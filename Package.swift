@@ -113,6 +113,7 @@ var streamChatSourcesExcluded: [String] { [
     "APIClient/Endpoints/AttachmentEndpoints_Tests.swift",
     "APIClient/Endpoints/SyncEndpoint_Tests.swift",
     "APIClient/Endpoints/MessageEndpoints_Tests.swift",
+    "APIClient/Endpoints/EndpointPath_Tests.swift",
     "APIClient/Endpoints/DeviceEndpoints_Tests.swift",
     "APIClient/Endpoints/Requests/GuestUserTokenRequestPayload_Tests.swift",
     "APIClient/Endpoints/Requests/MissingEventsRequestBody_Tests.swift",

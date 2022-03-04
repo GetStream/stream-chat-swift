@@ -64,6 +64,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
 
     lazy var messageUpdater = self.environment
         .messageUpdaterBuilder(
+            client.config.isLocalStorageEnabled,
             client.messageRepository,
             client.databaseContainer,
             client.apiClient
@@ -208,6 +209,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
 extension ChatMessageSearchController {
     struct Environment {
         var messageUpdaterBuilder: (
+            _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient

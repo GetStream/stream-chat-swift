@@ -117,6 +117,16 @@ class APIClientMock: APIClient, Spy {
         XCTWaiter().wait(for: [request_expectation], timeout: timeout)
         return request_endpoint
     }
+
+    override func enterRecoveryMode() {
+        record()
+        super.enterRecoveryMode()
+    }
+
+    override func exitRecoveryMode() {
+        record()
+        super.exitRecoveryMode()
+    }
 }
 
 extension APIClientMock {

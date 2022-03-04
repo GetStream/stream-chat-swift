@@ -107,7 +107,8 @@ protocol MessageDatabaseSession {
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
-        extraData: [String: RawJSON]
+        extraData: [String: RawJSON],
+        localState: LocalReactionState?
     ) throws -> MessageReactionDTO
     
     func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO?
@@ -132,7 +133,7 @@ protocol MessageDatabaseSession {
     /// Fetches `MessageReactionDTO` for the given `messageId`, `userId`, and `type` from the DB.
     /// Returns `nil` if there is no matching `MessageReactionDTO`.
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO?
-    
+
     /// Saves the provided reaction payload to the DB. Throws an error if the save fails
     /// else returns saved `MessageReactionDTO` entity.
     @discardableResult

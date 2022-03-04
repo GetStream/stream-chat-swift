@@ -298,7 +298,7 @@ class DatabaseSession_Tests: XCTestCase {
         let currentUser = database.viewContext.currentUser
         
         // Assert `lastReceivedEventDate` is nil
-        XCTAssertNil(currentUser?.lastSyncAt)
+        XCTAssertNil(currentUser?.lastSynchedEventDate)
     }
 
     func test_saveEvent_whenMessageUpdated_shouldUpdateMessagesQuotingTheUpdatedMessage() throws {

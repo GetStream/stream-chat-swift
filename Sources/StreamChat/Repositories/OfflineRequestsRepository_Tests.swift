@@ -56,7 +56,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
     }
 
     func test_runQueuedRequestsWithPendingRequests_createChannel() throws {
-        // We add one .createChannel request to the queue
+        // We add one .createChannel request to the queue. This is NOT a supported offline action anymore.
         try createRequest(id: .unique, path: .createChannel(""))
 
         let expectation = self.expectation(description: "Running completes")
@@ -66,18 +66,14 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
         // We reset the counter to properly assert later
         database.writeSessionCounter = 0
-        AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
-
-        let jsonData = XCTestCase.mockData(fromFile: "ChannelOnly-ChannelPayload")
-        apiClient.test_simulateRecoveryResponse(.success(jsonData))
-
         waitForExpectations(timeout: 0.1, handler: nil)
 
-        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        // No actions should be taken for a request that is not supported offline
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(pendingRequests.count, 0)
-        // 1 to remove the request from the queue - 1 to update the channel
-        XCTAssertEqual(database.writeSessionCounter, 2)
+        // 1 to remove the request from the queue
+        XCTAssertEqual(database.writeSessionCounter, 1)
     }
 
     func test_runQueuedRequestsWithPendingRequests_sendMessage() throws {

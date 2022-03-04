@@ -306,7 +306,7 @@ class MessageSender_Tests: XCTestCase {
         XCTAssertTrue(messageRepository.sendMessageCalls.keys.contains(channelA_message1))
         XCTAssertTrue(messageRepository.sendMessageCalls.keys.contains(channelB_message1))
 
-        // Simulate successfull responses for both calls
+        // Simulate successful responses for both calls
         messageRepository.sendMessageCalls.forEach {
             let message = ChatMessage.mock(id: $0.key, cid: cid, text: "Message sent", author: .unique)
             $0.value(.success(message))

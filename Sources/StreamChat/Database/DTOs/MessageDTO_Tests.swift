@@ -1395,6 +1395,208 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(predicateCount, 0)
     }
 
+    // MARK: Add Reaction
+
+    func test_addReaction_noCurrentUser() {
+        prepareEnvironment(createdUserId: nil, createdMessageId: nil)
+        let result = runAddReaction(messageId: "message_id", type: "love")
+        XCTAssertTrue(result.error is ClientError.CurrentUserDoesNotExist)
+    }
+
+    func test_addReaction_noExistingMessage() {
+        prepareEnvironment(createdUserId: "an id", createdMessageId: nil)
+        let result = runAddReaction(messageId: "message_id", type: "love")
+        XCTAssertTrue(result.error is ClientError.MessageDoesNotExist)
+    }
+
+    func test_addReaction_messageContainsReaction() {
+        let userId = "user_id"
+        let messageId = "message_id"
+        let reactionType: MessageReactionType = "reaction-type"
+        // We create user and messsage
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        // We add the reaction to the message so that it already contains it
+        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
+        addReactionToMessage(messageId: messageId, reactionId: reactionId)
+
+        let result = runAddReaction(messageId: messageId, type: reactionType)
+        XCTAssertNil(result.error)
+
+        // Reaction ID should be returned
+        XCTAssertEqual(result.value, reactionId)
+        // The message should still contain those reactions
+        let message = self.message(with: messageId)
+        XCTAssertTrue(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+        XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+    }
+
+    func test_addReaction_messageContainsReaction_updatesLocalState_pendingDelete() {
+        let userId = "user_id"
+        let messageId = "message_id"
+        let reactionType: MessageReactionType = "reaction-type"
+        // We create user and messsage
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        // We add the reaction to the message so that it already contains it
+        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
+        addReactionToMessage(messageId: messageId, reactionId: reactionId)
+
+        let result = runAddReaction(messageId: messageId, type: reactionType, localState: .pendingDelete)
+        XCTAssertNil(result.error)
+
+        // Reaction ID should be returned
+        XCTAssertEqual(result.value, reactionId)
+        // The message should still contain those reactions
+        let message = self.message(with: messageId)
+        XCTAssertEqual(reactionState(with: messageId, userId: userId, type: reactionType), .pendingDelete)
+        // Reaction is NOT returned as part of the message model when it is .pendingDelete
+        XCTAssertFalse(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+        XCTAssertFalse(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+    }
+
+    func test_addReaction_messageContainsReaction_updatesLocalState_sending() {
+        let userId = "user_id"
+        let messageId = "message_id"
+        let reactionType: MessageReactionType = "reaction-type"
+        // We create user and messsage
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        // We add the reaction to the message so that it already contains it
+        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
+        addReactionToMessage(messageId: messageId, reactionId: reactionId)
+
+        let result = runAddReaction(messageId: messageId, type: reactionType, localState: .sending)
+        XCTAssertNil(result.error)
+
+        // Reaction ID should be returned
+        XCTAssertEqual(result.value, reactionId)
+        // The message should still contain those reactions
+        let message = self.message(with: messageId)
+        XCTAssertEqual(reactionState(with: messageId, userId: userId, type: reactionType), .sending)
+        XCTAssertTrue(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+        XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+    }
+
+    func test_addReaction_messageDoesNotContainReaction() {
+        let userId = "user_id"
+        let messageId = "message_id"
+        let reactionType: MessageReactionType = "reaction-type"
+        // We create user and messsage
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        let result = runAddReaction(messageId: messageId, type: reactionType)
+        XCTAssertNil(result.error)
+
+        // Reaction ID should be returned
+        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
+        XCTAssertEqual(result.value, reactionId)
+        // The message should still contain those reactions
+        let message = self.message(with: messageId)
+        XCTAssertTrue(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+        XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+    }
+
+    func test_addReaction_reactionDoesNotExistYet_updatesLocalState_pendingDelete() {
+        let userId = "user_id"
+        let messageId = "message_id"
+        let reactionType: MessageReactionType = "reaction-type"
+        // We create user and messsage
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        let result = runAddReaction(messageId: messageId, type: reactionType, localState: .pendingDelete)
+        XCTAssertNil(result.error)
+
+        // Reaction ID should be returned
+        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
+        XCTAssertEqual(result.value, reactionId)
+        // The message should still contain those reactions
+        let message = self.message(with: messageId)
+        XCTAssertEqual(reactionState(with: messageId, userId: userId, type: reactionType), .pendingDelete)
+        // Reaction is NOT returned as part of the message model when it is .pendingDelete
+        XCTAssertFalse(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+        XCTAssertFalse(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+    }
+
+    func test_addReaction_reactionDoesNotExistYet_updatesLocalState_sending() {
+        let userId = "user_id"
+        let messageId = "message_id"
+        let reactionType: MessageReactionType = "reaction-type"
+        // We create user and messsage
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        let result = runAddReaction(messageId: messageId, type: reactionType, localState: .sending)
+        XCTAssertNil(result.error)
+
+        // Reaction ID should be returned
+        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
+        XCTAssertEqual(result.value, reactionId)
+        // The message should still contain those reactions
+        let message = self.message(with: messageId)
+        XCTAssertEqual(reactionState(with: messageId, userId: userId, type: reactionType), .sending)
+        XCTAssertTrue(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+        XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+    }
+
+    private func message(with id: MessageId) -> ChatMessage? {
+        var message: ChatMessage?
+        try? database.writeSynchronously { session in
+            message = session.message(id: id)?.asModel()
+        }
+        return message
+    }
+
+    private func reactionState(with messageId: String, userId: UserId, type: MessageReactionType) -> LocalReactionState? {
+        var reactionState: LocalReactionState?
+        try? database.writeSynchronously { session in
+            reactionState = session.reaction(messageId: messageId, userId: userId, type: type)?.localState
+        }
+        return reactionState
+    }
+
+    private func makeReactionId(userId: String, messageId: String, type: MessageReactionType) -> String {
+        [userId, messageId, type.rawValue].joined(separator: "/")
+    }
+
+    private func addReactionToMessage(messageId: MessageId, reactionId: String) {
+        try? database.writeSynchronously { session in
+            let message = session.message(id: messageId)
+            message?.latestReactions = [reactionId, "other-id-1"]
+            message?.ownReactions = [reactionId, "other-id-2"]
+            XCTAssertNil(message?.localMessageState)
+        }
+    }
+
+    private func prepareEnvironment(createdUserId: String?, createdMessageId: MessageId?) {
+        if let userId = createdUserId {
+            try? database.createCurrentUser(id: userId)
+        }
+        if let messageId = createdMessageId {
+            try? database.createMessage(id: messageId)
+        }
+    }
+
+    private func runAddReaction(
+        messageId: MessageId,
+        type: MessageReactionType,
+        localState: LocalReactionState? = nil
+    ) -> Result<String, ClientError> {
+        do {
+            var reactionId: String!
+            try database.writeSynchronously { database in
+                reactionId = try database.addReaction(to: messageId, type: type, score: 1, extraData: [:], localState: localState)
+                    .id
+            }
+            return .success(reactionId)
+        } catch {
+            guard let error = error as? ClientError else {
+                XCTFail("Should receive a ClientError")
+                return .failure(ClientError())
+            }
+            return .failure(error)
+        }
+    }
+
     // MARK: Helpers:
 
     private func checkChannelMessagesPredicateCount(

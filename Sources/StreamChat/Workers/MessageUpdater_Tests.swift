@@ -15,7 +15,7 @@ final class MessageUpdater_Tests: XCTestCase {
     var messageUpdater: MessageUpdater!
     
     // MARK: Setup
-    
+
     override func setUp() {
         super.setUp()
         
@@ -23,7 +23,21 @@ final class MessageUpdater_Tests: XCTestCase {
         apiClient = APIClientMock()
         database = DatabaseContainerMock()
         messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
-        messageUpdater = MessageUpdater(messageRepository: messageRepository, database: database, apiClient: apiClient)
+        messageUpdater = MessageUpdater(
+            isLocalStorageEnabled: true,
+            messageRepository: messageRepository,
+            database: database,
+            apiClient: apiClient
+        )
+    }
+
+    func recreateUpdater(isLocalStorageEnabled: Bool) {
+        messageUpdater = MessageUpdater(
+            isLocalStorageEnabled: isLocalStorageEnabled,
+            messageRepository: messageRepository,
+            database: database,
+            apiClient: apiClient
+        )
     }
     
     override func tearDown() {
@@ -1187,6 +1201,87 @@ final class MessageUpdater_Tests: XCTestCase {
 
         XCTAssertEqual(reactionReloaded.localState, .sendingFailed)
     }
+
+    func test_addReaction_connectionError_localStorageEnabled() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = try setupReactionData(userId: userId)
+        let reactionType: MessageReactionType = .init(rawValue: .unique)
+        let dbCall = XCTestExpectation(description: "database call")
+
+        recreateUpdater(isLocalStorageEnabled: true)
+
+        // Simulate `addReaction` call
+        messageUpdater.addReaction(
+            reactionType, score: 1, enforceUnique: false, extraData: [:], messageId: messageId
+        ) { error in
+            XCTAssertNil(error)
+            dbCall.fulfill()
+        }
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: 0.1)
+        guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reaction.localState, .sending)
+        // Simulate API response with failure - this kind of error is not retried
+        let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.waitForRequest()
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext.save()
+        }
+
+        guard let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        // Still sending, we keep it because we have offline queuing
+        XCTAssertEqual(reactionReloaded.localState, .sending)
+    }
+
+    func test_addReaction_connectionError_localStorageDisabled() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = try setupReactionData(userId: userId)
+        let reactionType: MessageReactionType = .init(rawValue: .unique)
+        let dbCall = XCTestExpectation(description: "database call")
+
+        recreateUpdater(isLocalStorageEnabled: false)
+
+        // Simulate `addReaction` call
+        messageUpdater.addReaction(
+            reactionType, score: 1, enforceUnique: false, extraData: [:], messageId: messageId
+        ) { error in
+            XCTAssertNil(error)
+            dbCall.fulfill()
+        }
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: 0.1)
+        guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reaction.localState, .sending)
+        // Simulate API response with failure - this kind of error is not retried
+        let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.waitForRequest()
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext.save()
+        }
+
+        guard let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reactionReloaded.localState, .sendingFailed)
+    }
     
     // MARK: - Delete reaction
 
@@ -1275,12 +1370,115 @@ final class MessageUpdater_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(reactionReloaded.localState, .unknown)
+        XCTAssertEqual(reactionReloaded.localState, .deletingFailed)
+    }
+
+    func test_deleteReaction_connectionError_localStorageEnabled() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = try setupReactionData(userId: userId)
+        let reactionType: MessageReactionType = .init(rawValue: .unique)
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext
+                .saveReaction(payload: .dummy(
+                    type: reactionType,
+                    messageId: messageId,
+                    user: .dummy(userId: userId),
+                    extraData: [:]
+                ))
+        }
+
+        recreateUpdater(isLocalStorageEnabled: true)
+
+        // Simulate `deleteReaction` call.
+        let dbCall = XCTestExpectation(description: "database call")
+        messageUpdater.deleteReaction(reactionType, messageId: messageId) { error in
+            XCTAssertNil(error)
+            dbCall.fulfill()
+        }
+
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: 0.1)
+
+        guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reaction.localState, .pendingDelete)
+
+        // Simulate API response with failure.
+        let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.waitForRequest()
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext.save()
+        }
+
+        guard let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        // Still pending, we keep it because we have offline queuing
+        XCTAssertEqual(reactionReloaded.localState, .pendingDelete)
+    }
+
+    func test_deleteReaction_connectionError_localStorageDisabled() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = try setupReactionData(userId: userId)
+        let reactionType: MessageReactionType = .init(rawValue: .unique)
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext
+                .saveReaction(payload: .dummy(
+                    type: reactionType,
+                    messageId: messageId,
+                    user: .dummy(userId: userId),
+                    extraData: [:]
+                ))
+        }
+
+        recreateUpdater(isLocalStorageEnabled: false)
+
+        // Simulate `deleteReaction` call.
+        let dbCall = XCTestExpectation(description: "database call")
+        messageUpdater.deleteReaction(reactionType, messageId: messageId) { error in
+            XCTAssertNil(error)
+            dbCall.fulfill()
+        }
+
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: 0.1)
+
+        guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reaction.localState, .pendingDelete)
+
+        // Simulate API response with failure.
+        let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.waitForRequest()
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext.save()
+        }
+
+        guard let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reactionReloaded.localState, .deletingFailed)
     }
 
     // MARK: - Pinning message
 
-    func test_pinMessage_propogates_MessageDoesNotExist_Error() throws {
+    func test_pinMessage_propagates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
         let completionError = try waitFor {

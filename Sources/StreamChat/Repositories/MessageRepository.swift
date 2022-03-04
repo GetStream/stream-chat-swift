@@ -158,4 +158,36 @@ class MessageRepository {
             completion()
         })
     }
+
+    func undoReactionAddition(
+        on messageId: MessageId,
+        type: MessageReactionType,
+        completion: (() -> Void)? = nil
+    ) {
+        database.write {
+            let reaction = try $0.removeReaction(from: messageId, type: type, on: nil)
+            reaction?.localState = .sendingFailed
+        } completion: { error in
+            if let error = error {
+                log.error("Error removing reaction for message with id \(messageId): \(error)")
+            }
+            completion?()
+        }
+    }
+
+    func undoReactionDeletion(
+        on messageId: MessageId,
+        type: MessageReactionType,
+        score: Int,
+        completion: (() -> Void)? = nil
+    ) {
+        database.write {
+            _ = try $0.addReaction(to: messageId, type: type, score: score, extraData: [:], localState: .deletingFailed)
+        } completion: { error in
+            if let error = error {
+                log.error("Error adding reaction for message with id \(messageId): \(error)")
+            }
+            completion?()
+        }
+    }
 }

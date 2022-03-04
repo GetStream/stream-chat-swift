@@ -7,9 +7,11 @@ import Foundation
 
 /// The type provides the API for getting/editing/deleting a message
 class MessageUpdater: Worker {
-    let repository: MessageRepository
+    private let repository: MessageRepository
+    private let isLocalStorageEnabled: Bool
 
-    init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+    init(isLocalStorageEnabled: Bool, messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+        self.isLocalStorageEnabled = isLocalStorageEnabled
         repository = messageRepository
         super.init(database: database, apiClient: apiClient)
     }
@@ -317,7 +319,6 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var reactionDTO: MessageReactionDTO?
         let version = UUID().uuidString
 
         let endpoint: Endpoint<EmptyResponse> = .addReaction(
@@ -330,32 +331,24 @@ class MessageUpdater: Worker {
 
         database.write { session in
             do {
-                reactionDTO = try session.addReaction(
+                let reaction = try session.addReaction(
                     to: messageId,
                     type: type,
                     score: score,
-                    extraData: extraData
+                    extraData: extraData,
+                    localState: .sending
                 )
+                reaction.version = version
             } catch {
                 log.warning("Failed to optimistically add the reaction to the database: \(error)")
             }
+        } completion: { [weak self, weak repository] error in
+            self?.apiClient.request(endpoint: endpoint) { result in
+                guard let error = result.error else { return }
 
-            if let reaction = reactionDTO {
-                reaction.localState = .sending
-                reaction.version = version
-            }
-        } completion: { error in
-            self.apiClient.request(endpoint: endpoint) { result in
-                if result.error == nil {
-                    return
-                }
+                if self?.canKeepReactionState(for: error) == true { return }
 
-                self.database.write { session in
-                    guard let reaction = try? session.removeReaction(from: messageId, type: type, on: version) else {
-                        return
-                    }
-                    reaction.localState = .sendingFailed
-                }
+                repository?.undoReactionAddition(on: messageId, type: type)
             }
             completion?(error)
         }
@@ -371,38 +364,29 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var reactionDTO: MessageReactionDTO?
-
+        var reactionScore: Int?
         database.write { session in
             do {
-                reactionDTO = try session.removeReaction(from: messageId, type: type, on: nil)
+                guard let reaction = try session.removeReaction(from: messageId, type: type, on: nil) else { return }
+                reaction.localState = .pendingDelete
+                reactionScore = Int(reaction.score)
             } catch {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
+        } completion: { [weak self, weak repository] error in
+            self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
+                guard let error = result.error else { return }
 
-            guard let reaction = reactionDTO else {
-                return
+                if self?.canKeepReactionState(for: error) == true { return }
+
+                repository?.undoReactionDeletion(on: messageId, type: type, score: reactionScore ?? 1)
             }
-            reaction.localState = .pendingDelete
-        } completion: { error in
-            self.apiClient
-                .request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
-                    if result.error == nil {
-                        return
-                    }
-
-                    guard let reaction = reactionDTO else {
-                        return
-                    }
-
-                    self.database.write { session in
-                        if let reaction = session.reaction(messageId: messageId, userId: reaction.user.id, type: type) {
-                            reaction.localState = nil
-                        }
-                    }
-                }
             completion?(error)
         }
+    }
+
+    private func canKeepReactionState(for error: Error) -> Bool {
+        isLocalStorageEnabled && ClientError.isEphemeral(error: error)
     }
 
     /// Pin the message with the provided message id.

@@ -1453,6 +1453,7 @@
 		C186BFB027AADB410099CCA6 /* SyncOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFAE27AADB410099CCA6 /* SyncOperations.swift */; };
 		C186BFB227AAF7E00099CCA6 /* ChatChannelController_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFB127AAF7E00099CCA6 /* ChatChannelController_Mock.swift */; };
 		C186BFB627AAFDAB0099CCA6 /* SyncOperations_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */; };
+		C19B9C3227D0FB0800D308C0 /* EndpointPath_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */; };
 		C1AC525B27ABEBC500CBC11A /* XCTAssertDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AC525A27ABEBC500CBC11A /* XCTAssertDate.swift */; };
 		C1B0B38327BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */; };
 		C1B0B38427BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */; };
@@ -3013,6 +3014,7 @@
 		C186BFAE27AADB410099CCA6 /* SyncOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperations.swift; sourceTree = "<group>"; };
 		C186BFB127AAF7E00099CCA6 /* ChatChannelController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelController_Mock.swift; sourceTree = "<group>"; };
 		C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperations_Tests.swift; sourceTree = "<group>"; };
+		C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointPath_Tests.swift; sourceTree = "<group>"; };
 		C1AC525A27ABEBC500CBC11A /* XCTAssertDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTAssertDate.swift; sourceTree = "<group>"; };
 		C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EndpointPath+OfflineRequest.swift"; sourceTree = "<group>"; };
 		C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository.swift; sourceTree = "<group>"; };
@@ -4118,6 +4120,7 @@
 				DAEAF4B624DADA990015FB28 /* Requests */,
 				C143788F27BC03EE00E23965 /* EndpointPath.swift */,
 				C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */,
+				C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */,
 				79877A172498E4EE00015F8B /* Endpoint.swift */,
 				C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */,
 				8A0D649524E579A50017A3C0 /* GuestEndpoints.swift */,
@@ -7917,6 +7920,7 @@
 				A3A644B327BF99D400F92494 /* ChannelTruncateRequestPayload_Tests.swift in Sources */,
 				88CD396625B584E000399F8E /* HTTPHeader_Tests.swift in Sources */,
 				DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */,
+				C19B9C3227D0FB0800D308C0 /* EndpointPath_Tests.swift in Sources */,
 				843C53AB269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift in Sources */,
 				792FCB4D24A3D56D000290C7 /* DatabaseSession_Tests.swift in Sources */,
 				430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */,

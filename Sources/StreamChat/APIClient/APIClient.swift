@@ -86,7 +86,7 @@ class APIClient {
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        let requestOperation = operation(endpoint: endpoint, completion: completion)
+        let requestOperation = operation(endpoint: endpoint, isRecoveryOperation: false, completion: completion)
         operationQueue.addOperation(requestOperation)
     }
 
@@ -103,12 +103,13 @@ class APIClient {
             log.assertionFailure("We should not call this method if not in recovery mode")
         }
 
-        let requestOperation = operation(endpoint: endpoint, completion: completion)
+        let requestOperation = operation(endpoint: endpoint, isRecoveryOperation: true, completion: completion)
         recoveryQueue.addOperation(requestOperation)
     }
 
     private func operation<Response: Decodable>(
         endpoint: Endpoint<Response>,
+        isRecoveryOperation: Bool,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
@@ -123,21 +124,32 @@ class APIClient {
                     operation.resetRetries()
                     done(.retry)
                 case let .failure(error) where self?.isConnectionError(error) == true:
+                    // If a non recovery request comes in while we are in recovery mode, we want to queue if still has
+                    // retries left
+                    let inRecoveryMode = self?.isInRecoveryMode == true
+                    if inRecoveryMode && !isRecoveryOperation && operation.canRetry {
+                        self?.request(endpoint: endpoint, completion: completion)
+                        done(.continue)
+                        return
+                    }
+
                     // Do not retry unless its a connection problem and we still have retries left
                     if operation.canRetry {
                         done(.retry)
                         return
                     }
 
-                    if self?.isInRecoveryMode == true {
+                    if inRecoveryMode {
                         completion(.failure(ClientError.ConnectionError()))
                     } else {
+                        // Offline Queuing
                         self?.queueOfflineRequest(endpoint.withDataResponse)
                         completion(result)
                     }
 
                     done(.continue)
                 case .success, .failure:
+                    log.debug("Request suceeded /\(endpoint.path)", subsystems: .offlineSupport)
                     completion(result)
                     done(.continue)
                 }

@@ -23,9 +23,9 @@ extension Endpoint {
 /// OfflineRequestsRepository handles both the enqueuing and the execution of offline requests when needed.
 /// When running the queued requests, it basically passes the requests on to the APIClient, and waits for its result.
 class OfflineRequestsRepository {
-    let messageRepository: MessageRepository
-    let database: DatabaseContainer
-    let apiClient: APIClient
+    private let messageRepository: MessageRepository
+    private let database: DatabaseContainer
+    private let apiClient: APIClient
 
     /// Serial queue used to enqueue pending requests one after another
     private let retryQueue = DispatchQueue(label: "io.getstream.queue-requests")
@@ -54,6 +54,7 @@ class OfflineRequestsRepository {
         let database = self.database
         let group = DispatchGroup()
         for (id, endpoint) in pendingActions {
+            group.enter()
             let leave = {
                 group.leave()
             }
@@ -69,7 +70,12 @@ class OfflineRequestsRepository {
                 continue
             }
 
-            group.enter()
+            guard endpoint.shouldBeQueuedOffline else {
+                log.error("Queued request for /\(endpoint.path.value) should not be queued", subsystems: .offlineSupport)
+                deleteQueuedRequestAndComplete()
+                continue
+            }
+
             log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
             apiClient.recoveryRequest(endpoint: endpoint) { [weak self] result in
                 log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
@@ -113,12 +119,6 @@ class OfflineRequestsRepository {
         }
 
         switch endpoint.path {
-        case .createChannel:
-            guard let payload = decodeTo(ChannelPayload.self) else {
-                completion()
-                return
-            }
-            database.write { try $0.saveChannel(payload: payload) } completion: { _ in completion() }
         case let .sendMessage(channelId):
             guard let message = decodeTo(MessagePayload.Boxed.self) else {
                 completion()

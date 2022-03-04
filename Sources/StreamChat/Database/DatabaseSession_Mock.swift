@@ -25,10 +25,17 @@ extension DatabaseSessionMock {
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
-        extraData: [String: RawJSON]
+        extraData: [String: RawJSON],
+        localState: LocalReactionState?
     ) throws -> MessageReactionDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.addReaction(to: messageId, type: type, score: score, extraData: extraData)
+        return try underlyingSession.addReaction(
+            to: messageId,
+            type: type,
+            score: score,
+            extraData: extraData,
+            localState: localState
+        )
     }
     
     func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO? {
