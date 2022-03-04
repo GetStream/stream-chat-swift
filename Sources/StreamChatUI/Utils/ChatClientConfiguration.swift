@@ -24,6 +24,8 @@ public extension ChatClient {
     }()
 }
 
+public typealias callbackGeneralGroupInvitLink = ((URL?) -> Void)
+
 open class ChatClientConfiguration {
 
     // MARK: - Variables
@@ -35,7 +37,8 @@ open class ChatClientConfiguration {
     // private group dynamicLink
     open var requestPrivateGroupDynamicLink: ((String, String, String) -> Void)? // groupId, signature, expiry
     open var requestedPrivateGroupDynamicLink: ((URL?) -> Void)?
-    
+    // General group invite link
+    open var requestedGeneralGroupDynamicLink: callbackGeneralGroupInvitLink?
     // MARK: - Init
     public init() {}
 }
