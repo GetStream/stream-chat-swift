@@ -319,7 +319,6 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var reactionDTO: MessageReactionDTO?
         let version = UUID().uuidString
 
         let endpoint: Endpoint<EmptyResponse> = .addReaction(
@@ -332,19 +331,16 @@ class MessageUpdater: Worker {
 
         database.write { session in
             do {
-                reactionDTO = try session.addReaction(
+                let reaction = try session.addReaction(
                     to: messageId,
                     type: type,
                     score: score,
                     extraData: extraData,
                     localState: .sending
                 )
+                reaction.version = version
             } catch {
                 log.warning("Failed to optimistically add the reaction to the database: \(error)")
-            }
-
-            if let reaction = reactionDTO {
-                reaction.version = version
             }
         } completion: { [weak self, weak repository] error in
             self?.apiClient.request(endpoint: endpoint) { result in
@@ -368,24 +364,22 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var reactionDTO: MessageReactionDTO?
-
+        var reactionScore: Int?
         database.write { session in
             do {
-                reactionDTO = try session.removeReaction(from: messageId, type: type, on: nil)
+                guard let reaction = try session.removeReaction(from: messageId, type: type, on: nil) else { return }
+                reaction.localState = .pendingDelete
+                reactionScore = Int(reaction.score)
             } catch {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
-
-            guard let reaction = reactionDTO else { return }
-            reaction.localState = .pendingDelete
         } completion: { [weak self, weak repository] error in
             self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
                 guard let error = result.error else { return }
 
                 if self?.canKeepReactionState(for: error) == true { return }
 
-                repository?.undoReactionDeletion(on: messageId, type: type)
+                repository?.undoReactionDeletion(on: messageId, type: type, score: reactionScore ?? 1)
             }
             completion?(error)
         }

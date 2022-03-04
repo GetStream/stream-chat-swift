@@ -393,7 +393,7 @@ class MessageRepositoryTests: XCTestCase {
 
     func test_undoReactionDeletion_nonExistingMessage() {
         let expectation = self.expectation(description: "Undo ReactionCompletes")
-        repository.undoReactionDeletion(on: "message_id", type: "type") {
+        repository.undoReactionDeletion(on: "message_id", type: "type", score: 10) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 0.1, handler: nil)
@@ -417,18 +417,21 @@ class MessageRepositoryTests: XCTestCase {
 
         // We undo reaction
         let expectation = self.expectation(description: "Undo ReactionCompletes")
-        repository.undoReactionDeletion(on: messageId, type: reactionType) {
+        repository.undoReactionDeletion(on: messageId, type: reactionType, score: 10) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 0.1, handler: nil)
 
         var reactionState: LocalReactionState?
+        var reactionScore: Int64?
         try database.writeSynchronously { session in
             let reaction = session.reaction(messageId: messageId, userId: userId, type: reactionType)
             reactionState = reaction?.localState
+            reactionScore = reaction?.score
         }
 
         // Should update existing local state
         XCTAssertEqual(reactionState, .deletingFailed)
+        XCTAssertEqual(reactionScore, 10)
     }
 }

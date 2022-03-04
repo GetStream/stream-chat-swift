@@ -625,6 +625,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.score = Int64(score)
         dto.extraData = try JSONEncoder.default.encode(extraData)
+        dto.localState = localState
 
         let reactionId = dto.id
         
@@ -634,10 +635,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         if !message.ownReactions.contains(reactionId) {
             message.ownReactions.append(reactionId)
-        }
-
-        if let localState = localState {
-            dto.localState = localState
         }
 
         return dto
