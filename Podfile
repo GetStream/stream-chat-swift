@@ -55,7 +55,6 @@ target 'StreamChat' do
   use_frameworks!
 
   # Pods for StreamChat
-  #pod 'SkeletonView'
   target 'StreamChatTests' do
     # Pods for testing
   end

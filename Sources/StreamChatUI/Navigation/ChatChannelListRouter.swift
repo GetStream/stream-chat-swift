@@ -35,7 +35,6 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
             return
         }
         self.rootViewController.pushWithAnimation(controller: vc)
-        
     }
 
     /// Called when a user tapped `More` swipe action on a channel
