@@ -10,10 +10,9 @@ extension EndpointPath {
         case .sendMessage, .editMessage, .deleteMessage, .addReaction, .deleteReaction:
             return true
         case .createChannel, .connect, .sync, .users, .guest, .members, .search, .devices, .channels, .updateChannel,
-             .deleteChannel,
-             .channelUpdate, .muteChannel, .showChannel, .truncateChannel, .markChannelRead, .markAllChannelsRead,
-             .channelEvent, .stopWatchingChannel, .pinnedMessages, .uploadAttachment, .message, .replies, .reactions,
-             .messageAction, .banMember, .flagUser, .flagMessage, .muteUser:
+             .deleteChannel, .channelUpdate, .muteChannel, .showChannel, .truncateChannel, .markChannelRead,
+             .markAllChannelsRead, .channelEvent, .stopWatchingChannel, .pinnedMessages, .uploadAttachment, .message,
+             .replies, .reactions, .messageAction, .banMember, .flagUser, .flagMessage, .muteUser:
             return false
         }
     }

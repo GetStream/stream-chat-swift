@@ -267,12 +267,8 @@ class APIClient_Tests: XCTestCase {
         })
         apiClient.enterRecoveryMode()
 
-        // We apply a delay to verify that only one request (the initial one) went through
-        waitUntil { done in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                done()
-            }
-        }
+        // We expect only one request (the initial one) to go through
+        AssertAsync.willBeTrue(decoder.numberOfCalls(on: "decodeRequestResponse(data:response:error:)") == 1)
 
         // Gets enqueued because we switched to recovery mode
         XCTEnsureRequestsWereExecuted(times: 1)

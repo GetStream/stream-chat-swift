@@ -67,11 +67,12 @@ struct DefaultRequestDecoder: RequestDecoder {
                 )
             throw ClientError(with: serverError)
         }
-        
+
+        if let responseAsData = data as? ResponseType {
+            return responseAsData
+        }
+
         do {
-            if let responseAsData = data as? ResponseType {
-                return responseAsData
-            }
             let decodedPayload = try JSONDecoder.default.decode(ResponseType.self, from: data)
             return decodedPayload
         } catch {
