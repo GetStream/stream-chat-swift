@@ -4,7 +4,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -102,39 +101,57 @@
                                 <rect key="frame" x="0.0" y="0.0" width="255" height="250"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#relax, #travel" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eID-Yp-ZBm">
-                                <rect key="frame" x="13" y="260" width="219" height="0.0"/>
-                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
-                                <color key="textColor" red="0.96078431369999995" green="0.29411764709999999" blue="0.3921568627" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="hMs-E0-dn9">
-                                <rect key="frame" x="12" y="265" width="233" height="104"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="hMs-E0-dn9">
+                                <rect key="frame" x="12" y="262" width="233" height="112"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="751" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k59-Wr-zSE">
-                                        <rect key="frame" x="0.0" y="0.0" width="233" height="48"/>
-                                        <string key="text">Coventry is a city with a thousand years of history that has plenty to offer the visiting tourist. It is located in the heart of Warwickshire, UK.</string>
-                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The Title" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JnZ-oi-BmJ">
+                                        <rect key="frame" x="0.0" y="0.0" width="233" height="14.5"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WFd-2h-nIc">
-                                        <rect key="frame" x="0.0" y="68" width="233" height="36"/>
-                                        <color key="backgroundColor" name="timelessBlue"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="249" verticalCompressionResistancePriority="751" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k59-Wr-zSE">
+                                        <rect key="frame" x="0.0" y="18.5" width="233" height="9.5"/>
+                                        <string key="text">Coventry is a city with a thousand years of history that has plenty to offer the visiting tourist. It is located in the heart of Warwickshire, UK.</string>
+                                        <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#relax, #travel" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eID-Yp-ZBm">
+                                        <rect key="frame" x="0.0" y="32" width="233" height="32"/>
+                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
+                                        <color key="textColor" red="0.96078431369999995" green="0.29411764709999999" blue="0.3921568627" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wb5-mQ-8m9">
+                                        <rect key="frame" x="0.0" y="68" width="233" height="44"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WFd-2h-nIc">
+                                                <rect key="frame" x="5" y="10" width="223" height="34"/>
+                                                <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="34" id="9Hq-Ip-89i"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Show More">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                        <real key="value" value="17"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="36" id="9Hq-Ip-89i"/>
+                                            <constraint firstItem="WFd-2h-nIc" firstAttribute="leading" secondItem="Wb5-mQ-8m9" secondAttribute="leading" constant="5" id="654-8z-ppp"/>
+                                            <constraint firstAttribute="bottom" secondItem="WFd-2h-nIc" secondAttribute="bottom" id="GgG-gc-cqk"/>
+                                            <constraint firstAttribute="trailing" secondItem="WFd-2h-nIc" secondAttribute="trailing" constant="5" id="g3S-Nl-mI6"/>
+                                            <constraint firstItem="WFd-2h-nIc" firstAttribute="top" secondItem="Wb5-mQ-8m9" secondAttribute="top" constant="10" id="hlD-fg-H8H"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="17"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" title="Show More">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        </state>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                <real key="value" value="18"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                    </button>
+                                    </view>
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sg6-7u-q7k">
@@ -148,6 +165,7 @@
                             <constraint firstItem="Uqj-t9-WIh" firstAttribute="trailing" secondItem="goy-Mo-hsb" secondAttribute="trailing" id="0qg-RL-590"/>
                             <constraint firstItem="goy-Mo-hsb" firstAttribute="leading" secondItem="bTX-bD-CGh" secondAttribute="leading" id="1zx-bA-uV3"/>
                             <constraint firstItem="Uqj-t9-WIh" firstAttribute="top" secondItem="goy-Mo-hsb" secondAttribute="top" id="4s5-sD-8DD"/>
+                            <constraint firstItem="hMs-E0-dn9" firstAttribute="top" secondItem="bTX-bD-CGh" secondAttribute="bottom" constant="12" id="55Z-2o-gVY"/>
                             <constraint firstItem="hMs-E0-dn9" firstAttribute="leading" secondItem="BmX-Br-KI2" secondAttribute="leading" constant="12" id="5CL-JT-ZNs"/>
                             <constraint firstItem="goy-Mo-hsb" firstAttribute="bottom" secondItem="bTX-bD-CGh" secondAttribute="bottom" id="5RU-IV-S7R"/>
                             <constraint firstItem="goy-Mo-hsb" firstAttribute="top" secondItem="bTX-bD-CGh" secondAttribute="top" id="5UV-VE-cta"/>
@@ -157,12 +175,9 @@
                             <constraint firstItem="bTX-bD-CGh" firstAttribute="trailing" secondItem="goy-Mo-hsb" secondAttribute="trailing" id="A6o-gg-ASv"/>
                             <constraint firstAttribute="trailing" secondItem="hMs-E0-dn9" secondAttribute="trailing" constant="10" id="AmA-BF-nZI"/>
                             <constraint firstAttribute="trailing" secondItem="Sg6-7u-q7k" secondAttribute="trailing" id="Cll-Qt-oLv"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="eID-Yp-ZBm" secondAttribute="trailing" constant="15" id="FPO-HO-QoH"/>
-                            <constraint firstItem="hMs-E0-dn9" firstAttribute="top" secondItem="eID-Yp-ZBm" secondAttribute="bottom" constant="5" id="Gb8-xh-C4p"/>
                             <constraint firstItem="Sg6-7u-q7k" firstAttribute="leading" secondItem="BmX-Br-KI2" secondAttribute="leading" id="Gbk-cg-Ti2"/>
                             <constraint firstAttribute="trailing" secondItem="0Vm-ha-Tp1" secondAttribute="trailing" id="JFY-Pk-SwW"/>
                             <constraint firstItem="bTX-bD-CGh" firstAttribute="bottom" secondItem="goy-Mo-hsb" secondAttribute="bottom" id="LNZ-eB-vhe"/>
-                            <constraint firstItem="eID-Yp-ZBm" firstAttribute="leading" secondItem="BmX-Br-KI2" secondAttribute="leadingMargin" constant="5" id="Oox-u2-wea"/>
                             <constraint firstAttribute="bottom" secondItem="0Vm-ha-Tp1" secondAttribute="bottom" id="T3A-Qz-8zn"/>
                             <constraint firstItem="bTX-bD-CGh" firstAttribute="top" secondItem="BmX-Br-KI2" secondAttribute="top" id="VDN-Wn-fXK"/>
                             <constraint firstItem="bTX-bD-CGh" firstAttribute="leading" secondItem="BmX-Br-KI2" secondAttribute="leading" id="W9t-0g-j4r"/>
@@ -171,8 +186,7 @@
                             <constraint firstItem="Sg6-7u-q7k" firstAttribute="bottom" secondItem="Uqj-t9-WIh" secondAttribute="bottom" id="dkI-Jj-UNE"/>
                             <constraint firstItem="0Vm-ha-Tp1" firstAttribute="leading" secondItem="BmX-Br-KI2" secondAttribute="leading" id="hhf-SG-lpN"/>
                             <constraint firstAttribute="trailing" secondItem="bTX-bD-CGh" secondAttribute="trailing" id="iYw-1g-Yxg"/>
-                            <constraint firstAttribute="bottom" secondItem="hMs-E0-dn9" secondAttribute="bottom" constant="20" id="pCJ-1L-1O3"/>
-                            <constraint firstItem="eID-Yp-ZBm" firstAttribute="top" secondItem="bTX-bD-CGh" secondAttribute="bottom" constant="10" id="qFe-3R-Ebb"/>
+                            <constraint firstAttribute="bottom" secondItem="hMs-E0-dn9" secondAttribute="bottom" constant="15" id="pCJ-1L-1O3"/>
                             <constraint firstItem="0Vm-ha-Tp1" firstAttribute="top" secondItem="BmX-Br-KI2" secondAttribute="top" id="rRK-GO-OZ7"/>
                             <constraint firstItem="Sg6-7u-q7k" firstAttribute="top" secondItem="BmX-Br-KI2" secondAttribute="top" id="rvQ-nP-XyJ"/>
                             <constraint firstItem="bTX-bD-CGh" firstAttribute="leading" secondItem="goy-Mo-hsb" secondAttribute="leading" id="vap-rk-IwU"/>
@@ -198,7 +212,9 @@
                 <outlet property="imgView" destination="bTX-bD-CGh" id="zIt-Uc-9lL"/>
                 <outlet property="lblHashTag" destination="eID-Yp-ZBm" id="qSr-Tu-pTi"/>
                 <outlet property="lblInfo" destination="k59-Wr-zSE" id="FCa-aR-KAr"/>
+                <outlet property="lblTitle" destination="JnZ-oi-BmJ" id="gp7-DI-wMQ"/>
                 <outlet property="playerView" destination="goy-Mo-hsb" id="ya1-Cb-RQn"/>
+                <outlet property="viewAction" destination="Wb5-mQ-8m9" id="Egj-mS-JRc"/>
             </connections>
             <point key="canvasLocation" x="137.68115942028987" y="99.441964285714278"/>
         </tableViewCell>
@@ -207,8 +223,5 @@
         <image name="comment" width="18" height="18"/>
         <image name="like" width="18" height="14"/>
         <image name="play.circle" catalog="system" width="128" height="121"/>
-        <namedColor name="timelessBlue">
-            <color red="0.5490196078431373" green="0.69803921568627447" blue="0.97254901960784312" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
     </resources>
 </document>

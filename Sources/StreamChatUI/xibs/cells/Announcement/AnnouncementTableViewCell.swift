@@ -23,6 +23,8 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
     @IBOutlet weak var playerView: UIView!
     @IBOutlet weak var imgHeightConst: NSLayoutConstraint!
     @IBOutlet weak var btnContainer: UIButton!
+    @IBOutlet weak var lblTitle: UILabel!
+    @IBOutlet weak var viewAction: UIView!
     @IBOutlet weak var btnShowMore: UIButton!
     
     // MARK: - Variables
@@ -48,15 +50,22 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         if let hashTag = message?.extraData.tag {
             lblHashTag.text = "#" +  hashTag.joined(separator: " #")
             btnShowMore.isHidden = false
+            viewAction.isHidden = false
+            self.layoutIfNeeded()
         } else {
             lblHashTag.text = nil
             btnShowMore.isHidden = true
+            viewAction.isHidden = true
+            self.layoutIfNeeded()
         }
         if let imageAttachments = message?.imageAttachments.first {
             imgHeightConst.constant = 250
             self.imgView.image = nil
+            self.imageUrl = imageAttachments.imageURL.absoluteString
+            self.lblTitle.text = imageAttachments.title
+
             if imageAttachments.imageURL.pathExtension == "gif" {
-                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: 1)
+                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: -1)
             } else {
                 Nuke.loadImage(with: imageAttachments.imagePreviewURL, into: self.imgView)
             }
@@ -66,6 +75,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
             imgHeightConst.constant = 250
             playerView.isHidden = false
             self.imgView.image = nil
+            self.lblTitle.text = videoAttachment.title
             streamVideoLoader?.loadPreviewForVideo(at: videoAttachment.videoURL, completion: { [weak self] result in
                 guard let `self` = self else { return }
                 switch result {

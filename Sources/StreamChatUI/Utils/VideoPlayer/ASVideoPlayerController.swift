@@ -16,6 +16,7 @@ import SwiftyGif
  */
 public protocol ASAutoPlayVideoLayerContainer {
     var videoURL: String? { get set }
+    var imageUrl: String? { get set }
     var videoLayer: AVPlayerLayer { get set }
     var isVideoPlaying: Bool { get set }
 }
@@ -203,8 +204,7 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
         var videoCellContainer: ASAutoPlayVideoLayerContainer?
         var maxHeight: CGFloat = 0.0
         for cellView in visibleCells {
-            guard var containerCell = cellView as? ASAutoPlayVideoLayerContainer,
-                  let videoCellURL = containerCell.videoURL else {
+            guard var containerCell = cellView as? ASAutoPlayVideoLayerContainer else {
                       continue
                   }
             let height = cellView.bounds.height
@@ -230,12 +230,12 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
                 cell.videoLayer.isHidden = !cell.isVideoPlaying
                 cell.imgView.stopAnimatingGif()
             }
-            pauseRemoveLayer(layer: containerCell.videoLayer, url: videoCellURL, layerHeight: height)
+            if let videoCellURL = videoURL {
+                pauseRemoveLayer(layer: containerCell.videoLayer, url: videoCellURL, layerHeight: height)
+            }
         }
-        guard var videoCell = videoCellContainer,
-              let videoCellURL = videoCell.videoURL else {
-                  return
-              }
+        guard var videoCell = videoCellContainer else { return }
+
         let minCellLayerHeight = videoCell.videoLayer.bounds.size.height * 0.5
         /**
          Visible video layer height should be at least more than max of predefined minimum height and
@@ -243,8 +243,11 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
          */
         let minimumVideoLayerVisibleHeight = max(minCellLayerHeight, minimumLayerHeightToPlay)
         if maxHeight > minimumVideoLayerVisibleHeight {
-            if appEnteredFromBackground {
-                setupVideoFor(url: videoCellURL)
+            if let videoCellURL = videoCell.videoURL {
+                if appEnteredFromBackground {
+                    setupVideoFor(url: videoCellURL)
+                }
+                playVideo(withLayer: videoCell.videoLayer, url: videoCellURL)
             }
 
             videoCell.isVideoPlaying = true
@@ -252,7 +255,6 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
                 cell.videoLayer.isHidden = !cell.isVideoPlaying
                 cell.imgView.startAnimatingGif()
             }
-            playVideo(withLayer: videoCell.videoLayer, url: videoCellURL)
         }
     }
 

@@ -9,7 +9,7 @@ import UIKit
 import AVKit
 
 open class ASVideoTableViewCell: UITableViewCell, ASAutoPlayVideoLayerContainer {
-    
+
     // MARK: Variables
     public var videoURL: String? {
         didSet {
@@ -20,6 +20,7 @@ open class ASVideoTableViewCell: UITableViewCell, ASAutoPlayVideoLayerContainer 
         }
     }
     
+    public var imageUrl: String?
     public var isVideoPlaying: Bool = false
     public var videoLayer = AVPlayerLayer()
     
