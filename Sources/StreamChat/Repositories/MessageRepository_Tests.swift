@@ -344,4 +344,91 @@ class MessageRepositoryTests: XCTestCase {
         }
         return dbMessage
     }
+
+    // MARK: undoReactionAddition
+
+    func test_undoReactionAddition_nonExistingReaction() {
+        let expectation = self.expectation(description: "Undo ReactionCompletes")
+        repository.undoReactionAddition(on: "message_id", type: "type") {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        // We are making sure the completion is executed even if the reaction is not there
+        XCTAssertTrue(true)
+    }
+
+    func test_undoReactionAddition_existingReaction() throws {
+        let cid = ChannelId(type: .messaging, id: "c")
+        let messageId = "message_id"
+        let userId = "user_id"
+        let reactionType: MessageReactionType = "reaction"
+
+        // We need a user, a channel, a message and an existing reaction
+        try database.createCurrentUser(id: userId)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+            try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: .unique), for: cid, syncOwnReactions: false)
+            _ = try session.addReaction(to: messageId, type: reactionType, score: 1, extraData: [:], localState: nil)
+        }
+
+        // We undo reaction
+        let expectation = self.expectation(description: "Undo ReactionCompletes")
+        repository.undoReactionAddition(on: messageId, type: reactionType) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        var reactionState: LocalReactionState?
+        try database.writeSynchronously { session in
+            let reaction = session.reaction(messageId: messageId, userId: userId, type: reactionType)
+            reactionState = reaction?.localState
+        }
+
+        // Should update existing local state
+        XCTAssertEqual(reactionState, .sendingFailed)
+    }
+
+    // MARK: undoReactionDeletion
+
+    func test_undoReactionDeletion_nonExistingMessage() {
+        let expectation = self.expectation(description: "Undo ReactionCompletes")
+        repository.undoReactionDeletion(on: "message_id", type: "type") {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        // We are making sure the completion is executed even if the reaction is not there
+        XCTAssertTrue(true)
+    }
+
+    func test_undoReactionDeletion_existingMessage() throws {
+        let cid = ChannelId(type: .messaging, id: "c")
+        let messageId = "message_id"
+        let userId = "user_id"
+        let reactionType: MessageReactionType = "reaction"
+
+        // We need a user, a channel, a message and an existing reaction
+        try database.createCurrentUser(id: userId)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+            try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: .unique), for: cid, syncOwnReactions: false)
+        }
+
+        // We undo reaction
+        let expectation = self.expectation(description: "Undo ReactionCompletes")
+        repository.undoReactionDeletion(on: messageId, type: reactionType) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        var reactionState: LocalReactionState?
+        try database.writeSynchronously { session in
+            let reaction = session.reaction(messageId: messageId, userId: userId, type: reactionType)
+            reactionState = reaction?.localState
+        }
+
+        // Should update existing local state
+        XCTAssertEqual(reactionState, .deletingFailed)
+    }
 }
