@@ -26,7 +26,7 @@ open class ChatChannelVC:
     ChatMessageListVCDelegate,
     ChatChannelControllerDelegate {
     /// Controller for observing data changes within the channel.
-    open var channelController: ChatChannelController!
+    open var channelController: ChatChannelController?
 
     /// boolean flag for first time navigate here after creating new channel
     open var isChannelCreated = false
@@ -35,16 +35,16 @@ open class ChatChannelVC:
     open var enableKeyboardObserver = false
 
     /// User search controller for suggestion users when typing in the composer.
-    open lazy var userSuggestionSearchController: ChatUserSearchController =
-        channelController.client.userSearchController()
+    open lazy var userSuggestionSearchController: ChatUserSearchController? =
+    channelController?.client.userSearchController()
 
     /// The size of the channel avatar.
     open var channelAvatarSize: CGSize {
         CGSize(width: 32, height: 32)
     }
 
-    public var client: ChatClient {
-        channelController.client
+    public var client: ChatClient? {
+        channelController?.client
     }
 
 //    /// Component responsible for setting the correct offset when keyboard frame is changed.
@@ -139,14 +139,13 @@ open class ChatChannelVC:
         return Bundle.main.loadNibNamed("AdminMessageTVCell", owner: nil, options: nil)?.first as? AdminMessageTVCell
     }()
 
-    
     /// The message list component responsible to render the messages.
-    open lazy var messageListVC: ChatMessageListVC = components
+    open lazy var messageListVC: ChatMessageListVC? = components
         .messageListVC
         .init()
 
     /// Controller that handles the composer view
-    open private(set) lazy var messageComposerVC = components
+    open private(set) lazy var messageComposerVC: ComposerVC? = components
         .messageComposerVC
         .init()
 
@@ -163,21 +162,29 @@ open class ChatChannelVC:
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
     private var loadingPreviousMessages: Bool = false
-
     
+    /// A boolean value indicating wether the last message is fully visible or not.
+    /// If the value is `true` it means the message list is fully scrolled to the bottom.
+    open var isLastMessageFullyVisible: Bool {
+        messageListVC?.listView.isLastCellFullyVisible ?? false
+    }
+
+    private var isLoadingPreviousMessages: Bool = false
+
     override open func setUp() {
         super.setUp()
 
-        messageListVC.delegate = self
-        messageListVC.dataSource = self
-        messageListVC.client = client
+        messageListVC?.delegate = self
+        messageListVC?.dataSource = self
+        if let client = channelController?.client {
+            messageListVC?.client = client
+        }
+        messageComposerVC?.channelController = channelController
+        messageComposerVC?.userSearchController = userSuggestionSearchController
 
-        messageComposerVC.channelController = channelController
-        messageComposerVC.userSearchController = userSuggestionSearchController
-
-        channelController.delegate = self
-        channelController.synchronize { [weak self] _ in
-            self?.messageComposerVC.updateContent()
+        channelController?.delegate = self
+        channelController?.synchronize { [weak self] _ in
+            self?.messageComposerVC?.updateContent()
         }
     }
 
@@ -212,7 +219,7 @@ open class ChatChannelVC:
 
         navigationHeaderView.addSubview(rightStackView)
         rightStackView.addArrangedSubview(channelAvatarView)
-        channelAvatarView.content = (channelController.channel, client.currentUserId)
+        channelAvatarView.content = (channelController?.channel, client?.currentUserId)
         rightStackView.addArrangedSubview(moreButton)
         moreButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
 
@@ -229,19 +236,22 @@ open class ChatChannelVC:
             headerView.centerXAnchor.constraint(equalTo: navigationHeaderView.centerXAnchor, constant: 0),
             headerView.widthAnchor.constraint(equalTo: navigationHeaderView.widthAnchor, multiplier: 0.6)
         ])
-
-        addChildViewController(messageListVC, targetView: view)
-        NSLayoutConstraint.activate([
-            messageListVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-            messageListVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            messageListVC.view.topAnchor.constraint(equalTo: navigationHeaderView.bottomAnchor, constant: 0),
-        ])
-        addChildViewController(messageComposerVC, targetView: view)
-        messageComposerVC.view.pin(anchors: [.leading, .trailing], to: view)
-        messageComposerVC.view.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
-        messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
-        messageComposerBottomConstraint?.isActive = true
-
+        if let messageListVC = messageListVC {
+            addChildViewController(messageListVC, targetView: view)
+            NSLayoutConstraint.activate([
+                messageListVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+                messageListVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+                messageListVC.view.topAnchor.constraint(equalTo: navigationHeaderView.bottomAnchor, constant: 0),
+            ])
+            if let messageComposerVC = messageComposerVC {
+                addChildViewController(messageComposerVC, targetView: view)
+                messageComposerVC.view.pin(anchors: [.leading, .trailing], to: view)
+                messageComposerVC.view.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
+                messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
+                messageComposerBottomConstraint?.isActive = true
+            }
+        }
+        
         view.addSubview(shareView)
         NSLayoutConstraint.activate([
             shareView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
@@ -265,17 +275,17 @@ open class ChatChannelVC:
             closePinButton.heightAnchor.constraint(equalToConstant: 30)
         ])
 
-        if let cid = channelController.cid {
-            headerView.channelController = client.channelController(for: cid)
+        if let cid = channelController?.cid {
+            headerView.channelController = client?.channelController(for: cid)
         }
-        if channelController.channelQuery.type == .announcement {
-            messageComposerVC.composerView.isUserInteractionEnabled = false
-            messageComposerVC.composerView.alpha = 0.5
+        if channelController?.channelQuery.type == .announcement {
+            messageComposerVC?.composerView.isUserInteractionEnabled = false
+            messageComposerVC?.composerView.alpha = 0.5
             headerView.titleContainerView.subtitleLabel.isHidden = true
             channelAvatarView.isHidden = true
         } else {
-            messageComposerVC.composerView.isUserInteractionEnabled = true
-            messageComposerVC.composerView.alpha = 1.0
+            messageComposerVC?.composerView.isUserInteractionEnabled = true
+            messageComposerVC?.composerView.alpha = 1.0
             channelAvatarView.isHidden = false
         }
         let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.headerViewAction(_:)))
@@ -318,13 +328,14 @@ open class ChatChannelVC:
     }
 
     @objc func backAction(_ sender: Any) {
+        deallocManually()
         self.popWithAnimation()
         self.dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(name: .showTabbar, object: nil)
     }
     
     @objc func headerViewAction(_ sender: Any) {
-        if self.channelController.channel?.isDirectMessageChannel ?? true {
+        if self.channelController?.channel?.isDirectMessageChannel ?? true {
             return
         }
         guard let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
@@ -335,19 +346,19 @@ open class ChatChannelVC:
     }
 
     @objc func avatarViewAction(_ sender: Any) {
-        if self.channelController.channel?.isDirectMessageChannel ?? true {
+        if self.channelController?.channel?.isDirectMessageChannel ?? true {
             return
         }
         showPinViewButton()
     }
 
     @objc func shareAction(_ sender: Any) {
-        guard let extraData = channelController.channel?.extraData,
-              channelController.channel?.type == .dao else {
+        guard let extraData = channelController?.channel?.extraData,
+              channelController?.channel?.type == .dao else {
             return
         }
         var userInfo = [AnyHashable: Any]()
-        userInfo["extraData"] = channelController.channel?.extraData
+        userInfo["extraData"] = channelController?.channel?.extraData
         NotificationCenter.default.post(name: .showDaoShareScreen, object: nil, userInfo: userInfo)
     }
     @objc func addFriendAction(_ sender: Any) {
@@ -393,8 +404,19 @@ open class ChatChannelVC:
         shareView.isHidden = true
     }
 
+    private func deallocManually() {
+        channelController = nil
+        NotificationCenter.default.removeObserver(self)
+        messageListVC?.client = nil
+        messageListVC?.delegate = nil
+        messageListVC?.dataSource = nil
+        messageListVC = nil
+        messageComposerVC = nil
+        userSuggestionSearchController = nil
+    }
+    
     private func getGroupLink() -> String? {
-        guard let extraData = channelController.channel?.extraData["joinLink"] else {
+        guard let extraData = channelController?.channel?.extraData["joinLink"] else {
             return nil
         }
         switch extraData {
@@ -407,7 +429,7 @@ open class ChatChannelVC:
 
     private func setupUI() {
         KeyboardService.shared.observeKeyboard(self.view)
-        if channelController.channel?.isDirectMessageChannel ?? false {
+        if channelController?.channel?.isDirectMessageChannel ?? false {
             shareView.isHidden = true
             moreButton.isHidden = true
         } else {
@@ -416,11 +438,11 @@ open class ChatChannelVC:
                 showPinViewButton()
             }
         }
-        channelController.markRead()
+        channelController?.markRead()
     }
 
     private func showPinViewButton() {
-        if channelController.channel?.type == .dao {
+        if channelController?.channel?.type == .dao {
             shareView.isHidden = false
             shareButton.isHidden = false
             addFriendButton.isHidden = true
@@ -430,13 +452,13 @@ open class ChatChannelVC:
             shareButton.isHidden = true
             guard self.isChannelCreated == true else { return  }
             self.isChannelCreated = false
-            let members = (channelController.channel?.lastActiveMembers ?? []).reduce(into: [String: RawJSON](), { $0[$1.id] = .string($1.name ?? "")})
+            let members = (channelController?.channel?.lastActiveMembers ?? []).reduce(into: [String: RawJSON](), { $0[$1.id] = .string($1.name ?? "")})
             let joiningText = "Group Created\nTry using the menu item to share with others."
             //
             var extraData = [String: RawJSON]()
             extraData["adminMessage"] = .string(joiningText)
             extraData["members"] = .dictionary(members)
-            channelController.createNewMessage(
+            channelController?.createNewMessage(
                 text: "",
                 pinning: nil,
                 attachments: [],
@@ -478,7 +500,7 @@ open class ChatChannelVC:
         controller.bCallbackActionHandler = { [weak self] in
             guard let weakSelf = self else { return }
             
-            weakSelf.channelController.removeMembers(userIds: [ChatClient.shared.currentUserId ?? ""]) { [weak self] error in
+            weakSelf.channelController?.removeMembers(userIds: [ChatClient.shared.currentUserId ?? ""]) { [weak self] error in
                 guard error == nil, let self = self else {
                     Snackbar.show(text: error?.localizedDescription ?? "")
                     return
@@ -502,7 +524,7 @@ open class ChatChannelVC:
         controller.alertType = .deleteGroup
         controller.bCallbackActionHandler = { [weak self] in
             guard let weakSelf = self else { return }
-            weakSelf.channelController.deleteChannel { [weak self] error in
+            weakSelf.channelController?.deleteChannel { [weak self] error in
                 guard error == nil, let self = self else {
                     Snackbar.show(text: error?.localizedDescription ?? "")
                     return
@@ -520,7 +542,7 @@ open class ChatChannelVC:
     }
     
     public func muteNotification() {
-        channelController.muteChannel { [weak self] error in
+        channelController?.muteChannel { [weak self] error in
             guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications muted" : "Error while muted group notifications"
             DispatchQueue.main.async {
@@ -529,7 +551,7 @@ open class ChatChannelVC:
         }
     }
     public func unMuteNotification() {
-        channelController.unmuteChannel { [weak self] error in
+        channelController?.unmuteChannel { [weak self] error in
             guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications unmuted" : "Error while unmute group notifications"
             DispatchQueue.main.async {
@@ -542,7 +564,7 @@ open class ChatChannelVC:
             guard let self = self else {
                 return
             }
-            self.channelController.hideChannel(clearHistory: true) { [weak self] error in
+            self.channelController?.hideChannel(clearHistory: true) { [weak self] error in
                 guard let weakSelf = self else { return }
                 guard error == nil else {
                     Snackbar.show(text: error?.localizedDescription ?? "")
@@ -560,29 +582,34 @@ open class ChatChannelVC:
             message: nil, actions: [yesAction, noAction])
     }
     // MARK: - ChatMessageListVCDataSource
+    public var messages: [ChatMessage] {
+        Array(channelController?.messages ?? [])
+    }
+    
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
-        channelController.channel
+        channelController?.channel
     }
 
     open func numberOfMessages(in vc: ChatMessageListVC) -> Int {
-        channelController.messages.count
+        channelController?.messages.count ?? 0
     }
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
-        guard indexPath.item < channelController.messages.count else { return nil }
-        return channelController.messages[indexPath.item]
+        guard indexPath.item < channelController?.messages.count ?? 0 else { return nil }
+        return channelController?.messages[indexPath.item]
     }
 
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         messageLayoutOptionsAt indexPath: IndexPath
     ) -> ChatMessageLayoutOptions {
-        guard let channel = channelController.channel else { return [] }
+        guard let channel = channelController?.channel,
+              let message = channelController?.messages else { return [] }
 
         return components.messageLayoutOptionsResolver.optionsForMessage(
             at: indexPath,
             in: channel,
-            with: AnyRandomAccessCollection(channelController.messages),
+            with: AnyRandomAccessCollection(message),
             appearance: appearance
         )
     }
@@ -593,22 +620,19 @@ open class ChatChannelVC:
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if channelController.state != .remoteDataFetched {
+        if channelController?.state != .remoteDataFetched {
             return
         }
-
-        if indexPath.row < channelController.messages.count - 10 {
+        if indexPath.row < (channelController?.messages.count ?? 0) - 10 {
             return
         }
-
         guard !loadingPreviousMessages else {
             return
         }
         loadingPreviousMessages = true
-
-        channelController.loadPreviousMessages(completion: { [weak self] _ in
-            self?.loadingPreviousMessages = false
-        })
+        channelController?.loadPreviousMessages { [weak self] _ in
+            self?.isLoadingPreviousMessages = false
+        }
     }
 
     open func chatMessageListVC(
@@ -619,15 +643,15 @@ open class ChatChannelVC:
         switch actionItem {
         case is EditActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.messageComposerVC.content.editMessage(message)
+                self?.messageComposerVC?.content.editMessage(message)
             }
         case is InlineReplyActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.messageComposerVC.content.quoteMessage(message)
+                self?.messageComposerVC?.content.quoteMessage(message)
             }
         case is ThreadReplyActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.messageListVC.showThread(messageId: message.id)
+                self?.messageListVC?.showThread(messageId: message.id)
             }
         default:
             return
@@ -635,18 +659,25 @@ open class ChatChannelVC:
     }
 
     var didReadAllMessages: Bool {
-        messageListVC.listView.isLastCellFullyVisible
+        messageListVC?.listView.isLastCellFullyVisible ?? false
     }
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
         if didReadAllMessages {
-            channelController.markRead()
+            channelController?.markRead()
         }
-
-        if messageListVC.listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
+        if messageListVC?.listView.isLastCellFullyVisible ?? false, channelController?.channel?.isUnread == true {
             // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
-            messageListVC.scrollToLatestMessageButton.content = .noUnread
+            messageListVC?.scrollToLatestMessageButton.content = .noUnread
         }
+    }
+
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        didTapOnMessageListView messageListView: ChatMessageListView,
+        with gestureRecognizer: UITapGestureRecognizer
+    ) {
+        messageComposerVC?.dismissSuggestions()
     }
 
     // MARK: - ChatChannelControllerDelegate
@@ -658,7 +689,7 @@ open class ChatChannelVC:
         if didReadAllMessages {
             channelController.markRead()
         }
-        messageListVC.updateMessages(with: changes)
+        messageListVC?.updateMessages(with: changes)
         if channelController.messages.count > 0 {
             self.groupCreateMessageView?.contentView.removeFromSuperview()
             self.groupCreateMessageView = nil
@@ -670,7 +701,7 @@ open class ChatChannelVC:
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
-        messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
+        messageListVC?.scrollToLatestMessageButton.content = channelUnreadCount
         if channelController.messages.count > 0 {
             self.groupCreateMessageView?.contentView.removeFromSuperview()
             self.groupCreateMessageView = nil
@@ -685,12 +716,12 @@ open class ChatChannelVC:
 
         let typingUsersWithoutCurrentUser = typingUsers
             .sorted { $0.id < $1.id }
-            .filter { $0.id != self.client.currentUserId }
+            .filter { $0.id != self.client?.currentUserId }
 
         if typingUsersWithoutCurrentUser.isEmpty {
-            messageListVC.hideTypingIndicator()
+            messageListVC?.hideTypingIndicator()
         } else {
-            messageListVC.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
+            messageListVC?.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
         }
     }
 
@@ -773,21 +804,21 @@ open class ChatChannelVC:
         // group Image
         let groupImage = UIAction(title: "Group Image", image: appearance.images.photo) { _ in
         }
-        if channelController.channel?.type == .privateMessaging {
+        if channelController?.channel?.type == .privateMessaging {
             //return [privateGroup]
             var actions: [UIAction] = []
             actions.append(privateGroup)
-            if channelController.channel?.membership?.userRole == .admin {
+            if channelController?.channel?.membership?.userRole == .admin {
                 actions.append(deleteAndLeave)
             } else {
                 actions.append(leaveGroup)
             }
             return actions
         } else {
-            if channelController.channel?.isDirectMessageChannel ?? false {
+            if channelController?.channel?.isDirectMessageChannel ?? false {
                 var actions: [UIAction] = []
                 actions.append(search)
-                if channelController.channel?.isMuted ?? false {
+                if channelController?.channel?.isMuted ?? false {
                     actions.append(unmute)
                 } else {
                     actions.append(mute)
@@ -795,11 +826,11 @@ open class ChatChannelVC:
                 actions.append(deleteChat)
                 return actions
             } else {
-                let isAdmin = channelController.channel?.createdBy?.id == ChatClient.shared.currentUserId
+                let isAdmin = channelController?.channel?.createdBy?.id == ChatClient.shared.currentUserId
                 if isAdmin {
                     var actions: [UIAction] = []
                     actions.append(contentsOf: [groupImage, search,invite,groupQR])
-                    if channelController.channel?.isMuted ?? false {
+                    if channelController?.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
                         actions.append(mute)
@@ -809,7 +840,7 @@ open class ChatChannelVC:
                 } else {
                     var actions: [UIAction] = []
                     actions.append(contentsOf: [search,groupQR])
-                    if channelController.channel?.isMuted ?? false {
+                    if channelController?.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
                         actions.append(mute)
