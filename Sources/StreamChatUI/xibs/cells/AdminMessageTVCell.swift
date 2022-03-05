@@ -89,18 +89,27 @@ class AdminMessageTVCell: UITableViewCell {
             if (content?.isSentByCurrentUser ?? false) {
                 let otherUserName = fetchRawData(raw: members.first?.value ?? .string("")) as? String ?? ""
                 var joiningText = "You created this group with \(otherUserName)"
-                //
-                if members.count > 2 {
-                    joiningText.append(" and \(members.count - 2) other.")
+                var allMember = content?.extraData.adminMessageMembers ?? [:]
+                if allMember.count > 2 {
+                    if (allMember.count - 2) >= 2 {
+                        joiningText.append(" and \(allMember.count - 2) others.")
+                    } else {
+                        joiningText.append(" and \(allMember.count - 2) other.")
+                    }
                 }
                 joiningText.append("\nTry using the menu item to share with others.")
                 return joiningText
             } else {
                 let authorName = (content?.author.name ?? "").capitalizingFirstLetter()
                 var joiningText = "\(authorName) created this group with you"
-                //
-                if members.count > 2 {
-                    joiningText.append(" and \(members.count - 2) other.")
+                var allMember = content?.extraData.adminMessageMembers ?? [:]
+
+                if allMember.count > 2 {
+                    if (allMember.count - 2) >= 2 {
+                        joiningText.append(" and \(allMember.count - 2) others.")
+                    } else {
+                        joiningText.append(" and \(allMember.count - 2) other.")
+                    }
                 }
                 joiningText.append("\nTry using the menu item to share with others.")
                 return joiningText
