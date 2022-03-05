@@ -45,7 +45,8 @@ public class ChatAddFriendVC: ChatBaseVC {
     public var existingUsers = [ChatUser]()
     public var bCallbackAddFriend:(([ChatUser]) -> Void)?
     public var bCallbackInviteFriend:(([ChatUser]) -> Void)?
-    var isShortFormEnabled = true
+    public var groupInviteLink: String?
+    private var isShortFormEnabled = true
     private lazy var panModelState: PanModalPresentationController.PresentationState = .shortForm
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
@@ -100,9 +101,28 @@ public class ChatAddFriendVC: ChatBaseVC {
         self.dismiss(animated: true, completion: nil)
     }
     @IBAction private func invitLinkAction(_ sender: UIButton) {
-        if self.selectedUsers.count > 0 {
-            self.bCallbackInviteFriend?(self.selectedUsers)
-            self.btnBackAction(sender)
+        guard let inviteLink = self.groupInviteLink else { return }
+        // To do
+//        let items = [URL(string: inviteLink)!]
+//        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+//        present(ac, animated: true)
+//        let client = ChatClient.shared
+        guard let currentUserId = ChatClient.shared.currentUserId else {
+            return
+        }
+        for user in selectedUsers {
+            do {
+            let controller =  try ChatClient.shared.channelController(createDirectMessageChannelWith: [currentUserId,user.id], extraData: [:])
+                controller.synchronize { error in
+                    if error == nil {
+                        controller.createNewMessage(text: inviteLink)
+                    } else {
+                        debugPrint(error?.localizedDescription)
+                    }
+                }
+            } catch let error {
+                debugPrint(error.localizedDescription)
+            }
         }
     }
     // swiftlint:disable redundant_type_annotation

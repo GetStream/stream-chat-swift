@@ -124,6 +124,8 @@
 		6E0D12EC27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */; };
 		6E1BA5C427C62A70004046D2 /* StreamChatBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */; };
 		6E1BA5C527C62A70004046D2 /* StreamChatBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */; };
+		6E3DEF6A27D3501C0095E0E3 /* JoinGroupRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */; };
+		6E3DEF6B27D3501C0095E0E3 /* JoinGroupRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */; };
 		6E41867B27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */; };
 		6E41867C27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */; };
 		6E41867D27C3CD630061E03F /* SFProText-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867627C3CD630061E03F /* SFProText-Semibold.ttf */; };
@@ -1647,6 +1649,7 @@
 		6E0D12E727B3CF85003DD1AA /* TableViewCellChatUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellChatUser.swift; sourceTree = "<group>"; };
 		6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewCellChatUser.xib; sourceTree = "<group>"; };
 		6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatBackButton.swift; sourceTree = "<group>"; };
+		6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGroupRequestVC.swift; sourceTree = "<group>"; };
 		6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFCompactText-Regular.ttf"; sourceTree = "<group>"; };
 		6E41867627C3CD630061E03F /* SFProText-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProText-Semibold.ttf"; sourceTree = "<group>"; };
 		6E41867727C3CD630061E03F /* SFProText-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProText-Regular.ttf"; sourceTree = "<group>"; };
@@ -3032,6 +3035,7 @@
 				6E0D12C727B3C907003DD1AA /* ChatSharedFilesVC.xib */,
 				6E0D12C627B3C907003DD1AA /* ChatUserListVC.swift */,
 				6ED3E44027B4D4C900A05C0A /* ChatBaseVC.swift */,
+				6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -7122,6 +7126,7 @@
 				CD24C71E2784892A00F6378D /* UIApplication+Extension.swift in Sources */,
 				88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */,
 				BD69F5D52669392E00E9E3FA /* ScrollToLatestMessageButton.swift in Sources */,
+				6E3DEF6B27D3501C0095E0E3 /* JoinGroupRequestVC.swift in Sources */,
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				6E0D12CB27B3C908003DD1AA /* ChatSharedFilesVC.swift in Sources */,
 				43F4750C26F4E4FF0009487D /* ChatMessageReactionItemView.swift in Sources */,
@@ -7599,6 +7604,7 @@
 				79682C4A24BF37C80071578E /* MessagePayloads.swift in Sources */,
 				8AAB1C6624CB39F2009B783F /* UnreadCount.swift in Sources */,
 				79877A282498E50D00015F8B /* UserDTO.swift in Sources */,
+				6E3DEF6A27D3501C0095E0E3 /* JoinGroupRequestVC.swift in Sources */,
 				DBCAFE2425C44B920015AD58 /* LazyCachedMapCollection.swift in Sources */,
 				6EEFB78927BB83AD007224C2 /* PanModalPresentable+Defaults.swift in Sources */,
 				79280F47248515FA00CDEB89 /* ChannelEvents.swift in Sources */,

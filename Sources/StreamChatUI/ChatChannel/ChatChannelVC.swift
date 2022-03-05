@@ -457,6 +457,7 @@ open class ChatChannelVC:
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
+        controller.groupInviteLink = self.getGroupLink()
         controller.selectionType = .inviteUser
         controller.existingUsers = self.channelController?.channel?.lastActiveMembers as? [ChatUser] ?? []
         controller.bCallbackInviteFriend = { [weak self] users in
