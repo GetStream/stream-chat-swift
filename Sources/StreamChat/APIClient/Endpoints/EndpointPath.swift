@@ -85,8 +85,7 @@ enum EndpointPath: Codable {
         }
     }
 
-    #if swift(>=5.5)
-    #else
+    #if swift(<5.5)
     // Only needed when compiling against 5.4 or lower
     enum CodingKeys: CodingKey {
         case connect, sync, users, guest, members, search, devices, channels, createChannel, updateChannel, deleteChannel,
