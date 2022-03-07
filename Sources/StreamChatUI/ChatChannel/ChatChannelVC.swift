@@ -336,6 +336,7 @@ open class ChatChannelVC:
         guard let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
             return
         }
+        controller.groupInviteLink = self.getGroupLink()
         controller.channelController = channelController
         self.pushWithAnimation(controller: controller)
     }
@@ -357,12 +358,14 @@ open class ChatChannelVC:
         NotificationCenter.default.post(name: .showDaoShareScreen, object: nil, userInfo: userInfo)
     }
     @objc func addFriendAction(_ sender: Any) {
+        guard let channelVC = self.channelController else { return }
         guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
-        controller.existingUsers = self.channelController?.channel?.lastActiveMembers as? [ChatUser] ?? []
-        
+        controller.groupInviteLink = self.getGroupLink()
+        controller.existingUsers = channelVC.channel?.lastActiveMembers as? [ChatUser] ?? []
+        controller.channelController = channelVC
         controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
@@ -453,13 +456,15 @@ open class ChatChannelVC:
     }
     // MARK: - Menu actions
     public func inviteUserAction() {
+        guard let channelVC = self.channelController else { return }
         guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
+        controller.channelController = channelVC
         controller.groupInviteLink = self.getGroupLink()
         controller.selectionType = .inviteUser
-        controller.existingUsers = self.channelController?.channel?.lastActiveMembers as? [ChatUser] ?? []
+        controller.existingUsers = channelVC.channel?.lastActiveMembers as? [ChatUser] ?? []
         controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
