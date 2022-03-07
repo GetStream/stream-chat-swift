@@ -524,21 +524,43 @@ open class ChatChannelVC:
         controller.alertType = .deleteGroup
         controller.bCallbackActionHandler = { [weak self] in
             guard let weakSelf = self else { return }
-            weakSelf.channelController?.deleteChannel { [weak self] error in
-                guard error == nil, let self = self else {
-                    Snackbar.show(text: error?.localizedDescription ?? "")
-                    return
-                }
-                Snackbar.show(text: "Group deleted successfully")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-                    guard let self = self else { return }
-                    self.backAction(UIButton())
-                }
-            }
+            weakSelf.deleteThisChannel()
         }
         controller.modalPresentationStyle = .overCurrentContext
         controller.modalTransitionStyle = .crossDissolve
         self.present(controller, animated: true, completion: nil)
+    }
+    
+    private func deleteThisChannel() {
+        guard let channelController = channelController,
+              let channelId = channelController.channel?.cid else {
+                  Snackbar.show(text: "Error when deleting the channel")
+            return
+        }
+        let memberListController = channelController.client.memberListController(query: .init(cid: channelId))
+        memberListController.synchronize { error in
+            guard error == nil else {
+                Snackbar.show(text: "Error when deleting the channel")
+                return
+            }
+            let userIds: [UserId] = memberListController.members.map({ member in
+                return member.id
+            })
+            channelController.removeMembers(userIds: Set(userIds)) { _ in
+                channelController.deleteChannel { [weak self] error in
+                    guard error == nil, let self = self else {
+                        Snackbar.show(text: error?.localizedDescription ?? "")
+                        return
+                    }
+                    Snackbar.show(text: "Group deleted successfully")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                        guard let self = self else { return }
+                        self.backAction(UIButton())
+                    }
+                }
+            }
+        }
+        
     }
     
     public func muteNotification() {
