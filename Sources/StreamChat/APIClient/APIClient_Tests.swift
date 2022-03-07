@@ -341,7 +341,7 @@ class APIClient_Tests: XCTestCase {
                 result = $0
             }
         )
-        wait(for: [tokenRefreshIsCalled], timeout: 0.1)
+        wait(for: [tokenRefreshIsCalled], timeout: 0.5)
 
         let testUser = TestUser(name: "test")
         decoder.decodeRequestResponse = .success(testUser)
