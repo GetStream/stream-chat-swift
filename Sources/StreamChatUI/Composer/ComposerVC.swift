@@ -283,7 +283,8 @@ open class ComposerVC: _ViewController,
         didSet {
             if lockInputViewObserver {
                 composerView.inputMessageView.isUserInteractionEnabled = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    guard let `self` = self else { return }
                     self.lockInputViewObserver = false
                     self.composerView.inputMessageView.isUserInteractionEnabled = true
                 }
