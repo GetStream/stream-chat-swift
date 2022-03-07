@@ -91,7 +91,10 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
             return
         }
         
-        userUpdater.loadUser(userId) { error in
+        userUpdater.loadUser(userId) { [weak self] error in
+            guard let self = self else {
+                return
+            }
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -135,7 +138,10 @@ public extension ChatUserController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     func mute(completion: ((Error?) -> Void)? = nil) {
-        userUpdater.muteUser(userId) { error in
+        userUpdater.muteUser(userId) { [weak self] error in
+            guard let self = self else {
+                return
+            }
             self.callback {
                 completion?(error)
             }
@@ -146,7 +152,10 @@ public extension ChatUserController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
     func unmute(completion: ((Error?) -> Void)? = nil) {
-        userUpdater.unmuteUser(userId) { error in
+        userUpdater.unmuteUser(userId) { [weak self] error in
+            guard let self = self else {
+                return
+            }
             self.callback {
                 completion?(error)
             }
@@ -157,7 +166,10 @@ public extension ChatUserController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     func flag(completion: ((Error?) -> Void)? = nil) {
-        userUpdater.flagUser(true, with: userId) { error in
+        userUpdater.flagUser(true, with: userId) { [weak self] error in
+            guard let self = self else {
+                return
+            }
             self.callback {
                 completion?(error)
             }
@@ -168,7 +180,10 @@ public extension ChatUserController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
     func unflag(completion: ((Error?) -> Void)? = nil) {
-        userUpdater.flagUser(false, with: userId) { error in
+        userUpdater.flagUser(false, with: userId) { [weak self] error in
+            guard let self = self else {
+                return
+            }
             self.callback {
                 completion?(error)
             }
@@ -195,7 +210,10 @@ public extension ChatUserController {
             name: name,
             imageURL: imageURL,
             userExtraData: userExtraData
-        ) { error in
+        ) { [weak self] error in
+            guard let self = self else {
+                return
+            }
             self.callback {
                 completion?(error)
             }
