@@ -47,7 +47,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         self.selectionStyle = .none
         containerView.layer.cornerRadius = 12
         lblInfo.text = message?.text
-        self.imgView.stopAnimatingGif()
+        self.imgView.image = nil
         if let hashTag = message?.extraData.tag {
             lblHashTag.text = "#" +  hashTag.joined(separator: " #")
             btnShowMore.isHidden = false
@@ -64,14 +64,15 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
             self.imgView.image = nil
             self.imageUrl = imageAttachments.imageURL.absoluteString
             self.lblTitle.text = imageAttachments.title
-            //            if imageAttachments.imageURL.pathExtension == "gif" {
-            //                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: 1)
-            //            } else {
-            let options = ImageLoadingOptions(
-                placeholder: Appearance.default.images.videoAttachmentPlaceholder,
-                transition: .fadeIn(duration: 0.1)
-            )
-            Nuke.loadImage(with: imageAttachments.imageURL, options: options, into: imageView)
+//            if imageAttachments.imageURL.pathExtension == "gif" {
+//                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: 1)
+//            } else {
+                let options = ImageLoadingOptions(
+                    placeholder: Appearance.default.images.videoAttachmentPlaceholder,
+                    transition: .fadeIn(duration: 0.1)
+                )
+                Nuke.loadImage(with: imageAttachments.imageURL, options: options, into: imageView)
+//            }
             playerView.isHidden = true
         } else if let videoAttachment = message?.videoAttachments.first {
             videoURL = videoAttachment.videoURL.absoluteString
@@ -86,7 +87,6 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
                     self.imgView.image = image
                     self.imgPlay.isHidden = true
                 case .failure(_):
-                    self.imgView.image = Appearance.default.images.videoAttachmentPlaceholder
                     self.imgPlay.isHidden = false
                     break
                 }

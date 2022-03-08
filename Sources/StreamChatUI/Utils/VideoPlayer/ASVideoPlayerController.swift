@@ -75,7 +75,7 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
             case .loaded:
                 break
             case .failed:
-                print("Failed to load asset")
+                print("Failed to load asset", URL)
                 return
             case .cancelled:
                 print("Cancelled to load asset")

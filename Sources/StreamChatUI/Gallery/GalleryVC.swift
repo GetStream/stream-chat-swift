@@ -105,6 +105,9 @@ open class GalleryVC:
     open private(set) lazy var videoPlaybackBar: VideoPlaybackControlView = components
         .videoPlaybackControlView.init()
         .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var lblMessage: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
     
     /// Button for sharing content.
     open private(set) lazy var shareButton: UIButton = components
@@ -232,6 +235,16 @@ open class GalleryVC:
         view.addSubview(videoPlaybackBar)
         videoPlaybackBar.pin(anchors: [.leading, .trailing], to: view)
         videoPlaybackBar.bottomAnchor.constraint(equalTo: bottomBarView.topAnchor).isActive = true
+
+        view.addSubview(lblMessage)
+        NSLayoutConstraint.activate([
+            lblMessage.leadingAnchor.constraint(equalTo: videoPlaybackBar.leadingAnchor, constant: 10),
+            lblMessage.trailingAnchor.constraint(equalTo: videoPlaybackBar.trailingAnchor, constant: -10),
+            lblMessage.bottomAnchor.constraint(equalTo: videoPlaybackBar.topAnchor)
+        ])
+        lblMessage.numberOfLines = 3
+        lblMessage.text = content.message.text
+        lblMessage.textColor = .white
     }
     
     override open func viewDidLoad() {
