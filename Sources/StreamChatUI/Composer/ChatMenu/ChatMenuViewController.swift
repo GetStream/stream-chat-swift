@@ -29,6 +29,10 @@ class ChatMenuViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         configureView(with: extraData)
         if #available(iOS 14.0.0, *) {
             self.children.forEach { vc in
@@ -74,7 +78,6 @@ class ChatMenuViewController: UIViewController {
         imgNft.image = Appearance.default.images.menuNft
         imgRedPacket.image = Appearance.default.images.menuRedPacket
         imgDao.image = Appearance.default.images.menuDao
-        self.view.backgroundColor = .red
     }
 
     func configureView(with data: [String: RawJSON]?) {
