@@ -55,6 +55,11 @@ class APIClient {
     /// Maximum amount of times a request can be retried
     private let maximumRequestRetries = 3
 
+    deinit {
+        operationQueue.cancelAllOperations()
+        recoveryQueue.cancelAllOperations()
+    }
+
     /// Creates a new `APIClient`.
     ///
     /// - Parameters:

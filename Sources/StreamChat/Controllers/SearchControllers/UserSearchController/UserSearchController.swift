@@ -121,27 +121,32 @@ private extension ChatUserSearchController {
         // values as it was when query was persisted.
         setLocalDataFetchedStateIfNeeded()
         
-        userQueryUpdater.fetch(userListQuery: query) { result in
+        userQueryUpdater.fetch(userListQuery: query) { [weak self] result in
             switch result {
             case let .success(page):
-                self.save(page: page) { loadedUsers in
-                    let listChanges = self.prepareListChanges(
+                self?.save(page: page) { loadedUsers in
+                    let listChanges = self?.prepareListChanges(
                         loadedPage: loadedUsers,
                         updatePolicy: query.pagination?.offset == 0 ? .replace : .merge
                     )
                     
-                    self.query = query
-                    self._users = self.userList(after: listChanges)
-                    self.state = .remoteDataFetched
+                    self?.query = query
+                    if let listChanges = listChanges, let users = self?.userList(after: listChanges) {
+                        self?._users = users
+                    }
+                    self?.state = .remoteDataFetched
                     
-                    self.callback {
-                        self.multicastDelegate.invoke { $0.controller(self, didChangeUsers: listChanges) }
+                    self?.callback {
+                        self?.multicastDelegate.invoke {
+                            guard let self = self, let listChanges = listChanges else { return }
+                            $0.controller(self, didChangeUsers: listChanges)
+                        }
                         completion?(nil)
                     }
                 }
             case let .failure(error):
-                self.state = .remoteDataFetchFailed(ClientError(with: error))
-                self.callback { completion?(error) }
+                self?.state = .remoteDataFetchFailed(ClientError(with: error))
+                self?.callback { completion?(error) }
             }
         }
     }

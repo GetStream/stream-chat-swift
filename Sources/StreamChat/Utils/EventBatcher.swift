@@ -51,10 +51,10 @@ final class Batcher<Item> {
     }
     
     func append(_ item: Item) {
-        timerType.schedule(timeInterval: 0, queue: queue) {
-            self.currentBatch.append(item)
+        timerType.schedule(timeInterval: 0, queue: queue) { [weak self] in
+            self?.currentBatch.append(item)
             
-            guard self.batchProcessingTimer == nil else { return }
+            guard let self = self, self.batchProcessingTimer == nil else { return }
             
             self.batchProcessingTimer = self.timerType.schedule(
                 timeInterval: self.period,
@@ -65,8 +65,8 @@ final class Batcher<Item> {
     }
     
     func processImmediately() {
-        timerType.schedule(timeInterval: 0, queue: queue) {
-            self.process()
+        timerType.schedule(timeInterval: 0, queue: queue) { [weak self] in
+            self?.process()
         }
     }
     

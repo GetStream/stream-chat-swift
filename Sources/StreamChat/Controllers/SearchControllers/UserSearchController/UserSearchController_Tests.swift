@@ -265,8 +265,8 @@ class UserSearchController_Tests: XCTestCase {
         // Assert state is not reset to `.localDataFetched` and stays `.remoteDataFetched`
         XCTAssertEqual(controller.state, .remoteDataFetched)
     }
-    
-    func test_searchWithTerm_keepsControllerAlive() throws {
+
+    func test_searchWithTerm_shouldNotKeepControllerAlive() throws {
         // Simulate `search` call.
         controller.search(term: .unique)
         
@@ -274,8 +274,8 @@ class UserSearchController_Tests: XCTestCase {
         weak var weakController = controller
         controller = nil
         
-        // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        // Assert controller is not kept alive
+        AssertAsync.staysTrue(weakController == nil)
     }
     
     // MARK: - search(query:)
@@ -464,7 +464,7 @@ class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetched)
     }
     
-    func test_searchWithQuery_keepsControllerAlive() throws {
+    func test_searchWithQuery_shouldNotKeepControllerAlive() throws {
         // Simulate `search` call.
         controller.search(query: query)
         
@@ -472,8 +472,8 @@ class UserSearchController_Tests: XCTestCase {
         weak var weakController = controller
         controller = nil
         
-        // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        // Assert controller is not kept alive
+        AssertAsync.staysTrue(weakController == nil)
     }
     
     // MARK: - loadNextUsers
@@ -611,8 +611,8 @@ class UserSearchController_Tests: XCTestCase {
         // Assert no list changes are reported
         XCTAssertEqual(delegate.didChangeUsers_changes, nil)
     }
-    
-    func test_loadNextUsers_keepsControllerAlive() throws {
+
+    func test_loadNextUsers_shouldNotKeepControllerAlive() throws {
         // Simulate `search` for query and catch the completion
         var searchCompletionCalled = false
         controller.search(query: query) { _ in
@@ -632,8 +632,8 @@ class UserSearchController_Tests: XCTestCase {
         weak var weakController = controller
         controller = nil
 
-        // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        // Assert controller is not kept alive
+        AssertAsync.staysTrue(weakController == nil)
     }
 }
 
