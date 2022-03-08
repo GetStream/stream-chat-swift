@@ -268,8 +268,11 @@ class UserSearchController_Tests: XCTestCase {
 
     func test_searchWithTerm_shouldNotKeepControllerAlive() throws {
         // Simulate `search` call.
-        controller.search(term: .unique)
-        
+        let expectation = self.expectation(description: "Search completes")
+        controller.search(term: .unique) { _ in expectation.fulfill() }
+        env.userListUpdater?.fetch_completion?(.success(.init(users: [])))
+        waitForExpectations(timeout: 0.1, handler: nil)
+
         // Create a weak ref and release a controller.
         weak var weakController = controller
         controller = nil
@@ -466,7 +469,10 @@ class UserSearchController_Tests: XCTestCase {
     
     func test_searchWithQuery_shouldNotKeepControllerAlive() throws {
         // Simulate `search` call.
-        controller.search(query: query)
+        let expectation = self.expectation(description: "Search completes")
+        controller.search(query: query) { _ in expectation.fulfill() }
+        env.userListUpdater?.fetch_completion?(.success(.init(users: [])))
+        waitForExpectations(timeout: 0.1, handler: nil)
         
         // Create a weak ref and release a controller.
         weak var weakController = controller
