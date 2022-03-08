@@ -29,13 +29,9 @@ open class ChatClientConfiguration {
     // MARK: - Variables
     public static let shared = ChatClientConfiguration()
     open var apiKey = ""
-    // streamChat request token
     open var streamChatToken: ((Token) -> Void)?
     open var requestNewChatToken: (() -> Void)?
-    // private group dynamicLink
-    open var requestPrivateGroupDynamicLink: ((String, String, String) -> Void)? // groupId, signature, expiry
-    open var requestedPrivateGroupDynamicLink: ((URL?) -> Void)?
-    
+
     // MARK: - Init
     public init() {}
 }
