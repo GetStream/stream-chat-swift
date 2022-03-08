@@ -183,11 +183,8 @@ public extension Dictionary where Key == String, Value == RawJSON {
 // MARK: - RedPacketAmountBubble txId
 public extension Dictionary where Key == String, Value == RawJSON {
     var txId: String? {
-        guard let txId = getExtraData(key: "txId") else {
-            return nil
-        }
-        if let strTxId = txId["txId"] {
-            return fetchRawData(raw: strTxId) as? String
+        if let txId = self["txId"] {
+            return fetchRawData(raw: txId) as? String
         } else {
             return nil
         }

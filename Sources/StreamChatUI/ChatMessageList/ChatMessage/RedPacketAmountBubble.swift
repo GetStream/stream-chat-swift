@@ -20,8 +20,13 @@ class RedPacketAmountBubble: UITableViewCell {
     var client: ChatClient?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     public var blockExpAction: ((URL) -> Void)?
-    private(set) lazy var btnExplore: UIButton = UIButton()
-        .withoutAutoresizingMaskConstraints
+    private(set) lazy var btnExplore: UIButton = {
+        let exploreButton = UIButton()
+        exploreButton.addTarget(self, action: #selector(btnTapExploreAction), for: .touchUpInside)
+        exploreButton.setTitle("", for: .normal)
+        exploreButton.backgroundColor = .clear
+        return exploreButton
+    }()
 
     var isSender = false
 
@@ -81,19 +86,13 @@ class RedPacketAmountBubble: UITableViewCell {
         descriptionLabel.transform = .mirrorY
         descriptionLabel.textAlignment = .left
         
-        btnExplore = CustomButton()
         btnExplore.translatesAutoresizingMaskIntoConstraints = false
         subContainer.insertSubview(btnExplore, aboveSubview: descriptionLabel)
-        btnExplore.setTitle("", for: .normal)
-        btnExplore.backgroundColor = .clear
-        btnExplore.isUserInteractionEnabled = true
-        btnExplore.clipsToBounds = true
 
         btnExplore.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor).isActive = true
         btnExplore.trailingAnchor.constraint(equalTo: descriptionLabel.trailingAnchor).isActive = true
         btnExplore.heightAnchor.constraint(equalToConstant: 25).isActive = true
         btnExplore.topAnchor.constraint(equalTo: descriptionLabel.topAnchor).isActive = true
-        btnExplore.addTarget(self, action: #selector(btnTapExploreAction), for: .touchUpInside)
 
         timestampLabel = createTimestampLabel()
         timestampLabel.translatesAutoresizingMaskIntoConstraints = false
