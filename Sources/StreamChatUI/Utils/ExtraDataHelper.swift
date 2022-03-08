@@ -179,3 +179,17 @@ public extension Dictionary where Key == String, Value == RawJSON {
         }
     }
 }
+
+// MARK: - RedPacketAmountBubble txId
+public extension Dictionary where Key == String, Value == RawJSON {
+    var txId: String? {
+        guard let txId = getExtraData(key: "txId") else {
+            return nil
+        }
+        if let strTxId = txId["txId"] {
+            return fetchRawData(raw: strTxId) as? String
+        } else {
+            return nil
+        }
+    }
+}

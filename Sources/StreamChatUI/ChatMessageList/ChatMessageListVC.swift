@@ -430,7 +430,7 @@ open class ChatMessageListVC:
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser)
             cell.configData()
-            cell.blockExpAction = { [weak self] blockExpUrl in
+            cell.blockExpAction = { blockExpUrl in
                 let svc = SFSafariViewController(url: blockExpUrl)
                 let nav = UINavigationController(rootViewController: svc)
                 nav.isNavigationBarHidden = true

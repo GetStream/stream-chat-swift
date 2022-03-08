@@ -20,9 +20,10 @@ class RedPacketAmountBubble: UITableViewCell {
     var client: ChatClient?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     public var blockExpAction: ((URL) -> Void)?
+    private(set) lazy var btnExplore: UIButton = UIButton()
+        .withoutAutoresizingMaskConstraints
 
     var isSender = false
-    var btnExplore: UIButton!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -109,9 +110,8 @@ class RedPacketAmountBubble: UITableViewCell {
     }
 
     @objc func btnTapExploreAction() {
-        if let txID = getExtraData()?["txId"] {
-            let rawTxId = fetchRawData(raw: txID) as? String ?? ""
-            if let blockExpURL = URL(string: "\(Constants.blockExplorer)\(rawTxId)") {
+        if let txID = getExtraData()?.txId {
+            if let blockExpURL = URL(string: "\(Constants.blockExplorer)\(txID)") {
                 blockExpAction?(blockExpURL)
             }
         }
