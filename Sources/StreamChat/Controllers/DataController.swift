@@ -29,9 +29,9 @@ public class DataController: Controller {
         }
     }
 
-    /// Determines whether the controller's data is already present server side. The fact that remote data has failed only tells us that we failed to fetch it,
-    /// but the data is present in the server.
-    var isAvailableOnRemote: Bool {
+    /// Determines whether the controller can be recovered. A failure fetching remote data can mean that we failed to fetch the data that is present on the server, or
+    /// that we failed to synchronize a locally created channel
+    var canBeRecovered: Bool {
         switch state {
         case .remoteDataFetched, .remoteDataFetchFailed:
             return true

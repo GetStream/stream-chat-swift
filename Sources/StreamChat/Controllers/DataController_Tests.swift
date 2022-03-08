@@ -24,34 +24,34 @@ class DataController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
     }
 
-    func test_isAvailableOnRemoteTrueWhenStateIs_remoteDataFetched() {
+    func test_canBeRecoveredTrueWhenStateIs_remoteDataFetched() {
         let controller = DataController()
         controller.state = .remoteDataFetched
-        XCTAssertTrue(controller.isAvailableOnRemote)
+        XCTAssertTrue(controller.canBeRecovered)
     }
 
-    func test_isAvailableOnRemoteTrueWhenStateIs_remoteDataFetchFailed() {
+    func test_canBeRecoveredTrueWhenStateIs_remoteDataFetchFailed() {
         let controller = DataController()
         controller.state = .remoteDataFetchFailed(ClientError(""))
-        XCTAssertTrue(controller.isAvailableOnRemote)
+        XCTAssertTrue(controller.canBeRecovered)
     }
 
-    func test_isAvailableOnRemoteTrueWhenStateIs_initialized() {
+    func test_canBeRecoveredTrueWhenStateIs_initialized() {
         let controller = DataController()
         controller.state = .initialized
-        XCTAssertFalse(controller.isAvailableOnRemote)
+        XCTAssertFalse(controller.canBeRecovered)
     }
 
-    func test_isAvailableOnRemoteTrueWhenStateIs_localDataFetched() {
+    func test_canBeRecoveredTrueWhenStateIs_localDataFetched() {
         let controller = DataController()
         controller.state = .localDataFetched
-        XCTAssertFalse(controller.isAvailableOnRemote)
+        XCTAssertFalse(controller.canBeRecovered)
     }
 
-    func test_isAvailableOnRemoteTrueWhenStateIs_localDataFetchFailed() {
+    func test_canBeRecoveredTrueWhenStateIs_localDataFetchFailed() {
         let controller = DataController()
         controller.state = .localDataFetchFailed(ClientError(""))
-        XCTAssertFalse(controller.isAvailableOnRemote)
+        XCTAssertFalse(controller.canBeRecovered)
     }
 }
 

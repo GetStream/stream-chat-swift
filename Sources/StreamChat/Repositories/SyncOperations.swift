@@ -60,7 +60,7 @@ final class SyncEventsOperation: AsyncOperation {
 final class WatchChannelOperation: AsyncOperation {
     init(controller: ChatChannelController, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak controller] _, done in
-            guard let controller = controller, controller.isAvailableOnRemote else {
+            guard let controller = controller, controller.canBeRecovered else {
                 done(.continue)
                 return
             }
@@ -91,7 +91,7 @@ final class WatchChannelOperation: AsyncOperation {
 final class RefetchChannelListQueryOperation: AsyncOperation {
     init(controller: ChatChannelListController, channelRepository: ChannelListUpdater, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak controller] _, done in
-            guard let controller = controller, controller.isAvailableOnRemote else {
+            guard let controller = controller, controller.canBeRecovered else {
                 done(.continue)
                 return
             }
