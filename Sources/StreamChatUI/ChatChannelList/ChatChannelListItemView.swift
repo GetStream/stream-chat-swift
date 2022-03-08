@@ -45,7 +45,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
-    
+
     /// The `UILabel` instance showing the last message or typing users if any.
     open private(set) lazy var subtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
@@ -185,7 +185,6 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     }
     
     override open func updateContent() {
-        titleLabel.text = titleText
         subtitleLabel.text = subtitleText
         timestampLabel.text = timestampText
 
@@ -193,6 +192,21 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
+        if content?.channel.isMuted ?? false {
+            setTitleWithMuteIcon()
+        } else {
+            titleLabel.text = titleText
+        }
+    }
+
+    private func setTitleWithMuteIcon() {
+        let fullString = NSMutableAttributedString(string: titleText ?? "")
+        let imageAttachment = NSTextAttachment()
+        // Add space
+        fullString.append(.init(string: "  "))
+        imageAttachment.image = appearance.images.muteChannel
+        fullString.append(NSAttributedString(attachment: imageAttachment))
+        titleLabel.attributedText = fullString
     }
 }
 

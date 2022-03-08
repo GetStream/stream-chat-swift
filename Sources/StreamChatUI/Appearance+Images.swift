@@ -148,9 +148,9 @@ public extension Appearance {
                 return loadImageSafely(with: "arrow")
             }
         }()
-        public var unsubscribe: UIImage = {
+        public var muteChannel: UIImage = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "bell.slash.fill")!
+                return UIImage(systemName: "speaker.slash.fill")!.withTintColor(.gray)
             } else {
                 return loadImageSafely(with: "arrow")
             }
@@ -317,6 +317,7 @@ public extension Appearance {
         public var userAvatarPlaceholder3: UIImage = loadImageSafely(with: "pattern3")
         public var userAvatarPlaceholder4: UIImage = loadImageSafely(with: "pattern4")
         public var userAvatarPlaceholder5: UIImage = loadImageSafely(with: "pattern5")
+        public var videoAttachmentPlaceholder: UIImage = loadImageSafely(with: "placeholder")
 
         public var avatarPlaceholders: [UIImage] {
             [

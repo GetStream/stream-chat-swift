@@ -327,12 +327,16 @@ open class ChatChannelListVC: _ViewController,
 
         let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
         if controller.channelQuery.type == .announcement {
-            let unsubscribe = CellActionView().withoutAutoresizingMaskConstraints
-            unsubscribe.actionButton.setImage(appearance.images.unsubscribe, for: .normal)
-            unsubscribe.actionButton.backgroundColor = appearance.colorPalette.alert
-            unsubscribe.actionButton.tintColor = appearance.colorPalette.text
-            unsubscribe.action = { self.deleteButtonPressedForCell(at: indexPath) }
-            return [unsubscribe]
+            let muteAction = CellActionView().withoutAutoresizingMaskConstraints
+            if controller.channel?.isMuted ?? false {
+                muteAction.actionButton.setImage(appearance.images.unMute, for: .normal)
+            } else {
+                muteAction.actionButton.setImage(appearance.images.mute, for: .normal)
+            }
+            muteAction.actionButton.backgroundColor = appearance.colorPalette.alert
+            muteAction.actionButton.tintColor = appearance.colorPalette.text
+            muteAction.action = { self.deleteButtonPressedForCell(at: indexPath) }
+            return [muteAction]
         } else {
             let deleteView = CellActionView().withoutAutoresizingMaskConstraints
             deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
@@ -347,9 +351,11 @@ open class ChatChannelListVC: _ViewController,
     /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
     open func deleteButtonPressedForCell(at indexPath: IndexPath) {
         var isAnnouncement = false
+        var isMute = false
         let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
         isAnnouncement = controller.channelQuery.type == .announcement
-        let deleteAction = UIAlertAction(title: isAnnouncement ? "Unsubscribe" : "Delete", style: .destructive) { [weak self] alert in
+        isMute = controller.channel?.isMuted ?? false
+        let deleteAction = UIAlertAction(title: isAnnouncement ? "\(isMute ? "Unmute" : "Mute")" : "Delete", style: .destructive) { [weak self] alert in
             guard let self = self else { return }
             let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
             if isAnnouncement {
@@ -377,7 +383,7 @@ open class ChatChannelListVC: _ViewController,
         }
         var alertTitle = "Would you like to delete this conversation?\nIt'll be permanently deleted."
         if isAnnouncement {
-            alertTitle = "Do you want to unsubscribe this channel?"
+            alertTitle = "Do you want to \(isMute ? "Unmute" : "Mute") this channel?"
         }
         let alert = UIAlertController.showAlert(title: alertTitle, message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
         self.present(alert, animated: true, completion: nil)
