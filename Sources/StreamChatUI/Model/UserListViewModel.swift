@@ -29,7 +29,7 @@ public class UserListViewModel: NSObject {
     private lazy var userListController: ChatUserListController = {
         return ChatClient.shared.userListController()
     }()
-    private lazy var serachListController: ChatUserSearchController = {
+    private lazy var searchListController: ChatUserSearchController = {
         return ChatClient.shared.userSearchController()
     }()
     private var searchOperation: DispatchWorkItem?
@@ -51,7 +51,7 @@ public class UserListViewModel: NSObject {
 }
 // MARK: - SORT METHODS
 extension UserListViewModel {
-    public func shortAtoZ(filteredUsers: [ChatUser]) -> ChatUserListData {
+    public func sortAtoZ(filteredUsers: [ChatUser]) -> ChatUserListData {
         let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) && $0.name?.isBlank == false }.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
         let otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
         var data = ChatUserListData.init(letter: "", sectionType: .noHeader)
@@ -59,14 +59,14 @@ extension UserListViewModel {
         data.users.append(contentsOf: otherUsers)
         return data
     }
-    public func shortLastSeen(filteredUsers: [ChatUser]) -> ChatUserListData{
+    public func sortLastSeen(filteredUsers: [ChatUser]) -> ChatUserListData{
         let onlineUser = filteredUsers.filter({ $0.isOnline && $0.name?.isBlank == false }).sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
         let alphabetUsers = onlineUser.filter { ($0.name?.isFirstCharacterAlp ?? false) }
-        let nonAphabetUsers = onlineUser.filter { ($0.name?.isFirstCharacterAlp ?? false) == false}
+        let nonAlphabetUsers = onlineUser.filter { ($0.name?.isFirstCharacterAlp ?? false) == false}
         let otherUsers = filteredUsers.filter({ $0.isOnline == false && $0.name?.isBlank == false}).sorted(by: { ($0.lastActiveAt ?? $0.userCreatedAt) > ($1.lastActiveAt ?? $1.userCreatedAt )})
         var data = ChatUserListData.init(letter: "", sectionType: .noHeader)
         data.users = alphabetUsers
-        data.users.append(contentsOf: nonAphabetUsers)
+        data.users.append(contentsOf: nonAlphabetUsers)
         data.users.append(contentsOf: otherUsers)
         return data
     }
@@ -79,10 +79,10 @@ extension UserListViewModel {
         var data = [ChatUserListData]()
         let keys = groupByName.keys.sorted()
         keys.forEach { item  in
-            data.append(ChatUserListData.init(letter: String(item), sectionType: .aphabetHeader, users: groupByName[item] ?? []))
+            data.append(ChatUserListData.init(letter: String(item), sectionType: .alphabetHeader, users: groupByName[item] ?? []))
         }
         if !otherUsers.isEmpty {
-            data.append(ChatUserListData.init(letter: "#", sectionType: .aphabetHeader, users: otherUsers))
+            data.append(ChatUserListData.init(letter: "#", sectionType: .alphabetHeader, users: otherUsers))
         }
         return data
     }
@@ -109,18 +109,18 @@ extension UserListViewModel {
                 self.dataLoadingState = .searchingError
                 return
             }
-            var newQuery = self.serachListController.query
+            var newQuery = self.searchListController.query
             newQuery.filter = .and([
                 .autocomplete(.name, text: strName),
                 .exists(.lastActiveAt),
                 .notEqual(.id, to: ChatClient.shared.currentUserId ?? ""),
             ])
-            serachListController.search(query: newQuery) { [weak self] error in
+            searchListController.search(query: newQuery) { [weak self] error in
                 guard let weakSelf = self else { return }
                 if let error = error {
                     weakSelf.dataLoadingState = .searchingError
                 } else {
-                    let filterData = weakSelf.serachListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
+                    let filterData = weakSelf.searchListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
                     weakSelf.bCallbackDataUserList?(filterData)
                     weakSelf.dataLoadingState = .completed
                 }
@@ -173,7 +173,7 @@ extension UserListViewModel {
     
     open func sortUserList() {
         if let strName = searchText, strName.isBlank == false {
-            let filterData = self.serachListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
+            let filterData = self.searchListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
             self.bCallbackDataUserList?(filterData)
         } else  {
             let filterData = self.userListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }

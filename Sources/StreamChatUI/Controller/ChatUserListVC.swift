@@ -24,7 +24,7 @@ public class ChatUserListVC: UIViewController {
         case singleUser, group, privateGroup , addFriend
     }
     public enum HeaderType {
-        case createChatHeader, noHeader, aphabetHeader
+        case createChatHeader, noHeader, alphabetHeader
     }
     // MARK: - @IBOutlet
     @IBOutlet private weak var searchFieldStack: UIStackView!
@@ -50,11 +50,11 @@ public class ChatUserListVC: UIViewController {
         }
     }
     public var userSelectionType = ChatUserSelectionType.singleUser
-    public var curentSectionType: ChatUserListVC.HeaderType = .noHeader
+    public var currentSectionType: ChatUserListVC.HeaderType = .noHeader
     private var sectionWiseList = [ChatUserListData]()
     public weak var delegate: ChatUserListDelegate?
     public var isSearchBarVisible = false
-    public var isPrefereSmallSize = false
+    public var isPreferSmallSize = false
     public var bCallbackGroupCreate: (() -> Void)?
     public var bCallbackGroupSelect: (() -> Void)?
     public var bCallbackGroupWeHere: (() -> Void)?
@@ -73,7 +73,7 @@ extension ChatUserListVC {
         self.setupTableView()
         searchBarView.layer.cornerRadius = 20.0
         searchBarContainerView.isHidden = !isSearchBarVisible
-        // UserListCallaback
+        // UserListCallback
         self.viewModel.bCallbackDataLoadingStateUpdated = { [weak self] loadingState in
             guard let weakSelf = self else { return }
             DispatchQueue.main.async {
@@ -173,16 +173,16 @@ public extension ChatUserListVC {
             case .sortByName:
                 let data = weakSelf.viewModel.shortByName(filteredUsers: filteredUsers)
                 weakSelf.sectionWiseList.append(contentsOf: data)
-                if weakSelf.curentSectionType == .createChatHeader {
+                if weakSelf.currentSectionType == .createChatHeader {
                     weakSelf.sectionWiseList.insert(ChatUserListData.init(letter: "", sectionType: .createChatHeader), at: 0)
                 }
             case .sortByAtoZ:
-                let data = weakSelf.viewModel.shortAtoZ(filteredUsers: filteredUsers)
+                let data = weakSelf.viewModel.sortAtoZ(filteredUsers: filteredUsers)
                 weakSelf.sectionWiseList.append(data)
             case .sortByLastSeen:
-                let data = weakSelf.viewModel.shortLastSeen(filteredUsers: filteredUsers)
+                let data = weakSelf.viewModel.sortLastSeen(filteredUsers: filteredUsers)
                 weakSelf.sectionWiseList.append(data)
-                if weakSelf.curentSectionType == .createChatHeader {
+                if weakSelf.currentSectionType == .createChatHeader {
                     weakSelf.sectionWiseList.insert(ChatUserListData.init(letter: "", sectionType: .createChatHeader), at: 0)
                 }
             }
@@ -279,7 +279,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
                 header.bCallbackGroupJoinViaQR = self.bCallbackGroupJoinViaQR
                 header.selectionStyle = .none
                 return header
-            case .noHeader,.aphabetHeader:
+            case .noHeader,.alphabetHeader:
                 let reuseID = TableViewCellChatUser.reuseId
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: reuseID, for: indexPath) as? TableViewCellChatUser else {
@@ -405,7 +405,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return nil
         case .noHeader:
             return nil
-        case .aphabetHeader:
+        case .alphabetHeader:
             guard self.sectionWiseList.indices.contains(section) else {
                 return nil
             }
@@ -431,7 +431,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return nil
         case .noHeader:
             return nil
-        case .aphabetHeader:
+        case .alphabetHeader:
             let footerView = UIView()
             footerView.backgroundColor = .clear
             footerView.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 20)
@@ -452,7 +452,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return 0
         case .noHeader:
             return 0
-        case .aphabetHeader:
+        case .alphabetHeader:
             return 45
         }
         return 0
@@ -467,7 +467,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return 0
         case .noHeader:
             return 0
-        case .aphabetHeader:
+        case .alphabetHeader:
             return 20
         }
         return 0
