@@ -83,6 +83,7 @@ class JoinPrivateGroupVC: UIViewController {
 
     // MARK: - Functions
     private func setupUI() {
+        view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         btnBack.setTitle("", for: .normal)
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         lblOTP.text = passWord
