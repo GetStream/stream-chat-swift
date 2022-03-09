@@ -137,7 +137,7 @@ class JoinPrivateGroupVC: UIViewController {
             extraData["longitude"] = .string("\(LocationManager.shared.location.value.coordinate.longitude)")
             channelController = try ChatClient.shared.channelController(
                 createChannelWithId: .init(type: .privateMessaging, id: groupId),
-                name: "temp private group",
+                name: "Unnamed private group",
                 members: [],
                 extraData: extraData)
             channelController?.synchronize { [weak self] error in

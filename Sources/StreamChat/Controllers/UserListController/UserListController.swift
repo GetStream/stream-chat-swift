@@ -20,7 +20,7 @@ extension ChatClient {
 /// `_ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
 public class ChatUserListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of users.
-    public let query: UserListQuery
+    public var query: UserListQuery
     
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient

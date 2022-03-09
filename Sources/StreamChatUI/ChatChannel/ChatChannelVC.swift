@@ -762,9 +762,10 @@ open class ChatChannelVC:
             self.pushWithAnimation(controller: qrCodeVc)
         }
         // search
-        let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
-            Snackbar.show(text: "Not available on alpha release")
-        }
+        // To do:- will add in future release
+//        let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
+//            Snackbar.show(text: "Not available on alpha release")
+//        }
         // invite
         let invite = UIAction(title: "Invite", image: appearance.images.personBadgePlus) { [weak self] _ in
             guard let self = self else {
@@ -824,8 +825,9 @@ open class ChatChannelVC:
             self.deleteChat()
         }
         // group Image
-        let groupImage = UIAction(title: "Group Image", image: appearance.images.photo) { _ in
-        }
+        // To do:- will add in future release
+//        let groupImage = UIAction(title: "Group Image", image: appearance.images.photo) { _ in
+//        }
         if channelController?.channel?.type == .privateMessaging {
             //return [privateGroup]
             var actions: [UIAction] = []
@@ -839,7 +841,8 @@ open class ChatChannelVC:
         } else {
             if channelController?.channel?.isDirectMessageChannel ?? false {
                 var actions: [UIAction] = []
-                actions.append(search)
+                // To do:- will add in future release
+                //actions.append(search)
                 if channelController?.channel?.isMuted ?? false {
                     actions.append(unmute)
                 } else {
@@ -851,7 +854,9 @@ open class ChatChannelVC:
                 let isAdmin = channelController?.channel?.createdBy?.id == ChatClient.shared.currentUserId
                 if isAdmin {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [groupImage, search,invite,groupQR])
+                    // To do:- will add in future release
+                    //actions.append(contentsOf: [groupImage, search,invite,groupQR])
+                    actions.append(contentsOf: [invite,groupQR])
                     if channelController?.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
@@ -861,7 +866,9 @@ open class ChatChannelVC:
                     return actions
                 } else {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [search,groupQR])
+                    // To do:- will add in future release
+                    //actions.append(contentsOf: [search,groupQR])
+                    actions.append(contentsOf: [groupQR])
                     if channelController?.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {

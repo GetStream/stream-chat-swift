@@ -55,7 +55,6 @@ target 'StreamChat' do
   use_frameworks!
 
   # Pods for StreamChat
-
   target 'StreamChatTests' do
     # Pods for testing
   end
@@ -86,6 +85,7 @@ target 'StreamChatUI' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   pod 'swiftScan', :git => 'https://github.com/MxABC/swiftScan.git'
+  pod 'SkeletonView'
   # Pods for StreamChatUI
   
   target 'StreamChatUITests' do
