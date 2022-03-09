@@ -305,6 +305,52 @@ class APIClient_Tests: XCTestCase {
         XCTAssertEqual(receivedResult?.value, mockedURL)
     }
 
+    func test_uploadAttachment_connectionError() throws {
+        let attachment = AnyChatMessageAttachment.sample()
+        let mockedProgress: Double = 42
+        cdnClient.uploadAttachmentProgress = mockedProgress
+        let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
+        cdnClient.uploadAttachmentResult = .failure(networkError)
+
+        var receivedProgress: Double?
+        var receivedResult: Result<URL, Error>?
+        let expectation = self.expectation(description: "Upload completes")
+        apiClient.uploadAttachment(
+            attachment,
+            progress: { receivedProgress = $0 },
+            completion: { receivedResult = $0; expectation.fulfill() }
+        )
+
+        waitForExpectations(timeout: 0.5, handler: nil)
+        // Should retry up to 3 times
+        XCTAssertCall("uploadAttachment(_:progress:completion:)", on: cdnClient, times: 4)
+        XCTAssertEqual(receivedProgress, mockedProgress)
+        XCTAssertEqual(receivedResult?.error as NSError?, networkError)
+    }
+
+    func test_uploadAttachment_randomError() throws {
+        let attachment = AnyChatMessageAttachment.sample()
+        let mockedProgress: Double = 42
+        cdnClient.uploadAttachmentProgress = mockedProgress
+        let error = NSError(domain: "", code: 1, userInfo: nil)
+        cdnClient.uploadAttachmentResult = .failure(error)
+
+        var receivedProgress: Double?
+        var receivedResult: Result<URL, Error>?
+        let expectation = self.expectation(description: "Upload completes")
+        apiClient.uploadAttachment(
+            attachment,
+            progress: { receivedProgress = $0 },
+            completion: { receivedResult = $0; expectation.fulfill() }
+        )
+
+        waitForExpectations(timeout: 0.5, handler: nil)
+        // Should only try 1
+        XCTAssertCall("uploadAttachment(_:progress:completion:)", on: cdnClient, times: 1)
+        XCTAssertEqual(receivedProgress, mockedProgress)
+        XCTAssertEqual(receivedResult?.error as NSError?, error)
+    }
+
     // MARK: - Token Refresh
     
     func test_requestFailedWithExpiredToken_refreshesToken() throws {
