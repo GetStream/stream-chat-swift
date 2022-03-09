@@ -53,7 +53,7 @@ class MessageUpdater: Worker {
     func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
         var shouldDeleteOnBackend = true
         
-        database.write({ session in
+        database.write({ [isLocalStorageEnabled] session in
             guard let messageDTO = session.message(id: messageId) else {
                 // Even though the message does not exist locally
                 // we don't throw any error because we still want
@@ -63,7 +63,7 @@ class MessageUpdater: Worker {
 
             messageDTO.isHardDeleted = hard
             
-            if messageDTO.existsOnlyLocally {
+            if messageDTO.existsOnlyLocally && !isLocalStorageEnabled {
                 messageDTO.type = MessageType.deleted.rawValue
                 messageDTO.deletedAt = Date()
                 shouldDeleteOnBackend = false
