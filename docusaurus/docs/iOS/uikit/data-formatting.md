@@ -25,7 +25,7 @@ As you can see, by changing the `timeStyle` to `.medium` the timestamp now displ
 
 ## Changing the user last activity formatting
 
-As an example to showcase how to create a custom formatter let's change the formatting of how the last activity of a user is displayed. By default, the last activity formatting is calculated by the `DefaultUserLastActivityFormatter` which uses a custom logic to display the last activity time relative to the current day in hours, weeks, months or years. For this example, we are going to create a custom formatter by conforming to the `UserLastActivityFormatter` protocol where we will make use of a `DateFormatter` to display the last activitiy in a different format.
+As an example to showcase how to create a custom formatter from scratch let's change the formatting of how the last activity of a user is displayed. By default, the last activity formatting is calculated by the `DefaultUserLastActivityFormatter` which uses a custom logic to display the last activity time relative to the current day in hours, weeks, months or years. For this example, we are going to create a custom formatter by conforming to the `UserLastActivityFormatter` protocol where we will make use of a `DateFormatter` to display the last activitiy in a different format.
 
 ```swift
 class CustomUserLastActivityFormatter: UserLastActivityFormatter {
@@ -55,3 +55,24 @@ Appearance.default.formatters.userLastActivity = CustomUserLastActivityFormatter
 | <img src={require("../assets/data-formatting-custom-user-activity-before.png").default} /> | <img src={require("../assets/data-formatting-custom-user-activity-after.png").default} /> |
 
 With this custom formatter we changed the last activity to display the relative date and the exact time which the user was last seen.
+
+## Changing the channel name formatting
+You can also create a custom formatter that uses a combination of our default formatters with your custom logic. For example, you can create a custom `ChannelNameFormatter` that only uses custom logic when the member count is only 1, but for the rest of the cases it uses the default logic.
+
+```swift
+class CustomChannelNameFormatter: ChannelNameFormatter {
+    let defaultChannelNameFormatter = DefaultChannelNameFormatter()
+
+    func format(channel: ChatChannel, forCurrentUserId currentUserId: UserId?) -> String? {
+        if channel.memberCount == 1 {
+            return channel.membership?.name
+        }
+
+        return defaultChannelNameFormatter.format(channel: channel, forCurrentUserId: currentUserId)
+    }
+}
+
+Appearance.default.formatters.channelName = CustomChannelNameFormatter()
+```
+
+In the example above, if the channel has only the current user as a member, it uses the name of the current user as the channel name, otherwise the default logic is used.
