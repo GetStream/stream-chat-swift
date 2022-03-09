@@ -56,13 +56,15 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                 guard error == nil, let weakSelf = self else { return }
                 DispatchQueue.main.async {
                     weakSelf.selectedUsers = []
-                    if let ownerUser = (controller.members ?? []).filter({ $0.id != nil && $0.memberRole == .owner }).first {
+                    let nonNilUsers = (controller.members ?? []).filter({ $0.id != nil && $0.name?.isBlank == false })
+                    if let ownerUser = nonNilUsers.filter({ $0.memberRole == .owner }).first {
                         weakSelf.selectedUsers.append(ownerUser)
                     }
-                    let filteredUsers = (controller.members ?? []).filter({ $0.id != nil && $0.memberRole != .owner })
-                    let onlineUser = filteredUsers.filter({ $0.isOnline && $0.name?.isBlank == false }).sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
-                    let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) && $0.name?.isBlank == false }.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
-                    let otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
+                    let filteredUsers = nonNilUsers.filter({ $0.memberRole != .owner })
+                    let onlineUser = filteredUsers.filter({ $0.isOnline }).sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+                    let offlineUser = filteredUsers.filter({ $0.isOnline == false})
+                    let alphabetUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == true && $0.isOnline == false}.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+                    let otherUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
                     
                     weakSelf.selectedUsers.append(contentsOf: onlineUser)
                     weakSelf.selectedUsers.append(contentsOf: alphabetUsers)

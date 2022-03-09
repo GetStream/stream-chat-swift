@@ -100,10 +100,11 @@ public class ChatAddFriendVC: ChatBaseVC {
         self.dismiss(animated: true, completion: nil)
     }
     @IBAction private func invitLinkAction(_ sender: UIButton) {
-        if self.selectedUsers.count > 0 {
-            self.bCallbackInviteFriend?(self.selectedUsers)
-            self.btnBackAction(sender)
-        }
+        // TO DO
+//        if self.selectedUsers.count > 0 {
+//            self.bCallbackInviteFriend?(self.selectedUsers)
+//            self.btnBackAction(sender)
+//        }
     }
     // swiftlint:disable redundant_type_annotation
     @IBAction private func btnDoneAction(_ sender: UIButton) {
