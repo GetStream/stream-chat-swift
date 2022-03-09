@@ -28,4 +28,34 @@ extension NSManagedObjectContext {
         get { userInfo[Self.shouldShowShadowedMessagesKey] as? Bool }
         set { userInfo[Self.shouldShowShadowedMessagesKey] = newValue }
     }
+    
+    func saveAndClear() throws {
+        PrefetchStorage.shared.clear()
+        try save()
+    }
+}
+
+class PrefetchStorage {
+    static let shared = PrefetchStorage()
+    
+    var prefetchedObjects: [String: NSManagedObject] = [:]
+    
+    func insert<T: NSManagedObject>(_ obj: T) {
+        guard let id = obj.value(forKey: "id") as? String else {
+            fatalError("Trying to insert obj but it has no id")
+        }
+//        if let existing = prefetchedObjects[id] {
+//            fatalError("id overlap for id \(id) and object \(existing)")
+//        }
+        prefetchedObjects[id] = obj
+    }
+    
+    func insert<T: NSManagedObject>(_ collection: [T]) {
+        collection.forEach { self.insert($0) }
+    }
+    
+    func clear() {
+        log.warning("PREFETCH STORAGE clearing")
+        prefetchedObjects.removeAll()
+    }
 }

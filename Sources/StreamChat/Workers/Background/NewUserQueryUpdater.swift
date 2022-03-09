@@ -26,16 +26,11 @@ final class NewUserQueryUpdater: Worker {
         fetchRequest: UserDTO.userWithoutQueryFetchRequest
     )
     
-    private var queries: [UserListQueryDTO] {
-        do {
-            let queries = try database.backgroundReadOnlyContext
-                .fetch(UserListQueryDTO.observedQueries())
-            return queries
-        } catch {
-            log.error("Internal error: Failed to fetch [UserListQueryDTO]: \(error)")
-        }
-        return []
-    }
+    private lazy var queriesObserver: ListDatabaseObserver = .init(
+        context: self.database.backgroundReadOnlyContext,
+        fetchRequest: UserListQueryDTO.observedQueries(),
+        itemCreator: { $0 }
+    )
     
     init(database: DatabaseContainer, apiClient: APIClient, env: Environment) {
         environment = env
@@ -52,6 +47,7 @@ final class NewUserQueryUpdater: Worker {
         // We have to initialize the lazy variables synchronously
         _ = userListUpdater
         _ = usersObserver
+        _ = queriesObserver
         
         // But the observing can be started on a background queue
         DispatchQueue.global().async { [weak self] in
@@ -60,9 +56,10 @@ final class NewUserQueryUpdater: Worker {
                     self?.handle(changes: changes)
                 }
                 try self?.usersObserver.startObserving()
+                try self?.queriesObserver.startObserving()
                 self?.usersObserver.items.forEach { self?.updateUserListQuery(for: $0) }
             } catch {
-                log.error("Error starting NewUserQueryUpdater observer: \(error)")
+                log.error("Error starting NewUserQueryUpdater observers: \(error)")
             }
         }
     }
@@ -79,14 +76,14 @@ final class NewUserQueryUpdater: Worker {
     }
     
     private func updateUserListQuery(for userDTO: UserDTO) {
-        database.backgroundReadOnlyContext.perform { [weak self] in
-            guard let queries = self?.queries else { return }
-
-            // Existing queries with modified filter parameter
-            var updatedQueries: [UserListQuery] = []
-            
+        guard !queriesObserver.items.isEmpty else { return }
+        
+        // Existing queries with modified filter parameter
+        var updatedQueries: [UserListQuery] = []
+        
+        database.backgroundReadOnlyContext.performAndWait {
             do {
-                updatedQueries = try queries.map {
+                updatedQueries = try queriesObserver.items.map {
                     // Modify original query filter
                     try $0.asUserListQueryWithUpdatedFilter(filterToAdd: .equal("id", to: userDTO.id))
                 }
@@ -94,14 +91,14 @@ final class NewUserQueryUpdater: Worker {
             } catch {
                 log.error("Internal error. Failed to update UserListQueries for the new user: \(error)")
             }
-            
-            // Send `update(userListQuery:` requests so corresponding queries will be linked to the user
-            updatedQueries.forEach {
-                self?.userListUpdater.update(userListQuery: $0) { error in
-                    if let error = error {
-                        log
-                            .error("Internal error. Failed to update UserListQueries for the new user: \(error)")
-                    }
+        }
+        
+        // Send `update(userListQuery:` requests so corresponding queries will be linked to the user
+        updatedQueries.forEach {
+            self.userListUpdater.update(userListQuery: $0) { error in
+                if let error = error {
+                    log
+                        .error("Internal error. Failed to update UserListQueries for the new user: \(error)")
                 }
             }
         }

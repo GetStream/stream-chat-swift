@@ -5,6 +5,12 @@
 import CoreData
 import Foundation
 
+extension PerformanceMeasureItem {
+    static let saveChannelList = Self("Save Channel List")
+    static let saveChannel = Self("Save Channel")
+    static let saveChannelDetail = Self("Save Channel Detail")
+}
+
 @objc(ChannelDTO)
 class ChannelDTO: NSManagedObject {
     @NSManaged var cid: String
@@ -99,9 +105,24 @@ class ChannelDTO: NSManagedObject {
         return request
     }
     
+    static var shouldFetch = true
     static func load(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO? {
         let request = fetchRequest(for: cid)
-        return load(by: request, context: context).first
+        if shouldFetch {
+            return load(by: request, context: context).first
+        } else {
+            if let dto = PrefetchStorage.shared.prefetchedObjects[cid.rawValue] as? ChannelDTO {
+                return dto
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    static func load(cids: Set<String>, context: NSManagedObjectContext) -> [ChannelDTO] {
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.predicate = NSPredicate(format: "cid IN %@", cids)
+        return load(by: request, context: context)
     }
     
     static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
@@ -111,6 +132,7 @@ class ChannelDTO: NSManagedObject {
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelDTO
         new.cid = cid.rawValue
+        PrefetchStorage.shared.prefetchedObjects[cid.rawValue] = new
         return new
     }
 }
@@ -133,21 +155,87 @@ extension NSManagedObjectContext {
         payload: ChannelListPayload,
         query: ChannelListQuery
     ) throws -> [ChannelDTO] {
+        log.startMeasuring(item: .saveChannelList)
+        
         // The query will be saved during `saveChannel` call
         // but in case this query does not have any channels,
         // the query won't be saved, which will cause any future
         // channels to not become linked to this query
         _ = saveQuery(query: query)
         
-        return try payload.channels.map { channelPayload in
+//        var userIds = Set<String>()
+//        var memberIds = Set<String>()
+//        var messageIds = Set<String>()
+//        var channelIds = Set<String>()
+//        var messageReactionIds = Set<String>()
+//
+//        for channel in payload.channels {
+//            channelIds.insert(channel.channel.cid.rawValue)
+//            if let createdId = channel.channel.createdBy?.id {
+//                userIds.insert(createdId)
+//            }
+//            if let membershipId = channel.membership?.user.id {
+//                memberIds.insert(MemberDTO.createId(userId: membershipId, channeldId: channel.channel.cid))
+//            }
+//            for member in channel.members {
+//                memberIds.insert(MemberDTO.createId(userId: member.user.id, channeldId: channel.channel.cid))
+//            }
+//            for message in channel.messages {
+//                messageIds.insert(message.id)
+//                userIds.insert(message.user.id)
+//                if let quotedMessage = message.quotedMessage {
+//                    messageIds.insert(quotedMessage.id)
+//                    userIds.insert(quotedMessage.user.id)
+//                }
+//                if let parentMessageId = message.parentId {
+//                    messageIds.insert(parentMessageId)
+//                }
+//
+//                for reaction in message.latestReactions {
+//                    messageReactionIds.insert(MessageReactionDTO.createId(userId: reaction.user.id, messageId: reaction.messageId, type: reaction.type))
+//                    userIds.insert(reaction.user.id)
+//                }
+//            }
+//        }
+//
+//        PrefetchStorage.shared.insert(UserDTO.load(ids: userIds, context: self))
+//        PrefetchStorage.shared.insert(MemberDTO.load(ids: memberIds, context: self))
+//        PrefetchStorage.shared.insert(MessageDTO.load(ids: messageIds, context: self))
+//        PrefetchStorage.shared.insert(MessageReactionDTO.load(ids: messageReactionIds, context: self))
+//        ChannelDTO.load(cids: channelIds, context: self).forEach {
+//            PrefetchStorage.shared.prefetchedObjects[$0.cid] = $0
+//        }
+//
+//        MessageDTO.shouldFetch = false
+//        MessageReactionDTO.shouldFetch = false
+//        MemberDTO.shouldFetch = false
+//        UserDTO.shouldFetch = false
+//        ChannelDTO.shouldFetch = false
+//
+//        defer {
+//            MessageDTO.shouldFetch = true
+//            MessageReactionDTO.shouldFetch = true
+//            MemberDTO.shouldFetch = true
+//            UserDTO.shouldFetch = true
+//            ChannelDTO.shouldFetch = true
+//            PrefetchStorage.shared.clear()
+//        }
+        
+        let dtos = try payload.channels.map { channelPayload in
             try saveChannel(payload: channelPayload, query: query)
         }
+        
+        log.endMeasuring(item: .saveChannelList)
+        
+        return dtos
     }
     
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?
     ) throws -> ChannelDTO {
+        log.startMeasuring(item: .saveChannelDetail)
+        
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
 
         dto.name = payload.name
@@ -198,6 +286,8 @@ extension NSManagedObjectContext {
             queryDTO.channels.insert(dto)
         }
         
+        log.endMeasuring(item: .saveChannelDetail)
+        
         return dto
     }
     
@@ -205,6 +295,8 @@ extension NSManagedObjectContext {
         payload: ChannelPayload,
         query: ChannelListQuery?
     ) throws -> ChannelDTO {
+        log.startMeasuring(item: .saveChannel)
+        
         let dto = try saveChannel(payload: payload.channel, query: query)
 
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true) }
@@ -243,6 +335,8 @@ extension NSManagedObjectContext {
         // We don't reset `watchers` array if it's missing
         // since that can mean that user didn't request watchers
         // This is done in `ChannelUpdater.channelWatchers` func
+        
+        log.endMeasuring(item: .saveChannel)
         
         return dto
     }

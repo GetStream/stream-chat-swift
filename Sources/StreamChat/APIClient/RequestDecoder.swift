@@ -17,6 +17,10 @@ protocol RequestDecoder {
     func decodeRequestResponse<ResponseType: Decodable>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType
 }
 
+extension PerformanceMeasureItem {
+    static let decoding = Self("Decoding")
+}
+
 /// The default implementation of `RequestDecoder`.
 struct DefaultRequestDecoder: RequestDecoder {
     func decodeRequestResponse<ResponseType: Decodable>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType {
@@ -43,7 +47,7 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.ResponseBodyEmpty()
         }
         
-        log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
+        log.warning("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
         
         guard httpResponse.statusCode < 300 else {
             guard let serverError = try? JSONDecoder.default.decode(ErrorPayload.self, from: data) else {
@@ -68,8 +72,11 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError(with: serverError)
         }
         
+        log.startMeasuring(item: .decoding)
+        
         do {
             let decodedPayload = try JSONDecoder.default.decode(ResponseType.self, from: data)
+            log.endMeasuring(item: .decoding)
             return decodedPayload
         } catch {
             log.error(error, subsystems: .httpRequests)

@@ -38,7 +38,7 @@ extension CurrentUserDTO {
     /// - Parameter context: The context used to fetch `CurrentUserDTO`
     fileprivate static func load(context: NSManagedObjectContext) -> CurrentUserDTO? {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
-        let result = (try? context.fetch(request)) ?? []
+        let result = load(by: request, context: context)
         
         log.assert(
             result.count <= 1,

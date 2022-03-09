@@ -21,7 +21,7 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
     static func load(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO? {
         let request = NSFetchRequest<ChannelMemberListQueryDTO>(entityName: ChannelMemberListQueryDTO.entityName)
         request.predicate = NSPredicate(format: "queryHash == %@", queryHash)
-        return try? context.fetch(request).first
+        return load(by: request, context: context).first
     }
     
     static func loadOrCreate(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO {

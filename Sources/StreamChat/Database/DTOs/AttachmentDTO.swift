@@ -55,9 +55,7 @@ class AttachmentDTO: NSManagedObject {
     }
     
     static func load(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO? {
-        let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id.rawValue)
-        return try? context.fetch(request).first
+        load(by: id.rawValue, context: context).first
     }
     
     static func loadOrCreate(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO {

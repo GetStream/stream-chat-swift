@@ -23,7 +23,7 @@ extension DeviceDTO {
     static func load(id: String, context: NSManagedObjectContext) -> DeviceDTO? {
         let request = NSFetchRequest<DeviceDTO>(entityName: DeviceDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@", id)
-        return try? context.fetch(request).first
+        return load(by: request, context: context).first
     }
     
     /// If a Device with the given id exists in the context, fetches and returns it. Otherwise creates a new

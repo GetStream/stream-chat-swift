@@ -14,7 +14,7 @@ class MessageSearchQueryDTO: NSManagedObject {
     static func load(filterHash: String, context: NSManagedObjectContext) -> MessageSearchQueryDTO? {
         let request = NSFetchRequest<MessageSearchQueryDTO>(entityName: MessageSearchQueryDTO.entityName)
         request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
-        return try? context.fetch(request).first
+        return load(by: request, context: context).first
     }
 }
 

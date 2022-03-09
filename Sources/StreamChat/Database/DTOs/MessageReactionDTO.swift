@@ -23,7 +23,7 @@ final class MessageReactionDTO: NSManagedObject {
     // internal field needed to sync data optimistically
     @NSManaged var version: String?
 
-    private static func createId(
+    static func createId(
         userId: String,
         messageId: MessageId,
         type: MessageReactionType
@@ -33,6 +33,7 @@ final class MessageReactionDTO: NSManagedObject {
 }
 
 extension MessageReactionDTO {
+    static var shouldFetch = true
     static func load(
         userId: String,
         messageId: MessageId,
@@ -40,9 +41,7 @@ extension MessageReactionDTO {
         context: NSManagedObjectContext
     ) -> MessageReactionDTO? {
         let id = createId(userId: userId, messageId: messageId, type: type)
-        let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return try? context.fetch(request).first
+        return load(by: id, fetch: shouldFetch, context: context).first
     }
 
     static let notLocallyDeletedPredicates: NSPredicate = {
@@ -63,7 +62,7 @@ extension MessageReactionDTO {
             NSPredicate(format: "id IN %@", ids),
             Self.notLocallyDeletedPredicates
         ])
-        return (try? context.fetch(request)) ?? []
+        return load(by: request, context: context)
     }
     
     static func loadOrCreate(
@@ -83,6 +82,7 @@ extension MessageReactionDTO {
         new.type = type.rawValue
         new.message = message
         new.user = user
+        PrefetchStorage.shared.insert(new)
         return new
     }
 }

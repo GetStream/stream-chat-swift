@@ -5,6 +5,10 @@
 import CoreData
 import Foundation
 
+extension PerformanceMeasureItem {
+    static let saveUser = Self("Save User")
+}
+
 @objc(UserDTO)
 class UserDTO: NSManagedObject {
     @NSManaged var extraData: Data
@@ -68,10 +72,10 @@ extension UserDTO {
     ///   - context: The context used to fetch `UserDTO`
     ///
     static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
-        let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return try? context.fetch(request).first
+        load(by: id, fetch: shouldFetch, context: context).first
     }
+
+    static var shouldFetch = true
     
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise creates a new
     /// `UserDTO` with the given id.
@@ -88,6 +92,7 @@ extension UserDTO {
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! UserDTO
         new.id = id
         new.teams = []
+        PrefetchStorage.shared.insert(new)
         return new
     }
     
@@ -112,6 +117,8 @@ extension NSManagedObjectContext: UserDatabaseSession {
         payload: UserPayload,
         query: UserListQuery?
     ) throws -> UserDTO {
+        log.startMeasuring(item: .saveUser)
+        
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
 
         dto.name = payload.name
@@ -139,6 +146,9 @@ extension NSManagedObjectContext: UserDatabaseSession {
         if let query = query, let queryDTO = try saveQuery(query: query) {
             queryDTO.users.insert(dto)
         }
+        
+        log.endMeasuring(item: .saveUser)
+        
         return dto
     }
 }

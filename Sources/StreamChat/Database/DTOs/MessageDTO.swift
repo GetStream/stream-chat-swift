@@ -282,10 +282,9 @@ class MessageDTO: NSManagedObject {
         return load(by: request, context: context)
     }
     
+    static var shouldFetch = true
     static func load(id: String, context: NSManagedObjectContext) -> MessageDTO? {
-        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return load(by: request, context: context).first
+        load(by: id, fetch: shouldFetch, context: context).first
     }
     
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> MessageDTO {
@@ -297,6 +296,7 @@ class MessageDTO: NSManagedObject {
         new.id = id
         new.latestReactions = []
         new.ownReactions = []
+        PrefetchStorage.shared.insert(new)
         return new
     }
     

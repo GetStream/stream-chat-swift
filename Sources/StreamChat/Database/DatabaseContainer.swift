@@ -193,7 +193,7 @@ class DatabaseContainer: NSPersistentContainer {
 
                 if self.writableContext.hasChanges {
                     log.debug("Context has changes. Saving.", subsystems: .database)
-                    try self.writableContext.save()
+                    try self.writableContext.saveAndClear()
                 } else {
                     log.debug("Context has no changes. Skipping save.", subsystems: .database)
                 }

@@ -28,7 +28,7 @@ class MemberDTO: NSManagedObject {
     @NSManaged var user: UserDTO
     @NSManaged var queries: Set<ChannelMemberListQueryDTO>
     
-    private static func createId(userId: String, channeldId: ChannelId) -> String {
+    static func createId(userId: String, channeldId: ChannelId) -> String {
         channeldId.rawValue + userId
     }
 }
@@ -54,11 +54,10 @@ extension MemberDTO {
 }
 
 extension MemberDTO {
+    static var shouldFetch = true
     static func load(id: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
         let memberId = MemberDTO.createId(userId: id, channeldId: channelId)
-        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", memberId)
-        return try? context.fetch(request).first
+        return load(by: memberId, fetch: shouldFetch, context: context).first
     }
     
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise create a new
@@ -75,6 +74,7 @@ extension MemberDTO {
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MemberDTO
         new.id = Self.createId(userId: id, channeldId: channelId)
+        PrefetchStorage.shared.insert(new)
         return new
     }
     
