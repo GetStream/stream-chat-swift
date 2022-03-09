@@ -27,9 +27,14 @@ public class TableViewCellChatUser: UITableViewCell {
     // MARK: - Functions
     public func config(user: ChatUser, selectedImage: UIImage?, avatarBG: UIColor) {
         if let imageURL = user.imageURL {
-            Nuke.loadImage(with: imageURL, into: avatarView)
+            let options = ImageLoadingOptions(
+                placeholder: Appearance.default.images.userAvatarPlaceholder4,
+                transition: .fadeIn(duration: 0.1),
+                failureImage: Appearance.default.images.userAvatarPlaceholder4
+            )
+            Nuke.loadImage(with: imageURL, options: options, into: avatarView)
         }
-        avatarView.backgroundColor = avatarBG
+        avatarView.backgroundColor = .clear
         let name = (user.name ?? user.id)
         if name.lowercased() == user.id.lowercased()  {
             let last = user.id.suffix(5)
