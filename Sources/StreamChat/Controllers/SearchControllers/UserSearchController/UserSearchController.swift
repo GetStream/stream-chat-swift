@@ -219,8 +219,10 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
             lastQuery = newQuery
             //
 
-            userQueryUpdater.update(userListQuery: newQuery, policy: .replace) { error in
-                //
+            userQueryUpdater.update(userListQuery: newQuery, policy: .replace) { [weak self] error in
+                guard let self = self else {
+                    return
+                }
                 self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
                 self.callback { completion?(error) }
             }
@@ -245,7 +247,10 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         
         lastQuery = query
         
-        userQueryUpdater.update(userListQuery: query, policy: .replace) { error in
+        userQueryUpdater.update(userListQuery: query, policy: .replace) { [weak self] error in
+            guard let self = self else {
+                return
+            }
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -269,7 +274,10 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         
         var updatedQuery = lastQuery
         updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)
-        userQueryUpdater.update(userListQuery: updatedQuery) { error in
+        userQueryUpdater.update(userListQuery: updatedQuery) { [weak self] error in
+            guard let self = self else {
+                return
+            }
             self.callback { completion?(error) }
         }
     }

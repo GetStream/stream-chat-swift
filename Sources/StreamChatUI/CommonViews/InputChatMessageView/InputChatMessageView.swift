@@ -101,7 +101,6 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         container.addArrangedSubview(inputTextContainer)
         quotedMessageView.isHidden = true
         attachmentsViewContainer.isHidden = true
-        emojiButton.setImage(appearance.images.emojiIcon, for: .normal)
         inputTextContainer.isLayoutMarginsRelativeArrangement = true
         inputTextContainer.alignment = .center
         inputTextContainer.spacing = 6
@@ -109,7 +108,8 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         inputTextContainer.addArrangedSubview(commandLabelView)
         inputTextContainer.addArrangedSubview(textView)
         inputTextContainer.addArrangedSubview(clearButton)
-        inputTextContainer.addArrangedSubview(emojiButton)
+        // TODO: Will add it when we will implement emoji feature.
+        //inputTextContainer.addArrangedSubview(emojiButton)
         inputTextContainer.addArrangedSubview(sendButton)
         inputTextContainer.addArrangedSubview(emptyView)
 
