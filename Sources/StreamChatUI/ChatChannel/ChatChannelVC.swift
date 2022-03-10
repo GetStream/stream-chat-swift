@@ -762,9 +762,12 @@ open class ChatChannelVC:
             self.pushWithAnimation(controller: qrCodeVc)
         }
         // search
-        let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
+        // hide for demo
+        /*
+         let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
             Snackbar.show(text: "Not available on alpha release")
         }
+         */
         // invite
         let invite = UIAction(title: "Invite", image: appearance.images.personBadgePlus) { [weak self] _ in
             guard let self = self else {
@@ -839,7 +842,6 @@ open class ChatChannelVC:
         } else {
             if channelController?.channel?.isDirectMessageChannel ?? false {
                 var actions: [UIAction] = []
-                actions.append(search)
                 if channelController?.channel?.isMuted ?? false {
                     actions.append(unmute)
                 } else {
@@ -861,7 +863,7 @@ open class ChatChannelVC:
                     return actions
                 } else {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [search,groupQR])
+                    actions.append(contentsOf: [groupQR])
                     if channelController?.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
