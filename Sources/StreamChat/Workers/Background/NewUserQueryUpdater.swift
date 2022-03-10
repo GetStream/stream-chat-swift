@@ -14,45 +14,41 @@ import CoreData
 ///     corresponding queries to the user.
 final class NewUserQueryUpdater: Worker {
     private let environment: Environment
-        
+
     private lazy var userListUpdater: UserListUpdater = self.environment
         .createUserListUpdater(
             database,
             apiClient
         )
-    
+
     private lazy var usersObserver: ListDatabaseObserver = .init(
         context: self.database.backgroundReadOnlyContext,
         fetchRequest: UserDTO.userWithoutQueryFetchRequest
     )
-    
-    private var queries: [UserListQueryDTO] {
-        do {
-            let queries = try database.backgroundReadOnlyContext
-                .fetch(UserListQueryDTO.observedQueries())
-            return queries
-        } catch {
-            log.error("Internal error: Failed to fetch [UserListQueryDTO]: \(error)")
-        }
-        return []
-    }
-    
+
+    private lazy var queriesObserver: ListDatabaseObserver = .init(
+        context: self.database.backgroundReadOnlyContext,
+        fetchRequest: UserListQueryDTO.observedQueries(),
+        itemCreator: { $0 }
+    )
+
     init(database: DatabaseContainer, apiClient: APIClient, env: Environment) {
         environment = env
         super.init(database: database, apiClient: apiClient)
-        
+
         startObserving()
     }
-    
+
     override convenience init(database: DatabaseContainer, apiClient: APIClient) {
         self.init(database: database, apiClient: apiClient, env: .init())
     }
-    
+
     private func startObserving() {
         // We have to initialize the lazy variables synchronously
         _ = userListUpdater
         _ = usersObserver
-        
+        _ = queriesObserver
+
         // But the observing can be started on a background queue
         DispatchQueue.global().async { [weak self] in
             do {
@@ -60,13 +56,14 @@ final class NewUserQueryUpdater: Worker {
                     self?.handle(changes: changes)
                 }
                 try self?.usersObserver.startObserving()
+                try self?.queriesObserver.startObserving()
                 self?.usersObserver.items.forEach { self?.updateUserListQuery(for: $0) }
             } catch {
-                log.error("Error starting NewUserQueryUpdater observer: \(error)")
+                log.error("Error starting NewUserQueryUpdater observers: \(error)")
             }
         }
     }
-    
+
     private func handle(changes: [ListChange<UserDTO>]) {
         // Observe `UserDTO` insertations
         changes.forEach { change in
@@ -77,40 +74,29 @@ final class NewUserQueryUpdater: Worker {
             }
         }
     }
-    
+
     private func updateUserListQuery(for userDTO: UserDTO) {
+        guard !queriesObserver.items.isEmpty else { return }
+
         database.backgroundReadOnlyContext.perform { [weak self] in
-            let userID = userDTO.id
-            let queryDTOs = self?.queries ?? []
-            
-            queryDTOs.forEach { dto in
-                let queryHash = dto.filterHash
-               
-                do {
-                    let queryMatchingUser = try dto.asUserListQueryWithUpdatedFilter(filterToAdd: .equal("id", to: userID))
-                    
-                    self?.userListUpdater.fetch(userListQuery: queryMatchingUser) {
-                        switch $0 {
-                        case let .success(userListPayload):
-                            self?.database.write { session in
-                                guard
-                                    let queryDTO = session.userListQuery(filterHash: queryHash),
-                                    let userDTO = session.user(id: userID)
-                                else { return }
-                                
-                                if userListPayload.users.contains(where: { $0.id == userID }) {
-                                    queryDTO.users.insert(userDTO)
-                                } else {
-                                    queryDTO.users.remove(userDTO)
-                                }
-                            }
-                        case let .failure(error):
-                            log.error("Failed to check if user with id \(userID) matches query: \(queryHash): \(error)")
+
+            do {
+                // Existing queries with modified filter parameter
+                let updatedQueries = try self?.queriesObserver.items.map {
+                    // Modify original query filter
+                    try $0.asUserListQueryWithUpdatedFilter(filterToAdd: .equal("id", to: userDTO.id))
+                }
+
+                // Send `update(userListQuery:` requests so corresponding queries will be linked to the user
+                updatedQueries?.forEach {
+                    self?.userListUpdater.update(userListQuery: $0) { error in
+                        if let error = error {
+                            log.error("Internal error. Failed to update UserListQueries for the new user: \(error)")
                         }
                     }
-                } catch {
-                    log.error("Failed to decode model from user list query: \(queryHash)")
                 }
+            } catch {
+                log.error("Internal error. Failed to update UserListQueries for the new user: \(error)")
             }
         }
     }
@@ -130,7 +116,7 @@ private extension UserListQueryDTO {
         filterToAdd filter: Filter<UserListFilterScope>
     ) throws -> UserListQuery {
         let originalFilter = try JSONDecoder.default.decode(Filter<UserListFilterScope>.self, from: filterJSONData)
-        
+
         return UserListQuery(
             filter: .and([originalFilter, filter])
         )
