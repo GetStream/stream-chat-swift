@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -131,12 +131,12 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="bFQ-ES-Ci7">
-                                        <rect key="frame" x="16" y="164" width="100" height="18"/>
+                                        <rect key="frame" x="16" y="164" width="0.0" height="0.0"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TeY-eJ-nB6">
-                                                <rect key="frame" x="0.0" y="0.0" width="100" height="18"/>
+                                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TeY-eJ-nB6">
+                                                <rect key="frame" x="0.0" y="0.0" width="100" height="0.0"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="18" id="XuT-ir-iXG"/>
+                                                    <constraint firstAttribute="height" id="XuT-ir-iXG"/>
                                                 </constraints>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -148,7 +148,7 @@
                                         </subviews>
                                     </stackView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oKK-mc-EWc">
-                                        <rect key="frame" x="-6" y="192" width="404" height="660"/>
+                                        <rect key="frame" x="-6" y="154" width="404" height="698"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
@@ -159,7 +159,7 @@
                                     <constraint firstItem="8Rq-6D-mie" firstAttribute="leading" secondItem="2hX-vZ-5CS" secondAttribute="leading" constant="12" id="MFi-9h-WOB"/>
                                     <constraint firstItem="9UB-QW-s7a" firstAttribute="leading" secondItem="2hX-vZ-5CS" secondAttribute="leading" id="Tmh-bb-uH9"/>
                                     <constraint firstAttribute="trailing" secondItem="9UB-QW-s7a" secondAttribute="trailing" id="YMY-d0-giT"/>
-                                    <constraint firstItem="oKK-mc-EWc" firstAttribute="top" secondItem="bFQ-ES-Ci7" secondAttribute="bottom" constant="10" id="e8y-ws-iRU"/>
+                                    <constraint firstItem="oKK-mc-EWc" firstAttribute="top" secondItem="bFQ-ES-Ci7" secondAttribute="bottom" constant="-10" id="e8y-ws-iRU"/>
                                     <constraint firstAttribute="trailing" secondItem="oKK-mc-EWc" secondAttribute="trailing" constant="6" id="hN4-cf-vaH"/>
                                     <constraint firstAttribute="bottom" secondItem="oKK-mc-EWc" secondAttribute="bottom" id="hTn-cj-7xu"/>
                                     <constraint firstAttribute="trailing" secondItem="8Rq-6D-mie" secondAttribute="trailing" constant="12" id="j2V-Mz-sn8"/>
