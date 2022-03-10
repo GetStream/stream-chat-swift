@@ -3,7 +3,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+No Changes
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix blurred avatar views when using image merger [#1841](https://github.com/GetStream/stream-chat-swift/pull/1841)
 
 # [4.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.11.0)
 _March 01, 2022_
