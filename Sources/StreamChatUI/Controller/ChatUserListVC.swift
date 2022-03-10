@@ -93,8 +93,6 @@ extension ChatUserListVC {
         self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
     }
     
-    public func tableViewFrameUpdate() { }
-    
     private func setupTableView() {
         tableView?.removeFromSuperview()
         let tableViewStyle: UITableView.Style = self.sortType == .sortByName ? .grouped : .plain

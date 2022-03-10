@@ -91,11 +91,13 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         tableView.separatorStyle = .none
         notificationSwitch.isOn = !(channelController?.channel?.isMuted ?? true)
     }
+    
     private func updateMemberCount() {
         let friendCount = selectedUsers.count
         let onlineUser = selectedUsers.filter( {$0.isOnline}).count ?? 0
         lblSubtitle.text = "\(friendCount) friends, \(onlineUser) online"
     }
+    
     private func updateShowMoreButtonStatus() {
         let contentSize = selectedUsers.count * 60
         if CGFloat(contentSize) > (self.tableView.bounds.height - 200) {
@@ -106,21 +108,25 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             self.usersCount = selectedUsers.count
         }
     }
+    
     public func muteNotification() {
-        self.channelController?.muteChannel { error in
+        self.channelController?.muteChannel { [weak self] error in
+            guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications muted" : "Error while muted group notifications"
             DispatchQueue.main.async {
                 Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupMute)
-                self.notificationSwitch.isOn = false
+                weakSelf.notificationSwitch.isOn = false
             }
         }
     }
+    
     public func unMuteNotification() {
-        self.channelController?.unmuteChannel { error in
+        self.channelController?.unmuteChannel { [weak self] error in
+            guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications unmuted" : "Error while unmute group notifications"
             DispatchQueue.main.async {
                 Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupUnMute)
-                self.notificationSwitch.isOn = true
+                weakSelf.notificationSwitch.isOn = true
             }
         }
     }
@@ -128,6 +134,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     @IBAction func backBtnTapped(_ sender: UIButton) {
         popWithAnimation()
     }
+    
     @IBAction func addFriendButtonAction(_ sender: UIButton) {
         guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
@@ -164,20 +171,23 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         }
         presentPanModal(controller)
     }
+    
     @IBAction func notificationToggle(_ sender: UISwitch) {
         if sender.isOn {
-            self.unMuteNotification()
+            unMuteNotification()
         } else {
-            self.muteNotification()
+            muteNotification()
         }
     }
+    
     @objc func showMoreButtonAction(_ sender: UIButton) {
-        self.buttonShowMore.isHidden = true
-        let visibleRow = IndexPath.init(row: self.usersCount, section: 0)
-        self.usersCount = self.selectedUsers.count
-        self.tableView.reloadData()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.tableView.scrollToRow(at: visibleRow, at: .bottom, animated: true)
+        buttonShowMore.isHidden = true
+        let visibleRow = IndexPath.init(row: usersCount, section: 0)
+        usersCount = selectedUsers.count
+        tableView.reloadData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.tableView.scrollToRow(at: visibleRow, at: .bottom, animated: true)
         }
     }
 }
@@ -187,6 +197,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
     public func numberOfSections(in tableView: UITableView) -> Int {
         return sectionWiseList.count
     }
+    
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sectionWiseList[section] {
         case .userList:
@@ -195,6 +206,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
             return 1
         }
     }
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch sectionWiseList[indexPath.section] {
         case .userList:
@@ -219,6 +231,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
             return cell
         }
     }
+    
     public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch sectionWiseList[section] {
         case .userList:
@@ -233,6 +246,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
             return nil
         }
     }
+    
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         switch sectionWiseList[section] {
         case .userList:
@@ -244,6 +258,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
             return 0
         }
     }
+    
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         defer {
             tableView.deselectRow(at: indexPath, animated: false)

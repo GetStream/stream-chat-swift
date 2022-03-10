@@ -17,19 +17,14 @@ public class ChatSharedFilesVC: UIViewController {
     // MARK: - VIEW CYCEL
     public override func viewDidLoad() {
         super.viewDidLoad()
-        //
         self.view.backgroundColor = .clear
-        //
         self.setupUI()
     }
-    //
 }
 // MARK: - UI
 extension ChatSharedFilesVC {
-    //
     public func setupUI() {
         lblEmpty?.textColor = Appearance.default.colorPalette.subtitleText
-        //
         switch self.attachmentType {
         case .image,.video:
             self.lblEmpty?.text = "No media available"
