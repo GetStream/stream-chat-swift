@@ -25,7 +25,7 @@ As you can see, by changing the `timeStyle` to `.medium` the timestamp now displ
 
 ## Changing the user last activity formatting
 
-As an example to showcase how to create a custom formatter from scratch let's change the formatting of how the last activity of a user is displayed. By default, the last activity formatting is calculated by the `DefaultUserLastActivityFormatter` which uses a custom logic to display the last activity time relative to the current day in hours, weeks, months or years. For this example, we are going to create a custom formatter by conforming to the `UserLastActivityFormatter` protocol where we will make use of a `DateFormatter` to display the last activitiy in a different format.
+As an example to showcase how to create a custom formatter from scratch, let's change the formatting of how the last activity of a user is displayed. By default, the last activity formatting is calculated by the `DefaultUserLastActivityFormatter` which uses custom logic to display the last activity time relative to the current day in hours, weeks, months or years. For this example, we are going to create a custom formatter by conforming to the `UserLastActivityFormatter` protocol where we will make use of a `DateFormatter` to display the last activity in a different format.
 
 ```swift
 class CustomUserLastActivityFormatter: UserLastActivityFormatter {
