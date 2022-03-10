@@ -67,17 +67,18 @@ class JoinPrivateGroupVC: UIViewController {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
                 guard let `self` = self else { return }
                 self.addMeInChannel(channelId: channelController.cid?.id ?? "") { error in
-                    self.viewJoinOverlay.isHidden = true
                     guard error == nil else {
                         var userInfo = [String: Any]()
                         userInfo["message"] = error?.localizedDescription
                         NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
+                        self.viewJoinOverlay.isHidden = true
                         return
                     }
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else {
                             return
                         }
+                        self.viewJoinOverlay.isHidden = true
                         self.handleNavigation()
                     }
 
