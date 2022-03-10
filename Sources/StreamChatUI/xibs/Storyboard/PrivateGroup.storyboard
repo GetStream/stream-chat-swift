@@ -249,20 +249,23 @@
                                     <constraint firstAttribute="height" constant="1" id="TUr-cD-rps"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3gp-7a-lsE">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3gp-7a-lsE">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d8x-sI-hJH">
-                                        <rect key="frame" x="40" y="722" width="334" height="40"/>
+                                        <rect key="frame" x="40" y="732" width="334" height="30"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="aTy-5W-gkE">
-                                                <rect key="frame" x="118" y="0.0" width="98.5" height="40"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="aTy-5W-gkE">
+                                                <rect key="frame" x="115.5" y="0.0" width="103.5" height="30"/>
                                                 <subviews>
-                                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="VZG-In-PTk">
-                                                        <rect key="frame" x="0.0" y="0.0" width="20" height="40"/>
+                                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="VZG-In-PTk">
+                                                        <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="30" id="DUj-6l-xje"/>
+                                                        </constraints>
                                                     </activityIndicatorView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Joining…" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U5f-N6-Da2">
-                                                        <rect key="frame" x="30" y="0.0" width="68.5" height="40"/>
+                                                        <rect key="frame" x="35" y="0.0" width="68.5" height="30"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <color key="textColor" red="0.92156862745098034" green="0.92156862745098034" blue="0.96078431372549022" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
@@ -272,7 +275,7 @@
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="Ayl-4u-B5m"/>
+                                            <constraint firstAttribute="height" constant="30" id="Ayl-4u-B5m"/>
                                             <constraint firstItem="aTy-5W-gkE" firstAttribute="centerX" secondItem="d8x-sI-hJH" secondAttribute="centerX" id="EYv-iD-ZrW"/>
                                             <constraint firstAttribute="bottom" secondItem="aTy-5W-gkE" secondAttribute="bottom" id="Qtn-hQ-pSn"/>
                                             <constraint firstItem="aTy-5W-gkE" firstAttribute="top" secondItem="d8x-sI-hJH" secondAttribute="top" id="dxH-II-Dho"/>
@@ -323,6 +326,7 @@
                         <outlet property="cvUserList" destination="KP0-1K-V0o" id="eHM-Kp-AG8"/>
                         <outlet property="lblDescription" destination="cno-bh-orJ" id="0R6-Md-eQo"/>
                         <outlet property="lblOTP" destination="WOe-Q5-qPe" id="zJ1-FI-zEz"/>
+                        <outlet property="viewJoinOverlay" destination="3gp-7a-lsE" id="DeI-yM-GQ9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zAI-3E-4jc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

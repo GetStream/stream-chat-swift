@@ -69,7 +69,10 @@ open class PrivateGroupOTPVC: UIViewController {
         } else {
             LocationManager.shared.requestLocationAuthorization()
             LocationManager.shared.requestGPS()
-            viewOTP.becomeFirstResponder()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                guard let `self` = self else { return }
+                self.viewOTP.becomeFirstResponder()
+            }
         }
     }
 
