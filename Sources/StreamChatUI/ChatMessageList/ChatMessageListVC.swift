@@ -322,7 +322,7 @@ open class ChatMessageListVC:
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
-        let currentUserId = client.currentUserId//dataSource?.channel(for: self)?.config.client.currentUserId
+        let currentUserId = ChatClient.shared.currentUserId
         let isMessageFromCurrentUser = message?.author.id == currentUserId
         if isOneWalletCell(message) {
             if isMessageFromCurrentUser {

@@ -33,7 +33,7 @@ public struct RedPacket {
     public init() {
     }
 
-    func toDictionary() -> [String: RawJSON] {
+    public func toDictionary() -> [String: RawJSON] {
         var dictOut = [String: RawJSON]()
         dictOut["title"] = .string(title ?? "")
         dictOut["myName"] = .string(myName ?? "")

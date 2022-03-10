@@ -11,8 +11,6 @@ extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
     public static let sendOneAction = Notification.Name("kStreamChatSendOneAction")
     public static let sendRedPacketTapAction = Notification.Name("kStreamChatSendRedPacketTapAction")
-    public static let sendOneWallet = Notification.Name("kTimelessWalletsendOneWallet")
-    public static let sendRedPacket = Notification.Name("kTimelessWalletsendRedPacket")
     public static let pickUpRedPacket = Notification.Name("kStreamChatPickUpRedPacket")
     public static let showSnackBar = Notification.Name("kStreamshowSnackBar")
     public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
@@ -348,8 +346,6 @@ open class ComposerVC: _ViewController,
     override open func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.removeObserver(self)
-        NotificationCenter.default.addObserver(self, selector: #selector(sendOneWalletBubble(notification:)), name: .sendOneWallet, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(redPacketBubble(notification:)), name: .sendRedPacket, object: nil)
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -817,41 +813,7 @@ open class ComposerVC: _ViewController,
             quotedMessageId: content.quotingMessage?.id
         )
     }
-
-    @objc open func sendOneWalletBubble(notification: Notification) {
-        if sendMessageLock {
-            return;
-        }
-        guard let sendOneWalletData = notification.userInfo?["oneWalletTx"] as? SendOneWallet else {
-            return
-        }
-        sendMessageLock = true
-        channelController?.createNewMessage(
-            text: "Sent ONE",
-            pinning: nil,
-            attachments: [],
-            mentionedUserIds: content.mentionedUsers.map(\.id),
-            quotedMessageId: content.quotingMessage?.id,
-            extraData: ["oneWalletTx" : .dictionary(sendOneWalletData.toDictionary())],
-            completion: nil)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            sendMessageLock = false
-        }
-    }
-
-    @objc open func redPacketBubble(notification: Notification) {
-        guard let redPacket = notification.userInfo?["redPacketPickup"] as? RedPacket else {
-            return
-        }
-        channelController?.createNewMessage(
-            text: "Red Packet",
-            pinning: nil,
-            attachments: [],
-            mentionedUserIds: content.mentionedUsers.map(\.id),
-            quotedMessageId: content.quotingMessage?.id,
-            extraData: ["redPacketPickup" : .dictionary(redPacket.toDictionary())],
-            completion: nil)
-    }
+    
     /// Updates an existing message.
     /// - Parameters:
     ///   - id: The id of the editing message.
