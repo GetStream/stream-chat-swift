@@ -54,7 +54,7 @@ class NewUserQueryUpdater_Tests: XCTestCase {
         try database.createUser()
         
         // Assert `fetch(userListQuery:)` called for both queries
-        AssertAsync.willBeEqual(env!.userQueryUpdater!.fetch_queries.count, 2)
+        AssertAsync.willBeEqual(env!.userListUpdater!.update_queries.count, 2)
     }
     
     func test_update_called_forExistingUser() throws {
@@ -70,7 +70,7 @@ class NewUserQueryUpdater_Tests: XCTestCase {
         try database.createUser(id: userId)
         
         // Assert `fetch(userListQuery)` is not called yet
-        AssertAsync.willBeTrue(env!.userQueryUpdater?.update_queries.isEmpty)
+        AssertAsync.willBeTrue(env!.userListUpdater?.update_queries.isEmpty)
         
         // Create `newUserQueryUpdater`
         newUserQueryUpdater = NewUserQueryUpdater(
@@ -81,7 +81,7 @@ class NewUserQueryUpdater_Tests: XCTestCase {
         
         // Assert `fetch(userListQuery)` called for user that was in DB before observing started
         let expectedFilter: Filter<UserListFilterScope> = .and([filter, .equal("id", to: userId)])
-        AssertAsync.willBeEqual(env!.userQueryUpdater?.fetch_queries.first?.filter, expectedFilter)
+        AssertAsync.willBeEqual(env!.userListUpdater?.update_queries.first?.filter, expectedFilter)
     }
     
     func test_filter_isModified() throws {
@@ -94,7 +94,7 @@ class NewUserQueryUpdater_Tests: XCTestCase {
         let expectedFilter: Filter = .and([filter, .equal(.id, to: id)])
         
         // Assert `fetch` is called with modified query
-        AssertAsync.willBeEqual(env!.userQueryUpdater?.fetch_queries.first?.filter, expectedFilter)
+        AssertAsync.willBeEqual(env!.userListUpdater?.update_queries.first?.filter, expectedFilter)
     }
     
     func test_newUserQueryUpdater_doesNotRetainItself() throws {
@@ -103,7 +103,7 @@ class NewUserQueryUpdater_Tests: XCTestCase {
         try database.createUser()
         
         // Assert `fetch` is called
-        AssertAsync.willBeFalse(env!.userQueryUpdater?.fetch_queries.isEmpty)
+        AssertAsync.willBeFalse(env!.userListUpdater?.update_queries.isEmpty)
         
         // Assert `newUserQueryUpdater` can be released even though network response hasn't come yet
         AssertAsync.canBeReleased(&newUserQueryUpdater)
@@ -129,20 +129,20 @@ class NewUserQueryUpdater_Tests: XCTestCase {
 
         // Assert `fetch` called for only observed query in DB
         AssertAsync {
-            Assert.willBeEqual(self.env!.userQueryUpdater?.fetch_queries.first?.filter, expectedFilter)
-            Assert.willBeEqual(self.env!.userQueryUpdater?.fetch_queries.count, 1)
+            Assert.willBeEqual(self.env!.userListUpdater?.update_queries.first?.filter, expectedFilter)
+            Assert.willBeEqual(self.env!.userListUpdater?.update_queries.count, 1)
         }
     }
 }
 
 private class TestEnvironment {
-    var userQueryUpdater: UserListUpdaterMock?
+    var userListUpdater: UserListUpdaterMock?
     
     lazy var environment = NewUserQueryUpdater.Environment(createUserListUpdater: { [unowned self] in
-        self.userQueryUpdater = UserListUpdaterMock(
+        self.userListUpdater = UserListUpdaterMock(
             database: $0,
             apiClient: $1
         )
-        return self.userQueryUpdater!
+        return self.userListUpdater!
     })
 }

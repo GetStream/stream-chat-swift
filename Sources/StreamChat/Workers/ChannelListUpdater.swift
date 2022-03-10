@@ -47,9 +47,7 @@ class ChannelListUpdater: Worker {
                     payload: channelListPayload,
                     query: updatedQuery,
                     initialActions: { session in
-                        guard let queryDTO = session.channelListQuery(filterHash: updatedQuery.filter.filterHash) else {
-                            throw ClientError("Channel List Query \(query) is not in database")
-                        }
+                        guard let queryDTO = session.channelListQuery(filterHash: updatedQuery.filter.filterHash) else { return }
                         
                         let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
                         let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
@@ -80,14 +78,13 @@ class ChannelListUpdater: Worker {
     private func writeChannelListPayload(
         payload: ChannelListPayload,
         query: ChannelListQuery,
-        initialActions: ((DatabaseSession) throws -> Void)? = nil,
+        initialActions: ((DatabaseSession) -> Void)? = nil,
         completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         var channels: [ChatChannel] = []
         database.write { session in
-            try initialActions?(session)
-            let channelDTOs = try session.saveChannelList(payload: payload, query: query)
-            channels = channelDTOs.map { $0.asModel() }
+            initialActions?(session)
+            channels = try session.saveChannelList(payload: payload, query: query).map { $0.asModel() }
         } completion: { error in
             if let error = error {
                 log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")

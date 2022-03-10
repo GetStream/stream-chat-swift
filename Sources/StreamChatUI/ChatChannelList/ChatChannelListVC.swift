@@ -199,6 +199,9 @@ open class ChatChannelListVC: _ViewController,
     }
         
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        defer {
+            collectionView.deselectItem(at: indexPath, animated: true)
+        }
         guard let channel = getChannel(at: indexPath) else { return }
         router.showChannel(for: channel.cid)
     }

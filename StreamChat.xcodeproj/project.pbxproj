@@ -1445,6 +1445,8 @@
 		C152F60027C795A7003B4805 /* ChannelOnly-ChannelPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = C152F5FF27C795A7003B4805 /* ChannelOnly-ChannelPayload.json */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
+		C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
+		C173538F27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
 		C186BFA327A048690099CCA6 /* SyncRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA227A048690099CCA6 /* SyncRepository_Mock.swift */; };
 		C186BFA627A7F4E10099CCA6 /* AsyncOperation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */; };
 		C186BFA827A98FE10099CCA6 /* Spy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA727A98FE10099CCA6 /* Spy.swift */; };
@@ -3007,6 +3009,7 @@
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C152F5FF27C795A7003B4805 /* ChannelOnly-ChannelPayload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "ChannelOnly-ChannelPayload.json"; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
+		C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Array.swift"; sourceTree = "<group>"; };
 		C186BFA227A048690099CCA6 /* SyncRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRepository_Mock.swift; sourceTree = "<group>"; };
 		C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation_Tests.swift; sourceTree = "<group>"; };
 		C186BFA727A98FE10099CCA6 /* Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spy.swift; sourceTree = "<group>"; };
@@ -3785,6 +3788,7 @@
 				84CF9C72274D473D00BCDE2D /* EventBatcher.swift */,
 				84ABF69B274E66AA00EDDA68 /* EventBatcher_Mock.swift */,
 				84ABF699274E570600EDDA68 /* EventBatcher_Tests.swift */,
+				C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -7723,6 +7727,7 @@
 				DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */,
 				8836FFBB2540741D009FDF73 /* FlagUserPayload.swift in Sources */,
 				C1FC2F9F2742579D0062530F /* WebSocket.swift in Sources */,
+				C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,
 				84AA4E3626F264610056A684 /* EventDTOConverterMiddleware.swift in Sources */,
 				ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */,
 				799C945E247D7283001F1104 /* DatabaseContainer.swift in Sources */,
@@ -8259,6 +8264,7 @@
 				C121E876274544AF00023E4C /* CurrentUserDTO.swift in Sources */,
 				C121E877274544AF00023E4C /* MemberModelDTO.swift in Sources */,
 				C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */,
+				C173538F27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,
 				C121E879274544AF00023E4C /* ChannelReadDTO.swift in Sources */,
 				C121E87A274544AF00023E4C /* ChannelListQueryDTO.swift in Sources */,
 				C121E87B274544AF00023E4C /* MessageSearchQueryDTO.swift in Sources */,

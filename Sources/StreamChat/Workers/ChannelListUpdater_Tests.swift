@@ -155,7 +155,7 @@ class ChannelListUpdater_Tests: XCTestCase {
 
     func test_resetChannelsQuery_QueryNotInDatabase() throws {
         let userId = "UserId"
-        let query = ChannelListQuery(filter: .in(.members, values: [userId]))
+        var query = ChannelListQuery(filter: .in(.members, values: [userId]))
         try database.writeSynchronously { session in
             try session.saveUser(payload: .dummy(userId: userId))
         }
@@ -182,12 +182,15 @@ class ChannelListUpdater_Tests: XCTestCase {
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
-        XCTAssertEqual(
-            (receivedResult.error as? ClientError)?.localizedDescription,
-            "Channel List Query \(query) is not in database"
-        )
-        // If the query does not exist, the payload should not be saved in database
-        XCTAssertEqual(channels(for: query, database: database).count, 0)
+        XCTAssertNil(receivedResult.error)
+
+        // If the query does not exist, the payload should still be saved in database
+        XCTAssertEqual(channels(for: query, database: database).count, 1)
+
+        // Should reset pagination
+        query.pagination = Pagination(pageSize: 20, offset: 0)
+        let expectedBody = ["payload": query]
+        XCTAssertEqual(requests.first?.0.body, expectedBody.asAnyEncodable)
     }
 
     func test_resetChannelsQuery_shouldOnlyRemoveOutdatedAndNotWatchedChannels() throws {

@@ -278,6 +278,7 @@ class APIClient {
                     if operation.canRetry {
                         done(.retry)
                     } else {
+                        completion(result)
                         done(.continue)
                     }
                 case .success, .failure:
