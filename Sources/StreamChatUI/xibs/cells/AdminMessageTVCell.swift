@@ -45,6 +45,8 @@ class AdminMessageTVCell: UITableViewCell {
             lblDesc.text = getInitialAddSignerDesc()
         case .simpleGroupChat:
             lblDesc.text = getGroupChatAdminMessage()
+        case .privateChat:
+            lblDesc.text = getPrivateChatAdminMessage()
         default:
             lblDesc.text = ""
         }
@@ -86,6 +88,15 @@ class AdminMessageTVCell: UITableViewCell {
         descText.append("\nTry using the menu item to share with others.")
         return descText
     }
+
+    private func getPrivateChatAdminMessage() -> String {
+        if content?.isSentByCurrentUser ?? false {
+            return "You created this group. Friends nearby can join the group by entering the secret 4 digits."
+        } else {
+            return "\(content?.author.name ?? "") created this group. Friends nearby can join the group by entering the secret 4 digits."
+        }
+    }
+
     private func getGroupChatAdminMessage() -> String {
         if let members = content?.extraData.adminMessageMembers?.filter { $0.key != ChatClient.shared.currentUserId }.sorted(by: { $0.key > $1.key }) {
             if (content?.isSentByCurrentUser ?? false) {

@@ -158,7 +158,8 @@ class JoinPrivateGroupVC: UIViewController {
                         text: "",
                         pinning: nil,
                         attachments: [],
-                        extraData: ["messageType": .string(AdminMessageType.privateChat.rawValue)],
+                        extraData: ["adminMessage": .string(self.channelController?.channel?.createdBy?.name ?? ""),
+                            "messageType": .string(AdminMessageType.privateChat.rawValue)],
                         completion: nil)
                 }
                 self.fetchChannelMembers(id: self.channelController?.channel?.cid.id ?? "")
