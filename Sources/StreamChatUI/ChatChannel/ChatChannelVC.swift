@@ -853,7 +853,7 @@ open class ChatChannelVC:
                 let isAdmin = channelController?.channel?.createdBy?.id == ChatClient.shared.currentUserId
                 if isAdmin {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [invite,groupQR])
+                    actions.append(contentsOf: [invite])
                     if channelController?.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
@@ -863,7 +863,7 @@ open class ChatChannelVC:
                     return actions
                 } else {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [groupQR])
+                    actions.append(contentsOf: [])
                     if channelController?.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
