@@ -402,6 +402,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if let parentMessageId = parentMessageId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(message)
+            parentMessageDTO.replyCount += 1
         }
         
         return message

@@ -914,7 +914,10 @@ class MessageDTO_Tests: XCTestCase {
         
         // Create parent message
         try database.createMessage(id: messageId, cid: cid)
-        
+
+        // Get original reply count
+        let originalReplyCount = database.viewContext.message(id: messageId)?.replyCount ?? 0
+
         // Reply messageId
         var replyMessageId: MessageId?
                 
@@ -938,12 +941,13 @@ class MessageDTO_Tests: XCTestCase {
             // Get reply messageId
             replyMessageId = replyDTO.id
         }
-        
+
         // Get parent message
         let parentMessage = database.viewContext.message(id: messageId)
         
         // Assert reply linked to parent message
         XCTAssert(parentMessage?.replies.first!.id == replyMessageId)
+        XCTAssertEqual(parentMessage?.replyCount, originalReplyCount + 1)
     }
     
     func test_replies_linkedToParentMessage_onSavingMessagePayload() throws {

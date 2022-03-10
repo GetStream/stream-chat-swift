@@ -218,17 +218,46 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertFalse(threadPartMessage.isRootOfThread)
     }
 
-    func test_isRootOfThread_whenMessageIsRootOfThread_returnsTrue() {
+    func test_isRootOfThread_whenReplyCountIsNonZero_returnsTrue() {
         let threadRootMessage: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             parentMessageId: nil,
-            replyCount: 10
+            replyCount: 10,
+            latestReplies: []
         )
 
         XCTAssertTrue(threadRootMessage.isRootOfThread)
+    }
+
+    func test_isRootOfThread_whenRepliesIsNotEmpty_returnsTrue() {
+        let threadRootMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            parentMessageId: nil,
+            replyCount: 0,
+            latestReplies: [.mock(id: .unique, cid: .unique, text: .unique, author: .mock(id: .unique))]
+        )
+
+        XCTAssertTrue(threadRootMessage.isRootOfThread)
+    }
+
+    func test_isRootOfThread_whenNoReplyCountNorReplies_returnsFalse() {
+        let threadRootMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            parentMessageId: nil,
+            replyCount: 0,
+            latestReplies: []
+        )
+
+        XCTAssertFalse(threadRootMessage.isRootOfThread)
     }
 
     func test_isRootOfThread_whenMessageDoesNotBelongToThread_returnsFalse() {
