@@ -57,7 +57,7 @@ Appearance.default.formatters.userLastActivity = CustomUserLastActivityFormatter
 With this custom formatter we changed the last activity to display the relative date and the exact time which the user was last seen.
 
 ## Changing the channel name formatting
-You can also create a custom formatter that uses a combination of our default formatters with your custom logic. For example, you can create a custom `ChannelNameFormatter` that only uses custom logic when the member count is only 1, but for the rest of the cases it uses the default logic.
+You can also create a custom formatter that uses a combination of our default formatters with your custom logic. For example, you can create a custom `ChannelNameFormatter` that only uses custom logic when the member count is only 1, but for the rest of the cases, it uses the default logic.
 
 ```swift
 class CustomChannelNameFormatter: ChannelNameFormatter {
