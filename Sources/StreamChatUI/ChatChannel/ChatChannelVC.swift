@@ -856,7 +856,7 @@ open class ChatChannelVC:
                     var actions: [UIAction] = []
                     // To do:- will add in future release
                     //actions.append(contentsOf: [groupImage, search,invite,groupQR])
-                    actions.append(contentsOf: [invite,groupQR])
+                    actions.append(contentsOf: [invite, groupQR])
                     if channelController?.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
