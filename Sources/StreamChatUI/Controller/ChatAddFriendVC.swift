@@ -102,48 +102,27 @@ public class ChatAddFriendVC: ChatBaseVC {
         self.dismiss(animated: true, completion: nil)
     }
     @IBAction private func invitLinkAction(_ sender: UIButton) {
-        self.dismiss(animated: true, completion: nil)
-        guard let inviteLink = self.groupInviteLink else { return }
-        guard let shareInviteVC = ShareInviteLinkVC.instantiateController(storyboard: .GroupChat) as? ShareInviteLinkVC else {
-            return
-        }
-        shareInviteVC.groupInviteLink = self.groupInviteLink
-        shareInviteVC.channelController = self.channelController
-        shareInviteVC.selectedUsers = self.selectedUsers
-        shareInviteVC.callbackSelectedUser = { [weak self] users in
-            guard let weakSelf = self else { return }
-            weakSelf.selectedUsers = users
-            weakSelf.chatUserList.selectedUsers = users
-            weakSelf.chatUserList.reloadData()
-        }
-        let nav = UINavigationController(rootViewController: shareInviteVC)
-        nav.navigationBar.isHidden = true
-        nav.modalPresentationStyle = .overCurrentContext
-        nav.modalTransitionStyle = .crossDissolve
-        UIApplication.shared.getTopViewController()?.present(nav, animated: true, completion: nil)
-        UIApplication.shared.windows.first?.bringSubviewToFront(nav.view)
-        // To do
-//        let items = [URL(string: inviteLink)!]
-//        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
-//        present(ac, animated: true)
-//        let client = ChatClient.shared
-//        guard let currentUserId = ChatClient.shared.currentUserId else {
+        // TODO: Will add in future release
+//        self.dismiss(animated: true, completion: nil)
+//        guard let inviteLink = self.groupInviteLink else { return }
+//        guard let shareInviteVC = ShareInviteLinkVC.instantiateController(storyboard: .GroupChat) as? ShareInviteLinkVC else {
 //            return
 //        }
-//        for user in selectedUsers {
-//            do {
-//            let controller =  try ChatClient.shared.channelController(createDirectMessageChannelWith: [currentUserId,user.id], extraData: [:])
-//                controller.synchronize { error in
-//                    if error == nil {
-//                        controller.createNewMessage(text: inviteLink)
-//                    } else {
-//                        debugPrint(error?.localizedDescription)
-//                    }
-//                }
-//            } catch let error {
-//                debugPrint(error.localizedDescription)
-//            }
+//        shareInviteVC.groupInviteLink = self.groupInviteLink
+//        shareInviteVC.channelController = self.channelController
+//        shareInviteVC.selectedUsers = self.selectedUsers
+//        shareInviteVC.callbackSelectedUser = { [weak self] users in
+//            guard let weakSelf = self else { return }
+//            weakSelf.selectedUsers = users
+//            weakSelf.chatUserList.selectedUsers = users
+//            weakSelf.chatUserList.reloadData()
 //        }
+//        let nav = UINavigationController(rootViewController: shareInviteVC)
+//        nav.navigationBar.isHidden = true
+//        nav.modalPresentationStyle = .overCurrentContext
+//        nav.modalTransitionStyle = .crossDissolve
+//        UIApplication.shared.getTopViewController()?.present(nav, animated: true, completion: nil)
+//        UIApplication.shared.windows.first?.bringSubviewToFront(nav.view)
     }
     // swiftlint:disable redundant_type_annotation
     @IBAction private func btnDoneAction(_ sender: UIButton) {

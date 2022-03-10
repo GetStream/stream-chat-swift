@@ -777,7 +777,7 @@ open class ChatChannelVC:
             guard let self = self else {
                 return
             }
-            if self.channelController.channel?.type == .dao {
+            if self.channelController?.channel?.type == .dao {
                 self.shareAction(UIButton())
             } else {
                 self.showGroupQRAction()

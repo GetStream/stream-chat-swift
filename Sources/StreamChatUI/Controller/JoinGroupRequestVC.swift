@@ -22,6 +22,7 @@ public class JoinGroupRequestVC: UIViewController {
     @IBOutlet private weak var usersCollectionView: CollectionViewGroupUserList!
     // MARK: - VARIBALES
     public var channelController: ChatChannelController!
+    public var callbackUserJoined:(() -> Void)?
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +36,6 @@ public class JoinGroupRequestVC: UIViewController {
         tapGesture.numberOfTapsRequired = 1
         self.backgroundView.addGestureRecognizer(tapGesture)
         closeButton.setImage(Appearance.default.images.closePopup, for: .normal)
-        
         let users = channelController.channel?.lastActiveMembers as? [ChatUser] ?? []
         usersCollectionView.setupUsers(users: users)
         if users.isEmpty {
@@ -49,13 +49,15 @@ public class JoinGroupRequestVC: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     @IBAction func joinGroupButtonAction(_ sender: UIButton) {
-        channelController.addMembers(userIds: [ChatClient.shared.currentUserId!]) { error in
+        guard let userId = ChatClient.shared.currentUserId else { return }
+        channelController.addMembers(userIds: [userId]) { [weak self] error in
+            guard let weakSelf = self else { return }
             guard error == nil else {
                 Snackbar.show(text: "Something went wrong!")
                 return
             }
             Snackbar.show(text: "Group joined successfully")
-            self.dismiss(animated: true, completion: nil)
+            weakSelf.callbackUserJoined?()
         }
     }
 }

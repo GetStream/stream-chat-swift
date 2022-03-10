@@ -15,7 +15,7 @@ public class CollectionViewGroupUserList: UIView {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.itemSize = CGSize(width: 70, height: 70)
+        layout.itemSize = CGSize(width: 75, height: 75)
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
         layout.sectionInset = .zero
