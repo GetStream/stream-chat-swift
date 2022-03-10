@@ -202,8 +202,7 @@ extension String {
         let newString = self.trimmingCharacters(in: .whitespacesAndNewlines)
         if self.count > count * 2 {
             let prefix = String(newString.prefix(count))
-            let suffix = String(newString.suffix(count))
-            return "\(prefix)...\(suffix)"
+            return "\(prefix)..."
         }
         return self
     }
