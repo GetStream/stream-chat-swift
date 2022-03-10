@@ -1216,6 +1216,49 @@ class ChatClient_Tests: XCTestCase {
         let streamHeader = sessionHeaders!["X-Stream-Client"] as! String
         XCTAssert(streamHeader.starts(with: prefix))
     }
+    
+    #if os(iOS)
+    func test_sessionHeadersOnIphone_userAgent_correctValue() {
+        // Given
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        
+        let os = "iOS"
+        
+        // When
+        client.connectAnonymousUser()
+        
+        // Then
+        let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders
+        let streamHeader = sessionHeaders!["User-Agent"] as! String
+        XCTAssertTrue(streamHeader.contains(os), "Header should contain iOS Device/Version reference")
+    }
+    
+    #elseif os(macOS)
+    func test_sessionHeadersOnMac_userAgent_correctValue() {
+        // Given
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        
+        let os = "MacOS"
+        
+        // When
+        client.connectAnonymousUser()
+        
+        // Then
+        let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders
+        let streamHeader = sessionHeaders!["User-Agent"] as! String
+        XCTAssertTrue(streamHeader.contains(os), "Header should contain MacOS Device/Version reference")
+    }
+    #endif
 }
 
 class TestWorker: Worker {
