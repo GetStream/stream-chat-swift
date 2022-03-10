@@ -75,4 +75,4 @@ class CustomChannelNameFormatter: ChannelNameFormatter {
 Appearance.default.formatters.channelName = CustomChannelNameFormatter()
 ```
 
-In the example above, if the channel has only the current user as a member, it uses the name of the current user as the channel name, otherwise the default logic is used.
+In the example above, if the channel has only the current user as a member, it uses the name of the current user as the channel name, otherwise, the default logic is used.
