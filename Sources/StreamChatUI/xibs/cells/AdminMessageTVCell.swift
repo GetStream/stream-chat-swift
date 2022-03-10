@@ -12,6 +12,7 @@ import StreamChat
 public enum AdminMessageType: String {
     case daoAddInitialSigners
     case simpleGroupChat
+    case privateChat
     case none
 }
 

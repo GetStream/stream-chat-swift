@@ -43,6 +43,7 @@ class JoinPrivateGroupVC: UIViewController {
     @IBOutlet weak var lblOTP: UILabel!
     @IBOutlet weak var cvUserList: UICollectionView!
     @IBOutlet weak var btnJoinGroup: UIButton!
+    @IBOutlet weak var lblDescription: UILabel!
 
     // MARK: - View Life cycle
     override func viewDidLoad() {
@@ -87,14 +88,21 @@ class JoinPrivateGroupVC: UIViewController {
         btnBack.setTitle("", for: .normal)
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         lblOTP.text = passWord
-        lblOTP.textColor = Appearance.default.colorPalette.themeBlue
-        lblOTP.textDropShadow(color: Appearance.default.colorPalette.themeBlue)
+        lblOTP.textColor = .white
         lblOTP.setTextSpacingBy(value: 10)
         btnJoinGroup.backgroundColor = Appearance.default.colorPalette.themeBlue
-        btnJoinGroup.layer.cornerRadius = 6
+        btnJoinGroup.layer.cornerRadius = 20
         cvUserList?.register(UINib(nibName: PrivateGroupUsersCVCell.identifier, bundle: nil),
                              forCellWithReuseIdentifier: PrivateGroupUsersCVCell.identifier)
         filterChannels()
+
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = Appearance.default.images.handPointUp
+        let fullString = NSMutableAttributedString(string: "Nearby friends can join by entering the ")
+        fullString.append(NSAttributedString(attachment: imageAttachment))
+        fullString.append(NSAttributedString(string: " secret code."))
+        lblDescription.attributedText = fullString
+
     }
 
     private func handleNavigation() {
@@ -143,6 +151,15 @@ class JoinPrivateGroupVC: UIViewController {
             channelController?.synchronize { [weak self] error in
                 guard error == nil, let self = self else {
                     return
+                }
+                if self.channelController?.channel?.lastMessageAt == nil {
+                    var extraData = [String: RawJSON]()
+                    self.channelController?.createNewMessage(
+                        text: "",
+                        pinning: nil,
+                        attachments: [],
+                        extraData: ["messageType": .string(AdminMessageType.privateChat.rawValue)],
+                        completion: nil)
                 }
                 self.fetchChannelMembers(id: self.channelController?.channel?.cid.id ?? "")
             }

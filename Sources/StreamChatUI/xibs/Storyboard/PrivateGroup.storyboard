@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -10,6 +11,14 @@
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="SFProText-Regular.ttf">
+            <string>SFProText-Regular</string>
+        </array>
+        <array key="SFProText-Semibold.ttf">
+            <string>SFProText-Semibold</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--Private GroupOTPVC-->
         <scene sceneID="s0d-6b-0kx">
@@ -36,10 +45,10 @@
                                             <action selector="btnBackAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Bcw-Ur-HhN"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timeless Wallet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w9o-T6-bIg">
-                                        <rect key="frame" x="146" y="12" width="122.5" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
-                                        <nil key="textColor"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1Wallet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w9o-T6-bIg">
+                                        <rect key="frame" x="178.5" y="12.5" width="57" height="19.5"/>
+                                        <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="16"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="Tqe-Jb-2t5">
@@ -59,14 +68,14 @@
                                     <constraint firstAttribute="bottom" secondItem="BqQ-GM-80b" secondAttribute="bottom" id="tiH-TB-lrn"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Join a group chat with friends nearby by entering the required four digits" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e5H-Ij-oCq">
-                                <rect key="frame" x="20" y="138" width="374" height="43"/>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
-                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Join a group with friends nearby by entering the secret four digits" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e5H-Ij-oCq">
+                                <rect key="frame" x="20" y="138" width="374" height="38.5"/>
+                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="16"/>
+                                <color key="textColor" white="1" alpha="0.61344068877551017" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0fj-2e-AMQ" customClass="DPOTPView" customModule="StreamChatUI" customModuleProvider="target">
-                                <rect key="frame" x="127" y="241" width="160" height="25"/>
+                                <rect key="frame" x="127" y="236.5" width="160" height="25"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -100,13 +109,13 @@
                                         <real key="value" value="0.0"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="color" keyPath="tintColorTextField">
-                                        <color key="value" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="value" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="color" keyPath="backGroundColorFilledTextField">
                                         <color key="value" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="image" keyPath="backGroundImageTextField">
-                                        <imageReference key="value" image="circle.fill" catalog="system" symbolScale="medium"/>
+                                        <imageReference key="value" image="circle" catalog="system" symbolScale="medium"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="isBottomLineTextField" value="NO"/>
                                 </userDefinedRuntimeAttributes>
@@ -168,9 +177,9 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Join Private Group" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ncA-gg-yOX">
-                                        <rect key="frame" x="135" y="12" width="144" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
-                                        <nil key="textColor"/>
+                                        <rect key="frame" x="134.5" y="12.5" width="145" height="19.5"/>
+                                        <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="16"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
@@ -185,14 +194,14 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0814" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WOe-Q5-qPe">
-                                <rect key="frame" x="160" y="108" width="94.5" height="49"/>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="40"/>
-                                <color key="textColor" systemColor="systemYellowColor"/>
+                                <rect key="frame" x="157" y="108" width="100.5" height="49"/>
+                                <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="40"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                                 <color key="shadowColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </label>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="KP0-1K-V0o">
-                                <rect key="frame" x="0.0" y="165" width="414" height="622"/>
+                                <rect key="frame" x="25" y="275.5" width="364" height="509.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="Gbi-Nn-uQU">
                                     <size key="itemSize" width="138" height="138"/>
@@ -216,9 +225,9 @@
                                 </connections>
                             </collectionView>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9ms-PI-oeJ">
-                                <rect key="frame" x="40" y="804" width="334" height="50"/>
+                                <rect key="frame" x="40" y="802" width="334" height="40"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="lTu-YR-BOZ"/>
+                                    <constraint firstAttribute="height" constant="40" id="lTu-YR-BOZ"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -227,25 +236,45 @@
                                     <action selector="btnJoinGroupAction:" destination="jto-lA-8Ps" eventType="touchUpInside" id="6aq-4H-fWF"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nearby friends can join by entering the 􀤹 secret code. " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cno-bh-orJ">
+                                <rect key="frame" x="40" y="182" width="334" height="38.5"/>
+                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="16"/>
+                                <color key="textColor" white="1" alpha="0.61344068880000002" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="waX-Gg-jOF">
+                                <rect key="frame" x="30" y="249.5" width="354" height="1"/>
+                                <color key="backgroundColor" red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="1" id="TUr-cD-rps"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="tEh-RS-mul"/>
-                        <color key="backgroundColor" red="0.027450980392156862" green="0.039215686274509803" blue="0.050980392156862744" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0.027450980392156862" green="0.039215686274509803" blue="0.050980392156862744" alpha="0.40000000000000002" colorSpace="custom" customColorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="KP0-1K-V0o" firstAttribute="top" secondItem="WOe-Q5-qPe" secondAttribute="bottom" constant="8" id="2pv-9y-Xfn"/>
+                            <constraint firstItem="KP0-1K-V0o" firstAttribute="top" secondItem="waX-Gg-jOF" secondAttribute="bottom" constant="25" id="3T9-7t-XsG"/>
                             <constraint firstItem="WOe-Q5-qPe" firstAttribute="top" secondItem="9fR-EQ-HJQ" secondAttribute="bottom" constant="20" id="3eh-u9-K4O"/>
                             <constraint firstItem="2nz-6E-EM0" firstAttribute="leading" secondItem="w5e-7e-sDz" secondAttribute="leading" id="5Uo-WM-zbZ"/>
                             <constraint firstItem="tEh-RS-mul" firstAttribute="top" secondItem="2nz-6E-EM0" secondAttribute="bottom" id="7E5-z0-Nyw"/>
                             <constraint firstItem="tEh-RS-mul" firstAttribute="trailing" secondItem="9fR-EQ-HJQ" secondAttribute="trailing" id="7mu-d2-9mg"/>
-                            <constraint firstItem="tEh-RS-mul" firstAttribute="trailing" secondItem="KP0-1K-V0o" secondAttribute="trailing" id="87H-UE-89T"/>
+                            <constraint firstItem="tEh-RS-mul" firstAttribute="trailing" secondItem="KP0-1K-V0o" secondAttribute="trailing" constant="25" id="87H-UE-89T"/>
                             <constraint firstItem="WOe-Q5-qPe" firstAttribute="centerX" secondItem="tEh-RS-mul" secondAttribute="centerX" id="8rr-Br-jxd"/>
-                            <constraint firstItem="9ms-PI-oeJ" firstAttribute="bottom" secondItem="tEh-RS-mul" secondAttribute="bottom" constant="-8" id="EEd-pN-bCM"/>
+                            <constraint firstItem="9ms-PI-oeJ" firstAttribute="bottom" secondItem="tEh-RS-mul" secondAttribute="bottom" constant="-20" id="EEd-pN-bCM"/>
+                            <constraint firstItem="cno-bh-orJ" firstAttribute="centerX" secondItem="w5e-7e-sDz" secondAttribute="centerX" id="Hxt-z0-P2W"/>
+                            <constraint firstItem="cno-bh-orJ" firstAttribute="top" secondItem="WOe-Q5-qPe" secondAttribute="bottom" constant="25" id="IRV-L3-BYs"/>
                             <constraint firstItem="9ms-PI-oeJ" firstAttribute="leading" secondItem="tEh-RS-mul" secondAttribute="leading" constant="40" id="Iu4-BL-WvF"/>
                             <constraint firstItem="tEh-RS-mul" firstAttribute="trailing" secondItem="9ms-PI-oeJ" secondAttribute="trailing" constant="40" id="RWs-OA-yW4"/>
-                            <constraint firstItem="KP0-1K-V0o" firstAttribute="leading" secondItem="tEh-RS-mul" secondAttribute="leading" id="Ra1-8n-Fqe"/>
+                            <constraint firstItem="KP0-1K-V0o" firstAttribute="leading" secondItem="tEh-RS-mul" secondAttribute="leading" constant="25" id="Ra1-8n-Fqe"/>
                             <constraint firstAttribute="trailing" secondItem="2nz-6E-EM0" secondAttribute="trailing" id="RvD-ba-8hh"/>
                             <constraint firstItem="2nz-6E-EM0" firstAttribute="top" secondItem="w5e-7e-sDz" secondAttribute="top" id="TFU-xY-JI7"/>
                             <constraint firstItem="9fR-EQ-HJQ" firstAttribute="top" secondItem="2nz-6E-EM0" secondAttribute="bottom" id="Zt1-F7-yfx"/>
+                            <constraint firstItem="waX-Gg-jOF" firstAttribute="top" secondItem="cno-bh-orJ" secondAttribute="bottom" constant="29" id="bPh-qP-wsr"/>
+                            <constraint firstItem="tEh-RS-mul" firstAttribute="trailing" secondItem="waX-Gg-jOF" secondAttribute="trailing" constant="30" id="jvy-KN-EkR"/>
                             <constraint firstItem="9fR-EQ-HJQ" firstAttribute="leading" secondItem="w5e-7e-sDz" secondAttribute="leading" id="lU8-ZN-WlG"/>
+                            <constraint firstItem="waX-Gg-jOF" firstAttribute="leading" secondItem="tEh-RS-mul" secondAttribute="leading" constant="30" id="quI-qB-Vr8"/>
+                            <constraint firstAttribute="trailing" secondItem="cno-bh-orJ" secondAttribute="trailing" constant="40" id="rke-zv-6Sw"/>
+                            <constraint firstItem="cno-bh-orJ" firstAttribute="leading" secondItem="w5e-7e-sDz" secondAttribute="leading" constant="40" id="xGL-VC-bie"/>
                             <constraint firstItem="9ms-PI-oeJ" firstAttribute="top" secondItem="KP0-1K-V0o" secondAttribute="bottom" constant="17" id="ztr-yy-PQh"/>
                         </constraints>
                     </view>
@@ -253,6 +282,7 @@
                         <outlet property="btnBack" destination="erV-bJ-x8g" id="OpL-xU-O3f"/>
                         <outlet property="btnJoinGroup" destination="9ms-PI-oeJ" id="0Mu-fL-F8f"/>
                         <outlet property="cvUserList" destination="KP0-1K-V0o" id="eHM-Kp-AG8"/>
+                        <outlet property="lblDescription" destination="cno-bh-orJ" id="0R6-Md-eQo"/>
                         <outlet property="lblOTP" destination="WOe-Q5-qPe" id="zJ1-FI-zEz"/>
                     </connections>
                 </viewController>
@@ -336,15 +366,12 @@
     </scenes>
     <resources>
         <image name="back_circle" width="30" height="30"/>
-        <image name="circle.fill" catalog="system" width="128" height="121"/>
+        <image name="circle" catalog="system" width="128" height="121"/>
         <namedColor name="tabBackgroundColor">
             <color red="0.086274509803921567" green="0.086274509803921567" blue="0.086274509803921567" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemYellowColor">
-            <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -28,6 +28,8 @@ class PrivateGroupUsersCVCell: UICollectionViewCell {
             print(result)
         }
         lblUserName.text = data.name
+        imgAvatar.cornerRadius = 35
+        imgAvatar.layoutIfNeeded()
     }
 
 }

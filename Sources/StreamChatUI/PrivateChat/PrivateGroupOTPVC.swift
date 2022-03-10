@@ -42,7 +42,7 @@ open class PrivateGroupOTPVC: UIViewController {
         NotificationCenter.default.post(name: .hideTabbar, object: nil)
         checkLocationPermission()
         viewOTP.dpOTPViewDelegate = self
-        viewOTP.textColorTextField = Appearance.default.colorPalette.themeBlue
+        viewOTP.textColorTextField = .white
         viewSafeAreaHeader.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
         viewHeader.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
