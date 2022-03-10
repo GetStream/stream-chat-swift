@@ -7,10 +7,20 @@ import Foundation
 import StreamChatTestTools
 
 class LoggerMock: Logger, Spy {
+    var originalLogger: Logger?
     var recordedFunctions: [String] = []
 
     func injectMock() {
+        let logger = LogConfig.logger
+        if logger.self === Logger.self {
+            originalLogger = logger
+        }
         LogConfig.logger = self
+    }
+
+    func restoreLogger() {
+        guard let originalLogger = originalLogger else { return }
+        LogConfig.logger = originalLogger
     }
 
     var assertCalls: Int {

@@ -73,7 +73,8 @@ class MessageRepositoryTests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: 0.1)
 
-        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.failure(NSError()))
+        let error = NSError(domain: "", code: 1, userInfo: nil)
+        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.failure(error))
 
         wait(for: [expectation], timeout: 0.1)
 
@@ -146,10 +147,14 @@ class MessageRepositoryTests: XCTestCase {
     // MARK: saveSuccessfullySentMessage
 
     func test_saveSuccessfullySentMessage_noChannel() {
+        let loggerMock = LoggerMock()
+        loggerMock.injectMock()
         let id = MessageId.unique
         let payload = MessagePayload.dummy(messageId: id, authorUserId: .anonymous, channel: nil)
         let message = runSaveSuccessfullySentMessageAndWait(payload: payload)
         XCTAssertNil(message)
+        XCTAssertEqual(loggerMock.assertionFailureCalls, 1)
+        loggerMock.restoreLogger()
     }
 
     func test_saveSuccessfullySentMessage_channelPayload_sending() throws {
@@ -184,6 +189,8 @@ class MessageRepositoryTests: XCTestCase {
     }
 
     func test_saveSuccessfullySentMessage_channelPayload_newMessageWithoutChannel() throws {
+        let loggerMock = LoggerMock()
+        loggerMock.injectMock()
         let id = MessageId.unique
         let payload = MessagePayload.dummy(messageId: id, authorUserId: .anonymous, channel: nil)
 
@@ -193,6 +200,8 @@ class MessageRepositoryTests: XCTestCase {
         let dbMessage = self.message(for: id)
         XCTAssertNil(message)
         XCTAssertNil(dbMessage)
+        XCTAssertEqual(loggerMock.assertionFailureCalls, 1)
+        loggerMock.restoreLogger()
     }
 
     func test_saveSuccessfullySentMessage_channelPayload_newMessageWithChannel() throws {

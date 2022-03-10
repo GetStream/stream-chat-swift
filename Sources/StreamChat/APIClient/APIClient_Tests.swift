@@ -414,7 +414,7 @@ class APIClient_Tests: XCTestCase {
         decoder.decodeRequestResponse = .failure(encoderError)
 
         var result: Result<TestUser, Error>?
-        waitUntil(timeout: 0.2) { done in
+        waitUntil(timeout: 0.5) { done in
             apiClient.request(
                 endpoint: Endpoint<TestUser>.mock(),
                 completion: {
@@ -538,6 +538,7 @@ class APIClient_Tests: XCTestCase {
         XCTAssertEqual(loggerMock.assertionFailureCalls, 5)
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 5)
         XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: 5)
+        loggerMock.restoreLogger()
     }
 
     func test_whenInRecoveryMode_startingMultipleRecoveryRequestsAtTheSameTimeShouldRunThemInSerial() {
