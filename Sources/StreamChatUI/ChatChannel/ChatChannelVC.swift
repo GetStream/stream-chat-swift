@@ -761,11 +761,12 @@ open class ChatChannelVC:
             qrCodeVc.strContent = self.getGroupLink()
             self.pushWithAnimation(controller: qrCodeVc)
         }
-        // search
-        // To do:- will add in future release
-//        let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
-//            Snackbar.show(text: "Not available on alpha release")
-//        }
+        // hide for demo
+        /*
+         let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
+            Snackbar.show(text: "Not available on alpha release")
+        }
+         */
         // invite
         let invite = UIAction(title: "Invite", image: appearance.images.personBadgePlus) { [weak self] _ in
             guard let self = self else {
