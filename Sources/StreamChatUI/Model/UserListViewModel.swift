@@ -51,6 +51,7 @@ public class UserListViewModel: NSObject {
 }
 // MARK: - SORT METHODS
 extension UserListViewModel {
+    // TODO:  Will try improve filter user list in future
     public func sortAtoZ(filteredUsers: [ChatUser]) -> ChatUserListData {
         let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) && $0.name?.isBlank == false }.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
         let otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
