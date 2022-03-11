@@ -23,13 +23,18 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     public let client: ChatClient
     
     /// Copy of last search query made, used for getting next page.
-    public private(set) var query: UserListQuery?
+    private(set) var query: UserListQuery?
     
     /// The users matching the last query of this controller.
     private var _users: [ChatUser] = []
     public var userArray: [ChatUser] {
         setLocalDataFetchedStateIfNeeded()
         return _users
+    }
+
+    @available(*, deprecated, message: "Please, switch to `userArray: [ChatUser]`")
+    var users: LazyCachedMapCollection<ChatUser> {
+        .init(source: userArray, map: { $0 })
     }
 
     lazy var userQueryUpdater = self.environment

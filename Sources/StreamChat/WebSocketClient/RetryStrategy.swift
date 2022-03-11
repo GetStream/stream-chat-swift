@@ -6,7 +6,7 @@ import Foundation
 
 /// The type encapsulating the logic of computing delays for the failed actions that needs to be retried.
 protocol RetryStrategy {
-    /// Rerturns the # of consecutively failed retries.
+    /// Returns the # of consecutively failed retries.
     var consecutiveFailuresCount: Int { get }
     
     /// Increments the # of consecutively failed retries making the next delay longer.
