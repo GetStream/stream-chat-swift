@@ -54,12 +54,15 @@ public class ShareInviteLinkVC: UIViewController {
         acttivityIndicator.hidesWhenStopped = true
         acttivityIndicator.isHidden = true
     }
+    
     @objc func backgroundViewAction() {
         self.dismiss(animated: true, completion: nil)
     }
+    
     @IBAction func closeButtonAction(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
+    
     @IBAction func shareInviteButtonAction(_ sender: UIButton) {
         guard self.selectedUsers.count > 0  else {
             return
@@ -75,22 +78,21 @@ public class ShareInviteLinkVC: UIViewController {
             do {
                 self.dispatchGroupSendLink.enter()
             let controller =  try ChatClient.shared.channelController(createDirectMessageChannelWith: [currentUserId,user.id], extraData: [:])
-                controller.synchronize { error in
-                    self.dispatchGroupSendLink.leave()
+                controller.synchronize { [weak self] error in
+                    guard let weakSelf = self else { return }
+                    weakSelf.dispatchGroupSendLink.leave()
                     if error == nil {
                         controller.createNewMessage(text: inviteLink)
-                    } else {
-                        debugPrint(error?.localizedDescription)
                     }
                 }
             } catch let error {
                 self.dispatchGroupSendLink.leave()
-                debugPrint(error.localizedDescription)
             }
         }
-        dispatchGroupSendLink.notify(queue: .main) {
-            self.acttivityIndicator.stopAnimating()
-            self.dismiss(animated: true, completion: nil)
+        dispatchGroupSendLink.notify(queue: .main) { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.acttivityIndicator.stopAnimating()
+            weakSelf.dismiss(animated: true, completion: nil)
         }
     }
 }
