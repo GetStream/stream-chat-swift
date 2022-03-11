@@ -68,9 +68,7 @@ class JoinPrivateGroupVC: UIViewController {
                 guard let `self` = self else { return }
                 self.addMeInChannel(channelId: channelController.cid?.id ?? "") { error in
                     guard error == nil else {
-                        var userInfo = [String: Any]()
-                        userInfo["message"] = error?.localizedDescription
-                        NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
+                        Snackbar.show(text: "Something went wrong!")
                         self.viewJoinOverlay.isHidden = true
                         return
                     }
