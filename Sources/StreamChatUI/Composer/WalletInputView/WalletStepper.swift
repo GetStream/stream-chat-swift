@@ -208,6 +208,7 @@ class WalletStepper: UIView {
                 let maxOffset = (detailView.bounds.height / 3)
                 if abs(offset) > abs(maxOffset / 2) {
                     value = 0
+                    formatAmount()
                     if #available(iOS 13.0, *) {
                         hapticFeedback(style: .soft)
                     } else {
