@@ -43,6 +43,8 @@ class JoinPrivateGroupVC: UIViewController {
     @IBOutlet weak var lblOTP: UILabel!
     @IBOutlet weak var cvUserList: UICollectionView!
     @IBOutlet weak var btnJoinGroup: UIButton!
+    @IBOutlet weak var lblDescription: UILabel!
+    @IBOutlet weak var viewJoinOverlay: UIView!
 
     // MARK: - View Life cycle
     override func viewDidLoad() {
@@ -61,20 +63,24 @@ class JoinPrivateGroupVC: UIViewController {
             return
         }
         if userStatus == .joinGroup {
-            addMeInChannel(channelId: channelController.cid?.id ?? "") { error in
-                guard error == nil else {
-                    var userInfo = [String: Any]()
-                    userInfo["message"] = error?.localizedDescription
-                    NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
-                    return
-                }
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else {
+            viewJoinOverlay.isHidden = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                guard let `self` = self else { return }
+                self.addMeInChannel(channelId: channelController.cid?.id ?? "") { error in
+                    guard error == nil else {
+                        Snackbar.show(text: "Something went wrong!")
+                        self.viewJoinOverlay.isHidden = true
                         return
                     }
-                    self.handleNavigation()
-                }
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else {
+                            return
+                        }
+                        self.viewJoinOverlay.isHidden = true
+                        self.handleNavigation()
+                    }
 
+                }
             }
         } else {
             handleNavigation()
@@ -86,14 +92,21 @@ class JoinPrivateGroupVC: UIViewController {
         btnBack.setTitle("", for: .normal)
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         lblOTP.text = passWord
-        lblOTP.textColor = Appearance.default.colorPalette.themeBlue
-        lblOTP.textDropShadow(color: Appearance.default.colorPalette.themeBlue)
+        lblOTP.textColor = .white
         lblOTP.setTextSpacingBy(value: 10)
         btnJoinGroup.backgroundColor = Appearance.default.colorPalette.themeBlue
-        btnJoinGroup.layer.cornerRadius = 6
+        btnJoinGroup.layer.cornerRadius = 20
         cvUserList?.register(UINib(nibName: PrivateGroupUsersCVCell.identifier, bundle: nil),
                              forCellWithReuseIdentifier: PrivateGroupUsersCVCell.identifier)
         filterChannels()
+
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = Appearance.default.images.handPointUp
+        let joinString = NSMutableAttributedString(string: "Nearby friends can join by entering the ")
+        joinString.append(NSAttributedString(attachment: imageAttachment))
+        joinString.append(NSAttributedString(string: " secret code."))
+        lblDescription.attributedText = joinString
+        viewJoinOverlay.isHidden = true
     }
 
     private func handleNavigation() {
@@ -144,12 +157,22 @@ class JoinPrivateGroupVC: UIViewController {
             do {
                 self.channelController = try ChatClient.shared.channelController(
                     createChannelWithId: .init(type: .privateMessaging, id: groupId),
-                    name: "temp private group",
+                    name: "Unnamed private group",
                     members: [],
                     extraData: extraData)
                 self.channelController?.synchronize{ [weak self] error in
                     guard error == nil, let self = self else {
                         return
+                    }
+                    if self.channelController?.channel?.lastMessageAt == nil {
+                        var extraData = [String: RawJSON]()
+                        self.channelController?.createNewMessage(
+                            text: "",
+                            pinning: nil,
+                            attachments: [],
+                            extraData: ["adminMessage": .string(self.channelController?.channel?.createdBy?.name ?? ""),
+                                        "messageType": .string(AdminMessageType.privateChat.rawValue)],
+                            completion: nil)
                     }
                     self.fetchChannelMembers(id: self.channelController?.channel?.cid.id ?? "")
                 }

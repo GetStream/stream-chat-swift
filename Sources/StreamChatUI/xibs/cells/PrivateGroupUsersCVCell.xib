@@ -4,9 +4,13 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="SFProText-Regular.ttf">
+            <string>SFProText-Regular</string>
+        </array>
+    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -21,25 +25,25 @@
                         <rect key="frame" x="6" y="6" width="149" height="174"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9bK-CP-ruL">
-                                <rect key="frame" x="0.0" y="0.0" width="149" height="149"/>
-                                <color key="backgroundColor" systemColor="systemGreenColor"/>
+                                <rect key="frame" x="39.5" y="0.0" width="70" height="70"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="9bK-CP-ruL" secondAttribute="height" multiplier="1:1" id="6Po-Gy-4pC"/>
+                                    <constraint firstAttribute="width" constant="70" id="R1M-0d-ZVK"/>
+                                    <constraint firstAttribute="height" constant="70" id="jTU-ub-ofJ"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" alpha="0.65000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="hochung" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rTb-Pp-aKX">
-                                <rect key="frame" x="0.0" y="153" width="149" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <rect key="frame" x="0.0" y="74" width="149" height="100"/>
+                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="16"/>
+                                <color key="textColor" white="1" alpha="0.59816113945578231" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="9bK-CP-ruL" firstAttribute="centerX" secondItem="sUz-go-7PF" secondAttribute="centerX" id="1cc-mk-FEf"/>
                             <constraint firstItem="rTb-Pp-aKX" firstAttribute="leading" secondItem="sUz-go-7PF" secondAttribute="leading" id="1z7-se-pcS"/>
-                            <constraint firstItem="9bK-CP-ruL" firstAttribute="leading" secondItem="sUz-go-7PF" secondAttribute="leading" id="8rj-Jw-lPR"/>
                             <constraint firstAttribute="trailing" secondItem="rTb-Pp-aKX" secondAttribute="trailing" id="Fey-68-scc"/>
-                            <constraint firstAttribute="trailing" secondItem="9bK-CP-ruL" secondAttribute="trailing" id="ZZU-uS-Hec"/>
                             <constraint firstItem="rTb-Pp-aKX" firstAttribute="top" secondItem="9bK-CP-ruL" secondAttribute="bottom" constant="4" id="j98-T8-enC"/>
                             <constraint firstItem="9bK-CP-ruL" firstAttribute="top" secondItem="sUz-go-7PF" secondAttribute="top" id="xVg-d2-EPp"/>
                             <constraint firstAttribute="bottom" secondItem="rTb-Pp-aKX" secondAttribute="bottom" id="yn0-GI-N8n"/>
@@ -61,9 +65,4 @@
             <point key="canvasLocation" x="207.97101449275365" y="138.61607142857142"/>
         </collectionViewCell>
     </objects>
-    <resources>
-        <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-    </resources>
 </document>

@@ -41,8 +41,14 @@ public class TableViewCellChatUser: UITableViewCell {
 extension TableViewCellChatUser {
     public func config(user: ChatUser, selectedImage: UIImage?) {
         if let imageURL = user.imageURL {
-            Nuke.loadImage(with: imageURL, into: avatarView)
+            let options = ImageLoadingOptions(
+                placeholder: Appearance.default.images.userAvatarPlaceholder4,
+                transition: .fadeIn(duration: 0.1),
+                failureImage: Appearance.default.images.userAvatarPlaceholder4
+            )
+            Nuke.loadImage(with: imageURL, options: options, into: avatarView)
         }
+        avatarView.backgroundColor = .clear
         nameLabel.setChatTitleColor()
         descriptionLabel.setChatSubtitleBigColor()
         let name = (user.name ?? user.id)
