@@ -77,7 +77,7 @@ public extension Appearance {
         public var outgoingMessageColor: UIColor = .outgoingMessageColor
         public var incommingMessageColor: UIColor = .incommingMessageColor
         public var searchPlaceHolder: UIColor = .searchPlaceHolder
-        
+        public var placeHolderBalanceBG: UIColor = .placeHolderBalanceBG
     }
 }
 
@@ -97,6 +97,7 @@ private extension UIColor {
     static let outgoingMessageColor = mode(0x0B84FF, lightAlpha: 1.0, 0x0B84FF, darkAlpha: 1.0)
     static let incommingMessageColor = mode(0x3B3B3D, lightAlpha: 1.0, 0x3B3B3D, darkAlpha: 1.0)
     static let searchPlaceHolder = mode(0x878B95, lightAlpha: 1.0, 0x878B95, darkAlpha: 1.0)
+    static let placeHolderBalanceBG = mode(0x37393C, lightAlpha: 1.0, 0x37393C, darkAlpha: 1.0)
     
     static let streamBlack = mode(0x000000, 0xffffff)
     static let streamGray = mode(0x7a7a7a, 0x7a7a7a)

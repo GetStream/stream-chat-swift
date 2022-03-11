@@ -124,6 +124,12 @@
 		6E0D12EC27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */; };
 		6E1BA5C427C62A70004046D2 /* StreamChatBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */; };
 		6E1BA5C527C62A70004046D2 /* StreamChatBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */; };
+		6E297C0F27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E297C0D27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift */; };
+		6E297C1027CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E297C0D27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift */; };
+		6E297C1127CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E297C0E27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib */; };
+		6E297C1227CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E297C0E27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib */; };
+		6E297C5027CF963E002BE0AF /* StreamChatCustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E297C4F27CF963E002BE0AF /* StreamChatCustomButton.swift */; };
+		6E297C5127CF963E002BE0AF /* StreamChatCustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E297C4F27CF963E002BE0AF /* StreamChatCustomButton.swift */; };
 		6E41867B27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */; };
 		6E41867C27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */; };
 		6E41867D27C3CD630061E03F /* SFProText-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867627C3CD630061E03F /* SFProText-Semibold.ttf */; };
@@ -136,9 +142,17 @@
 		6E41868427C3CD630061E03F /* SFProDisplay-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867927C3CD630061E03F /* SFProDisplay-Bold.ttf */; };
 		6E41868527C3CD630061E03F /* SFProDisplay-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867A27C3CD630061E03F /* SFProDisplay-Heavy.ttf */; };
 		6E41868627C3CD630061E03F /* SFProDisplay-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867A27C3CD630061E03F /* SFProDisplay-Heavy.ttf */; };
+		6E4D4FD827C8D03B007FFE83 /* UserListDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D4FD727C8D03B007FFE83 /* UserListDataSource.swift */; };
+		6E4D4FD927C8D03B007FFE83 /* UserListDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D4FD727C8D03B007FFE83 /* UserListDataSource.swift */; };
+		6E4D4FDB27C8D927007FFE83 /* UserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D4FDA27C8D927007FFE83 /* UserListViewModel.swift */; };
+		6E4D4FDC27C8D927007FFE83 /* UserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D4FDA27C8D927007FFE83 /* UserListViewModel.swift */; };
 		6E92FD3A27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */; };
 		6E92FD3B27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */; };
 		6E92FD3C27BCEEAD00DA89B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779B12563FA6B00BA79B6 /* Assets.xcassets */; };
+		6EBB724127CD003D00FAF482 /* SkeletonView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724027CD003D00FAF482 /* SkeletonView.framework */; };
+		6EBB724227CD003D00FAF482 /* SkeletonView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724027CD003D00FAF482 /* SkeletonView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EBB724527CD005400FAF482 /* SkeletonView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724427CD005400FAF482 /* SkeletonView.framework */; };
+		6EBB724627CD005400FAF482 /* SkeletonView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724427CD005400FAF482 /* SkeletonView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6ED0BE5227C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */; };
 		6ED0BE5327C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */; };
 		6ED0BE5427C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ED0BE5127C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib */; };
@@ -1479,6 +1493,28 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6EBB724327CD003D00FAF482 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6EBB724227CD003D00FAF482 /* SkeletonView.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6EBB724727CD005400FAF482 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6EBB724627CD005400FAF482 /* SkeletonView.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		79200D48250140BB002F4EB1 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1647,13 +1683,20 @@
 		6E0D12E727B3CF85003DD1AA /* TableViewCellChatUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellChatUser.swift; sourceTree = "<group>"; };
 		6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewCellChatUser.xib; sourceTree = "<group>"; };
 		6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatBackButton.swift; sourceTree = "<group>"; };
+		6E297C0D27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellGroupDetailsAttachmentsList.swift; sourceTree = "<group>"; };
+		6E297C0E27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCellGroupDetailsAttachmentsList.xib; sourceTree = "<group>"; };
+		6E297C4F27CF963E002BE0AF /* StreamChatCustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatCustomButton.swift; sourceTree = "<group>"; };
 		6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFCompactText-Regular.ttf"; sourceTree = "<group>"; };
 		6E41867627C3CD630061E03F /* SFProText-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProText-Semibold.ttf"; sourceTree = "<group>"; };
 		6E41867727C3CD630061E03F /* SFProText-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProText-Regular.ttf"; sourceTree = "<group>"; };
 		6E41867827C3CD630061E03F /* SFProDisplay-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Regular.ttf"; sourceTree = "<group>"; };
 		6E41867927C3CD630061E03F /* SFProDisplay-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Bold.ttf"; sourceTree = "<group>"; };
 		6E41867A27C3CD630061E03F /* SFProDisplay-Heavy.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Heavy.ttf"; sourceTree = "<group>"; };
+		6E4D4FD727C8D03B007FFE83 /* UserListDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListDataSource.swift; sourceTree = "<group>"; };
+		6E4D4FDA27C8D927007FFE83 /* UserListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewModel.swift; sourceTree = "<group>"; };
 		6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatNavTitleLabel.swift; sourceTree = "<group>"; };
+		6EBB724027CD003D00FAF482 /* SkeletonView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SkeletonView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EBB724427CD005400FAF482 /* SkeletonView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SkeletonView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewHeaderCreateChat.swift; sourceTree = "<group>"; };
 		6ED0BE5127C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewHeaderCreateChat.xib; sourceTree = "<group>"; };
 		6ED3E44027B4D4C900A05C0A /* ChatBaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBaseVC.swift; sourceTree = "<group>"; };
@@ -2805,6 +2848,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EBB724527CD005400FAF482 /* SkeletonView.framework in Frameworks */,
 				799ADAAF2563FFA1006D43F9 /* Nuke in Frameworks */,
 				DB823107259C271C00E7D7FE /* SwiftyGif in Frameworks */,
 				CD72AFD4278DAEF20025999A /* EFQRCode in Frameworks */,
@@ -2863,6 +2907,7 @@
 			files = (
 				79A4AE112536EE5500C32A74 /* Starscream in Frameworks */,
 				BF5EA9D193842F9AAC139B29 /* Pods_StreamChat.framework in Frameworks */,
+				6EBB724127CD003D00FAF482 /* SkeletonView.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3057,6 +3102,8 @@
 				6ED3E45327B53D3400A05C0A /* AttachmentListContainerView.swift */,
 				6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */,
 				6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */,
+				6E297C4F27CF963E002BE0AF /* StreamChatCustomButton.swift */,
+				6E4D4FD727C8D03B007FFE83 /* UserListDataSource.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -4975,6 +5022,8 @@
 		8AD5ECA722E9B3C4005CFAC9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6EBB724427CD005400FAF482 /* SkeletonView.framework */,
+				6EBB724027CD003D00FAF482 /* SkeletonView.framework */,
 				437FC9E826D630860000223C /* UserNotifications.framework */,
 				437FC9EA26D630860000223C /* UserNotificationsUI.framework */,
 				573A57A55AE5060C741CB615 /* Pods_DemoApp.framework */,
@@ -5431,6 +5480,8 @@
 				6ED3E44E27B53AE200A05C0A /* AttachmentListCollectionViewCell.xib */,
 				6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */,
 				6ED0BE5127C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib */,
+				6E297C0D27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift */,
+				6E297C0E27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib */,
 			);
 			path = cells;
 			sourceTree = "<group>";
@@ -5449,6 +5500,7 @@
 			children = (
 				CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */,
 				CD72548C275F556100CD6444 /* RedPacket.swift */,
+				6E4D4FDA27C8D927007FFE83 /* UserListViewModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -5878,6 +5930,7 @@
 				790881F925432B7200896F03 /* Sources */,
 				790881FA25432B7200896F03 /* Frameworks */,
 				790881FB25432B7200896F03 /* Resources */,
+				6EBB724727CD005400FAF482 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -6009,6 +6062,7 @@
 				799C9417247D2F80001F1104 /* Sources */,
 				799C9418247D2F80001F1104 /* Frameworks */,
 				799C9419247D2F80001F1104 /* Resources */,
+				6EBB724327CD003D00FAF482 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -6301,6 +6355,7 @@
 				6E41868227C3CD630061E03F /* SFProDisplay-Regular.ttf in Resources */,
 				DBC8A4BB257E5BFB00B20A82 /* Localizable.stringsdict in Resources */,
 				6E41868027C3CD630061E03F /* SFProText-Regular.ttf in Resources */,
+				6E297C1227CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6372,6 +6427,7 @@
 				6E92FD3C27BCEEAD00DA89B6 /* Assets.xcassets in Resources */,
 				6E41868327C3CD630061E03F /* SFProDisplay-Bold.ttf in Resources */,
 				6E41868527C3CD630061E03F /* SFProDisplay-Heavy.ttf in Resources */,
+				6E297C1127CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib in Resources */,
 				6E41867B27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */,
 				6E41867F27C3CD630061E03F /* SFProText-Regular.ttf in Resources */,
 			);
@@ -7006,9 +7062,12 @@
 				F80BCA1E26304FEE00F2107B /* CloseButton.swift in Sources */,
 				22ADD682256C40410098EFEB /* ComposerView.swift in Sources */,
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
+				6E297C5127CF963E002BE0AF /* StreamChatCustomButton.swift in Sources */,
 				8850FE91256558B200C8D534 /* NavigationRouter.swift in Sources */,
 				883051C82630579D0069D731 /* ChatThreadArrowView.swift in Sources */,
+				6E297C1027CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift in Sources */,
 				ED3B5F05275A3A5A00DEAF0A /* RedPacketSentBubble.swift in Sources */,
+				6E4D4FD927C8D03B007FFE83 /* UserListDataSource.swift in Sources */,
 				E798D6D325FF69120002C3B9 /* SwipeableView.swift in Sources */,
 				E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */,
 				A3BB3FFF261DA74D00365496 /* ContainerStackView.swift in Sources */,
@@ -7100,6 +7159,7 @@
 				F87E8F5D264CFFA300D0F6AA /* LinkAttachmentViewInjector.swift in Sources */,
 				BDDD1E9F2632C4C900BA007B /* Components+SwiftUI.swift in Sources */,
 				F87A4866260B3516001653A8 /* SwiftUIViewRepresentable.swift in Sources */,
+				6E4D4FDC27C8D927007FFE83 /* UserListViewModel.swift in Sources */,
 				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				69736BF226413E5D00090B67 /* ChatMessageListScrollOverlayView.swift in Sources */,
 				DBC8A564258113F700B20A82 /* ChatThreadVC.swift in Sources */,
@@ -7487,6 +7547,7 @@
 				8AE335A924FCF999002B6677 /* InternetConnection.swift in Sources */,
 				6EEFB79727BB83AD007224C2 /* PanModalAnimator.swift in Sources */,
 				F6ED5F7A2502791F005D7327 /* MissingEventsPayload.swift in Sources */,
+				6E297C5027CF963E002BE0AF /* StreamChatCustomButton.swift in Sources */,
 				792A4F40247FFDE700EAF71D /* Data+Gzip.swift in Sources */,
 				88EA9AEE254721C0007EE76B /* MessageReactionType.swift in Sources */,
 				79E2B84024CAC8D60024752F /* ListDatabaseObserver.swift in Sources */,
@@ -7496,6 +7557,7 @@
 				7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
 				79B5517524E595CC00CE9FEC /* CurrentUserPayloads.swift in Sources */,
+				6E4D4FDB27C8D927007FFE83 /* UserListViewModel.swift in Sources */,
 				8A0CC9E524C5FEA900705CF9 /* MemberEvents.swift in Sources */,
 				DA4AA3BA2502731900FAAF6E /* Publisher+Extensions.swift in Sources */,
 				881506EC258212BF0013935B /* MultipartFormData.swift in Sources */,
@@ -7667,6 +7729,7 @@
 				ADF34F8A25CDC58900AD637C /* ConnectionController.swift in Sources */,
 				79A0E9BB2498C31300E9BD50 /* TypingStartCleanupMiddleware.swift in Sources */,
 				790A4C42252DD377001F4A23 /* DeviceEndpoints.swift in Sources */,
+				6E297C0F27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift in Sources */,
 				797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */,
 				F6FF1DA624FD17B400151735 /* MessageController.swift in Sources */,
 				E7AD954F25D536AA00076DC3 /* SystemEnvironment+Version.swift in Sources */,
@@ -7689,6 +7752,7 @@
 				F6CCA24D251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift in Sources */,
 				8A618E4524D19D510003D83C /* WebSocketPingController.swift in Sources */,
 				8A62704E24B8660A0040BFD6 /* EventType.swift in Sources */,
+				6E4D4FD827C8D03B007FFE83 /* UserListDataSource.swift in Sources */,
 				F65D9091250A5989000B8CEB /* WebSocketConnectEndpoint.swift in Sources */,
 				DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */,
 				6E92FD3A27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */,

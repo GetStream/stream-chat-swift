@@ -57,6 +57,7 @@ public class ChatAlertVC: UIViewController {
         tapGesture.numberOfTapsRequired = 1
         self.backgroundView.addGestureRecognizer(tapGesture)
     }
+    // TO DO
     @objc func backgroundViewAction() {
         //self.dismiss(animated: true, completion: nil)
     }
@@ -65,6 +66,7 @@ public class ChatAlertVC: UIViewController {
         self.bCallbackActionHandler?()
         self.cancelButtonAction(sender)
     }
+    
     @IBAction func cancelButtonAction(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }

@@ -44,8 +44,10 @@ public class NameGroupViewController: ChatBaseVC {
         groupDescriptionField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         nameField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
         groupDescriptionField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
-        groupDescriptionField.delegate = self
         nameField.delegate = self
+        groupDescriptionField.delegate = self
+        nameField.tintColor = Appearance.default.colorPalette.statusColorBlue
+        groupDescriptionField.tintColor = Appearance.default.colorPalette.statusColorBlue
         nameField.becomeFirstResponder()
         nameContainerView.layer.cornerRadius = 6.0
         descriptionContainerView.layer.cornerRadius = 6.0
@@ -83,7 +85,7 @@ public class NameGroupViewController: ChatBaseVC {
             self.btnNext?.isHidden = false
         }
     }
-    //
+    
     @IBAction func backBtnTapped(_ sender: UIButton) {
         popWithAnimation()
     }
@@ -99,7 +101,6 @@ public class NameGroupViewController: ChatBaseVC {
             return
         }
         do {
-            
             let channelController = try ChatClient.shared.channelController(
                 createChannelWithId: .init(type: .messaging, id: String(UUID().uuidString.prefix(10))),
                 name: name,
@@ -136,6 +137,10 @@ public class NameGroupViewController: ChatBaseVC {
 }
 // MARK: - UITextFieldDelegate
 extension NameGroupViewController: UITextFieldDelegate {
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == nameField {
             let maxLength = 40
@@ -165,6 +170,7 @@ extension NameGroupViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         selectedUsers.count
     }
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let reuseID = TableViewCellChatUser.reuseId
         guard let cell = tableView.dequeueReusableCell(
@@ -173,16 +179,16 @@ extension NameGroupViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         let user: ChatUser = selectedUsers[indexPath.row]
-        cell.config(user: user,
-                        selectedImage: nil,
-                        avatarBG: view.tintColor)
+        cell.config(user: user,selectedImage: nil)
         cell.backgroundColor = .clear
         return cell
 
     }
+    
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
     public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }

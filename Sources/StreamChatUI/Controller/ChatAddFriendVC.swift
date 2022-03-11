@@ -11,7 +11,6 @@ import StreamChatUI
 import UIKit
 
 public class ChatAddFriendVC: ChatBaseVC {
-    
     public enum SelectionType {
         case addFriend,inviteUser
         var title: String {
@@ -74,13 +73,14 @@ public class ChatAddFriendVC: ChatBaseVC {
         tableviewContainerView.updateChildViewContraint(childView: chatUserList.view)
         chatUserList.delegate = self
         chatUserList.userSelectionType = .addFriend
-        chatUserList.existingUsers = existingUsers
-        chatUserList.curentSortType = .sortByAtoZ
-        chatUserList.fetchUserList()
+        chatUserList.sortType = .sortByAtoZ
+        chatUserList.viewModel.existingUsers = existingUsers
+        chatUserList.viewModel.fetchUserList()
         viewContainerLeadingConst.constant = 5
         viewContainerTrailingConst.constant = 5
         setupUI()
     }
+    
     private func setupUI() {
         let cornorRadius = viewContainerLeadingConst.constant > 0 ? 32 : 0
         
@@ -91,20 +91,21 @@ public class ChatAddFriendVC: ChatBaseVC {
     }
     
     @objc private func textDidChange(_ sender: UITextField) {
-        self.chatUserList.searchDataUsing(searchString: sender.text)
+        self.chatUserList.viewModel.searchDataUsing(searchString: sender.text)
     }
-    //
     // MARK: - Actions
-    //
     @IBAction private func btnBackAction(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
+    
     @IBAction private func invitLinkAction(_ sender: UIButton) {
-        if self.selectedUsers.count > 0 {
-            self.bCallbackInviteFriend?(self.selectedUsers)
-            self.btnBackAction(sender)
-        }
+        // TO DO
+//        if self.selectedUsers.count > 0 {
+//            self.bCallbackInviteFriend?(self.selectedUsers)
+//            self.btnBackAction(sender)
+//        }
     }
+    
     // swiftlint:disable redundant_type_annotation
     @IBAction private func btnDoneAction(_ sender: UIButton) {
         if self.selectedUsers.count > 0 {
@@ -125,9 +126,8 @@ extension ChatAddFriendVC: UITextFieldDelegate {
 }
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
-    public func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {}
     public func chatUserDidSelect() {
-        self.selectedUsers = self.chatUserList.selectedUsers
+        self.selectedUsers = self.chatUserList.viewModel.selectedUsers
         self.btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
         self.btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
     }
