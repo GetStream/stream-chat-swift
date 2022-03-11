@@ -23,6 +23,7 @@ open class PrivateGroupOTPVC: UIViewController {
     @IBOutlet weak var viewHeader: UIView!
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var viewOTP: DPOTPView!
+    @IBOutlet weak var lblOtpDetails: UILabel!
     @IBOutlet weak var indicator: UIActivityIndicatorView!
 
     // MARK: - view life cycle
@@ -60,6 +61,7 @@ open class PrivateGroupOTPVC: UIViewController {
                 }
             }
         }
+        lblOtpDetails.text = "Join a group with friends nearby by \n entering the secret four digits"
     }
 
     private func checkLocationPermission() {
