@@ -5,17 +5,23 @@
 import StreamChat
 import UIKit
 import StreamChatUI
+
 extension Notification.Name {
     public static let showTabbar = Notification.Name("kStreamChatshowTabbar")
     public static let hideTabbar = Notification.Name("kStreamHideTabbar")
     public static let showDaoShareScreen = Notification.Name("showDaoShareScreen")
     public static let hidePaymentOptions = Notification.Name("kStreamHidePaymentOptions")
     public static let showFriendScreen = Notification.Name("showFriendScreen")
+    public static let generalGroupInviteLink = Notification.Name("kGeneralGoupeInviteLink")
 }
 
 public let kExtraDataChannelDescription = "channelDescription"
 public let kExtraDataOneToOneChat = "OneToOneChat"
 public let kExtraDataIsGroupChat = "DataIsGroupChat"
+
+public let kInviteGroupID = "kInviteGroupID"
+public let kInviteExpiryDate = "kInviteExpiryDate"
+
 
 /// Controller responsible for displaying the channel messages.
 @available(iOSApplicationExtension, unavailable)
@@ -341,6 +347,7 @@ open class ChatChannelVC:
         guard let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
             return
         }
+        controller.groupInviteLink = self.getGroupLink()
         controller.channelController = channelController
         self.pushWithAnimation(controller: controller)
     }
@@ -362,12 +369,14 @@ open class ChatChannelVC:
         NotificationCenter.default.post(name: .showDaoShareScreen, object: nil, userInfo: userInfo)
     }
     @objc func addFriendAction(_ sender: Any) {
+        guard let channelVC = self.channelController else { return }
         guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
-        controller.existingUsers = self.channelController?.channel?.lastActiveMembers as? [ChatUser] ?? []
-        
+        controller.groupInviteLink = self.getGroupLink()
+        controller.existingUsers = channelVC.channel?.lastActiveMembers as? [ChatUser] ?? []
+        controller.channelController = channelVC
         controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
@@ -469,12 +478,15 @@ open class ChatChannelVC:
     }
     // MARK: - Menu actions
     public func inviteUserAction() {
+        guard let channelVC = self.channelController else { return }
         guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
+        controller.channelController = channelVC
+        controller.groupInviteLink = self.getGroupLink()
         controller.selectionType = .inviteUser
-        controller.existingUsers = self.channelController?.channel?.lastActiveMembers as? [ChatUser] ?? []
+        controller.existingUsers = channelVC.channel?.lastActiveMembers as? [ChatUser] ?? []
         controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
@@ -489,6 +501,16 @@ open class ChatChannelVC:
             })
         }
         presentPanModal(controller)
+    }
+    public func showGroupQRAction() {
+        DispatchQueue.main.async { [weak self] in
+            guard let weakSelf = self else { return }
+            guard let qrCodeVc: GroupQRCodeVC = GroupQRCodeVC.instantiateController(storyboard: .PrivateGroup) else {
+                return
+            }
+            qrCodeVc.strContent = weakSelf.getGroupLink()
+            weakSelf.pushWithAnimation(controller: qrCodeVc)
+        }
     }
     
     public func leaveGroupAction() {
@@ -778,7 +800,12 @@ open class ChatChannelVC:
             guard let self = self else {
                 return
             }
-            self.shareAction(UIButton())
+            if self.channelController?.channel?.type == .dao {
+                self.shareAction(UIButton())
+            } else {
+                self.showGroupQRAction()
+            }
+            
         }
         // mute
         let mute = UIAction(title: "Mute", image: appearance.images.mute) { _ in

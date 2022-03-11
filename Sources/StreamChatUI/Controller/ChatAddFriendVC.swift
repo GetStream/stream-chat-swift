@@ -33,6 +33,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     @IBOutlet private var viewContainerLeadingConst: NSLayoutConstraint!
     @IBOutlet private var viewContainerTrailingConst: NSLayoutConstraint!
     // MARK: - VARIABLES
+    public var channelController: ChatChannelController!
     public var selectionType = ChatAddFriendVC.SelectionType.addFriend
     public lazy var chatUserList: ChatUserListVC = {
         let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
@@ -44,7 +45,8 @@ public class ChatAddFriendVC: ChatBaseVC {
     public var existingUsers = [ChatUser]()
     public var bCallbackAddFriend:(([ChatUser]) -> Void)?
     public var bCallbackInviteFriend:(([ChatUser]) -> Void)?
-    var isShortFormEnabled = true
+    public var groupInviteLink: String?
+    private var isShortFormEnabled = true
     private lazy var panModelState: PanModalPresentationController.PresentationState = .shortForm
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
@@ -99,11 +101,27 @@ public class ChatAddFriendVC: ChatBaseVC {
     }
     
     @IBAction private func invitLinkAction(_ sender: UIButton) {
-        // TO DO
-//        if self.selectedUsers.count > 0 {
-//            self.bCallbackInviteFriend?(self.selectedUsers)
-//            self.btnBackAction(sender)
+        // TODO: Will add in future release
+//        self.dismiss(animated: true, completion: nil)
+//        guard let inviteLink = self.groupInviteLink else { return }
+//        guard let shareInviteVC = ShareInviteLinkVC.instantiateController(storyboard: .GroupChat) as? ShareInviteLinkVC else {
+//            return
 //        }
+//        shareInviteVC.groupInviteLink = self.groupInviteLink
+//        shareInviteVC.channelController = self.channelController
+//        shareInviteVC.selectedUsers = self.selectedUsers
+//        shareInviteVC.callbackSelectedUser = { [weak self] users in
+//            guard let weakSelf = self else { return }
+//            weakSelf.selectedUsers = users
+//            weakSelf.chatUserList.selectedUsers = users
+//            weakSelf.chatUserList.reloadData()
+//        }
+//        let nav = UINavigationController(rootViewController: shareInviteVC)
+//        nav.navigationBar.isHidden = true
+//        nav.modalPresentationStyle = .overCurrentContext
+//        nav.modalTransitionStyle = .crossDissolve
+//        UIApplication.shared.getTopViewController()?.present(nav, animated: true, completion: nil)
+//        UIApplication.shared.windows.first?.bringSubviewToFront(nav.view)
     }
     
     // swiftlint:disable redundant_type_annotation

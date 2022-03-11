@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="SFProText-Regular.ttf">
+            <string>SFProText-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="CollectionViewCellGroupUsers" customModule="StreamChatUI" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="172" height="174"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="172" height="174"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cjy-97-Qxu">
+                        <rect key="frame" x="0.0" y="0.0" width="172" height="174"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="K6Z-cZ-z0q" customClass="AvatarView" customModule="StreamChatUI">
+                                <rect key="frame" x="66" y="0.0" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="qSC-q1-IR5"/>
+                                    <constraint firstAttribute="width" secondItem="K6Z-cZ-z0q" secondAttribute="height" multiplier="1:1" id="tEZ-bG-ghZ"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="57X-8l-x5Q">
+                                <rect key="frame" x="0.0" y="48" width="172" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="3op-0j-XPa"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="13"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_UserDelete" translatesAutoresizingMaskIntoConstraints="NO" id="TCZ-Px-ZbC">
+                                <rect key="frame" x="97" y="5" width="19" height="19"/>
+                                <color key="tintColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="19" id="k5A-w2-lFl"/>
+                                    <constraint firstAttribute="width" secondItem="TCZ-Px-ZbC" secondAttribute="height" multiplier="1:1" id="tcs-Du-STF"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="K6Z-cZ-z0q" firstAttribute="centerX" secondItem="cjy-97-Qxu" secondAttribute="centerX" id="3pD-f0-4bN"/>
+                            <constraint firstItem="K6Z-cZ-z0q" firstAttribute="top" secondItem="cjy-97-Qxu" secondAttribute="top" id="EQ1-YY-aPo"/>
+                            <constraint firstItem="TCZ-Px-ZbC" firstAttribute="top" secondItem="cjy-97-Qxu" secondAttribute="top" constant="5" id="MbT-AW-6uM"/>
+                            <constraint firstItem="57X-8l-x5Q" firstAttribute="top" secondItem="K6Z-cZ-z0q" secondAttribute="bottom" constant="8" id="RBD-Zh-je1"/>
+                            <constraint firstAttribute="trailing" secondItem="57X-8l-x5Q" secondAttribute="trailing" id="SCM-au-y5t"/>
+                            <constraint firstItem="TCZ-Px-ZbC" firstAttribute="trailing" secondItem="K6Z-cZ-z0q" secondAttribute="trailing" constant="10" id="cDN-k8-jU2"/>
+                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="57X-8l-x5Q" secondAttribute="bottom" constant="8" id="drs-qV-pIo"/>
+                            <constraint firstItem="57X-8l-x5Q" firstAttribute="leading" secondItem="cjy-97-Qxu" secondAttribute="leading" id="mmg-Ow-ldP"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstItem="cjy-97-Qxu" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="Fn5-kg-v05"/>
+                <constraint firstItem="cjy-97-Qxu" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="iIB-lb-XEs"/>
+                <constraint firstAttribute="trailing" secondItem="cjy-97-Qxu" secondAttribute="trailing" id="qDA-w4-HJe"/>
+                <constraint firstAttribute="bottom" secondItem="cjy-97-Qxu" secondAttribute="bottom" id="wLd-mW-qhb"/>
+            </constraints>
+            <size key="customSize" width="172" height="174"/>
+            <connections>
+                <outlet property="avatarView" destination="K6Z-cZ-z0q" id="amm-V8-PF4"/>
+                <outlet property="nameLabel" destination="57X-8l-x5Q" id="HaQ-NE-uuk"/>
+                <outlet property="removeUserButton" destination="TCZ-Px-ZbC" id="xfb-Kb-lq7"/>
+            </connections>
+            <point key="canvasLocation" x="220.28985507246378" y="105.13392857142857"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="chat_UserDelete" width="17" height="18"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

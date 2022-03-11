@@ -100,21 +100,32 @@ public class NameGroupViewController: ChatBaseVC {
             Snackbar.show(text: "Please enter valid group name")
             return
         }
-        do {
-            let channelController = try ChatClient.shared.channelController(
-                createChannelWithId: .init(type: .messaging, id: String(UUID().uuidString.prefix(10))),
-                name: name,
-                members: Set(selectedUsers.map(\.id)), extraData: [kExtraDataChannelDescription: .string(self.groupDescriptionField.text ?? "")])
-            
-            channelController.synchronize { [weak self] error in
-                guard let weakSelf = self else {
-                    return
-                }
-                if let error = error {
-                    DispatchQueue.main.async {
-                        Snackbar.show(text: error.localizedDescription)
+        let groupId = String(UUID().uuidString)
+        let encodeGroupId = groupId.base64Encoded.string ?? ""
+        let expiryDate = String(Date().withAddedHours(hours: 24).ticks).base64Encoded.string ?? ""
+        var extraData: [String: RawJSON] = [:]
+        extraData[kExtraDataChannelDescription] = RawJSON.string(self.groupDescriptionField.text ?? "")
+        // Deeplink url Callback
+        ChatClientConfiguration.shared.requestedGeneralGroupDynamicLink = { [weak self] url in
+            guard let weakSelf = self else { return }
+            guard let groupInviteLink = url else {
+                return
+            }
+            ChatClientConfiguration.shared.requestedGeneralGroupDynamicLink = nil
+            extraData["joinLink"] = .string(groupInviteLink.absoluteString)
+            do {
+                let channelController = try ChatClient.shared.channelController(
+                    createChannelWithId: .init(type: .messaging, id: groupId),
+                    name: name,
+                    members: Set(weakSelf.selectedUsers.map(\.id)), extraData: extraData)
+                // Channel synchronize
+                channelController.synchronize { [weak self] error in
+                    guard let weakSelf = self , error == nil else {
+                        DispatchQueue.main.async {
+                            Snackbar.show(text: "something went wrong!")
+                        }
+                        return
                     }
-                } else {
                     DispatchQueue.main.async {
                         let chatChannelVC = ChatChannelVC.init()
                         chatChannelVC.isChannelCreated = true
@@ -129,10 +140,13 @@ public class NameGroupViewController: ChatBaseVC {
                         }
                     }
                 }
+            } catch {
+                Snackbar.show(text: "Error while creating the channel")
             }
-        } catch {
-            Snackbar.show(text: "Error when creating the channel")
         }
+        // Fetching invite link
+        let parameter = [kInviteGroupID: encodeGroupId, kInviteExpiryDate: expiryDate]
+        NotificationCenter.default.post(name: .generalGroupInviteLink, object: nil, userInfo: parameter)
     }
 }
 // MARK: - UITextFieldDelegate
@@ -141,6 +155,7 @@ extension NameGroupViewController: UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
+    
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == nameField {
             let maxLength = 40
@@ -206,10 +221,12 @@ extension NameGroupViewController: UITableViewDataSource {
 }
 // MARK: - Generic View Class
 class ViewWithRadius: UIView {}
+// MARK: - UITextField extension
 extension UITextField {
     open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return true
     }
+    
     public func setAttributedPlaceHolder(placeHolder: String) {
         let attributeString = [
             NSAttributedString.Key.foregroundColor: Appearance.default.colorPalette.searchPlaceHolder,

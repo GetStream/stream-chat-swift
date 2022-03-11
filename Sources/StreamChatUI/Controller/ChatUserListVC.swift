@@ -264,6 +264,11 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             cell.showShimmer()
             return cell
         default:
+            guard self.sectionWiseList.indices.contains(indexPath.section) else {
+                let cell = UITableViewCell.init(frame: .zero)
+                cell.backgroundColor = .clear
+                return UITableViewCell.init(frame: .zero)
+            }
             let sectionType = sectionWiseList[indexPath.section].sectionType
             switch sectionType {
             case .createChatHeader:
