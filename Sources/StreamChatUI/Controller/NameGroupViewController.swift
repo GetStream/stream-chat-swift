@@ -125,28 +125,28 @@ public class NameGroupViewController: ChatBaseVC {
                             Snackbar.show(text: "something went wrong!")
                         }
                         return
-                        DispatchQueue.main.async {
-                            let chatChannelVC = ChatChannelVC.init()
-                            chatChannelVC.isChannelCreated = true
-                            chatChannelVC.channelController = channelController
-                            weakSelf.pushWithAnimation(controller: chatChannelVC)
-                            let navControllers = weakSelf.navigationController?.viewControllers ?? []
-                            for (index,navController) in navControllers.enumerated() {
-                                if index == 0 || navController.isKind(of: ChatChannelVC.self) {
-                                    continue
-                                }
-                                navController.removeFromParent()
+                    }
+                    DispatchQueue.main.async {
+                        let chatChannelVC = ChatChannelVC.init()
+                        chatChannelVC.isChannelCreated = true
+                        chatChannelVC.channelController = channelController
+                        weakSelf.pushWithAnimation(controller: chatChannelVC)
+                        let navControllers = weakSelf.navigationController?.viewControllers ?? []
+                        for (index,navController) in navControllers.enumerated() {
+                            if index == 0 || navController.isKind(of: ChatChannelVC.self) {
+                                continue
                             }
+                            navController.removeFromParent()
                         }
                     }
                 }
             } catch {
                 Snackbar.show(text: "Error while creating the channel")
             }
-            // Fetching invite link
-            let parameter = [kInviteGroupID: encodeGroupId, kInviteExpiryDate: expiryDate]
-            NotificationCenter.default.post(name: .generalGroupInviteLink, object: nil, userInfo: parameter)
         }
+        // Fetching invite link
+        let parameter = [kInviteGroupID: encodeGroupId, kInviteExpiryDate: expiryDate]
+        NotificationCenter.default.post(name: .generalGroupInviteLink, object: nil, userInfo: parameter)
     }
 }
 // MARK: - UITextFieldDelegate
