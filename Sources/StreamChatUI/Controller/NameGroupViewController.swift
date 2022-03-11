@@ -125,28 +125,28 @@ public class NameGroupViewController: ChatBaseVC {
                             Snackbar.show(text: "something went wrong!")
                         }
                         return
-                    DispatchQueue.main.async {
-                        let chatChannelVC = ChatChannelVC.init()
-                        chatChannelVC.isChannelCreated = true
-                        chatChannelVC.channelController = channelController
-                        weakSelf.pushWithAnimation(controller: chatChannelVC)
-                        let navControllers = weakSelf.navigationController?.viewControllers ?? []
-                        for (index,navController) in navControllers.enumerated() {
-                            if index == 0 || navController.isKind(of: ChatChannelVC.self) {
-                                continue
+                        DispatchQueue.main.async {
+                            let chatChannelVC = ChatChannelVC.init()
+                            chatChannelVC.isChannelCreated = true
+                            chatChannelVC.channelController = channelController
+                            weakSelf.pushWithAnimation(controller: chatChannelVC)
+                            let navControllers = weakSelf.navigationController?.viewControllers ?? []
+                            for (index,navController) in navControllers.enumerated() {
+                                if index == 0 || navController.isKind(of: ChatChannelVC.self) {
+                                    continue
+                                }
+                                navController.removeFromParent()
                             }
-                            navController.removeFromParent()
                         }
                     }
                 }
+            } catch {
+                Snackbar.show(text: "Error while creating the channel")
             }
-        } catch {
-            Snackbar.show(text: "Error while creating the channel")
+            // Fetching invite link
+            let parameter = [kInviteGroupID: encodeGroupId, kInviteExpiryDate: expiryDate]
+            NotificationCenter.default.post(name: .generalGroupInviteLink, object: nil, userInfo: parameter)
         }
-        // Fetching invite link
-        let parameter = [kInviteGroupID: encodeGroupId, kInviteExpiryDate: expiryDate]
-        NotificationCenter.default.post(name: .generalGroupInviteLink, object: nil, userInfo: parameter)
-        
     }
 }
 // MARK: - UITextFieldDelegate
@@ -221,10 +221,12 @@ extension NameGroupViewController: UITableViewDataSource {
 }
 // MARK: - Generic View Class
 class ViewWithRadius: UIView {}
+// MARK: - UITextField extension
 extension UITextField {
     open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return true
     }
+    
     public func setAttributedPlaceHolder(placeHolder: String) {
         let attributeString = [
             NSAttributedString.Key.foregroundColor: Appearance.default.colorPalette.searchPlaceHolder,

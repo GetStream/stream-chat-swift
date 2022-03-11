@@ -42,12 +42,15 @@ public class JoinGroupRequestVC: UIViewController {
             usersCollectionView.isHidden = true
         }
     }
+    
     @objc func backgroundViewAction() {
         self.dismiss(animated: true, completion: nil)
     }
+    
     @IBAction func closeButtonAction(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
+    
     @IBAction func joinGroupButtonAction(_ sender: UIButton) {
         guard let userId = ChatClient.shared.currentUserId else { return }
         channelController.addMembers(userIds: [userId]) { [weak self] error in
