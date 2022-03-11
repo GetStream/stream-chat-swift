@@ -44,13 +44,13 @@ extension Character {
 
 extension String {
     /// Checks whether a string is a single emoji
-    var isSingleEmoji: Bool { count == 1 && containsEmoji }
+    public var isSingleEmoji: Bool { count == 1 && containsEmoji }
     
     /// Checks whether the string contains an emoji
-    var containsEmoji: Bool { contains { $0.isEmoji } }
+    public var containsEmoji: Bool { contains { $0.isEmoji } }
     
     /// Checks whether the string only contains emoji
-    var containsOnlyEmoji: Bool { !isEmpty && !contains { !$0.isEmoji } }
+    public var containsOnlyEmoji: Bool { !isEmpty && !contains { !$0.isEmoji } }
 }
 
 extension String {

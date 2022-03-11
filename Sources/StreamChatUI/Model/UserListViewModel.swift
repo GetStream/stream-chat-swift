@@ -128,9 +128,6 @@ extension UserListViewModel {
                     weakSelf.dataLoadingState = .completed
                 }
             }
-        } else {
-            self.searchText = nil
-            self.fetchUserList()
         }
     }
     
@@ -138,6 +135,7 @@ extension UserListViewModel {
         guard self.searchText == nil else {
             return
         }
+        searchOperation?.cancel()
         if self.dataLoadingState != .loading && fetchMoreData == false {
             self.dataLoadingState = .loading
         }
@@ -150,12 +148,14 @@ extension UserListViewModel {
             self.userListController.synchronize { [weak self] error in
                 guard let weakSelf = self else { return }
                 if error == nil {
-                    let filterData = weakSelf.getFilteredData(users: weakSelf.userListController.users)
-                    weakSelf.bCallbackDataUserList?(filterData)
-                    weakSelf.dataLoadingState = .completed
-                    return
+                    DispatchQueue.main.async {
+                        let filterData = weakSelf.getFilteredData(users: weakSelf.userListController.users)
+                        weakSelf.bCallbackDataUserList?(filterData)
+                        weakSelf.dataLoadingState = .completed
+                    }
+                } else {
+                    weakSelf.dataLoadingState = .error
                 }
-                weakSelf.dataLoadingState = .error
             }
         } else {
             let date = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
@@ -164,12 +164,14 @@ extension UserListViewModel {
             self.userListController.synchronize { [weak self] error in
                 guard let weakSelf = self else { return }
                 if error == nil {
-                    let filterData = weakSelf.getFilteredData(users: weakSelf.userListController.users)
-                    weakSelf.bCallbackDataUserList?(filterData)
-                    weakSelf.dataLoadingState = .completed
-                    return
+                    DispatchQueue.main.async {
+                        let filterData = weakSelf.getFilteredData(users: weakSelf.userListController.users)
+                        weakSelf.bCallbackDataUserList?(filterData)
+                        weakSelf.dataLoadingState = .completed
+                    }
+                } else {
+                    weakSelf.dataLoadingState = .error
                 }
-                weakSelf.dataLoadingState = .error
             }
         }
     }
