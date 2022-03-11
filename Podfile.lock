@@ -9,7 +9,7 @@ PODS:
   - StreamChatUI (4.2.0):
     - EFQRCode (~> 6.2.0)
     - Nuke (~> 10.0)
-    - SkeletonView
+    - SkeletonView (= 1.29.2)
     - StreamChat (= 4.2.0)
     - swiftScan
     - SwiftyGif (~> 5.4.1)
@@ -17,7 +17,7 @@ PODS:
   - SwiftyGif (5.4.2)
 
 DEPENDENCIES:
-  - SkeletonView
+  - SkeletonView (= 1.29.2)
   - StreamChat (from `./`)
   - StreamChatUI (from `./`)
   - swiftScan (from `https://github.com/MxABC/swiftScan.git`)
@@ -49,10 +49,10 @@ SPEC CHECKSUMS:
   SkeletonView: 915a80ecc2b6421ab7ac0f0212321c0cc1406472
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   StreamChat: 0871bc9e4fa9c354a4384be63fe221d4a665f70a
-  StreamChatUI: d461f851bb512b13b50327a5f99f83aced7c30a0
+  StreamChatUI: ef4e438b01f9171b95701db1f5ec1884036d7d4f
   swiftScan: 0849e7d7c1c641384767a573ee8cb90b88d1ddd9
   SwiftyGif: dec758a9dd3d278e5a855dbf279bf062c923c387
 
-PODFILE CHECKSUM: 9c452f0b166472ba99c20ade6f2b83a95361aa61
+PODFILE CHECKSUM: e0d5017b8a1c8c7077ccd82c1d368456797e351f
 
 COCOAPODS: 1.11.2

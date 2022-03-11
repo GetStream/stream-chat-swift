@@ -253,7 +253,7 @@ class RedPacketSentBubble: UITableViewCell {
 //
 //            }
 //        }
-        lblExpire.text = "Expires in 10 minutes!"
+        lblExpire.text = "Expires in 30 minutes!"
     }
 
     private func getRedPacketExtraData() -> [String: RawJSON]? {

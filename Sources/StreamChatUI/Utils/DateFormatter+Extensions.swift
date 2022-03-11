@@ -22,6 +22,16 @@ extension DateFormatter {
         return df
     }()
 }
+// Date Formatter for chat user list
+public struct DTFormatter {
+    public static var formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        formatter.dateStyle = .short
+        formatter.doesRelativeDateFormatting = true
+        return formatter
+    }()
+}
 
 extension DateComponentsFormatter {
     static var minutes: DateComponentsFormatter = {

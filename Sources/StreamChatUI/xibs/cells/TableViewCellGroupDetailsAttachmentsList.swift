@@ -34,9 +34,11 @@ class TableViewCellGroupDetailsAttachmentsList: UITableViewCell {
     @IBAction func mediaButtonAction(_ sender: UIButton) {
         self.scrollToPage(page: 0)
     }
+    
     @IBAction func fileButtonAction(_ sender: UIButton) {
         self.scrollToPage(page: 1)
     }
+    
     @IBAction func linkButtonAction(_ sender: UIButton) {
         self.scrollToPage(page: 2)
     }
@@ -65,6 +67,7 @@ extension TableViewCellGroupDetailsAttachmentsList {
         self.scrollViewFiles.isPagingEnabled = true
         self.scrollViewFiles.contentSize = CGSize(width: widthTotal, height: self.scrollViewFiles.frame.size.height)
     }
+    
     public func scrollToPage(page: Int) {
         var frame: CGRect = self.scrollViewFiles.frame
         frame.origin.x = frame.size.width * CGFloat(page)
@@ -72,6 +75,7 @@ extension TableViewCellGroupDetailsAttachmentsList {
         self.scrollViewFiles.scrollRectToVisible(frame, animated: true)
         self.updateIndicator(page: page)
     }
+    
     public func updateIndicator(page: Int) {
         UIView.animate(withDuration: 0.1) {
             switch page {
@@ -84,7 +88,6 @@ extension TableViewCellGroupDetailsAttachmentsList {
             default:
                 break
             }
-            
         }
     }
 }

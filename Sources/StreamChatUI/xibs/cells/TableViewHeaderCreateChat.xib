@@ -36,17 +36,17 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="379" height="20"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="dck-a0-ZlU">
-                                                        <rect key="frame" x="0.0" y="0.0" width="156.5" height="20.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="152" height="20"/>
                                                         <subviews>
                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_createGroup" translatesAutoresizingMaskIntoConstraints="NO" id="T8P-fl-Clw">
-                                                                <rect key="frame" x="0.0" y="1" width="20" height="19"/>
+                                                                <rect key="frame" x="0.0" y="0.5" width="20" height="19"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="19" id="RrP-RG-JRu"/>
                                                                     <constraint firstAttribute="width" constant="20" id="dMS-aN-Bzj"/>
                                                                 </constraints>
                                                             </imageView>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create a Group" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Adt-dH-DPG">
-                                                                <rect key="frame" x="35" y="0.0" width="121.5" height="20.5"/>
+                                                                <rect key="frame" x="35" y="0.0" width="117" height="20"/>
                                                                 <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="17"/>
                                                                 <color key="textColor" red="0.52941176469999995" green="0.5450980392" blue="0.58431372550000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <nil key="highlightedColor"/>
@@ -77,7 +77,7 @@
                                                 <rect key="frame" x="0.0" y="33.5" width="379" height="20"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="clM-x0-gF9">
-                                                        <rect key="frame" x="0.0" y="0.0" width="154" height="19"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="149" height="19"/>
                                                         <subviews>
                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_selectGroup" translatesAutoresizingMaskIntoConstraints="NO" id="mVV-XN-HvQ">
                                                                 <rect key="frame" x="0.0" y="0.0" width="20" height="19"/>
@@ -87,7 +87,7 @@
                                                                 </constraints>
                                                             </imageView>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select a Group" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9LY-qY-67G">
-                                                                <rect key="frame" x="35" y="1" width="119" height="17"/>
+                                                                <rect key="frame" x="35" y="1" width="114" height="17"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="17" id="BLH-Pk-UDS"/>
                                                                 </constraints>
@@ -121,17 +121,17 @@
                                                 <rect key="frame" x="0.0" y="47" width="379" height="20"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="dfq-5h-DmJ">
-                                                        <rect key="frame" x="0.0" y="0.0" width="101.5" height="20.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="97" height="20"/>
                                                         <subviews>
                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_JoinGroup" translatesAutoresizingMaskIntoConstraints="NO" id="lBU-QV-HvV">
-                                                                <rect key="frame" x="0.0" y="1" width="20" height="19"/>
+                                                                <rect key="frame" x="0.0" y="0.5" width="20" height="19"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="19" id="odY-iv-kqP"/>
                                                                     <constraint firstAttribute="width" constant="20" id="tiG-4o-lQq"/>
                                                                 </constraints>
                                                             </imageView>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We.here" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dN9-cj-3mZ">
-                                                                <rect key="frame" x="35" y="0.0" width="66.5" height="20.5"/>
+                                                                <rect key="frame" x="35" y="0.0" width="62" height="20"/>
                                                                 <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="17"/>
                                                                 <color key="textColor" red="0.52941176469999995" green="0.5450980392" blue="0.58431372550000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <nil key="highlightedColor"/>
@@ -162,10 +162,10 @@
                                                 <rect key="frame" x="0.0" y="94" width="379" height="20"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="sX6-rP-rNh">
-                                                        <rect key="frame" x="0.0" y="0.0" width="172.5" height="20.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="168.5" height="20"/>
                                                         <subviews>
                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="qrcode" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="8gv-l9-Euc">
-                                                                <rect key="frame" x="0.0" y="2" width="20" height="16.5"/>
+                                                                <rect key="frame" x="0.0" y="1.5" width="20" height="16.5"/>
                                                                 <color key="tintColor" name="chatText"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="20" id="1qy-ev-fYZ"/>
@@ -173,7 +173,7 @@
                                                                 </constraints>
                                                             </imageView>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Join via QR Code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hhf-sb-FB3">
-                                                                <rect key="frame" x="35" y="0.0" width="137.5" height="20.5"/>
+                                                                <rect key="frame" x="35" y="0.0" width="133.5" height="20"/>
                                                                 <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="17"/>
                                                                 <color key="textColor" red="0.52941176469999995" green="0.5450980392" blue="0.58431372550000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <nil key="highlightedColor"/>

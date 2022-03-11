@@ -89,7 +89,6 @@ class JoinPrivateGroupVC: UIViewController {
 
     // MARK: - Functions
     private func setupUI() {
-        view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         btnBack.setTitle("", for: .normal)
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         lblOTP.text = passWord
@@ -139,41 +138,49 @@ class JoinPrivateGroupVC: UIViewController {
     }
 
     private func createPrivateChannel() {
-        do {
-            let groupId = String(UUID().uuidString)
-            let expiryDate = String(Date().withAddedHours(hours: 24).ticks).base64Encoded.string ?? ""
-            var extraData: [String: RawJSON] = [:]
-            extraData["isPrivateChat"] = .bool(true)
-            extraData["password"] = .string(passWord)
-            extraData["joinLink"] = .string("timeless-wallet://join-private-group?id=\(groupId.base64Encoded.string ?? "")&signature=\(passWord.base64Encoded.string ?? "")&expiry=\(expiryDate)")
-            extraData["latitude"] = .string("\(LocationManager.shared.location.value.coordinate.latitude)")
-            extraData["longitude"] = .string("\(LocationManager.shared.location.value.coordinate.longitude)")
-            channelController = try ChatClient.shared.channelController(
-                createChannelWithId: .init(type: .privateMessaging, id: groupId),
-                name: "Unnamed private group",
-                members: [],
-                extraData: extraData)
-            channelController?.synchronize { [weak self] error in
-                guard error == nil, let self = self else {
-                    return
-                }
-                if self.channelController?.channel?.lastMessageAt == nil {
-                    var extraData = [String: RawJSON]()
-                    self.channelController?.createNewMessage(
-                        text: "",
-                        pinning: nil,
-                        attachments: [],
-                        extraData: ["adminMessage": .string(self.channelController?.channel?.createdBy?.name ?? ""),
-                            "messageType": .string(AdminMessageType.privateChat.rawValue)],
-                        completion: nil)
-                }
-                self.fetchChannelMembers(id: self.channelController?.channel?.cid.id ?? "")
+        let groupId = String(UUID().uuidString)
+        let encodeGroupId = groupId.base64Encoded.string ?? ""
+        let encodePassword = passWord.base64Encoded.string ?? ""
+        
+        let expiryDate = String(Date().withAddedHours(hours: 24).ticks).base64Encoded.string ?? ""
+        var extraData: [String: RawJSON] = [:]
+        extraData["isPrivateChat"] = .bool(true)
+        extraData["password"] = .string(passWord)
+        extraData["latitude"] = .string("\(LocationManager.shared.location.value.coordinate.latitude)")
+        extraData["longitude"] = .string("\(LocationManager.shared.location.value.coordinate.longitude)")
+        ChatClientConfiguration.shared.requestedPrivateGroupDynamicLink = { [weak self] dynamicLink in
+            guard let self = self, let dynamicLink = dynamicLink else {
+                Snackbar.show(text: "error while creating channel")
+                return
             }
-        } catch {
-            var userInfo = [String: Any]()
-            userInfo["message"] = "error while creating channel"
-            NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
+            extraData["joinLink"] = .string(dynamicLink.absoluteString)
+            do {
+                self.channelController = try ChatClient.shared.channelController(
+                    createChannelWithId: .init(type: .privateMessaging, id: groupId),
+                    name: "Unnamed private group",
+                    members: [],
+                    extraData: extraData)
+                self.channelController?.synchronize{ [weak self] error in
+                    guard error == nil, let self = self else {
+                        return
+                    }
+                    if self.channelController?.channel?.lastMessageAt == nil {
+                        var extraData = [String: RawJSON]()
+                        self.channelController?.createNewMessage(
+                            text: "",
+                            pinning: nil,
+                            attachments: [],
+                            extraData: ["adminMessage": .string(self.channelController?.channel?.createdBy?.name ?? ""),
+                                        "messageType": .string(AdminMessageType.privateChat.rawValue)],
+                            completion: nil)
+                    }
+                    self.fetchChannelMembers(id: self.channelController?.channel?.cid.id ?? "")
+                }
+            } catch {
+                Snackbar.show(text: "error while creating channel")
+            }
         }
+        ChatClientConfiguration.shared.requestPrivateGroupDynamicLink?(encodeGroupId, encodePassword, expiryDate)
     }
 
     private func addMeInChannel(channelId: String, completion: ((Error?) -> Void)? = nil) {

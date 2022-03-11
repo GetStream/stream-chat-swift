@@ -23,7 +23,10 @@ public class TableViewCellChatUser: UITableViewCell {
     // MARK: - Variables
     private var user: ChatUser?
     private let shimmerBackgroundColor = Appearance.default.colorPalette.placeHolderBalanceBG
-    private lazy var shimmerGradient = SkeletonGradient(colors: [shimmerBackgroundColor.withAlphaComponent(0.3),shimmerBackgroundColor.withAlphaComponent(0.5), shimmerBackgroundColor.withAlphaComponent(0.3)])
+    private lazy var shimmerGradient = SkeletonGradient(colors: [
+        shimmerBackgroundColor.withAlphaComponent(0.3),
+        shimmerBackgroundColor.withAlphaComponent(0.5),
+        shimmerBackgroundColor.withAlphaComponent(0.3)])
     //MARK: - LIFE CYCEL
     public override func awakeFromNib() {
         super.awakeFromNib()

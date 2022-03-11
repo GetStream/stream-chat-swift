@@ -11,7 +11,6 @@ import StreamChatUI
 import UIKit
 
 public class ChatAddFriendVC: ChatBaseVC {
-    
     public enum SelectionType {
         case addFriend,inviteUser
         var title: String {
@@ -81,6 +80,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         viewContainerTrailingConst.constant = 5
         setupUI()
     }
+    
     private func setupUI() {
         let cornorRadius = viewContainerLeadingConst.constant > 0 ? 32 : 0
         
@@ -93,12 +93,11 @@ public class ChatAddFriendVC: ChatBaseVC {
     @objc private func textDidChange(_ sender: UITextField) {
         self.chatUserList.viewModel.searchDataUsing(searchString: sender.text)
     }
-    //
     // MARK: - Actions
-    //
     @IBAction private func btnBackAction(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
+    
     @IBAction private func invitLinkAction(_ sender: UIButton) {
         // TO DO
 //        if self.selectedUsers.count > 0 {
@@ -106,6 +105,7 @@ public class ChatAddFriendVC: ChatBaseVC {
 //            self.btnBackAction(sender)
 //        }
     }
+    
     // swiftlint:disable redundant_type_annotation
     @IBAction private func btnDoneAction(_ sender: UIButton) {
         if self.selectedUsers.count > 0 {
