@@ -47,7 +47,7 @@ open class PrivateGroupOTPVC: UIViewController {
         viewHeader.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         btnBack.setTitle("", for: .normal)
-        view.backgroundColor = Appearance.default.colorPalette.background
+        view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         indicator.startAnimating()
         LocationManager.shared.location.bind { [weak self] location in
             guard let self = self else {

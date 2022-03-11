@@ -430,6 +430,12 @@ open class ChatMessageListVC:
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser)
             cell.configData()
+            cell.blockExpAction = { blockExpUrl in
+                let svc = SFSafariViewController(url: blockExpUrl)
+                let nav = UINavigationController(rootViewController: svc)
+                nav.isNavigationBarHidden = true
+                UIApplication.shared.keyWindow?.rootViewController?.present(nav, animated: true, completion: nil)
+            }
             return cell
         } else if isWalletRequestPayCell(message) {
             guard let cell = tableView.dequeueReusableCell(

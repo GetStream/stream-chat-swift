@@ -546,21 +546,43 @@ open class ChatChannelVC:
         controller.alertType = .deleteGroup
         controller.bCallbackActionHandler = { [weak self] in
             guard let weakSelf = self else { return }
-            weakSelf.channelController?.deleteChannel { [weak self] error in
-                guard error == nil, let self = self else {
-                    Snackbar.show(text: error?.localizedDescription ?? "")
-                    return
-                }
-                Snackbar.show(text: "Group deleted successfully")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-                    guard let self = self else { return }
-                    self.backAction(UIButton())
-                }
-            }
+            weakSelf.deleteThisChannel()
         }
         controller.modalPresentationStyle = .overCurrentContext
         controller.modalTransitionStyle = .crossDissolve
         self.present(controller, animated: true, completion: nil)
+    }
+    
+    private func deleteThisChannel() {
+        guard let channelController = channelController,
+              let channelId = channelController.channel?.cid else {
+                  Snackbar.show(text: "Error when deleting the channel")
+            return
+        }
+        let memberListController = channelController.client.memberListController(query: .init(cid: channelId))
+        memberListController.synchronize { error in
+            guard error == nil else {
+                Snackbar.show(text: "Error when deleting the channel")
+                return
+            }
+            let userIds: [UserId] = memberListController.members.map({ member in
+                return member.id
+            })
+            channelController.removeMembers(userIds: Set(userIds)) { _ in
+                channelController.deleteChannel { [weak self] error in
+                    guard error == nil, let self = self else {
+                        Snackbar.show(text: error?.localizedDescription ?? "")
+                        return
+                    }
+                    Snackbar.show(text: "Group deleted successfully")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                        guard let self = self else { return }
+                        self.backAction(UIButton())
+                    }
+                }
+            }
+        }
+        
     }
     
     public func muteNotification() {
@@ -761,10 +783,12 @@ open class ChatChannelVC:
             qrCodeVc.strContent = self.getGroupLink()
             self.pushWithAnimation(controller: qrCodeVc)
         }
-        // search
-//        let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
-//            Snackbar.show(text: "Not available on alpha release")
-//        }
+        // hide for demo
+        /*
+         let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
+            Snackbar.show(text: "Not available on alpha release")
+        }
+         */
         // invite
         let invite = UIAction(title: "Invite", image: appearance.images.personBadgePlus) { [weak self] _ in
             guard let self = self else {
@@ -829,6 +853,7 @@ open class ChatChannelVC:
             self.deleteChat()
         }
         // group Image
+        // To do:- will add in future release
 //        let groupImage = UIAction(title: "Group Image", image: appearance.images.photo) { _ in
 //        }
         if channelController?.channel?.type == .privateMessaging {
@@ -859,7 +884,7 @@ open class ChatChannelVC:
                     var actions: [UIAction] = []
                     // To do:- will add in future release
                     //actions.append(contentsOf: [groupImage, search,invite,groupQR])
-                    actions.append(contentsOf: [invite,groupQR])
+                    actions.append(contentsOf: [invite, groupQR])
                     if channelController?.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {

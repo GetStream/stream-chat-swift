@@ -44,8 +44,10 @@ public class NameGroupViewController: ChatBaseVC {
         groupDescriptionField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         nameField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
         groupDescriptionField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
-        groupDescriptionField.delegate = self
         nameField.delegate = self
+        groupDescriptionField.delegate = self
+        nameField.tintColor = Appearance.default.colorPalette.statusColorBlue
+        groupDescriptionField.tintColor = Appearance.default.colorPalette.statusColorBlue
         nameField.becomeFirstResponder()
         nameContainerView.layer.cornerRadius = 6.0
         descriptionContainerView.layer.cornerRadius = 6.0
@@ -83,7 +85,7 @@ public class NameGroupViewController: ChatBaseVC {
             self.btnNext?.isHidden = false
         }
     }
-    //
+    
     @IBAction func backBtnTapped(_ sender: UIButton) {
         popWithAnimation()
     }
@@ -98,7 +100,6 @@ public class NameGroupViewController: ChatBaseVC {
             Snackbar.show(text: "Please enter valid group name")
             return
         }
-        
         let groupId = String(UUID().uuidString)
         let encodeGroupId = groupId.base64Encoded.string ?? ""
         let expiryDate = String(Date().withAddedHours(hours: 24).ticks).base64Encoded.string ?? ""
@@ -117,14 +118,13 @@ public class NameGroupViewController: ChatBaseVC {
                     createChannelWithId: .init(type: .messaging, id: groupId),
                     name: name,
                     members: Set(weakSelf.selectedUsers.map(\.id)), extraData: extraData)
-                
+                // Channel synchronize
                 channelController.synchronize { [weak self] error in
                     guard let weakSelf = self , error == nil else {
                         DispatchQueue.main.async {
-                            Snackbar.show(text: "Somet thing went wrong!")
+                            Snackbar.show(text: "something went wrong!")
                         }
                         return
-                    }
                     DispatchQueue.main.async {
                         let chatChannelVC = ChatChannelVC.init()
                         chatChannelVC.isChannelCreated = true
@@ -139,11 +139,9 @@ public class NameGroupViewController: ChatBaseVC {
                         }
                     }
                 }
-            } catch {
-                Snackbar.show(text: "Error when creating the channel")
             }
-            // Creating channel
-            
+        } catch {
+            Snackbar.show(text: "Error while creating the channel")
         }
         // Fetching invite link
         let parameter = [kInviteGroupID: encodeGroupId, kInviteExpiryDate: expiryDate]
@@ -153,6 +151,11 @@ public class NameGroupViewController: ChatBaseVC {
 }
 // MARK: - UITextFieldDelegate
 extension NameGroupViewController: UITextFieldDelegate {
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == nameField {
             let maxLength = 40
@@ -182,6 +185,7 @@ extension NameGroupViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         selectedUsers.count
     }
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let reuseID = TableViewCellChatUser.reuseId
         guard let cell = tableView.dequeueReusableCell(
@@ -190,16 +194,16 @@ extension NameGroupViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         let user: ChatUser = selectedUsers[indexPath.row]
-        cell.config(user: user,
-                        selectedImage: nil,
-                        avatarBG: view.tintColor)
+        cell.config(user: user,selectedImage: nil)
         cell.backgroundColor = .clear
         return cell
 
     }
+    
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
     public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
