@@ -209,3 +209,23 @@ public extension Dictionary where Key == String, Value == RawJSON {
         }
     }
 }
+
+// MARK: - Announcement
+public extension Dictionary where Key == String, Value == RawJSON {
+    var cta: String? {
+        if let ctaStr = self["cta"] {
+            return fetchRawData(raw: ctaStr) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var ctaData: String? {
+        if let ctaDataStr = self["cta_data"] {
+            return fetchRawData(raw: ctaDataStr) as? String
+        } else {
+            return nil
+        }
+    }
+
+}

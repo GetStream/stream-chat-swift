@@ -48,31 +48,27 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         containerView.layer.cornerRadius = 12
         lblInfo.text = message?.text
         self.imgView.image = nil
+        if let clickAction = message?.extraData.cta {
+            viewAction.isHidden = false
+        } else {
+            viewAction.isHidden = true
+        }
         if let hashTag = message?.extraData.tag {
             lblHashTag.text = "#" +  hashTag.joined(separator: " #")
-            btnShowMore.isHidden = false
-            viewAction.isHidden = false
-            self.layoutIfNeeded()
         } else {
             lblHashTag.text = nil
-            btnShowMore.isHidden = true
-            viewAction.isHidden = true
-            self.layoutIfNeeded()
         }
         if let imageAttachments = message?.imageAttachments.first {
             imgHeightConst.constant = 250
             self.imgView.image = nil
+            self.btnShowMore.setTitle(getActionTitle(), for: .normal)
             self.imageUrl = imageAttachments.imageURL.absoluteString
             self.lblTitle.text = imageAttachments.title
-//            if imageAttachments.imageURL.pathExtension == "gif" {
-//                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: 1)
-//            } else {
-                let options = ImageLoadingOptions(
-                    placeholder: Appearance.default.images.videoAttachmentPlaceholder,
-                    transition: .fadeIn(duration: 0.1)
-                )
-                Nuke.loadImage(with: imageAttachments.imageURL, options: options, into: imageView)
-//            }
+            let options = ImageLoadingOptions(
+                placeholder: Appearance.default.images.videoAttachmentPlaceholder,
+                transition: .fadeIn(duration: 0.1)
+            )
+            Nuke.loadImage(with: imageAttachments.imageURL, options: options, into: imageView)
             playerView.isHidden = true
         } else if let videoAttachment = message?.videoAttachments.first {
             videoURL = videoAttachment.videoURL.absoluteString
@@ -96,12 +92,21 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
             playerView.isHidden = true
             imgHeightConst.constant = 0
         }
+        self.layoutIfNeeded()
     }
 
     private func setupUI() {
         videoLayer.backgroundColor = UIColor.clear.cgColor
         videoLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
         playerView.layer.addSublayer(videoLayer)
+    }
+    
+    private func getActionTitle() -> String {
+        guard let cta = message?.extraData.cta else { return "Show More" }
+        switch cta {
+        case "url":  return "Show More"
+        default: return ""
+        }
     }
 }
 
