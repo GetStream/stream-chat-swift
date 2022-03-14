@@ -124,22 +124,19 @@ class NameGroupViewController: UIViewController {
             presentAlert(title: "Name cannot be empty")
             return
         }
-        do {
-            let channelController = try client?.channelController(
-                createChannelWithId: .init(type: .messaging, id: String(UUID().uuidString.prefix(10))),
-                name: name,
-                members: Set(selectedUsers.map(\.id))
-            )
-            channelController?.synchronize { error in
+        client?.createChannelWithCid(
+            cid: .init(type: .messaging, id: String(UUID().uuidString.prefix(10))),
+            members: Set(selectedUsers.map(\.id)),
+            name: name,
+            completion: { _ in
+                self.navigationController?.popToRootViewController(animated: true)
+            },
+            onFailure: { error in
                 if let error = error {
-                    self.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
-                } else {
-                    self.navigationController?.popToRootViewController(animated: true)
+                    self.presentAlert(title: "Error creating the channel", message: error.localizedDescription)
                 }
             }
-        } catch {
-            presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
-        }
+        )
     }
 }
 

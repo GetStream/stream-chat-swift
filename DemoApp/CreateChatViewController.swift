@@ -19,19 +19,10 @@ class CreateChatViewController: UIViewController {
             guard let navController = parent?.parent as? UINavigationController,
                   let controller = channelController else { return }
             // Create the Channel on backend
-            controller.synchronize { error in
-                // TODO: handle error
-                if let error = error { print("###", error) }
-                
-                // Send the message
-                super.createNewMessage(text: text)
-                
-                // Present the new chat and controller
-                let vc = ChatChannelVC()
-                vc.channelController = controller
-                
-                navController.setViewControllers([navController.viewControllers.first!, vc], animated: true)
-            }
+            controller.createNewMessage(text: text)
+            let vc = ChatChannelVC()
+            vc.channelController = controller
+            navController.setViewControllers([navController.viewControllers.first!, vc], animated: true)
         }
     }
     
@@ -341,17 +332,13 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
         
         update(for: .selected)
         let client = searchController.client
-        do {
-            composerView.channelController = try client
-                .channelController(
-                    createDirectMessageChannelWith: selectedUserIds,
-                    name: nil,
-                    imageURL: nil,
-                    extraData: [:]
-                )
-        } catch {
-            print(error.localizedDescription)
-        }
+        client.createChannel(members: selectedUserIds, completion: { controller in
+            self.composerView.channelController = controller
+        }, onFailure: { error in
+            if let error = error {
+                print(error)
+            }
+        })
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

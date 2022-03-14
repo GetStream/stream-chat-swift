@@ -102,6 +102,91 @@ public extension ChatClient {
             messageOrdering: messageOrdering
         )
     }
+    
+    func createChannel(
+        members: Set<UserId>,
+        type: ChannelType = .messaging,
+        isCurrentUserMember: Bool = true,
+        messageOrdering: MessageOrdering = .topToBottom,
+        name: String? = nil,
+        imageURL: URL? = nil,
+        team: String? = nil,
+        extraData: [String: RawJSON] = [:],
+        channelListQuery: ChannelListQuery? = nil,
+        completion: @escaping (ChatChannelController) -> Void,
+        onFailure: @escaping (Error?) -> Void
+    ) {
+        guard let currentUserId = currentUserId else { return onFailure(nil) }
+        guard !members.isEmpty else { return onFailure(nil) }
+
+        let payload = ChannelEditDetailPayload(
+            type: type,
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members.union(isCurrentUserMember ? [currentUserId] : []),
+            invites: [],
+            extraData: extraData
+        )
+        let chatController = ChatChannelController(
+            channelQuery: .init(channelPayload: payload),
+            channelListQuery: channelListQuery,
+            client: self,
+            isChannelAlreadyCreated: false,
+            messageOrdering: messageOrdering
+        )
+        
+        chatController.updateChannel { error in
+            if let error = error {
+                onFailure(error)
+            } else {
+                completion(chatController)
+            }
+        }
+    }
+    
+    func createChannelWithCid(
+        cid: ChannelId,
+        members: Set<UserId>,
+        type: ChannelType = .messaging,
+        isCurrentUserMember: Bool = true,
+        messageOrdering: MessageOrdering = .topToBottom,
+        name: String? = nil,
+        imageURL: URL? = nil,
+        team: String? = nil,
+        extraData: [String: RawJSON] = [:],
+        channelListQuery: ChannelListQuery? = nil,
+        completion: @escaping (ChatChannelController) -> Void,
+        onFailure: @escaping (Error?) -> Void
+    ) {
+        guard let currentUserId = currentUserId else { return onFailure(nil) }
+        guard !members.isEmpty else { return onFailure(nil) }
+
+        let payload = ChannelEditDetailPayload(
+            type: type,
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members.union(isCurrentUserMember ? [currentUserId] : []),
+            invites: [],
+            extraData: extraData
+        )
+        let chatController = ChatChannelController(
+            channelQuery: .init(channelPayload: payload),
+            channelListQuery: channelListQuery,
+            client: self,
+            isChannelAlreadyCreated: false,
+            messageOrdering: messageOrdering
+        )
+        
+        chatController.updateChannel { error in
+            if let error = error {
+                onFailure(error)
+            } else {
+                completion(chatController)
+            }
+        }
+    }
 
     /// Creates a `ChatChannelController` that will create a new channel with the provided members without having to specify
     /// the channel id explicitly. This is great for direct message channels because the channel should be uniquely identified by
@@ -308,6 +393,32 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         markChannelAsOpen(false)
     }
     
+    public func updateChannel(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
+        updater.update(
+            channelQuery: channelQuery,
+            channelCreatedCallback: channelCreatedCallback
+        ) { result in
+            switch result {
+            case .success:
+                self.markChannelAsOpen(true) { error in
+                    self.state = error.map { .remoteDataFetchFailed($0) } ?? .remoteDataFetched
+                    self.callback { completion?(error) }
+                }
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
+        }
+        
+        /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
+        /// Otherwise they will be set up after channel creation, in `set(cid:)`.
+        if let cid = cid {
+            setupEventObservers(for: cid)
+            setLocalStateBasedOnError(startDatabaseObservers())
+        }
+    }
+    
     private func setChannelObserver() {
         _channelObserver.computeValue = { [weak self] in
             guard let self = self else {
@@ -388,6 +499,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
     
+    @available(
+        *,
+        deprecated,
+        message: "synchronise() is now deprecated, you can use create() and watch() directly from the ChannelController."
+    )
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
@@ -1151,7 +1267,25 @@ public extension ChatChannelController {
     ///
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    @available(
+        *,
+        deprecated,
+        message: "startWatching() is now deprecated, you can use watch() directly from the ChannelController."
+    )
     func startWatching(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.startWatching(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    func watch(completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
