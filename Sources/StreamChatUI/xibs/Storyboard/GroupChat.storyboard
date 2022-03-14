@@ -210,16 +210,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eol-SJ-p51">
-                                <rect key="frame" x="0.0" y="-50" width="414" height="996"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.3956361109" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wmg-bO-KgA">
-                                <rect key="frame" x="5" y="530.5" width="404" height="362.5"/>
-                                <color key="backgroundColor" name="viewBackground"/>
+                                <rect key="frame" x="5" y="0.0" width="404" height="893"/>
+                                <color key="backgroundColor" red="0.11764705882352941" green="0.11764705882352941" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="34"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="zEJ-PD-S0X">
-                                <rect key="frame" x="55" y="575.5" width="304" height="276.5"/>
+                                <rect key="frame" x="55" y="45" width="304" height="276.5"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="ze2-YJ-Rqk">
                                         <rect key="frame" x="10" y="0.0" width="284" height="95.5"/>
@@ -294,22 +295,17 @@
                         <viewLayoutGuide key="safeArea" id="TG8-uv-uNI"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="TG8-uv-uNI" firstAttribute="bottom" secondItem="zEJ-PD-S0X" secondAttribute="bottom" constant="10" id="3yV-5i-eDm"/>
                             <constraint firstAttribute="bottom" secondItem="wmg-bO-KgA" secondAttribute="bottom" constant="3" id="BaT-dj-7RZ"/>
-                            <constraint firstAttribute="bottom" secondItem="Eol-SJ-p51" secondAttribute="bottom" constant="-50" id="Mjj-Ks-Lgc"/>
                             <constraint firstItem="zEJ-PD-S0X" firstAttribute="leading" secondItem="GND-di-ziF" secondAttribute="leading" constant="55" id="dJC-CR-rZN"/>
-                            <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="Eol-SJ-p51" secondAttribute="trailing" id="guZ-Pg-gZ7"/>
                             <constraint firstItem="wmg-bO-KgA" firstAttribute="top" secondItem="zEJ-PD-S0X" secondAttribute="top" constant="-45" id="hC9-JS-SF9"/>
                             <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="zEJ-PD-S0X" secondAttribute="trailing" constant="55" id="iOs-C1-v5c"/>
                             <constraint firstAttribute="trailing" secondItem="wmg-bO-KgA" secondAttribute="trailing" constant="5" id="m6Y-NO-CsJ"/>
-                            <constraint firstItem="Eol-SJ-p51" firstAttribute="top" secondItem="GND-di-ziF" secondAttribute="top" constant="-50" id="mhg-FZ-sqN"/>
+                            <constraint firstItem="wmg-bO-KgA" firstAttribute="top" secondItem="GND-di-ziF" secondAttribute="top" id="vKz-F4-nMO"/>
                             <constraint firstItem="wmg-bO-KgA" firstAttribute="leading" secondItem="TG8-uv-uNI" secondAttribute="leading" constant="5" id="xhg-SU-Wd0"/>
-                            <constraint firstItem="Eol-SJ-p51" firstAttribute="leading" secondItem="TG8-uv-uNI" secondAttribute="leading" id="zb3-qs-NMw"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="actionButton" destination="S7M-bp-k8X" id="GyN-J6-Zws"/>
-                        <outlet property="backgroundView" destination="Eol-SJ-p51" id="vY1-NL-pXt"/>
                         <outlet property="cancelButton" destination="pJJ-cM-lop" id="uD7-rj-oB3"/>
                         <outlet property="containerView" destination="wmg-bO-KgA" id="Nbv-NY-0Yd"/>
                         <outlet property="messageLabel" destination="8Fr-is-VB2" id="t7Z-fb-DL7"/>
