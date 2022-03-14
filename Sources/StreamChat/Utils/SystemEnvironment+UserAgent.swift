@@ -27,7 +27,7 @@ extension SystemEnvironment {
         var scale = String(format: "%0.2f", UIScreen.main.scale)
         model = UIDevice.current.model
         os = UIDevice.current.systemVersion
-        return "\(appName)/\(appVersion) (\(model); iOS \(os); Scale/\(scale))"
+        return "\(appName)/\(appVersion) (\(deviceModelName); iOS \(os); Scale/\(scale))"
         #else
 
         model = getModelIdentifier() ?? ""
