@@ -48,6 +48,11 @@ public class ChatAlertVC: UIViewController {
     private func setupUI() {
         self.titleLabel.text = self.alertType.data.title
         self.messageLabel.text = self.alertType.data.message
+        let attributedString = NSMutableAttributedString(string: self.alertType.data.message)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 5
+        attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attributedString.length))
+        messageLabel.attributedText = attributedString
         self.actionButton.setTitle(self.alertType.data.actionButtonTitle, for: .normal)
         self.actionButton.layer.cornerRadius = actionButton.bounds.height/2
         self.cancelButton.layer.cornerRadius = actionButton.bounds.height/2
@@ -69,11 +74,11 @@ extension ChatAlertVC: PanModalPresentable {
     }
 
     public var shortFormHeight: PanModalHeight {
-        return .contentHeightIgnoringSafeArea(360)
+        return .contentHeightIgnoringSafeArea(382)
     }
 
     public var longFormHeight: PanModalHeight {
-        return .contentHeightIgnoringSafeArea(360)
+        return .contentHeightIgnoringSafeArea(382)
     }
 
     public var anchorModalToLongForm: Bool {
