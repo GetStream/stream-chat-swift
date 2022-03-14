@@ -60,8 +60,24 @@ extension Date {
         withAddedMinutes(minutes: hours * 60)
     }
 
+    static func getDayDiffOfDates(_ startDate: Date, endDate: Date) -> Int {
+        let calendar = Calendar.current
+        let date1 = calendar.startOfDay(for: startDate)
+        let date2 = calendar.startOfDay(for: endDate)
+        let components = calendar.dateComponents([.day], from: date1, to: date2)
+        return abs(components.day ?? 0)
+    }
+
+    func isInSameYear(as date: Date) -> Bool {
+        return isEqual(to: date, toGranularity: .year)
+    }
+
     var ticks: Double {
         //return Int64(self.timeIntervalSince1970 * 1000)
         return timeIntervalSince1970
+    }
+
+    func isEqual(to date: Date, toGranularity component: Calendar.Component, in calendar: Calendar = .current) -> Bool {
+        calendar.isDate(self, equalTo: date, toGranularity: component)
     }
 }

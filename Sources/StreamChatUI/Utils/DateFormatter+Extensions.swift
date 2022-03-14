@@ -12,6 +12,24 @@ extension DateFormatter {
         formatter.locale = Locale.autoupdatingCurrent
         return formatter
     }
+
+    static var shortWeekDateFormat: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat  = "EE"
+        return dateFormatter
+    }
+
+    static var dayMonthDateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat  = "MM/dd"
+        return dateFormatter
+    }
+
+    static var longDateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat  = "MM/DD/YY"
+        return dateFormatter
+    }
     
     /// Formatter that is used to format date for scrolling overlay that should display
     /// day when message below was sent
