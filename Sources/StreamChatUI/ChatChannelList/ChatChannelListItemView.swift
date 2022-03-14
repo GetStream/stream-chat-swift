@@ -121,11 +121,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
     /// Text of `timestampLabel` which contains the time of the last sent message.
     open var timestampText: String? {
-        if let lastMessageAt = content?.channel.lastMessageAt {
-            return dateFormatter.string(from: lastMessageAt)
-        } else {
-            return nil
-        }
+        return getTimestamp()
     }
 
     /*
@@ -188,11 +184,25 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         titleLabel.text = titleText
         subtitleLabel.text = subtitleText
         timestampLabel.text = timestampText
-
         avatarView.content = (content?.channel, content?.currentUserId)
 
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
+    }
+
+    private func getTimestamp() -> String? {
+        guard let lastMessageAt = content?.channel.lastMessageAt else {
+            return nil
+        }
+        if Calendar.current.isDateInToday(lastMessageAt) {
+            return dateFormatter.string(from: lastMessageAt)
+        } else if Date.getDayDiffOfDates(Date(), endDate: lastMessageAt) < 6 {
+            return DateFormatter.formatter(with: .shortWeekDateFormat).string(from: lastMessageAt)
+        } else if lastMessageAt.isInSameYear(as: Date()) {
+            return DateFormatter.formatter(with: .dayMonthDateFormatter).string(from: lastMessageAt)
+        } else {
+            return DateFormatter.formatter(with: .longDateFormatter).string(from: lastMessageAt)
+        }
     }
 }
 

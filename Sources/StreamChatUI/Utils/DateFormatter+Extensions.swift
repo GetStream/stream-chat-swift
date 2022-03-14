@@ -5,12 +5,25 @@
 import Foundation
 
 extension DateFormatter {
+    // Date Format type
+    enum dateFormatType: String {
+        case shortWeekDateFormat = "EE"
+        case dayMonthDateFormatter = "MM/dd"
+        case longDateFormatter = "MM/DD/YY"
+    }
+
     static func makeDefault() -> DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .short
         formatter.locale = Locale.autoupdatingCurrent
         return formatter
+    }
+
+    static func formatter(with type: dateFormatType) -> DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat  = type.rawValue
+        return dateFormatter
     }
     
     /// Formatter that is used to format date for scrolling overlay that should display
