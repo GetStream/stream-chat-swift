@@ -5,6 +5,13 @@
 import Foundation
 
 extension DateFormatter {
+    // Date Format type
+    enum dateFormatType: String {
+        case shortWeekDateFormat = "EE"
+        case dayMonthDateFormatter = "MM/dd"
+        case longDateFormatter = "MM/DD/YY"
+    }
+
     static func makeDefault() -> DateFormatter {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
@@ -13,21 +20,9 @@ extension DateFormatter {
         return formatter
     }
 
-    static var shortWeekDateFormat: DateFormatter {
+    static func formatter(with type: dateFormatType) -> DateFormatter {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat  = "EE"
-        return dateFormatter
-    }
-
-    static var dayMonthDateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat  = "MM/dd"
-        return dateFormatter
-    }
-
-    static var longDateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat  = "MM/DD/YY"
+        dateFormatter.dateFormat  = type.rawValue
         return dateFormatter
     }
     
