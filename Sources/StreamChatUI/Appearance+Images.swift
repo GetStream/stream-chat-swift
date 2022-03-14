@@ -148,11 +148,11 @@ public extension Appearance {
                 return loadImageSafely(with: "arrow")
             }
         }()
-        public var muteChannel: UIImage = {
+        public var muteChannel: UIImage? = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "speaker.slash.fill")!.withTintColor(.gray)
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
         public var commands: UIImage = loadImageSafely(with: "bolt")
