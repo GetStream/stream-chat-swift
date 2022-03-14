@@ -440,7 +440,6 @@ open class ChatChannelVC:
         KeyboardService.shared.observeKeyboard(self.view)
         if channelController?.channel?.isDirectMessageChannel ?? false {
             shareView.isHidden = true
-            moreButton.isHidden = true
         } else {
             shareView.isHidden = isChannelCreated ? false : true
             if isChannelCreated {

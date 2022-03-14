@@ -193,6 +193,21 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
+        if content?.channel.isMuted ?? false {
+            setTitleWithMuteIcon()
+        } else {
+            titleLabel.text = titleText
+        }
+    }
+    
+    private func setTitleWithMuteIcon() {
+        let fullString = NSMutableAttributedString(string: titleText ?? "")
+        let imageAttachment = NSTextAttachment()
+        // Add space
+        fullString.append(.init(string: "  "))
+        imageAttachment.image = appearance.images.muteChannel
+        fullString.append(NSAttributedString(attachment: imageAttachment))
+        titleLabel.attributedText = fullString
     }
 }
 
