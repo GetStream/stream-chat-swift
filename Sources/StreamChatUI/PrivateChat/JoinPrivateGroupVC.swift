@@ -43,6 +43,8 @@ class JoinPrivateGroupVC: UIViewController {
     @IBOutlet weak var lblOTP: UILabel!
     @IBOutlet weak var cvUserList: UICollectionView!
     @IBOutlet weak var btnJoinGroup: UIButton!
+    @IBOutlet weak var lblDescription: UILabel!
+    @IBOutlet weak var viewJoinOverlay: UIView!
 
     // MARK: - View Life cycle
     override func viewDidLoad() {
@@ -61,20 +63,24 @@ class JoinPrivateGroupVC: UIViewController {
             return
         }
         if userStatus == .joinGroup {
-            addMeInChannel(channelId: channelController.cid?.id ?? "") { error in
-                guard error == nil else {
-                    var userInfo = [String: Any]()
-                    userInfo["message"] = error?.localizedDescription
-                    NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
-                    return
-                }
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else {
+            viewJoinOverlay.isHidden = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                guard let `self` = self else { return }
+                self.addMeInChannel(channelId: channelController.cid?.id ?? "") { error in
+                    guard error == nil else {
+                        Snackbar.show(text: "Something went wrong!")
+                        self.viewJoinOverlay.isHidden = true
                         return
                     }
-                    self.handleNavigation()
-                }
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else {
+                            return
+                        }
+                        self.viewJoinOverlay.isHidden = true
+                        self.handleNavigation()
+                    }
 
+                }
             }
         } else {
             handleNavigation()
@@ -85,15 +91,23 @@ class JoinPrivateGroupVC: UIViewController {
     private func setupUI() {
         btnBack.setTitle("", for: .normal)
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
+        view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         lblOTP.text = passWord
-        lblOTP.textColor = Appearance.default.colorPalette.themeBlue
-        lblOTP.textDropShadow(color: Appearance.default.colorPalette.themeBlue)
+        lblOTP.textColor = .white
         lblOTP.setTextSpacingBy(value: 10)
         btnJoinGroup.backgroundColor = Appearance.default.colorPalette.themeBlue
-        btnJoinGroup.layer.cornerRadius = 6
+        btnJoinGroup.layer.cornerRadius = 20
         cvUserList?.register(UINib(nibName: PrivateGroupUsersCVCell.identifier, bundle: nil),
                              forCellWithReuseIdentifier: PrivateGroupUsersCVCell.identifier)
         filterChannels()
+
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = Appearance.default.images.handPointUp
+        let joinString = NSMutableAttributedString(string: "Nearby friends can join by entering the ")
+        joinString.append(NSAttributedString(attachment: imageAttachment))
+        joinString.append(NSAttributedString(string: " secret code."))
+        lblDescription.attributedText = joinString
+        viewJoinOverlay.isHidden = true
     }
 
     private func handleNavigation() {
@@ -125,31 +139,49 @@ class JoinPrivateGroupVC: UIViewController {
     }
 
     private func createPrivateChannel() {
-        do {
-            let groupId = String(UUID().uuidString)
-            let expiryDate = String(Date().withAddedHours(hours: 24).ticks).base64Encoded.string ?? ""
-            var extraData: [String: RawJSON] = [:]
-            extraData["isPrivateChat"] = .bool(true)
-            extraData["password"] = .string(passWord)
-            extraData["joinLink"] = .string("timeless-wallet://join-private-group?id=\(groupId.base64Encoded.string ?? "")&signature=\(passWord.base64Encoded.string ?? "")&expiry=\(expiryDate)")
-            extraData["latitude"] = .string("\(LocationManager.shared.location.value.coordinate.latitude)")
-            extraData["longitude"] = .string("\(LocationManager.shared.location.value.coordinate.longitude)")
-            channelController = try ChatClient.shared.channelController(
-                createChannelWithId: .init(type: .privateMessaging, id: groupId),
-                name: "temp private group",
-                members: [],
-                extraData: extraData)
-            channelController?.synchronize { [weak self] error in
-                guard error == nil, let self = self else {
-                    return
-                }
-                self.fetchChannelMembers(id: self.channelController?.channel?.cid.id ?? "")
+        let groupId = String(UUID().uuidString)
+        let encodeGroupId = groupId.base64Encoded.string ?? ""
+        let encodePassword = passWord.base64Encoded.string ?? ""
+        
+        let expiryDate = String(Date().withAddedHours(hours: 24).ticks).base64Encoded.string ?? ""
+        var extraData: [String: RawJSON] = [:]
+        extraData["isPrivateChat"] = .bool(true)
+        extraData["password"] = .string(passWord)
+        extraData["latitude"] = .string("\(LocationManager.shared.location.value.coordinate.latitude)")
+        extraData["longitude"] = .string("\(LocationManager.shared.location.value.coordinate.longitude)")
+        ChatClientConfiguration.shared.requestedPrivateGroupDynamicLink = { [weak self] dynamicLink in
+            guard let self = self, let dynamicLink = dynamicLink else {
+                Snackbar.show(text: "error while creating channel")
+                return
             }
-        } catch {
-            var userInfo = [String: Any]()
-            userInfo["message"] = "error while creating channel"
-            NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
+            extraData["joinLink"] = .string(dynamicLink.absoluteString)
+            do {
+                self.channelController = try ChatClient.shared.channelController(
+                    createChannelWithId: .init(type: .privateMessaging, id: groupId),
+                    name: "Unnamed private group",
+                    members: [],
+                    extraData: extraData)
+                self.channelController?.synchronize{ [weak self] error in
+                    guard error == nil, let self = self else {
+                        return
+                    }
+                    if self.channelController?.channel?.lastMessageAt == nil {
+                        var extraData = [String: RawJSON]()
+                        self.channelController?.createNewMessage(
+                            text: "",
+                            pinning: nil,
+                            attachments: [],
+                            extraData: ["adminMessage": .string(self.channelController?.channel?.createdBy?.name ?? ""),
+                                        "messageType": .string(AdminMessageType.privateChat.rawValue)],
+                            completion: nil)
+                    }
+                    self.fetchChannelMembers(id: self.channelController?.channel?.cid.id ?? "")
+                }
+            } catch {
+                Snackbar.show(text: "error while creating channel")
+            }
         }
+        ChatClientConfiguration.shared.requestPrivateGroupDynamicLink?(encodeGroupId, encodePassword, expiryDate)
     }
 
     private func addMeInChannel(channelId: String, completion: ((Error?) -> Void)? = nil) {

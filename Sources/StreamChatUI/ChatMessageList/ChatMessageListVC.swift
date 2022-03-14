@@ -31,7 +31,9 @@ open class ChatMessageListVC:
     /// The root object representing the Stream Chat.
     public var client: ChatClient!
     
-    public var channelType: ChannelType!
+    public var channelType: ChannelType {
+        return dataSource?.channel(for: self)?.type ?? .messaging
+    }
 
     /// The router object that handles navigation to other view controllers.
     open lazy var router: ChatMessageListRouter = components
@@ -326,7 +328,7 @@ open class ChatMessageListVC:
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
-        let currentUserId = client.currentUserId//dataSource?.channel(for: self)?.config.client.currentUserId
+        let currentUserId = ChatClient.shared.currentUserId
         let isMessageFromCurrentUser = message?.author.id == currentUserId
         if isOneWalletCell(message) {
             if isMessageFromCurrentUser {
@@ -434,6 +436,12 @@ open class ChatMessageListVC:
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser)
             cell.configData()
+            cell.blockExpAction = { blockExpUrl in
+                let svc = SFSafariViewController(url: blockExpUrl)
+                let nav = UINavigationController(rootViewController: svc)
+                nav.isNavigationBarHidden = true
+                UIApplication.shared.keyWindow?.rootViewController?.present(nav, animated: true, completion: nil)
+            }
             return cell
         } else if isWalletRequestPayCell(message) {
             guard let cell = tableView.dequeueReusableCell(

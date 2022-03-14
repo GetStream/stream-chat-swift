@@ -9,12 +9,11 @@ import StreamChat
 import StreamChatUI
 import UIKit
 import Nuke
+import SkeletonView
 
 public class TableViewCellChatUser: UITableViewCell {
-
-    //
     public static let reuseId: String = "TableViewCellChatUser"
-    //
+    // MARK: - OUTLETS
     @IBOutlet public var containerView: UIView!
     @IBOutlet public var nameLabel: UILabel!
     @IBOutlet public var descriptionLabel: UILabel!
@@ -23,13 +22,35 @@ public class TableViewCellChatUser: UITableViewCell {
     @IBOutlet public var lblRole: UILabel!
     // MARK: - Variables
     private var user: ChatUser?
-    //
-    // MARK: - Functions
-    public func config(user: ChatUser, selectedImage: UIImage?, avatarBG: UIColor) {
+    private let shimmerBackgroundColor = Appearance.default.colorPalette.placeHolderBalanceBG
+    private lazy var shimmerGradient = SkeletonGradient(colors: [
+        shimmerBackgroundColor.withAlphaComponent(0.3),
+        shimmerBackgroundColor.withAlphaComponent(0.5),
+        shimmerBackgroundColor.withAlphaComponent(0.3)])
+    //MARK: - LIFE CYCEL
+    public override func awakeFromNib() {
+        super.awakeFromNib()
+        lblRole.isHidden = true
+        avatarView.layer.cornerRadius = avatarView.bounds.height / 2
+        accessoryImageView.layer.cornerRadius = accessoryImageView.bounds.height / 2
+        self.containerView.backgroundColor = .clear
+        SkeletonAppearance.default.gradient = shimmerGradient
+    }
+}
+// MARK: - Config
+extension TableViewCellChatUser {
+    public func config(user: ChatUser, selectedImage: UIImage?) {
         if let imageURL = user.imageURL {
-            Nuke.loadImage(with: imageURL, into: avatarView)
+            let options = ImageLoadingOptions(
+                placeholder: Appearance.default.images.userAvatarPlaceholder4,
+                transition: .fadeIn(duration: 0.1),
+                failureImage: Appearance.default.images.userAvatarPlaceholder4
+            )
+            Nuke.loadImage(with: imageURL, options: options, into: avatarView)
         }
-        avatarView.backgroundColor = avatarBG
+        avatarView.backgroundColor = .clear
+        nameLabel.setChatTitleColor()
+        descriptionLabel.setChatSubtitleBigColor()
         let name = (user.name ?? user.id)
         if name.lowercased() == user.id.lowercased()  {
             let last = user.id.suffix(5)
@@ -38,10 +59,6 @@ public class TableViewCellChatUser: UITableViewCell {
         } else {
             nameLabel.text = name.capitalizingFirstLetter()
         }
-        //
-        nameLabel.setChatTitleColor()
-        descriptionLabel.setChatSubtitleBigColor()
-        //
         if user.isOnline {
             descriptionLabel.textColor = Appearance.default.colorPalette.statusColorBlue
             descriptionLabel.text = "Online"
@@ -55,13 +72,12 @@ public class TableViewCellChatUser: UITableViewCell {
         accessoryImageView.image = selectedImage
         lblRole.text = ""
         lblRole.isHidden = true
-        //
+        // asigned user
         self.user = user
     }
     
-    public func configGroupDetails(channelMember: ChatChannelMember, selectedImage: UIImage?, avatarBG: UIColor) {
-        self.config(user: channelMember, selectedImage: selectedImage, avatarBG: avatarBG)
-        //
+    public func configGroupDetails(channelMember: ChatChannelMember, selectedImage: UIImage?) {
+        self.config(user: channelMember, selectedImage: selectedImage)
         lblRole.text = ""
         lblRole.isHidden = true
         if channelMember.memberRole == .owner {
@@ -74,31 +90,21 @@ public class TableViewCellChatUser: UITableViewCell {
            lblRole.isHidden = false
         }
     }
-    
-    //
-    public override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-        
+}
+//MARK: - SHIMMER EFFECT
+extension TableViewCellChatUser {
+    public func showShimmer() {
+        avatarView.image = UIImage()
+        avatarView.backgroundColor = shimmerBackgroundColor
+        accessoryImageView.image = nil
+        avatarView.showAnimatedGradientSkeleton()
+        nameLabel.showAnimatedGradientSkeleton()
+        descriptionLabel.showAnimatedGradientSkeleton()
     }
-
-    public override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        if self.selectedBackgroundView == nil {
-            let bgView = UIView()
-            self.selectedBackgroundView = bgView
-        }
-        self.selectedBackgroundView?.backgroundColor = selected ? UIColor.lightGray.withAlphaComponent(0.1) : UIColor.clear
+    public func hideShimmer() {
+        accessoryImageView.hideSkeleton()
+        avatarView.hideSkeleton()
+        nameLabel.hideSkeleton()
+        descriptionLabel.hideSkeleton()
     }
-    
-    public override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        super.setHighlighted(highlighted, animated: animated)
-        if self.selectedBackgroundView == nil {
-            let bgView = UIView()
-            self.selectedBackgroundView = bgView
-        }
-        self.selectedBackgroundView?.backgroundColor = highlighted ? UIColor.lightGray.withAlphaComponent(0.1) : UIColor.clear
-    }
-    
 }

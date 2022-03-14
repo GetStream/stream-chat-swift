@@ -24,10 +24,12 @@ class PrivateGroupUsersCVCell: UICollectionViewCell {
 
     // MARK: - Functions
     func configData(data: ChatChannelMember) {
-        NukeImageLoader().loadImage(into: imgAvatar, url: data.imageURL, imageCDN: StreamImageCDN(), placeholder: nil, resize: true) { result in
+        NukeImageLoader().loadImage(into: imgAvatar, url: data.imageURL, imageCDN: StreamImageCDN(), placeholder: Appearance.default.images.userAvatarPlaceholder4, resize: true) { result in
             print(result)
         }
         lblUserName.text = data.name
+        imgAvatar.cornerRadius = 35
+        imgAvatar.layoutIfNeeded()
     }
 
 }

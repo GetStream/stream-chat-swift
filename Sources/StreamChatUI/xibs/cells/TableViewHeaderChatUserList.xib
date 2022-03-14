@@ -43,6 +43,7 @@
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
+                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="GIc-ul-IaG" secondAttribute="bottom" id="FNL-I9-EjC"/>
                     <constraint firstItem="GIc-ul-IaG" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="ScK-Qf-Z0N"/>
                     <constraint firstItem="GIc-ul-IaG" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="11" id="iPz-gz-7zQ"/>
                     <constraint firstAttribute="trailing" secondItem="GIc-ul-IaG" secondAttribute="trailing" constant="11" id="kfD-mM-AeA"/>

@@ -23,6 +23,7 @@ open class PrivateGroupOTPVC: UIViewController {
     @IBOutlet weak var viewHeader: UIView!
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var viewOTP: DPOTPView!
+    @IBOutlet weak var lblOtpDetails: UILabel!
     @IBOutlet weak var indicator: UIActivityIndicatorView!
 
     // MARK: - view life cycle
@@ -42,12 +43,12 @@ open class PrivateGroupOTPVC: UIViewController {
         NotificationCenter.default.post(name: .hideTabbar, object: nil)
         checkLocationPermission()
         viewOTP.dpOTPViewDelegate = self
-        viewOTP.textColorTextField = Appearance.default.colorPalette.themeBlue
+        viewOTP.textColorTextField = .white
         viewSafeAreaHeader.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
         viewHeader.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         btnBack.setTitle("", for: .normal)
-        view.backgroundColor = Appearance.default.colorPalette.background
+        view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         indicator.startAnimating()
         LocationManager.shared.location.bind { [weak self] location in
             guard let self = self else {
@@ -60,6 +61,7 @@ open class PrivateGroupOTPVC: UIViewController {
                 }
             }
         }
+        lblOtpDetails.text = "Join a group with friends nearby by \n entering the secret four digits"
     }
 
     private func checkLocationPermission() {

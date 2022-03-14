@@ -47,11 +47,7 @@ class WalletStepper: UIView {
     private var centerContainerXLayoutConstraint: NSLayoutConstraint?
     private var centerContainerYLayoutConstraint: NSLayoutConstraint?
     private var startPosition: CGPoint!
-    public var value: Double = 1 {
-        didSet {
-            formatAmount()
-        }
-    }
+    public var value: Double = 1
     public var minimumValue: Double = 0.0
     public var maximumValue: Double = 400
     private var scrollDirection: ScrollDirection?
@@ -212,6 +208,7 @@ class WalletStepper: UIView {
                 let maxOffset = (detailView.bounds.height / 3)
                 if abs(offset) > abs(maxOffset / 2) {
                     value = 0
+                    formatAmount()
                     if #available(iOS 13.0, *) {
                         hapticFeedback(style: .soft)
                     } else {
@@ -235,7 +232,7 @@ class WalletStepper: UIView {
         }
     }
 
-    func updateAmount(amount: Double) {
+    func updateAmount(amount: Double, shouldFormat: Bool = true) {
         if amount > maximumValue {
             self.requireUserAttention(on: lblAmount)
             return
@@ -243,7 +240,9 @@ class WalletStepper: UIView {
             return
         }
         self.value = amount
-        formatAmount()
+        if shouldFormat {
+            formatAmount()
+        }
     }
 
     func insertNumber(numberValue: String?) {
@@ -261,7 +260,12 @@ class WalletStepper: UIView {
                 let amount = amountString.replacingOccurrences(of: ",", with: "")
                 if !amount.replacingOccurrences(of: "0", with: "").replacingOccurrences(of: ".", with: "").isEmpty &&
                     !(amount.components(separatedBy: ".").last?.replacingOccurrences(of: "0", with: "").isEmpty ?? false) {
-                    self.updateAmount(amount: Double(amount) ?? 0.0)
+                    if !amount.contains(".") {
+                        self.updateAmount(amount: Double(amount) ?? 0.0)
+                    } else {
+                        lblAmount.text = amount
+                        self.updateAmount(amount: Double(amount) ?? 0, shouldFormat: false)
+                    }
                 } else {
                     lblAmount.text = amount
                 }
@@ -271,11 +275,17 @@ class WalletStepper: UIView {
             amountString.removeLast()
             if amountString.isEmpty {
                 value = 0
+                updateAmount(amount: value)
             } else {
                 let amount = amountString.replacingOccurrences(of: ",", with: "")
                 if !amount.replacingOccurrences(of: "0", with: "").replacingOccurrences(of: ".", with: "").isEmpty &&
                     !(amount.components(separatedBy: ".").last?.replacingOccurrences(of: "0", with: "").isEmpty ?? false) {
-                    self.updateAmount(amount: Double(amount) ?? 0.0)
+                    if !amount.contains(".") {
+                        self.updateAmount(amount: Double(amount) ?? 0.0)
+                    } else {
+                        lblAmount.text = amount
+                        self.updateAmount(amount: Double(amount) ?? 0, shouldFormat: false)
+                    }
                 } else {
                     lblAmount.text = amount
                 }
@@ -302,6 +312,7 @@ class WalletStepper: UIView {
         currencyFormatter.usesGroupingSeparator = true
         currencyFormatter.numberStyle = .currency
         currencyFormatter.currencySymbol = ""
+        currencyFormatter.decimalSeparator = "."
         currencyFormatter.maximumFractionDigits = 4
         currencyFormatter.minimumFractionDigits = 0
         currencyFormatter.locale = Locale.init(identifier: "en_US")

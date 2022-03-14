@@ -9,10 +9,12 @@
 import Foundation
 
 public class ChatBaseVC: UIViewController {
+    // MARK: - Outlets
     @IBOutlet weak var btnNext: UIButton?
     @IBOutlet weak var btnBack: UIButton?
     @IBOutlet weak var btnAddFriend: UIButton?
     @IBOutlet weak var btnInviteLink: UIButton?
+    // MARK: - View Cycle
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.btnBack?.setTitle("", for: .normal)

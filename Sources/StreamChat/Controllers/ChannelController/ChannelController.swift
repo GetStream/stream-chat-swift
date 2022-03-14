@@ -1320,7 +1320,7 @@ extension ChatChannelController {
 
 public extension ChatChannelController {
     /// Set the delegate of `ChannelController` to observe the changes in the system.
-    var delegate: ChatChannelControllerDelegate? {
+    weak var delegate: ChatChannelControllerDelegate? {
         get { multicastDelegate.mainDelegate }
         set { multicastDelegate.set(mainDelegate: newValue) }
     }
