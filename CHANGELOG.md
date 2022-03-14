@@ -9,6 +9,7 @@ No Changes
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix blurred avatar views when using image merger [#1841](https://github.com/GetStream/stream-chat-swift/pull/1841)
+- Fix "Only visible to you" shown when deleted messages visible for all users [#1847](https://github.com/GetStream/stream-chat-swift/pull/1847)
 
 # [4.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.11.0)
 _March 01, 2022_
