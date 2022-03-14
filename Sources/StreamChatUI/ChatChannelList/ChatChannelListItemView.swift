@@ -197,11 +197,11 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         if Calendar.current.isDateInToday(lastMessageAt) {
             return dateFormatter.string(from: lastMessageAt)
         } else if Date.getDayDiffOfDates(Date(), endDate: lastMessageAt) < 6 {
-            return DateFormatter.shortWeekDateFormat.string(from: lastMessageAt)
+            return DateFormatter.formatter(with: .shortWeekDateFormat).string(from: lastMessageAt)
         } else if lastMessageAt.isInSameYear(as: Date()) {
-            return DateFormatter.dayMonthDateFormatter.string(from: lastMessageAt)
+            return DateFormatter.formatter(with: .dayMonthDateFormatter).string(from: lastMessageAt)
         } else {
-            return DateFormatter.longDateFormatter.string(from: lastMessageAt)
+            return DateFormatter.formatter(with: .longDateFormatter).string(from: lastMessageAt)
         }
     }
 }
