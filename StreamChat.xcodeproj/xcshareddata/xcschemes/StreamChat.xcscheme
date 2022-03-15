@@ -32,9 +32,6 @@
             reference = "container:Tests/StreamChatTests/StreamChatTestPlan.xctestplan"
             default = "YES">
          </TestPlanReference>
-         <TestPlanReference
-            reference = "container:Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan">
-         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

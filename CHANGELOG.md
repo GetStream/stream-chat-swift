@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Make it possible to customize the message view only in the popup actions [#1844](https://github.com/GetStream/stream-chat-swift/pull/1844)
 ### 🐞 Fixed
 - Fix blurred avatar views when using image merger [#1841](https://github.com/GetStream/stream-chat-swift/pull/1841)
+- Fix "Only visible to you" shown when deleted messages visible for all users [#1847](https://github.com/GetStream/stream-chat-swift/pull/1847)
 - Fix channels list cell staying as selected when in Airplane mode [#1831](https://github.com/GetStream/stream-chat-swift/pull/1831)
 
 # [4.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.11.0)

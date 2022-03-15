@@ -6,14 +6,17 @@ import Foundation
 @testable import StreamChat
 
 public extension ChatClient {
-    /// Create a new instance of mock `ChatClient`
-    static func mock(isLocalStorageEnabled: Bool = false) -> ChatClient {
+    static var defaultMockedConfig: ChatClientConfig {
         var config = ChatClientConfig(apiKey: .init("--== Mock ChatClient ==--"))
-        config.isLocalStorageEnabled = isLocalStorageEnabled
+        config.isLocalStorageEnabled = false
         config.isClientInActiveMode = false
-        
-        return .init(
-            config: config,
+        return config
+    }
+
+    /// Create a new instance of mock `ChatClient`
+    static func mock(config: ChatClientConfig? = nil) -> ChatClient {
+        .init(
+            config: config ?? defaultMockedConfig,
             environment: .init(
                 apiClientBuilder: APIClient_Mock.init,
                 webSocketClientBuilder: {

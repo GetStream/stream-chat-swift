@@ -25,7 +25,7 @@ class ChannelListController_Tests: XCTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = ChatClient.mock(isLocalStorageEnabled: false)
+        client = ChatClient.mock()
         query = .init(filter: .in(.members, values: [.unique]))
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
