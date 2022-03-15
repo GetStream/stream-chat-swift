@@ -98,11 +98,6 @@ public struct Filter<Scope: FilterScope> {
     /// The "right-hand" side of the filter. Specifies the value the filter should match.
     public let value: FilterValue
     
-    /// Set this value if you want to alter the hash of the filter. This is handy when you want to change the filter
-    /// but you want the changed filter to have the same hash as the original filter (for example, when you use the
-    /// hash to identify queries).
-    var explicitHash: String?
-    
     /// Creates a new instance of `Filter`.
     ///
     /// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
@@ -240,7 +235,7 @@ public extension Filter {
 extension Filter {
     /// Filter hash that can be used to uniquely identify a filter.
     var filterHash: String {
-        explicitHash ?? String(describing: self)
+        String(describing: self)
     }
 }
 

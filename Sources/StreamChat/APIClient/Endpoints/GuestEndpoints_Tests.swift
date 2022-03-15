@@ -14,7 +14,7 @@ final class GuestEndpoints_Tests: XCTestCase {
             extraData: [:]
         )
         let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
-            path: "guest",
+            path: .guest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -33,6 +33,7 @@ final class GuestEndpoints_Tests: XCTestCase {
             AnyEndpoint(expectedEndpoint),
             AnyEndpoint(actualEndpoint)
         )
+        XCTAssertEqual("guest", actualEndpoint.path.value)
     }
     
     func test_token_buildsCorrectly_withCustomExtraData() {
@@ -43,7 +44,7 @@ final class GuestEndpoints_Tests: XCTestCase {
             extraData: [:]
         )
         let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
-            path: "guest",
+            path: .guest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -62,5 +63,6 @@ final class GuestEndpoints_Tests: XCTestCase {
             AnyEndpoint(expectedEndpoint),
             AnyEndpoint(actualEndpoint)
         )
+        XCTAssertEqual("guest", actualEndpoint.path.value)
     }
 }

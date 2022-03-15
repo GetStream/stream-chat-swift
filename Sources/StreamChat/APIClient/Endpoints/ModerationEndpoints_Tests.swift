@@ -10,7 +10,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         let userId: UserId = .unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "moderation/mute",
+            path: .muteUser(true),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -22,13 +22,14 @@ final class ModerationEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("moderation/mute", endpoint.path.value)
     }
     
     func test_unmuteUser_buildsCorrectly() {
         let userId: UserId = .unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "moderation/unmute",
+            path: .muteUser(false),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -40,6 +41,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("moderation/unmute", endpoint.path.value)
     }
     
     func test_banMember_buildsCorrectly() {
@@ -49,7 +51,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         let reason: String = .unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "moderation/ban",
+            path: .banMember,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -66,6 +68,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("moderation/ban", endpoint.path.value)
     }
     
     func test_unbanMember_buildsCorrectly() {
@@ -73,7 +76,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         let cid: ChannelId = .unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "moderation/ban",
+            path: .banMember,
             method: .delete,
             queryItems: ChannelMemberBanRequestPayload(userId: userId, cid: cid),
             requiresConnectionId: false,
@@ -85,12 +88,13 @@ final class ModerationEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("moderation/ban", endpoint.path.value)
     }
     
     func test_flagUser_buildsCorrectly() {
         let testCases = [
-            (true, "moderation/flag"),
-            (false, "moderation/unflag")
+            (true, EndpointPath.flagUser(true)),
+            (false, EndpointPath.flagUser(false))
         ]
         
         for (flag, path) in testCases {
@@ -109,13 +113,14 @@ final class ModerationEndpoints_Tests: XCTestCase {
             
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path.value)
         }
     }
     
     func test_flagMessage_buildsCorrectly() {
         let testCases = [
-            (true, "moderation/flag"),
-            (false, "moderation/unflag")
+            (true, EndpointPath.flagMessage(true)),
+            (false, EndpointPath.flagMessage(false))
         ]
         
         for (flag, path) in testCases {
@@ -134,6 +139,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
             
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path.value)
         }
     }
 }

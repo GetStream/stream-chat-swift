@@ -30,7 +30,7 @@ public extension ChatMessage {
 
     /// A boolean value that checks if the message is the root of a thread.
     var isRootOfThread: Bool {
-        replyCount > 0
+        replyCount > 0 || !latestReplies.isEmpty
     }
 
     /// A boolean value that checks if the message is part of a thread.

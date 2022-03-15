@@ -28,6 +28,17 @@ public class DataController: Controller {
             }
         }
     }
+
+    /// Determines whether the controller can be recovered. A failure fetching remote data can mean that we failed to fetch the data that is present on the server, or
+    /// that we failed to synchronize a locally created channel
+    var canBeRecovered: Bool {
+        switch state {
+        case .remoteDataFetched, .remoteDataFetchFailed:
+            return true
+        case .initialized, .localDataFetched, .localDataFetchFailed:
+            return false
+        }
+    }
     
     /// Synchronize local data with remote.
     ///

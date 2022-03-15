@@ -10,7 +10,7 @@ extension Endpoint {
         cids: [ChannelId]
     ) -> Endpoint<MissingEventsPayload> {
         .init(
-            path: "sync",
+            path: .sync,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,

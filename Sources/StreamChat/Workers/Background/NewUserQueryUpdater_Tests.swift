@@ -53,23 +53,24 @@ class NewUserQueryUpdater_Tests: XCTestCase {
                 
         try database.createUser()
         
-        // Assert `update(userListQuery` called for each query in DB
-        AssertAsync.willBeEqual(
-            env!.userQueryUpdater?.update_queries.compactMap(\.filter?.filterHash).sorted(),
-            [filter1, filter2].map(\.filterHash).sorted()
-        )
+        // Assert `fetch(userListQuery:)` called for both queries
+        AssertAsync.willBeEqual(env!.userListUpdater!.update_queries.count, 2)
     }
     
     func test_update_called_forExistingUser() throws {
         // Deinitialize newUserQueryUpdater
         newUserQueryUpdater = nil
         
+        // Save user list query to database
         let filter: Filter<UserListFilterScope> = .notEqual(.id, to: .unique)
         try database.createUserListQuery(filter: filter)
-        try database.createUser(id: .unique)
         
-        // Assert `update(userListQuery` is not called
-        AssertAsync.willBeTrue(env!.userQueryUpdater?.update_queries.isEmpty)
+        // Save user to database
+        let userId: UserId = .unique
+        try database.createUser(id: userId)
+        
+        // Assert `fetch(userListQuery)` is not called yet
+        AssertAsync.willBeTrue(env!.userListUpdater?.update_queries.isEmpty)
         
         // Create `newUserQueryUpdater`
         newUserQueryUpdater = NewUserQueryUpdater(
@@ -78,8 +79,9 @@ class NewUserQueryUpdater_Tests: XCTestCase {
             env: env.environment
         )
         
-        // Assert `update(userListQuery` called for user that was in DB before observing started
-        AssertAsync.willBeEqual(env!.userQueryUpdater?.update_queries.first?.filter?.filterHash, filter.filterHash)
+        // Assert `fetch(userListQuery)` called for user that was in DB before observing started
+        let expectedFilter: Filter<UserListFilterScope> = .and([filter, .equal("id", to: userId)])
+        AssertAsync.willBeEqual(env!.userListUpdater?.update_queries.first?.filter, expectedFilter)
     }
     
     func test_filter_isModified() throws {
@@ -91,11 +93,8 @@ class NewUserQueryUpdater_Tests: XCTestCase {
         
         let expectedFilter: Filter = .and([filter, .equal(.id, to: id)])
         
-        // Assert `update(userListQuery` called with modified query
-        AssertAsync {
-            Assert.willBeEqual(self.env!.userQueryUpdater?.update_queries.first?.filter?.filterHash, filter.filterHash)
-            Assert.willBeEqual(self.env!.userQueryUpdater?.update_queries.first?.filter?.description, expectedFilter.description)
-        }
+        // Assert `fetch` is called with modified query
+        AssertAsync.willBeEqual(env!.userListUpdater?.update_queries.first?.filter, expectedFilter)
     }
     
     func test_newUserQueryUpdater_doesNotRetainItself() throws {
@@ -103,8 +102,8 @@ class NewUserQueryUpdater_Tests: XCTestCase {
         try database.createUserListQuery(filter: filter)
         try database.createUser()
         
-        // Assert `update(userListQuery` is called
-        AssertAsync.willBeEqual(env!.userQueryUpdater?.update_queries.first?.filter?.filterHash, filter.filterHash)
+        // Assert `fetch` is called
+        AssertAsync.willBeFalse(env!.userListUpdater?.update_queries.isEmpty)
         
         // Assert `newUserQueryUpdater` can be released even though network response hasn't come yet
         AssertAsync.canBeReleased(&newUserQueryUpdater)
@@ -112,34 +111,38 @@ class NewUserQueryUpdater_Tests: XCTestCase {
     
     func test_updater_ignoresNonObservedQueries() throws {
         let filter1: Filter<UserListFilterScope> = .equal(.id, to: .unique)
-        
+
         try database.createUserListQuery(filter: filter1)
-        
+
         var nonObservedQuery = UserListQuery(filter: .equal(.name, to: .unique))
         nonObservedQuery.shouldBeUpdatedInBackground = false
-        
+
         try database.writeSynchronously { session in
             try session.saveQuery(query: nonObservedQuery)
         }
-        
-        try database.createUser()
-        
-        // Assert `update(userListQuery` called for only observed query in DB
-        AssertAsync.willBeEqual(
-            env!.userQueryUpdater?.update_queries.compactMap(\.filter?.filterHash).sorted(),
-            [filter1].map(\.filterHash).sorted()
-        )
+
+        // Save user to database
+        let userId: UserId = .unique
+        try database.createUser(id: userId)
+
+        let expectedFilter: Filter<UserListFilterScope> = .and([filter1, .equal("id", to: userId)])
+
+        // Assert `fetch` called for only observed query in DB
+        AssertAsync {
+            Assert.willBeEqual(self.env!.userListUpdater?.update_queries.first?.filter, expectedFilter)
+            Assert.willBeEqual(self.env!.userListUpdater?.update_queries.count, 1)
+        }
     }
 }
 
 private class TestEnvironment {
-    var userQueryUpdater: UserListUpdaterMock?
+    var userListUpdater: UserListUpdaterMock?
     
     lazy var environment = NewUserQueryUpdater.Environment(createUserListUpdater: { [unowned self] in
-        self.userQueryUpdater = UserListUpdaterMock(
+        self.userListUpdater = UserListUpdaterMock(
             database: $0,
             apiClient: $1
         )
-        return self.userQueryUpdater!
+        return self.userListUpdater!
     })
 }

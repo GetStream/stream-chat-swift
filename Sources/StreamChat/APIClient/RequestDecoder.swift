@@ -55,7 +55,7 @@ struct DefaultRequestDecoder: RequestDecoder {
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
             
-            if ErrorPayload.tokenInvadlidErrorCodes ~= serverError.code {
+            if serverError.isInvalidTokenError {
                 log.info("Request failed because of an experied token.", subsystems: .httpRequests)
                 throw ClientError.ExpiredToken()
             }
@@ -67,7 +67,11 @@ struct DefaultRequestDecoder: RequestDecoder {
                 )
             throw ClientError(with: serverError)
         }
-        
+
+        if let responseAsData = data as? ResponseType {
+            return responseAsData
+        }
+
         do {
             let decodedPayload = try JSONDecoder.default.decode(ResponseType.self, from: data)
             return decodedPayload
@@ -80,6 +84,9 @@ struct DefaultRequestDecoder: RequestDecoder {
 
 extension ClientError {
     class ExpiredToken: ClientError {}
+    class RefreshingToken: ClientError {}
+    class TokenRefreshed: ClientError {}
+    class ConnectionError: ClientError {}
     class TooManyTokenRefreshAttempts: ClientError {
         override var localizedDescription: String {
             "Authentication failed on expired tokens after too many refresh attempts, please check that your user tokens are created correctly."

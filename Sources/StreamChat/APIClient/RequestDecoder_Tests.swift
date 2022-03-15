@@ -23,6 +23,17 @@ class RequestDecoder_Tests: XCTestCase {
         let decoded: TestUser = try decoder.decodeRequestResponse(data: data, response: response, error: nil)
         XCTAssertEqual(decoded, testUser)
     }
+
+    func test_decodingSuccessfullResponse_responseTypeData() throws {
+        // Prepare test data simulating successful response
+        let response = HTTPURLResponse(url: .unique(), statusCode: 200, httpVersion: nil, headerFields: nil)
+        let testUser = TestUser(name: "Luke", age: 22)
+        let data = try JSONEncoder.stream.encode(testUser)
+
+        // Decode it and check the results is `testUser`
+        let decoded: Data = try decoder.decodeRequestResponse(data: data, response: response, error: nil)
+        XCTAssertEqual(decoded, data)
+    }
     
     func test_decodingResponseWithError() {
         let testError = TestError()

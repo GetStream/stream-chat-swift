@@ -11,7 +11,7 @@ final class SyncEndpoint_Tests: XCTestCase {
         let cids: [ChannelId] = [.unique, .unique, .unique]
 
         let expectedEndpoint = Endpoint<MissingEventsPayload>(
-            path: "sync",
+            path: .sync,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,

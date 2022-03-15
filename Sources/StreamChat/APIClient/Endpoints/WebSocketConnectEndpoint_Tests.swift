@@ -15,7 +15,7 @@ final class WebSocketConnectEndpoint_Tests: XCTestCase {
         )
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "connect",
+            path: .connect,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -27,5 +27,6 @@ final class WebSocketConnectEndpoint_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("connect", endpoint.path.value)
     }
 }

@@ -9,7 +9,7 @@ extension Endpoint {
         userInfo: UserInfo
     ) -> Endpoint<EmptyResponse> {
         .init(
-            path: "connect",
+            path: .connect,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
