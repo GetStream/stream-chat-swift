@@ -14,7 +14,7 @@ final class MemberEndpoints_Tests: XCTestCase {
         )
         
         let expectedEndpoint = Endpoint<ChannelMemberListPayload>(
-            path: "members",
+            path: .members,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -26,5 +26,6 @@ final class MemberEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("members", endpoint.path.value)
     }
 }

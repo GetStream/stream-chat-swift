@@ -137,6 +137,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var messageUpdater: MessageUpdater = environment.messageUpdaterBuilder(
+        client.config.isLocalStorageEnabled,
+        client.messageRepository,
         client.databaseContainer,
         client.apiClient
     )
@@ -555,6 +557,8 @@ extension ChatMessageController {
         ) -> ListDatabaseObserver<ChatMessage, MessageDTO> = ListDatabaseObserver.init
         
         var messageUpdaterBuilder: (
+            _ isLocalStorageEnabled: Bool,
+            _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init

@@ -10,7 +10,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let messageId: MessageId = .unique
         
         let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
-            path: "messages/\(messageId)",
+            path: .message(messageId),
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -22,13 +22,14 @@ final class MessageEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
     
     func test_deleteMessage_whenHardDeleteDisabled_buildsCorrectly() {
         let messageId: MessageId = .unique
         
         let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
-            path: "messages/\(messageId)",
+            path: .message(messageId),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
@@ -42,13 +43,14 @@ final class MessageEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
     func test_deleteMessage_whenHardDeleteEnabled_buildsCorrectly() {
         let messageId: MessageId = .unique
 
         let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
-            path: "messages/\(messageId)",
+            path: .message(messageId),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
@@ -62,6 +64,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
     
     func test_editMessage_buildsCorrectly() {
@@ -73,7 +76,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "messages/\(payload.id)",
+            path: .message(payload.id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -85,6 +88,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(payload.id)", endpoint.path.value)
     }
     
     func test_loadReplies_buildsCorrectly() {
@@ -92,7 +96,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let pagination: MessagesPagination = .init(pageSize: 10)
         
         let expectedEndpoint = Endpoint<MessageRepliesPayload>(
-            path: "messages/\(messageId)/replies",
+            path: .replies(messageId),
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -104,6 +108,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)/replies", endpoint.path.value)
     }
 
     func test_loadReactions_buildsCorrectly() {
@@ -115,7 +120,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             pagination: pagination
         )
 
-        XCTAssertEqual(endpoint.path, "messages/ID/reactions")
+        XCTAssertEqual(endpoint.path.value, "messages/ID/reactions")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertTrue(endpoint.queryItems == nil)
         XCTAssertEqual(endpoint.requiresConnectionId, false)
@@ -129,7 +134,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let extraData: [String: RawJSON] = [:]
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "messages/\(messageId)/reaction",
+            path: .addReaction(messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -154,6 +159,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)/reaction", endpoint.path.value)
     }
     
     func test_deleteReaction_buildsCorrectly() {
@@ -161,7 +167,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let reaction: MessageReactionType = .init(rawValue: "like")
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "messages/\(messageId)/reaction/\(reaction.rawValue)",
+            path: .deleteReaction(messageId, reaction),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
@@ -173,6 +179,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)/reaction/\(reaction.rawValue)", endpoint.path.value)
     }
 
     func test_sendMessageAction_buildsCorrectly() {
@@ -187,7 +194,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
-            path: "messages/\(messageId)/action",
+            path: .messageAction(messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -207,5 +214,6 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)/action", endpoint.path.value)
     }
 }

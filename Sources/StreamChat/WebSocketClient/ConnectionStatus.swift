@@ -29,10 +29,10 @@ extension ConnectionStatus {
     // In internal initializer used for convering internal `WebSocketConnectionState` to `ChatClientConnectionStatus`.
     init(webSocketConnectionState: WebSocketConnectionState) {
         switch webSocketConnectionState {
-        case let .disconnected(error: error):
-            self = .disconnected(error: error)
+        case .initialized:
+            self = .initialized
             
-        case .connecting, .waitingForConnectionId, .waitingForReconnect:
+        case .connecting, .waitingForConnectionId:
             self = .connecting
             
         case .connected:
@@ -40,6 +40,12 @@ extension ConnectionStatus {
             
         case .disconnecting:
             self = .disconnecting
+            
+        case let .disconnected(source):
+            let isWaitingForReconnect = webSocketConnectionState.isAutomaticReconnectionEnabled || source.serverError?
+                .isInvalidTokenError == true
+            
+            self = isWaitingForReconnect ? .connecting : .disconnected(error: source.serverError)
         }
     }
 }
@@ -61,10 +67,20 @@ enum WebSocketConnectionState: Equatable {
         
         /// `WebSocketPingController` didn't get a pong response.
         case noPongReceived
+        
+        /// Returns the underlaying error if connection cut was initiated by the server.
+        var serverError: ClientError? {
+            guard case let .serverInitiated(error) = self else { return nil }
+            
+            return error
+        }
     }
     
-    /// The web socket is not connected. Optionally contains an error, if the connection was disconnected due to an error.
-    case disconnected(error: ClientError? = nil)
+    /// The initial state meaning that  there was no atempt to connect yet.
+    case initialized
+    
+    /// The web socket is not connected. Contains the source/reason why the disconnection has happened.
+    case disconnected(source: DisconnectionSource)
     
     /// The web socket is connecting
     case connecting
@@ -77,9 +93,6 @@ enum WebSocketConnectionState: Equatable {
     
     /// The web socket is disconnecting. `source` contains more info about the source of the event.
     case disconnecting(source: DisconnectionSource)
-    
-    /// The web socket is waiting for reconnecting. Optinally, an error is provided with the reason why it was disconnected.
-    case waitingForReconnect(error: ClientError? = nil)
     
     /// Checks if the connection state is connected.
     var isConnected: Bool {
@@ -95,5 +108,39 @@ enum WebSocketConnectionState: Equatable {
             return false
         }
         return true
+    }
+    
+    /// Returns `true` is the state requires and allows automatic reconnection.
+    var isAutomaticReconnectionEnabled: Bool {
+        guard case let .disconnected(source) = self else { return false }
+        
+        switch source {
+        case let .serverInitiated(clientError):
+            if let wsEngineError = clientError?.underlyingError as? WebSocketEngineError,
+               wsEngineError.code == WebSocketEngineError.stopErrorCode {
+                // Don't reconnect on `stop` errors
+                return false
+            }
+            
+            if let serverInitiatedError = clientError?.underlyingError as? ErrorPayload {
+                if serverInitiatedError.isInvalidTokenError {
+                    // Don't reconnect on invalid token errors
+                    return false
+                }
+                
+                if serverInitiatedError.isClientError {
+                    // Don't reconnect on client side errors
+                    return false
+                }
+            }
+            
+            return true
+        case .systemInitiated:
+            return true
+        case .noPongReceived:
+            return true
+        case .userInitiated:
+            return false
+        }
     }
 }

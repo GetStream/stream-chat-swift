@@ -10,11 +10,10 @@ public extension ChatClient {
     static func mock(isLocalStorageEnabled: Bool = false) -> ChatClient {
         var config = ChatClientConfig(apiKey: .init("--== Mock ChatClient ==--"))
         config.isLocalStorageEnabled = isLocalStorageEnabled
+        config.isClientInActiveMode = false
         
         return .init(
             config: config,
-            workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: .init(
                 apiClientBuilder: APIClient_Mock.init,
                 webSocketClientBuilder: {
@@ -22,8 +21,7 @@ public extension ChatClient {
                         sessionConfiguration: $0,
                         requestEncoder: $1,
                         eventDecoder: $2,
-                        eventNotificationCenter: $3,
-                        internetConnection: $4
+                        eventNotificationCenter: $3
                     )
                 },
                 databaseContainerBuilder: {
@@ -36,8 +34,7 @@ public extension ChatClient {
                         shouldShowShadowedMessages: $5
                     )
                 }
-            ),
-            tokenExpirationRetryStrategy: DefaultReconnectionStrategy()
+            )
         )
     }
 }
@@ -47,7 +44,6 @@ public extension ChatClient {
 class APIClient_Mock: APIClient {
     override func request<Response>(
         endpoint: Endpoint<Response>,
-        timeout: TimeInterval,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response: Decodable {
         // Do nothing for now

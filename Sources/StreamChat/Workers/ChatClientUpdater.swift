@@ -59,9 +59,12 @@ class ChatClientUpdater {
             return try client.databaseContainer.removeAllData(force: true)
         }
 
-        guard newToken != client.currentToken else {
-            return
+        // Set the web-socket endpoint
+        if client.webSocketClient?.connectEndpoint == nil {
+            client.webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo ?? .init(id: newToken.userId))
         }
+
+        guard newToken != client.currentToken else { return }
 
         client.currentToken = newToken
 
@@ -144,8 +147,8 @@ class ChatClientUpdater {
                 completion?(nil)
             } else {
                 // Try to get a concrete error
-                if case let .disconnected(error) = client?.webSocketClient?.connectionState {
-                    completion?(ClientError.ConnectionNotSuccessful(with: error))
+                if case let .disconnected(source) = client?.webSocketClient?.connectionState {
+                    completion?(ClientError.ConnectionNotSuccessful(with: source.serverError))
                 } else {
                     completion?(ClientError.ConnectionNotSuccessful())
                 }

@@ -50,18 +50,6 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         }
     }
     
-    func test_uniqueForChannel() {
-        // Create channel identifier
-        let cid: ChannelId = .unique
-        
-        // Create query unique for channel
-        let query: ChannelListQuery = .unique(for: cid)
-        
-        // Assert correct query is created
-        XCTAssertEqual(query, .init(filter: .equal(.cid, to: cid)))
-        XCTAssertEqual(query.filter.filterHash, cid.rawValue)
-    }
-    
     func test_hiddenFilter_valueIsDetected() {
         let hiddenValue = Bool.random()
         let testValues: [(Filter<ChannelListFilterScope>, Bool?)] = [
@@ -77,6 +65,19 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         for testValue in testValues {
             XCTAssertEqual(testValue.0.hiddenFilterValue, testValue.1, "\(testValue) failed")
         }
+    }
+
+    func test_debugDescription() {
+        let id = "theid"
+        let query = ChannelListQuery(
+            filter: .containMembers(userIds: [id]),
+            sort: [Sorting<ChannelListSortingKey>(key: .cid)],
+            pageSize: 1,
+            messagesLimit: 2,
+            membersLimit: 3
+        )
+
+        XCTAssertEqual(query.debugDescription, "Filter: members IN [\"theid\"] | Sort: [cid:-1]")
     }
 }
 
