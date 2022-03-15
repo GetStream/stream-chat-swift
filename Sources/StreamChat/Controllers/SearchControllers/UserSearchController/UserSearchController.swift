@@ -33,7 +33,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     }
 
     @available(*, deprecated, message: "Please, switch to `userArray: [ChatUser]`")
-    var users: LazyCachedMapCollection<ChatUser> {
+    public var users: LazyCachedMapCollection<ChatUser> {
         .init(source: userArray, map: { $0 })
     }
 
