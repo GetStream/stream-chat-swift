@@ -1227,15 +1227,16 @@ class ChatClient_Tests: XCTestCase {
             environment: testEnv.environment
         )
         
-        let os = "iOS"
-        
         // When
         client.connectAnonymousUser()
         
         // Then
-        let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders
-        let streamHeader = sessionHeaders!["User-Agent"] as! String
-        XCTAssertTrue(streamHeader.contains(os), "Header should contain iOS Device/Version reference")
+        guard let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders,
+              let streamHeader = sessionHeaders["User-Agent"] as? String else {
+            return XCTFail("User-Agent key should exist as a HTTP additional header.")
+        }
+        
+        XCTAssertEqual(streamHeader, SystemEnvironment.userAgent)
     }
     
     #elseif os(macOS)
@@ -1248,15 +1249,16 @@ class ChatClient_Tests: XCTestCase {
             environment: testEnv.environment
         )
         
-        let os = "MacOS"
-        
         // When
         client.connectAnonymousUser()
         
         // Then
-        let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders
-        let streamHeader = sessionHeaders!["User-Agent"] as! String
-        XCTAssertTrue(streamHeader.contains(os), "Header should contain MacOS Device/Version reference")
+        guard let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders,
+              let streamHeader = sessionHeaders["User-Agent"] as? String else {
+            return XCTFail("User-Agent key should exist as a HTTP additional header.")
+        }
+        
+        XCTAssertEqual(streamHeader, SystemEnvironment.userAgent)
     }
     #endif
 }

@@ -190,7 +190,7 @@ public class ChatClient {
     /// Stream-specific request headers.
     private let sessionHeaders: [String: String] = [
         "X-Stream-Client": "stream-chat-\(sdkIdentifier)-client-v\(SystemEnvironment.version)",
-        "User-Agent": SystemEnvironment.userAgent ?? ""
+        "User-Agent": SystemEnvironment.userAgent
     ]
     
     /// Identifies which SDK is being used.
