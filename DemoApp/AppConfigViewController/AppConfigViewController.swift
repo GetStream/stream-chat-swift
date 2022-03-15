@@ -28,12 +28,10 @@ class AppConfig {
             isAtlantisEnabled: false
         )
 
-        // Default ChatClientConfig
+        // DemoApp ChatClientConfig
         chatClientConfig = ChatClientConfig(apiKeyString: apiKeyString)
         chatClientConfig.shouldShowShadowedMessages = true
-        chatClientConfig.staysConnectedInBackground = true
         chatClientConfig.applicationGroupIdentifier = applicationGroupIdentifier
-        chatClientConfig.deletedMessagesVisibility = .visibleForCurrentUser
     }
 }
 
