@@ -48,11 +48,12 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         containerView.layer.cornerRadius = 12
         lblInfo.text = message?.text
         self.imgView.image = nil
-        if let clickAction = message?.extraData.cta {
+        if let clickAction = message?.extraData.cta, clickAction == "url" {
             viewAction.isHidden = false
         } else {
             viewAction.isHidden = true
         }
+        viewAction.isHidden = true
         if let hashTag = message?.extraData.tag {
             lblHashTag.text = "#" +  hashTag.joined(separator: " #")
         } else {
@@ -70,6 +71,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
             )
             Nuke.loadImage(with: imageAttachments.imageURL, options: options, into: imageView)
             playerView.isHidden = true
+            videoURL = nil
         } else if let videoAttachment = message?.videoAttachments.first {
             videoURL = videoAttachment.videoURL.absoluteString
             imgHeightConst.constant = 250
@@ -88,6 +90,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
                 }
             })
         } else {
+            videoURL = nil
             imgView.image = nil
             playerView.isHidden = true
             imgHeightConst.constant = 0
