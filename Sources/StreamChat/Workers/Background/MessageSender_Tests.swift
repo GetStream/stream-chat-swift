@@ -7,6 +7,7 @@
 import XCTest
 
 class MessageSender_Tests: XCTestCase {
+    var messageRepository: MessageRepositoryMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
@@ -17,12 +18,12 @@ class MessageSender_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
+
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         database = DatabaseContainerMock()
-        
-        sender = MessageSender(database: database, apiClient: apiClient)
+        messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        sender = MessageSender(messageRepository: messageRepository, database: database, apiClient: apiClient)
         
         cid = .unique
         
@@ -36,6 +37,7 @@ class MessageSender_Tests: XCTestCase {
         AssertAsync {
             Assert.canBeReleased(&sender)
             Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&messageRepository)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
         }
@@ -44,10 +46,13 @@ class MessageSender_Tests: XCTestCase {
     }
     
     func test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments() throws {
-        var message1Id: MessageId!
+        let message1Id: MessageId = .unique
         var message2Id: MessageId!
         var message3Id: MessageId!
-                
+
+        let message = ChatMessage.mock(id: message1Id, cid: cid, text: "Message sent", author: .unique)
+        messageRepository.sendMessageResult = .success(message)
+
         // Create 3 messages in the DB:
         //  - message in .pendingSend without attachments
         //  - message in .pendingSend with attachments
@@ -62,7 +67,7 @@ class MessageSender_Tests: XCTestCase {
                 extraData: [:]
             )
             message1.localMessageState = .pendingSend
-            message1Id = message1.id
+            message1.id = message1Id
 
             let message2 = try session.createNewMessage(
                 in: self.cid,
@@ -91,39 +96,18 @@ class MessageSender_Tests: XCTestCase {
             )
             message3Id = message3.id
         }
-        
-        let message1Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: message1Id)?
-                .asRequestBody()
-        )
-        let message2Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: message2Id)?
-                .asRequestBody()
-        )
-        let message3Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: message3Id)?
-                .asRequestBody()
-        )
 
         // Check only the message1 was sent
         AssertAsync {
-            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.contains(where: {
-                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message1Payload))
-            }))
-            Assert.staysFalse(self.apiClient.request_allRecordedCalls.contains(where: {
-                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message2Payload))
-            }))
-            Assert.staysFalse(self.apiClient.request_allRecordedCalls.contains(where: {
-                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message3Payload))
-            }))
+            Assert.willBeTrue(self.messageRepository.sendMessageIds.contains(where: { $0 == message1Id }))
+            Assert.staysFalse(self.messageRepository.sendMessageIds.contains(where: { $0 == message2Id }))
+            Assert.staysFalse(self.messageRepository.sendMessageIds.contains(where: { $0 == message3Id }))
         }
 
-        // Simulate successful response for message1.
-        let dummyPayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: message1Id, authorUserId: .anonymous)
-        )
+        XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 1)
 
-        apiClient.test_simulateResponse(.success(dummyPayload))
+        let message2 = ChatMessage.mock(id: message2Id, cid: cid, text: "Message sent 2", author: .unique)
+        messageRepository.sendMessageResult = .success(message2)
 
         // Simulate all message2 attachments are uploaded.
         try database.writeSynchronously { session in
@@ -133,13 +117,10 @@ class MessageSender_Tests: XCTestCase {
 
         // Check message2 was sent.
         AssertAsync {
-            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.contains(where: {
-                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message2Payload))
-            }))
-            Assert.staysFalse(self.apiClient.request_allRecordedCalls.contains(where: {
-                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message3Payload))
-            }))
+            Assert.willBeTrue(self.messageRepository.sendMessageIds.contains(where: { $0 == message2Id }))
+            Assert.staysFalse(self.messageRepository.sendMessageIds.contains(where: { $0 == message3Id }))
         }
+        XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 2)
     }
     
     func test_sender_sendsMessage_withUploadedAttachments() throws {
@@ -162,13 +143,8 @@ class MessageSender_Tests: XCTestCase {
             messageId = message.id
         }
         
-        let messagePayload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: messageId)?.asRequestBody()
-        )
-    
-        AssertAsync.willBeTrue(apiClient.request_allRecordedCalls.contains(where: {
-            $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: messagePayload))
-        }))
+        AssertAsync.willBeTrue(messageRepository.sendMessageIds.contains(where: { $0 == messageId }))
+        XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 1)
     }
     
     func test_sender_sendsMessage_withBothNotUploadableAttachmentAndUploadedAttachments() throws {
@@ -191,10 +167,8 @@ class MessageSender_Tests: XCTestCase {
             messageId = message.id
         }
         
-        let messagePayload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: messageId)?.asRequestBody()
-        )
-        
+        AssertAsync.staysTrue(messageRepository.sendMessageIds.isEmpty)
+
         // Simulate attachment seed uploaded
         try database.writeSynchronously { session in
             let message = try XCTUnwrap(session.message(id: messageId))
@@ -203,84 +177,15 @@ class MessageSender_Tests: XCTestCase {
                 $0.localState = .uploaded
             }
         }
-        
-        AssertAsync {
-            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.contains(where: {
-                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: messagePayload))
-            }))
-        }
+
+        AssertAsync.willBeTrue(messageRepository.sendMessageIds.contains(where: { $0 == messageId }))
     }
-    
-    func test_sender_changesMessageStates_whenSending() throws {
-        var message1Id: MessageId!
-                
-        // Create a message with pending state
-        try database.writeSynchronously { session in
-            let message1 = try session.createNewMessage(
-                in: self.cid,
-                text: "Message pending send",
-                pinning: nil,
-                quotedMessageId: nil,
-                isSilent: false,
-                extraData: [:]
-            )
-            message1.localMessageState = .pendingSend
-            message1Id = message1.id
-        }
-        
-        // Check the state is eventually changed to .sending
-        AssertAsync.willBeEqual(database.viewContext.message(id: message1Id)?.localMessageState, .sending)
-        
-        // Wait for the API call to be initiated
-        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
-        
-        // Simulate successful API response
-        let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
-        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
-        
-        // Check the temporary state is erased
-        AssertAsync {
-            Assert.willBeEqual(self.database.viewContext.message(id: message1Id)?.localMessageState, nil)
-            Assert.willBeEqual(self.database.viewContext.message(id: message1Id)?.locallyCreatedAt, nil)
-        }
-    }
-    
-    func test_sender_changesMessageStates_whenSendingFails() throws {
-        var message1Id: MessageId!
-                
-        // Create a message with pending state
-        try database.writeSynchronously { session in
-            let message1 = try session.createNewMessage(
-                in: self.cid,
-                text: "Message pending send",
-                pinning: nil,
-                quotedMessageId: nil,
-                isSilent: false,
-                extraData: [:]
-            )
-            message1.localMessageState = .pendingSend
-            message1Id = message1.id
-        }
-        
-        // Wait for the API call to be initiated
-        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
-        
-        // Simulate error API response
-        let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
-        callback(.failure(TestError()))
-        
-        // Check the state is eventually changed to `sendingFailed` but keeps the `locallyCreatedAt` value
-        AssertAsync {
-            Assert.willBeEqual(self.database.viewContext.message(id: message1Id)?.localMessageState, .sendingFailed)
-            Assert.willNotBeNil(self.database.viewContext.message(id: message1Id)?.locallyCreatedAt)
-        }
-    }
-    
+
     func test_senderSendsMessage_inTheOrderTheyWereCreatedLocally() throws {
         var message1Id: MessageId!
         var message2Id: MessageId!
         var message3Id: MessageId!
-        
+
         // Create 3 messages in the DB, all with `.pendingSend` local state
         try database.writeSynchronously { session in
             let message1 = try session.createNewMessage(
@@ -316,48 +221,26 @@ class MessageSender_Tests: XCTestCase {
             message3.localMessageState = .pendingSend
             message3Id = message3.id
         }
-        
-        // Check the 1st API call
-        let message1Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: message1Id)?
-                .asRequestBody()
-        )
-        AssertAsync.willBeEqual(
-            apiClient.request_endpoint,
-            AnyEndpoint(.sendMessage(cid: cid, messagePayload: message1Payload))
-        )
-        
-        // Simulate the first call response
-        var callback: ((Result<MessagePayload.Boxed, Error>) -> Void) {
-            apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
-        }
-        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
-        
-        // Check the 2nd API call
-        let message2Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: message2Id)?
-                .asRequestBody()
-        )
-        AssertAsync.willBeEqual(
-            apiClient.request_endpoint,
-            AnyEndpoint(.sendMessage(cid: cid, messagePayload: message2Payload))
-        )
-        
+
+        // Check the 1st call
+        AssertAsync.willBeEqual(messageRepository.sendMessageCalls.first?.key, message1Id)
+
+        let m1 = ChatMessage.mock(id: message1Id, cid: cid, text: "Message sent", author: .unique)
+        let callback1 = messageRepository.sendMessageCalls.first?.value
+        messageRepository.sendMessageCalls = [:]
+        callback1?(.success(m1))
+
+        // Check the 2nd call
+        AssertAsync.willBeEqual(messageRepository.sendMessageCalls.first?.key, message2Id)
+
         // Simulate the second call response
-        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
+        let m2 = ChatMessage.mock(id: message2Id, cid: cid, text: "Message sent", author: .unique)
+        let callback2 = messageRepository.sendMessageCalls.first?.value
+        messageRepository.sendMessageCalls = [:]
+        callback2?(.success(m2))
 
         // Check the 3rd API call
-        let message3Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: message3Id)?
-                .asRequestBody()
-        )
-        AssertAsync.willBeEqual(
-            apiClient.request_endpoint,
-            AnyEndpoint(.sendMessage(cid: cid, messagePayload: message3Payload))
-        )
-        
-        // Simulate the second call response
-        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
+        AssertAsync.willBeEqual(messageRepository.sendMessageCalls.first?.key, message3Id)
     }
     
     func test_senderSendsMessages_forMultipleChannelsInParalel_butStillInTheCorrectOrder() throws {
@@ -418,94 +301,29 @@ class MessageSender_Tests: XCTestCase {
             channelB_message2 = messageB2.id
         }
         
-        // Wait for 2 API calls to be made
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2)
-        
-        // Check the API calls are for the first messages from both channels
-        let channelA_message1Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext
-                .message(id: channelA_message1)?.asRequestBody()
-        )
-        let channelB_message1Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext
-                .message(id: channelB_message1)?.asRequestBody()
-        )
+        // Wait for 2 repository calls to be made
+        AssertAsync.willBeEqual(messageRepository.sendMessageCalls.count, 2)
+        XCTAssertTrue(messageRepository.sendMessageCalls.keys.contains(channelA_message1))
+        XCTAssertTrue(messageRepository.sendMessageCalls.keys.contains(channelB_message1))
 
-        XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
-            $0.endpoint == AnyEndpoint(.sendMessage(cid: cidA, messagePayload: channelA_message1Payload))
-        }))
-        XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
-            $0.endpoint == AnyEndpoint(.sendMessage(cid: cidB, messagePayload: channelB_message1Payload))
-        }))
-
-        // Simulate successfull responses for both API calls
-        apiClient.request_allRecordedCalls.forEach {
-            let callback = $0.completion as! (Result<MessagePayload.Boxed, Error>) -> Void
-            callback(.success(.init(message: .dummy(messageId: .unique, authorUserId: .anonymous))))
+        // Simulate successful responses for both calls
+        messageRepository.sendMessageCalls.forEach {
+            let message = ChatMessage.mock(id: $0.key, cid: cid, text: "Message sent", author: .unique)
+            $0.value(.success(message))
         }
                 
-        // Wait for 2 more API calls to be made
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2 + 2)
-        
-        // Check the API calls are for the second messages from both channels
-        let channelA_message2Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext
-                .message(id: channelA_message2)?.asRequestBody()
-        )
-        let channelB_message2Payload: MessageRequestBody = try XCTUnwrap(
-            database.viewContext
-                .message(id: channelB_message2)?.asRequestBody()
-        )
-        
-        XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
-            $0.endpoint == AnyEndpoint(.sendMessage(cid: cidA, messagePayload: channelA_message2Payload))
-        }))
-        XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
-            $0.endpoint == AnyEndpoint(.sendMessage(cid: cidB, messagePayload: channelB_message2Payload))
-        }))
-    }
-    
-    func test_messagePayloadResponse_savedAfterSuccessfulSending() throws {
-        var messageId: MessageId!
-                
-        // Create a message with pending state
-        try database.writeSynchronously { session in
-            let message = try session.createNewMessage(
-                in: self.cid,
-                text: "Message pending send",
-                pinning: nil,
-                quotedMessageId: nil,
-                isSilent: false,
-                extraData: [:]
-            )
-            message.localMessageState = .pendingSend
-            messageId = message.id
-        }
-        
-        // Wait for the API call to be initiated
-        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
-        
-        // Simulate successful API response with assigned attachment
-        let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
-        let attachment: MessageAttachmentPayload = .dummy(type: .giphy, title: .unique)
-        let messagePayload: MessagePayload = .dummy(
-            messageId: messageId,
-            attachments: [attachment],
-            authorUserId: .unique
-        )
-        
-        callback(.success(.init(message: messagePayload)))
+        // Wait for 2 more repository calls to be made
+        AssertAsync.willBeEqual(messageRepository.sendMessageCalls.count, 4)
+        XCTAssertTrue(messageRepository.sendMessageCalls.keys.contains(channelA_message2))
+        XCTAssertTrue(messageRepository.sendMessageCalls.keys.contains(channelB_message2))
 
-        var message: ChatMessage? {
-            database.viewContext.message(id: messageId)?.asModel()
+        // Check the repository calls are for the second messages from both channels
+        messageRepository.sendMessageCalls.forEach {
+            let message = ChatMessage.mock(id: $0.key, cid: cid, text: "Message sent", author: .unique)
+            $0.value(.success(message))
         }
-
-        AssertAsync.willBeEqual(
-            message?.giphyAttachments.first?.payload,
-            attachment.decodedGiphyPayload
-        )
     }
-    
+
     // MARK: - Life cycle tests
     
     func test_sender_doesNotRetainItself() throws {
@@ -514,8 +332,8 @@ class MessageSender_Tests: XCTestCase {
         // Create a message with pending state
         try database.createMessage(id: messageId, cid: cid, text: "Message pending send", localState: .pendingSend)
         
-        // Wait for the API call to be initiated
-        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
+        // Wait for the repository call
+        AssertAsync.willBeTrue(messageRepository.sendMessageCalls.count == 1)
         
         // Assert sender can be released even though network response hasn't come yet
         AssertAsync.canBeReleased(&sender)

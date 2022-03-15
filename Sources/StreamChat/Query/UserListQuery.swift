@@ -121,6 +121,25 @@ extension UserListQuery {
     static func user(withID userId: UserId) -> Self {
         .init(filter: .equal(.id, to: userId))
     }
+    
+    /// Builds `UserListQuery` for a user with the search term that sorts users by name ascending.
+    ///
+    /// - Parameter term: The search term. If `nil` or empty the pseudo-filter is used to fetch all users
+    /// - Returns: The query.
+    static func search(term: String?) -> Self {
+        var query = UserListQuery(sort: [.init(key: .name, isAscending: true)])
+        
+        if let term = term, !term.isEmpty {
+            query.filter = .or([
+                .autocomplete(.name, text: term),
+                .autocomplete(.id, text: term)
+            ])
+        } else {
+            query.filter = .exists(.id)
+        }
+        
+        return query
+    }
 }
 
 // Backend expects empty object for "filter_conditions" in case no filter specified.

@@ -88,7 +88,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
         
         // Assert channel endpoint is called.
-        let channelEndpoint: Endpoint<ChannelPayload> = .channel(query: .init(cid: query.cid))
+        let channelEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: .init(cid: query.cid))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
         
         // Simulate successful channel response.
@@ -139,7 +139,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
         
         // Assert channel endpoint is called.
-        let channelEndpoint: Endpoint<ChannelPayload> = .channel(query: .init(cid: query.cid))
+        let channelEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: .init(cid: query.cid))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
         
         // Simulate channel response with failure.
@@ -162,7 +162,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
         
         // Assert channel endpoint is called.
-        let channelEndpoint: Endpoint<ChannelPayload> = .channel(query: .init(cid: query.cid))
+        let channelEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: .init(cid: query.cid))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
         
         // Simulate channel response with  success.

@@ -266,7 +266,7 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
         _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
-        usersCache = searchController.users.map { $0 }
+        usersCache = searchController.userArray
         collectionView.reloadData()
     }
 }

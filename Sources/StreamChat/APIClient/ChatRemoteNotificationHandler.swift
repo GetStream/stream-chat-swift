@@ -81,14 +81,14 @@ public class ChatRemoteNotificationHandler {
     var client: ChatClient
     var content: UNNotificationContent
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
-    /// do not call the sync endpoint more than once every six seconds
-    let syncCooldown: TimeInterval = 6.0
     let database: DatabaseContainer
+    let syncRepository: SyncRepository
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
         self.content = content
         database = client.databaseContainer
+        syncRepository = client.syncRepository
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
@@ -98,100 +98,6 @@ public class ChatRemoteNotificationHandler {
         
         getContent(completion: completion)
         return true
-    }
-
-    private func obtainLastSyncDate(completion: @escaping (Date?) -> Void) {
-        var lastReceivedEventDate: Date?
-        database.viewContext.performAndWait {
-            lastReceivedEventDate = self.database.viewContext.currentUser?.lastReceivedEventDate
-        }
-        completion(lastReceivedEventDate)
-    }
-
-    private func bumpLastSyncDate(lastReceivedEventDate: Date, completion: @escaping () -> Void) {
-        database.write { session in
-            session.currentUser?.lastReceivedEventDate = lastReceivedEventDate
-        } completion: { error in
-            if let error = error {
-                log.error(error)
-            }
-            completion()
-        }
-    }
-
-    private func shouldSyncWithAPI(since: Date, now: Date = .init()) -> Bool {
-        now.timeIntervalSince(since) > syncCooldown
-    }
-
-    private func syncChannels(completion: @escaping () -> Void) {
-        guard client.config.isLocalStorageEnabled else {
-            completion()
-            return
-        }
-
-        obtainLastSyncDate { lastSyncAt in
-            guard let lastSyncAt = lastSyncAt, self.shouldSyncWithAPI(since: lastSyncAt) else {
-                completion()
-                return
-            }
-
-            let request = ChannelDTO.allChannelsFetchRequest
-            request.fetchLimit = 1000
-            request.propertiesToFetch = ["cid"]
-
-            guard let results = try? self.database.viewContext.fetch(request) else {
-                completion()
-                return
-            }
-
-            let cids = results.compactMap { try? ChannelId(cid: $0.cid) }
-            guard !cids.isEmpty else {
-                completion()
-                return
-            }
-
-            let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(
-                since: lastSyncAt,
-                cids: cids
-            )
-
-            self.client.apiClient.request(endpoint: endpoint) {
-                var lastReceivedEventDate: Date?
-                switch $0 {
-                case let .success(payload):
-                    self.client.eventNotificationCenter.process(payload.eventPayloads)
-                    lastReceivedEventDate = payload.eventPayloads.first?.createdAt
-                case let .failure(error):
-                    log.error("Failed cleaning up channels data: \(error).")
-                }
-
-                if let lastReceivedEventDate = lastReceivedEventDate {
-                    self.bumpLastSyncDate(lastReceivedEventDate: lastReceivedEventDate) {
-                        completion()
-                    }
-                } else {
-                    completion()
-                }
-            }
-        }
-    }
-
-    private func getMessageAndSync(cid: ChannelId, messageId: String, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
-        let controller = client.messageController(cid: cid, messageId: messageId)
-        controller.synchronize { error in
-            if let error = error {
-                log.error(error)
-                completion(nil, nil)
-            }
-            guard let message = controller.message else {
-                completion(nil, nil)
-                return
-            }
-            self.syncChannels() {
-                let channel = ChannelDTO.load(cid: cid, context: self.database.viewContext)?.asModel()
-                completion(message, channel)
-            }
-        }
     }
 
     private func getContent(completion: @escaping (ChatPushNotificationContent) -> Void) {
@@ -218,6 +124,28 @@ public class ChatRemoteNotificationHandler {
             }
         default:
             completion(.unknown(UnknownNotificationContent(content: content)))
+        }
+    }
+
+    private func getMessageAndSync(cid: ChannelId, messageId: String, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
+        let controller = client.messageController(cid: cid, messageId: messageId)
+        let database = self.database
+        controller.synchronize { [weak self] error in
+            if let error = error {
+                log.error(error)
+                completion(nil, nil)
+            }
+            guard let message = controller.message else {
+                completion(nil, nil)
+                return
+            }
+
+            self?.syncRepository.syncExistingChannelsEvents { _ in
+                database.backgroundReadOnlyContext.perform {
+                    let channel = ChannelDTO.load(cid: cid, context: database.backgroundReadOnlyContext)?.asModel()
+                    completion(message, channel)
+                }
+            }
         }
     }
 }

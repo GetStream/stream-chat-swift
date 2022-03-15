@@ -622,8 +622,10 @@ private class TestEnvironment {
     lazy var environment: ChatMessageSearchController.Environment =
         .init(messageUpdaterBuilder: { [unowned self] in
             self.messageUpdater = MessageUpdaterMock(
-                database: $0,
-                apiClient: $1
+                isLocalStorageEnabled: $0,
+                messageRepository: $1,
+                database: $2,
+                apiClient: $3
             )
             return self.messageUpdater!
         })

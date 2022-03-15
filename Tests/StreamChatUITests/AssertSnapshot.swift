@@ -6,6 +6,9 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
+/// Set this property true, to easily re-record all snapshots.
+let overrideRecording: Bool? = nil
+
 /// The default view controller size. Simulates an iPhone in portrait mode.
 let defaultScreenSize = CGSize(width: 360, height: 700)
 
@@ -45,7 +48,7 @@ func AssertSnapshot(
             matching: viewController,
             as: .image(size: screenSize, traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
-            record: record,
+            record: overrideRecording ?? record,
             file: file,
             testName: function,
             line: line
@@ -84,7 +87,7 @@ func AssertSnapshot(
             matching: view,
             as: size != nil ? .image(size: size!, traits: variant.traits) : .image(traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
-            record: record,
+            record: overrideRecording ?? record,
             file: file,
             testName: function,
             line: line
@@ -113,7 +116,7 @@ func AssertSnapshot<View: UIViewControllerRepresentable>(
         variants: variants,
         screenSize: screenSize,
         suffix: suffix,
-        record: record,
+        record: overrideRecording ?? record,
         line: line,
         file: file,
         function: function
@@ -153,7 +156,7 @@ func AssertSnapshot<View: SwiftUI.View>(
             matching: view,
             as: size != nil ? .image(layout: .sizeThatFits) : .image(layout: .device(config: device), traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
-            record: record,
+            record: overrideRecording ?? record,
             file: file,
             testName: function,
             line: line

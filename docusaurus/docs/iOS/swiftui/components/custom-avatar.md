@@ -42,11 +42,11 @@ class CustomFactory: ViewFactory {
     
     init() {}
    
-    func makeMessageAvatarView(for avatarURL: URL?) -> some View {
-        CustomUserAvatar(avatarURL: avatarURL)
+    func makeMessageAvatarView(for userDisplayInfo: UserDisplayInfo) -> some View {
+        CustomUserAvatar(avatarURL: userDisplayInfo.avatarURL)
     }
     
 }
 ```
 
-With this, you can have a custom avatar view in the message list view.
+With this, you can have a custom avatar view in the message list view. You can also use the name and the user id from the `UserDisplayInfo`, in case you want to present additional information in the avatar view.

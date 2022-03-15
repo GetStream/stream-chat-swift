@@ -22,14 +22,15 @@ class MessageEditor: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
     
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
+    private let messageRepository: MessageRepository
 
-    override init(database: DatabaseContainer, apiClient: APIClient) {
+    init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
         observer = .init(
             context: database.backgroundReadOnlyContext,
             fetchRequest: MessageDTO.messagesPendingSyncFetchRequest(),
             itemCreator: { $0 }
         )
-        
+        self.messageRepository = messageRepository
         super.init(database: database, apiClient: apiClient)
         
         startObserving()
@@ -61,7 +62,7 @@ class MessageEditor: Worker {
     }
 
     private func processNextMessage() {
-        database.write { [weak self] session in
+        database.write { [weak self, weak messageRepository] session in
             guard let messageId = self?.pendingMessageIDs.first else { return }
             
             guard
@@ -73,10 +74,10 @@ class MessageEditor: Worker {
             }
             
             let requestBody = dto.asRequestBody() as MessageRequestBody
-            self?.markMessage(withID: messageId, as: .syncing) {
+            messageRepository?.updateMessage(withID: messageId, localState: .syncing) {
                 self?.apiClient.request(endpoint: .editMessage(payload: requestBody)) {
                     let newMessageState: LocalMessageState? = $0.error == nil ? nil : .syncingFailed
-                    self?.markMessage(withID: messageId, as: newMessageState) {
+                    messageRepository?.updateMessage(withID: messageId, localState: newMessageState) {
                         self?.removeMessageIDAndContinue(messageId)
                     }
                 }
@@ -87,17 +88,6 @@ class MessageEditor: Worker {
     private func removeMessageIDAndContinue(_ messageId: MessageId) {
         _pendingMessageIDs.mutate { $0.remove(messageId) }
         processNextMessage()
-    }
-    
-    private func markMessage(withID id: MessageId, as state: LocalMessageState?, completion: @escaping () -> Void) {
-        database.write({
-            $0.message(id: id)?.localMessageState = state
-        }, completion: {
-            if let error = $0 {
-                log.error("Error changing localMessageState for message with id \(id) to `\(String(describing: state))`: \(error)")
-            }
-            completion()
-        })
     }
 }
 
