@@ -85,18 +85,11 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
         else { return }
         
         selectedMessageId = originalMessageContentView.content?.id
-        
+
+        let messageView = makeMessageContentView(fromOriginalView: originalMessageContentView)
         let messageViewFrame = selectedMessageContentViewFrame ?? .zero
-        let messageViewType = type(of: originalMessageContentView)
-        let messageAttachmentInjectorType = originalMessageContentView.attachmentViewInjector.map { type(of: $0) }
-        let messageLayoutOptions = originalMessageContentView.layoutOptions?.subtracting([.reactions]) ?? []
-        let message = originalMessageContentView.content
-        
-        let messageView = messageViewType.init()
-        messageView.setUpLayoutIfNeeded(options: messageLayoutOptions, attachmentViewInjectorType: messageAttachmentInjectorType)
         messageView.frame = messageViewFrame
-        messageView.content = message
-        
+
         transitionContext.containerView.addSubview(toVC.view)
         toVC.view.isHidden = true
         toVC.messageContentView = messageView
@@ -251,5 +244,19 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
                 self.selectedMessageId = nil
             }
         )
+    }
+
+    /// Responsible to create the message view from the original one in the message list.
+    open func makeMessageContentView(fromOriginalView originalView: ChatMessageContentView) -> ChatMessageContentView {
+        let messageViewType = type(of: originalView)
+        let messageAttachmentInjectorType = originalView.attachmentViewInjector.map { type(of: $0) }
+        let messageLayoutOptions = originalView.layoutOptions?.subtracting([.reactions]) ?? []
+        let message = originalView.content
+
+        let messageView = messageViewType.init()
+        messageView.setUpLayoutIfNeeded(options: messageLayoutOptions, attachmentViewInjectorType: messageAttachmentInjectorType)
+        messageView.content = message
+
+        return messageView
     }
 }

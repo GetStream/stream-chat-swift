@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add Offline Support (Connection & events recovery, and offline actions queuing) [#1831](https://github.com/GetStream/stream-chat-swift/pull/1831)
 
 ## StreamChatUI
+### ✅ Added
+- Make it possible to customize the message view only in the popup actions [#1844](https://github.com/GetStream/stream-chat-swift/pull/1844)
 ### 🐞 Fixed
 - Fix blurred avatar views when using image merger [#1841](https://github.com/GetStream/stream-chat-swift/pull/1841)
 - Fix channels list cell staying as selected when in Airplane mode [#1831](https://github.com/GetStream/stream-chat-swift/pull/1831)
