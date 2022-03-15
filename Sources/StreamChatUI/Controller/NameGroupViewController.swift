@@ -53,8 +53,7 @@ public class NameGroupViewController: ChatBaseVC {
         descriptionContainerView.layer.cornerRadius = 6.0
         let str = self.selectedUsers.count > 1 ? "friends" : "friend"
         lblFriendCount.text = "\(self.selectedUsers.count) \(str)"
-        lblTitle.setChatNavTitleColor()
-        lblTitle.text = "New Chat"
+        lblTitle.text = "New Group"
         nameField.placeholder = "Group chat name"
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
@@ -79,7 +78,7 @@ public class NameGroupViewController: ChatBaseVC {
         }
         let name = self.nameField.text ?? ""
         let description = self.groupDescriptionField.text ?? ""
-        if name.isBlank || description.isBlank || name.containsEmoji || description.containsEmoji {
+        if name.isBlank || name.containsEmoji || description.containsEmoji {
             self.btnNext?.isHidden = true
         } else {
             self.btnNext?.isHidden = false

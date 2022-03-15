@@ -19,9 +19,6 @@
         <array key="SFProText-Semibold.ttf">
             <string>SFProText-Semibold</string>
         </array>
-        <array key="TimesNewRoman.ttf">
-            <string>.SFUI-Regular</string>
-        </array>
     </customFonts>
     <scenes>
         <!--Chat Add FriendVC-->
@@ -640,10 +637,10 @@
                                                     <action selector="backBtnTapped:" destination="yjH-wK-zCh" eventType="touchUpInside" id="DZx-c0-qkr"/>
                                                 </connections>
                                             </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Chat" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bXa-Bc-F3u">
-                                                <rect key="frame" x="163" y="13.5" width="76.5" height="19.5"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Group" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bXa-Bc-F3u">
+                                                <rect key="frame" x="157.5" y="13.5" width="87.5" height="19.5"/>
                                                 <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="16"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <color key="textColor" white="1" alpha="0.80758397108843538" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
@@ -705,7 +702,7 @@
                                         <subviews>
                                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group chat name" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="VGn-Kf-YWL">
                                                 <rect key="frame" x="10" y="0.0" width="310" height="41"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="16"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZX6-EO-Rux">
@@ -747,7 +744,7 @@
                                         <subviews>
                                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group description" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="d9i-Sw-F4z">
                                                 <rect key="frame" x="10" y="0.0" width="300" height="41"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="16"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VMj-eX-SlU">
@@ -930,24 +927,17 @@
                                     </view>
                                 </subviews>
                             </stackView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Com-Wr-O04">
-                                <rect key="frame" x="0.0" y="260" width="414" height="9"/>
-                                <color key="backgroundColor" red="0.10980392156862745" green="0.10980392156862745" blue="0.11764705882352941" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="9" id="ah2-Hm-itm"/>
-                                </constraints>
-                            </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="0 friends" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0fQ-Bb-8Nq">
-                                <rect key="frame" x="20" y="295" width="374" height="24"/>
+                                <rect key="frame" x="20" y="274" width="374" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="phB-LY-U8v"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name=".SFUI-Regular" family=".AppleSystemUIFont" pointSize="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="oMx-7P-M2h">
-                                <rect key="frame" x="0.0" y="331" width="414" height="531"/>
+                                <rect key="frame" x="0.0" y="310" width="414" height="552"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fEY-ac-cIW">
@@ -968,13 +958,10 @@
                         <viewLayoutGuide key="safeArea" id="DRn-aO-RM0"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="Com-Wr-O04" firstAttribute="leading" secondItem="DRn-aO-RM0" secondAttribute="leading" id="1ch-6v-tdu"/>
                             <constraint firstItem="wd1-lA-Kpe" firstAttribute="leading" secondItem="rgj-TS-iyu" secondAttribute="leading" id="7Zb-WG-y32"/>
                             <constraint firstItem="DRn-aO-RM0" firstAttribute="bottom" secondItem="oMx-7P-M2h" secondAttribute="bottom" id="IOL-t7-uge"/>
-                            <constraint firstItem="Com-Wr-O04" firstAttribute="top" secondItem="Qb3-R4-KcB" secondAttribute="bottom" constant="20" id="J2a-ZI-H2a"/>
                             <constraint firstItem="DRn-aO-RM0" firstAttribute="trailing" secondItem="DtV-Yc-lyt" secondAttribute="trailing" id="LCY-jr-U1D"/>
                             <constraint firstItem="DRn-aO-RM0" firstAttribute="trailing" secondItem="oMx-7P-M2h" secondAttribute="trailing" id="LOb-Ce-H8N"/>
-                            <constraint firstItem="0fQ-Bb-8Nq" firstAttribute="top" secondItem="Com-Wr-O04" secondAttribute="bottom" constant="26" id="Ojn-DQ-Jgq"/>
                             <constraint firstItem="DRn-aO-RM0" firstAttribute="bottom" secondItem="fEY-ac-cIW" secondAttribute="bottom" constant="20" id="PVM-LT-XwG"/>
                             <constraint firstItem="wd1-lA-Kpe" firstAttribute="top" secondItem="rgj-TS-iyu" secondAttribute="top" id="Pee-kO-yFz"/>
                             <constraint firstItem="Qb3-R4-KcB" firstAttribute="top" secondItem="wd1-lA-Kpe" secondAttribute="bottom" constant="11" id="WQC-ub-TjU"/>
@@ -985,11 +972,11 @@
                             <constraint firstItem="DRn-aO-RM0" firstAttribute="trailing" secondItem="0fQ-Bb-8Nq" secondAttribute="trailing" constant="20" id="hNf-C9-U5n"/>
                             <constraint firstItem="oMx-7P-M2h" firstAttribute="leading" secondItem="DRn-aO-RM0" secondAttribute="leading" id="jSc-DU-PId"/>
                             <constraint firstItem="DRn-aO-RM0" firstAttribute="trailing" secondItem="Qb3-R4-KcB" secondAttribute="trailing" constant="17" id="ptO-oZ-BKm"/>
+                            <constraint firstItem="0fQ-Bb-8Nq" firstAttribute="top" secondItem="Qb3-R4-KcB" secondAttribute="bottom" constant="34" id="qcF-of-loJ"/>
                             <constraint firstItem="DtV-Yc-lyt" firstAttribute="top" secondItem="DRn-aO-RM0" secondAttribute="top" id="qdY-dD-NwB"/>
                             <constraint firstItem="DRn-aO-RM0" firstAttribute="trailing" secondItem="wd1-lA-Kpe" secondAttribute="trailing" id="rio-pd-uht"/>
                             <constraint firstItem="Qb3-R4-KcB" firstAttribute="leading" secondItem="DRn-aO-RM0" secondAttribute="leading" constant="17" id="se2-Sq-oVt"/>
                             <constraint firstItem="DRn-aO-RM0" firstAttribute="trailing" secondItem="fEY-ac-cIW" secondAttribute="trailing" constant="20" id="tfS-Wh-riK"/>
-                            <constraint firstItem="Com-Wr-O04" firstAttribute="trailing" secondItem="DRn-aO-RM0" secondAttribute="trailing" id="zl8-6S-5Wm"/>
                         </constraints>
                     </view>
                     <connections>
