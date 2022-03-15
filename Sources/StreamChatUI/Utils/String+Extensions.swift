@@ -115,3 +115,35 @@ extension String {
         return prefix(1).capitalized + dropFirst()
     }
 }
+
+extension String {
+    var htmlToAttributedString: NSAttributedString? {
+        guard let data = data(using: .utf8) else { return nil }
+        let modifiedFont = String(format:"<span style=\"font-family: '-apple-system', 'SF PRO'; font-size: \(14)\">%@</span>", self)
+
+        let attrStr = try! NSAttributedString(
+            data: modifiedFont.data(using: .unicode, allowLossyConversion: true)!,
+            options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding:String.Encoding.utf8.rawValue],
+            documentAttributes: nil)
+        return attrStr
+    }
+    var htmlToString: String {
+        return htmlToAttributedString?.string ?? ""
+    }
+}
+
+extension NSAttributedString {
+    func height(containerWidth: CGFloat) -> CGFloat {
+        let rect = self.boundingRect(with: CGSize.init(width: containerWidth, height: CGFloat.greatestFiniteMagnitude),
+                                     options: [.usesLineFragmentOrigin, .usesFontLeading],
+                                     context: nil)
+        return ceil(rect.size.height)
+    }
+
+    func width(containerHeight: CGFloat) -> CGFloat {
+        let rect = self.boundingRect(with: CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: containerHeight),
+                                     options: [.usesLineFragmentOrigin, .usesFontLeading],
+                                     context: nil)
+        return ceil(rect.size.width)
+    }
+}

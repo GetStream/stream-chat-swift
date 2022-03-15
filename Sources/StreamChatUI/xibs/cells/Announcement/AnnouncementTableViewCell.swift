@@ -26,7 +26,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var viewAction: UIView!
     @IBOutlet weak var btnShowMore: UIButton!
-    
+
     // MARK: - Variables
     var content: ChatMessage?
     var streamVideoLoader: StreamVideoLoader?
@@ -46,7 +46,11 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
     func configureCell(_ message: ChatMessage?) {
         self.selectionStyle = .none
         containerView.layer.cornerRadius = 12
-        lblInfo.text = message?.text
+        if let detailsText = message?.text.htmlToAttributedString {
+            let mutableAttributedString = NSMutableAttributedString(attributedString: detailsText ?? .init())
+            mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range: NSRange(location: 0,length: detailsText.length))
+            lblInfo.attributedText = mutableAttributedString
+        }
         self.imgView.image = nil
         if let clickAction = message?.extraData.cta, clickAction == "url" {
             viewAction.isHidden = false
