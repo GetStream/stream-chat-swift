@@ -90,7 +90,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             let observer = ListDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
                 fetchRequest: MessageDTO.messagesFetchRequest(
-                    for: query
+                    for: lastQuery ?? query
                 ),
                 itemCreator: { $0.asModel() as ChatMessage }
             )
@@ -143,18 +143,34 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             completion?(ClientError.CurrentUserDoesNotExist("For message search with text, a current user must be logged in"))
             return
         }
+        // We don't choose `guard` here since the expression
+        // guard !text.isEmpty, lastQuery != nil else { ...clearSearch(for: lastQuery!).. }
+        // would be much more complex to parse than this `if` statement
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let lastQuery = lastQuery {
+            messageUpdater.clearSearchResults(for: lastQuery) { error in
+                self.callback { completion?(error) }
+            }
+            return
+        }
         var query = MessageSearchQuery(
             channelFilter: .containMembers(userIds: [currentUserId]),
             messageFilter: .queryText(text)
         )
         query.filterHash = explicitFilterHash
         lastQuery = query
-        messageUpdater.search(query: query) { error in
+        messageUpdater.search(query: query, policy: .replace) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }
 
+    private func resetMessagesObserver() {
+        state = .initialized
+        setMessagesObserver()
+        _messagesObserver.reset()
+        startObserversIfNeeded()
+    }
+    
     /// Searches messages for the given query.
     ///
     /// When this function is called, `messages` property of this
@@ -164,19 +180,22 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///
     /// - Note: Currently, no local data will be searched, only remote data will be queried.
     ///
+    /// - Warning: Make sure the `query` text is not empty. Empty queries will result in 400 errors from backend.
+    ///
     /// - Parameters:
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: MessageSearchQuery, completion: ((_ error: Error?) -> Void)? = nil) {
-        startObserversIfNeeded()
-
         var query = query
         query.filterHash = explicitFilterHash
         
         lastQuery = query
         
-        messageUpdater.search(query: query) { error in
+        // To respect sorting the user passed, we must reset messagesObserver
+        resetMessagesObserver()
+        
+        messageUpdater.search(query: query, policy: .replace) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }

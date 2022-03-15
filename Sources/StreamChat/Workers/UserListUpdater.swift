@@ -6,14 +6,6 @@ import CoreData
 
 /// Makes a users query call to the backend and updates the local storage with the results.
 class UserListUpdater: Worker {
-    /// Defines the update policy for this worker.
-    enum UpdatePolicy {
-        /// The resulting user set of the query will be merged with the existing user set.
-        case merge
-        /// The resulting user set of the query will replace the existing user set.
-        case replace
-    }
-
     /// Makes a users query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:
@@ -64,4 +56,12 @@ class UserListUpdater: Worker {
             completion: completion
         )
     }
+}
+
+/// Defines the update policy for this worker.
+enum UpdatePolicy {
+    /// The resulting user set of the query will be merged with the existing user set.
+    case merge
+    /// The resulting user set of the query will replace the existing user set.
+    case replace
 }

@@ -79,6 +79,13 @@ final class MessageUpdaterMock: MessageUpdater {
     @Atomic var dispatchEphemeralMessageAction_action: AttachmentAction?
     @Atomic var dispatchEphemeralMessageAction_completion: ((Error?) -> Void)?
     
+    @Atomic var search_query: MessageSearchQuery?
+    @Atomic var search_policy: UpdatePolicy?
+    @Atomic var search_completion: ((Error?) -> Void)?
+    
+    @Atomic var clearSearchResults_query: MessageSearchQuery?
+    @Atomic var clearSearchResults_completion: ((Error?) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -147,6 +154,13 @@ final class MessageUpdaterMock: MessageUpdater {
         dispatchEphemeralMessageAction_messageId = nil
         dispatchEphemeralMessageAction_action = nil
         dispatchEphemeralMessageAction_completion = nil
+        
+        search_query = nil
+        search_policy = nil
+        search_completion = nil
+        
+        clearSearchResults_query = nil
+        clearSearchResults_completion = nil
     }
     
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
@@ -297,5 +311,23 @@ final class MessageUpdaterMock: MessageUpdater {
         dispatchEphemeralMessageAction_messageId = messageId
         dispatchEphemeralMessageAction_action = action
         dispatchEphemeralMessageAction_completion = completion
+    }
+    
+    override func search(
+        query: MessageSearchQuery,
+        policy: UpdatePolicy = .merge,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        search_query = query
+        search_policy = policy
+        search_completion = completion
+    }
+    
+    override func clearSearchResults(
+        for query: MessageSearchQuery,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        clearSearchResults_query = query
+        clearSearchResults_completion = completion
     }
 }

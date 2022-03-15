@@ -181,7 +181,7 @@ private extension ChatUserSearchController {
     ///   - loadedPage: The next page of users.
     ///   - updatePolicy: The update policy.
     /// - Returns: The list of changes that can be applied to the current list of users.
-    func prepareListChanges(loadedPage: [ChatUser], updatePolicy: UserListUpdater.UpdatePolicy) -> [ListChange<ChatUser>] {
+    func prepareListChanges(loadedPage: [ChatUser], updatePolicy: UpdatePolicy) -> [ListChange<ChatUser>] {
         switch updatePolicy {
         case .replace:
             let deletions = userArray.enumerated().reversed().map { (index, user) in
