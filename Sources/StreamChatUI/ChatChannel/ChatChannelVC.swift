@@ -39,6 +39,9 @@ open class ChatChannelVC:
 
     /// Listen to keyboard observer or not
     open var enableKeyboardObserver = false
+    
+    /// Local variable to toggle channel mute flag
+    private var isChannelMuted = false
 
     /// User search controller for suggestion users when typing in the composer.
     open lazy var userSuggestionSearchController: ChatUserSearchController? =
@@ -76,13 +79,6 @@ open class ChatChannelVC:
         button.setImage(appearance.images.moreVertical, for: .normal)
         button.tintColor = .white
         button.backgroundColor = .clear
-        if #available(iOS 14.0, *) {
-            let menu = UIMenu(title: "",
-                              options: .displayInline,
-                              children: getMenuItems())
-            button.menu = menu
-            button.showsMenuAsPrimaryAction = true
-        }
         return button.withoutAutoresizingMaskConstraints
     }()
 
@@ -368,6 +364,7 @@ open class ChatChannelVC:
         userInfo["extraData"] = channelController?.channel?.extraData
         NotificationCenter.default.post(name: .showDaoShareScreen, object: nil, userInfo: userInfo)
     }
+    
     @objc func addFriendAction(_ sender: Any) {
         guard let channelVC = self.channelController else { return }
         guard let controller = ChatAddFriendVC
@@ -437,6 +434,8 @@ open class ChatChannelVC:
     }
 
     private func setupUI() {
+        isChannelMuted = channelController?.channel?.isMuted ?? false
+        reloadMenu()
         KeyboardService.shared.observeKeyboard(self.view)
         if channelController?.channel?.isDirectMessageChannel ?? false {
             shareView.isHidden = true
@@ -475,6 +474,17 @@ open class ChatChannelVC:
                 completion: nil)
         }
     }
+    
+    private func reloadMenu() {
+        if #available(iOS 14.0, *) {
+            let menu = UIMenu(title: "",
+                              options: .displayInline,
+                              children: getMenuItems())
+            moreButton.menu = menu
+            moreButton.showsMenuAsPrimaryAction = true
+        }
+    }
+    
     // MARK: - Menu actions
     public func inviteUserAction() {
         guard let channelVC = self.channelController else { return }
@@ -585,23 +595,35 @@ open class ChatChannelVC:
     }
     
     public func muteNotification() {
-        channelController?.muteChannel { [weak self] error in
+        channelController?.muteChannel(completion: { [weak self] error in
             guard let weakSelf = self else { return }
-            let msg = error == nil ? "Notifications muted" : "Error while muted group notifications"
-            DispatchQueue.main.async {
-                Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupMute)
+            guard error == nil else {
+                Snackbar.show(text: "Error while mute group notifications")
+                weakSelf.isChannelMuted = false
+                weakSelf.reloadMenu()
+                return
             }
-        }
+            weakSelf.isChannelMuted = true
+            weakSelf.reloadMenu()
+            Snackbar.show(text: "Notifications muted", messageType: StreamChatMessageType.ChatGroupMute)
+        })
     }
+    
     public func unMuteNotification() {
-        channelController?.unmuteChannel { [weak self] error in
+        channelController?.unmuteChannel(completion: { [weak self] error in
             guard let weakSelf = self else { return }
-            let msg = error == nil ? "Notifications unmuted" : "Error while unmute group notifications"
-            DispatchQueue.main.async {
-                Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupUnMute)
+            guard error == nil else {
+                Snackbar.show(text: "Error while unmute group notifications")
+                weakSelf.isChannelMuted = true
+                weakSelf.reloadMenu()
+                return
             }
-        }
+            weakSelf.isChannelMuted = false
+            weakSelf.reloadMenu()
+            Snackbar.show(text: "Notifications unmuted", messageType: StreamChatMessageType.ChatGroupMute)
+        })
     }
+    
     public func deleteChat() {
         let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
             guard let self = self else {
@@ -869,7 +891,7 @@ open class ChatChannelVC:
                 var actions: [UIAction] = []
                 // To do:- will add in future release
                 //actions.append(search)
-                if channelController?.channel?.isMuted ?? false {
+                if isChannelMuted {
                     actions.append(unmute)
                 } else {
                     actions.append(mute)
@@ -883,7 +905,7 @@ open class ChatChannelVC:
                     // To do:- will add in future release
                     //actions.append(contentsOf: [groupImage, search,invite,groupQR])
                     actions.append(contentsOf: [invite, groupQR])
-                    if channelController?.channel?.isMuted ?? false {
+                    if isChannelMuted {
                         actions.append(unmute)
                     } else {
                         actions.append(mute)
@@ -895,7 +917,7 @@ open class ChatChannelVC:
                     // To do:- will add in future release
                     //actions.append(contentsOf: [search,groupQR])
                     actions.append(contentsOf: [groupQR])
-                    if channelController?.channel?.isMuted ?? false {
+                    if isChannelMuted {
                         actions.append(unmute)
                     } else {
                         actions.append(mute)
