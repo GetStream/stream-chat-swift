@@ -213,6 +213,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
         case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
             moveRow(at: fromIndex, to: toIndex)
+            reloadRows(at: [fromIndex, toIndex], with: .automatic)
 
         case let .update(_, index: index):
             reloadRows(at: [index], with: .automatic)

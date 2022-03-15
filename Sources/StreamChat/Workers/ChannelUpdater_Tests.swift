@@ -35,17 +35,26 @@ class ChannelUpdater_Tests: XCTestCase {
     func test_updateChannelQuery_makesCorrectAPICall() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
-        channelUpdater.update(channelQuery: query)
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false)
         
-        let referenceEndpoint: Endpoint<ChannelPayload> = .channel(query: query)
+        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_updateChannelQueryRecovery_makesCorrectAPICall() {
+        // Simulate `update(channelQuery:)` call
+        let query = ChannelQuery(cid: .unique)
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: true)
+
+        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        XCTAssertEqual(apiClient.recoveryRequest_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
     func test_updateChannelQuery_successfulResponseData_areSavedToDB() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
         var completionCalled = false
-        channelUpdater.update(channelQuery: query, completion: { result in
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
             XCTAssertNil(result.error)
             completionCalled = true
         })
@@ -64,17 +73,55 @@ class ChannelUpdater_Tests: XCTestCase {
             Assert.willBeTrue(completionCalled)
         }
     }
+
+    func test_updateChannelQueryRecovery_successfulResponseData_areSavedToDB() {
+        // Simulate `update(channelQuery:)` call
+        let query = ChannelQuery(cid: .unique)
+        var completionCalled = false
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: true, completion: { result in
+            XCTAssertNil(result.error)
+            completionCalled = true
+        })
+
+        // Simulate API response with channel data
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let payload = dummyPayload(with: cid)
+        apiClient.test_simulateRecoveryResponse(.success(payload))
+
+        // Assert the data is stored in the DB
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        AssertAsync {
+            Assert.willBeTrue(channel != nil)
+            Assert.willBeTrue(completionCalled)
+        }
+    }
     
     func test_updateChannelQuery_errorResponse_isPropagatedToCompletion() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
         var completionCalledError: Error?
-        channelUpdater.update(channelQuery: query, completion: { completionCalledError = $0.error })
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { completionCalledError = $0.error })
         
         // Simulate API response with failure
         let error = TestError()
         apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
         
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    func test_updateChannelQueryRecovery_errorResponse_isPropagatedToCompletion() {
+        // Simulate `update(channelQuery:)` call
+        let query = ChannelQuery(cid: .unique)
+        var completionCalledError: Error?
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: true, completion: { completionCalledError = $0.error })
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateRecoveryResponse(Result<ChannelPayload, Error>.failure(error))
+
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
@@ -95,7 +142,7 @@ class ChannelUpdater_Tests: XCTestCase {
         }
 
         // Simulate `updateChannel` call
-        channelUpdater.update(channelQuery: query, channelCreatedCallback: callback, completion: nil)
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, channelCreatedCallback: callback, completion: nil)
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
@@ -105,6 +152,178 @@ class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(cid, query.cid)
         // Assert channel is saved to DB after
         AssertAsync.willBeTrue(channel != nil)
+    }
+
+    func test_updateChannelQueryRecovery_completionForCreatedChannelCalled() {
+        // Simulate `update(channelQuery:)` call
+        let query = ChannelQuery(channelPayload: .unique)
+        var cid: ChannelId = .unique
+
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+
+        let callback: (ChannelId) -> Void = {
+            cid = $0
+            // Assert channel is not saved to DB before callback returns
+            AssertAsync.staysTrue(channel == nil)
+        }
+
+        // Simulate `updateChannel` call
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: true, channelCreatedCallback: callback, completion: nil)
+
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: query.cid!)
+        apiClient.test_simulateRecoveryResponse(.success(payload))
+
+        // Assert `channelCreatedCallback` is called
+        XCTAssertEqual(cid, query.cid)
+        // Assert channel is saved to DB after
+        AssertAsync.willBeTrue(channel != nil)
+    }
+
+    func test_updateChannelQuery_successfulResponseData_oldMessagesAreNotKeptIfPaginationDoesNotHaveParameter() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let query = ChannelQuery(cid: cid, pageSize: 10, paginationParameter: nil, membersLimit: 10, watchersLimit: 10)
+
+        // Populate messages for channel
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
+            try (1...3).forEach {
+                try session.saveMessage(payload: self.dummyMessagePayload(id: "\($0)dames"), for: cid, syncOwnReactions: false)
+            }
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.messages.count, 3)
+
+        // Simulate `update(channelQuery:)` call
+        let expectation = self.expectation(description: "update call completion")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
+            XCTAssertNil(result.error)
+            expectation.fulfill()
+        })
+
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: cid, numberOfMessages: 1)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertNotNil(channel)
+        // Removes old ones, only keeps the one in the simulated response
+        XCTAssertEqual(channel?.messages.count, 1)
+    }
+
+    func test_updateChannelQueryRecovery_successfulResponseData_oldMessagesAreNotKeptIfPaginationDoesNotHaveParameter() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let query = ChannelQuery(cid: cid, pageSize: 10, paginationParameter: nil, membersLimit: 10, watchersLimit: 10)
+
+        // Populate messages for channel
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
+            try (1...3).forEach {
+                try session.saveMessage(payload: self.dummyMessagePayload(id: "\($0)dames"), for: cid, syncOwnReactions: false)
+            }
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.messages.count, 3)
+
+        // Simulate `update(channelQuery:)` call
+        let expectation = self.expectation(description: "update call completion")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: true, completion: { result in
+            XCTAssertNil(result.error)
+            expectation.fulfill()
+        })
+
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: cid, numberOfMessages: 1)
+        apiClient.test_simulateRecoveryResponse(.success(payload))
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertNotNil(channel)
+        // Removes old ones, only keeps the one in the simulated response
+        XCTAssertEqual(channel?.messages.count, 1)
+    }
+
+    func test_updateChannelQuery_successfulResponseData_oldMessagesAreKeptIfPaginationHasParameter() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let query = ChannelQuery(
+            cid: cid,
+            pageSize: 10,
+            paginationParameter: .greaterThan("something"),
+            membersLimit: 10,
+            watchersLimit: 10
+        )
+
+        // Populate messages for channel
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
+            try (1...3).forEach {
+                try session.saveMessage(payload: self.dummyMessagePayload(id: "\($0)"), for: cid, syncOwnReactions: false)
+            }
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.messages.count, 3)
+
+        // Simulate `update(channelQuery:)` call
+        let expectation = self.expectation(description: "update call completion")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
+            XCTAssertNil(result.error)
+            expectation.fulfill()
+        })
+
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: cid, numberOfMessages: 1)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertNotNil(channel)
+        // Adds the message in the simulated response on top of the existing ones as we are paginating
+        XCTAssertEqual(channel?.messages.count, 4)
+    }
+
+    func test_updateChannelQueryRecovery_successfulResponseData_oldMessagesAreKeptIfPaginationHasParameter() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let query = ChannelQuery(
+            cid: cid,
+            pageSize: 10,
+            paginationParameter: .greaterThan("something"),
+            membersLimit: 10,
+            watchersLimit: 10
+        )
+
+        // Populate messages for channel
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
+            try (1...3).forEach {
+                try session.saveMessage(payload: self.dummyMessagePayload(id: "\($0)"), for: cid, syncOwnReactions: false)
+            }
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.messages.count, 3)
+
+        // Simulate `update(channelQuery:)` call
+        let expectation = self.expectation(description: "update call completion")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: true, completion: { result in
+            XCTAssertNil(result.error)
+            expectation.fulfill()
+        })
+
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: cid, numberOfMessages: 1)
+        apiClient.test_simulateRecoveryResponse(.success(payload))
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertNotNil(channel)
+        // Adds the message in the simulated response on top of the existing ones as we are paginating
+        XCTAssertEqual(channel?.messages.count, 4)
     }
 
     // MARK: - Messages
@@ -943,18 +1162,29 @@ class ChannelUpdater_Tests: XCTestCase {
     func test_startWatching_makesCorrectAPICall() {
         let cid = ChannelId.unique
         
-        channelUpdater.startWatching(cid: cid)
+        channelUpdater.startWatching(cid: cid, isInRecoveryMode: false)
         
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        let referenceEndpoint: Endpoint<ChannelPayload> = .channel(query: query)
+        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
-    
+
+    func test_startWatchingRecovery_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+
+        channelUpdater.startWatching(cid: cid, isInRecoveryMode: true)
+
+        var query = ChannelQuery(cid: cid)
+        query.options = .all
+        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        XCTAssertEqual(apiClient.recoveryRequest_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
     func test_startWatching_successfulResponse_isPropagatedToCompletion() {
         var completionCalled = false
         let cid = ChannelId.unique
-        channelUpdater.startWatching(cid: cid) { error in
+        channelUpdater.startWatching(cid: cid, isInRecoveryMode: false) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -967,14 +1197,41 @@ class ChannelUpdater_Tests: XCTestCase {
         
         AssertAsync.willBeTrue(completionCalled)
     }
+
+    func test_startWatchingRecovery_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        let cid = ChannelId.unique
+        channelUpdater.startWatching(cid: cid, isInRecoveryMode: true) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: cid)
+        apiClient.test_simulateRecoveryResponse(.success(payload))
+
+        AssertAsync.willBeTrue(completionCalled)
+    }
     
     func test_startWatching_errorResponse_isPropagatedToCompletion() {
         var completionCalledError: Error?
-        channelUpdater.startWatching(cid: .unique) { completionCalledError = $0 }
+        channelUpdater.startWatching(cid: .unique, isInRecoveryMode: false) { completionCalledError = $0 }
         
         let error = TestError()
         apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
         
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    func test_startWatchingRecovery_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.startWatching(cid: .unique, isInRecoveryMode: true) { completionCalledError = $0 }
+
+        let error = TestError()
+        apiClient.test_simulateRecoveryResponse(Result<ChannelPayload, Error>.failure(error))
+
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
     

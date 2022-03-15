@@ -9,12 +9,10 @@ import XCTest
 
 extension ChatClient {
     static var mock: ChatClient {
-        .init(
+        ChatClientMock(
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
-            eventWorkerBuilders: [],
-            environment: .mock,
-            tokenExpirationRetryStrategy: DefaultReconnectionStrategy()
+            environment: .mock
         )
     }
     
@@ -32,7 +30,10 @@ extension ChatClient {
 
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
         guard let connectionId = connectionId else {
-            webSocketClient(mockWebSocketClient, didUpdateConnectionState: .disconnected(error: nil))
+            webSocketClient(
+                mockWebSocketClient,
+                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: nil))
+            )
             return
         }
         webSocketClient(mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: connectionId))
@@ -42,8 +43,6 @@ extension ChatClient {
 class ChatClientMock: ChatClient {
     @Atomic var init_config: ChatClientConfig
     @Atomic var init_tokenProvider: TokenProvider?
-    @Atomic var init_workerBuilders: [WorkerBuilder]
-    @Atomic var init_eventWorkerBuilders: [EventWorkerBuilder]
     @Atomic var init_environment: Environment
     @Atomic var init_completion: ((Error?) -> Void)?
 
@@ -57,30 +56,32 @@ class ChatClientMock: ChatClient {
     @Atomic var completeTokenWaiters_called = false
     @Atomic var completeTokenWaiters_token: Token?
 
+    override var backgroundWorkers: [Worker] {
+        _backgroundWorkers ?? super.backgroundWorkers
+    }
+
+    private var _backgroundWorkers: [Worker]?
+
     // MARK: - Overrides
 
-    override init(
+    init(
         config: ChatClientConfig,
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder] = [],
-        eventWorkerBuilders: [EventWorkerBuilder] = [],
-        environment: Environment = .mock,
-        tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
+        environment: Environment = .mock
     ) {
         init_config = config
         init_tokenProvider = tokenProvider
-        init_workerBuilders = workerBuilders
-        init_eventWorkerBuilders = eventWorkerBuilders
         init_environment = environment
 
         super.init(
             config: config,
             tokenProvider: tokenProvider,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
-            environment: environment,
-            tokenExpirationRetryStrategy: tokenExpirationRetryStrategy
+            environment: environment
         )
+        if !workerBuilders.isEmpty {
+            _backgroundWorkers = workerBuilders.map { $0(databaseContainer, apiClient) }
+        }
     }
 
     override func fetchCurrentUserIdFromDatabase() -> UserId? {
@@ -135,8 +136,7 @@ extension ChatClient.Environment {
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     eventDecoder: $2,
-                    eventNotificationCenter: $3,
-                    internetConnection: $4
+                    eventNotificationCenter: $3
                 )
             },
             databaseContainerBuilder: {
@@ -159,6 +159,25 @@ extension ChatClient.Environment {
             eventDecoderBuilder: EventDecoder.init,
             notificationCenterBuilder: EventNotificationCenter.init,
             clientUpdaterBuilder: ChatClientUpdaterMock.init
+        )
+    }
+
+    static var withZeroEventBatchingPeriod: Self {
+        .init(
+            webSocketClientBuilder: {
+                var webSocketEnvironment = WebSocketClient.Environment()
+                webSocketEnvironment.eventBatcherBuilder = {
+                    Batcher<Event>(period: 0, handler: $0)
+                }
+                
+                return WebSocketClient(
+                    sessionConfiguration: $0,
+                    requestEncoder: $1,
+                    eventDecoder: $2,
+                    eventNotificationCenter: $3,
+                    environment: webSocketEnvironment
+                )
+            }
         )
     }
 }

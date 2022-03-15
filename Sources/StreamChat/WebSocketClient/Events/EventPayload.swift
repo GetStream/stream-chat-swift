@@ -128,3 +128,19 @@ extension EventPayload {
         return value
     }
 }
+
+extension Array where Element == EventPayload {
+    /// Decodes events from event payloads. If decoding of some event fails the error is logged without interrupting the chain.
+    ///
+    /// - Returns: The array of successfully decoded events.
+    func asEvents() -> [Event] {
+        compactMap {
+            do {
+                return try $0.event()
+            } catch {
+                log.error("Failed to decode event from event payload: \($0)")
+                return nil
+            }
+        }
+    }
+}

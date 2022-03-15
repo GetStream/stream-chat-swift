@@ -23,6 +23,7 @@ class UserListQueryDTO: NSManagedObject {
     static func observedQueries() -> NSFetchRequest<UserListQueryDTO> {
         let fetchRequest = NSFetchRequest<UserListQueryDTO>(entityName: UserListQueryDTO.entityName)
         fetchRequest.predicate = NSPredicate(format: "shouldBeUpdatedInBackground == YES")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserListQueryDTO.filterHash, ascending: true)]
         return fetchRequest
     }
     

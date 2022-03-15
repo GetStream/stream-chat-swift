@@ -12,6 +12,48 @@ class VirtualTime_Tests: XCTestCase {
         time = VirtualTime(initialTime: 0)
     }
     
+    func test_timerWithZeroPeriodFires() {
+        // Start non-repeating timer with 0 period and catch the moment when it fires
+        var calledAtTime: TimeInterval?
+        _ = time.scheduleTimer(interval: 0, repeating: false) { _ in
+            calledAtTime = self.time.currentTime
+        }
+        
+        // Run the time
+        time.run()
+        
+        // Assert the timer is called
+        XCTAssertEqual(calledAtTime, 0)
+    }
+    
+    func test_whenRunningSameTimestampMultipleTimes_onlyNewTimersFire() {
+        // Schedule 1st timer with zero interval
+        var firstTimeFireCount = 0
+        _ = time.scheduleTimer(interval: 0, repeating: false) { _ in
+            firstTimeFireCount += 1
+        }
+        
+        // Run the time
+        time.run()
+        
+        // Assert the 1st timer is fired
+        XCTAssertEqual(firstTimeFireCount, 1)
+        
+        // Schedule 2nd timer with zero interval
+        var secondTimeFireCount = 0
+        _ = time.scheduleTimer(interval: 0, repeating: false) { _ in
+            secondTimeFireCount += 1
+        }
+        
+        // Run the time
+        time.run()
+
+        // Assert the new timer is fired
+        XCTAssertEqual(secondTimeFireCount, 1)
+        // Assert the 1st timer is not fired one more time
+        XCTAssertEqual(firstTimeFireCount, 1)
+    }
+    
     func test_simpleTimer() {
         // Setup
         var calledAtTime: TimeInterval?

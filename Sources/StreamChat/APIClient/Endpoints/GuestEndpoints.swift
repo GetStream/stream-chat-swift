@@ -17,7 +17,7 @@ extension Endpoint {
         extraData: [String: RawJSON]
     ) -> Endpoint<GuestUserTokenPayload> {
         .init(
-            path: "guest",
+            path: .guest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,

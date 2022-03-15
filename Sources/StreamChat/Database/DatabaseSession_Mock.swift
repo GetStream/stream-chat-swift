@@ -25,10 +25,17 @@ extension DatabaseSessionMock {
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
-        extraData: [String: RawJSON]
+        extraData: [String: RawJSON],
+        localState: LocalReactionState?
     ) throws -> MessageReactionDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.addReaction(to: messageId, type: type, score: score, extraData: extraData)
+        return try underlyingSession.addReaction(
+            to: messageId,
+            type: type,
+            score: score,
+            extraData: extraData,
+            localState: localState
+        )
     }
     
     func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO? {
@@ -67,6 +74,10 @@ extension DatabaseSessionMock {
     func saveQuery(query: UserListQuery) throws -> UserListQueryDTO? {
         try throwErrorIfNeeded()
         return try underlyingSession.saveQuery(query: query)
+    }
+    
+    func userListQuery(filterHash: String) -> UserListQueryDTO? {
+        underlyingSession.userListQuery(filterHash: filterHash)
     }
     
     func user(id: UserId) -> UserDTO? {
@@ -206,6 +217,10 @@ extension DatabaseSessionMock {
         underlyingSession.channelListQuery(filterHash: filterHash)
     }
     
+    func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
+        underlyingSession.loadAllChannelListQueries()
+    }
+    
     func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?
@@ -284,6 +299,10 @@ extension DatabaseSessionMock {
 
     func deleteQuery(_ query: MessageSearchQuery) {
         underlyingSession.deleteQuery(query)
+    }
+
+    func deleteQueuedRequest(id: String) {
+        underlyingSession.deleteQueuedRequest(id: id)
     }
 }
 

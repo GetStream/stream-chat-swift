@@ -14,7 +14,7 @@ extension Endpoint {
     /// - Returns: The endpoint for adding a device.
     static func addDevice(userId: UserId, deviceId: DeviceId) -> Endpoint<EmptyResponse> {
         .init(
-            path: "devices",
+            path: .devices,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -31,7 +31,7 @@ extension Endpoint {
     /// - Returns: The endpoint for removing a device.
     static func removeDevice(userId: UserId, deviceId: DeviceId) -> Endpoint<EmptyResponse> {
         .init(
-            path: "devices",
+            path: .devices,
             method: .delete,
             queryItems: ["user_id": userId, "id": deviceId],
             requiresConnectionId: false,
@@ -46,7 +46,7 @@ extension Endpoint {
     /// - Returns: The endpoint with `DevicesPayload` in the response.
     static func devices(userId: UserId) -> Endpoint<DeviceListPayload> {
         .init(
-            path: "devices",
+            path: .devices,
             method: .get,
             queryItems: ["user_id": userId],
             requiresConnectionId: false,

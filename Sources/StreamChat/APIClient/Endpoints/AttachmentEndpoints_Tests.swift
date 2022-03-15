@@ -21,7 +21,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
 
         for (type, pathComponent) in testCases {
             let expectedEndpoint: Endpoint<FileUploadPayload> = .init(
-                path: "channels/\(id.cid.type.rawValue)/\(id.cid.id)/\(pathComponent)",
+                path: .uploadAttachment(channelId: id.cid.apiPath, type: pathComponent),
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: false,
@@ -33,6 +33,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
 
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+            XCTAssertEqual("channels/\(id.cid.type.rawValue)/\(id.cid.id)/\(pathComponent)", endpoint.path.value)
         }
     }
 }

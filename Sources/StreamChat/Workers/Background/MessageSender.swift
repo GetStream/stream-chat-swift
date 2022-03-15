@@ -36,10 +36,12 @@ class MessageSender: Worker {
         qos: .userInitiated,
         attributes: [.concurrent]
     )
-    
-    override init(database: DatabaseContainer, apiClient: APIClient) {
-        super.init(database: database, apiClient: apiClient)
 
+    let messageRepository: MessageRepository
+
+    init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+        self.messageRepository = messageRepository
+        super.init(database: database, apiClient: apiClient)
         // We need to initialize the observer synchronously
         _ = observer
         
@@ -87,8 +89,7 @@ class MessageSender: Worker {
             newRequests.forEach { cid, requests in
                 if sendingQueueByCid[cid] == nil {
                     sendingQueueByCid[cid] = MessageSendingQueue(
-                        apiClient: self.apiClient,
-                        database: self.database,
+                        messageRepository: self.messageRepository,
                         dispatchQueue: sendingDispatchQueue
                     )
                 }
@@ -101,13 +102,11 @@ class MessageSender: Worker {
 
 /// This objects takes care of sending messages to the server in the order they have been enqueued.
 private class MessageSendingQueue {
-    unowned var apiClient: APIClient
-    unowned var database: DatabaseContainer
+    let messageRepository: MessageRepository
     let dispatchQueue: DispatchQueue
-        
-    init(apiClient: APIClient, database: DatabaseContainer, dispatchQueue: DispatchQueue) {
-        self.apiClient = apiClient
-        self.database = database
+
+    init(messageRepository: MessageRepository, dispatchQueue: DispatchQueue) {
+        self.messageRepository = messageRepository
         self.dispatchQueue = dispatchQueue
     }
     
@@ -136,61 +135,9 @@ private class MessageSendingQueue {
             // If this proves to be a bottleneck in the future, we might
             // switch to using a custom `OrderedSet`
             guard let request = self?.requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }).first else { return }
-            
-            // Check the message with the given id is still in the DB.
-            self?.database.backgroundReadOnlyContext.perform {
-                guard let dto = self?.database.backgroundReadOnlyContext.message(id: request.messageId) else {
-                    log.error("Trying to send a message with id \(request.messageId) but the message was deleted.")
-                    self?.removeRequestAndContinue(request)
-                    return
-                }
-                
-                // Check the message still have `pendingSend` state.
-                guard dto.localMessageState == .pendingSend else {
-                    log.info("Skipping sending message with id \(dto.id) because it doesn't have `pendingSend` local state.")
-                    self?.removeRequestAndContinue(request)
-                    return
-                }
-                
-                guard let channelDTO = dto.channel, let cid = try? ChannelId(cid: channelDTO.cid) else {
-                    log.info("Skipping sending message with id \(dto.id) because it doesn't have a valid channel.")
-                    self?.removeRequestAndContinue(request)
-                    return
-                }
 
-                let requestBody = dto.asRequestBody() as MessageRequestBody
-                
-                // Change the message state to `.sending` and the proceed with the actual sending
-                self?.database.write({
-                    let messageDTO = $0.message(id: request.messageId)
-                    messageDTO?.localMessageState = .sending
-                    
-                }, completion: { error in
-                    if let error = error {
-                        log.error("Error changing localMessageState message with id \(request.messageId) to `sending`: \(error)")
-                        self?.markMessageAsFailedToSend(id: request.messageId) {
-                            self?.removeRequestAndContinue(request)
-                        }
-                        
-                        return
-                    }
-                    
-                    let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(cid: cid, messagePayload: requestBody)
-                    self?.apiClient.request(endpoint: endpoint) {
-                        switch $0 {
-                        case let .success(payload):
-                            self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) {
-                                self?.removeRequestAndContinue(request)
-                            }
-                            
-                        case let .failure(error):
-                            log.error("Sending the message with id \(request.messageId) failed with error: \(error)")
-                            self?.markMessageAsFailedToSend(id: request.messageId) {
-                                self?.removeRequestAndContinue(request)
-                            }
-                        }
-                    }
-                })
+            self?.messageRepository.sendMessage(with: request.messageId) { _ in
+                self?.removeRequestAndContinue(request)
             }
         }
     }
@@ -198,37 +145,6 @@ private class MessageSendingQueue {
     private func removeRequestAndContinue(_ request: SendRequest) {
         _requests.mutate { $0.remove(request) }
         sendNextMessage()
-    }
-    
-    private func saveSuccessfullySentMessage(cid: ChannelId, message: MessagePayload, completion: @escaping () -> Void) {
-        database.write({
-            guard let messageDTO = try? $0.saveMessage(payload: message, for: cid, syncOwnReactions: false) else {
-                return
-            }
-            if messageDTO.localMessageState == .sending {
-                messageDTO.localMessageState = nil
-                messageDTO.locallyCreatedAt = nil
-            }
-        }, completion: {
-            if let error = $0 {
-                log.error("Error saving sent message with id \(message.id): \(error)")
-            }
-            completion()
-        })
-    }
-    
-    private func markMessageAsFailedToSend(id: MessageId, completion: @escaping () -> Void) {
-        database.write({
-            let dto = $0.message(id: id)
-            if dto?.localMessageState == .sending {
-                dto?.localMessageState = .sendingFailed
-            }
-        }, completion: {
-            if let error = $0 {
-                log.error("Error changing localMessageState message with id \(id) to `sendingFailed`: \(error)")
-            }
-            completion()
-        })
     }
 }
 

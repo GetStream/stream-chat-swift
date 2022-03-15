@@ -20,15 +20,14 @@ class WebSocketClient_Tests: XCTestCase {
     var time: VirtualTime!
     var endpoint: Endpoint<EmptyResponse>!
     private var decoder: EventDecoderMock!
-    private var reconnectionStrategy: MockReconnectionStrategy!
     var engine: WebSocketEngineMock? { webSocketClient.engine as? WebSocketEngineMock }
     var connectionId: String!
     var user: ChatUser!
     var requestEncoder: TestRequestEncoder!
     var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
-    var internetConnectionMonitor: InternetConnectionMonitorMock!
+    var eventsBatcher: EventBatcherMock { webSocketClient.eventsBatcher as! EventBatcherMock }
     
-    var eventNotificationCenter: EventNotificationCenter!
+    var eventNotificationCenter: EventNotificationCenterMock!
     private var eventNotificationCenterMiddleware: EventMiddlewareMock!
     
     var database: DatabaseContainer!
@@ -45,29 +44,21 @@ class WebSocketClient_Tests: XCTestCase {
         
         decoder = EventDecoderMock()
         
-        reconnectionStrategy = MockReconnectionStrategy()
-        
         requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
         
         database = DatabaseContainerMock()
-        eventNotificationCenter = EventNotificationCenter(database: database)
+        eventNotificationCenter = EventNotificationCenterMock(database: database)
         eventNotificationCenterMiddleware = EventMiddlewareMock()
         eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
         
-        internetConnectionMonitor = InternetConnectionMonitorMock()
-        
-        var environment = WebSocketClient.Environment()
+        var environment = WebSocketClient.Environment.mock
         environment.timerType = VirtualTimeTimer.self
-        environment.createPingController = WebSocketPingControllerMock.init
-        environment.createEngine = WebSocketEngineMock.init
         
         webSocketClient = WebSocketClient(
             sessionConfiguration: .ephemeral,
             requestEncoder: requestEncoder,
             eventDecoder: decoder,
             eventNotificationCenter: eventNotificationCenter,
-            internetConnection: InternetConnection(monitor: internetConnectionMonitor),
-            reconnectionStrategy: reconnectionStrategy,
             environment: environment
         )
         
@@ -132,7 +123,7 @@ class WebSocketClient_Tests: XCTestCase {
     // MARK: - Connection tests
     
     func test_connectionFlow() {
-        assert(webSocketClient.connectionState == .disconnected())
+        assert(webSocketClient.connectionState == .initialized)
         
         // Simulate response from the encoder
         let request = URLRequest(url: .unique())
@@ -174,131 +165,74 @@ class WebSocketClient_Tests: XCTestCase {
         }
     }
     
-    func test_callingConnect_whenWaitingForReconnection_connectsImmediately() {
-        // Simulate reconnection state
-        test_connectionFlow()
-        assert(reconnectionStrategy.reconnectionDelay_calledWithError == nil)
-        reconnectionStrategy.reconnectionDelay = 20
-        engine!.simulateDisconnect()
-        
-        assert(webSocketClient.connectionState == .waitingForReconnect())
-        // Reset counters
-        engine!.connect_calledCount = 0
-        engine!.disconnect_calledCount = 0
-        
-        // Call connect and assert calls `connect`
-        webSocketClient.connect()
-        AssertAsync {
-            Assert.willBeTrue(self.webSocketClient.connectionState == .connecting)
-            Assert.willBeTrue(self.engine!.connect_calledCount == 1)
-        }
-    }
-    
-    func test_disconnect() {
+    func test_disconnect_callsEngine() {
         // Simulate connection
         test_connectionFlow()
         
         assert(webSocketClient.connectionState == .connected(connectionId: connectionId))
         assert(engine!.disconnect_calledCount == 0)
-        
+                
         // Call `disconnect`, it should change connection state and call `disconnect` on the engine
-        webSocketClient.disconnect()
-        XCTAssertEqual(webSocketClient.connectionState, .disconnecting(source: .userInitiated))
+        let source: WebSocketConnectionState.DisconnectionSource = .userInitiated
+        webSocketClient.disconnect(source: source)
+        
+        // Assert disconnect is called
         AssertAsync.willBeEqual(engine!.disconnect_calledCount, 1)
-        
-        // Simulate the engine is disconnected and check the connection state is updated
-        engine!.simulateDisconnect()
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected())
     }
     
-    func test_reconnectionStrategy_successfullyConnectedIsCalled() {
-        assert(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
-        
-        // Simulate response from the encoder
-        let request = URLRequest(url: .unique())
-        requestEncoder.encodeRequest = .success(request)
-        
-        // Simulate connection
-        webSocketClient.connectEndpoint = endpoint
-        webSocketClient.connect()
-        engine!.simulateConnectionSuccess()
-        
-        // `sucessfullyConnected` shouldn't be called before the first health check event arrives
-        AssertAsync.staysTrue(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
-        
-        // Simulate a health check event
-        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
-        engine!.simulateMessageReceived()
-        
-        // `sucessfullyConnected` should be called now
-        AssertAsync.willBeEqual(reconnectionStrategy.sucessfullyConnected_calledCount, 1)
-    }
-    
-    func test_reconnectionStrategy_reconnectionDelayIsRequestedAndUsed() {
+    func test_whenConnectedAndEngineDisconnectsWithServerError_itIsTreatedAsServerInitiatedDisconnect() {
         // Simulate connection
         test_connectionFlow()
-        assert(reconnectionStrategy.reconnectionDelay_calledWithError == nil)
-        // Reset the counter
-        engine!.connect_calledCount = 0
         
-        // Make the reconnection strategy return 20 seconds
-        reconnectionStrategy.reconnectionDelay = 20
+        // Simulate the engine disconnecting with server error
+        let errorPayload = ErrorPayload(
+            code: .unique,
+            message: .unique,
+            statusCode: .unique
+        )
+        let engineError = WebSocketEngineError(
+            reason: UUID().uuidString,
+            code: 0,
+            engineError: errorPayload
+        )
+        engine!.simulateDisconnect(engineError)
         
-        // Simulate the engine disconnects
-        let testError = WebSocketEngineError(reason: UUID().uuidString, code: 0, engineError: nil)
-        engine!.simulateDisconnect(testError)
+        // Assert state is disconnected with `systemInitiated` source
+        XCTAssertEqual(
+            webSocketClient.connectionState,
+            .disconnected(source: .serverInitiated(error: ClientError.WebSocket(with: engineError)))
+        )
+    }
+    
+    func test_disconnect_propagatesDisconnectionSource() {
+        // Simulate connection
+        test_connectionFlow()
         
-        AssertAsync {
-            Assert.willBeEqual(self.reconnectionStrategy.reconnectionDelay_calledWithError as? WebSocketEngineError, testError)
-            Assert.willBeEqual(
-                self.webSocketClient.connectionState,
-                .waitingForReconnect(error: ClientError.WebSocket(with: testError))
-            )
+        let testCases: [WebSocketConnectionState.DisconnectionSource] = [
+            .userInitiated,
+            .systemInitiated,
+            .serverInitiated(error: nil),
+            .serverInitiated(error: .init(.unique))
+        ]
+        
+        for source in testCases {
+            engine?.disconnect_calledCount = 0
+            
+            // Call `disconnect` with the given source
+            webSocketClient.disconnect(source: source)
+            
+            // Assert connection state is changed to disconnecting respecting the source
+            XCTAssertEqual(webSocketClient.connectionState, .disconnecting(source: source))
+            
+            // Assert disconnect is called
+            AssertAsync.willBeEqual(engine!.disconnect_calledCount, 1)
+            
+            // Simulate engine disconnection
+            engine!.simulateDisconnect()
+            
+            // Assert state is `disconnected` with the correct source
+            AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected(source: source))
         }
-        
-        // Simulate 10 seconds passed and check `connect` is not called yet
-        time.run(numberOfSeconds: 10)
-        AssertAsync.staysEqual(engine!.connect_calledCount, 0)
-        
-        // Simulate another 11 seconds passed and `connect` is called now
-        time.run(numberOfSeconds: 11)
-        AssertAsync.willBeEqual(engine!.connect_calledCount, 1)
-    }
-    
-    func test_reconnectionStrategy_reconnectionNotHappeningWhenNilIsReturned() {
-        // Simulate connection
-        test_connectionFlow()
-        // Reset the counter
-        engine!.connect_calledCount = 0
-        
-        // Make the reconnection strategy return `nil``
-        reconnectionStrategy.reconnectionDelay = nil
-        
-        // Simulate the engine disconnects and check `connectionState` is updated
-        engine!.simulateDisconnect()
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected())
-        
-        // Simulate time passed and make sure `connect` is not called
-        time.run(numberOfSeconds: 60)
-        AssertAsync.staysTrue(engine!.connect_calledCount == 0)
-    }
-    
-    func test_reconnectionStrategy_notCalledWhenDisconnectedManually() {
-        // Simulate connection
-        test_connectionFlow()
-        // Reset the counter
-        engine!.connect_calledCount = 0
-        
-        // Make the reconnection return 10 seconds
-        reconnectionStrategy.reconnectionDelay = 10
-        
-        // Simulate manual disconnect
-        webSocketClient.disconnect()
-        engine!.simulateDisconnect()
-        
-        // Simulate time passed and make sure `connect` is not called
-        time.run(numberOfSeconds: 60)
-        AssertAsync.staysTrue(engine!.connect_calledCount == 0)
     }
     
     func test_connectionState_afterDecodingError() {
@@ -367,13 +301,14 @@ class WebSocketClient_Tests: XCTestCase {
     func test_changingConnectEndpointAndReconnecting() {
         // Simulate connection
         test_connectionFlow()
+        requestEncoder.encodeRequest_endpoints = []
         
         // Save the original engine reference
         let oldEngine = engine
         
         // Simulate connect endpoint is updated (i.e. new user is logged in)
         let newEndpoint = Endpoint<EmptyResponse>(
-            path: .unique,
+            path: .guest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -392,9 +327,9 @@ class WebSocketClient_Tests: XCTestCase {
         
         // Reconnect again
         webSocketClient.connect()
-        XCTAssertEqual(requestEncoder.encodeRequest_endpoint, AnyEndpoint(newEndpoint))
+        XCTAssertEqual(requestEncoder.encodeRequest_endpoints.first, AnyEndpoint(newEndpoint))
         
-        // Check the engige got recreated
+        // Check the engine got recreated
         XCTAssert(engine !== oldEngine)
         
         AssertAsync {
@@ -404,57 +339,6 @@ class WebSocketClient_Tests: XCTestCase {
     }
     
     // MARK: - Event handling tests
-    
-    func test_incomingEventIsPublished() {
-        // Simulate connection
-        test_connectionFlow()
-        
-        // Make the decoder always return TestEvent
-        let testEvent = TestEvent()
-        decoder.decodedEvent = .success(testEvent)
-        
-        // Clean up pending events and start logging the new ones
-        eventNotificationCenter.pendingEvents = []
-        let eventLogger = EventLogger(eventNotificationCenter)
-        
-        // Simulate incoming data
-        let incomingData = UUID().uuidString.data(using: .utf8)!
-        engine!.simulateMessageReceived(incomingData)
-        
-        // Assert that the decoder is used with correct data and the event decoder returns is published
-        AssertAsync {
-            Assert.willBeEqual(self.decoder.decode_calledWithData, incomingData)
-            Assert.willBeEqual(eventLogger.events, [testEvent])
-        }
-    }
-    
-    func test_incomingEvent_processedUsingMiddlewares() {
-        // Simulate connection
-        test_connectionFlow()
-        
-        // Clean up pending events
-        eventNotificationCenter.pendingEvents = []
-
-        // Make the decoder return an event
-        let incomingEvent = TestEvent()
-        decoder.decodedEvent = .success(incomingEvent)
-        
-        let processedEvent = TestEvent()
-        eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, session in
-            XCTAssertEqual(incomingEvent.asEquatable, middlewareIncomingEvent.asEquatable)
-            XCTAssertEqual(session as? NSManagedObjectContext, self.database.writableContext)
-            return processedEvent
-        }
-        
-        // Start logging events
-        let eventLogger = EventLogger(eventNotificationCenter)
-        
-        // Simulate incoming event
-        engine!.simulateMessageReceived()
-        
-        // Assert the published event is the one from the middleware
-        AssertAsync.willBeEqual(eventLogger.equatableEvents, [processedEvent.asEquatable])
-    }
     
     func test_connectionStatusUpdated_eventsArePublished_whenWSConnectionStateChanges() {
         // Start logging events
@@ -470,8 +354,8 @@ class WebSocketClient_Tests: XCTestCase {
             .connected(connectionId: connectionId), // duplicate state should be ignored
             .disconnecting(source: .userInitiated),
             .disconnecting(source: .userInitiated), // duplicate state should be ignored
-            .disconnected(),
-            .disconnected() // duplicate state should be ignored
+            .disconnected(source: .userInitiated),
+            .disconnected(source: .userInitiated) // duplicate state should be ignored
         ]
         
         connectionStates.forEach { webSocketClient.simulateConnectionStatus($0) }
@@ -480,7 +364,7 @@ class WebSocketClient_Tests: XCTestCase {
             WebSocketConnectionState.connecting, // states 0...3
             .connected(connectionId: connectionId), // states 4...5
             .disconnecting(source: .userInitiated), // states 6...7
-            .disconnected() // states 8...9
+            .disconnected(source: .userInitiated) // states 8...9
         ].map {
             ConnectionStatusUpdated(webSocketConnectionState: $0).asEquatable
         }
@@ -534,6 +418,85 @@ class WebSocketClient_Tests: XCTestCase {
         AssertAsync.willBeEqual(currentUser?.user.id, payloadCurrentUser.id)
         AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
     }
+    
+    func test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching() throws {
+        // Simulate response from the encoder
+        let request = URLRequest(url: .unique())
+        requestEncoder.encodeRequest = .success(request)
+        
+        // Assign connect endpoint
+        webSocketClient.connectEndpoint = endpoint
+        
+        // Connect the web-socket client
+        webSocketClient.connect()
+        
+        // Wait for engine to be called
+        AssertAsync.willBeEqual(engine!.connect_calledCount, 1)
+        
+        // Simulate engine established connection
+        engine!.simulateConnectionSuccess()
+        
+        // Wait for the connection state to be propagated to web-socket client
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
+        
+        // Simulate received health check event
+        let healthCheckEvent = HealthCheckEvent(connectionId: .unique)
+        decoder.decodedEvent = .success(healthCheckEvent)
+        engine!.simulateMessageReceived()
+        
+        // Assert healtch check event does not get batched
+        let batchedEvents = eventsBatcher.mock_append.calls.map(\.asEquatable)
+        XCTAssertFalse(batchedEvents.contains(healthCheckEvent.asEquatable))
+        
+        // Assert health check event was processed
+        let (_, postNotification, _) = try XCTUnwrap(
+            eventNotificationCenter.mock_process.calls.first(where: { events, _, _ in
+                events.first is HealthCheckEvent
+            })
+        )
+        
+        // Assert health check events was not posted
+        XCTAssertFalse(postNotification)
+    }
+        
+    func test_whenNonHealthCheckEventComes_getsBatchedAndPostedAfterProcessing() throws {
+        // Simulate connection
+        test_connectionFlow()
+        
+        // Clear state
+        eventsBatcher.mock_append.calls.removeAll()
+        eventNotificationCenter.mock_process.calls.removeAll()
+        
+        // Simulate incoming event
+        let incomingEvent = UserPresenceChangedEvent(user: .unique, createdAt: .unique)
+        decoder.decodedEvent = .success(incomingEvent)
+        engine!.simulateMessageReceived()
+        
+        // Assert event gets batched
+        XCTAssertEqual(
+            eventsBatcher.mock_append.calls.map(\.asEquatable),
+            [incomingEvent.asEquatable]
+        )
+        
+        // Assert incoming event get processed and posted
+        let (events, postNotifications, _) = try XCTUnwrap(eventNotificationCenter.mock_process.calls.first)
+        XCTAssertEqual(events.map(\.asEquatable), [incomingEvent.asEquatable])
+        XCTAssertTrue(postNotifications)
+    }
+    
+    func test_whenDisconnectHappens_immidiateBatchedEventsProcessingIsTriggered() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        // Assert `processImmediately` was not triggered
+        XCTAssertFalse(eventsBatcher.mock_processImmediately.called)
+        
+        // Simulate disconnection
+        webSocketClient.disconnect()
+        
+        // Assert `processImmediately` is triggered
+        AssertAsync.willBeTrue(eventsBatcher.mock_processImmediately.called)
+    }
 }
 
 private struct TestEvent: Event, Equatable {
@@ -560,58 +523,9 @@ private class EventDecoderMock: AnyEventDecoder {
     }
 }
 
-private class MockReconnectionStrategy: WebSocketClientReconnectionStrategy {
-    var sucessfullyConnected_calledCount: Int = 0
-    var reconnectionDelay_calledWithError: Error?
-    
-    var reconnectionDelay: TimeInterval?
-    
-    func successfullyConnected() {
-        sucessfullyConnected_calledCount += 1
-    }
-    
-    func reconnectionDelay(forConnectionError error: Error?) -> TimeInterval? {
-        reconnectionDelay_calledWithError = error
-        return reconnectionDelay
-    }
-}
-
 extension WebSocketEngineError: Equatable {
     public static func == (lhs: WebSocketEngineError, rhs: WebSocketEngineError) -> Bool {
         String(describing: lhs) == String(describing: rhs)
-    }
-}
-
-class MockBackgroundTaskScheduler: BackgroundTaskScheduler {
-    var beginBackgroundTask_called: Bool = false
-    var beginBackgroundTask_expirationHandler: (() -> Void)?
-    var beginBackgroundTask_returns: Bool = true
-    func beginTask(expirationHandler: (() -> Void)?) -> Bool {
-        beginBackgroundTask_called = true
-        beginBackgroundTask_expirationHandler = expirationHandler
-        return beginBackgroundTask_returns
-    }
-
-    var endBackgroundTask_called: Bool = false
-    func endTask() {
-        endBackgroundTask_called = true
-    }
-
-    var startListeningForAppStateUpdates_called: Bool = false
-    var startListeningForAppStateUpdates_onBackground: (() -> Void)?
-    var startListeningForAppStateUpdates_onForeground: (() -> Void)?
-    func startListeningForAppStateUpdates(
-        onEnteringBackground: @escaping () -> Void,
-        onEnteringForeground: @escaping () -> Void
-    ) {
-        startListeningForAppStateUpdates_called = true
-        startListeningForAppStateUpdates_onBackground = onEnteringBackground
-        startListeningForAppStateUpdates_onForeground = onEnteringForeground
-    }
-    
-    var stopListeningForAppStateUpdates_called: Bool = false
-    func stopListeningForAppStateUpdates() {
-        stopListeningForAppStateUpdates_called = true
     }
 }
 

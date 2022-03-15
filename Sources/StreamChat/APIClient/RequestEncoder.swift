@@ -62,7 +62,17 @@ extension RequestEncoder {
 struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
-    
+    let timerType: Timer.Type
+
+    /// The most probable reason why a RequestEncoder can timeout when waiting for token or connectionId is because there's no connection.
+    /// When returning an error, it will just fail without giving an opportunity to know if the timeout occurred because of a networking problem.
+    /// Instead, now, returning a success, even without the needed token/connectionId, it will account for this case and instead will let the APIClient
+    /// return a connection error if needed.
+    /// That way, the request can be requeued, and we give a much better experience.
+    ///
+    /// On the other hand, any big number for a timeout here would be "to much". In normal situations, the requests should be back in less than a second,
+    /// otherwise we have a connection problem, which is handled as described above.
+    private let waiterTimeout: TimeInterval = 10
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     
     func encodeRequest<ResponsePayload: Decodable>(
@@ -104,10 +114,15 @@ struct DefaultRequestEncoder: RequestEncoder {
             }
         }
     }
-    
+
     init(baseURL: URL, apiKey: APIKey) {
+        self.init(baseURL: baseURL, apiKey: apiKey, timerType: DefaultTimer.self)
+    }
+
+    init(baseURL: URL, apiKey: APIKey, timerType: Timer.Type) {
         self.baseURL = baseURL
         self.apiKey = apiKey
+        self.timerType = timerType
     }
     
     // MARK: - Private
@@ -129,7 +144,20 @@ struct DefaultRequestEncoder: RequestEncoder {
             "The endpoint requires `token` but `connectionDetailsProviderDelegate` is not set.", subsystems: .httpRequests
         )
 
-        connectionDetailsProviderDelegate?.provideToken {
+        let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
+
+        var waiterToken: WaiterToken?
+        let timer = timerType
+            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
+                // We complete with a success to account for the most probable case for the timeout: No connection.
+                // That way, when reaching the APIClient, we would properly report a connection error.
+                defer { completion(.success(request)) }
+                guard let waiterToken = waiterToken else { return }
+                connectionDetailsProviderDelegate?.invalidateTokenWaiter(waiterToken)
+            }
+
+        waiterToken = connectionDetailsProviderDelegate?.provideToken {
+            timer.cancel()
             if let token = $0 {
                 var updatedRequest = request
 
@@ -141,8 +169,7 @@ struct DefaultRequestEncoder: RequestEncoder {
 
                 completion(.success(updatedRequest))
             } else {
-                let error = ClientError.MissingToken("Failed to get `token`, request can't be created.")
-                completion(.failure(error))
+                completion(.failure(missingTokenError))
             }
         }
     }
@@ -162,14 +189,29 @@ struct DefaultRequestEncoder: RequestEncoder {
             "The endpoint requires `connectionId` but `connectionDetailsProviderDelegate` is not set.", subsystems: .httpRequests
         )
 
-        connectionDetailsProviderDelegate?.provideConnectionId {
+        let missingConnectionIdError = ClientError.MissingConnectionId(
+            "Failed to get `connectionId`, request can't be created."
+        )
+
+        var waiterToken: WaiterToken?
+        let timer = timerType
+            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
+                // We complete with a success to account for the most probable case for the timeout: No connection.
+                // That way, when reaching the APIClient, we would properly report a connection error.
+                defer { completion(.success(request)) }
+                guard let waiterToken = waiterToken else { return }
+                connectionDetailsProviderDelegate?.invalidateConnectionIdWaiter(waiterToken)
+            }
+
+        waiterToken = connectionDetailsProviderDelegate?.provideConnectionId {
+            timer.cancel()
             do {
                 if let connectionId = $0 {
                     var updatedRequest = request
                     updatedRequest.url = try updatedRequest.url?.appendingQueryItems(["connection_id": connectionId])
                     completion(.success(updatedRequest))
                 } else {
-                    throw ClientError.MissingConnectionId("Failed to get `connectionId`, request can't be created.")
+                    throw missingConnectionIdError
                 }
             } catch {
                 completion(.failure(error))
@@ -187,7 +229,7 @@ struct DefaultRequestEncoder: RequestEncoder {
             throw ClientError.InvalidURL("URL can't be created using components: \(urlComponents)")
         }
         
-        url = url.appendingPathComponent(endpoint.path)
+        url = url.appendingPathComponent(endpoint.path.value)
         return url
     }
     
@@ -197,13 +239,17 @@ struct DefaultRequestEncoder: RequestEncoder {
             guard let body = endpoint.body else { return }
             try encodeJSONToQueryItems(request: &request, data: body)
         case .post, .patch:
-            let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))
-            request.httpBody = body
+            if let data = endpoint.body as? Data {
+                request.httpBody = data
+            } else {
+                let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))
+                request.httpBody = body
+            }
         }
     }
     
     private func encodeJSONToQueryItems(request: inout URLRequest, data: Encodable) throws {
-        let data = try JSONEncoder.stream.encode(AnyEncodable(data))
+        let data = try (data as? Data) ?? JSONEncoder.stream.encode(AnyEncodable(data))
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw ClientError.InvalidJSON("Data is not a valid JSON: \(String(data: data, encoding: .utf8) ?? "nil")")
         }
@@ -251,9 +297,14 @@ private extension URL {
     }
 }
 
+typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
-    func provideConnectionId(completion: @escaping (_ connectionId: ConnectionId?) -> Void)
-    func provideToken(completion: @escaping (Token?) -> Void)
+    @discardableResult
+    func provideConnectionId(completion: @escaping (_ connectionId: ConnectionId?) -> Void) -> WaiterToken
+    @discardableResult
+    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken
+    func invalidateTokenWaiter(_ waiter: WaiterToken)
+    func invalidateConnectionIdWaiter(_ waiter: WaiterToken)
 }
 
 extension ClientError {

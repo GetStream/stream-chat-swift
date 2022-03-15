@@ -141,3 +141,9 @@ public struct ChannelListQuery: Encodable {
         try pagination.encode(to: encoder)
     }
 }
+
+extension ChannelListQuery: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "Filter: \(filter) | Sort: \(sort)"
+    }
+}
