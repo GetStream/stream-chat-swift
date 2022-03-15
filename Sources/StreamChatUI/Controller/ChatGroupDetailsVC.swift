@@ -5,6 +5,86 @@
 //  Created by Jitendra Sharma on 08/02/22.
 //
 
+import UIKit
+
+public class ChatGroupDetailsVC: UIViewController {
+    
+    // MARK: - Variables
+    
+    // MARK: - Outlets
+    @IBOutlet weak var btnBack: StreamChatBackButton!
+    @IBOutlet weak var btnMore: StreamChatBackButton!
+    @IBOutlet weak var tblView: UITableView!
+    
+    //moregreyCircle
+    // MARK: - view life cycle
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+    }
+    
+    // MARK: - IB Actions
+    @IBAction func btnBackAction(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @IBAction func btnMoreAction(_ sender: Any) {
+    }
+    
+    // MARK: - functions
+    private func setupUI() {
+        view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
+        btnMore.setTitle("", for: .normal)
+        btnMore.setImage(Appearance.default.images.moregreyCircle, for: .normal)
+        addMenuToMoreBtn()
+        tblView.delegate = self
+        tblView.dataSource = self
+    }
+    
+    @available(iOS 13.0, *)
+    private func getMenuItems() -> [UIAction] {
+        let report = UIAction(title: "Report", image: Appearance.default.images.exclamationMarkCircle) { [weak self] _ in
+            print("report tapped")
+        }
+        return [report]
+    }
+    
+    private func addMenuToMoreBtn() {
+        if #available(iOS 14.0, *) {
+            let menu = UIMenu(title: "", options: .displayInline, children: getMenuItems())
+            btnMore.menu = menu
+            btnMore.showsMenuAsPrimaryAction = true
+        }
+    }
+}
+
+extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
+    public func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch section {
+        case 0:
+            return 1
+        default:
+            return 0
+        }
+    }
+    
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch indexPath.section {
+        case 0:
+            return UITableViewCell()
+        default:
+            return UITableViewCell()
+        }
+    }
+}
+
+
+
+/*
 import Foundation
 import Nuke
 import StreamChat
@@ -285,3 +365,4 @@ extension AttachmentType {
         }
     }
 }
+ */

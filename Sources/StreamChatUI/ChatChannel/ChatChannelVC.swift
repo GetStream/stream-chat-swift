@@ -347,8 +347,8 @@ open class ChatChannelVC:
         guard let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
             return
         }
-        controller.groupInviteLink = self.getGroupLink()
-        controller.channelController = channelController
+        //controller.groupInviteLink = self.getGroupLink()
+        //controller.channelController = channelController
         self.pushWithAnimation(controller: controller)
     }
 
