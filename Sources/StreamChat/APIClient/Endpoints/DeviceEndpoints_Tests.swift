@@ -11,7 +11,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
         let deviceId: String = .unique
         
         let expectedEndpoint: Endpoint<EmptyResponse> = .init(
-            path: "devices",
+            path: .devices,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -23,6 +23,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("devices", endpoint.path.value)
     }
     
     func test_removeDevice_buildsCorrectly() {
@@ -30,7 +31,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
         let deviceId: String = .unique
         
         let expectedEndpoint: Endpoint<EmptyResponse> = .init(
-            path: "devices",
+            path: .devices,
             method: .delete,
             queryItems: ["user_id": userId, "id": deviceId],
             requiresConnectionId: false,
@@ -42,13 +43,14 @@ final class DeviceEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("devices", endpoint.path.value)
     }
     
     func test_devices_buildsCorrectly() {
         let userId: UserId = .unique
         
         let expectedEndpoint: Endpoint<DeviceListPayload> = .init(
-            path: "devices",
+            path: .devices,
             method: .get,
             queryItems: ["user_id": userId],
             requiresConnectionId: false,
@@ -60,5 +62,6 @@ final class DeviceEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("devices", endpoint.path.value)
     }
 }

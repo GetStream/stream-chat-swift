@@ -8,7 +8,6 @@ import XCTest
 class Atomic_Tests: StressTestCase {
     @Atomic var stringAtomicValue: String?
     @Atomic var intAtomicValue: Int = 0
-    @Atomic var boolAtomicValue: Bool = false
 
     func test_Atomic_asPropertyWrapper() {
         stringAtomicValue = nil
@@ -22,34 +21,6 @@ class Atomic_Tests: StressTestCase {
             value = nil
         }
         XCTAssertEqual(stringAtomicValue, nil)
-    }
-    
-    func test_Atomic_CAS() {
-        boolAtomicValue = false
-        XCTAssertFalse(_boolAtomicValue.compareAndSwap(old: true, new: false))
-        XCTAssertFalse(_boolAtomicValue.compareAndSwap(old: true, new: true))
-        XCTAssertTrue(_boolAtomicValue.compareAndSwap(old: false, new: true))
-        XCTAssertFalse(_boolAtomicValue.compareAndSwap(old: false, new: true))
-    }
-    
-    func test_Atomic_CAS_Concurrent() {
-        let group = DispatchGroup()
-
-        boolAtomicValue = false
-        var swaps = 0
-
-        for _ in 0..<numberOfTestCycles {
-            group.enter()
-            DispatchQueue.random.async {
-                if self._boolAtomicValue.compareAndSwap(old: false, new: true) {
-                    swaps += 1
-                }
-                group.leave()
-            }
-        }
-        
-        group.wait()
-        XCTAssertEqual(swaps, 1)
     }
 
     func test_Atomic_usedAsCounter() {

@@ -239,7 +239,13 @@ final class MessageController_Tests: XCTestCase {
         let cid = ChannelId.unique
         let truncatedDate = Date.unique
         let channel = dummyPayload(with: cid, truncatedAt: truncatedDate)
-        
+
+        // Set the deleted messages visibility to hide the message
+        var config = ChatClient.defaultMockedConfig
+        config.deletedMessagesVisibility = .alwaysHidden
+        client = .mock(config: config)
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
+
         // Save channel
         var dto: ChannelDTO?
         try client.databaseContainer.writeSynchronously {
@@ -1925,7 +1931,12 @@ private class TestEnvironment {
                 return self.repliesObserver!
             },
             messageUpdaterBuilder: { [unowned self] in
-                self.messageUpdater = MessageUpdaterMock(database: $0, apiClient: $1)
+                self.messageUpdater = MessageUpdaterMock(
+                    isLocalStorageEnabled: $0,
+                    messageRepository: $1,
+                    database: $2,
+                    apiClient: $3
+                )
                 return self.messageUpdater
             }
         )

@@ -274,33 +274,6 @@ class DatabaseSession_Tests: XCTestCase {
         }
     }
     
-    func test_saveEvent_resetsLastReceivedEventDate_withEventCreatedAtValue() throws {
-        // Create event payload with specific `createdAt` date
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            connectionId: .unique,
-            cid: .unique,
-            currentUser: .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: nil
-            ),
-            unreadCount: .dummy,
-            createdAt: .unique
-        )
-        
-        // Save event to the database
-        try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
-        }
-        
-        // Load current user
-        let currentUser = database.viewContext.currentUser
-        
-        // Assert `eventPayload.createdAt` is taked as last received event date
-        XCTAssertEqual(currentUser?.lastReceivedEventDate, eventPayload.createdAt)
-    }
-    
     func test_saveEvent_doesntResetLastReceivedEventDate_whenEventCreatedAtValueIsNil() throws {
         // Create event payload with missing `createdAt`
         let eventPayload = EventPayload(
@@ -325,7 +298,7 @@ class DatabaseSession_Tests: XCTestCase {
         let currentUser = database.viewContext.currentUser
         
         // Assert `lastReceivedEventDate` is nil
-        XCTAssertNil(currentUser?.lastReceivedEventDate)
+        XCTAssertNil(currentUser?.lastSynchedEventDate)
     }
 
     func test_saveEvent_whenMessageUpdated_shouldUpdateMessagesQuotingTheUpdatedMessage() throws {

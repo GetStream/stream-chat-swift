@@ -3,7 +3,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add Offline Support (Connection & events recovery, and offline actions queuing) [#1831](https://github.com/GetStream/stream-chat-swift/pull/1831)
+- Add `MessageSearchSortingKey.createdAt` and `updatedAt` for sorting options [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+### 🐞 Fixed
+- Fix `ChatMessageSearchController` not respecting `sort` param [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+- Fix `ChatMessageSearchController` not removing old search results [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+- Fix `ChatMessageSearchController` making empty searches [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+
+## StreamChatUI
 ### 🔄 Changed
+- ⚠️ Change default message deleted visibility to `.alwaysVisible` [#1851](https://github.com/GetStream/stream-chat-swift/pull/1851)
+   - **Note:** This change is required to be align with the other SDK Platforms. If you still want the older behaviour, you should set the `ChatClientConfig.deletedMessagesVisibility` to `.visibleForCurrentUser`.
+### ✅ Added
+- Make it possible to customize the message view only in the popup actions [#1844](https://github.com/GetStream/stream-chat-swift/pull/1844)
+### 🐞 Fixed
+- Fix blurred avatar views when using image merger [#1841](https://github.com/GetStream/stream-chat-swift/pull/1841)
+- Fix "Only visible to you" shown when deleted messages visible for all users [#1847](https://github.com/GetStream/stream-chat-swift/pull/1847)
+- Fix channels list cell staying as selected when in Airplane mode [#1831](https://github.com/GetStream/stream-chat-swift/pull/1831)
 
 # [4.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.11.0)
 _March 01, 2022_

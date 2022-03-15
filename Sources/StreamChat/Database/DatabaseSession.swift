@@ -17,6 +17,10 @@ protocol UserDatabaseSession {
     @discardableResult
     func saveQuery(query: UserListQuery) throws -> UserListQueryDTO?
     
+    /// Load user list query with the given hash.
+    /// - Returns: The query hash.
+    func userListQuery(filterHash: String) -> UserListQueryDTO?
+    
     /// Fetches `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
     
@@ -103,7 +107,8 @@ protocol MessageDatabaseSession {
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
-        extraData: [String: RawJSON]
+        extraData: [String: RawJSON],
+        localState: LocalReactionState?
     ) throws -> MessageReactionDTO
     
     func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO?
@@ -128,7 +133,7 @@ protocol MessageDatabaseSession {
     /// Fetches `MessageReactionDTO` for the given `messageId`, `userId`, and `type` from the DB.
     /// Returns `nil` if there is no matching `MessageReactionDTO`.
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO?
-    
+
     /// Saves the provided reaction payload to the DB. Throws an error if the save fails
     /// else returns saved `MessageReactionDTO` entity.
     @discardableResult
@@ -137,8 +142,6 @@ protocol MessageDatabaseSession {
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
     func delete(reaction: MessageReactionDTO)
-    
-    func deleteQuery(_ query: MessageSearchQuery)
 }
 
 extension MessageDatabaseSession {
@@ -172,6 +175,12 @@ extension MessageDatabaseSession {
     }
 }
 
+protocol MessageSearchDatabaseSession {
+    func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO
+    
+    func deleteQuery(_ query: MessageSearchQuery)
+}
+
 protocol ChannelDatabaseSession {
     /// Creates `ChannelDTO` objects for the given channel payloads and `query`.
     @discardableResult
@@ -197,6 +206,10 @@ protocol ChannelDatabaseSession {
     /// Loads channel list query with the given filter hash from the database.
     /// - Parameter filterHash: The filter hash.
     func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
+    
+    /// Loads all channel list queries from the database.
+    /// - Returns: The array of channel list queries.
+    func loadAllChannelListQueries() -> [ChannelListQueryDTO]
     
     @discardableResult func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
     
@@ -293,15 +306,21 @@ protocol AttachmentDatabaseSession {
     ) throws -> AttachmentDTO
 }
 
+protocol QueuedRequestDatabaseSession {
+    func deleteQueuedRequest(id: String)
+}
+
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
+    MessageSearchDatabaseSession,
     ChannelReadDatabaseSession,
     ChannelDatabaseSession,
     MemberDatabaseSession,
     MemberListQueryDatabaseSession,
     AttachmentDatabaseSession,
-    ChannelMuteDatabaseSession {}
+    ChannelMuteDatabaseSession,
+    QueuedRequestDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult
@@ -345,10 +364,6 @@ extension DatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
         
-        if let currentUser = currentUser, let date = payload.createdAt {
-            currentUser.lastReceivedEventDate = date
-        }
-
         try saveMessageIfNeeded(from: payload)
         
         // handle reaction events for messages that already exist in the database and for this user

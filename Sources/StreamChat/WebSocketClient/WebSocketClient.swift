@@ -8,24 +8,28 @@ class WebSocketClient {
     /// The notification center `WebSocketClient` uses to send notifications about incoming events.
     let eventNotificationCenter: EventNotificationCenter
     
+    /// The batch of events received via the web-socket that wait to be processed.
+    private(set) lazy var eventsBatcher = environment.eventBatcherBuilder { [weak self] events in
+        self?.eventNotificationCenter.process(events)
+    }
+    
     /// The current state the web socket connection.
-    @Atomic private(set) var connectionState: WebSocketConnectionState = .disconnected() {
+    @Atomic private(set) var connectionState: WebSocketConnectionState = .initialized {
         didSet {
-            log.info("Web socket connection state changed: \(connectionState)", subsystems: .webSocket)
-            connectionStateDelegate?.webSocketClient(self, didUpdateConnectionState: connectionState)
-            
-            if connectionState.isConnected {
-                reconnectionStrategy.successfullyConnected()
-            }
-            
             pingController.connectionStateDidChange(connectionState)
+            
+            guard connectionState != oldValue else { return }
+            
+            log.info("Web socket connection state changed: \(connectionState)", subsystems: .webSocket)
+                
+            connectionStateDelegate?.webSocketClient(self, didUpdateConnectionState: connectionState)
 
             let previousStatus = ConnectionStatus(webSocketConnectionState: oldValue)
             let event = ConnectionStatusUpdated(webSocketConnectionState: connectionState)
 
             if event.connectionStatus != previousStatus {
                 // Publish Connection event with the new state
-                eventNotificationCenter.process(event)
+                eventsBatcher.append(event)
             }
         }
     }
@@ -37,15 +41,12 @@ class WebSocketClient {
     /// Changing this value doesn't automatically update the existing connection. You need to manually call `disconnect`
     /// and `connect` to make a new connection to the updated endpoint.
     var connectEndpoint: Endpoint<EmptyResponse>?
-    
+
     /// The decoder used to decode incoming events
     private let eventDecoder: AnyEventDecoder
     
     /// The web socket engine used to make the actual WS connection
     private(set) var engine: WebSocketEngine?
-    
-    /// If in the `waitingForReconnect` state, this variable contains the reconnection timer.
-    private var reconnectionTimer: TimerControl?
     
     /// The queue on which web socket engine methods are called
     private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .userInitiated)
@@ -54,12 +55,6 @@ class WebSocketClient {
     
     /// The session config used for the web socket engine
     private let sessionConfiguration: URLSessionConfiguration
-    
-    /// An object describing reconnection behavior after the web socket is disconnected.
-    private var reconnectionStrategy: WebSocketClientReconnectionStrategy
-    
-    /// The internet connection observer we use for recovering when the connection was offline for some time.
-    private let internetConnection: InternetConnection
     
     /// An object containing external dependencies of `WebSocketClient`
     private let environment: Environment
@@ -92,16 +87,12 @@ class WebSocketClient {
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
         eventNotificationCenter: EventNotificationCenter,
-        internetConnection: InternetConnection,
-        reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: Environment = .init()
     ) {
         self.environment = environment
         self.requestEncoder = requestEncoder
         self.sessionConfiguration = sessionConfiguration
-        self.reconnectionStrategy = reconnectionStrategy
         self.eventDecoder = eventDecoder
-        self.internetConnection = internetConnection
 
         self.eventNotificationCenter = eventNotificationCenter
     }
@@ -124,9 +115,6 @@ class WebSocketClient {
         
         engine = createEngineIfNeeded(for: endpoint)
         
-        // Cancel the reconnection timer if exists
-        reconnectionTimer?.cancel()
-        
         connectionState = .connecting
         
         engineQueue.async { [weak engine] in
@@ -140,8 +128,10 @@ class WebSocketClient {
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
     func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         connectionState = .disconnecting(source: source)
-        engineQueue.async { [weak engine] in
+        engineQueue.async { [weak engine, eventsBatcher] in
             engine?.disconnect()
+            
+            eventsBatcher.processImmediately()
         }
     }
 }
@@ -172,6 +162,10 @@ extension WebSocketClient {
                 return StarscreamWebSocketProvider(request: $0, sessionConfiguration: $1, callbackQueue: $2)
             }
         }
+        
+        var eventBatcherBuilder: (_ handler: @escaping ([Event]) -> Void) -> EventBatcher = {
+            Batcher<Event>(period: 0.5, handler: $0)
+        }
     }
 }
 
@@ -189,14 +183,14 @@ extension WebSocketClient: WebSocketEngineDelegate {
 
             let event = try eventDecoder.decode(from: messageData)
             if let healthCheckEvent = event as? HealthCheckEvent {
-                eventNotificationCenter.process(healthCheckEvent) { [weak self] connectionId in
+                eventNotificationCenter.process(healthCheckEvent, postNotification: false) { [weak self] in
                     self?.engineQueue.async { [weak self] in
                         self?.pingController.pongReceived()
-                        self?.connectionState = .connected(connectionId: connectionId)
+                        self?.connectionState = .connected(connectionId: healthCheckEvent.connectionId)
                     }
                 }
             } else {
-                eventNotificationCenter.process(event)
+                eventsBatcher.append(event)
             }
         } catch is ClientError.UnsupportedEventType {
             log.info("Skipping unsupported event type with payload: \(message)", subsystems: .webSocket)
@@ -216,41 +210,17 @@ extension WebSocketClient: WebSocketEngineDelegate {
     }
     
     func webSocketDidDisconnect(error engineError: WebSocketEngineError?) {
-        // Reconnection shouldn't happen for manually initiated disconnect
-        // or system initated disconnect (app enters background)
-        let shouldReconnect = connectionState != .disconnecting(source: .userInitiated)
-            && connectionState != .disconnecting(source: .systemInitiated)
+        switch connectionState {
+        case .connecting, .waitingForConnectionId, .connected:
+            let serverError = engineError.map { ClientError.WebSocket(with: $0) }
+            
+            connectionState = .disconnected(source: .serverInitiated(error: serverError))
         
-        let disconnectionError: Error?
-        if case let .disconnecting(.serverInitiated(webSocketError)) = connectionState {
-            disconnectionError = webSocketError?.underlyingError
-        } else {
-            disconnectionError = engineError
-        }
+        case let .disconnecting(source):
+            connectionState = .disconnected(source: source)
         
-        if shouldReconnect,
-           let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) {
-            let clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
-            connectionState = .waitingForReconnect(error: clientError)
-            
-            reconnectionTimer = environment.timerType
-                .schedule(timeInterval: reconnectionDelay, queue: engineQueue) { [weak self] in self?.connect() }
-            
-        } else {
-            connectionState = .disconnected(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
-
-            // If the disconnection error was one of the internet-is-down error, schedule reconnecting once the
-            // connection is back online.
-            guard disconnectionError?.isInternetOfflineError == true else { return }
-            
-            internetConnection.notifyOnce(when: { $0.isAvailable }) { [weak self] in
-                // Check the current state is still "disconnected" with an internet-down error. If not, it means
-                // the state was changed manually and we don't want to reconnect automatically.
-                if case let .disconnected(error) = self?.connectionState,
-                   error?.underlyingError?.isInternetOfflineError == true {
-                    self?.connect()
-                }
-            }
+        case .initialized, .disconnected:
+            log.error("Web socket can not be disconnected when in \(connectionState) state.")
         }
     }
 }

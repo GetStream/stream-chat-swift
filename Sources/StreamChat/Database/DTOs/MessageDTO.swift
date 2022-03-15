@@ -256,7 +256,8 @@ class MessageDTO: NSManagedObject {
     static func messagesFetchRequest(for query: MessageSearchQuery) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.predicate = NSPredicate(format: "ANY searches.filterHash == %@", query.filterHash)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        request.sortDescriptors = sortDescriptors.isEmpty ? [MessageSearchSortingKey.defaultSortDescriptor] : sortDescriptors
         return request
     }
     
@@ -402,6 +403,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if let parentMessageId = parentMessageId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(message)
+            parentMessageDTO.replyCount += 1
         }
         
         return message
@@ -600,7 +602,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
-        extraData: [String: RawJSON]
+        extraData: [String: RawJSON],
+        localState: LocalReactionState?
     ) throws -> MessageReactionDTO {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -624,6 +627,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.score = Int64(score)
         dto.extraData = try JSONEncoder.default.encode(extraData)
+        dto.localState = localState
 
         let reactionId = dto.id
         

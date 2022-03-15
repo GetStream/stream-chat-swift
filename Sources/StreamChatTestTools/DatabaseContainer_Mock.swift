@@ -7,7 +7,9 @@ import CoreData
 import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.
-class DatabaseContainerMock: DatabaseContainer {
+class DatabaseContainerMock: DatabaseContainer, Spy {
+    @Atomic var recordedFunctions: [String] = []
+
     /// If set, the `write` completion block is called with this value.
     @Atomic var write_errorResponse: Error?
     @Atomic var init_kind: DatabaseContainer.Kind
@@ -90,6 +92,7 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var writeSessionCounter: Int = 0
     
     override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
+        record()
         let wrappedActions: ((DatabaseSession) throws -> Void) = { session in
             self.isWriteSessionInProgress = true
             try actions(session)
@@ -106,6 +109,7 @@ class DatabaseContainerMock: DatabaseContainer {
     }
     
     override func resetEphemeralValues() {
+        record()
         resetEphemeralValues_called = true
         super.resetEphemeralValues()
     }
@@ -278,6 +282,60 @@ extension DatabaseContainer {
                 
                 let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true)!
                 messageDTO.replies.insert(replyDTO)
+            }
+        }
+    }
+    
+    func createMessage(
+        id: MessageId = .unique,
+        cid: ChannelId = .unique,
+        searchQuery: MessageSearchQuery,
+        clearAll: Bool = false
+    ) throws {
+        try writeSynchronously { session in
+            if clearAll {
+                let searchDTO = session.saveQuery(query: searchQuery)
+                searchDTO.messages.removeAll()
+            }
+            
+            let channelPayload = XCTestCase().dummyPayload(with: cid)
+            
+            try session.saveChannel(payload: channelPayload)
+            
+            let message: MessagePayload = .dummy(
+                messageId: id,
+                authorUserId: .unique,
+                channel: channelPayload.channel
+            )
+            
+            try session.saveMessage(payload: message, for: searchQuery)
+        }
+    }
+    
+    func createMessages(
+        ids: [MessageId] = [.unique],
+        cid: ChannelId = .unique,
+        searchQuery: MessageSearchQuery,
+        clearAll: Bool = false
+    ) throws {
+        try writeSynchronously { session in
+            if clearAll {
+                let searchDTO = session.saveQuery(query: searchQuery)
+                searchDTO.messages.removeAll()
+            }
+            
+            let channelPayload = XCTestCase().dummyPayload(with: cid)
+            
+            try session.saveChannel(payload: channelPayload)
+            
+            try ids.forEach {
+                let message: MessagePayload = .dummy(
+                    messageId: $0,
+                    authorUserId: .unique,
+                    channel: channelPayload.channel
+                )
+                
+                try session.saveMessage(payload: message, for: searchQuery)
             }
         }
     }

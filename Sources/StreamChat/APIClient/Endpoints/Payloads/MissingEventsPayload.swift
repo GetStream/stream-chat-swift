@@ -11,4 +11,13 @@ struct MissingEventsPayload: Decodable {
     }
     
     let eventPayloads: [EventPayload]
+
+    init(eventPayloads: [EventPayload]) {
+        self.eventPayloads = eventPayloads
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        eventPayloads = try container.decodeArrayIgnoringFailures([EventPayload].self, forKey: .eventPayloads)
+    }
 }

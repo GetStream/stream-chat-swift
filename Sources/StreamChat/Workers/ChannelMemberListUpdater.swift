@@ -11,17 +11,17 @@ class ChannelMemberListUpdater: Worker {
     ///   - query: The query used in the request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func load(_ query: ChannelMemberListQuery, completion: ((Error?) -> Void)? = nil) {
-        fetchAndSaveChannelIfNeeded(query.cid) { error in
+        fetchAndSaveChannelIfNeeded(query.cid) { [weak self] error in
             guard error == nil else {
                 completion?(error)
                 return
             }
             
             let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
-            self.apiClient.request(endpoint: membersEndpoint) { membersResult in
+            self?.apiClient.request(endpoint: membersEndpoint) { membersResult in
                 switch membersResult {
                 case let .success(memberListPayload):
-                    self.database.write({ session in
+                    self?.database.write({ session in
                         try memberListPayload.members.forEach {
                             try session.saveMember(
                                 payload: $0,
@@ -47,17 +47,17 @@ class ChannelMemberListUpdater: Worker {
 
 private extension ChannelMemberListUpdater {
     func fetchAndSaveChannelIfNeeded(_ cid: ChannelId, completion: @escaping (Error?) -> Void) {
-        checkChannelExistsLocally(with: cid) { exists in
-            exists ? completion(nil) : self.fetchAndSaveChannel(with: cid, completion: completion)
+        checkChannelExistsLocally(with: cid) { [weak self] exists in
+            exists ? completion(nil) : self?.fetchAndSaveChannel(with: cid, completion: completion)
         }
     }
     
     func fetchAndSaveChannel(with cid: ChannelId, completion: @escaping (Error?) -> Void) {
         let query = ChannelQuery(cid: cid)
-        apiClient.request(endpoint: .channel(query: query)) {
+        apiClient.request(endpoint: .updateChannel(query: query)) { [weak self] in
             switch $0 {
             case let .success(payload):
-                self.database.write({ session in
+                self?.database.write({ session in
                     try session.saveChannel(payload: payload)
                 }, completion: { error in
                     if let error = error {

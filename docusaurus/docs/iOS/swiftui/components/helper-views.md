@@ -131,6 +131,44 @@ public func makeChannelListDividerItem() -> some View {
 
 If you want your list to not have a divider whatsoever, you can simply return an `EmptyView` here.
 
+## Changing the Top Bar
+
+By default, the SwiftUI SDK shows a search bar at the top of the channel list. This component lets you search through messages matching the search term inside the channels. When you tap on a search result, the corresponding channel is opened, automatically scrolling to the searched message.
+
+In order to replace this component with your own (or completely remove it by returning an `EmptyView`), you need to implement the `makeChannelListTopView` method:
+
+```swift
+func makeChannelListTopView(
+    searchText: Binding<String>
+) -> some View {
+    SearchBar(text: searchText)
+}
+```
+
+In this method, a binding of the search text is provided, in case you want to implement your custom search bar.
+
+## Changing the Footer View
+
+You can add a view at the bottom of the channel list. There are two options here - a footer shown when you scroll to the end of the channel list and a sticky footer that's always visible.
+
+To add a footer at the bottom of the channel list, you need to implement the `makeChannelListFooterView` method:
+
+```swift
+public func makeChannelListFooterView() -> some View {
+    SomeFooterView()
+}
+```
+
+To add a sticky footer, always visible at the bottom of the channel list, you need to implement the `makeChannelListStickyFooterView` method:
+
+```swift
+func makeChannelListStickyFooterView() -> some View {
+    SomeStickyFooterView()
+}
+```
+
+Both methods return an `EmptyView` by default.
+
 Remember to always inject your custom view factory in your view hierarchy:
 
 ```swift

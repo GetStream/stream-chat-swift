@@ -23,6 +23,36 @@ class DataController_Tests: XCTestCase {
         // Check if state of delegate method is called after state change.
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
     }
+
+    func test_canBeRecoveredTrueWhenStateIs_remoteDataFetched() {
+        let controller = DataController()
+        controller.state = .remoteDataFetched
+        XCTAssertTrue(controller.canBeRecovered)
+    }
+
+    func test_canBeRecoveredTrueWhenStateIs_remoteDataFetchFailed() {
+        let controller = DataController()
+        controller.state = .remoteDataFetchFailed(ClientError(""))
+        XCTAssertTrue(controller.canBeRecovered)
+    }
+
+    func test_canBeRecoveredTrueWhenStateIs_initialized() {
+        let controller = DataController()
+        controller.state = .initialized
+        XCTAssertFalse(controller.canBeRecovered)
+    }
+
+    func test_canBeRecoveredTrueWhenStateIs_localDataFetched() {
+        let controller = DataController()
+        controller.state = .localDataFetched
+        XCTAssertFalse(controller.canBeRecovered)
+    }
+
+    func test_canBeRecoveredTrueWhenStateIs_localDataFetchFailed() {
+        let controller = DataController()
+        controller.state = .localDataFetchFailed(ClientError(""))
+        XCTAssertFalse(controller.canBeRecovered)
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, DataControllerStateDelegate {

@@ -178,7 +178,75 @@ final class MessageReactionDTO_Tests: XCTestCase {
         // Assert dto is `nil`.
         XCTAssertNil(dto)
     }
-    
+
+    // MARK: - Loading
+
+    func test_onlyCorrectStatesAreReturned() throws {
+        // We need to first create a channel and a message
+        let cid = ChannelId(type: .messaging, id: "c")
+        let messageId = "m"
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+            try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: .unique), for: cid, syncOwnReactions: false)
+        }
+
+        // We store one reaction for each state
+        let allStates: [LocalReactionState] = [
+            .unknown,
+            .pendingSend,
+            .sending,
+            .sendingFailed,
+            .pendingDelete,
+            .deleting,
+            .deletingFailed
+        ]
+        let userId = "id"
+        var storedIds: [String] = []
+        for state in allStates {
+            let type = MessageReactionType(stringLiteral: state.rawValue)
+            let reactionId = try saveReaction(state: state, type: type, messageId: messageId, userId: userId)
+            storedIds.append(reactionId)
+        }
+
+        // We not fetch the reactions the user should see
+        var fetchedIds: [String] = []
+        database.backgroundReadOnlyContext.performAndWait {
+            fetchedIds = MessageReactionDTO.loadReactions(ids: storedIds, context: database.backgroundReadOnlyContext).map(\.id)
+        }
+
+        // We only expect to receive 4 states
+        let expectedLocalStates: [LocalReactionState] = [.unknown, .deletingFailed, .pendingSend, .sending]
+        XCTAssertEqual(fetchedIds.count, expectedLocalStates.count)
+        for state in expectedLocalStates {
+            XCTAssertTrue(fetchedIds.contains("\(userId)/\(messageId)/\(state.rawValue)"))
+        }
+    }
+
+    private func saveReaction(
+        state: LocalReactionState,
+        type: MessageReactionType,
+        messageId: MessageId,
+        userId: UserId
+    ) throws -> String {
+        var id: String!
+        try database.writeSynchronously { session in
+            let reaction = try session.saveReaction(
+                payload: MessageReactionPayload(
+                    type: type,
+                    score: 1,
+                    messageId: messageId,
+                    createdAt: Date(),
+                    updatedAt: Date(),
+                    user: .dummy(userId: userId),
+                    extraData: [:]
+                )
+            )
+            reaction.localState = state
+            id = reaction.id
+        }
+        return id
+    }
+
     // MARK: - Private
     
     private func assert_messageReaction_isStoredAndLoadedFromDB(

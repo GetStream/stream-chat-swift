@@ -25,7 +25,7 @@ class ChannelListController_Tests: XCTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = ChatClient.mock(isLocalStorageEnabled: false)
+        client = ChatClient.mock()
         query = .init(filter: .in(.members, values: [.unique]))
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -65,7 +65,7 @@ class ChannelListController_Tests: XCTestCase {
         controller.synchronize()
         
         // Simulate successful network call.
-        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
+        env.channelListUpdater?.update_completion?(.success([]))
         
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
@@ -154,9 +154,9 @@ class ChannelListController_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate successful update
-        env.channelListUpdater!.update_completion?(.success(ChannelListPayload(channels: [])))
+        env.channelListUpdater?.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater!.update_completion = nil
+        env.channelListUpdater?.update_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
@@ -192,7 +192,7 @@ class ChannelListController_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate successful update
-        env.channelListUpdater!.update_completion?(.success(ChannelListPayload(channels: [])))
+        env.channelListUpdater!.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.update_completion = nil
         
@@ -227,9 +227,9 @@ class ChannelListController_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate successful update
-        env.channelListUpdater!.update_completion?(.success(ChannelListPayload(channels: [])))
+        env.channelListUpdater?.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater!.update_completion = nil
+        env.channelListUpdater?.update_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
@@ -249,7 +249,7 @@ class ChannelListController_Tests: XCTestCase {
         
         // Simulate failed udpate
         let testError = TestError()
-        env.channelListUpdater!.update_completion?(.failure(testError))
+        env.channelListUpdater?.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -268,7 +268,7 @@ class ChannelListController_Tests: XCTestCase {
         }
         
         // Simulate successful network call.
-        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
+        env.channelListUpdater?.update_completion?(.success([]))
 
         // Assert the channels are loaded
         XCTAssertEqual(controller.channels.map(\.cid), [channelId])
@@ -301,13 +301,14 @@ class ChannelListController_Tests: XCTestCase {
         // Add the channel to the DB
         let cid: ChannelId = .unique
         let channelPayload = dummyPayload(with: cid)
+        var channel: ChatChannel!
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: channelPayload, query: self.query)
+            let dto = try session.saveChannel(payload: channelPayload, query: self.query)
+            channel = dto.asModel()
         }
         
         // Simulate successful response from backend
-        let channelListPayload = ChannelListPayload(channels: [channelPayload])
-        env.channelListUpdater!.update_completion!(.success(channelListPayload))
+        env.channelListUpdater?.update_completion?(.success([channel]))
         
         AssertAsync {
             // Assert synchronized completion is invoked
@@ -352,13 +353,14 @@ class ChannelListController_Tests: XCTestCase {
         // Add the channel to the DB
         let cid: ChannelId = .unique
         let channelPayload = dummyPayload(with: cid)
+        var channel: ChatChannel!
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: channelPayload, query: self.query)
+            let dto = try session.saveChannel(payload: channelPayload, query: self.query)
+            channel = dto.asModel()
         }
-        
+
         // Simulate successful response from backend
-        let channelListPayload = ChannelListPayload(channels: [channelPayload])
-        env.channelListUpdater!.update_completion!(.success(channelListPayload))
+        env.channelListUpdater?.update_completion?(.success([channel]))
         
         AssertAsync {
             // Assert synchronized completion is invoked
@@ -417,13 +419,14 @@ class ChannelListController_Tests: XCTestCase {
         // Add the channel to the DB
         let cid: ChannelId = .unique
         let channelPayload = dummyPayload(with: cid)
+        var channel: ChatChannel!
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: channelPayload, query: self.query)
+            let dto = try session.saveChannel(payload: channelPayload, query: self.query)
+            channel = dto.asModel()
         }
-        
+
         // Simulate successful response from backend
-        let channelListPayload = ChannelListPayload(channels: [channelPayload])
-        env.channelListUpdater!.update_completion!(.success(channelListPayload))
+        env.channelListUpdater?.update_completion?(.success([channel]))
         
         AssertAsync {
             // Assert synchronized completion is invoked
@@ -584,7 +587,7 @@ class ChannelListController_Tests: XCTestCase {
         controller.synchronize()
             
         // Simulate network call response
-        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
+        env.channelListUpdater?.update_completion?(.success([]))
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -696,9 +699,9 @@ class ChannelListController_Tests: XCTestCase {
         controller = nil
         
         // Simulate successful update
-        env!.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
+        env!.channelListUpdater?.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater!.update_completion = nil
+        env.channelListUpdater?.update_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
@@ -716,7 +719,7 @@ class ChannelListController_Tests: XCTestCase {
         
         // Simulate failed update
         let testError = TestError()
-        env.channelListUpdater!.update_completion?(.failure(testError))
+        env.channelListUpdater?.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -751,7 +754,7 @@ class ChannelListController_Tests: XCTestCase {
         controller = nil
         
         // Simulate successful update
-        env!.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
+        env!.channelListUpdater?.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.update_completion = nil
         
@@ -866,6 +869,18 @@ class ChannelListController_Tests: XCTestCase {
             ).messageOrdering,
             .bottomToTop
         )
+    }
+
+    // MARK: Init registers active controller
+
+    func test_initRegistersActiveController() {
+        let client = ChatClient.mock
+        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        let controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+
+        XCTAssert(controller.client === client)
+        XCTAssert(client.activeChannelListControllers.count == 1)
+        XCTAssert(client.activeChannelListControllers.allObjects.first === controller)
     }
 }
 

@@ -144,7 +144,7 @@ final class PinnedMessagesQueryIntegration_Tests: XCTestCase {
         // Assert host is correct
         XCTAssertEqual(urlComponents.host, baseURL.host)
         // Assert path is correct
-        XCTAssertEqual(urlComponents.path, "/\(endpoint.path)")
+        XCTAssertEqual(urlComponents.path, "/\(endpoint.path.value)")
         // Assert query contains payload
         let payload = try XCTUnwrap(
             urlComponents
@@ -170,13 +170,19 @@ final class PinnedMessagesQueryIntegration_Tests: XCTestCase {
 private class ConnectionDetailsProvider: ConnectionDetailsProviderDelegate {
     var token: Token?
     
-    func provideToken(completion: @escaping (Token?) -> Void) {
+    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken {
         completion(token)
+        return String.newUniqueId
     }
     
     var connectionId: ConnectionId?
     
-    func provideConnectionId(completion: @escaping (ConnectionId?) -> Void) {
+    func provideConnectionId(completion: @escaping (ConnectionId?) -> Void) -> WaiterToken {
         completion(connectionId)
+        return String.newUniqueId
     }
+
+    func invalidateTokenWaiter(_ waiter: WaiterToken) {}
+
+    func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {}
 }
