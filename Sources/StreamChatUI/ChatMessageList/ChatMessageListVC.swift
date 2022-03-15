@@ -200,7 +200,15 @@ open class ChatMessageListVC:
             return ChatMessageLayoutOptions()
         }
 
-        return dataSource.chatMessageListVC(self, messageLayoutOptionsAt: indexPath)
+        var options = dataSource.chatMessageListVC(self, messageLayoutOptionsAt: indexPath)
+
+        // Ideally this would be part of the `ChatMessageLayoutOptionsResolver`, but currently
+        // it is a bit odd to pass the `ChatClientConfig` to the resolver.
+        if client.config.deletedMessagesVisibility != .visibleForCurrentUser {
+            options.remove(.onlyVisibleForYouIndicator)
+        }
+
+        return options
     }
 
     /// Returns the content view class for the message at given `indexPath`
