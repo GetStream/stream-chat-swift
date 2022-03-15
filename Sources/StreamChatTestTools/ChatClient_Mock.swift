@@ -15,7 +15,7 @@ public extension ChatClient {
 
     /// Create a new instance of mock `ChatClient`
     static func mock(config: ChatClientConfig? = nil) -> ChatClient {
-        return .init(
+        .init(
             config: config ?? defaultMockedConfig,
             environment: .init(
                 apiClientBuilder: APIClient_Mock.init,
