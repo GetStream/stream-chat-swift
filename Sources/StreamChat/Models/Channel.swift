@@ -98,10 +98,12 @@ public struct ChatChannel {
     /// An option to enable ban users.
 //    public let banEnabling: BanEnabling
     
-    /// Latest messages present on the channel.
+    /// Latest messages present on the channel. The first item of the array, is the most recent message.
     ///
     /// This field contains only the latest messages of the channel. You can get all existing messages in the channel by creating
     /// and using a `ChatChannelController` for this channel id.
+    ///
+    /// The amount of latest messages is controlled by the `ChatClientConfig.LocalCaching.latestMessagesLimit`.
     ///
     /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
     public var latestMessages: [ChatMessage] { _latestMessages }
