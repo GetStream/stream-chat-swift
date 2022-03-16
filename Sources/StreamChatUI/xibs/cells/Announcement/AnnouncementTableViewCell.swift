@@ -104,6 +104,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
             imgView.image = nil
             playerView.isHidden = true
             imgHeightConst.constant = 0
+            lblTitle.text = nil
         }
         layoutIfNeeded()
     }
