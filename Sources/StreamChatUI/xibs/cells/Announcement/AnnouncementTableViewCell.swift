@@ -53,7 +53,14 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
             lblInfo.attributedText = mutableAttributedString
         }
         */
-        lblInfo.text = message?.text
+        if let message = message?.text {
+            let attributedString = NSMutableAttributedString(string: message)
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 1.5
+            attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedString.length))
+            lblInfo.attributedText = attributedString
+        }
+
         imgView.image = nil
         // TODO: Hide Action
         /*
@@ -95,6 +102,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
                     self.imgView.image = image
                     self.imgPlay.isHidden = true
                 case .failure(_):
+                    self.imgView.image = nil
                     self.imgPlay.isHidden = false
                     break
                 }
