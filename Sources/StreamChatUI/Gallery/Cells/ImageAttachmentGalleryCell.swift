@@ -33,11 +33,15 @@ open class ImageAttachmentGalleryCell: GalleryCollectionViewCell {
         let imageAttachment = content?.attachment(payloadType: ImageAttachmentPayload.self)
         
         if let url = imageAttachment?.imageURL {
-            components.imageLoader.loadImage(
-                into: imageView,
-                url: url,
-                imageCDN: components.imageCDN
-            )
+            if imageAttachment?.isGifURL ?? false {
+                imageView.setGifFromURL(url)
+            } else {
+                components.imageLoader.loadImage(
+                    into: imageView,
+                    url: url,
+                    imageCDN: components.imageCDN
+                )
+            }
         } else {
             imageView.image = nil
         }
