@@ -178,6 +178,14 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
+    
+    var isTreasureGroup: Bool {
+        if let isTreasureGroup = self["isTreasureGroup"] {
+            return fetchRawData(raw: isTreasureGroup) as? Bool ?? false
+        } else {
+            return false
+        }
+    }
 }
 
 // MARK: - RedPacketAmountBubble txId
