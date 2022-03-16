@@ -135,11 +135,9 @@ extension AnnouncementTableViewCell: GalleryItemPreview {
     override var imageView: UIImageView {
         self.imgView
     }
-    
 }
 
 protocol AnnouncementAction: class  {
     func didSelectAnnouncement(_ message: ChatMessage?, view: AnnouncementTableViewCell)
-
     func didSelectAnnouncementAction(_ message: ChatMessage?)
 }
