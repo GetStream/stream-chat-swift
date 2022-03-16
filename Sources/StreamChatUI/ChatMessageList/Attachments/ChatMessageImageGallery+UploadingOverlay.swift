@@ -24,15 +24,18 @@ extension ChatMessageGalleryView {
         public private(set) lazy var actionButton: AttachmentActionButton = components
             .attachmentActionButton.init()
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "actionButton")
         
         public private(set) lazy var loadingIndicator: ChatLoadingIndicator = components
             .loadingIndicator.init()
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "loadingIndicator")
 
         public private(set) lazy var uploadingProgressLabel: UILabel = UILabel()
             .withoutAutoresizingMaskConstraints
             .withBidirectionalLanguagesSupport
             .withAdjustingFontForContentSizeCategory
+            .withAccessibilityIdentifier(identifier: "uploadingProgressLabel")
         
         public private(set) lazy var bottomContainer = ContainerStackView()
             .withoutAutoresizingMaskConstraints

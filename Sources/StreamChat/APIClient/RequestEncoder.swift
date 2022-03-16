@@ -224,6 +224,7 @@ struct DefaultRequestEncoder: RequestEncoder {
         urlComponents.scheme = baseURL.scheme
         urlComponents.host = baseURL.host
         urlComponents.path = baseURL.path
+        urlComponents.port = baseURL.port
         
         guard var url = urlComponents.url else {
             throw ClientError.InvalidURL("URL can't be created using components: \(urlComponents)")

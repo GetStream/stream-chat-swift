@@ -30,50 +30,63 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
     /// Main container which holds `avatarView` and two horizontal containers `title` and `unreadCount` and
     /// `subtitle` and `timestampLabel`
-    open private(set) lazy var mainContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var mainContainer: ContainerStackView = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "mainContainer")
     
     /// This container embeded by `mainContainer` containing `topContainer` and `bottomContainer`.
     open private(set) lazy var rightContainer: ContainerStackView = ContainerStackView(
         axis: .vertical,
         spacing: 4
-    ).withoutAutoresizingMaskConstraints
+    )
+    .withoutAutoresizingMaskConstraints
+    .withAccessibilityIdentifier(identifier: "rightContainer")
 
     /// By default contains `title` and `unreadCount`.
     /// This container is embed inside `mainContainer ` and is the one above `bottomContainer`
-    open private(set) lazy var topContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var topContainer: ContainerStackView = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "topContainer")
 
     /// By default contains `subtitle` and `timestampLabel`.
     /// This container is embed inside `mainContainer ` and is the one below `topContainer`
-    open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "bottomContainer")
     
     /// The `UILabel` instance showing the channel name.
     open private(set) lazy var titleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
+        .withAccessibilityIdentifier(identifier: "titleLabel")
     
     /// The `UILabel` instance showing the last message or typing users if any.
     open private(set) lazy var subtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
+        .withAccessibilityIdentifier(identifier: "subtitleLabel")
     
     /// The `UILabel` instance showing the time of the last sent message.
     open private(set) lazy var timestampLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
+        .withAccessibilityIdentifier(identifier: "timestampLabel")
     
     /// The view used to show channels avatar.
     open private(set) lazy var avatarView: ChatChannelAvatarView = components
         .channelAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "avatarView")
     
     /// The view showing number of unread messages in channel if any.
     open private(set) lazy var unreadCountView: ChatChannelUnreadCountView = components
         .channelUnreadCountView.init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "unreadCountView")
 
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
