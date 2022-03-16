@@ -27,9 +27,6 @@ public enum ChannelType: Codable, Hashable {
     // donation group
     case dao
 
-    // Private broadcast channel
-    case broadcast
-
     /// Good defaults for building something like your own version of Intercom or Drift.
     case commerce
     
@@ -52,7 +49,6 @@ public enum ChannelType: Codable, Hashable {
         case .privateMessaging: return "privateMessaging"
         case .dao: return "dao"
         case .commerce: return "commerce"
-        case .broadcast: return "broadcast"
         case let .custom(value):
             Self.assertCustomTypeValue(value)
             return value
@@ -72,7 +68,6 @@ public enum ChannelType: Codable, Hashable {
         case "privateMessaging": self = .privateMessaging
         case "commerce": self = .commerce
         case "dao": self = .dao
-        case "broadcast": self = .broadcast
         default:
             Self.assertCustomTypeValue(rawValue)
             self = .custom(rawValue)

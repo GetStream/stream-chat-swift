@@ -330,7 +330,7 @@ open class ChatMessageListVC:
         let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
         let currentUserId = ChatClient.shared.currentUserId
         let isMessageFromCurrentUser = message?.author.id == currentUserId
-        if channelType == .announcement || channelType == .broadcast {
+        if channelType == .announcement {
             let cell = listView.dequeueReusableCell(withIdentifier: "AnnouncementTableViewCell") as! AnnouncementTableViewCell
             cell.delegate = self
             cell.streamVideoLoader = streamVideoLoader
