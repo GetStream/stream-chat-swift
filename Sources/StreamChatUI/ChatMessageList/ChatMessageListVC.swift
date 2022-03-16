@@ -330,32 +330,120 @@ open class ChatMessageListVC:
         let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
         let currentUserId = ChatClient.shared.currentUserId
         let isMessageFromCurrentUser = message?.author.id == currentUserId
-        if isOneWalletCell(message) {
-            if isMessageFromCurrentUser {
-                guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "CryptoSentBubble",
-                    for: indexPath) as? CryptoSentBubble else {
-                    return UITableViewCell()
+        if channelType == .announcement || channelType == .broadcast {
+            let cell = listView.dequeueReusableCell(withIdentifier: "AnnouncementTableViewCell") as! AnnouncementTableViewCell
+            cell.delegate = self
+            cell.streamVideoLoader = streamVideoLoader
+            cell.message = message
+            cell.configureCell(message)
+            cell.transform = .mirrorY
+            return cell
+        } else {
+            if isOneWalletCell(message) {
+                if isMessageFromCurrentUser {
+                    guard let cell = tableView.dequeueReusableCell(
+                        withIdentifier: "CryptoSentBubble",
+                        for: indexPath) as? CryptoSentBubble else {
+                            return UITableViewCell()
+                        }
+                    cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                    cell.content = message
+                    cell.configData()
+                    cell.blockExpAction = { [weak self] blockExpUrl in
+                        let svc = SFSafariViewController(url: blockExpUrl)
+                        let nav = UINavigationController(rootViewController: svc)
+                        nav.isNavigationBarHidden = true
+                        UIApplication.shared.keyWindow?.rootViewController?.present(nav, animated: true, completion: nil)
+                    }
+                    return cell
+                } else {
+                    guard let cell = tableView.dequeueReusableCell(
+                        withIdentifier: "CryptoReceiveBubble",
+                        for: indexPath) as? CryptoReceiveBubble else {
+                            return UITableViewCell()
+                        }
+                    cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                    cell.content = message
+                    cell.client = client
+                    cell.configData()
+                    cell.blockExpAction = { blockExpUrl in
+                        let svc = SFSafariViewController(url: blockExpUrl)
+                        let nav = UINavigationController(rootViewController: svc)
+                        nav.isNavigationBarHidden = true
+                        UIApplication.shared.keyWindow?.rootViewController?.present(nav, animated: true, completion: nil)
+                    }
+                    return cell
                 }
+            } else if isRedPacketCell(message) {
+                //if isMessageFromCurrentUser {
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: "RedPacketSentBubble",
+                    for: indexPath) as? RedPacketSentBubble else {
+                        return UITableViewCell()
+                    }
                 cell.options = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
+                cell.configureCell(isSender: isMessageFromCurrentUser)
                 cell.configData()
-                cell.blockExpAction = { [weak self] blockExpUrl in
-                    let svc = SFSafariViewController(url: blockExpUrl)
-                    let nav = UINavigationController(rootViewController: svc)
-                    nav.isNavigationBarHidden = true
-                    UIApplication.shared.keyWindow?.rootViewController?.present(nav, animated: true, completion: nil)
-                }
                 return cell
-            } else {
+                //}
+            }
+            else if isRedPacketNoPickUpCell(message) {
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "CryptoReceiveBubble",
-                    for: indexPath) as? CryptoReceiveBubble else {
-                    return UITableViewCell()
+                    withIdentifier: "RedPacketExpired",
+                    for: indexPath) as? RedPacketExpired else {
+                        return UITableViewCell()
+                    }
+                if let channel = dataSource?.channel(for: self) {
+                    cell.channel = channel
+                }
+                cell.client = client
+                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.content = message
+                cell.configureCell(isSender: isMessageFromCurrentUser)
+                cell.configData()
+                return cell
+            }
+            else if isRedPacketExpiredCell(message) {
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: "RedPacketBubble",
+                    for: indexPath) as? RedPacketBubble else {
+                        return UITableViewCell()
+                    }
+                if let channel = dataSource?.channel(for: self) {
+                    cell.channel = channel
+                }
+                cell.chatClient = client
+                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.content = message
+                cell.configureCell(isSender: isMessageFromCurrentUser, with: .EXPIRED)
+                cell.configData()
+                return cell
+            } else if isRedPacketReceivedCell(message) {
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: "RedPacketBubble",
+                    for: indexPath) as? RedPacketBubble else {
+                        return UITableViewCell()
+                    }
+                if let channel = dataSource?.channel(for: self) {
+                    cell.channel = channel
                 }
                 cell.options = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
+                cell.configureCell(isSender: isMessageFromCurrentUser, with: .RECEIVED)
+                cell.configData()
+                return cell
+            } else if isRedPacketAmountCell(message) {
+
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: "RedPacketAmountBubble",
+                    for: indexPath) as? RedPacketAmountBubble else {
+                        return UITableViewCell()
+                    }
                 cell.client = client
+                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.content = message
+                cell.configureCell(isSender: isMessageFromCurrentUser)
                 cell.configData()
                 cell.blockExpAction = { blockExpUrl in
                     let svc = SFSafariViewController(url: blockExpUrl)
@@ -364,127 +452,40 @@ open class ChatMessageListVC:
                     UIApplication.shared.keyWindow?.rootViewController?.present(nav, animated: true, completion: nil)
                 }
                 return cell
-            }
-        } else if isRedPacketCell(message) {
-            //if isMessageFromCurrentUser {
+            } else if isWalletRequestPayCell(message) {
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "RedPacketSentBubble",
-                    for: indexPath) as? RedPacketSentBubble else {
-                    return UITableViewCell()
-                }
+                    withIdentifier: "RequestBubble",
+                    for: indexPath) as? WalletRequestPayBubble else {
+                        return UITableViewCell()
+                    }
+                cell.client = client
                 cell.options = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configureCell(isSender: isMessageFromCurrentUser)
                 cell.configData()
                 return cell
-            //}
-        }
-        else if isRedPacketNoPickUpCell(message) {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RedPacketExpired",
-                for: indexPath) as? RedPacketExpired else {
-                return UITableViewCell()
+            } else if isAdminMessage(message) {
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: "AdminMessageTVCell",
+                    for: indexPath) as? AdminMessageTVCell else {
+                        return UITableViewCell()
+                    }
+                let messagesCont = dataSource?.numberOfMessages(in: self) ?? 0
+                cell.content = message
+                cell.configCell(messageCount: messagesCont)
+                cell.transform = .mirrorY
+                return cell
+            } else {
+                let cell: ChatMessageCell = listView.dequeueReusableCell(
+                    contentViewClass: cellContentClassForMessage(at: indexPath),
+                    attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
+                    layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
+                    for: indexPath
+                )
+                cell.messageContentView?.delegate = self
+                cell.messageContentView?.content = message
+                return cell
             }
-            if let channel = dataSource?.channel(for: self) {
-                cell.channel = channel
-            }
-            cell.client = client
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
-            cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser)
-            cell.configData()
-            return cell
-        }
-        else if isRedPacketExpiredCell(message) {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RedPacketBubble",
-                for: indexPath) as? RedPacketBubble else {
-                return UITableViewCell()
-            }
-            if let channel = dataSource?.channel(for: self) {
-                cell.channel = channel
-            }
-            cell.chatClient = client
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
-            cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser, with: .EXPIRED)
-            cell.configData()
-            return cell
-        } else if isRedPacketReceivedCell(message) {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RedPacketBubble",
-                for: indexPath) as? RedPacketBubble else {
-                return UITableViewCell()
-            }
-            if let channel = dataSource?.channel(for: self) {
-                cell.channel = channel
-            }
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
-            cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser, with: .RECEIVED)
-            cell.configData()
-            return cell
-        } else if isRedPacketAmountCell(message) {
-            
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RedPacketAmountBubble",
-                for: indexPath) as? RedPacketAmountBubble else {
-                return UITableViewCell()
-            }
-            cell.client = client
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
-            cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser)
-            cell.configData()
-            cell.blockExpAction = { blockExpUrl in
-                let svc = SFSafariViewController(url: blockExpUrl)
-                let nav = UINavigationController(rootViewController: svc)
-                nav.isNavigationBarHidden = true
-                UIApplication.shared.keyWindow?.rootViewController?.present(nav, animated: true, completion: nil)
-            }
-            return cell
-        } else if isWalletRequestPayCell(message) {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RequestBubble",
-                for: indexPath) as? WalletRequestPayBubble else {
-                return UITableViewCell()
-            }
-            cell.client = client
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
-            cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser)
-            cell.configData()
-            return cell
-        } else if isAdminMessage(message) {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "AdminMessageTVCell",
-                for: indexPath) as? AdminMessageTVCell else {
-                    return UITableViewCell()
-            }
-            let messagesCont = dataSource?.numberOfMessages(in: self) ?? 0
-            cell.content = message
-            cell.configCell(messageCount: messagesCont)
-            cell.transform = .mirrorY
-            return cell
-        } else if channelType == .announcement {
-            let cell = listView.dequeueReusableCell(withIdentifier: "AnnouncementTableViewCell") as! AnnouncementTableViewCell
-            cell.btnContainer.addTarget(self, action: #selector(didSelectAnnouncement(_:)), for: .touchUpInside)
-            cell.streamVideoLoader = streamVideoLoader
-            cell.message = message
-            cell.configureCell(message)
-            cell.btnShowMore.addTarget(self, action: #selector(didSelectAnnouncementAction(_:)), for: .touchUpInside)
-            cell.transform = .mirrorY
-            return cell
-        } else {
-            let cell: ChatMessageCell = listView.dequeueReusableCell(
-                contentViewClass: cellContentClassForMessage(at: indexPath),
-                attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
-                layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-                for: indexPath
-            )
-            cell.messageContentView?.delegate = self
-            cell.messageContentView?.content = message
-            return cell
         }
     }
 
@@ -514,27 +515,6 @@ open class ChatMessageListVC:
         lblChat.centerXAnchor.constraint(equalTo: viewEmptyState.centerXAnchor, constant: 0).isActive = true
         lblChat.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 50).isActive = true
         viewEmptyState.isUserInteractionEnabled = false
-    }
-
-    @objc private func didSelectAnnouncement(_ sender: UIButton) {
-        guard let cell = sender.superview?.superview?.superview as? AnnouncementTableViewCell,
-        let indexPath = listView.indexPath(for: cell),
-        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
-        let attachmentId = message.firstAttachmentId
-        else { return }
-        router.showGallery(
-            message: message,
-            initialAttachmentId: attachmentId,
-            previews: [cell]
-        )
-    }
-
-    @objc private func didSelectAnnouncementAction(_ sender: UIButton) {
-        guard let cell = sender.superview?.superview?.superview?.superview as? AnnouncementTableViewCell,
-        let indexPath = listView.indexPath(for: cell),
-        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
-        else { return }
-        
     }
     
     private func isOneWalletCell(_ message: ChatMessage?) -> Bool {
@@ -776,15 +756,25 @@ extension ChatMessageListVC: UIScrollViewDelegate {
         if !decelerate {
             pausePlayVideos()
         }
-        // Disable swipe down gesture
-        /*
-        if scrollView.contentOffset.y < 0 && !self.viewModel.isPopup {
-            self.tblEvents.isScrollEnabled = false
-        }
-        */
     }
 
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         pausePlayVideos()
+    }
+}
+
+extension ChatMessageListVC: AnnouncementAction {
+    func didSelectAnnouncement(_ message: ChatMessage?, view: AnnouncementTableViewCell) {
+        guard let attachmentId = message?.firstAttachmentId, let message = message
+        else { return }
+        router.showGallery(
+            message: message,
+            initialAttachmentId: attachmentId,
+            previews: [view]
+        )
+    }
+
+    func didSelectAnnouncementAction(_ message: ChatMessage?) {
+        debugPrint(message?.text)
     }
 }

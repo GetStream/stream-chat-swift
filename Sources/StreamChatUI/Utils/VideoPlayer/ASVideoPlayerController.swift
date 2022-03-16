@@ -75,12 +75,12 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
             case .loaded:
                 break
             case .failed:
-                print("Failed to load asset", URL)
+                debugPrint("Failed to load asset", URL)
                 return
             case .cancelled:
-                print("Cancelled to load asset")
+                debugPrint("Cancelled to load asset")
             default:
-                print("Unknown state of asset")
+                debugPrint("Unknown state of asset")
                 return
             }
             let player = AVPlayer()
@@ -109,7 +109,8 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
             addObservers(url: url, videoContainer: videoContainer)
         }
         // Give chance for current video player to be ready to play
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
             if let videoContainer = self.videoCache.object(forKey: url as NSString),
                videoContainer.player.currentItem?.status == .readyToPlay {
                 videoContainer.playOn = true

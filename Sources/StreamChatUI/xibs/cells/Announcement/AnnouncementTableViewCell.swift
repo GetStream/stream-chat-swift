@@ -31,6 +31,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
     var content: ChatMessage?
     var streamVideoLoader: StreamVideoLoader?
     var message: ChatMessage?
+    weak var delegate: AnnouncementAction?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -43,14 +44,17 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
     }
 
     func configureCell(_ message: ChatMessage?) {
-        self.selectionStyle = .none
+        selectionStyle = .none
         containerView.layer.cornerRadius = 12
+        /*
         if let detailsText = message?.text.htmlToAttributedString {
             let mutableAttributedString = NSMutableAttributedString(attributedString: detailsText ?? .init())
             mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white, range: NSRange(location: 0,length: detailsText.length))
             lblInfo.attributedText = mutableAttributedString
         }
-        self.imgView.image = nil
+        */
+        lblInfo.text = message?.text
+        imgView.image = nil
         // TODO: Hide Action
         /*
         if let clickAction = message?.extraData.cta, clickAction == "url" {
@@ -67,10 +71,10 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         }
         if let imageAttachments = message?.imageAttachments.first {
             imgHeightConst.constant = 250
-            self.imgView.image = nil
-            self.btnShowMore.setTitle(getActionTitle(), for: .normal)
-            self.imageUrl = imageAttachments.imageURL.absoluteString
-            self.lblTitle.text = imageAttachments.title
+            imgView.image = nil
+            btnShowMore.setTitle(getActionTitle(), for: .normal)
+            imageUrl = imageAttachments.imageURL.absoluteString
+            lblTitle.text = imageAttachments.title
             let options = ImageLoadingOptions(
                 placeholder: Appearance.default.images.videoAttachmentPlaceholder,
                 transition: .fadeIn(duration: 0.1)
@@ -82,8 +86,8 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
             videoURL = videoAttachment.videoURL.absoluteString
             imgHeightConst.constant = 250
             playerView.isHidden = false
-            self.imgView.image = nil
-            self.lblTitle.text = videoAttachment.title
+            imgView.image = nil
+            lblTitle.text = videoAttachment.title
             streamVideoLoader?.loadPreviewForVideo(at: videoAttachment.videoURL, completion: { [weak self] result in
                 guard let `self` = self else { return }
                 switch result {
@@ -101,7 +105,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
             playerView.isHidden = true
             imgHeightConst.constant = 0
         }
-        self.layoutIfNeeded()
+        layoutIfNeeded()
     }
 
     private func setupUI() {
@@ -117,6 +121,10 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         default: return ""
         }
     }
+
+    @IBAction func btnContainerTapAction(_ sender: Any) {
+        delegate?.didSelectAnnouncement(message, view: self)
+    }
 }
 
 extension AnnouncementTableViewCell: GalleryItemPreview {
@@ -128,4 +136,10 @@ extension AnnouncementTableViewCell: GalleryItemPreview {
         self.imgView
     }
     
+}
+
+protocol AnnouncementAction: class  {
+    func didSelectAnnouncement(_ message: ChatMessage?, view: AnnouncementTableViewCell)
+
+    func didSelectAnnouncementAction(_ message: ChatMessage?)
 }

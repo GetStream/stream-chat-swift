@@ -102,7 +102,8 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             return content.channel.isDirectMessageChannel ? "Video" : "\(authorName) Video"
         } else if !lastMessage.giphyAttachments.isEmpty {
             return content.channel.isDirectMessageChannel ? "Gif" : "\(authorName) Gif"
-        } else if lastMessage.attachments(payloadType: WalletAttachmentPayload.self).first != nil {
+        } else if lastMessage.attachments(payloadType: WalletAttachmentPayload.self).first != nil &&
+                    lastMessage.attachments(payloadType: WalletAttachmentPayload.self).first?.type != AttachmentType.unknown {
             return content.channel.isDirectMessageChannel ? "Request Payment" : "\(authorName) Request Payment"
         } else if lastMessage.extraData.keys.contains("redPacketPickup") {
             return content.channel.isDirectMessageChannel ? "Red Packet" : "\(authorName) Red Packet"

@@ -158,6 +158,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="255" height="250"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <connections>
+                                    <action selector="btnContainerTapAction:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="n2P-ej-6FJ"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="0.074509803921568626" green="0.074509803921568626" blue="0.078431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

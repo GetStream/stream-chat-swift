@@ -123,12 +123,6 @@ public extension Dictionary where Key == String, Value == RawJSON {
 
 // MARK: - Admin Message
 public extension Dictionary where Key == String, Value == RawJSON {
-    var tag: [String]? {
-        guard let tags = getExtraDataArray(key: "tags") else {
-            return nil
-        }
-        return tags.map { fetchRawData(raw: $0) as? String ?? "" }
-    }
     var adminMessage: String? {
         guard let adminMessage = getExtraData(key: "adminMessage") else {
             return nil
@@ -212,6 +206,13 @@ public extension Dictionary where Key == String, Value == RawJSON {
 
 // MARK: - Announcement
 public extension Dictionary where Key == String, Value == RawJSON {
+    var tag: [String]? {
+        guard let tags = getExtraDataArray(key: "tags") else {
+            return nil
+        }
+        return tags.map { fetchRawData(raw: $0) as? String ?? "" }
+    }
+    
     var cta: String? {
         if let ctaStr = self["cta"] {
             return fetchRawData(raw: ctaStr) as? String
