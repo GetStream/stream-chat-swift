@@ -284,6 +284,7 @@ open class ChatChannelVC:
             messageComposerVC?.composerView.isUserInteractionEnabled = false
             messageComposerVC?.composerView.alpha = 0.5
             headerView.titleContainerView.subtitleLabel.isHidden = true
+            messageComposerVC?.composerView.inputMessageView.textView.resignFirstResponder()
             channelAvatarView.isHidden = true
             moreButton.isHidden = true
         } else {

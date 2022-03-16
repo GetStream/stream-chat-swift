@@ -30,7 +30,6 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
     // MARK: - Variables
     var content: ChatMessage?
     var streamVideoLoader: StreamVideoLoader?
-    var didTapAnnouncement: (() -> Void)?
     var message: ChatMessage?
     
     override func awakeFromNib() {
@@ -52,11 +51,14 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
             lblInfo.attributedText = mutableAttributedString
         }
         self.imgView.image = nil
+        // TODO: Hide Action
+        /*
         if let clickAction = message?.extraData.cta, clickAction == "url" {
             viewAction.isHidden = false
         } else {
             viewAction.isHidden = true
         }
+         */
         viewAction.isHidden = true
         if let hashTag = message?.extraData.tag {
             lblHashTag.text = "#" +  hashTag.joined(separator: " #")
