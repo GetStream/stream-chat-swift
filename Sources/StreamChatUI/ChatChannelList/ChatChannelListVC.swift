@@ -359,11 +359,18 @@ open class ChatChannelListVC: _ViewController,
             guard let self = self else { return }
             let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
             if isbroadcastChannel {
+                guard let currentUserId = ChatClient.shared.currentUserId else { return }
                 if controller.channel?.isMuted ?? false {
                     controller.unmuteChannel(completion: nil)
+                    // TODO: disable for now
+                    // Add user in channel to enable notification
+                    // controller.addMembers(userIds: [currentUserId], completion: nil)
                     return;
                 }
                 controller.muteChannel(completion: nil)
+                // TODO: disable for now
+                // Remove user from channel to disable notification
+                // controller.removeMembers(userIds: [currentUserId], completion: nil)
             } else {
                 controller.hideChannel(clearHistory: true, completion: nil)
             }
