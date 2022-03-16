@@ -38,18 +38,22 @@ extension ChatMessageGalleryView {
             let imageView = UIImageView()
             imageView.contentMode = .scaleAspectFill
             imageView.layer.masksToBounds = true
-            return imageView.withoutAutoresizingMaskConstraints
+            return imageView
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "imageView")
         }()
 
         public private(set) lazy var loadingIndicator = components
             .loadingIndicator
             .init()
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "loadingIndicator")
 
         public private(set) lazy var uploadingOverlay = components
             .imageUploadingOverlay
             .init()
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "uploadingOverlay")
 
         // MARK: - Overrides
 

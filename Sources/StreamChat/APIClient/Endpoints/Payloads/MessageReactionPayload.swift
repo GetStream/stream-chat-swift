@@ -6,7 +6,7 @@ import Foundation
 
 /// The type describes the incoming message-reaction JSON.
 struct MessageReactionPayload: Decodable {
-    private enum CodingKeys: String, CodingKey, CaseIterable {
+    internal enum CodingKeys: String, CodingKey, CaseIterable {
         case type
         case score
         case messageId = "message_id"

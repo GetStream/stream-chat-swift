@@ -79,28 +79,34 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// Shows a spacer where the author avatar should be.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.avatarSizePadding`.
+    @AccessibleView(accessibilityIdentifier: "authorAvatarSpacer")
     public private(set) var authorAvatarSpacer: UIView?
 
     /// Shows message text content.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.text`.
+    @AccessibleView(accessibilityIdentifier: "textView")
     public private(set) var textView: UITextView?
 
     /// Shows message timestamp.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.timestamp`.
+    @AccessibleView(accessibilityIdentifier: "timestampLabel")
     public private(set) var timestampLabel: UILabel?
 
     /// Shows message author name.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.authorName`.
+    @AccessibleView(accessibilityIdentifier: "authorNameLabel")
     public private(set) var authorNameLabel: UILabel?
 
     /// Shows the icon part of the indicator saying the message is visible for current user only.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options
     /// containing `.onlyVisibleForYouIndicator`.
+    @AccessibleView(accessibilityIdentifier: "onlyVisibleForYouIconImageView")
     public private(set) var onlyVisibleForYouIconImageView: UIImageView?
 
     /// Shows the text part of the indicator saying the message is visible for current user only.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options
     /// containing `.onlyVisibleForYouIndicator`
+    @AccessibleView(accessibilityIdentifier: "onlyVisibleForYouLabel")
     public private(set) var onlyVisibleForYouLabel: UILabel?
 
     /// Shows error indicator.
@@ -121,6 +127,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// Shows the # of thread replies on the message.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
+    @AccessibleView(accessibilityIdentifier: "threadReplyCountButton")
     public private(set) var threadReplyCountButton: UIButton?
 
     /// Shows the avatar of the user who left the latest thread reply.
@@ -162,6 +169,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// The container which holds `errorIndicatorView`
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.errorIndicator`.
+    @AccessibleView(accessibilityIdentifier: "errorIndicatorContainer")
     public private(set) var errorIndicatorContainer: UIView?
 
     /// Constraint between bubble and reactions.
