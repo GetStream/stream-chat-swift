@@ -185,17 +185,17 @@ private extension ChatUserSearchController {
         switch updatePolicy {
         case .replace:
             let deletions = userArray.enumerated().reversed().map { (index, user) in
-                ListChange.remove(user, index: .init(row: index, section: 0))
+                ListChange.remove(user, index: .init(item: index, section: 0))
             }
             
             let insertions = loadedPage.enumerated().map { (index, user) in
-                ListChange.insert(user, index: .init(row: index, section: 0))
+                ListChange.insert(user, index: .init(item: index, section: 0))
             }
             
             return deletions + insertions
         case .merge:
             let insertions = loadedPage.enumerated().map { (index, user) in
-                ListChange.insert(user, index: .init(row: index + userArray.count, section: 0))
+                ListChange.insert(user, index: .init(item: index + userArray.count, section: 0))
             }
             
             return insertions
@@ -213,9 +213,9 @@ private extension ChatUserSearchController {
         for change in changes {
             switch change {
             case let .insert(user, indexPath):
-                users.insert(user, at: indexPath.row)
+                users.insert(user, at: indexPath.item)
             case let .remove(_, indexPath):
-                users.remove(at: indexPath.row)
+                users.remove(at: indexPath.item)
             default:
                 log.assertionFailure("Unsupported list change observed: \(change)")
             }
