@@ -51,17 +51,16 @@ public class NameGroupViewController: ChatBaseVC {
         nameField.becomeFirstResponder()
         nameContainerView.layer.cornerRadius = 6.0
         descriptionContainerView.layer.cornerRadius = 6.0
-        let str = self.selectedUsers.count > 1 ? "friends" : "friend"
+        let str = self.selectedUsers.count > 1 ? "Friends" : "Friend"
         lblFriendCount.text = "\(self.selectedUsers.count) \(str)"
-        lblTitle.setChatNavTitleColor()
-        lblTitle.text = "New Chat"
+        lblTitle.text = "New Group"
         nameField.placeholder = "Group chat name"
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView?.register(chatUserNib, forCellReuseIdentifier: chatUserID)
         //
         tableView.dataSource = self
-        tableView.bounces = false
+        tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
@@ -79,7 +78,7 @@ public class NameGroupViewController: ChatBaseVC {
         }
         let name = self.nameField.text ?? ""
         let description = self.groupDescriptionField.text ?? ""
-        if name.isBlank || description.isBlank || name.containsEmoji || description.containsEmoji {
+        if name.isBlank || name.containsEmoji || description.containsEmoji {
             self.btnNext?.isHidden = true
         } else {
             self.btnNext?.isHidden = false
@@ -152,7 +151,11 @@ public class NameGroupViewController: ChatBaseVC {
 // MARK: - UITextFieldDelegate
 extension NameGroupViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
+        if textField == nameField {
+            groupDescriptionField.becomeFirstResponder()
+        } else {
+            textField.resignFirstResponder()
+        }
         return true
     }
     
@@ -195,7 +198,6 @@ extension NameGroupViewController: UITableViewDataSource {
         }
         let user: ChatUser = selectedUsers[indexPath.row]
         cell.config(user: user,selectedImage: nil)
-        cell.backgroundColor = .clear
         return cell
 
     }
