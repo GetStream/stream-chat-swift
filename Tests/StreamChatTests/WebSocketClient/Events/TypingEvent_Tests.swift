@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class TypingEvent_Tests: XCTestCase {
+final class TypingEvent_Tests: XCTestCase {
     var eventDecoder: EventDecoder!
     var cid: ChannelId = ChannelId(type: .messaging, id: "general")
     var userId = "luke_skywalker"
@@ -16,8 +16,13 @@ class TypingEvent_Tests: XCTestCase {
         eventDecoder = EventDecoder()
     }
 
+    override func tearDown() {
+        super.tearDown()
+        eventDecoder = nil
+    }
+
     func test_parseTypingStartEvent() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStartTyping")
+        let json = XCTestCase.mockData(fromFile: "UserStartTyping", bundle: .testTools)
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
@@ -29,7 +34,7 @@ class TypingEvent_Tests: XCTestCase {
     }
     
     func test_parseTypingStoptEvent() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStopTyping")
+        let json = XCTestCase.mockData(fromFile: "UserStopTyping", bundle: .testTools)
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
@@ -42,7 +47,7 @@ class TypingEvent_Tests: XCTestCase {
     }
 
     func test_parseTypingStartEventInThread() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStartTypingThread")
+        let json = XCTestCase.mockData(fromFile: "UserStartTypingThread", bundle: .testTools)
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
@@ -53,7 +58,7 @@ class TypingEvent_Tests: XCTestCase {
     }
     
     func test_parseTypingStoptEventInThread() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStopTypingThread")
+        let json = XCTestCase.mockData(fromFile: "UserStopTypingThread", bundle: .testTools)
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
@@ -129,7 +134,7 @@ class TypingEvent_Tests: XCTestCase {
     }
 }
 
-class TypingEventsIntegration_Tests: XCTestCase {
+final class TypingEventsIntegration_Tests: XCTestCase {
     var client: ChatClient!
     var currentUserId: UserId!
 
@@ -152,7 +157,7 @@ class TypingEventsIntegration_Tests: XCTestCase {
     }
 
     func test_UserStartTypingEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStartTyping")
+        let json = XCTestCase.mockData(fromFile: "UserStartTyping", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? TypingEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "general")
@@ -173,7 +178,7 @@ class TypingEventsIntegration_Tests: XCTestCase {
     }
     
     func test_UserStopTypingEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStopTyping")
+        let json = XCTestCase.mockData(fromFile: "UserStopTyping", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? TypingEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "general")

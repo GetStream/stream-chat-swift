@@ -21,7 +21,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
     
     override func tearDown() {
         middleware = nil
-        AssertAsync.canBeReleased(&database)
+        database = nil
         
         super.tearDown()
     }
@@ -125,8 +125,4 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel?.watcherCount, Int64(watcherCount))
         XCTAssert(forwardedEvent is UserWatchingEventDTO)
     }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
 }

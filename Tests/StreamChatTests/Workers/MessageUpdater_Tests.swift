@@ -31,6 +31,17 @@ final class MessageUpdater_Tests: XCTestCase {
         )
     }
 
+    override func tearDown() {
+        super.tearDown()
+        webSocketClient = nil
+        apiClient.cleanUp()
+        apiClient = nil
+        database = nil
+        messageRepository.clear()
+        messageRepository = nil
+        messageUpdater = nil
+    }
+
     func recreateUpdater(isLocalStorageEnabled: Bool) {
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: isLocalStorageEnabled,
@@ -39,21 +50,7 @@ final class MessageUpdater_Tests: XCTestCase {
             apiClient: apiClient
         )
     }
-    
-    override func tearDown() {
-        apiClient.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&messageRepository)
-            Assert.canBeReleased(&messageUpdater)
-            Assert.canBeReleased(&webSocketClient)
-            Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&database)
-        }
-        
-        super.tearDown()
-    }
-    
+
     // MARK: Edit message
     
     func test_editMessage_propagates_CurrentUserDoesNotExist_Error() throws {

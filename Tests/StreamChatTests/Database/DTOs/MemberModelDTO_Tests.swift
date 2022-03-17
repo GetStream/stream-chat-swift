@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class MemberModelDTO_Tests: XCTestCase {
+final class MemberModelDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
     
     override func setUp() {
@@ -15,7 +15,7 @@ class MemberModelDTO_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
     

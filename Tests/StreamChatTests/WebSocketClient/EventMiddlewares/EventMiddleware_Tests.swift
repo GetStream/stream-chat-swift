@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class EventMiddleware_Tests: XCTestCase {
+final class EventMiddleware_Tests: XCTestCase {
     /// A test event holding an `Int` value.
     struct IntBasedEvent: Event, Equatable {
         let value: Int

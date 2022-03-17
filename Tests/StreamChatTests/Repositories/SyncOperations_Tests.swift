@@ -20,6 +20,14 @@ final class SyncOperations_Tests: XCTestCase {
         syncRepository = SyncRepositoryMock(client: client)
     }
 
+    override func tearDown() {
+        super.tearDown()
+        client = nil
+        syncRepository = nil
+        channelRepository = nil
+        database = nil
+    }
+
     // MARK: - GetChannelIdsOperation
 
     func test_GetChannelIdsOperation_noChannels() {

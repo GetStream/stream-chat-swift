@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class TypingEventsSender_Tests: XCTestCase {
+final class TypingEventsSender_Tests: XCTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
@@ -28,7 +28,12 @@ class TypingEventsSender_Tests: XCTestCase {
     }
     
     override func tearDown() {
+        time = nil
+        VirtualTimeTimer.time = nil
+        eventSender = nil
+        database = nil
         apiClient.cleanUp()
+        apiClient = nil
         super.tearDown()
     }
     

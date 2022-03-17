@@ -170,7 +170,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_delegate_isAssignedCorrectly() {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestUserControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly
@@ -179,7 +179,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_delegate_isReferencedWeakly() {
         // Create the delegate
-        var delegate: TestDelegate? = .init(expectedQueueId: callbackQueueID)
+        var delegate: TestUserControllerDelegate? = .init(expectedQueueId: callbackQueueID)
         
         // Set the delegate
         controller.delegate = delegate
@@ -203,7 +203,7 @@ final class CurrentUserController_Tests: XCTestCase {
         )
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestUserControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -230,7 +230,7 @@ final class CurrentUserController_Tests: XCTestCase {
         )
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestUserControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -265,7 +265,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let unreadCount = UnreadCount(channels: 10, messages: 15)
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestUserControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -602,30 +602,6 @@ final class CurrentUserController_Tests: XCTestCase {
             // Assert `error` is propagated.
             XCTAssertEqual(reloadUserIfNeededCompletionError as? TestError, error)
         }
-    }
-}
-
-private class TestDelegate: QueueAwareDelegate, CurrentChatUserControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
-    @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-
-    func currentUserController(
-        _ controller: CurrentChatUserController,
-        didChangeCurrentUser change: EntityChange<CurrentChatUser>
-    ) {
-        didChangeCurrentUser_change = change
-        validateQueue()
-    }
-    
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
-        didChangeCurrentUserUnreadCount_count = count
-        validateQueue()
     }
 }
 

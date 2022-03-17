@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class AttachmentEndpoints_Tests: XCTestCase {

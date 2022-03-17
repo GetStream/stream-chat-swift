@@ -21,12 +21,10 @@ final class EventSender_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&sender)
-            Assert.canBeReleased(&database)
-        }
-        
+        apiClient = nil
+        database = nil
+        sender = nil
+
         super.tearDown()
     }
     

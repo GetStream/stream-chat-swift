@@ -6,18 +6,28 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class UserEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder()
+final class UserEvents_Tests: XCTestCase {
+    var eventDecoder: EventDecoder!
+
+    override func setUp() {
+        super.setUp()
+        eventDecoder = EventDecoder()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        eventDecoder = nil
+    }
     
     func test_userPresenceEvent() throws {
-        let json = XCTestCase.mockData(fromFile: "UserPresence")
+        let json = XCTestCase.mockData(fromFile: "UserPresence", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? UserPresenceChangedEventDTO
         XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.createdAt.description, "2020-07-16 15:44:19 +0000")
     }
     
     func test_watchingEvent() throws {
-        var json = XCTestCase.mockData(fromFile: "UserStartWatching")
+        var json = XCTestCase.mockData(fromFile: "UserStartWatching", bundle: .testTools)
         var event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"))
         XCTAssertEqual(event?.user.id, "luke_skywalker")
@@ -25,7 +35,7 @@ class UserEvents_Tests: XCTestCase {
         // rather if it the event is START not STOP watching.
         XCTAssertTrue(event?.isStarted ?? false)
        
-        json = XCTestCase.mockData(fromFile: "UserStopWatching")
+        json = XCTestCase.mockData(fromFile: "UserStopWatching", bundle: .testTools)
         event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
         XCTAssertEqual(event?.user.id, "luke_skywalker")
         XCTAssertFalse(event?.isStarted ?? false)
@@ -34,7 +44,7 @@ class UserEvents_Tests: XCTestCase {
     }
     
     func test_userBannedEvent() throws {
-        let json = XCTestCase.mockData(fromFile: "UserBanned")
+        let json = XCTestCase.mockData(fromFile: "UserBanned", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? UserBannedEventDTO
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.ownerId, "steep-moon-9")
@@ -43,7 +53,7 @@ class UserEvents_Tests: XCTestCase {
     }
     
     func test_userUnbannedEvent() throws {
-        let json = XCTestCase.mockData(fromFile: "UserUnbanned")
+        let json = XCTestCase.mockData(fromFile: "UserUnbanned", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? UserUnbannedEventDTO
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
@@ -279,7 +289,7 @@ class UserEvents_Tests: XCTestCase {
     }
 }
 
-class UserEventsIntegration_Tests: XCTestCase {
+final class UserEventsIntegration_Tests: XCTestCase {
     var client: ChatClient!
     var currentUserId: UserId!
 
@@ -302,7 +312,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     }
 
     func test_UserWatchingStartEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStartWatching")
+        let json = XCTestCase.mockData(fromFile: "UserStartWatching", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
@@ -326,7 +336,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     }
     
     func test_UserWatchingStoppedEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStopWatching")
+        let json = XCTestCase.mockData(fromFile: "UserStopWatching", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
@@ -350,7 +360,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     }
     
     func test_UserPresenceChangedPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "UserPresence")
+        let json = XCTestCase.mockData(fromFile: "UserPresence", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? UserPresenceChangedEventDTO
 
         try! client.databaseContainer.createUser(id: "steep-moon-9")
@@ -367,7 +377,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     
     // TODO: Find JSON:
     func test_UserUpdatedPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "UserUpdated")
+        let json = XCTestCase.mockData(fromFile: "UserUpdated", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? UserUpdatedEventDTO
 
         let previousUpdateDate = Date.unique
@@ -390,7 +400,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     }
     
     func test_UserBannedPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "UserBanned")
+        let json = XCTestCase.mockData(fromFile: "UserBanned", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? UserBannedEventDTO
 
         try! client.databaseContainer.createMember(
@@ -419,7 +429,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     }
     
     func test_UserUnbannedPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "UserUnbanned")
+        let json = XCTestCase.mockData(fromFile: "UserUnbanned", bundle: .testTools)
         let event = try eventDecoder.decode(from: json) as? UserUnbannedEventDTO
 
         try! client.databaseContainer.createMember(

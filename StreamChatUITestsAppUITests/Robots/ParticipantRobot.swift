@@ -7,8 +7,8 @@ import Swifter
 import XCTest
 
 /// Simulates participant behavior
-public final class ParticipantRobot: Robot {
-    
+final class ParticipantRobot: Robot {
+
     private var server: StreamMockServer
     
     init(_ server: StreamMockServer) {

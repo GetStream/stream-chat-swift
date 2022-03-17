@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class EntityChange_Tests: XCTestCase {
+final class EntityChange_Tests: XCTestCase {
     func test_item() {
         let createdItem: String = .unique
         let updatedItem: String = .unique
@@ -47,7 +47,7 @@ class EntityChange_Tests: XCTestCase {
     }
 }
 
-class EntityDatabaseObserver_Tests: XCTestCase {
+final class EntityDatabaseObserver_Tests: XCTestCase {
     private var observer: EntityDatabaseObserver<TestItem, TestManagedObject>!
     var fetchRequest: NSFetchRequest<TestManagedObject>!
     var database: DatabaseContainerMock!
@@ -271,18 +271,5 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         try database.removeAllData()
         
         XCTAssertEqual(listener, [.remove(testItem)])
-    }
-}
-
-private struct TestItem: Equatable {
-    static var unique: Self { .init(id: .unique, value: .unique) }
-    
-    var id: String
-    var value: String?
-}
-
-private extension TestManagedObject {
-    var model: TestItem {
-        .init(id: testId, value: testValue)
     }
 }

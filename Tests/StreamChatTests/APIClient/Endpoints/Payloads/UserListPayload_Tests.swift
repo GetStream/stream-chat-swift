@@ -3,11 +3,12 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class UserListPayload_Tests: XCTestCase {
+final class UserListPayload_Tests: XCTestCase {
     let usersJSON: Data = {
-        let url = Bundle(for: UserListPayload_Tests.self).url(forResource: "UsersQuery", withExtension: "json")!
+        let url = Bundle(for: StreamChatTestTools.self).url(forResource: "UsersQuery", withExtension: "json")!
         return try! Data(contentsOf: url)
     }()
     

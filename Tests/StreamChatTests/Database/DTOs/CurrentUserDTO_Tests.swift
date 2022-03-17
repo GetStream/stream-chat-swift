@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class CurrentUserModelDTO_Tests: XCTestCase {
+final class CurrentUserModelDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
     
     override func setUp() {
@@ -16,7 +16,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
     

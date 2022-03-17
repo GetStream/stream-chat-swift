@@ -3,12 +3,13 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class GuestUserTokenPayload_Tests: XCTestCase {
-    let guestUserDefaultExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+DefaultExtraData")
-    let guestUserCustomExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+CustomExtraData")
-    let guestUserInvalidTokenJSON = XCTestCase.mockData(fromFile: "GuestUser+InvalidToken")
+    let guestUserDefaultExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+DefaultExtraData", bundle: .testTools)
+    let guestUserCustomExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+CustomExtraData", bundle: .testTools)
+    let guestUserInvalidTokenJSON = XCTestCase.mockData(fromFile: "GuestUser+InvalidToken", bundle: .testTools)
 
     func test_guestUserDefaultExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(

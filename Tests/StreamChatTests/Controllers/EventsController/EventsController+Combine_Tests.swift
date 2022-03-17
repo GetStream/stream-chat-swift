@@ -25,11 +25,8 @@ final class EventsController_Combine_Tests: iOS13TestCase {
     
     override func tearDown() {
         cancellables = nil
-        
-        AssertAsync {
-            Assert.canBeReleased(&notificationCenter)
-            Assert.canBeReleased(&controller)
-        }
+        notificationCenter = nil
+        controller = nil
 
         super.tearDown()
     }
@@ -54,7 +51,7 @@ final class EventsController_Combine_Tests: iOS13TestCase {
     func test_concreteEventPublisher_keepsControllerAlive() {
         // Subscribe on concrete events.
         controller
-            .eventPublisher(Event1.self)
+            .eventPublisher(EventOne.self)
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
         
@@ -79,9 +76,9 @@ final class EventsController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
         
         // Simulate incoming events.
-        let event1 = Event1()
-        let event2 = Event2()
-        let events: [Event] = [event1, event2]
+        let EventOne = EventOne()
+        let EventTwo = EventTwo()
+        let events: [Event] = [EventOne, EventTwo]
         
         for event in events {
             let notification = Notification(newEventReceived: event, sender: self)
@@ -91,30 +88,30 @@ final class EventsController_Combine_Tests: iOS13TestCase {
         // Assert all events are delivered.
         AssertAsync {
             Assert.willBeEqual(recording.output.count, events.count)
-            Assert.willBeEqual(recording.output.first as? Event1, event1)
-            Assert.willBeEqual(recording.output.last as? Event2, event2)
+            Assert.willBeEqual(recording.output.first as? EventOne, EventOne)
+            Assert.willBeEqual(recording.output.last as? EventTwo, EventTwo)
         }
     }
     
     func test_whenEventsArePosted_concreteEventPublishersReceiveThem() {
-        // Setup `Event1` observation chain
-        var recording1 = Record<Event1, Never>.Recording()
+        // Setup `EventOne` observation chain
+        var recording1 = Record<EventOne, Never>.Recording()
         controller
-            .eventPublisher(Event1.self)
+            .eventPublisher(EventOne.self)
             .sink(receiveValue: { recording1.receive($0) })
             .store(in: &cancellables)
         
-        // Setup `Event2` observation chain
-        var recording2 = Record<Event2, Never>.Recording()
+        // Setup `EventTwo` observation chain
+        var recording2 = Record<EventTwo, Never>.Recording()
         controller
-            .eventPublisher(Event2.self)
+            .eventPublisher(EventTwo.self)
             .sink(receiveValue: { recording2.receive($0) })
             .store(in: &cancellables)
         
         // Simulate incoming events of different types.
-        let event1 = Event1()
-        let event2 = Event2()
-        let events: [Event] = [event1, event2]
+        let EventOne = EventOne()
+        let EventTwo = EventTwo()
+        let events: [Event] = [EventOne, EventTwo]
         
         for event in events {
             let notification = Notification(newEventReceived: event, sender: self)
@@ -123,16 +120,16 @@ final class EventsController_Combine_Tests: iOS13TestCase {
         
         // Assert both observers receive all events.
         AssertAsync {
-            Assert.willBeEqual(recording1.output, [event1])
-            Assert.willBeEqual(recording2.output, [event2])
+            Assert.willBeEqual(recording1.output, [EventOne])
+            Assert.willBeEqual(recording2.output, [EventTwo])
         }
     }
 }
 
-private struct Event1: Event, Equatable {
+private struct EventOne: Event, Equatable {
     let value: Int = .random(in: 0..<1000)
 }
 
-private struct Event2: Event, Equatable {
+private struct EventTwo: Event, Equatable {
     let value: String = .unique
 }

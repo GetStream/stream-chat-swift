@@ -33,17 +33,13 @@ final class MemberController_Tests: XCTestCase {
     override func tearDown() {
         userId = nil
         cid = nil
+        client = nil
+        controller = nil
         controllerCallbackQueueID = nil
         
         env.memberUpdater?.cleanUp()
         env.memberListUpdater?.cleanUp()
-
-        AssertAsync {
-            Assert.canBeReleased(&controller)
-            Assert.canBeReleased(&client)
-            Assert.canBeReleased(&env)
-        }
-
+        env = nil
         super.tearDown()
     }
 
@@ -195,7 +191,7 @@ final class MemberController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Set the delegate
-        controller.delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = TestChannelMemberControllerDelegate(expectedQueueId: callbackQueueID)
 
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -215,7 +211,7 @@ final class MemberController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Set the delegate
-        controller.delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = TestChannelMemberControllerDelegate(expectedQueueId: callbackQueueID)
 
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -246,7 +242,7 @@ final class MemberController_Tests: XCTestCase {
     // MARK: - Delegate
 
     func test_delegate_isAssignedCorrectly() {
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestChannelMemberControllerDelegate(expectedQueueId: callbackQueueID)
 
         // Set the delegate
         controller.delegate = delegate
@@ -257,7 +253,7 @@ final class MemberController_Tests: XCTestCase {
 
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestChannelMemberControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Synchronize
@@ -275,7 +271,7 @@ final class MemberController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutMemberUpdates() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestChannelMemberControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Create member in the database.
@@ -466,20 +462,4 @@ private class TestEnvironment {
             return self.memberObserver!
         }
     )
-}
-
-// A concrete `ChatChannelMemberControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChatChannelMemberControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateMember_change: EntityChange<ChatChannelMember>?
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        validateQueue()
-        self.state = state
-    }
-
-    func memberController(_ controller: ChatChannelMemberController, didUpdateMember change: EntityChange<ChatChannelMember>) {
-        validateQueue()
-        didUpdateMember_change = change
-    }
 }

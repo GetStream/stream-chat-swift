@@ -7,7 +7,7 @@
 @testable import UserNotifications
 import XCTest
 
-class ChatPushNotificationContent_Tests: XCTestCase {
+final class ChatPushNotificationContent_Tests: XCTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
@@ -57,7 +57,15 @@ class ChatPushNotificationContent_Tests: XCTestCase {
     }
 
     override func tearDown() {
+        webSocketClient = nil
         apiClient.cleanUp()
+        apiClient = nil
+        database = nil
+        currentUserUpdater = nil
+        clientWithOffline = nil
+        testMessage = nil
+        exampleMessageNotificationContent = nil
+        exampleMessagePayload = nil
         super.tearDown()
     }
 

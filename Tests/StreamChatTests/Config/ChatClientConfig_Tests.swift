@@ -16,16 +16,6 @@ final class ChatClientConfig_Tests: XCTestCase {
     }
     
     func test_maxAttachmentSize_whenCustomCDNClientSet_takesMaxSizeFromCustomCDNClient() {
-        class CustomCDNClient: CDNClient {
-            static var maxAttachmentSize: Int64 { 10 * 1000 * 1000 }
-            
-            func uploadAttachment(
-                _ attachment: AnyChatMessageAttachment,
-                progress: ((Double) -> Void)?,
-                completion: @escaping (Result<URL, Error>) -> Void
-            ) {}
-        }
-        
         // Create a config.
         var config = ChatClientConfig(apiKey: .init(.unique))
         

@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class UserListController_Tests: XCTestCase {
+final class UserListController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
     
     var client: ChatClient!
@@ -32,15 +32,12 @@ class UserListController_Tests: XCTestCase {
     
     override func tearDown() {
         query = nil
+        client = nil
+        controller = nil
         controllerCallbackQueueID = nil
         
         env.userListUpdater?.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&controller)
-            Assert.canBeReleased(&client)
-            Assert.canBeReleased(&env)
-        }
+        env = nil
         
         super.tearDown()
     }
@@ -215,7 +212,7 @@ class UserListController_Tests: XCTestCase {
     // MARK: - Delegate tests
     
     func test_settingDelegate_leadsToFetchingLocalData() {
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestUserListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
@@ -228,7 +225,7 @@ class UserListController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestUserListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert delegate is notified about state changes
@@ -246,7 +243,7 @@ class UserListController_Tests: XCTestCase {
     
     func test_delegateMethodsAreCalled() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestUserListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -329,23 +326,4 @@ private class TestEnvironment {
             )
             return self.userListUpdater!
         })
-}
-
-// A concrete `UserListControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChatUserListControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didChangeUsers_changes: [ListChange<ChatUser>]?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
-    func controller(
-        _ controller: ChatUserListController,
-        didChangeUsers changes: [ListChange<ChatUser>]
-    ) {
-        didChangeUsers_changes = changes
-        validateQueue()
-    }
 }

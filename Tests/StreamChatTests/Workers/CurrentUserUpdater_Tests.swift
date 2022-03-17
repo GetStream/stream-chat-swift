@@ -26,14 +26,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     }
     
     override func tearDown() {
+        currentUserUpdater = nil
+        webSocketClient = nil
         apiClient.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&currentUserUpdater)
-            Assert.canBeReleased(&webSocketClient)
-            Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&database)
-        }
+        apiClient = nil
+        database = nil
         
         super.tearDown()
     }

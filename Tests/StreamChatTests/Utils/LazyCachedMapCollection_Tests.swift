@@ -5,7 +5,7 @@
 @testable import StreamChat
 import XCTest
 
-class LazyCachedMapCollection_Tests: XCTestCase {
+final class LazyCachedMapCollection_Tests: XCTestCase {
     func test_mapIsLazy() {
         // Arrange: Prepare sequence that records transformations
         var mapped: Set<Int> = []

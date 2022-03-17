@@ -81,7 +81,7 @@ final class ListChange_Tests: XCTestCase {
     }
 }
 
-class ListDatabaseObserver_Tests: XCTestCase {
+final class ListDatabaseObserver_Tests: XCTestCase {
     var observer: ListDatabaseObserver<String, TestManagedObject>!
     var fetchRequest: NSFetchRequest<TestManagedObject>!
     var database: DatabaseContainer!
@@ -108,10 +108,11 @@ class ListDatabaseObserver_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        AssertAsync {
-            Assert.canBeReleased(&observer)
-            Assert.canBeReleased(&database)
-        }
+        observer.releaseNotificationObservers?()
+        observer = nil
+        fetchRequest = nil
+        database = nil
+
         super.tearDown()
     }
     
@@ -251,7 +252,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
     }
 }
 
-class ListChangeAggregator_Tests: XCTestCase {
+final class ListChangeAggregator_Tests: XCTestCase {
     var fakeController: NSFetchedResultsController<NSFetchRequestResult>!
     var aggregator: ListChangeAggregator<TestManagedObject, String>!
     
@@ -262,6 +263,13 @@ class ListChangeAggregator_Tests: XCTestCase {
         
         // We don't have to provide real creator. Let's just simply use the value that gets in
         aggregator = ListChangeAggregator(itemCreator: { $0.uniqueValue })
+    }
+
+    override func tearDown() {
+        fakeController = nil
+        aggregator = nil
+
+        super.tearDown()
     }
 
     func test_onWillChange_isCalled() {
@@ -528,18 +536,5 @@ class ListChangeAggregator_Tests: XCTestCase {
             .insert(addedObject.uniqueValue, index: [1, 0]),
             .move(movedObject.uniqueValue, fromIndex: [4, 0], toIndex: [2, 0])
         ])
-    }
-}
-
-class TestFetchedResultsController: NSFetchedResultsController<TestManagedObject> {
-    var test_performFetchCalled = false
-    var test_fetchedObjects: [TestManagedObject]?
-    
-    override func performFetch() throws {
-        test_performFetchCalled = true
-    }
-    
-    override var fetchedObjects: [TestManagedObject]? {
-        test_fetchedObjects
     }
 }

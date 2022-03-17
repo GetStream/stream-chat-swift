@@ -21,7 +21,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
 
     override func tearDown() {
         middleware = nil
-        AssertAsync.canBeReleased(&database)
+        database = nil
 
         super.tearDown()
     }
@@ -85,8 +85,4 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.channel(cid: cid)?.truncatedAt, date)
         XCTAssert(forwardedEvent is ChannelTruncatedEventDTO)
     }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
 }

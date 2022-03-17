@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class ChannelEndpoints_Tests: XCTestCase {
@@ -496,19 +497,5 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("channels/" + cid.apiPath + "/pinned_messages", endpoint.path.value)
-    }
-}
-
-extension ChannelEditDetailPayload {
-    static var unique: Self {
-        Self(
-            cid: .unique,
-            name: .unique,
-            imageURL: .unique(),
-            team: .unique,
-            members: [],
-            invites: [],
-            extraData: .init()
-        )
     }
 }

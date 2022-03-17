@@ -26,14 +26,11 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
     }
     
     override func tearDown() {
+        webSocketClient = nil
         apiClient.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&updater)
-            Assert.canBeReleased(&webSocketClient)
-            Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&database)
-        }
+        apiClient = nil
+        database = nil
+        updater = nil
         
         super.tearDown()
     }

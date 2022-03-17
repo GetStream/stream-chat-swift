@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class DatabaseContainer_Tests: XCTestCase {
+final class DatabaseContainer_Tests: XCTestCase {
     func test_databaseContainer_isInitialized_withInMemoryPreset() {
         XCTAssertNoThrow(try DatabaseContainer(kind: .inMemory))
     }
@@ -270,11 +270,5 @@ class DatabaseContainer_Tests: XCTestCase {
         database.backgroundReadOnlyContext.performAndWait {
             XCTAssertEqual(database.backgroundReadOnlyContext.shouldShowShadowedMessages, shouldShowShadowedMessages)
         }
-    }
-}
-
-extension TestManagedObject: EphemeralValuesContainer {
-    func resetEphemeralValues() {
-        resetEphemeralValuesCalled = true
     }
 }

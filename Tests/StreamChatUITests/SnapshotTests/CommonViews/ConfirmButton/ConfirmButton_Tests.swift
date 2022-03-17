@@ -8,7 +8,7 @@ import StreamChatTestTools
 import SwiftUI
 import XCTest
 
-class ConfirmButton_Tests: XCTestCase {
+final class ConfirmButton_Tests: XCTestCase {
     private lazy var container = UIView().withoutAutoresizingMaskConstraints
 
     override func setUp() {

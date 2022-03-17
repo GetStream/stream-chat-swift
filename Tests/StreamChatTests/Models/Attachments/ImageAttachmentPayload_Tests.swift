@@ -3,7 +3,7 @@
 //
 
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 import XCTest
 
 final class ImageAttachmentPayload_Tests: XCTestCase {

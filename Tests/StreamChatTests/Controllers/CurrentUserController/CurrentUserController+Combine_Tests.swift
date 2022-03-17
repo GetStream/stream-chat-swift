@@ -9,7 +9,7 @@ import CoreData
 import XCTest
 
 @available(iOS 13, *)
-class CurrentUserController_Combine_Tests: iOS13TestCase {
+final class CurrentUserController_Combine_Tests: iOS13TestCase {
     var currentUserController: CurrentUserControllerMock!
     var cancellables: Set<AnyCancellable>!
 
@@ -22,7 +22,7 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
     override func tearDown() {
         // Release existing subscriptions and make sure the controller gets released, too
         cancellables = nil
-        AssertAsync.canBeReleased(&currentUserController)
+        currentUserController = nil
         super.tearDown()
     }
     

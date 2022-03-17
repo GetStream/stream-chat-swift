@@ -4,13 +4,14 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class CurrentUserPayload_Tests: XCTestCase {
-    let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser")
+final class CurrentUserPayload_Tests: XCTestCase {
+    let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser", bundle: .testTools)
     
     func test_currentUserJSON_customRoleIsDecodedCorrectly() throws {
-        let json = XCTestCase.mockData(fromFile: "CurrentUserCustomRole")
+        let json = XCTestCase.mockData(fromFile: "CurrentUserCustomRole", bundle: .testTools)
         let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: json)
         XCTAssertEqual(payload.role, UserRole("banana-master"))
     }

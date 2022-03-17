@@ -3,11 +3,11 @@
 //
 
 import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatChannelListVC_Tests: XCTestCase {
+final class ChatChannelListVC_Tests: XCTestCase {
     var view: ChatChannelListItemView!
     var vc: ChatChannelListVC!
     var mockedChannelListController: ChatChannelListController_Mock!

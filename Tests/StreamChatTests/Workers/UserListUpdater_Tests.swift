@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class UserListUpdater_Tests: XCTestCase {
+final class UserListUpdater_Tests: XCTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainer!
@@ -25,12 +25,11 @@ class UserListUpdater_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&listUpdater)
-            Assert.canBeReleased(&database)
-        }
-        
+        apiClient = nil
+        listUpdater = nil
+        database = nil
+        webSocketClient = nil
+
         super.tearDown()
     }
     

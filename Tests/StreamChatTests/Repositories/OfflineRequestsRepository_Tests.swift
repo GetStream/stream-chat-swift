@@ -20,6 +20,16 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         repository = OfflineRequestsRepository(messageRepository: messageRepository, database: database, apiClient: apiClient)
     }
 
+    override func tearDown() {
+        super.tearDown()
+        messageRepository.clear()
+        messageRepository = nil
+        repository = nil
+        database = nil
+        apiClient.cleanUp()
+        apiClient = nil
+    }
+
     // MARK: - Run queued requests
 
     func test_runQueuedRequestsWithoutPendingRequests() {
@@ -89,7 +99,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let jsonData = XCTestCase.mockData(fromFile: "Message")
+        let jsonData = XCTestCase.mockData(fromFile: "Message", bundle: .testTools)
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 
         waitForExpectations(timeout: 0.1, handler: nil)
@@ -142,7 +152,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let jsonData = XCTestCase.mockData(fromFile: "Message")
+        let jsonData = XCTestCase.mockData(fromFile: "Message", bundle: .testTools)
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 
         waitForExpectations(timeout: 0.1, handler: nil)

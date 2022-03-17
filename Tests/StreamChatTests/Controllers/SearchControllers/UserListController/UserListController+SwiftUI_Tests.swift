@@ -3,10 +3,11 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
-class UserListController_SwiftUI_Tests: iOS13TestCase {
+final class UserListController_SwiftUI_Tests: iOS13TestCase {
     var userListController: UserListControllerMock!
     
     override func setUp() {
@@ -15,7 +16,7 @@ class UserListController_SwiftUI_Tests: iOS13TestCase {
     }
     
     override func tearDown() {
-        AssertAsync.canBeReleased(&userListController)
+        userListController = nil
         super.tearDown()
     }
     
@@ -62,7 +63,7 @@ class UserListController_SwiftUI_Tests: iOS13TestCase {
     }
 }
 
-class UserListControllerMock: ChatUserListController {
+final class UserListControllerMock: ChatUserListController {
     @Atomic var synchronize_called = false
     
     var users_simulated: [ChatUser]?

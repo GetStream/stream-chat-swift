@@ -3,13 +3,13 @@
 //
 
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import SwiftUI
 import XCTest
 
 @available(iOS 13.0, *)
-class ChatChannelView_Tests: iOS13TestCase {
+final class ChatChannelView_Tests: iOS13TestCase {
     var chatChannel: SwiftUIViewControllerRepresentable<ChatChannelVC>!
     var mockedChannelController: ChatChannelController_Mock!
 
