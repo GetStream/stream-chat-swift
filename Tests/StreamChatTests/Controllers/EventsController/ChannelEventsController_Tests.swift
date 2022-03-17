@@ -31,15 +31,12 @@ final class ChannelEventsController_Tests: XCTestCase {
         callbackQueueID = nil
         
         apiClient.cleanUp()
+        apiClient = nil
         eventSender.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&notificationCenter)
-            Assert.canBeReleased(&database)
-            Assert.canBeReleased(&eventSender)
-            Assert.canBeReleased(&callbackQueue)
-        }
+        notificationCenter = nil
+        database = nil
+        eventSender = nil
+        callbackQueue = nil
         
         super.tearDown()
     }
@@ -227,7 +224,7 @@ final class ChannelEventsController_Tests: XCTestCase {
             eventSender: eventSender,
             notificationCenter: notificationCenter
         )
-        let delegate = EventsControllerDelegateMock(expectedQueueId: callbackQueueID)
+        let delegate = TestEventsControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         controller.callbackQueue = callbackQueue
         

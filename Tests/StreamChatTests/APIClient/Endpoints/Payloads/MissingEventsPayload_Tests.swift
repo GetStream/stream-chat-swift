@@ -3,11 +3,12 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class MissingEventsPayload_Tests: XCTestCase {
     func test_missingEventsPayload_isDeserialized() throws {
-        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload")
+        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload", bundle: .testToolsBundle)
         let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
         XCTAssertEqual(payload.eventPayloads.count, 1)
         

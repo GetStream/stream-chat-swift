@@ -27,12 +27,12 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        AssertAsync.canBeReleased(&handler)
-        AssertAsync.canBeReleased(&mockChatClient)
-        AssertAsync.canBeReleased(&mockInternetConnection)
-        AssertAsync.canBeReleased(&mockRetryStrategy)
-        AssertAsync.canBeReleased(&mockBackgroundTaskScheduler)
-        
+        handler = nil
+        mockChatClient = nil
+        mockInternetConnection = nil
+        mockRetryStrategy = nil
+        mockBackgroundTaskScheduler = nil
+
         VirtualTimeTimer.time = nil
 
         super.tearDown()
@@ -611,14 +611,5 @@ private extension ConnectionRecoveryHandler_Tests {
         
         ws.simulateConnectionStatus(.disconnecting(source: source))
         ws.simulateConnectionStatus(.disconnected(source: source))
-    }
-}
-
-extension ChannelListQuery: Equatable {
-    public static func == (lhs: ChannelListQuery, rhs: ChannelListQuery) -> Bool {
-        lhs.filter == rhs.filter &&
-            lhs.messagesLimit == rhs.messagesLimit &&
-            lhs.options == rhs.options &&
-            lhs.pagination == rhs.pagination
     }
 }

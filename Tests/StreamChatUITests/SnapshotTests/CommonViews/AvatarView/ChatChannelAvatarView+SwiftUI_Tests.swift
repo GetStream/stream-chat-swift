@@ -8,7 +8,7 @@ import SwiftUI
 import XCTest
 
 @available(iOS 13.0, *)
-class ChatChannelAvatarView_SwiftUI_Tests: XCTestCase {
+final class ChatChannelAvatarView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomChatChannelAvatarView: ChatChannelAvatarView.SwiftUIView {
             @ObservedObject var dataSource: ChatChannelAvatarView.ObservedObject<Self>

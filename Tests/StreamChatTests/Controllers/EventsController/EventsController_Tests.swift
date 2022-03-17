@@ -3,7 +3,7 @@
 //
 
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 import XCTest
 
 final class EventsController_Tests: XCTestCase {
@@ -24,11 +24,8 @@ final class EventsController_Tests: XCTestCase {
     
     override func tearDown() {
         callbackQueueID = nil
-        
-        AssertAsync {
-            Assert.canBeReleased(&controller)
-            Assert.canBeReleased(&client)
-        }
+        controller = nil
+        client = nil
         
         super.tearDown()
     }
@@ -75,7 +72,7 @@ final class EventsController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: callbackQueueID)
         
         // Create and set the delegate.
-        let delegate = EventsControllerDelegateMock(expectedQueueId: callbackQueueID)
+        let delegate = TestEventsControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Create `event -> should be processed` mapping.
@@ -109,7 +106,7 @@ final class EventsController_Tests: XCTestCase {
     
     func test_whenEventsNotificationIsObserved_theUnknownUserEvent_isForwardedToDelegate() {
         // Create and set the delegate.
-        let delegate = EventsControllerDelegateMock(expectedQueueId: callbackQueueID)
+        let delegate = TestEventsControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Create `event -> should be processed` mapping.
@@ -126,7 +123,7 @@ final class EventsController_Tests: XCTestCase {
     
     func test_whenEventsNotificationIsObserved_theUnknownChannelEvent_isForwardedToDelegate() throws {
         // Create and set the delegate.
-        let delegate = EventsControllerDelegateMock(expectedQueueId: callbackQueueID)
+        let delegate = TestEventsControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Create `event -> should be processed` mapping.
@@ -140,14 +137,5 @@ final class EventsController_Tests: XCTestCase {
         AssertAsync.willBeEqual(
             delegate.events.compactMap { $0 as? UnknownChannelEvent }, [event]
         )
-    }
-}
-
-class EventsControllerDelegateMock: QueueAwareDelegate, EventsControllerDelegate {
-    @Atomic var events: [Event] = []
-    
-    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        events.append(event)
-        validateQueue()
     }
 }

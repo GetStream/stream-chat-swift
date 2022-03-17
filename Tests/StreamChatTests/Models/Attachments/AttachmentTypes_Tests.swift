@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class AttachmentTypes_Tests: XCTestCase {
+final class AttachmentTypes_Tests: XCTestCase {
     func test_type_encodedAndDecodedCorrectly() throws {
         let types: [AttachmentType] = [.image, .video, .audio, .file, .giphy, .linkPreview, "sticker"]
         

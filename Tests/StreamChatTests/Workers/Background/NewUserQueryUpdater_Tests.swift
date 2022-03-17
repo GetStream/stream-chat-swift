@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class NewUserQueryUpdater_Tests: XCTestCase {
+final class NewUserQueryUpdater_Tests: XCTestCase {
     private var env: TestEnvironment!
     
     var database: DatabaseContainerMock!
@@ -32,14 +32,11 @@ class NewUserQueryUpdater_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&newUserQueryUpdater)
-            Assert.canBeReleased(&database)
-            Assert.canBeReleased(&webSocketClient)
-            Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&env)
-        }
+        apiClient = nil
+        newUserQueryUpdater = nil
+        webSocketClient = nil
+        env = nil
+        database = nil
         
         super.tearDown()
     }

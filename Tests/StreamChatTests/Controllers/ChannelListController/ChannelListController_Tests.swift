@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelListController_Tests: XCTestCase {
+final class ChannelListController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
     
     var client: ChatClient!
@@ -564,7 +564,7 @@ class ChannelListController_Tests: XCTestCase {
     // MARK: - Delegate tests
     
     func test_settingDelegate_leadsToFetchingLocalData() {
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestChannelListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
@@ -577,7 +577,7 @@ class ChannelListController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestChannelListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert delegate is notified about state changes
@@ -595,7 +595,7 @@ class ChannelListController_Tests: XCTestCase {
 
     func test_delegateMethodsAreCalled() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestChannelListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -895,59 +895,4 @@ private class TestEnvironment {
             )
             return self.channelListUpdater!
         })
-}
-
-// A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var willChangeChannels_called = false
-    @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-
-    func controllerWillChangeChannels(_ controller: ChatChannelListController) {
-        willChangeChannels_called = true
-        validateQueue()
-    }
-
-    func controller(
-        _ controller: ChatChannelListController,
-        didChangeChannels changes: [ListChange<ChatChannel>]
-    ) {
-        didChangeChannels_changes = changes
-        validateQueue()
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        validateQueue()
-        return true
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        validateQueue()
-        return true
-    }
-}
-
-private class TestLinkDelegate: ChatChannelListControllerDelegate {
-    let shouldListNewChannel: (ChatChannel) -> Bool
-    let shouldListUpdatedChannel: (ChatChannel) -> Bool
-    init(
-        shouldListNewChannel: @escaping (ChatChannel) -> Bool,
-        shouldListUpdatedChannel: @escaping (ChatChannel) -> Bool
-    ) {
-        self.shouldListNewChannel = shouldListNewChannel
-        self.shouldListUpdatedChannel = shouldListUpdatedChannel
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        shouldListNewChannel(channel)
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        shouldListUpdatedChannel(channel)
-    }
 }

@@ -54,7 +54,7 @@ final class ChatConnectionController_Tests: XCTestCase {
     
     func test_delegate_isAssignedCorrectly() {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestConnectionControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly
@@ -63,7 +63,7 @@ final class ChatConnectionController_Tests: XCTestCase {
     
     func test_delegate_isReferencedWeakly() {
         // Create the delegate
-        var delegate: TestDelegate? = .init(expectedQueueId: callbackQueueID)
+        var delegate: TestConnectionControllerDelegate? = .init(expectedQueueId: callbackQueueID)
         
         // Set the delegate
         controller.delegate = delegate
@@ -77,7 +77,7 @@ final class ChatConnectionController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutConnectionStatusChanges() {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestConnectionControllerDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert no connection status changes received so far
@@ -127,21 +127,6 @@ final class ChatConnectionController_Tests: XCTestCase {
 
         // Assert the `chatClientUpdater` is called.
         XCTAssertTrue(env.chatClientUpdater.disconnect_called)
-    }
-}
-
-private class TestDelegate: QueueAwareDelegate, ChatConnectionControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
-    func connectionController(_ controller: ChatConnectionController, didUpdateConnectionStatus status: ConnectionStatus) {
-        _didUpdateConnectionStatus_statuses.mutate { $0.append(status) }
-        validateQueue()
     }
 }
 

@@ -8,7 +8,7 @@ import StreamChatTestTools
 import SwiftUI
 import XCTest
 
-class ChatChannelAvatarView_Tests: XCTestCase {
+final class ChatChannelAvatarView_Tests: XCTestCase {
     var currentUserId: UserId!
     var channel: ChatChannel!
     

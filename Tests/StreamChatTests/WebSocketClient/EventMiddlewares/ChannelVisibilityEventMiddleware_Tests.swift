@@ -21,7 +21,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
 
     override func tearDown() {
         middleware = nil
-        AssertAsync.canBeReleased(&database)
+        database = nil
 
         super.tearDown()
     }
@@ -208,8 +208,4 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         // Assert the `isHidden` value is reset
         XCTAssertFalse(channelDTO.isHidden)
     }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
 }

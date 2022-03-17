@@ -3,16 +3,27 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class EventDecoder_Tests: XCTestCase {
-    let eventDecoder = EventDecoder()
+    var eventDecoder: EventDecoder!
+
+    override func setUp() {
+        super.setUp()
+        eventDecoder = EventDecoder()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        eventDecoder = nil
+    }
     
     // MARK: System events
     
     func test_decode_whenValidSystemEventPayloadComes_returnsDecodedSystemEvent() throws {
         // Load valid system event JSON.
-        let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
+        let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel", bundle: .testToolsBundle)
         
         // Decode an event.
         let event = try eventDecoder.decode(from: json)

@@ -27,14 +27,11 @@ final class MessageEditor_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
-                
-        AssertAsync {
-            Assert.canBeReleased(&messageRepository)
-            Assert.canBeReleased(&editor)
-            Assert.canBeReleased(&webSocketClient)
-            Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&database)
-        }
+        apiClient = nil
+        messageRepository = nil
+        editor = nil
+        webSocketClient = nil
+        database = nil
 
         super.tearDown()
     }

@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -21,7 +22,7 @@ final class WatcherListController_SwiftUI_Tests: iOS13TestCase {
 
     override func tearDown() {
         query = nil
-        AssertAsync.canBeReleased(&watcherListController)
+        watcherListController = nil
 
         super.tearDown()
     }

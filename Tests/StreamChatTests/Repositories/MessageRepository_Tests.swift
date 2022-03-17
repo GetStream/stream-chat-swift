@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class MessageRepositoryTests: XCTestCase {
+final class MessageRepositoryTests: XCTestCase {
     var database: DatabaseContainerMock!
     var apiClient: APIClientMock!
     var repository: MessageRepository!
@@ -18,6 +18,15 @@ class MessageRepositoryTests: XCTestCase {
         apiClient = client.mockAPIClient
         repository = MessageRepository(database: database, apiClient: apiClient)
         cid = .unique
+    }
+
+    override func tearDown() {
+        super.tearDown()
+
+        database = nil
+        apiClient = nil
+        repository = nil
+        cid = nil
     }
 
     // MARK: sendMessage
@@ -111,37 +120,6 @@ class MessageRepositoryTests: XCTestCase {
 
         XCTAssertNil(currentMessageState)
         XCTAssertNotNil(result?.value)
-    }
-
-    @discardableResult
-    private func createMessage(id: MessageId, localState: LocalMessageState) throws -> MessageDTO {
-        try database.createCurrentUser()
-        try database.createChannel(cid: cid)
-        var message: MessageDTO!
-        try database.writeSynchronously { session in
-            message = try session.createNewMessage(
-                in: self.cid,
-                text: "Message pending send",
-                pinning: nil,
-                quotedMessageId: nil,
-                isSilent: false,
-                extraData: [:]
-            )
-            message.id = id
-            message.localMessageState = localState
-        }
-        return message
-    }
-
-    private func runSendMessageAndWait(id: MessageId) -> Result<ChatMessage, MessageRepositoryError>? {
-        let expectation = self.expectation(description: "Send Message completes")
-        var result: Result<ChatMessage, MessageRepositoryError>?
-        repository.sendMessage(with: id) {
-            result = $0
-            expectation.fulfill()
-        }
-        waitForExpectations(timeout: 0.1, handler: nil)
-        return result
     }
 
     // MARK: saveSuccessfullySentMessage
@@ -442,5 +420,39 @@ class MessageRepositoryTests: XCTestCase {
         // Should update existing local state
         XCTAssertEqual(reactionState, .deletingFailed)
         XCTAssertEqual(reactionScore, 10)
+    }
+}
+
+extension MessageRepositoryTests {
+
+    @discardableResult
+    private func createMessage(id: MessageId, localState: LocalMessageState) throws -> MessageDTO {
+        try database.createCurrentUser()
+        try database.createChannel(cid: cid)
+        var message: MessageDTO!
+        try database.writeSynchronously { session in
+            message = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send",
+                pinning: nil,
+                quotedMessageId: nil,
+                isSilent: false,
+                extraData: [:]
+            )
+            message.id = id
+            message.localMessageState = localState
+        }
+        return message
+    }
+
+    private func runSendMessageAndWait(id: MessageId) -> Result<ChatMessage, MessageRepositoryError>? {
+        let expectation = self.expectation(description: "Send Message completes")
+        var result: Result<ChatMessage, MessageRepositoryError>?
+        repository.sendMessage(with: id) {
+            result = $0
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1, handler: nil)
+        return result
     }
 }

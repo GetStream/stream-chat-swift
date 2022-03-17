@@ -9,7 +9,7 @@ import CoreData
 import XCTest
 
 @available(iOS 13, *)
-class MessageController_Combine_Tests: iOS13TestCase {
+final class MessageController_Combine_Tests: iOS13TestCase {
     var messageController: ChatMessageController_Mock!
     var cancellables: Set<AnyCancellable>!
 
@@ -22,7 +22,7 @@ class MessageController_Combine_Tests: iOS13TestCase {
     override func tearDown() {
         // Release existing subscriptions and make sure the controller gets released, too
         cancellables = nil
-        AssertAsync.canBeReleased(&messageController)
+        messageController = nil
         super.tearDown()
     }
     

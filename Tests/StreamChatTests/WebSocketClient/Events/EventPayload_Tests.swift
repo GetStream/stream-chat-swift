@@ -4,11 +4,22 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
+import StreamChatTestHelpers
 import XCTest
 
-class EventPayload_Tests: XCTestCase {
-    let eventJSON = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
-    let eventDecoder = EventDecoder()
+final class EventPayload_Tests: XCTestCase {
+    let eventJSON = XCTestCase.mockData(fromFile: "NotificationAddedToChannel", bundle: .testToolsBundle)
+    var eventDecoder: EventDecoder!
+
+    override func setUp() {
+        super.setUp()
+        eventDecoder = EventDecoder()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        eventDecoder = nil
+    }
     
     func test_eventJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(EventPayload.self, from: eventJSON)
@@ -52,20 +63,20 @@ class EventPayload_Tests: XCTestCase {
             user: .dummy(userId: .unique),
             createdAt: .unique
         )
-        
+
         // Wrap payloads into array
         let payloads = [
             knownEventPayload1,
             unknownEventPayload,
             knownEventPayload2
         ]
-        
+
         // Declare expected output
         let expectedEvents = [
             try knownEventPayload1.event(),
             try knownEventPayload2.event()
         ]
-                
+
         // Assert output matches expected one
         XCTAssertEqual(
             payloads.asEvents().map(\.asEquatable),

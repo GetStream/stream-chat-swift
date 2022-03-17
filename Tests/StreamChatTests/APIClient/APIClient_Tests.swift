@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class APIClient_Tests: XCTestCase {
+final class APIClient_Tests: XCTestCase {
     var apiClient: APIClient!
     
     var apiKey: APIKey!
@@ -54,7 +54,15 @@ class APIClient_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        AssertAsync.canBeReleased(&apiClient)
+        apiClient = nil
+        baseURL = nil
+        sessionConfiguration = nil
+        uniqueHeaderValue = nil
+        encoder = nil
+        decoder = nil
+        cdnClient = nil
+        tokenRefresher = nil
+        queueOfflineRequest = nil
         
         RequestRecorderURLProtocol.reset()
         MockNetworkURLProtocol.reset()
@@ -111,7 +119,7 @@ class APIClient_Tests: XCTestCase {
         let uniqueQueryItem: String = .unique
         var testRequest = URLRequest(url: URL(string: "test://test.test/\(uniquePath)?item=\(uniqueQueryItem)")!)
         testRequest.httpMethod = "post"
-        testRequest.httpBody = try! JSONEncoder.stream.encode(TestUser(name: "Leia"))
+        testRequest.httpBody = try! JSONEncoder.stream.encode(TestUser(name: "Leia", age: 1))
         testRequest.allHTTPHeaderFields?["surname"] = "Organa"
         encoder.encodeRequest = .success(testRequest)
         
@@ -130,7 +138,7 @@ class APIClient_Tests: XCTestCase {
             // the "name" header value comes from the request, "unique_value" from the session config
             headers: ["surname": "Organa", "unique_value": uniqueHeaderValue],
             queryParameters: ["item": uniqueQueryItem],
-            body: try JSONEncoder().encode(["name": "Leia"])
+            body: try JSONEncoder().encode(["name": "Leia", "age": "1"])
         )
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 1)
         XCTEnsureRequestsWereExecuted(times: 1)
@@ -623,14 +631,11 @@ class APIClient_Tests: XCTestCase {
         XCTAssertEqual(totalRequests.count, 8)
         XCTAssertEqual(Set(totalRequests).count, 5)
     }
+}
 
-    // MARK: - Helpers
+// MARK: Helpers
 
-    private func XCTEnsureRequestsWereExecuted(times: Int, file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: times, file: file, line: line)
-        XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: times, file: file, line: line)
-    }
-
+extension APIClient_Tests {
     private func createClient(
         tokenRefresher: ((@escaping () -> Void) -> Void)? = nil,
         queueOfflineRequest: QueueOfflineRequestBlock? = nil
@@ -650,162 +655,10 @@ class APIClient_Tests: XCTestCase {
             queueOfflineRequest: self.queueOfflineRequest
         )
     }
-}
 
-extension Endpoint {
-    static func mock(path: EndpointPath = .guest) -> Endpoint<ResponseType> {
-        .init(path: path, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
-    }
-}
-
-private struct TestUser: Codable, Equatable {
-    let name: String
-}
-
-class TestRequestEncoder: RequestEncoder, Spy {
-    var recordedFunctions: [String] = []
-    let init_baseURL: URL
-    let init_apiKey: APIKey
-    
-    weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
-    
-    var encodeRequest: Result<URLRequest, Error>? = .success(URLRequest(url: .unique()))
-    var encodeRequest_endpoints: [AnyEndpoint] = []
-    var encodeRequest_completion: ((Result<URLRequest, Error>) -> Void)?
-    
-    func encodeRequest<ResponsePayload>(
-        for endpoint: Endpoint<ResponsePayload>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
-    ) where ResponsePayload: Decodable {
-        record()
-        encodeRequest_endpoints.append(AnyEndpoint(endpoint))
-        encodeRequest_completion = completion
-        
-        if let result = encodeRequest {
-            completion(result)
-        }
-    }
-    
-    required init(baseURL: URL, apiKey: APIKey) {
-        init_baseURL = baseURL
-        init_apiKey = apiKey
-    }
-}
-
-class TestRequestDecoder: RequestDecoder, Spy {
-    var recordedFunctions: [String] = []
-    var decodeRequestResponse: Result<Any, Error>?
-    var decodeRequestDelay: TimeInterval?
-
-    var decodeRequestResponse_data: Data?
-    var decodeRequestResponse_response: HTTPURLResponse?
-    var decodeRequestResponse_error: Error?
-    
-    func decodeRequestResponse<ResponseType>(
-        data: Data?,
-        response: URLResponse?,
-        error: Error?
-    ) throws -> ResponseType where ResponseType: Decodable {
-        record()
-        decodeRequestResponse_data = data
-        decodeRequestResponse_response = response as? HTTPURLResponse
-        decodeRequestResponse_error = error
-
-        guard let simulatedResponse = decodeRequestResponse else {
-            log.warning("TestRequestDecoder simulated response not set. Throwing a TestError.")
-            throw TestError()
-        }
-
-        if let decodeRequestDelay = decodeRequestDelay {
-            let group = DispatchGroup()
-            group.enter()
-            DispatchQueue.main.asyncAfter(deadline: .now() + decodeRequestDelay) { group.leave() }
-            group.wait()
-        }
-        switch simulatedResponse {
-        case let .success(response):
-            return response as! ResponseType
-        case let .failure(error):
-            throw error
-        }
-    }
-}
-
-extension AnyEncodable: Equatable {
-    public static func == (lhs: AnyEncodable, rhs: AnyEncodable) -> Bool {
-        do {
-            let encoder = JSONEncoder.default
-            let encodedLhs = try encoder.encode(lhs)
-            let encodedRhs = try encoder.encode(rhs)
-            try CompareJSONEqual(encodedLhs, encodedRhs)
-            return true
-        } catch {
-            return String(describing: lhs) == String(describing: rhs)
-        }
-    }
-}
-
-struct AnyEndpoint: Equatable {
-    let path: EndpointPath
-    let method: EndpointMethod
-    let queryItems: AnyEncodable?
-    let requiresConnectionId: Bool
-    let body: AnyEncodable?
-    let payloadType: Decodable.Type
-    
-    init<T: Decodable>(_ endpoint: Endpoint<T>) {
-        path = endpoint.path
-        method = endpoint.method
-        queryItems = endpoint.queryItems?.asAnyEncodable
-        requiresConnectionId = endpoint.requiresConnectionId
-        body = endpoint.body?.asAnyEncodable
-        payloadType = T.self
-    }
-    
-    static func == (lhs: AnyEndpoint, rhs: AnyEndpoint) -> Bool {
-        lhs.path.value == rhs.path.value
-            && lhs.method == rhs.method
-            && lhs.queryItems == rhs.queryItems
-            && lhs.requiresConnectionId == rhs.requiresConnectionId
-            && lhs.body == rhs.body
-            && lhs.payloadType == rhs.payloadType
-    }
-}
-
-extension URLSessionConfiguration {
-    // Because on < iOS13 the configuration class gets copied and we can't simply compare it's the same instance, we need to
-    // provide custom implementation for comparing. The default `Equatable` implementation of `URLSessionConfiguration`
-    // simply compares the pointers.
-    @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
-    func isTestEqual(to otherConfiguration: URLSessionConfiguration) -> Bool {
-        let commonEquatability = identifier == otherConfiguration.identifier
-            && requestCachePolicy == otherConfiguration.requestCachePolicy
-            && timeoutIntervalForRequest == otherConfiguration.timeoutIntervalForRequest
-            && timeoutIntervalForResource == otherConfiguration.timeoutIntervalForResource
-            && networkServiceType == otherConfiguration.networkServiceType
-            && allowsCellularAccess == otherConfiguration.allowsCellularAccess
-            && httpShouldUsePipelining == otherConfiguration.httpShouldUsePipelining
-            && httpShouldSetCookies == otherConfiguration.httpShouldSetCookies
-            && httpCookieAcceptPolicy == otherConfiguration.httpCookieAcceptPolicy
-            && httpAdditionalHeaders as? [String: String] == otherConfiguration.httpAdditionalHeaders as? [String: String]
-            && httpMaximumConnectionsPerHost == otherConfiguration.httpMaximumConnectionsPerHost
-            && httpCookieStorage == otherConfiguration.httpCookieStorage
-            && urlCredentialStorage == otherConfiguration.urlCredentialStorage
-            && urlCache == otherConfiguration.urlCache
-            && shouldUseExtendedBackgroundIdleMode == otherConfiguration.shouldUseExtendedBackgroundIdleMode
-            && waitsForConnectivity == otherConfiguration.waitsForConnectivity
-            && isDiscretionary == otherConfiguration.isDiscretionary
-            && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
-            && waitsForConnectivity == otherConfiguration.waitsForConnectivity
-            && isDiscretionary == otherConfiguration.isDiscretionary
-            && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
-        
-        #if os(iOS)
-        return commonEquatability
-            && multipathServiceType == otherConfiguration.multipathServiceType
-            && sessionSendsLaunchEvents == otherConfiguration.sessionSendsLaunchEvents
-        #else
-        return commonEquatability
-        #endif
+    // MARK: - Helpers
+    func XCTEnsureRequestsWereExecuted(times: Int, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: times, file: file, line: line)
+        XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: times, file: file, line: line)
     }
 }

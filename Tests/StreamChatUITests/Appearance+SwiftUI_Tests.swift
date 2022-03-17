@@ -7,7 +7,7 @@ import SwiftUI
 import XCTest
 
 @available(iOS 13, *)
-class Appearance_SwiftUI_Tests: iOS13TestCase {
+final class Appearance_SwiftUI_Tests: iOS13TestCase {
     func test_correctInstanceIsUsed() {
         let testColor: UIColor? = UIColor(r: 4, g: 2, b: 0)
 

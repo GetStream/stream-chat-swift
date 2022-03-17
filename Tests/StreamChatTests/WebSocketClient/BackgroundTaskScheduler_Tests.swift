@@ -6,7 +6,7 @@
 import XCTest
 
 #if os(iOS)
-class IOSBackgroundTaskScheduler_Tests: XCTestCase {
+final class IOSBackgroundTaskScheduler_Tests: XCTestCase {
     func test_notifications_foreground() {
         // Arrange: Subscribe for app notifications
         let scheduler = IOSBackgroundTaskScheduler()

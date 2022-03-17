@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatMessageActionControl_Tests: XCTestCase {
+final class ChatMessageActionControl_Tests: XCTestCase {
     struct TestChatMessageActionItem: ChatMessageActionItem {
         let title: String
         let icon: UIImage

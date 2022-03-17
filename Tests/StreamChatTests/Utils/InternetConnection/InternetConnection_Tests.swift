@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class InternetConnection_Tests: XCTestCase {
+final class InternetConnection_Tests: XCTestCase {
     var monitor: InternetConnectionMonitorMock!
     var internetConnection: InternetConnection!
     
@@ -13,6 +14,12 @@ class InternetConnection_Tests: XCTestCase {
         super.setUp()
         monitor = InternetConnectionMonitorMock()
         internetConnection = InternetConnection(monitor: monitor)
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        monitor = nil
+        internetConnection = nil
     }
     
     func test_internetConnection_init() {

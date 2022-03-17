@@ -6,14 +6,25 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class ReactionEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder()
+final class ReactionEvents_Tests: XCTestCase {
     let userId = "broken-waterfall-5"
     let cid = ChannelId(type: .messaging, id: "general")
     let messageId = "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779"
+
+    var eventDecoder: EventDecoder!
+
+    override func setUp() {
+        super.setUp()
+        eventDecoder = EventDecoder()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        eventDecoder = nil
+    }
     
     func test_new() throws {
-        let json = XCTestCase.mockData(fromFile: "ReactionNew")
+        let json = XCTestCase.mockData(fromFile: "ReactionNew", bundle: .testToolsBundle)
         let event = try eventDecoder.decode(from: json) as? ReactionNewEventDTO
         let reactionPayload = event?.payload.reaction
         XCTAssertEqual(event?.user.id, userId)
@@ -27,7 +38,7 @@ class ReactionEvents_Tests: XCTestCase {
     }
     
     func test_updated() throws {
-        let json = XCTestCase.mockData(fromFile: "ReactionUpdated")
+        let json = XCTestCase.mockData(fromFile: "ReactionUpdated", bundle: .testToolsBundle)
         let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEventDTO
         let reactionPayload = event?.payload.reaction
         XCTAssertEqual(event?.user.id, userId)
@@ -41,7 +52,7 @@ class ReactionEvents_Tests: XCTestCase {
     }
     
     func test_deleted() throws {
-        let json = XCTestCase.mockData(fromFile: "ReactionDeleted")
+        let json = XCTestCase.mockData(fromFile: "ReactionDeleted", bundle: .testToolsBundle)
         let event = try eventDecoder.decode(from: json) as? ReactionDeletedEventDTO
         let reactionPayload = event?.payload.reaction
         XCTAssertEqual(event?.user.id, userId)
@@ -54,7 +65,7 @@ class ReactionEvents_Tests: XCTestCase {
     }
 }
 
-class ReactionEventsIntegration_Tests: XCTestCase {
+final class ReactionEventsIntegration_Tests: XCTestCase {
     var client: ChatClient!
     var currentUserId: UserId!
 
@@ -77,7 +88,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
     }
 
     func test_ReactionNewEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "ReactionNew")
+        let json = XCTestCase.mockData(fromFile: "ReactionNew", bundle: .testToolsBundle)
         let event = try eventDecoder.decode(from: json) as? ReactionNewEventDTO
         
         // For message to be received, we need to have channel:
@@ -109,10 +120,10 @@ class ReactionEventsIntegration_Tests: XCTestCase {
     }
     
     func test_ReactionUpdatedEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "ReactionUpdated")
+        let json = XCTestCase.mockData(fromFile: "ReactionUpdated", bundle: .testToolsBundle)
         let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEventDTO
         
-        let newReactionJSON = XCTestCase.mockData(fromFile: "ReactionNew")
+        let newReactionJSON = XCTestCase.mockData(fromFile: "ReactionNew", bundle: .testToolsBundle)
         let newReactionEvent = try eventDecoder.decode(from: newReactionJSON) as? ReactionNewEventDTO
         let newReactionPayload = try XCTUnwrap(newReactionEvent?.payload.reaction)
         
@@ -152,7 +163,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
     }
     
     func test_ReactionDeletedEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "ReactionDeleted")
+        let json = XCTestCase.mockData(fromFile: "ReactionDeleted", bundle: .testToolsBundle)
         let event = try eventDecoder.decode(from: json) as? ReactionDeletedEventDTO
         
         // For message to be received, we need to have channel:

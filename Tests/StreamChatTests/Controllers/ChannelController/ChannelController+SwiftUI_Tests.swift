@@ -4,10 +4,11 @@
 
 @testable import StreamChat
 import StreamChatTestTools
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
-class ChannelController_SwiftUI_Tests: iOS13TestCase {
+final class ChannelController_SwiftUI_Tests: iOS13TestCase {
     var channelController: ChannelControllerMock!
     
     override func setUp() {
@@ -16,7 +17,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
     }
     
     override func tearDown() {
-        AssertAsync.canBeReleased(&channelController)
+        channelController = nil
         super.tearDown()
     }
     
@@ -107,75 +108,5 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         }
         
         AssertAsync.willBeEqual(observableObject.typingUsers, [typingUser])
-    }
-}
-
-class ChannelControllerMock: ChatChannelController {
-    @Atomic var synchronize_called = false
-    
-    var channel_simulated: ChatChannel?
-    override var channel: ChatChannel? {
-        channel_simulated
-    }
-    
-    var messages_simulated: [ChatMessage]?
-    override var messages: LazyCachedMapCollection<ChatMessage> {
-        messages_simulated.map { $0.lazyCachedMap { $0 } } ?? super.messages
-    }
-
-    var state_simulated: DataController.State?
-    override var state: DataController.State {
-        get { state_simulated ?? super.state }
-        set { super.state = newValue }
-    }
-    
-    init(channelQuery: ChannelQuery = .init(channelPayload: .unique)) {
-        super.init(
-            channelQuery: channelQuery,
-            channelListQuery: nil,
-            client: .mock
-        )
-    }
-    
-    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
-        synchronize_called = true
-    }
-}
-
-extension ChatMessage {
-    static var unique: ChatMessage {
-        .init(
-            id: .unique,
-            cid: .unique,
-            text: "",
-            type: .regular,
-            command: nil,
-            createdAt: Date(),
-            locallyCreatedAt: nil,
-            updatedAt: Date(),
-            deletedAt: nil,
-            arguments: nil,
-            parentMessageId: nil,
-            showReplyInChannel: true,
-            replyCount: 2,
-            extraData: [:],
-            quotedMessage: { nil },
-            isSilent: false,
-            isShadowed: false,
-            reactionScores: ["like": 1],
-            reactionCounts: ["like": 1],
-            author: { .mock(id: .unique) },
-            mentionedUsers: { [] },
-            threadParticipants: { [] },
-            attachments: { [] },
-            latestReplies: { [] },
-            localState: nil,
-            isFlaggedByCurrentUser: false,
-            latestReactions: { [] },
-            currentUserReactions: { [] },
-            isSentByCurrentUser: false,
-            pinDetails: nil,
-            underlyingContext: nil
-        )
     }
 }

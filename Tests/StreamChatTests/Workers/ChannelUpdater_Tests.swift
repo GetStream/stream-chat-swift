@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelUpdater_Tests: XCTestCase {
+final class ChannelUpdater_Tests: XCTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     
@@ -23,8 +23,8 @@ class ChannelUpdater_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
+        apiClient = nil
         channelUpdater = nil
-        AssertAsync.canBeReleased(&database)
         database = nil
         
         super.tearDown()

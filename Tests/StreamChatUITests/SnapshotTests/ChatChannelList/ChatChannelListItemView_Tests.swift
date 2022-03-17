@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatChannelListItemView_Tests: XCTestCase {
+final class ChatChannelListItemView_Tests: XCTestCase {
     var content: ChatChannelListItemView.Content!
     
     override func setUp() {

@@ -8,7 +8,7 @@ import StreamChatTestTools
 import SwiftUI
 import XCTest
 
-class QuotedChatMessageView_Tests: XCTestCase {
+final class QuotedChatMessageView_Tests: XCTestCase {
     var view: QuotedChatMessageView!
 
     override func setUp() {

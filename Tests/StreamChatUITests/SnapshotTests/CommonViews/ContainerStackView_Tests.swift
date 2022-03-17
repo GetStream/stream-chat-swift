@@ -5,7 +5,7 @@
 @testable import StreamChatUI
 import XCTest
 
-class ContainerStackView_Tests: XCTestCase {
+final class ContainerStackView_Tests: XCTestCase {
     var views: [UIView] = []
     
     let axis: [String: NSLayoutConstraint.Axis] = [

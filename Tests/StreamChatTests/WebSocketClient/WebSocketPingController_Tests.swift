@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class WebSocketPingController_Tests: XCTestCase {
+final class WebSocketPingController_Tests: XCTestCase {
     var time: VirtualTime!
     var pingController: WebSocketPingController!
     private var delegate: TestWebSocketPingControllerDelegate!
@@ -82,17 +83,5 @@ class WebSocketPingController_Tests: XCTestCase {
         
         // `disconnectOnNoPongReceived` should be called
         XCTAssertEqual(delegate.disconnectOnNoPongReceived_calledCount, 1)
-    }
-}
-
-private class TestWebSocketPingControllerDelegate: WebSocketPingControllerDelegate {
-    var sendPing_calledCount = 0
-    var disconnectOnNoPongReceived_calledCount = 0
-    func sendPing() {
-        sendPing_calledCount += 1
-    }
-    
-    func disconnectOnNoPongReceived() {
-        disconnectOnNoPongReceived_calledCount += 1
     }
 }

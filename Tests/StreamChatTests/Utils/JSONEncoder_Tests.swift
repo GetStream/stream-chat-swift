@@ -7,7 +7,7 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-class JSONEncoderTests: XCTestCase {
+final class JSONEncoderTests: XCTestCase {
     private var encoder: JSONEncoder!
 
     lazy var dateFormatter: DateFormatter = {
@@ -104,7 +104,11 @@ class JSONEncoderTests: XCTestCase {
             dateString: "1936-10-02T10:12:13Z"
         )
     }
-    
+}
+
+// MARK: Test Helpers
+
+extension JSONEncoderTests {
     private func checkDateIsEncodingFromComponents(
         year: Int,
         month: Int,

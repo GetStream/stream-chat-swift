@@ -7,7 +7,7 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-class UserSearchController_Tests: XCTestCase {
+final class UserSearchController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
     
     var client: ChatClient!
@@ -37,15 +37,13 @@ class UserSearchController_Tests: XCTestCase {
     }
     
     override func tearDown() {
+        client = nil
+        query = nil
+        controller = nil
         controllerCallbackQueueID = nil
         
         env.userListUpdater?.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&controller)
-            Assert.canBeReleased(&client)
-            Assert.canBeReleased(&env)
-        }
+        env = nil
         
         super.tearDown()
     }

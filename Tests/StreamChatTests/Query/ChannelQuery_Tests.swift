@@ -2,10 +2,11 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+@testable import StreamChatTestTools
 @testable import StreamChat
 import XCTest
 
-class ChannelQuery_Tests: XCTestCase {
+final class ChannelQuery_Tests: XCTestCase {
     // Test ChannelQuery encoded correctly
     func test_channelQuery_encodedCorrectly() throws {
         let cid: ChannelId = .unique

@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class EventDataProcessorMiddleware_Tests: XCTestCase {
+final class EventDataProcessorMiddleware_Tests: XCTestCase {
     var middleware: EventDataProcessorMiddleware!
     fileprivate var database: DatabaseContainerMock!
     
@@ -18,7 +18,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
     
     override func tearDown() {
         middleware = nil
-        AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
     

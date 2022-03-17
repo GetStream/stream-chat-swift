@@ -21,7 +21,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
     override func tearDown() {
         middleware = nil
-        AssertAsync.canBeReleased(&database)
+        database = nil
 
         super.tearDown()
     }
@@ -155,8 +155,4 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         XCTAssert(forwardedEvent is UserUnbannedEventDTO)
     }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
 }

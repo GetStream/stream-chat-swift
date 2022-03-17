@@ -3,18 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-protocol DecodableEntity: Decodable {
-    var extraData: [String: RawJSON] { get }
-}
-
-extension MessagePayload: DecodableEntity {}
-extension MessageReactionPayload: DecodableEntity {}
-extension UserPayload: DecodableEntity {}
-extension ChannelDetailPayload: DecodableEntity {}
-
-class CustomDataHashMap_Tests: XCTestCase {
+final class CustomDataHashMap_Tests: XCTestCase {
     func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
         let extraData: [String: RawJSON] = ["how-many-roads": .number(42)]
         let imageURL = URL.unique()
@@ -26,31 +18,6 @@ class CustomDataHashMap_Tests: XCTestCase {
         XCTAssertEqual(jsonStr, "{\"id\":\"44\",\"name\":\"tommaso\",\"image\":\"\(imageStr)\",\"how-many-roads\":42}")
     }
 
-    func assertEmptyCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
-        let jsonData = XCTestCase.mockData(fromFile: fileName)
-        let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
-        XCTAssertEqual(payload.extraData, [:])
-    }
-
-    func assertCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
-        let jsonData = XCTestCase.mockData(fromFile: fileName)
-        let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
-        
-        XCTAssertEqual(payload.extraData["secret_note"], .string("Anakin is Vader!"))
-        XCTAssertEqual(payload.extraData["good_movies_count"], .number(3))
-        XCTAssertEqual(payload.extraData["awesome"], .bool(true))
-        XCTAssertEqual(payload.extraData["nested_stuff"], .dictionary(
-            [
-                "how_many_times": .number(42), "small": .double(0.001),
-                "colors": .array([
-                    .string("blue"),
-                    .string("yellow"),
-                    .number(42)
-                ])
-            ]
-        ))
-    }
-    
     func test_channelDetailJSONDecodeWithoutAnyCustomData() throws {
         try! assertEmptyCustomData(ChannelDetailPayload.self, "ChannelPayload")
     }
@@ -89,5 +56,35 @@ class CustomDataHashMap_Tests: XCTestCase {
     
     func test_currentUserJSONDecodeWithCustomData() throws {
         try! assertCustomData(CurrentUserPayload.self, "CurrentUserPayloadWithCustom")
+    }
+}
+
+// MARK: Test helpers
+
+extension CustomDataHashMap_Tests {
+
+    func assertEmptyCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
+        let jsonData = XCTestCase.mockData(fromFile: fileName, bundle: .testToolsBundle)
+        let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
+        XCTAssertEqual(payload.extraData, [:])
+    }
+
+    func assertCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
+        let jsonData = XCTestCase.mockData(fromFile: fileName, bundle: .testToolsBundle)
+        let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
+
+        XCTAssertEqual(payload.extraData["secret_note"], .string("Anakin is Vader!"))
+        XCTAssertEqual(payload.extraData["good_movies_count"], .number(3))
+        XCTAssertEqual(payload.extraData["awesome"], .bool(true))
+        XCTAssertEqual(payload.extraData["nested_stuff"], .dictionary(
+            [
+                "how_many_times": .number(42), "small": .double(0.001),
+                "colors": .array([
+                    .string("blue"),
+                    .string("yellow"),
+                    .number(42)
+                ])
+            ]
+        ))
     }
 }

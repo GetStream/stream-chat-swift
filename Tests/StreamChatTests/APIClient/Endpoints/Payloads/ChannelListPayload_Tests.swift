@@ -3,11 +3,12 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class ChannelListPayload_Tests: XCTestCase {
+final class ChannelListPayload_Tests: XCTestCase {
     let channelJSON: Data = {
-        let url = Bundle(for: ChannelListPayload_Tests.self).url(forResource: "ChannelsQuery", withExtension: "json")!
+        let url = Bundle(for: StreamChatTestTools.self).url(forResource: "ChannelsQuery", withExtension: "json")!
         return try! Data(contentsOf: url)
     }()
     
@@ -17,9 +18,9 @@ class ChannelListPayload_Tests: XCTestCase {
     }
 }
 
-class ChannelPayload_Tests: XCTestCase {
+final class ChannelPayload_Tests: XCTestCase {
     let channelJSON: Data = {
-        let url = Bundle(for: ChannelListPayload_Tests.self).url(forResource: "Channel", withExtension: "json")!
+        let url = Bundle(for: StreamChatTestTools.self).url(forResource: "Channel", withExtension: "json")!
         return try! Data(contentsOf: url)
     }()
     

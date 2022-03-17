@@ -16,7 +16,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
     
@@ -241,10 +241,4 @@ final class EventNotificationCenter_Tests: XCTestCase {
             [outputEvent]
         )
     }
-}
-
-// MARK: - Helpers
-
-private struct TestEvent: Event, Equatable {
-    let uuid: UUID = .init()
 }

@@ -3,11 +3,12 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class MessageReactionPayload_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageReactionPayload+DefaultExtraData", extension: "json")
+        let json = XCTestCase.mockData(fromFile: "MessageReactionPayload+DefaultExtraData", bundle: .testToolsBundle)
         let payload = try JSONDecoder.default.decode(MessageReactionPayload.self, from: json)
         
         // Assert payload is deserialized correctly.
@@ -22,7 +23,7 @@ final class MessageReactionPayload_Tests: XCTestCase {
     }
     
     func test_json_isDeserialized_withCustomExtraData() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageReactionPayload+CustomExtraData", extension: "json")
+        let json = XCTestCase.mockData(fromFile: "MessageReactionPayload+CustomExtraData", bundle: .testToolsBundle)
         let payload = try JSONDecoder.default.decode(MessageReactionPayload.self, from: json)
         
         // Assert payload is deserialized correctly.

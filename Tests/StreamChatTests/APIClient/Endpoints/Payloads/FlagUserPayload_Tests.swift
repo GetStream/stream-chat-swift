@@ -3,11 +3,12 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class FlagUserPayload_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
-        let json = XCTestCase.mockData(fromFile: "FlagUserPayload+DefaultExtraData", extension: "json")
+        let json = XCTestCase.mockData(fromFile: "FlagUserPayload+DefaultExtraData", bundle: .testToolsBundle)
         let payload = try JSONDecoder.default.decode(FlagUserPayload.self, from: json)
         
         // Assert current user payload is deserialized correctly.
@@ -27,7 +28,7 @@ final class FlagUserPayload_Tests: XCTestCase {
     }
 
     func test_json_isDeserialized_withCustomData() throws {
-        let json = XCTestCase.mockData(fromFile: "FlagUserPayload+CustomExtraData", extension: "json")
+        let json = XCTestCase.mockData(fromFile: "FlagUserPayload+CustomExtraData", bundle: .testToolsBundle)
         let payload = try JSONDecoder.default.decode(FlagUserPayload.self, from: json)
             
         // Assert current user payload is deserialized correctly.

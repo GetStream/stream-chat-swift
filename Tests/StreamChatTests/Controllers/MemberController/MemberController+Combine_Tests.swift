@@ -5,6 +5,7 @@
 import Combine
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -23,7 +24,7 @@ final class MemberController_Combine_Tests: iOS13TestCase {
     
     override func tearDown() {
         cancellables = nil
-        AssertAsync.canBeReleased(&memberController)
+        memberController = nil
         
         super.tearDown()
     }
@@ -73,33 +74,5 @@ final class MemberController_Combine_Tests: iOS13TestCase {
         
         // Assert member change is delivered.
         XCTAssertEqual(recording.output, [.create(newMember)])
-    }
-}
-
-extension ChatChannelMember {
-    static var dummy: ChatChannelMember {
-        .init(
-            id: .unique,
-            name: .unique,
-            imageURL: .unique(),
-            isOnline: true,
-            isBanned: false,
-            isFlaggedByCurrentUser: false,
-            userRole: .user,
-            userCreatedAt: .unique,
-            userUpdatedAt: .unique,
-            lastActiveAt: .unique,
-            teams: [],
-            extraData: [:],
-            memberRole: .member,
-            memberCreatedAt: .unique,
-            memberUpdatedAt: .unique,
-            isInvited: true,
-            inviteAcceptedAt: .unique,
-            inviteRejectedAt: nil,
-            isBannedFromChannel: true,
-            banExpiresAt: .unique,
-            isShadowBannedFromChannel: true
-        )
     }
 }

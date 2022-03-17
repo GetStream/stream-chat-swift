@@ -7,10 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class WebSocketClient_Tests: XCTestCase {
-    struct TestEvent: Event, Equatable {
-        let id = UUID()
-    }
+final class WebSocketClient_Tests: XCTestCase {
     
     // The longest time WebSocket waits to reconnect.
     let maxReconnectTimeout: VirtualTime.Seconds = 25
@@ -65,13 +62,21 @@ class WebSocketClient_Tests: XCTestCase {
         connectionId = UUID().uuidString
         user = .mock(id: "test_user_\(UUID().uuidString)")
     }
-    
+
     override func tearDown() {
-        AssertAsync.canBeReleased(&webSocketClient)
-        AssertAsync.canBeReleased(&eventNotificationCenter)
-        AssertAsync.canBeReleased(&eventNotificationCenterMiddleware)
-        AssertAsync.canBeReleased(&database)
-        
+        webSocketClient = nil
+        eventNotificationCenter = nil
+        eventNotificationCenterMiddleware = nil
+        database = nil
+
+        time = nil
+        VirtualTimeTimer.time = nil
+        endpoint = nil
+        decoder = nil
+        connectionId = nil
+        user = nil
+        requestEncoder = nil
+
         super.tearDown()
     }
 
@@ -496,50 +501,5 @@ class WebSocketClient_Tests: XCTestCase {
         
         // Assert `processImmediately` is triggered
         AssertAsync.willBeTrue(eventsBatcher.mock_processImmediately.called)
-    }
-}
-
-private struct TestEvent: Event, Equatable {
-    let uuid: UUID = .init()
-}
-
-// MARK: - Helpers
-
-private class EventDecoderMock: AnyEventDecoder {
-    var decode_calledWithData: Data?
-    var decodedEvent: Result<Event, Error>!
-    
-    func decode(from data: Data) throws -> Event {
-        decode_calledWithData = data
-        
-        switch decodedEvent {
-        case let .success(event): return event
-        case let .failure(error): throw error
-        case .none:
-            XCTFail("Undefined state, `decodedEvent` should not be nil")
-            // just dummy error to make compiler happy
-            throw NSError(domain: "some error", code: 0, userInfo: nil)
-        }
-    }
-}
-
-extension WebSocketEngineError: Equatable {
-    public static func == (lhs: WebSocketEngineError, rhs: WebSocketEngineError) -> Bool {
-        String(describing: lhs) == String(describing: rhs)
-    }
-}
-
-class WebSocketPingControllerMock: WebSocketPingController {
-    var connectionStateDidChange_connectionStates: [WebSocketConnectionState] = []
-    var pongReceivedCount = 0
-    
-    override func connectionStateDidChange(_ connectionState: WebSocketConnectionState) {
-        connectionStateDidChange_connectionStates.append(connectionState)
-        super.connectionStateDidChange(connectionState)
-    }
-    
-    override func pongReceived() {
-        pongReceivedCount += 1
-        super.pongReceived()
     }
 }

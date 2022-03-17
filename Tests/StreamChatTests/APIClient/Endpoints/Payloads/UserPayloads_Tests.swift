@@ -3,11 +3,12 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class UserPayload_Tests: XCTestCase {
-    let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser")
-    let otherUserJSON = XCTestCase.mockData(fromFile: "OtherUser")
+final class UserPayload_Tests: XCTestCase {
+    let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser", bundle: .testToolsBundle)
+    let otherUserJSON = XCTestCase.mockData(fromFile: "OtherUser", bundle: .testToolsBundle)
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(UserPayload.self, from: currentUserJSON)
@@ -59,7 +60,7 @@ class UserPayload_Tests: XCTestCase {
     }
 }
 
-class UserRequestBody_Tests: XCTestCase {
+final class UserRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
         let payload: UserRequestBody = .init(
             id: .unique,
@@ -79,7 +80,7 @@ class UserRequestBody_Tests: XCTestCase {
     }
 }
 
-class UserUpdateRequestBody_Tests: XCTestCase {
+final class UserUpdateRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
         let value = String.unique
 
@@ -102,9 +103,9 @@ class UserUpdateRequestBody_Tests: XCTestCase {
     }
 }
 
-class UserUpdateResponse_Tests: XCTestCase {
+final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_isSerialized() throws {
-        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromFile: "UserUpdateResponse")
+        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromFile: "UserUpdateResponse", bundle: .testToolsBundle)
         let payload = try JSONDecoder.default.decode(
             UserUpdateResponse.self, from: currentUserUpdateResponseJSON
         )
@@ -124,16 +125,9 @@ class UserUpdateResponse_Tests: XCTestCase {
     }
     
     func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {
-        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromFile: "UserUpdateResponse+MissingUser")
+        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromFile: "UserUpdateResponse+MissingUser", bundle: .testToolsBundle)
         XCTAssertThrowsError(try JSONDecoder.default.decode(
             UserUpdateResponse.self, from: currentUserUpdateResponseJSON
         ))
-    }
-}
-
-extension String {
-    /// Converst a string to `Date`. Only for testing!
-    func toDate() -> Date {
-        DateFormatter.Stream.rfc3339Date(from: self)!
     }
 }

@@ -25,13 +25,10 @@ final class AttachmentUploader_Tests: XCTestCase {
 
     override func tearDown() {
         apiClient.cleanUp()
-
-        AssertAsync {
-            Assert.canBeReleased(&uploader)
-            Assert.canBeReleased(&webSocketClient)
-            Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&database)
-        }
+        apiClient = nil
+        webSocketClient = nil
+        database = nil
+        uploader = nil
 
         super.tearDown()
     }

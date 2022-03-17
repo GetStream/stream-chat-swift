@@ -21,7 +21,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     override func tearDown() {
         middleware = nil
-        AssertAsync.canBeReleased(&database)
+        database = nil
         
         super.tearDown()
     }
@@ -657,29 +657,5 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channelListObserver.observedChanges,
             [.update(cid, index: .init(item: 0, section: 0))]
         )
-    }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
-}
-
-private class TestChannelListObserver {
-    let databaseObserver: ListDatabaseObserver<ChannelId, ChannelDTO>
-    
-    var observedChanges: [ListChange<ChannelId>] = []
-    
-    init(database: DatabaseContainerMock) {
-        databaseObserver = ListDatabaseObserver<ChannelId, ChannelDTO>(
-            context: database.viewContext,
-            fetchRequest: ChannelDTO.allChannelsFetchRequest,
-            itemCreator: { try! ChannelId(cid: $0.cid) }
-        )
-        
-        databaseObserver.onChange = { [weak self] in
-            self?.observedChanges.append(contentsOf: $0)
-        }
-        
-        try! databaseObserver.startObserving()
     }
 }
