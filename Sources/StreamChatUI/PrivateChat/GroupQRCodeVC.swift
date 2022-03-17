@@ -14,10 +14,14 @@ class GroupQRCodeVC: UIViewController {
 
     // MARK: - Variables
     var strContent: String?
+    var groupName: String?
     
     // MARK: - Outlets
     @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var btnShare: UIButton!
+    @IBOutlet weak var qrCodeView: UIView!
     @IBOutlet weak var imgQRCode: UIImageView!
+    @IBOutlet weak var lblName: UILabel!
 
     // MARK: - View Life cycle
     override func viewDidLoad() {
@@ -27,14 +31,18 @@ class GroupQRCodeVC: UIViewController {
 
     // MARK: - IBOutlets
     @IBAction func btnBackAction(_ sender: UIButton) {
-        navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true, completion: nil)
     }
 
     // MARK: - Functions
     private func setupUI() {
         btnBack.setTitle("", for: .normal)
-        btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
+        btnBack.setImage(Appearance.default.images.closeCircle, for: .normal)
         generateQRCode()
+        qrCodeView.layoutIfNeeded()
+        qrCodeView.cornerRadius = self.qrCodeView.bounds.width / 2
+        lblName.text = groupName
+        btnShare.tintColor = .white
     }
 
     private func generateQRCode() {

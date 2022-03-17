@@ -66,7 +66,7 @@ public extension Appearance {
         public var userSelected: UIImage = loadImageSafely(with: "chat_UserStatus")
         public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
-        static let closeCircle: UIImage = loadImageSafely(with: "close_circle")
+        public let closeCircle: UIImage = loadImageSafely(with: "close_circle")
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
         public var back: UIImage = loadImageSafely(with: "icn_back")
         public var onlyVisibleToCurrentUser = loadImageSafely(with: "eye")
@@ -421,5 +421,8 @@ public extension Appearance {
         public var disburseFund: UIImage = loadImageSafely(with: "disburseFund")
         public var polling: UIImage = loadImageSafely(with: "polling")
         public var contributeToFund: UIImage = loadImageSafely(with: "fundIcon")
+
+        // MARK: QR Code Option
+        public var shareImageIcon: UIImage = loadImageSafely(with: "share_image_icon")
     }
 }
