@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import DocsSnippets
 
 class ChannelDetailHeaderTVCell: UITableViewCell {
 
@@ -27,7 +26,6 @@ class ChannelDetailHeaderTVCell: UITableViewCell {
     private func setupUI() {
         imgProfile.layer.cornerRadius = imgProfile.frame.size.height / 2
         imgProfile.backgroundColor = .red
-        lblTitle
     }
     
 }
