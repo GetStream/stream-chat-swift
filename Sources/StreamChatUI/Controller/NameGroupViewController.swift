@@ -60,7 +60,7 @@ public class NameGroupViewController: ChatBaseVC {
         tableView?.register(chatUserNib, forCellReuseIdentifier: chatUserID)
         //
         tableView.dataSource = self
-        tableView.bounces = false
+        tableView.keyboardDismissMode = .onDrag
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
@@ -151,7 +151,11 @@ public class NameGroupViewController: ChatBaseVC {
 // MARK: - UITextFieldDelegate
 extension NameGroupViewController: UITextFieldDelegate {
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
+        if textField == nameField {
+            groupDescriptionField.becomeFirstResponder()
+        } else {
+            textField.resignFirstResponder()
+        }
         return true
     }
     
@@ -195,6 +199,7 @@ extension NameGroupViewController: UITableViewDataSource {
         let user: ChatUser = selectedUsers[indexPath.row]
         cell.config(user: user,selectedImage: nil)
         cell.backgroundColor = .clear
+        cell.selectionStyle = .none
         return cell
 
     }
