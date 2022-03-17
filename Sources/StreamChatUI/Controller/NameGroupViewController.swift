@@ -51,7 +51,7 @@ public class NameGroupViewController: ChatBaseVC {
         nameField.becomeFirstResponder()
         nameContainerView.layer.cornerRadius = 6.0
         descriptionContainerView.layer.cornerRadius = 6.0
-        let str = self.selectedUsers.count > 1 ? "friends" : "friend"
+        let str = self.selectedUsers.count > 1 ? "Friends" : "Friend"
         lblFriendCount.text = "\(self.selectedUsers.count) \(str)"
         lblTitle.text = "New Group"
         nameField.placeholder = "Group chat name"

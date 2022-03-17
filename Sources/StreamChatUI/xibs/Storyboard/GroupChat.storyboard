@@ -742,7 +742,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OjL-Eu-jPg" customClass="ViewWithRadius" customModule="StreamChatUI" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="98" width="380" height="41"/>
                                         <subviews>
-                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group description" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="d9i-Sw-F4z">
+                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group description (optional)" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="d9i-Sw-F4z">
                                                 <rect key="frame" x="10" y="0.0" width="300" height="41"/>
                                                 <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="16"/>
                                                 <textInputTraits key="textInputTraits"/>
