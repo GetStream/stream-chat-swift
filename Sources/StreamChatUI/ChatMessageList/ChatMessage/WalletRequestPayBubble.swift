@@ -10,7 +10,7 @@ import StreamChat
 import Nuke
 import AVKit
 
-class WalletRequestPayBubble: ASVideoTableViewCell {
+class WalletRequestPayBubble: UITableViewCell {
 
     public private(set) var viewContainer: UIView!
     public private(set) var subContainer: UIView!

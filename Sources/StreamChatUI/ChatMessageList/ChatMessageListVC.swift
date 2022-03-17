@@ -751,6 +751,7 @@ open class ChatMessageListVC:
     }
     
     func pausePlayVideos() {
+        guard channelType == .announcement else { return }
         ASVideoPlayerController.sharedVideoPlayer.pausePlayVideosFor(tableView: listView)
     }
 }
