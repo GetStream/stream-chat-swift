@@ -1531,9 +1531,8 @@
 		C1FC2FA02742579D0062530F /* FoundationSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F5273936D900F93B34 /* FoundationSecurity.swift */; };
 		C1FC2FA12742579D0062530F /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7508273936DA00F93B34 /* Engine.swift */; };
 		C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7504273936D900F93B34 /* WSCompression.swift */; };
-		CFA41B6727DA952100427602 /* SystemEnvironment+UserAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+UserAgent.swift */; };
-		CFA41B6827DA952300427602 /* SystemEnvironment+UserAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+UserAgent.swift */; };
-		CFF9162527E0FB4800F86742 /* SystemEnvironment_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF9162427E0FB4800F86742 /* SystemEnvironment_Tests.swift */; };
+		CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
+		CFA41B6827DA952300427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA49714E2549C28000AC68C2 /* AttachmentDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */; };
@@ -3066,8 +3065,7 @@
 		C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
 		C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint_Tests.swift; sourceTree = "<group>"; };
 		C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO.swift; sourceTree = "<group>"; };
-		CFA41B6527DA724400427602 /* SystemEnvironment+UserAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemEnvironment+UserAgent.swift"; sourceTree = "<group>"; };
-		CFF9162427E0FB4800F86742 /* SystemEnvironment_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment_Tests.swift; sourceTree = "<group>"; };
+		CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemEnvironment+XStreamClient.swift"; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDTO_Tests.swift; sourceTree = "<group>"; };
@@ -3776,8 +3774,7 @@
 				DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */,
 				792A4F3B247FFBB400EAF71D /* Timers.swift */,
 				797A756524814EF8003CF16D /* SystemEnvironment.swift */,
-				CFA41B6527DA724400427602 /* SystemEnvironment+UserAgent.swift */,
-				CFF9162427E0FB4800F86742 /* SystemEnvironment_Tests.swift */,
+				CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */,
 				797A756724814F0D003CF16D /* Bundle+Extensions.swift */,
 				792FCB4824A3BF38000290C7 /* OptionSet+Extensions.swift */,
 				792B804F24D95B5D00C2963E /* Cached.swift */,
@@ -7486,7 +7483,7 @@
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
 				88DA57202631AC3100FA8C53 /* ChannelMuteDTO.swift in Sources */,
 				C1FC2F9E2742579D0062530F /* FoundationTransport.swift in Sources */,
-				CFA41B6727DA952100427602 /* SystemEnvironment+UserAgent.swift in Sources */,
+				CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */,
 				792CA62624CEE93700D70A5E /* ChannelListUpdater.swift in Sources */,
 				882C5756252C791400E60C44 /* ChannelMemberListUpdater.swift in Sources */,
 				79896D5E25065ECD00BA8F1C /* ChannelRead.swift in Sources */,
@@ -7871,7 +7868,6 @@
 				792FCB4724A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift in Sources */,
 				797EEA4A24FFC37600C81203 /* ConnectionStatus_Tests.swift in Sources */,
 				88206FE625B1AB34009D086A /* ChatClientUpdater_Tests.swift in Sources */,
-				CFF9162527E0FB4800F86742 /* SystemEnvironment_Tests.swift in Sources */,
 				79877A2B2498E51500015F8B /* UserDTO_Tests.swift in Sources */,
 				799F611B2530B62C007F218C /* ChannelListQuery_Tests.swift in Sources */,
 				883EB95325B0A1ED001858FD /* TokenProvider_Tests.swift in Sources */,
@@ -8280,7 +8276,7 @@
 				C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */,
 				C173538F27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,
 				C121E879274544AF00023E4C /* ChannelReadDTO.swift in Sources */,
-				CFA41B6827DA952300427602 /* SystemEnvironment+UserAgent.swift in Sources */,
+				CFA41B6827DA952300427602 /* SystemEnvironment+XStreamClient.swift in Sources */,
 				C121E87A274544AF00023E4C /* ChannelListQueryDTO.swift in Sources */,
 				C121E87B274544AF00023E4C /* MessageSearchQueryDTO.swift in Sources */,
 				C1E8AD5F278EF5F40041B775 /* AsyncOperation.swift in Sources */,

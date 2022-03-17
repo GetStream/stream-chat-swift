@@ -809,32 +809,10 @@ class ChatClient_Tests: XCTestCase {
         XCTAssertNil(providedConnectionId)
     }
     
-    // Test identifier setup
-    func test_sessionHeaders_sdkIdentifier_correctValue() {
+    func test_sessionHeaders_xStreamClient_correctValue() {
         // Given
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            environment: testEnv.environment
-        )
-        
-        let prefix = "stream-chat-\(expectedIdentifier)-client-v"
-        
-        // When
-        client.connectAnonymousUser()
-        
-        // Then
-        let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders
-        let streamHeader = sessionHeaders!["X-Stream-Client"] as! String
-        XCTAssert(streamHeader.starts(with: prefix))
-    }
-    
-    #if os(iOS)
-    func test_sessionHeadersOnIphone_userAgent_correctValue() {
-        // Given
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -843,35 +821,12 @@ class ChatClient_Tests: XCTestCase {
         
         // Then
         guard let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders,
-              let streamHeader = sessionHeaders["User-Agent"] as? String else {
-            return XCTFail("User-Agent key should exist as a HTTP additional header.")
+              let streamHeader = sessionHeaders["X-Stream-Client"] as? String else {
+            return XCTFail("X-Stream-Client key should exist as a HTTP additional header.")
         }
         
-        XCTAssertEqual(streamHeader, SystemEnvironment.userAgent)
+        XCTAssertEqual(streamHeader, SystemEnvironment.xStreamClientHeader)
     }
-    
-    #elseif os(macOS)
-    func test_sessionHeadersOnMac_userAgent_correctValue() {
-        // Given
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        
-        // When
-        client.connectAnonymousUser()
-        
-        // Then
-        guard let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders,
-              let streamHeader = sessionHeaders["User-Agent"] as? String else {
-            return XCTFail("User-Agent key should exist as a HTTP additional header.")
-        }
-        
-        XCTAssertEqual(streamHeader, SystemEnvironment.userAgent)
-    }
-    #endif
 }
 
 class TestWorker: Worker {
@@ -994,7 +949,7 @@ extension ChatClient_Tests {
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
         XCTAssertEqual(
             headers["X-Stream-Client"],
-            "stream-chat-\(expectedIdentifier)-client-v\(SystemEnvironment.version)"
+            SystemEnvironment.xStreamClientHeader
         )
     }
 }
