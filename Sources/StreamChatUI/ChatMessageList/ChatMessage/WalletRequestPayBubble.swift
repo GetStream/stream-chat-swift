@@ -8,12 +8,14 @@
 import UIKit
 import StreamChat
 import Nuke
+import AVKit
 
 class WalletRequestPayBubble: UITableViewCell {
 
     public private(set) var viewContainer: UIView!
     public private(set) var subContainer: UIView!
     public private(set) var sentThumbImageView: UIImageView!
+    public private(set) var playerView: UIView!
     public private(set) var timestampLabel: UILabel!
     public private(set) var descriptionLabel: UILabel!
     public private(set) var requestMessageLabel: UILabel!

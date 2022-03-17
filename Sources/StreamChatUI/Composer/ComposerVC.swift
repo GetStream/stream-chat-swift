@@ -342,7 +342,7 @@ open class ComposerVC: _ViewController,
         bindMenuController()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let `self` = self else { return }
-            if self.keyboardHeight == 0.0 {
+            if self.keyboardHeight == 0.0 && self.channelController?.channel?.type != .announcement {
                 self.composerView.inputMessageView.textView.becomeFirstResponder()
             }
         }

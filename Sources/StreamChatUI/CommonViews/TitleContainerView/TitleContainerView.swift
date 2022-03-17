@@ -8,7 +8,7 @@ import UIKit
 /// A view that displays a title label and subtitle in a container stack view.
 open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// Content of the view that contains title (first line) and subtitle (second nil)
-    open var content: (title: String?, subtitle: String?, isOneWayChannel: Bool) = (nil, nil, false) {
+    open var content: (title: String?, subtitle: String?, isOneWayChannel: Bool, isMute: Bool) = (nil, nil, false, false) {
         didSet {
             updateContentIfNeeded()
         }
@@ -24,8 +24,21 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
         .withBidirectionalLanguagesSupport
         .withAdjustingFontForContentSizeCategory
     
+    /// image that represent channel mute status
+    open private(set) lazy var muteImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = appearance.images.muteChannel
+        imageView.tintColor = .gray
+        imageView.withoutAutoresizingMaskConstraints
+        return imageView
+    }()
+    
     /// A view that acts as the main container for the subviews
     open private(set) lazy var containerView: ContainerStackView = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+    
+    /// A view that acts as the title container for the subviews
+    open private(set) lazy var titleContainerView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
     
     override open func setUpAppearance() {
@@ -46,12 +59,21 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
         containerView.axis = .vertical
         containerView.alignment = .center
         containerView.spacing = 0
+        
+        titleContainerView.axis = .horizontal
+        titleContainerView.alignment = .center
+        titleContainerView.spacing = 2
     }
     
     override open func setUpLayout() {
         super.setUpLayout()
-
-        containerView.addArrangedSubviews([titleLabel, subtitleLabel])
+        titleContainerView.removeAllArrangedSubviews()
+        if content.isMute {
+            titleContainerView.addArrangedSubviews([titleLabel, muteImageView])
+        } else {
+            titleContainerView.addArrangedSubviews([titleLabel])
+        }
+        containerView.addArrangedSubviews([titleContainerView, subtitleLabel])
         embed(containerView)
     }
     
