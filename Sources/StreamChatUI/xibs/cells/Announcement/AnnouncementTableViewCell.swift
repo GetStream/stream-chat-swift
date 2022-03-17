@@ -71,7 +71,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         }
          */
         viewAction.isHidden = true
-        if let hashTag = message?.extraData.tag {
+        if let hashTag = message?.extraData.tag, !hashTag.isEmpty {
             lblHashTag.text = "#" +  hashTag.joined(separator: " #")
         } else {
             lblHashTag.text = nil
