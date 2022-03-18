@@ -3,7 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix payload for reaction when using `enforce_unique` [#1861](https://github.com/GetStream/stream-chat-swift/issues/1861)
+- Use IndexPath's item instead of row for macOS compatibility [#1859](https://github.com/GetStream/stream-chat-swift/pull/1859)
 
 # [4.12.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.12.0)
 _March 16, 2022_

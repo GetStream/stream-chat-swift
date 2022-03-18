@@ -138,14 +138,10 @@ final class MessageEndpoints_Tests: XCTestCase {
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "reaction": MessageReactionRequestPayload(
-                    type: reaction,
-                    score: score,
-                    enforceUnique: false,
-                    extraData: extraData
-                )
-            ]
+            body: MessageReactionRequestPayload(
+                enforceUnique: false,
+                reaction: ReactionRequestPayload(type: reaction, score: score, extraData: extraData)
+            )
         )
         
         // Build endpoint.
