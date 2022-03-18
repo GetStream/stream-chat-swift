@@ -11,6 +11,10 @@ import IOKit
 #endif
 
 extension SystemEnvironment {
+    static let xStreamClientHeader: String = {
+        "stream-chat-\(sdkIdentifier)-client-v\(version)|app=\(appName)|app_version=\(appVersion)|os=\(os) \(osVersion)|device_model=\(model)|device_screen_ratio=\(scale)"
+    }()
+    
     private static var sdkIdentifier: String {
         #if canImport(StreamChatSwiftUI)
         return "swiftui"
@@ -80,8 +84,4 @@ extension SystemEnvironment {
         return "1.00"
         #endif
     }
-
-    static let xStreamClientHeader: String = {
-        "stream-chat-\(sdkIdentifier)-client-v\(version)|app=\(appName)|app_version=\(appVersion)|os=\(os) \(osVersion)|device_model=\(model)|device_screen_ratio=\(scale)"
-    }()
 }

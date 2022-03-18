@@ -1546,7 +1546,7 @@
 		C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7504273936D900F93B34 /* WSCompression.swift */; };
 		CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
 		CFA41B6827DA952300427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
-		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
+		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extensions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA49714E2549C28000AC68C2 /* AttachmentDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */; };
 		DA4971542549C2A000AC68C2 /* MessageAttachmentPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4971532549C2A000AC68C2 /* MessageAttachmentPayload_Tests.swift */; };
@@ -3074,7 +3074,7 @@
 		C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint_Tests.swift; sourceTree = "<group>"; };
 		C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO.swift; sourceTree = "<group>"; };
 		CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemEnvironment+XStreamClient.swift"; sourceTree = "<group>"; };
-		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
+		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extensions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDTO_Tests.swift; sourceTree = "<group>"; };
 		DA4971532549C2A000AC68C2 /* MessageAttachmentPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAttachmentPayload_Tests.swift; sourceTree = "<group>"; };
@@ -3738,7 +3738,7 @@
 				DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */,
 				DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */,
 				797A756524814EF8003CF16D /* SystemEnvironment.swift */,
-                CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */,
+				CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */,
 				792A4F3B247FFBB400EAF71D /* Timers.swift */,
 				797E10A724EAF6DE00353791 /* UniqueId.swift */,
 				F6D61D992510B3E300EB0624 /* Database */,
