@@ -9,21 +9,21 @@ final class MessageReactionRequestPayload_Tests: XCTestCase {
     func test_payload_isBuiltAndEncodedCorrectly() throws {
         // Build the payload.
         let payload = MessageReactionRequestPayload(
-            type: "like",
-            score: 10,
             enforceUnique: false,
-            extraData: ["mood": .string("good one")]
+            reaction: ReactionRequestPayload(type: "like", score: 10, extraData: ["mood": .string("good one")])
         )
-        
+
         // Encode the payload.
         let json = try JSONEncoder.default.encode(payload)
         
         // Assert encoding is correct.
         AssertJSONEqual(json, [
-            "type": payload.type.rawValue,
-            "score": payload.score,
             "enforce_unique": payload.enforceUnique,
-            "mood": "good one"
+            "reaction": [
+                "type": payload.reaction.type.rawValue,
+                "score": payload.reaction.score,
+                "mood": "good one"
+            ]
         ])
     }
 }
