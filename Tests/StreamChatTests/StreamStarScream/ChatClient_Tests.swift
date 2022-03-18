@@ -809,23 +809,23 @@ class ChatClient_Tests: XCTestCase {
         XCTAssertNil(providedConnectionId)
     }
     
-    // Test identifier setup
-    func test_sessionHeaders_sdkIdentifier_correctValue() {
+    func test_sessionHeaders_xStreamClient_correctValue() {
         // Given
         let client = ChatClient(
             config: inMemoryStorageConfig,
             environment: testEnv.environment
         )
         
-        let prefix = "stream-chat-\(expectedIdentifier)-client-v"
-        
         // When
         client.connectAnonymousUser()
         
         // Then
-        let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders
-        let streamHeader = sessionHeaders!["X-Stream-Client"] as! String
-        XCTAssert(streamHeader.starts(with: prefix))
+        guard let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders,
+              let streamHeader = sessionHeaders["X-Stream-Client"] as? String else {
+            return XCTFail("X-Stream-Client key should exist as a HTTP additional header.")
+        }
+        
+        XCTAssertEqual(streamHeader, SystemEnvironment.xStreamClientHeader)
     }
 }
 
@@ -949,7 +949,7 @@ extension ChatClient_Tests {
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
         XCTAssertEqual(
             headers["X-Stream-Client"],
-            "stream-chat-\(expectedIdentifier)-client-v\(SystemEnvironment.version)"
+            SystemEnvironment.xStreamClientHeader
         )
     }
 }
