@@ -64,19 +64,20 @@ extension Endpoint {
         extraData: [String: RawJSON],
         messageId: MessageId
     ) -> Endpoint<EmptyResponse> {
-        .init(
+        let body = MessageReactionRequestPayload(
+            enforceUnique: enforceUnique,
+            reaction: ReactionRequestPayload(
+                type: type,
+                score: score,
+                extraData: extraData
+            )
+        )
+        return .init(
             path: .addReaction(messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "reaction": MessageReactionRequestPayload(
-                    type: type,
-                    score: score,
-                    enforceUnique: enforceUnique,
-                    extraData: extraData
-                )
-            ]
+            body: body
         )
     }
     
