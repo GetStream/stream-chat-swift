@@ -74,7 +74,7 @@ open class ChatChannelVC:
         return view
     }()
 
-    open private(set) weak var moreButton: UIButton? = {
+    open private(set) lazy var moreButton: UIButton = {
         let button = UIButton()
         button.setImage(Appearance.default.images.moreVertical, for: .normal)
         button.tintColor = .white
@@ -222,10 +222,8 @@ open class ChatChannelVC:
         navigationHeaderView.addSubview(rightStackView)
         rightStackView.addArrangedSubview(channelAvatarView)
         channelAvatarView.content = (channelController?.channel, client?.currentUserId)
-        if let moreBtn = moreButton {
-            rightStackView.addArrangedSubview(moreBtn)
-            moreBtn.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        }
+        rightStackView.addArrangedSubview(moreButton)
+        moreButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
 
         NSLayoutConstraint.activate([
             rightStackView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
@@ -287,12 +285,12 @@ open class ChatChannelVC:
             messageComposerVC?.composerView.alpha = 0.5
             headerView.titleContainerView.subtitleLabel.isHidden = true
             channelAvatarView.isHidden = true
-            moreButton?.isHidden = true
+            moreButton.isHidden = true
         } else {
             messageComposerVC?.composerView.isUserInteractionEnabled = true
             messageComposerVC?.composerView.alpha = 1.0
             channelAvatarView.isHidden = false
-            moreButton?.isHidden = false
+            moreButton.isHidden = false
         }
         let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.headerViewAction(_:)))
         tapGesture.numberOfTapsRequired = 1
@@ -334,6 +332,7 @@ open class ChatChannelVC:
     }
 
     @objc func backAction(_ sender: Any) {
+        removeMenu()
         self.popWithAnimation()
         self.dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(name: .showTabbar, object: nil)
@@ -471,8 +470,14 @@ open class ChatChannelVC:
             let menu = UIMenu(title: "",
                               options: .displayInline,
                               children: getMenuItems())
-            moreButton?.menu = menu
-            moreButton?.showsMenuAsPrimaryAction = true
+            moreButton.menu = menu
+            moreButton.showsMenuAsPrimaryAction = true
+        }
+    }
+    
+    private func removeMenu() {
+        if #available(iOS 14.0, *) {
+            moreButton.menu = nil
         }
     }
     
