@@ -42,6 +42,8 @@ class GroupQRCodeVC: UIViewController {
         qrCodeView.layoutIfNeeded()
         qrCodeView.cornerRadius = self.qrCodeView.bounds.width / 2
         lblName.text = groupName
+        let shareImage = Appearance.default.images.shareImageIcon.withRenderingMode(.alwaysTemplate)
+        shareImage.tinted(with: .white)
         btnShare.tintColor = .white
     }
 
