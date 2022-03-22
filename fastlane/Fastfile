@@ -3,7 +3,7 @@ default_platform :ios
 require 'json'
 require 'net/http'
 
-xcode_version = ENV['XCODE_VERSION'].nil? ? '13.3' : ENV['XCODE_VERSION']
+xcode_version = ENV['XCODE_VERSION'].nil? ? '13.3.0' : ENV['XCODE_VERSION']
 # The number of times the stress test suite is ran
 stress_tests_cycles = 50
 
