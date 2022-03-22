@@ -82,7 +82,7 @@ extension ChatAlertVC: PanModalPresentable {
     }
 
     public var anchorModalToLongForm: Bool {
-        return false
+        return true
     }
 
     public var showDragIndicator: Bool {
@@ -90,7 +90,7 @@ extension ChatAlertVC: PanModalPresentable {
     }
 
     public var allowsExtendedPanScrolling: Bool {
-        return true
+        return false
     }
 
     public var allowsDragToDismiss: Bool {

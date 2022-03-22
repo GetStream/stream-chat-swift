@@ -213,11 +213,6 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wmg-bO-KgA">
                                 <rect key="frame" x="5" y="0.0" width="404" height="893"/>
                                 <color key="backgroundColor" red="0.11764705882352941" green="0.11764705882352941" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="34"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="zEJ-PD-S0X">
                                 <rect key="frame" x="55" y="45" width="304" height="98.5"/>
