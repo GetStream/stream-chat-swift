@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// A type that represents the supported push providers.
 public struct PushProvider: RawRepresentable, Hashable, ExpressibleByStringLiteral {
     public static let firebase: Self = "firebase"
     public static let apn: Self = "apn"
