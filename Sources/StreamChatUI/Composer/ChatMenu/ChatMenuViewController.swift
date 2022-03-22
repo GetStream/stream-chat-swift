@@ -133,11 +133,11 @@ enum MenuType: Int, CaseIterable {
     func getImage() -> UIImage {
         switch self {
         case .media:
-            return Appearance.default.images.menuWeather
+            return Appearance.default.images.menuMedia
         case .disburseFund:
             return Appearance.default.images.disburseFund
         case .weather:
-            return Appearance.default.images.menuContact
+            return Appearance.default.images.menuWeather
         case .crypto:
             return Appearance.default.images.menuCrypto
         case .oneN:
