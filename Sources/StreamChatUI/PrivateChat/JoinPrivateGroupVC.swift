@@ -45,7 +45,8 @@ class JoinPrivateGroupVC: UIViewController {
     @IBOutlet weak var btnJoinGroup: UIButton!
     @IBOutlet weak var lblDescription: UILabel!
     @IBOutlet weak var viewJoinOverlay: UIView!
-
+    @IBOutlet weak var safeAreaHeight: NSLayoutConstraint!
+    
     // MARK: - View Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,6 +90,7 @@ class JoinPrivateGroupVC: UIViewController {
 
     // MARK: - Functions
     private func setupUI() {
+        safeAreaHeight.constant = UIView.safeAreaTop
         btnBack.setTitle("", for: .normal)
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         view.backgroundColor = Appearance.default.colorPalette.chatViewBackground

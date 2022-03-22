@@ -153,7 +153,7 @@ open class ChatChannelListVC: _ViewController,
             headerSafeAreaView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             headerSafeAreaView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             headerSafeAreaView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            headerSafeAreaView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0)
+            headerSafeAreaView.heightAnchor.constraint(equalToConstant: UIView.safeAreaTop)
         ])
 
         view.addSubview(headerView)

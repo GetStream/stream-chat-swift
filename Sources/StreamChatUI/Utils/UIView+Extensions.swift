@@ -219,3 +219,49 @@ extension UIView {
         propertyAnimator.startAnimation()
     }
 }
+
+extension UIView {
+
+    static var hasNotch: Bool {
+        if let window = UIApplication.shared.keyWindowInConnectedScenes {
+            return window.safeAreaInsets.bottom > 0
+        }
+        return false
+    }
+
+    static var safeAreaBottom: CGFloat {
+         if #available(iOS 11, *) {
+            if let window = UIApplication.shared.keyWindowInConnectedScenes {
+                return window.safeAreaInsets.bottom
+            }
+         }
+         return 0
+    }
+
+    static var safeAreaTop: CGFloat {
+         if #available(iOS 11, *) {
+            if let window = UIApplication.shared.keyWindowInConnectedScenes {
+                return window.safeAreaInsets.top
+            }
+         }
+         return 0
+    }
+
+    static var safeAreaLeft: CGFloat {
+         if #available(iOS 11, *) {
+            if let window = UIApplication.shared.keyWindowInConnectedScenes {
+                return window.safeAreaInsets.left
+            }
+         }
+         return 0
+    }
+
+    static var safeAreaRight: CGFloat {
+         if #available(iOS 11, *) {
+            if let window = UIApplication.shared.keyWindowInConnectedScenes {
+                return window.safeAreaInsets.right
+            }
+         }
+         return 0
+    }
+}

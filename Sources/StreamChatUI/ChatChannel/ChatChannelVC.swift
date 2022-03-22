@@ -200,7 +200,7 @@ open class ChatChannelVC:
             navigationSafeAreaView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             navigationSafeAreaView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             navigationSafeAreaView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            navigationSafeAreaView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0)
+            navigationSafeAreaView.heightAnchor.constraint(equalToConstant: UIView.safeAreaTop)
         ])
 
         view.addSubview(navigationHeaderView)

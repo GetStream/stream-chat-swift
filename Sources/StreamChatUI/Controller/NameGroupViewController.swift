@@ -25,6 +25,8 @@ public class NameGroupViewController: ChatBaseVC {
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var tagView: UIStackView!
     @IBOutlet private var tagViewPlaceHolderView: UIView!
+    @IBOutlet weak var heightSafeAreaView: NSLayoutConstraint!
+    
     // MARK: - VARIABLES
     public var client: ChatClient?
     public var selectedUsers: [ChatUser]!
@@ -36,6 +38,7 @@ public class NameGroupViewController: ChatBaseVC {
     }
     // MARK: - METHODS
     public func setupUI() {
+        heightSafeAreaView.constant = UIView.safeAreaTop
         navigationController?.navigationBar.isHidden = true
         self.btnNext?.isHidden = true
         self.view.backgroundColor = Appearance.default.colorPalette.chatViewBackground

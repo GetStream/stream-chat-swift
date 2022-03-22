@@ -18,7 +18,8 @@ class GroupQRCodeVC: UIViewController {
     // MARK: - Outlets
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var imgQRCode: UIImageView!
-
+    @IBOutlet weak var heightSafeAreaTop: NSLayoutConstraint!
+    
     // MARK: - View Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +33,7 @@ class GroupQRCodeVC: UIViewController {
 
     // MARK: - Functions
     private func setupUI() {
+        heightSafeAreaTop.constant = UIView.safeAreaTop
         btnBack.setTitle("", for: .normal)
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         generateQRCode()

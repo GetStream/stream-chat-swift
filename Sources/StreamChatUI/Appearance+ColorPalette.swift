@@ -78,6 +78,7 @@ public extension Appearance {
         public var incommingMessageColor: UIColor = .incommingMessageColor
         public var searchPlaceHolder: UIColor = .searchPlaceHolder
         public var placeHolderBalanceBG: UIColor = .placeHolderBalanceBG
+        public var groupDetailBackground: UIColor = .groupDetailBackground
     }
 }
 
@@ -127,6 +128,7 @@ private extension UIColor {
     static let streamOverlayDark = mode(0x000000, lightAlpha: 0.6, 0xffffff, darkAlpha: 0.8)
     static let streamOverlayDarkStatic = mode(0x000000, lightAlpha: 0.6, 0x000000, darkAlpha: 0.6)
     static let walletTabbarBackground = mode(0x161616, lightAlpha: 1.0, 0x161616, darkAlpha: 1.0)
+    static let groupDetailBackground = mode(0x0D0D0D, lightAlpha: 1.0, 0x0D0D0D, darkAlpha: 1.0)
     static func mode(_ light: Int, lightAlpha: CGFloat = 1.0, _ dark: Int, darkAlpha: CGFloat = 1.0) -> UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { traitCollection in

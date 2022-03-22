@@ -15,6 +15,7 @@ public class ChatGroupDetailsVC: UIViewController {
     @IBOutlet weak var btnBack: StreamChatBackButton!
     @IBOutlet weak var btnMore: StreamChatBackButton!
     @IBOutlet weak var tblView: UITableView!
+    @IBOutlet weak var heightSafeAreaView: NSLayoutConstraint!
     
     //moregreyCircle
     // MARK: - view life cycle
@@ -33,7 +34,8 @@ public class ChatGroupDetailsVC: UIViewController {
     
     // MARK: - functions
     private func setupUI() {
-        view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
+        heightSafeAreaView.constant = UIView.safeAreaTop
+        view.backgroundColor = Appearance.default.colorPalette.groupDetailBackground //Appearance.default.colorPalette.chatViewBackground
         btnMore.setTitle("", for: .normal)
         btnMore.setImage(Appearance.default.images.moregreyCircle, for: .normal)
         addMenuToMoreBtn()
