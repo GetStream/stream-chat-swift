@@ -19,15 +19,13 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  XCODE_VERSION: 13.2.1
-  IOS_VERSION: "15.2"
+  XCODE_VERSION: 13.3.1
   IOS_SIMULATOR_DEVICE: "iPhone 12"
-  IOS_SIMULATOR_DEVICE_WITH_VERSION: "iPhone 12 (15.2)"
 
 jobs:
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/set-build-image-var
@@ -55,7 +53,7 @@ jobs:
 
   build-and-test-debug:
     name: Test LLC (Debug)
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
       with:
@@ -103,7 +101,7 @@ jobs:
 
   build-and-test-ui-debug:
     name: Test UI (Debug)
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
     - name: Set build image var
@@ -144,7 +142,7 @@ jobs:
 
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
     - name: Set build image var
@@ -219,7 +217,7 @@ jobs:
 
   build-apps:
     name: Build Sample + Demo Apps
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
     - name: Set build image var
@@ -264,7 +262,7 @@ jobs:
 
   # build-docs-snippets:
   #   name: Build Docs Snippets
-  #   runs-on: macos-11
+  #   runs-on: macos-12
   #   steps:
   #   - uses: actions/checkout@v1
   #   - name: Set build image var
@@ -291,7 +289,7 @@ jobs:
 
   spm-integration:
     name: Test Integration (SPM)
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
     - name: Set build image var
@@ -326,7 +324,7 @@ jobs:
 
   cocoapods-integration:
     name: Test Integration (CocoaPods)
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
     - name: Set build image var
