@@ -66,6 +66,7 @@ public extension Appearance {
         public var redPacketExpired: UIColor = .init(rgb: 0x758796)
         public var stepperBackground: UIColor = .init(rgb: 0x282828)
         public var stepperForeground: UIColor = .init(rgb: 0x3A3A3D)
+        public var qrBackground: UIColor = .init(rgb: 0x2C2C2E)
         
         public var tabbarBackground: UIColor = .tabBarBackground
         public var chatViewBackground: UIColor = .chatViewBackground

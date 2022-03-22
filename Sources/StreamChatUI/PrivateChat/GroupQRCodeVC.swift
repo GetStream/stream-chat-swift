@@ -21,6 +21,8 @@ class GroupQRCodeVC: UIViewController {
     @IBOutlet weak var btnShare: UIButton!
     @IBOutlet weak var qrCodeView: UIView!
     @IBOutlet weak var imgQRCode: UIImageView!
+    @IBOutlet weak var viewPreview: UIView!
+    @IBOutlet weak var viewQR: UIView!
     @IBOutlet weak var lblName: UILabel!
 
     // MARK: - View Life cycle
@@ -45,6 +47,10 @@ class GroupQRCodeVC: UIViewController {
         let shareImage = Appearance.default.images.shareImageIcon.withRenderingMode(.alwaysTemplate)
         shareImage.tinted(with: .white)
         btnShare.tintColor = .white
+        btnShare.setImage(shareImage, for: .normal)
+        viewPreview.backgroundColor = Appearance.default.colorPalette.searchBarBackground
+        viewQR.backgroundColor = Appearance.default.colorPalette.searchBarBackground
+        qrCodeView.backgroundColor = Appearance.default.colorPalette.qrBackground
     }
 
     private func generateQRCode() {
@@ -53,4 +59,16 @@ class GroupQRCodeVC: UIViewController {
         }
         imgQRCode.image = UIImage(cgImage: qrCode)
     }
+
+    @IBAction func btnShareAction(_ sender: Any) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let `self` = self else { return }
+            let uiimage = self.viewPreview.asImage(rect: self.viewPreview.bounds)
+            var userInfo = [String: Any]()
+            userInfo["image"] = uiimage
+            userInfo["groupName"] = self.groupName
+            NotificationCenter.default.post(name: .showActivityAction, object: nil, userInfo: userInfo)
+        }
+    }
 }
+
