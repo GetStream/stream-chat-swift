@@ -76,7 +76,7 @@ open class ChatChannelVC:
 
     open private(set) lazy var moreButton: UIButton = {
         let button = UIButton()
-        button.setImage(appearance.images.moreVertical, for: .normal)
+        button.setImage(Appearance.default.images.moreVertical, for: .normal)
         button.tintColor = .white
         button.backgroundColor = .clear
         return button.withoutAutoresizingMaskConstraints
@@ -285,10 +285,12 @@ open class ChatChannelVC:
             messageComposerVC?.composerView.alpha = 0.5
             headerView.titleContainerView.subtitleLabel.isHidden = true
             channelAvatarView.isHidden = true
+            moreButton.isHidden = true
         } else {
             messageComposerVC?.composerView.isUserInteractionEnabled = true
             messageComposerVC?.composerView.alpha = 1.0
             channelAvatarView.isHidden = false
+            moreButton.isHidden = false
         }
         let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.headerViewAction(_:)))
         tapGesture.numberOfTapsRequired = 1
@@ -330,7 +332,7 @@ open class ChatChannelVC:
     }
 
     @objc func backAction(_ sender: Any) {
-        deallocManually()
+        removeMenu()
         self.popWithAnimation()
         self.dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(name: .showTabbar, object: nil)
@@ -387,7 +389,7 @@ open class ChatChannelVC:
                 }
             })
         }
-        
+
         controller.bCallbackAddFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
@@ -402,23 +404,11 @@ open class ChatChannelVC:
                 }
             })
         }
-    
         presentPanModal(controller)
     }
 
     @objc func closePinViewAction(_ sender: Any) {
         shareView.isHidden = true
-    }
-
-    private func deallocManually() {
-        channelController = nil
-        NotificationCenter.default.removeObserver(self)
-        messageListVC?.client = nil
-        messageListVC?.delegate = nil
-        messageListVC?.dataSource = nil
-        messageListVC = nil
-        messageComposerVC = nil
-        userSuggestionSearchController = nil
     }
     
     private func getGroupLink() -> String? {
@@ -482,6 +472,12 @@ open class ChatChannelVC:
                               children: getMenuItems())
             moreButton.menu = menu
             moreButton.showsMenuAsPrimaryAction = true
+        }
+    }
+    
+    private func removeMenu() {
+        if #available(iOS 14.0, *) {
+            moreButton.menu = nil
         }
     }
     
