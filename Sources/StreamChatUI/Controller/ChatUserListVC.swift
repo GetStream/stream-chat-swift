@@ -21,7 +21,7 @@ public protocol ChatUserListDelegate: AnyObject {
 }
 public class ChatUserListVC: UIViewController {
     public enum ChatUserSelectionType {
-        case singleUser, group, privateGroup , addFriend
+        case singleUser, group, privateGroup, addFriend
     }
     public enum HeaderType {
         case createChatHeader, noHeader, alphabetHeader
@@ -59,6 +59,7 @@ public class ChatUserListVC: UIViewController {
     public var bCallbackGroupSelect: (() -> Void)?
     public var bCallbackGroupWeHere: (() -> Void)?
     public var bCallbackGroupJoinViaQR: (() -> Void)?
+    public var bCallbackAddFriend: ((ChatUser?) -> Void)?
     // MARK: - VIEW CYCLE
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -345,30 +346,24 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         guard self.viewModel.dataLoadingState == .completed else {
             return
         }
-        var user: ChatUser? = sectionWiseList[indexPath.section].users[indexPath.row]
-        if self.viewModel.existingUsers.map({ $0.id.lowercased()}).contains(user!.id.lowercased()) {
+        let user: ChatUser = sectionWiseList[indexPath.section].users[indexPath.row]
+        if self.viewModel.existingUsers.map({ $0.id.lowercased()}).contains(user.id.lowercased()) {
             return
         }
-        let selectedUserId = user!.id
+        let selectedUserId = user.id
         let client = ChatClient.shared
         guard let currentUserId = client.currentUserId else {
             return
         }
         switch userSelectionType {
         case .addFriend:
-            if let index = self.viewModel.selectedUsers.firstIndex(where: { $0.id == user!.id}) {
-                self.viewModel.selectedUsers.remove(at: index)
-            } else {
-                self.viewModel.selectedUsers.append(user!)
-            }
-            self.delegate?.chatUserDidSelect()
-            tableView.reloadRows(at: [indexPath], with: .fade)
+            self.bCallbackAddFriend?(user)
             return
         case .group:
-            if let index = self.viewModel.selectedUsers.firstIndex(where: { $0.id == user!.id}) {
+            if let index = self.viewModel.selectedUsers.firstIndex(where: { $0.id == user.id}) {
                 self.viewModel.selectedUsers.remove(at: index)
             } else {
-                self.viewModel.selectedUsers.append(user!)
+                self.viewModel.selectedUsers.append(user)
             }
             self.delegate?.chatUserDidSelect()
             tableView.reloadRows(at: [indexPath], with: .fade)
@@ -476,6 +471,9 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
 
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if self.viewModel.dataLoadingState == .searching || self.viewModel.dataLoadingState == .loading || self.viewModel.dataLoadingState == .none {
+            return 0
+        }
+        guard self.sectionWiseList.indices.contains(section) else {
             return 0
         }
         switch self.sectionWiseList[section].sectionType {

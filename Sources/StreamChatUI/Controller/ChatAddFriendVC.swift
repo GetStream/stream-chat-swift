@@ -39,7 +39,6 @@ public class ChatAddFriendVC: ChatBaseVC {
         let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
         return obj!
     }()
-    private var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
     private var isFullScreen = false
     public var selectedUsers = [ChatUser]()
     public var existingUsers = [ChatUser]()
@@ -53,22 +52,15 @@ public class ChatAddFriendVC: ChatBaseVC {
         super.viewDidLoad()
         setup()
     }
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.view.layoutIfNeeded()
-    }
     // MARK: - METHODS
     public func setup() {
         self.view.backgroundColor = .clear
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
-        btnAddFriend?.setTitle("", for: .normal)
-        btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
-        btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
-        btnAddFriend?.isHidden = selectionType == .inviteUser
+        btnAddFriend?.isHidden = true
         titleLabel.text = selectionType.title
         self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         self.searchField.delegate = self
-        
+        // Chat user list
         addChild(chatUserList)
         tableviewContainerView.addSubview(chatUserList.view)
         chatUserList.didMove(toParent: self)
@@ -78,22 +70,54 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.sortType = .sortByAtoZ
         chatUserList.viewModel.existingUsers = existingUsers
         chatUserList.viewModel.fetchUserList()
+        // Add friend Callback
+        chatUserList.bCallbackAddFriend = { [weak self] user in
+            guard let weakSelf = self else { return }
+            guard let selectedUser = user else { return }
+            weakSelf.searchField.resignFirstResponder()
+            if weakSelf.selectionType == .addFriend {
+                weakSelf.showAddFriendConfirmPopup(user: selectedUser)
+            }
+        }
+        // Setup UI
         viewContainerLeadingConst.constant = 5
         viewContainerTrailingConst.constant = 5
         setupUI()
+        
     }
     
     private func setupUI() {
-        let cornorRadius = viewContainerLeadingConst.constant > 0 ? 32 : 0
-        
+        let cornerRadius = viewContainerLeadingConst.constant > 0 ? 32 : 0
         viewHeaderView.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground
         searchBarContainerView.layer.cornerRadius = 20.0
-        viewHeaderView.layer.cornerRadius = CGFloat(cornorRadius)
+        viewHeaderView.layer.cornerRadius = CGFloat(cornerRadius)
     }
     
     @objc private func textDidChange(_ sender: UITextField) {
-        self.chatUserList.viewModel.searchDataUsing(searchString: sender.text)
+        if let searchText = sender.text, searchText.isEmpty == false {
+            if searchText.containsEmoji || searchText.isBlank {
+                return
+            }
+            self.chatUserList.viewModel.searchDataUsing(searchString: searchText)
+        } else {
+            self.chatUserList.viewModel.searchText = nil
+            self.chatUserList.viewModel.fetchUserList(true)
+        }
+    }
+    
+    private func showAddFriendConfirmPopup(user: ChatUser) {
+        let message = "Add \(user.name ?? user.id) to the group?"
+        let alert = UIAlertController.init(title: message, message: nil, preferredStyle: .alert)
+        let noAction = UIAlertAction.init(title: "No", style: .cancel, handler: nil)
+        let yesAction = UIAlertAction.init(title: "Yes", style: .default, handler: { [weak self] action in
+            guard let weakSelf = self else { return }
+            weakSelf.bCallbackAddFriend?([user])
+            weakSelf.btnBackAction(UIButton())
+        })
+        alert.addAction(noAction)
+        alert.addAction(yesAction)
+        present(alert, animated: true, completion: nil)
     }
     // MARK: - Actions
     @IBAction private func btnBackAction(_ sender: UIButton) {
@@ -123,14 +147,6 @@ public class ChatAddFriendVC: ChatBaseVC {
 //        UIApplication.shared.getTopViewController()?.present(nav, animated: true, completion: nil)
 //        UIApplication.shared.windows.first?.bringSubviewToFront(nav.view)
     }
-    
-    // swiftlint:disable redundant_type_annotation
-    @IBAction private func btnDoneAction(_ sender: UIButton) {
-        if self.selectedUsers.count > 0 {
-            self.bCallbackAddFriend?(self.selectedUsers)
-            self.btnBackAction(sender)
-        }
-    }
 }
 // MARK: - UITextFieldDelegate
 extension ChatAddFriendVC: UITextFieldDelegate {
@@ -141,10 +157,16 @@ extension ChatAddFriendVC: UITextFieldDelegate {
         }
         return true
     }
+    
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
     public func chatUserDidSelect() {
+        self.searchField.resignFirstResponder()
         self.selectedUsers = self.chatUserList.viewModel.selectedUsers
         self.btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
         self.btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty

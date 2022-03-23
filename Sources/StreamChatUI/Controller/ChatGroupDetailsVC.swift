@@ -13,70 +13,30 @@ import UIKit
 
 public class ChatGroupDetailsVC: ChatBaseVC {
     enum GroupDetailsSection: CaseIterable {
-        case userList,attachmentList
+        case userList
     }
     // MARK: - OUTLETS
     @IBOutlet private var lblTitle: UILabel!
     @IBOutlet private var lblSubtitle: UILabel!
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var notificationSwitch: UISwitch!
-    var filesContainerView = UIView()
     // MARK: - VARIABLES
     public var groupInviteLink: String?
     public var selectedUsers: [ChatChannelMember] = []
     public var channelController: ChatChannelController?
-    private var arrController = [UIViewController]()
-    private var usersCount = 0
-    private var sectionWiseList = [GroupDetailsSection]()
-    private lazy var buttonShowMore: UIButton = {
-        let btnShowMore = UIButton(frame: CGRect.init(x: UIScreen.main.bounds.width - 120, y: 0, width: 100, height: 35))
-        btnShowMore.setTitle("Show more", for: .normal)
-        btnShowMore.setTitleColor(Appearance.default.colorPalette.statusColorBlue, for: .normal)
-        btnShowMore.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        btnShowMore.addTarget(self, action: #selector(self.showMoreButtonAction(_ :)), for: .touchUpInside)
-        return btnShowMore
-    }()
+    private let sectionWiseList = GroupDetailsSection.allCases
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        fetchGroupDetails()
     }
     // MARK: - METHOD
     open func setupUI() {
         view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         let name = self.channelController?.channel?.name ?? ""
         lblTitle.text = name
-        self.buttonShowMore.isHidden = true
         self.updateMemberCount()
-        sectionWiseList.removeAll()
-        tableView.reloadData()
-        //
-        if let cid = channelController?.cid {
-            let controller = ChatClient.shared.memberListController(query: .init(cid: cid))
-            controller.synchronize { [weak self] error in
-                guard error == nil, let weakSelf = self else { return }
-                DispatchQueue.main.async {
-                    weakSelf.selectedUsers = []
-                    let nonNilUsers = (controller.members ?? []).filter({ $0.id != nil && $0.name?.isBlank == false })
-                    if let ownerUser = nonNilUsers.filter({ $0.memberRole == .owner }).first {
-                        weakSelf.selectedUsers.append(ownerUser)
-                    }
-                    let filteredUsers = nonNilUsers.filter({ $0.memberRole != .owner })
-                    let onlineUser = filteredUsers.filter({ $0.isOnline }).sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
-                    let offlineUser = filteredUsers.filter({ $0.isOnline == false})
-                    let alphabetUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == true && $0.isOnline == false}.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
-                    let otherUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
-                    
-                    weakSelf.selectedUsers.append(contentsOf: onlineUser)
-                    weakSelf.selectedUsers.append(contentsOf: alphabetUsers)
-                    weakSelf.selectedUsers.append(contentsOf: otherUsers)
-                    weakSelf.updateShowMoreButtonStatus()
-                    weakSelf.updateMemberCount()
-                    weakSelf.sectionWiseList = GroupDetailsSection.allCases
-                    weakSelf.tableView.reloadData()
-                }
-            }
-        }
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView.register(chatUserNib, forCellReuseIdentifier: chatUserID)
@@ -93,21 +53,59 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         notificationSwitch.isOn = !(channelController?.channel?.isMuted ?? true)
     }
     
+    private func fetchGroupDetails() {
+        if let cid = channelController?.cid {
+            let controller = ChatClient.shared.memberListController(query: .init(cid: cid))
+            controller.synchronize { [weak self] error in
+                guard error == nil, let weakSelf = self else { return }
+                DispatchQueue.main.async {
+                    var usersList = [ChatChannelMember]()
+                    let nonNilUsers = (controller.members ?? []).filter({ $0.id != nil && $0.name?.isBlank == false })
+                    if let ownerUser = nonNilUsers.filter({ $0.memberRole == .owner }).first {
+                        usersList.append(ownerUser)
+                    }
+                    let filteredUsers = nonNilUsers.filter({ $0.memberRole != .owner })
+                    let onlineUser = filteredUsers.filter({ $0.isOnline }).sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+                    let offlineUser = filteredUsers.filter({ $0.isOnline == false})
+                    let alphabetUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == true && $0.isOnline == false}.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+                    let otherUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
+                    
+                    usersList.append(contentsOf: onlineUser)
+                    usersList.append(contentsOf: alphabetUsers)
+                    usersList.append(contentsOf: otherUsers)
+                    weakSelf.updateMemberCount()
+                    weakSelf.updateFilteredUserList(list: usersList)
+                }
+            }
+        }
+    }
+    
     private func updateMemberCount() {
         let friendCount = selectedUsers.count
         let onlineUser = selectedUsers.filter( {$0.isOnline}).count ?? 0
         lblSubtitle.text = "\(friendCount) friends, \(onlineUser) online"
     }
     
-    private func updateShowMoreButtonStatus() {
-        let contentSize = selectedUsers.count * 60
-        if CGFloat(contentSize) > (self.tableView.bounds.height - 200) {
-            self.buttonShowMore.isHidden = false
-            self.usersCount = Int((self.tableView.bounds.height - 200) / 60)
-        } else {
-            self.buttonShowMore.isHidden = true
-            self.usersCount = selectedUsers.count
+    private func updateFilteredUserList(list: [ChatChannelMember]) {
+        var indexPathForInsert = [IndexPath]()
+        var indexPathForDelete = [IndexPath]()
+        for (userIndex,user) in list.enumerated() {
+            if let oldUserIndex = selectedUsers.firstIndex(where: { $0.id.lowercased() == user.id.lowercased() }) {
+                if oldUserIndex != userIndex {
+                    selectedUsers.remove(at: oldUserIndex)
+                    indexPathForDelete.append(IndexPath.init(row: oldUserIndex, section: 0))
+                    selectedUsers.insert(user, at: userIndex)
+                    indexPathForInsert.append(IndexPath.init(row: userIndex, section: 0))
+                }
+            } else {
+                selectedUsers.insert(user, at: userIndex)
+                indexPathForInsert.append(IndexPath.init(row: userIndex, section: 0))
+            }
         }
+        tableView.beginUpdates()
+        tableView.deleteRows(at: indexPathForDelete, with: .automatic)
+        tableView.insertRows(at: indexPathForInsert, with: .automatic)
+        tableView.endUpdates()
     }
     
     public func muteNotification() {
@@ -166,7 +164,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                 if error == nil {
                     DispatchQueue.main.async {
                         Snackbar.show(text: "Group Member updated")
-                        weakSelf.setupUI()
+                        weakSelf.fetchGroupDetails()
                     }
                 } else {
                     Snackbar.show(text: "Error operation could be completed")
@@ -183,17 +181,6 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             muteNotification()
         }
     }
-    
-    @objc func showMoreButtonAction(_ sender: UIButton) {
-        buttonShowMore.isHidden = true
-        let visibleRow = IndexPath.init(row: usersCount, section: 0)
-        usersCount = selectedUsers.count
-        tableView.reloadData()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-            guard let weakSelf = self else { return }
-            weakSelf.tableView.scrollToRow(at: visibleRow, at: .bottom, animated: true)
-        }
-    }
 }
 
 // MARK: - TABLEVIEW
@@ -205,9 +192,9 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sectionWiseList[section] {
         case .userList:
-            return usersCount
-        case .attachmentList:
-            return 1
+            return selectedUsers.count
+        default:
+            return 0
         }
     }
     
@@ -225,47 +212,8 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
             cell.backgroundColor = .clear
             cell.selectionStyle = .none
             return cell
-        case .attachmentList:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCellGroupDetailsAttachmentsList.reuseID) as? TableViewCellGroupDetailsAttachmentsList else {
-                return UITableViewCell.init(frame: .zero)
-            }
-            cell.selectionStyle = .none
-            cell.backgroundColor = .clear
-            cell.filesContainerView.backgroundColor = Appearance.default.colorPalette.chatViewBackground
-            return cell
-        }
-    }
-    
-    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        switch sectionWiseList[section] {
-        case .userList:
-            if usersCount == self.selectedUsers.count {
-                return nil
-            }
-            let footerView = UIView()
-            footerView.backgroundColor = .clear
-            footerView.addSubview(buttonShowMore)
-            return footerView
         default:
-            return nil
-        }
-    }
-    
-    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        switch sectionWiseList[section] {
-        case .userList:
-            if usersCount == self.selectedUsers.count {
-                return 0
-            }
-            return 35
-        default:
-            return 0
-        }
-    }
-    
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        defer {
-            tableView.deselectRow(at: indexPath, animated: false)
+            return UITableViewCell.init(frame: .zero)
         }
     }
 }
