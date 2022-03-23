@@ -33,8 +33,10 @@ public class TableViewCellChatUser: UITableViewCell {
         lblRole.isHidden = true
         avatarView.layer.cornerRadius = avatarView.bounds.height / 2
         accessoryImageView.layer.cornerRadius = accessoryImageView.bounds.height / 2
-        self.containerView.backgroundColor = .clear
+        containerView.backgroundColor = .clear
         SkeletonAppearance.default.gradient = shimmerGradient
+        backgroundColor = .clear
+        selectionStyle = .none
     }
 }
 // MARK: - Config

@@ -479,6 +479,9 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         if self.viewModel.dataLoadingState == .searching || self.viewModel.dataLoadingState == .loading || self.viewModel.dataLoadingState == .none {
             return 0
         }
+        guard self.sectionWiseList.indices.contains(section) else {
+            return 0
+        }
         switch self.sectionWiseList[section].sectionType {
         case .createChatHeader:
             return 0

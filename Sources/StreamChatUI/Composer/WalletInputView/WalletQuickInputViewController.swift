@@ -48,18 +48,18 @@ class WalletQuickInputViewController: UIViewController {
 
     @IBAction func btnRequestAction(_ sender: Any) {
         guard validateAmount() else { return }
-        showPaymentOptions()
         viewPaymentOption.isHidden = false
         didShowPaymentOption?()
         paymentType = .request
+        showPaymentOptions()
     }
 
     @IBAction func btnSendAction(_ sender: Any) {
         guard validateAmount() else { return }
-        showPaymentOptions()
         viewPaymentOption.isHidden = false
         didShowPaymentOption?()
         paymentType = .pay
+        showPaymentOptions()
     }
 
     private func validateAmount() -> Bool {
@@ -73,10 +73,12 @@ class WalletQuickInputViewController: UIViewController {
     private func showPaymentOptions() {
         guard validateAmount() else { return }
         if #available(iOS 14.0.0, *) {
-            self.children.forEach { vc in
-                vc.removeFromParent()
+            self.children.forEach { childVC in
+                childVC.willMove(toParent: nil)
+                childVC.removeFromParent()
+                childVC.view.removeFromSuperview()
             }
-            var paymentSelection = SendPaymentOptionView(amount: .constant("\(walletStepper.value)"))
+            var paymentSelection = SendPaymentOptionView(amount: .constant("\(walletStepper.value)"), paymentType: paymentType)
             paymentSelection.didSelectPayment = { [weak self] paymentOption in
                 guard let `self` = self else { return }
                 self.viewPaymentOption.isHidden = true
