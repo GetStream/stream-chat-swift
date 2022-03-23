@@ -28,7 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 log.error("adding a device failed with an error \(error)")
                 return
             }
-            UserDefaults(suiteName: applicationGroupIdentifier)?.set(currentUserId, forKey: currentUserIdRegisteredForPush)
+            UserDefaults(suiteName: applicationGroupIdentifier)?
+                .set(currentUserId, forKey: currentUserIdRegisteredForPush)
         }
     }
 
