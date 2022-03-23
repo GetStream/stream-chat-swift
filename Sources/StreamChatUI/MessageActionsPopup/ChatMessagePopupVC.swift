@@ -121,9 +121,9 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         }
 
         messageContainerStackView.addArrangedSubview(messageContentContainerView)
+
         constraints += [
-            messageContentContainerView.widthAnchor.pin(equalToConstant: messageViewFrame.width),
-            messageContentContainerView.heightAnchor.pin(equalToConstant: messageViewFrame.height)
+            messageContentContainerView.widthAnchor.pin(equalToConstant: messageViewFrame.width)
         ]
 
         if let actionsController = actionsController {

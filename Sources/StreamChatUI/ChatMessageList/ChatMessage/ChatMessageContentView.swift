@@ -599,6 +599,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
             textView?.dataDetectorTypes = .link
             textView?.isScrollEnabled = false
             textView?.backgroundColor = .clear
+            textView?.textContainer.lineBreakMode = .byTruncatingTail
             textView?.adjustsFontForContentSizeCategory = true
             textView?.textContainerInset = .init(top: 0, left: 8, bottom: 0, right: 8)
             textView?.textContainer.lineFragmentPadding = 0
