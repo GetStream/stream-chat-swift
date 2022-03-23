@@ -148,10 +148,10 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
             usingSpringWithDamping: 0.7,
             initialSpringVelocity: 4,
             options: [.curveEaseInOut],
-            animations: {
+            animations: { [weak self] in
                 messageView.transform = .identity
                 
-                actionsSnapshot?.frame = self.selectedMessageContentViewFrame ?? .zero
+                actionsSnapshot?.frame = self?.selectedMessageContentViewFrame ?? .zero
                 
                 showSnapshot(actionsSnapshot)
                 showSnapshot(reactionsSnapshot)
