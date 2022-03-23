@@ -42,7 +42,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         setupUI()
     }
     // MARK: - METHOD
-    open func setupUI() {
+    private func setupUI() {
         view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         let name = self.channelController?.channel?.name ?? ""
         lblTitle.text = name
@@ -110,7 +110,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         }
     }
     
-    public func muteNotification() {
+    private func muteNotification() {
         self.channelController?.muteChannel { [weak self] error in
             guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications muted" : "Error while muted group notifications"
@@ -121,7 +121,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         }
     }
     
-    public func unMuteNotification() {
+    private func unMuteNotification() {
         self.channelController?.unmuteChannel { [weak self] error in
             guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications unmuted" : "Error while unmute group notifications"
