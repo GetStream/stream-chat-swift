@@ -68,6 +68,7 @@ public class NameGroupViewController: ChatBaseVC {
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: UIView.safeAreaBottom, right: 0)
     }
     // MARK: - ACTIONS
     @objc private func textDidChange(_ sender: UITextField) {

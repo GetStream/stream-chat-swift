@@ -46,6 +46,8 @@ class JoinPrivateGroupVC: UIViewController {
     @IBOutlet weak var lblDescription: UILabel!
     @IBOutlet weak var viewJoinOverlay: UIView!
     @IBOutlet weak var safeAreaHeight: NSLayoutConstraint!
+    @IBOutlet weak var bottomSafeAreaHeight: NSLayoutConstraint!
+    @IBOutlet weak var viewSafeAreaBottom: UIView!
     
     // MARK: - View Life cycle
     override func viewDidLoad() {
@@ -91,9 +93,11 @@ class JoinPrivateGroupVC: UIViewController {
     // MARK: - Functions
     private func setupUI() {
         safeAreaHeight.constant = UIView.safeAreaTop
+        bottomSafeAreaHeight.constant = UIView.safeAreaBottom
         btnBack.setTitle("", for: .normal)
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
+        viewSafeAreaBottom.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         lblOTP.text = passWord
         lblOTP.textColor = .white
         lblOTP.setTextSpacingBy(value: 10)
