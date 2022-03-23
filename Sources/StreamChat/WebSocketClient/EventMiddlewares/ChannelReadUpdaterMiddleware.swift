@@ -72,7 +72,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
 
         // Try to get the existing channel read for the current user
         if let read = session.loadChannelRead(cid: cid, userId: currentUserId) {
-            if message.createdAt > read.lastReadAt ?? Date.distantPast {
+            if message.createdAt > read.lastReadAt {
                 read.unreadMessageCount += 1
             }
         } else {
