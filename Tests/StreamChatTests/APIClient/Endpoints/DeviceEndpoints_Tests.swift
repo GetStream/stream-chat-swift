@@ -6,10 +6,10 @@
 import XCTest
 
 final class DeviceEndpoints_Tests: XCTestCase {
-    func test_addDevice_buildsCorrectly() {
+    func test_addDevice_whenPushProviderIsAPN() {
         let userId: UserId = .unique
         let deviceId: String = .unique
-        
+
         let expectedEndpoint: Endpoint<EmptyResponse> = .init(
             path: .devices,
             method: .post,
@@ -17,10 +17,38 @@ final class DeviceEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: ["user_id": userId, "id": deviceId, "push_provider": "apn"]
         )
-        
+
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .addDevice(userId: userId, deviceId: deviceId)
-        
+        let endpoint: Endpoint<EmptyResponse> = .addDevice(
+            userId: userId,
+            deviceId: deviceId,
+            pushProvider: .apn
+        )
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("devices", endpoint.path.value)
+    }
+
+    func test_addDevice_whenPushProviderIsFirebase() {
+        let userId: UserId = .unique
+        let deviceId: String = .unique
+
+        let expectedEndpoint: Endpoint<EmptyResponse> = .init(
+            path: .devices,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["user_id": userId, "id": deviceId, "push_provider": "firebase"]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .addDevice(
+            userId: userId,
+            deviceId: deviceId,
+            pushProvider: .firebase
+        )
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("devices", endpoint.path.value)
