@@ -210,106 +210,100 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eol-SJ-p51">
-                                <rect key="frame" x="0.0" y="-50" width="414" height="996"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.3956361109" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wmg-bO-KgA">
-                                <rect key="frame" x="5" y="530.5" width="404" height="362.5"/>
-                                <color key="backgroundColor" name="viewBackground"/>
+                                <rect key="frame" x="5" y="0.0" width="404" height="893"/>
+                                <color key="backgroundColor" red="0.11764705882352941" green="0.11764705882352941" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="zEJ-PD-S0X">
-                                <rect key="frame" x="55" y="575.5" width="304" height="276.5"/>
+                                <rect key="frame" x="55" y="45" width="304" height="98.5"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="ze2-YJ-Rqk">
-                                        <rect key="frame" x="10" y="0.0" width="284" height="95.5"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="ze2-YJ-Rqk">
+                                        <rect key="frame" x="0.0" y="0.0" width="304" height="98.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Leave Chatroom" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTq-La-9ii">
-                                                <rect key="frame" x="0.0" y="0.0" width="284" height="34"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="304" height="34"/>
                                                 <fontDescription key="fontDescription" name="AppleSDGothicNeo-Bold" family="Apple SD Gothic Neo" pointSize="28"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Are you sure you want to leave this chatroom? If you leave, your chat history will be permanently deleted." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Fr-is-VB2">
-                                                <rect key="frame" x="0.0" y="45" width="284" height="50.5"/>
-                                                <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="14"/>
+                                                <rect key="frame" x="0.0" y="48" width="304" height="50.5"/>
+                                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="0.80213180853396049" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ndd-Nb-Rj1">
-                                        <rect key="frame" x="6.5" y="95.5" width="291" height="181"/>
-                                        <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDR-z1-HGp">
-                                                <rect key="frame" x="0.0" y="0.0" width="291" height="88"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="88" id="qBB-0t-BZ5"/>
-                                                </constraints>
-                                            </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S7M-bp-k8X">
-                                                <rect key="frame" x="0.0" y="88" width="291" height="41"/>
-                                                <color key="backgroundColor" red="1" green="0.41176470588235292" blue="0.38039215686274508" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="41" id="2BH-Ib-fVA"/>
-                                                    <constraint firstAttribute="width" constant="291" id="BK6-qZ-idC"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                <state key="normal" title="Delete Chatroom">
-                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="actionButton:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="pgW-wy-VX9"/>
-                                                </connections>
-                                            </button>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OFW-94-1D4">
-                                                <rect key="frame" x="0.0" y="129" width="291" height="11"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="11" id="ht6-Tv-bqG"/>
-                                                </constraints>
-                                            </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pJJ-cM-lop">
-                                                <rect key="frame" x="0.0" y="140" width="291" height="41"/>
-                                                <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="41" id="nau-gg-gqF"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                <state key="normal" title="Cancel">
-                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="0.69862594085485752" colorSpace="custom" customColorSpace="sRGB"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="cancelButtonAction:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="uXa-Jc-kM2"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                    </stackView>
+                                </subviews>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ndd-Nb-Rj1">
+                                <rect key="frame" x="40" y="143.5" width="334" height="181"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDR-z1-HGp">
+                                        <rect key="frame" x="0.0" y="0.0" width="334" height="88"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="88" id="qBB-0t-BZ5"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S7M-bp-k8X">
+                                        <rect key="frame" x="0.0" y="88" width="334" height="41"/>
+                                        <color key="backgroundColor" red="1" green="0.41176470588235292" blue="0.38039215686274508" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="41" id="2BH-Ib-fVA"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="17"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Delete Chatroom">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="actionButton:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="pgW-wy-VX9"/>
+                                        </connections>
+                                    </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OFW-94-1D4">
+                                        <rect key="frame" x="0.0" y="129" width="334" height="11"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="11" id="ht6-Tv-bqG"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pJJ-cM-lop">
+                                        <rect key="frame" x="0.0" y="140" width="334" height="41"/>
+                                        <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="41" id="nau-gg-gqF"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="17"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Cancel">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="0.69862594085485752" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="cancelButtonAction:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="uXa-Jc-kM2"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TG8-uv-uNI"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="TG8-uv-uNI" firstAttribute="bottom" secondItem="zEJ-PD-S0X" secondAttribute="bottom" constant="10" id="3yV-5i-eDm"/>
+                            <constraint firstItem="ndd-Nb-Rj1" firstAttribute="top" secondItem="zEJ-PD-S0X" secondAttribute="bottom" id="4K8-d8-eDS"/>
                             <constraint firstAttribute="bottom" secondItem="wmg-bO-KgA" secondAttribute="bottom" constant="3" id="BaT-dj-7RZ"/>
-                            <constraint firstAttribute="bottom" secondItem="Eol-SJ-p51" secondAttribute="bottom" constant="-50" id="Mjj-Ks-Lgc"/>
+                            <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="ndd-Nb-Rj1" secondAttribute="trailing" constant="40" id="DjZ-g1-ET4"/>
                             <constraint firstItem="zEJ-PD-S0X" firstAttribute="leading" secondItem="GND-di-ziF" secondAttribute="leading" constant="55" id="dJC-CR-rZN"/>
-                            <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="Eol-SJ-p51" secondAttribute="trailing" id="guZ-Pg-gZ7"/>
                             <constraint firstItem="wmg-bO-KgA" firstAttribute="top" secondItem="zEJ-PD-S0X" secondAttribute="top" constant="-45" id="hC9-JS-SF9"/>
                             <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="zEJ-PD-S0X" secondAttribute="trailing" constant="55" id="iOs-C1-v5c"/>
                             <constraint firstAttribute="trailing" secondItem="wmg-bO-KgA" secondAttribute="trailing" constant="5" id="m6Y-NO-CsJ"/>
-                            <constraint firstItem="Eol-SJ-p51" firstAttribute="top" secondItem="GND-di-ziF" secondAttribute="top" constant="-50" id="mhg-FZ-sqN"/>
+                            <constraint firstItem="wmg-bO-KgA" firstAttribute="top" secondItem="GND-di-ziF" secondAttribute="top" id="vKz-F4-nMO"/>
+                            <constraint firstItem="ndd-Nb-Rj1" firstAttribute="leading" secondItem="TG8-uv-uNI" secondAttribute="leading" constant="40" id="vft-cF-CpY"/>
                             <constraint firstItem="wmg-bO-KgA" firstAttribute="leading" secondItem="TG8-uv-uNI" secondAttribute="leading" constant="5" id="xhg-SU-Wd0"/>
-                            <constraint firstItem="Eol-SJ-p51" firstAttribute="leading" secondItem="TG8-uv-uNI" secondAttribute="leading" id="zb3-qs-NMw"/>
+                            <constraint firstItem="ndd-Nb-Rj1" firstAttribute="centerX" secondItem="GND-di-ziF" secondAttribute="centerX" id="zrU-W3-Lqi"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="actionButton" destination="S7M-bp-k8X" id="GyN-J6-Zws"/>
-                        <outlet property="backgroundView" destination="Eol-SJ-p51" id="vY1-NL-pXt"/>
                         <outlet property="cancelButton" destination="pJJ-cM-lop" id="uD7-rj-oB3"/>
                         <outlet property="containerView" destination="wmg-bO-KgA" id="Nbv-NY-0Yd"/>
                         <outlet property="messageLabel" destination="8Fr-is-VB2" id="t7Z-fb-DL7"/>

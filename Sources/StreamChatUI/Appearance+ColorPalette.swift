@@ -78,6 +78,8 @@ public extension Appearance {
         public var incommingMessageColor: UIColor = .incommingMessageColor
         public var searchPlaceHolder: UIColor = .searchPlaceHolder
         public var placeHolderBalanceBG: UIColor = .placeHolderBalanceBG
+
+        public var showMoreButtonBg: UIColor = .init(rgb: 0x38383A)
     }
 }
 

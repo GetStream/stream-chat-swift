@@ -538,9 +538,7 @@ open class ChatChannelVC:
                 }
             }
         }
-        controller.modalPresentationStyle = .overCurrentContext
-        controller.modalTransitionStyle = .crossDissolve
-        self.present(controller, animated: true, completion: nil)
+        self.presentPanModal(controller)
     }
     
     public func leaveGroupDeleteGroupAction() {
@@ -553,9 +551,7 @@ open class ChatChannelVC:
             guard let weakSelf = self else { return }
             weakSelf.deleteThisChannel()
         }
-        controller.modalPresentationStyle = .overCurrentContext
-        controller.modalTransitionStyle = .crossDissolve
-        self.present(controller, animated: true, completion: nil)
+        self.presentPanModal(controller)
     }
     
     private func deleteThisChannel() {
