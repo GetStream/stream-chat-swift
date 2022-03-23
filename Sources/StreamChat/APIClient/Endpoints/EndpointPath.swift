@@ -37,6 +37,7 @@ enum EndpointPath: Codable {
     case addReaction(MessageId)
     case deleteReaction(MessageId, MessageReactionType)
     case messageAction(MessageId)
+    case translateMessage(MessageId)
 
     case banMember
     case flagUser(Bool)
@@ -77,6 +78,7 @@ enum EndpointPath: Codable {
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
         case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
+        case let .translateMessage(messageId): return "messages/\(messageId)/translate"
 
         case .banMember: return "moderation/ban"
         case let .flagUser(flag): return "moderation/\(flag ? "flag" : "unflag")"

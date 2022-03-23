@@ -150,6 +150,9 @@ public struct ChatMessage {
     /// The message pinning information. Is `nil` if the message is not pinned.
     public let pinDetails: MessagePinDetails?
     
+    /// Internationalization and localization for the message. Only available for translated messages.
+    public let translations: [TranslationLanguage: String]?
+    
     internal init(
         id: MessageId,
         cid: ChannelId,
@@ -181,6 +184,7 @@ public struct ChatMessage {
         currentUserReactions: @escaping () -> Set<ChatMessageReaction>,
         isSentByCurrentUser: Bool,
         pinDetails: MessagePinDetails?,
+        translations: [TranslationLanguage: String]?,
         underlyingContext: NSManagedObjectContext?
     ) {
         self.id = id
@@ -205,6 +209,7 @@ public struct ChatMessage {
         self.isFlaggedByCurrentUser = isFlaggedByCurrentUser
         self.isSentByCurrentUser = isSentByCurrentUser
         self.pinDetails = pinDetails
+        self.translations = translations
         
         $_author = (author, underlyingContext)
         $_mentionedUsers = (mentionedUsers, underlyingContext)

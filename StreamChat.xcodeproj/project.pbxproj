@@ -346,6 +346,10 @@
 		79CD959424F9381700E87377 /* MulticastDelegate_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CD959324F9381700E87377 /* MulticastDelegate_Tests.swift */; };
 		79CD959624F9414700E87377 /* ChannelListController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CD959524F9414700E87377 /* ChannelListController+SwiftUI_Tests.swift */; };
 		79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */; };
+		79D5CDD127EA1BA100BE7D8B /* TranslationLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D5CDD027EA1BA100BE7D8B /* TranslationLanguage.swift */; };
+		79D5CDD227EA1BA100BE7D8B /* TranslationLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D5CDD027EA1BA100BE7D8B /* TranslationLanguage.swift */; };
+		79D5CDD427EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D5CDD327EA1BE300BE7D8B /* MessageTranslationsPayload.swift */; };
+		79D5CDD527EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D5CDD327EA1BE300BE7D8B /* MessageTranslationsPayload.swift */; };
 		79D6CE1725F7C02400BE2EEC /* ChannelWatcherListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CE1625F7C02400BE2EEC /* ChannelWatcherListQuery_Tests.swift */; };
 		79D6CE2725F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CE2625F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift */; };
 		79D6CE3725F7C84600BE2EEC /* ChatChannelWatcherListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CE3625F7C84500BE2EEC /* ChatChannelWatcherListController+SwiftUI.swift */; };
@@ -2385,6 +2389,8 @@
 		79CD959324F9381700E87377 /* MulticastDelegate_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticastDelegate_Tests.swift; sourceTree = "<group>"; };
 		79CD959524F9414700E87377 /* ChannelListController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserDTO.swift; sourceTree = "<group>"; };
+		79D5CDD027EA1BA100BE7D8B /* TranslationLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationLanguage.swift; sourceTree = "<group>"; };
+		79D5CDD327EA1BE300BE7D8B /* MessageTranslationsPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTranslationsPayload.swift; sourceTree = "<group>"; };
 		79D6CE1625F7C02400BE2EEC /* ChannelWatcherListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWatcherListQuery_Tests.swift; sourceTree = "<group>"; };
 		79D6CE2625F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelWatcherListController+Combine.swift"; sourceTree = "<group>"; };
 		79D6CE3625F7C84500BE2EEC /* ChatChannelWatcherListController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelWatcherListController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -3746,6 +3752,7 @@
 				79BF83EA248F8EC0007611A1 /* Logger */,
 				C1E8AD5A278DDEBB0041B775 /* Operations */,
 				C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */,
+				79D5CDD027EA1BA100BE7D8B /* TranslationLanguage.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -3921,6 +3928,7 @@
 				A30C3F1F276B428F00DA5968 /* UnknownUserEvent.swift */,
 				DA84070B25250581005A0F62 /* UserListPayload.swift */,
 				79B5517124E593C200CE9FEC /* UserPayloads.swift */,
+				79D5CDD327EA1BE300BE7D8B /* MessageTranslationsPayload.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -8231,6 +8239,7 @@
 				C1FC2F9D2742579D0062530F /* FoundationHTTPHandler.swift in Sources */,
 				C186BFAF27AADB410099CCA6 /* SyncOperations.swift in Sources */,
 				79B5517524E595CC00CE9FEC /* CurrentUserPayloads.swift in Sources */,
+				79D5CDD127EA1BA100BE7D8B /* TranslationLanguage.swift in Sources */,
 				8A0CC9E524C5FEA900705CF9 /* MemberEvents.swift in Sources */,
 				DA4AA3BA2502731900FAAF6E /* Publisher+Extensions.swift in Sources */,
 				881506EC258212BF0013935B /* MultipartFormData.swift in Sources */,
@@ -8361,6 +8370,7 @@
 				88F6DF91252C8845009A8AF0 /* ChannelMemberUpdater.swift in Sources */,
 				79BF83F2248F8F60007611A1 /* Logger.swift in Sources */,
 				799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */,
+				79D5CDD427EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */,
 				88D85D97252F168000AE1030 /* MemberController+SwiftUI.swift in Sources */,
 				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
 				88D85D9A252F168B00AE1030 /* MemberController+Combine.swift in Sources */,
@@ -8851,6 +8861,7 @@
 				C121E804274544AC00023E4C /* ChatClient.swift in Sources */,
 				C121E805274544AC00023E4C /* Deprecations.swift in Sources */,
 				C121E806274544AC00023E4C /* Token.swift in Sources */,
+				79D5CDD227EA1BA100BE7D8B /* TranslationLanguage.swift in Sources */,
 				C121E807274544AC00023E4C /* TokenProvider.swift in Sources */,
 				C121E808274544AC00023E4C /* BaseURL.swift in Sources */,
 				C121E809274544AC00023E4C /* ChatClientConfig.swift in Sources */,
@@ -8881,6 +8892,7 @@
 				C1B0B38427BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */,
 				C121E823274544AD00023E4C /* URLSessionWebSocketEngine.swift in Sources */,
 				C121E824274544AD00023E4C /* StarscreamWebSocketEngine.swift in Sources */,
+				79D5CDD527EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */,
 				C121E825274544AD00023E4C /* BackgroundTaskScheduler.swift in Sources */,
 				C121E826274544AD00023E4C /* WebSocketClient.swift in Sources */,
 				C121E827274544AD00023E4C /* WebSocketPingController.swift in Sources */,
