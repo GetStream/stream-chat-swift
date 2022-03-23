@@ -17,30 +17,21 @@ public class JoinGroupRequestVC: UIViewController {
     @IBOutlet private weak var groupNameLabel: UILabel!
     @IBOutlet private weak var joinGroupButton: UIButton!
     @IBOutlet private weak var closeButton: UIButton!
-    @IBOutlet private weak var containerView: UIView!
+    @IBOutlet private weak var lblGroupDetails: UILabel!
     @IBOutlet private weak var backgroundView: UIView!
-    @IBOutlet private weak var usersCollectionView: CollectionViewGroupUserList!
+
     // MARK: - VARIBALES
     public var channelController: ChatChannelController!
     public var callbackUserJoined:(() -> Void)?
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .clear
         groupImageView.layer.cornerRadius = groupImageView.bounds.width / 2
         groupImageView.content = (channelController.channel, nil)
-        groupNameLabel.text = channelController.channel!.name!.capitalizingFirstLetter()
-        self.containerView.layer.cornerRadius = 30.0
-        self.joinGroupButton.layer.cornerRadius = joinGroupButton.bounds.height/2
-        let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(backgroundViewAction))
-        tapGesture.numberOfTapsRequired = 1
-        self.backgroundView.addGestureRecognizer(tapGesture)
+        groupNameLabel.text = channelController.channel?.name?.capitalizingFirstLetter() ?? ""
+        lblGroupDetails.text = channelController.channel?.extraData.channelDescription ?? ""
+        joinGroupButton.layer.cornerRadius = joinGroupButton.bounds.height/2
         closeButton.setImage(Appearance.default.images.closePopup, for: .normal)
-        let users = channelController.channel?.lastActiveMembers as? [ChatUser] ?? []
-        usersCollectionView.setupUsers(users: users)
-        if users.isEmpty {
-            usersCollectionView.isHidden = true
-        }
     }
     
     @objc func backgroundViewAction() {
@@ -62,5 +53,43 @@ public class JoinGroupRequestVC: UIViewController {
             Snackbar.show(text: "Group joined successfully")
             weakSelf.callbackUserJoined?()
         }
+    }
+}
+
+extension JoinGroupRequestVC: PanModalPresentable {
+    public var panScrollable: UIScrollView? {
+        return nil
+    }
+
+    public var shortFormHeight: PanModalHeight {
+        return .contentHeightIgnoringSafeArea(447)
+    }
+
+    public var longFormHeight: PanModalHeight {
+        return .contentHeightIgnoringSafeArea(447)
+    }
+
+    public var anchorModalToLongForm: Bool {
+        return true
+    }
+
+    public var showDragIndicator: Bool {
+        return false
+    }
+
+    public var allowsExtendedPanScrolling: Bool {
+        return false
+    }
+
+    public var allowsDragToDismiss: Bool {
+        return true
+    }
+
+    public var cornerRadius: CGFloat {
+        return 34
+    }
+
+    public var isHapticFeedbackEnabled: Bool {
+        return true
     }
 }
