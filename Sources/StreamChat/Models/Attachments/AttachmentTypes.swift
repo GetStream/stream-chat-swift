@@ -187,25 +187,50 @@ public struct AttachmentFile: Codable, Hashable {
 
 /// An attachment file type.
 public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
-    /// A file attachment type.
-    case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
-    
+    /// File
+    case generic, doc, docx, pdf, ppt, pptx, tar, xls, zip, x7z, xz, ods, odt, xlsx
+    /// Text
+    case csv, rtf, txt
+    /// Audio
+    case mp3, mp4, wav, ogg, m4a
+    /// Video
+    case mov, avi, wmv, webm
+    /// Image
+    case jpeg, png, gif, bmp, webp
+
     private static let mimeTypes: [String: AttachmentFileType] = [
         "application/octet-stream": .generic,
-        "text/csv": .csv,
         "application/msword": .doc,
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": .docx,
         "application/pdf": .pdf,
         "application/vnd.ms-powerpoint": .ppt,
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation": .pptx,
         "application/x-tar": .tar,
         "application/vnd.ms-excel": .xls,
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": .xlsx,
         "application/zip": .zip,
+        "application/x-7z-compressed": .x7z,
+        "application/x-xz": .xz,
+        "application/vnd.oasis.opendocument.spreadsheet": .ods,
+        "application/vnd.oasis.opendocument.text": .odt,
+        "text/csv": .csv,
+        "text/rtf": .rtf,
+        "text/plain": .txt,
         "audio/mp3": .mp3,
+        "audio/mp4": .m4a,
+        "audio/wav": .wav,
+        "audio/ogg": .ogg,
         "video/mp4": .mp4,
         "video/quicktime": .mov,
+        "video/x-msvideo": .avi,
+        "video/x-ms-wmv": .wmv,
+        "video/webm": .webm,
         "image/jpeg": .jpeg,
         "image/jpg": .jpeg,
         "image/png": .png,
-        "image/gif": .gif
+        "image/gif": .gif,
+        "image/bmp": .bmp,
+        "image/webp": .webp
     ]
     
     /// Init an attachment file type by mime type.
@@ -223,11 +248,17 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         // which breaks our file type detection code.
         // We lowercase it for extra safety
         let ext = ext.lowercased()
+
         if ext == "jpg" {
             self = .jpeg
             return
         }
-        
+
+        if ext == "7z" {
+            self = .x7z
+            return
+        }
+
         self = AttachmentFileType(rawValue: ext) ?? .generic
     }
     
@@ -236,8 +267,10 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         if self == .jpeg {
             return "image/jpeg"
         }
-        
-        return AttachmentFileType.mimeTypes.first(where: { $1 == self })?.key ?? "application/octet-stream"
+
+        return AttachmentFileType.mimeTypes
+            .first(where: { $1 == self })?
+            .key ?? "application/octet-stream"
     }
 }
 

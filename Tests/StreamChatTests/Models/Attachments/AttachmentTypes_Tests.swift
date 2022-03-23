@@ -101,4 +101,10 @@ class AttachmentTypes_Tests: XCTestCase {
         // Assert object encoded and decoded correctly
         XCTAssertEqual(file, decoded)
     }
+
+    func test_attachmentFileType_initWithExtension_edgeCases() {
+        XCTAssertEqual(AttachmentFileType(ext: "jpg"), .jpeg)
+        XCTAssertEqual(AttachmentFileType(ext: "jpeg"), .jpeg)
+        XCTAssertEqual(AttachmentFileType(ext: "7z"), .x7z)
+    }
 }
