@@ -145,6 +145,12 @@ open class ChatChannelVC:
     open lazy var messageListVC: ChatMessageListVC? = components
         .messageListVC
         .init()
+    
+    /// bottom safe area view
+    open lazy var bottomSafeArea: BottomSafeAreaView = components
+        .bottomSafeAreaView
+        .init()
+        .withoutAutoresizingMaskConstraints
 
     /// Controller that handles the composer view
     open private(set) lazy var messageComposerVC: ComposerVC? = components
@@ -238,6 +244,16 @@ open class ChatChannelVC:
             headerView.centerXAnchor.constraint(equalTo: navigationHeaderView.centerXAnchor, constant: 0),
             headerView.widthAnchor.constraint(equalTo: navigationHeaderView.widthAnchor, multiplier: 0.6)
         ])
+        
+        view.addSubview(bottomSafeArea)
+        bottomSafeArea.backgroundColor = appearance.colorPalette.tabbarBackground
+        NSLayoutConstraint.activate([
+            bottomSafeArea.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bottomSafeArea.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomSafeArea.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomSafeArea.heightAnchor.constraint(equalToConstant: UIView.safeAreaBottom)
+        ])
+        
         if let messageListVC = messageListVC {
             addChildViewController(messageListVC, targetView: view)
             NSLayoutConstraint.activate([
