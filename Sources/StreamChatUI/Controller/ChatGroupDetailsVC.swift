@@ -5,6 +5,83 @@
 //  Created by Jitendra Sharma on 08/02/22.
 //
 
+import UIKit
+
+public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
+    
+    // MARK: - Variables
+    enum TableViewSections: Int {
+        case profile
+        case userList
+    }
+    
+    // MARK: - Outlets
+    @IBOutlet weak var heightSafeAreaTop: NSLayoutConstraint!
+    @IBOutlet weak var imgMore: StreamChatBackButton!
+    @IBOutlet weak var tableView: UITableView!
+    
+    // MARK: - view life cycle
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+    }
+    
+    // MARK: - IB Actions
+    @IBAction func btnBackAction(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @IBAction func btnMoreAction(_ sender: Any) {
+        
+    }
+    
+    // MARK: - Functions
+    private func setupUI() {
+        heightSafeAreaTop.constant = UIView.safeAreaTop
+        view.backgroundColor = appearance.colorPalette.groupDetailBackground
+        imgMore.setImage(appearance.images.moregreyCircle, for: .normal)
+        tableView.register(.init(nibName: "ChannelDetailHeaderTVCell", bundle: nil), forCellReuseIdentifier: "ChannelDetailHeaderTVCell")
+    }
+}
+
+extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
+    
+    public func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let section = TableViewSections(rawValue: section) else {
+            return 0
+        }
+        switch section {
+        case .profile:
+            return 1
+        case .userList:
+            return 0
+        default:
+            return 0
+        }
+    }
+    
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let section = TableViewSections(rawValue: indexPath.section) else {
+            return UITableViewCell()
+        }
+        switch section {
+        case .profile:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "ChannelDetailHeaderTVCell",
+                for: indexPath) as? ChannelDetailHeaderTVCell else {
+                return UITableViewCell()
+            }
+            return cell
+        case .userList:
+            return UITableViewCell()
+        }
+    }
+}
+/*
 import Nuke
 import StreamChat
 import StreamChatUI
@@ -286,3 +363,4 @@ extension AttachmentType {
         }
     }
 }
+ */
