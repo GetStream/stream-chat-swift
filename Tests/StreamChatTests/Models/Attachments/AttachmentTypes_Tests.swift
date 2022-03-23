@@ -107,4 +107,13 @@ class AttachmentTypes_Tests: XCTestCase {
         XCTAssertEqual(AttachmentFileType(ext: "jpeg"), .jpeg)
         XCTAssertEqual(AttachmentFileType(ext: "7z"), .x7z)
     }
+
+    func test_attachmentType_initWithFileExtension() {
+        XCTAssertEqual(AttachmentType(fileExtension: "jpg"), .image)
+        XCTAssertEqual(AttachmentType(fileExtension: "mp4"), .video)
+        XCTAssertEqual(AttachmentType(fileExtension: "wav"), .audio)
+        XCTAssertEqual(AttachmentType(fileExtension: "txt"), .file)
+        XCTAssertEqual(AttachmentType(fileExtension: "zip"), .file)
+        XCTAssertEqual(AttachmentType(fileExtension: "unknown"), .file)
+    }
 }

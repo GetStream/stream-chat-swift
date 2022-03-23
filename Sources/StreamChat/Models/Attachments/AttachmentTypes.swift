@@ -96,6 +96,30 @@ public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBy
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
+
+    /// Create an `AttachmentType` from a file extension.
+    ///
+    /// If we know the extension of a file, it is possible to resolve
+    /// the attachment type through its extension/mime-type.
+    public init(fileExtension: String) {
+        let attachmentFileType = AttachmentFileType(ext: fileExtension)
+        guard let mainMimeType = attachmentFileType.mimeType.split(separator: "/").first else {
+            self = .file
+            return
+        }
+        switch mainMimeType {
+        case "image":
+            self = .image
+        case "video":
+            self = .video
+        case "audio":
+            self = .audio
+        case "text", "application":
+            self = .file
+        default:
+            self = .file
+        }
+    }
 }
 
 public extension AttachmentType {
