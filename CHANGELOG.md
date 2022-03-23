@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix attachment file mime-types [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
 ## StreamChatUI
 ### 🐞 Fixed
-- Resolve attachment type when importing from file picker [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
+- Resolve attachment type when importing file from file picker [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
 
 # [4.12.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.12.0)
 _March 16, 2022_
