@@ -514,7 +514,9 @@ open class ChatChannelVC:
                 return
             }
             qrCodeVc.strContent = weakSelf.getGroupLink()
-            weakSelf.pushWithAnimation(controller: qrCodeVc)
+            qrCodeVc.groupName = weakSelf.channelController?.channel?.name
+            qrCodeVc.modalPresentationStyle = .fullScreen
+            UIApplication.shared.keyWindow?.rootViewController?.present(qrCodeVc, animated: true, completion: nil)
         }
     }
     
@@ -794,7 +796,9 @@ open class ChatChannelVC:
                 return
             }
             qrCodeVc.strContent = self.getGroupLink()
-            self.pushWithAnimation(controller: qrCodeVc)
+            qrCodeVc.groupName = self.channelController?.channel?.name
+            qrCodeVc.modalPresentationStyle = .fullScreen
+            UIApplication.shared.keyWindow?.rootViewController?.present(qrCodeVc, animated: true, completion: nil)
         }
         // search
         // To do:- will add in future release
