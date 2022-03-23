@@ -32,6 +32,7 @@ public class JoinGroupRequestVC: UIViewController {
         lblGroupDetails.text = channelController.channel?.extraData.channelDescription ?? ""
         joinGroupButton.layer.cornerRadius = joinGroupButton.bounds.height/2
         closeButton.setImage(Appearance.default.images.closePopup, for: .normal)
+        backgroundView.backgroundColor = Appearance.default.colorPalette.panModelColor
     }
     
     @objc func backgroundViewAction() {
