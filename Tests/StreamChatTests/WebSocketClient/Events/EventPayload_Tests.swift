@@ -4,7 +4,6 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
-import StreamChatTestHelpers
 import XCTest
 
 final class EventPayload_Tests: XCTestCase {
@@ -41,7 +40,7 @@ final class EventPayload_Tests: XCTestCase {
         // Create event payload with custom event type and cid
         let cid: ChannelId = try .init(cid: "club:123")
         let payload = EventPayload(eventType: IdeaEventPayload.eventType, cid: cid)
-        
+
         // Try to parse system event from payload
         XCTAssertThrowsError(try payload.event()) { error in
             // Assert `ClientError.UnknownChannelEvent` is thrown
