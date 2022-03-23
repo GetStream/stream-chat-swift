@@ -83,7 +83,6 @@ public class ChatAddFriendVC: ChatBaseVC {
         viewContainerLeadingConst.constant = 5
         viewContainerTrailingConst.constant = 5
         setupUI()
-        
     }
     
     private func setupUI() {
