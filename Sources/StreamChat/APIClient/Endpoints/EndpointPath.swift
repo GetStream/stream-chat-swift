@@ -93,7 +93,7 @@ enum EndpointPath: Codable {
         case connect, sync, users, guest, members, search, devices, channels, createChannel, updateChannel, deleteChannel,
              channelUpdate, muteChannel, showChannel, truncateChannel, markChannelRead, markAllChannelsRead, channelEvent,
              stopWatchingChannel, pinnedMessages, uploadAttachment, sendMessage, message, editMessage, deleteMessage, replies,
-             reactions, addReaction, deleteReaction, messageAction, banMember, flagUser, flagMessage, muteUser
+             reactions, addReaction, deleteReaction, messageAction, translate, banMember, flagUser, flagMessage, muteUser
     }
 
     init(from decoder: Decoder) throws {
@@ -180,6 +180,8 @@ enum EndpointPath: Codable {
             )
         case .messageAction:
             self = try .messageAction(container.decode(MessageId.self, forKey: key))
+        case .translate:
+            self = try .translateMessage(container.decode(MessageId.self, forKey: key))
         case .banMember:
             self = .banMember
         case .flagUser:
@@ -261,6 +263,8 @@ enum EndpointPath: Codable {
             try nestedContainer.encode(reactionType)
         case let .messageAction(messageId):
             try container.encode(messageId, forKey: .messageAction)
+        case let .translateMessage(messageId):
+            try container.encode(messageId, forKey: .translate)
         case .banMember:
             try container.encode(true, forKey: .banMember)
         case let .flagUser(bool):
