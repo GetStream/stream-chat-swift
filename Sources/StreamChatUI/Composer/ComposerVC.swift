@@ -865,15 +865,14 @@ open class ComposerVC: _ViewController,
     // MARK: - UIDocumentPickerViewControllerDelegate
     
     open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let type: AttachmentType = .file
-        
         for fileURL in urls {
+            let attachmentType = AttachmentType(fileExtension: fileURL.pathExtension)
             do {
-                try addAttachmentToContent(from: fileURL, type: type)
+                try addAttachmentToContent(from: fileURL, type: attachmentType)
             } catch {
                 handleAddAttachmentError(
                     attachmentURL: fileURL,
-                    attachmentType: type,
+                    attachmentType: attachmentType,
                     error: error
                 )
                 break
