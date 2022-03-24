@@ -880,7 +880,6 @@
 		A34407C127D8C33F0044F150 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34407C027D8C33F0044F150 /* ViewController.swift */; };
 		A34407C927D8C3400044F150 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A34407C827D8C3400044F150 /* Assets.xcassets */; };
 		A34407CC27D8C3400044F150 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A34407CA27D8C3400044F150 /* LaunchScreen.storyboard */; };
-		A34407F727D8C8A70044F150 /* ChannelListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34407F427D8C8A70044F150 /* ChannelListVC.swift */; };
 		A34407F827D8C8A70044F150 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34407F527D8C8A70044F150 /* User.swift */; };
 		A34407F927D8C8A70044F150 /* ChatClient+shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34407F627D8C8A70044F150 /* ChatClient+shared.swift */; };
 		A34407FC27D8C9040044F150 /* StreamChatWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34407FB27D8C9040044F150 /* StreamChatWrapper.swift */; };
@@ -2981,7 +2980,6 @@
 		A34407CB27D8C3400044F150 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A34407CD27D8C3400044F150 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A34407DC27D8C3400044F150 /* StreamChatUITestsAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITestsAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A34407F427D8C8A70044F150 /* ChannelListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelListVC.swift; sourceTree = "<group>"; };
 		A34407F527D8C8A70044F150 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		A34407F627D8C8A70044F150 /* ChatClient+shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChatClient+shared.swift"; sourceTree = "<group>"; };
 		A34407FB27D8C9040044F150 /* StreamChatWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatWrapper.swift; sourceTree = "<group>"; };
@@ -4842,12 +4840,12 @@
 		822F267B27DA1DA600E454FB /* MockResponses */ = {
 			isa = PBXGroup;
 			children = (
+				822F267F27DA3F7700E454FB /* http_events.json */,
 				822F267C27DA1E3900E454FB /* http_message.json */,
 				82CED1CD27DF60AC006E967A /* http_reaction.json */,
-				822F267F27DA3F7700E454FB /* http_events.json */,
+				825A32C727DBA243000402A9 /* ws_events.json */,
 				822F268B27DA447F00E454FB /* ws_message.json */,
 				82CED1D327DF612A006E967A /* ws_reaction.json */,
-				825A32C727DBA243000402A9 /* ws_events.json */,
 			);
 			path = MockResponses;
 			sourceTree = "<group>";
@@ -4855,8 +4853,8 @@
 		825A32C927DBB44D000402A9 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
-				825A32CA27DBB463000402A9 /* MessageListPage.swift */,
 				825A32CC27DBB46F000402A9 /* ChannelListPage.swift */,
+				825A32CA27DBB463000402A9 /* MessageListPage.swift */,
 				825A32CE27DBB48D000402A9 /* StartPage.swift */,
 				82CED1C727DF492F006E967A /* ThreadPage.swift */,
 			);
@@ -4866,13 +4864,13 @@
 		82AD02B427D8E3C0000611B7 /* MockServer */ = {
 			isa = PBXGroup;
 			children = (
-				82D2E81E27D10F4300169ADA /* StreamMockServer.swift */,
-				82B350F827EA294900FEB6A0 /* MockServerAttributes.swift */,
-				82B350FE27EA2A9700FEB6A0 /* MessageDetails.swift */,
-				82B350FA27EA298800FEB6A0 /* ReactionResponses.swift */,
-				82B350FC27EA2A3900FEB6A0 /* MessagingResponses.swift */,
-				82B3510027EA2B1400FEB6A0 /* EventResponses.swift */,
 				824445AA27EA364300DB2FD8 /* ChannelResponses.swift */,
+				82B3510027EA2B1400FEB6A0 /* EventResponses.swift */,
+				82B350FE27EA2A9700FEB6A0 /* MessageDetails.swift */,
+				82B350FC27EA2A3900FEB6A0 /* MessagingResponses.swift */,
+				82B350F827EA294900FEB6A0 /* MockServerAttributes.swift */,
+				82B350FA27EA298800FEB6A0 /* ReactionResponses.swift */,
+				82D2E81E27D10F4300169ADA /* StreamMockServer.swift */,
 			);
 			path = MockServer;
 			sourceTree = "<group>";
@@ -4889,12 +4887,12 @@
 		82AD02B627D8E3D4000611B7 /* Robots */ = {
 			isa = PBXGroup;
 			children = (
-				8298C8E427D22B28004082D3 /* Robot.swift */,
-				8298C8E827D22C3E004082D3 /* UserRobot.swift */,
-				82AD02B827D8E416000611B7 /* DeviceRobot.swift */,
-				822F268D27DA460800E454FB /* ParticipantRobot.swift */,
 				825A32C327DB60E9000402A9 /* BasicAssertions.swift */,
 				82BA52F027E1F36B00951B87 /* CustomAssertions.swift */,
+				82AD02B827D8E416000611B7 /* DeviceRobot.swift */,
+				822F268D27DA460800E454FB /* ParticipantRobot.swift */,
+				8298C8E427D22B28004082D3 /* Robot.swift */,
+				8298C8E827D22C3E004082D3 /* UserRobot.swift */,
 			);
 			path = Robots;
 			sourceTree = "<group>";
@@ -4902,9 +4900,9 @@
 		82AD02B727D8E3DB000611B7 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				8298C8E627D22B80004082D3 /* XCUITest.swift */,
-				82AD02A327D76A63000611B7 /* String.swift */,
 				825A32AB27DA5462000402A9 /* Dictionary.swift */,
+				82AD02A327D76A63000611B7 /* String.swift */,
+				8298C8E627D22B80004082D3 /* XCUITest.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -4912,9 +4910,9 @@
 		82AD02BE27D8E453000611B7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				82AD02BC27D8E44B000611B7 /* StreamTestCase.swift */,
 				82BA52EE27E1EF7B00951B87 /* MessagingTests.swift */,
 				82A6F5BF27E2031000F4A2F6 /* ReactionsTests.swift */,
+				82AD02BC27D8E44B000611B7 /* StreamTestCase.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -5440,12 +5438,12 @@
 		A34407DF27D8C3400044F150 /* StreamChatUITestsAppUITests */ = {
 			isa = PBXGroup;
 			children = (
-				82AD02BE27D8E453000611B7 /* Tests */,
-				82AD02B427D8E3C0000611B7 /* MockServer */,
+				82AD02B727D8E3DB000611B7 /* Extensions */,
 				822F267B27DA1DA600E454FB /* MockResponses */,
+				82AD02B427D8E3C0000611B7 /* MockServer */,
 				825A32C927DBB44D000402A9 /* Pages */,
 				82AD02B627D8E3D4000611B7 /* Robots */,
-				82AD02B727D8E3DB000611B7 /* Extensions */,
+				82AD02BE27D8E453000611B7 /* Tests */,
 				82AD02B527D8E3C7000611B7 /* Utilities */,
 			);
 			path = StreamChatUITestsAppUITests;
@@ -5454,7 +5452,6 @@
 		A34407FA27D8C8AB0044F150 /* StreamChat */ = {
 			isa = PBXGroup;
 			children = (
-				A34407F427D8C8A70044F150 /* ChannelListVC.swift */,
 				A34407F627D8C8A70044F150 /* ChatClient+shared.swift */,
 				A34407F527D8C8A70044F150 /* User.swift */,
 				A34407FB27D8C9040044F150 /* StreamChatWrapper.swift */,
@@ -9210,7 +9207,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A34407F727D8C8A70044F150 /* ChannelListVC.swift in Sources */,
 				A34407C127D8C33F0044F150 /* ViewController.swift in Sources */,
 				A34407BD27D8C33F0044F150 /* AppDelegate.swift in Sources */,
 				A34407F827D8C8A70044F150 /* User.swift in Sources */,

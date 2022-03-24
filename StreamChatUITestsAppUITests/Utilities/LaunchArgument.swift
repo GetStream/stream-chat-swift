@@ -12,7 +12,10 @@ struct MockServerConfiguration {
 
 enum EnvironmentVariable: String {
 
-    /// This changes the base url to localhost & assigns port when our LLC is built in Debug build configuration && `USE_MOCK_SERVER` launch argument is set.
+    // This changes the base url to localhost with assigned port.
+    // Two conditions need to be met in order to leverage the web socket server in LLC.
+    //   1. App runs in Debug build configuration
+    //   2. `USE_MOCK_SERVER` is set as launch argument
     case websocketHost = "MOCK_SERVER_WEBSOCKET_HOST"
     case httpHost = "MOCK_SERVER_HTTP_HOST"
     case port = "MOCK_SERVER_PORT"

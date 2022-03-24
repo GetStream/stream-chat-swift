@@ -6,6 +6,13 @@ import XCTest
 
 extension Robot {
     
+    /// Check the state of an element
+    ///
+    /// - Parameters:
+    ///     - XCUIElement: the element that has to be verified
+    ///     - ElementState: the state in which the element should be presented
+    ///     - Double: the timeout that has to be used to wait for an element to appear
+    /// - Returns: Self
     @discardableResult
     func assertElement(
         _ element: XCUIElement,
@@ -31,7 +38,15 @@ extension Robot {
         XCTAssertEqual(expected, actual, state.errorMessage, file: file, line: line)
         return self
     }
-
+    
+    /// Check the availability and visibility of an element
+    ///
+    /// - Parameters:
+    ///     - XCUIElement: the element that has to be verified
+    ///     - Bool: an expected availability of the element
+    ///     - Bool: an expected visibility of the element
+    ///     - Double: the timeout that has to be used to wait for an element to appear
+    /// - Returns: Self
     @discardableResult
     private func assertElement(
         _ element: XCUIElement,
@@ -49,7 +64,13 @@ extension Robot {
         }
         return self
     }
-
+    
+    /// Check the size of an element
+    ///
+    /// - Parameters:
+    ///     - XCUIElement: the element that has to be verified
+    ///     - CGSize: an expected size of the element
+    /// - Returns: Self
     @discardableResult
     private func assertElement(
         _ element: XCUIElement,

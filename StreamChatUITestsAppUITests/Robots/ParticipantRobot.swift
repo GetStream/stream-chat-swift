@@ -6,6 +6,7 @@
 import Swifter
 import XCTest
 
+/// Simulates participant behavior
 public final class ParticipantRobot: Robot {
     
     private var server: StreamMockServer
@@ -69,19 +70,29 @@ public final class ParticipantRobot: Robot {
         return self
     }
     
+    /// Sends an event over a websocket connection
+    ///
+    /// - Parameters: EventType
+    /// - Returns: Self
     @discardableResult
     private func sendEvent(_ eventType: EventType) -> Self {
         var json = TestData.getMockResponse(fromFile: .wsChatEvent).json
-        json[TopLevelKeys.createdAt.rawValue] = TestData.currentDate
-        json[TopLevelKeys.type.rawValue] = eventType.rawValue
+        json[TopLevelKey.createdAt.rawValue] = TestData.currentDate
+        json[TopLevelKey.type.rawValue] = eventType.rawValue
         server.writeText(json.jsonToString())
         return self
     }
     
+    /// Manages the lifecycle of the messages over a websocket connection
+    ///
+    /// - Parameters:
+    ///     - String: the text that will be used in the message (empty by default for deleted messages)
+    ///     - EventType: what needs to be done with message
+    /// - Returns: Self
     @discardableResult
     private func message(_ text: String = "", eventType: EventType) -> Self {
         var json = TestData.getMockResponse(fromFile: .wsMessage).json
-        let messageKey = TopLevelKeys.message.rawValue
+        let messageKey = TopLevelKey.message.rawValue
         let message = json[messageKey] as! Dictionary<String, Any>
         let timestamp: String = TestData.currentDate
         
@@ -120,17 +131,23 @@ public final class ParticipantRobot: Robot {
             json[messageKey] = [:]
         }
         
-        json[TopLevelKeys.type.rawValue] = eventType.rawValue
+        json[TopLevelKey.type.rawValue] = eventType.rawValue
         server.writeText(json.jsonToString())
         return self
     }
     
+    /// Manages the lifecycle of the reactions over a websocket connection
+    ///
+    /// - Parameters:
+    ///     - TestData.Reactions: the reaction that will be used
+    ///     - EventType: what needs to be done with reaction
+    /// - Returns: Self
     @discardableResult
     private func sendReaction(type: TestData.Reactions, eventType: EventType) -> Self {
         let messageDetails = server.getMessageDetails()
         var json = TestData.getMockResponse(fromFile: .wsReaction).json
-        let messageKey = TopLevelKeys.message.rawValue
-        let reactionKey = TopLevelKeys.reaction.rawValue
+        let messageKey = TopLevelKey.message.rawValue
+        let reactionKey = TopLevelKey.reaction.rawValue
         var reaction = json[reactionKey] as! Dictionary<String, Any>
         var message = json[messageKey] as! Dictionary<String, Any>
         let messageId = messageDetails[.messageId]
@@ -155,7 +172,7 @@ public final class ParticipantRobot: Robot {
         
         json[messageKey] = message
         json[reactionKey] = reaction
-        json[TopLevelKeys.type.rawValue] = eventType.rawValue
+        json[TopLevelKey.type.rawValue] = eventType.rawValue
         
         server.writeText(json.jsonToString())
         return self

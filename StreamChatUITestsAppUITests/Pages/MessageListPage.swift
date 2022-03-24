@@ -11,7 +11,7 @@ class MessageListPage {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMessageCell'"))
     }
     
-    struct NavigationBar {
+    enum NavigationBar {
         
         static var header: XCUIElement { app.otherElements["ChatChannelHeaderView"] }
         
@@ -28,7 +28,7 @@ class MessageListPage {
         }
     }
     
-    struct Composer {
+    enum Composer {
         static var sendButton: XCUIElement { app.buttons["SendButton"] }
         static var confirmButton: XCUIElement { app.buttons["ConfirmButton"] }
         static var attachmentButton: XCUIElement { app.buttons["AttachmentButton"] }
@@ -37,7 +37,7 @@ class MessageListPage {
     }
     
     
-    struct Reactions {
+    enum Reactions {
         static var lol: XCUIElement { reaction(label: "reaction lol big") }
         static var like: XCUIElement { reaction(label: "reaction thumbsup big") }
         static var love: XCUIElement { reaction(label: "reaction love big") }
@@ -54,7 +54,7 @@ class MessageListPage {
         }
     }
     
-    struct ContextMenu {
+    enum ContextMenu {
         static var reply: XCUIElement { action(label: "Reply") }
         static var threadReply: XCUIElement { action(label: "Thread Reply") }
         static var copy: XCUIElement { action(label: "Copy Message") }
@@ -71,7 +71,7 @@ class MessageListPage {
         }
     }
     
-    struct Attributes {
+    enum Attributes {
         static func reactionButton(messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["ChatMessageReactionItemView"]
         }
@@ -102,7 +102,7 @@ class MessageListPage {
         
     }
     
-    struct PopUpButtons {
+    enum PopUpButtons {
         static var cancel: XCUIElement {
             app.scrollViews.buttons.matching(NSPredicate(format: "label LIKE 'Cancel'")).firstMatch
         }
@@ -112,7 +112,7 @@ class MessageListPage {
         }
     }
     
-    struct AttachmentMenu {
+    enum AttachmentMenu {
         static var fileButton: XCUIElement {
             app.scrollViews.buttons.matching(NSPredicate(format: "label LIKE 'File'")).firstMatch
         }
@@ -126,7 +126,7 @@ class MessageListPage {
         }
     }
     
-    struct ComposerCommands {
+    enum ComposerCommands {
         static var cells: XCUIElementQuery {
             app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatCommandSuggestionCollectionViewCell'"))
         }

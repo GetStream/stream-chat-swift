@@ -32,10 +32,9 @@ final class StreamChatWrapper {
 
     func makeChannelListViewController() -> UIViewController {
         // UI
-        let channelList = ChannelListVC()
         let query = ChannelListQuery(filter: .containMembers(userIds: [userCredentials?.id ?? ""]))
-        channelList.controller = ChatClient.shared.channelListController(query: query)
-
+        let controller = ChatClient.shared.channelListController(query: query)
+        let channelList = ChatChannelListVC.make(with: controller)
         return channelList
     }
 

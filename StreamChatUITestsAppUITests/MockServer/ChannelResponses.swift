@@ -9,10 +9,10 @@ extension StreamMockServer {
     
     // TODO: CIS-1686
     func configureChannelEndpoints() {
-        server[MockEndpoints.query] = { _ in
+        server[MockEndpoint.query] = { _ in
             .ok(.text(TestData.getMockResponse(fromFile: .httpChannel)))
         }
-        server[MockEndpoints.channels] = { _ in
+        server[MockEndpoint.channels] = { _ in
             .ok(.text(TestData.getMockResponse(fromFile: .httpChannelsQuery)))
         }
     }

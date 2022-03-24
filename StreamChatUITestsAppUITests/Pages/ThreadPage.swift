@@ -9,7 +9,7 @@ class ThreadPage: MessageListPage {
     
     static var alsoSendInChannelCheckbox: XCUIElement { app.otherElements["CheckboxControl"] }
     
-    struct NavigationBar {
+    enum NavigationBar {
         
         static var header: XCUIElement { app.otherElements["ChatThreadHeaderView"] }
         

@@ -8,7 +8,7 @@ import StreamChat
 let apiKey = "8br4watad788"
 let applicationGroupIdentifier = "group.io.getstream.iOS.StreamChatUITestsApp"
 
-public struct UserCredentials {
+struct UserCredentials {
     let id: String
     let name: String
     let avatarURL: URL

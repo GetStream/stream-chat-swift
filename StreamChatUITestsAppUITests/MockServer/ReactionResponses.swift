@@ -8,10 +8,10 @@ import Swifter
 extension StreamMockServer {
     
     func configureReactionEndpoints() {
-        server[MockEndpoints.reaction] = { request in
+        server[MockEndpoint.reaction] = { request in
             self.reactionCreation(request: request)
         }
-        server[MockEndpoints.reactionUpdate] = { request in
+        server[MockEndpoint.reactionUpdate] = { request in
             self.reactionDeletion(request: request)
         }
     }
@@ -83,8 +83,8 @@ extension StreamMockServer {
     private func reactionCreation(request: HttpRequest) -> HttpResponse {
         let messageId = request.params[":message_id"]
         let requestJson = TestData.toJson(request.body)
-        let messageKey = TopLevelKeys.message.rawValue
-        let reactionKey = TopLevelKeys.reaction.rawValue
+        let messageKey = TopLevelKey.message.rawValue
+        let reactionKey = TopLevelKey.reaction.rawValue
         let requestReaction = requestJson[reactionKey] as! Dictionary<String, Any>
         let reactionType = requestReaction[MessageReactionPayload.CodingKeys.type.rawValue]
         var responseJson = TestData.toJson(.httpReaction)
@@ -116,8 +116,8 @@ extension StreamMockServer {
         let messageId = request.params[":message_id"]
         let reactionType = request.params[":reaction_type"]
         var json = TestData.toJson(.httpReaction)
-        let messageKey = TopLevelKeys.message.rawValue
-        let reactionKey = TopLevelKeys.reaction.rawValue
+        let messageKey = TopLevelKey.message.rawValue
+        let reactionKey = TopLevelKey.reaction.rawValue
         let message = json[messageKey] as! Dictionary<String, Any>
         let reaction = json[reactionKey] as! Dictionary<String, Any>
         let messageDetails = getMessageDetails(messageId: messageId!)

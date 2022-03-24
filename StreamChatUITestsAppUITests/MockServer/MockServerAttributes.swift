@@ -2,7 +2,7 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-enum MockFiles: String {
+enum MockFile: String {
     case httpMessage = "http_message"
     case httpChatEvent = "http_events"
     case httpReaction = "http_reaction"
@@ -14,31 +14,31 @@ enum MockFiles: String {
     case httpChannelsQuery = "ChannelsQuery"
 }
 
-struct MockEndpoints {
-    static var connect = "/connect"
-    static var message = "/channels/messaging/:channel_id/message"
-    static var messageUpdate = "/messages/:message_id"
-    static var event = "/channels/messaging/:channel_id/event"
-    static var messageRead = "/channels/messaging/:channel_id/read"
-    static var reaction = "/messages/:message_id/reaction"
-    static var reactionUpdate = "/messages/:message_id/reaction/:reaction_type"
-    static var channels = "/channels"
-    static var query = "/channels/messaging/:channel_id/query"
+enum MockEndpoint {
+    static let connect = "/connect"
+    static let message = "/channels/messaging/:channel_id/message"
+    static let messageUpdate = "/messages/:message_id"
+    static let event = "/channels/messaging/:channel_id/event"
+    static let messageRead = "/channels/messaging/:channel_id/read"
+    static let reaction = "/messages/:message_id/reaction"
+    static let reactionUpdate = "/messages/:message_id/reaction/:reaction_type"
+    static let channels = "/channels"
+    static let query = "/channels/messaging/:channel_id/query"
 }
 
-enum MessageTypes: String {
+enum MessageType: String {
     case regular
     case deleted
 }
 
-enum MessageDetails: String {
+enum MessageDetail: String {
     case messageId
     case text
     case createdAt
     case updatedAt
 }
 
-enum TopLevelKeys: String {
+enum TopLevelKey: String {
     case message
     case reaction
     case event

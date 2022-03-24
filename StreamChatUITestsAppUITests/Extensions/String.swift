@@ -8,11 +8,14 @@ import XCTest
 extension String {
     
     var json: [String: Any] {
-        try! JSONSerialization.jsonObject(with: Data(self.utf8), options: .mutableContainers) as! [String: Any]
+        try! JSONSerialization.jsonObject(with: Data(self.utf8),
+                                          options: .mutableContainers) as! [String: Any]
     }
 
     func replace(_ target: String, to: String) -> String {
-        replacingOccurrences(of: target, with: to, options: NSString.CompareOptions.literal, range: nil)
+        replacingOccurrences(of: target,
+                             with: to,
+                             options: NSString.CompareOptions.literal, range: nil)
     }
     
     var html: Self {

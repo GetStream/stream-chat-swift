@@ -9,7 +9,7 @@ final class StreamMockServer {
     
     private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
-    internal var messageDetails: [Dictionary<MessageDetails, String>] = []
+    var messageDetails: [Dictionary<MessageDetail, String>] = []
     
     func start(port: UInt16) {
         do {
@@ -37,7 +37,7 @@ final class StreamMockServer {
     }
     
     private func configureWebsockets() {
-        server[MockEndpoints.connect] = websocket(connected: { [weak self] session in
+        server[MockEndpoint.connect] = websocket(connected: { [weak self] session in
             self?.globalSession = session
             self?.onConnect()
         }, disconnected: { [weak self] _ in

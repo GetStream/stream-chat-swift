@@ -13,7 +13,7 @@ class ChannelListPage {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatChannelListCollectionViewCell'"))
     }
     
-    struct Attributes {
+    enum Attributes {
         static func name(channelCell: XCUIElement) -> XCUIElement {
             channelCell.staticTexts["titleLabel"]
         }

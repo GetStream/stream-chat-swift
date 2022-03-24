@@ -5,6 +5,7 @@
 import Foundation
 import XCTest
 
+/// Simulates device behavior
 public final class DeviceRobot {
 
     enum Orientation {

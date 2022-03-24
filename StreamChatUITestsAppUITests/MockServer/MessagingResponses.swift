@@ -8,10 +8,10 @@ import Swifter
 extension StreamMockServer {
     
     func configureMessagingEndpoints() {
-        server[MockEndpoints.message] = { request in
+        server[MockEndpoint.message] = { request in
             self.messageCreation(request: request)
         }
-        server[MockEndpoints.messageUpdate] = { request in
+        server[MockEndpoint.messageUpdate] = { request in
             self.messageUpdate(request: request)
         }
     }
@@ -42,7 +42,7 @@ extension StreamMockServer {
         }
         if deleted {
             mockedMessage[codingKeys.deletedAt.rawValue] = TestData.currentDate
-            mockedMessage[codingKeys.type.rawValue] = MessageTypes.deleted.rawValue
+            mockedMessage[codingKeys.type.rawValue] = MessageType.deleted.rawValue
             removeMessageDetails(messageId: messageId!)
         }
         return mockedMessage
@@ -58,7 +58,7 @@ extension StreamMockServer {
     
     private func messageCreation(request: HttpRequest) -> HttpResponse {
         let requestJson = TestData.toJson(request.body)
-        let messageKey = TopLevelKeys.message.rawValue
+        let messageKey = TopLevelKey.message.rawValue
         let requestMessage = requestJson[messageKey] as! Dictionary<String, Any>
         let text = requestMessage[MessagePayloadsCodingKeys.text.rawValue] as! String
         let messageId = requestMessage[MessagePayloadsCodingKeys.id.rawValue] as! String
@@ -79,7 +79,7 @@ extension StreamMockServer {
     private func messageDeletion(request: HttpRequest) -> HttpResponse {
         let messageId = request.params[":message_id"]
         var json = TestData.toJson(.httpMessage)
-        let messageKey = TopLevelKeys.message.rawValue
+        let messageKey = TopLevelKey.message.rawValue
         let message = json[messageKey] as! Dictionary<String, Any>
         let messageDetails = getMessageDetails(messageId: messageId!)
         json[messageKey] = mockMessage(

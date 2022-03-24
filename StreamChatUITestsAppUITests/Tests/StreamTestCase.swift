@@ -4,6 +4,7 @@
 
 import XCTest
 
+// Application
 let app = XCUIApplication()
 
 class StreamTestCase: XCTestCase {
@@ -21,12 +22,8 @@ class StreamTestCase: XCTestCase {
         participantRobot = ParticipantRobot(server)
 
         try super.setUpWithError()
-        app.setLaunchArguments(.useMockServer)
-        app.setEnvironmentVariables([
-            .websocketHost: "\(MockServerConfiguration.websocketHost)",
-            .httpHost: "\(MockServerConfiguration.httpHost)",
-            .port: "\(MockServerConfiguration.port)"
-        ])
+
+        useMockServer()
         app.launch()
     }
 
@@ -41,4 +38,19 @@ class StreamTestCase: XCTestCase {
         app.launchEnvironment.removeAll()
     }
     
+}
+
+extension StreamTestCase {
+
+    private func useMockServer() {
+        // Leverage web socket server
+        app.setLaunchArguments(.useMockServer)
+
+        // Configure web socket host
+        app.setEnvironmentVariables([
+            .websocketHost: "\(MockServerConfiguration.websocketHost)",
+            .httpHost: "\(MockServerConfiguration.httpHost)",
+            .port: "\(MockServerConfiguration.port)"
+        ])
+    }
 }

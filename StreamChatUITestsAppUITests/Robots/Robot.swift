@@ -8,11 +8,17 @@ import XCTest
 // MARK: Robot
 protocol Robot: AnyObject { }
 
+/// Declares the state of the switch (UI element)
+///
+/// - Returns: Self
 enum SwitchState {
     case on
     case off
 }
 
+/// Declares the state of the UI element
+///
+/// - Returns: String
 enum ElementState {
     case enabled(isEnabled: Bool)
     case visible(isVisible: Bool)
@@ -34,12 +40,9 @@ enum ElementState {
 
 extension Robot {
     
-    func step(_ name: String, step: () -> Void) {
-        XCTContext.runActivity(named: name) { _ in
-            step()
-        }
-    }
-
+    /// Closes the keyboard on the device
+    ///
+    /// - Returns: Self
     @discardableResult
     func dismissKeyboard() -> Self {
         app.swipeDown()
