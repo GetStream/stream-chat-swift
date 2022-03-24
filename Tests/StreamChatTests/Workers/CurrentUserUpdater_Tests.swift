@@ -220,13 +220,21 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
         
         // Call addDevice
-        currentUserUpdater.addDevice(token: .init(repeating: 1, count: 1), currentUserId: userPayload.id) {
+        currentUserUpdater.addDevice(
+            token: .init(repeating: 1, count: 1),
+            currentUserId: userPayload.id,
+            pushProvider: .apn
+        ) {
             // No error should be returned
             XCTAssertNil($0)
         }
         
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<EmptyResponse> = .addDevice(userId: userPayload.id, deviceId: "01")
+        let expectedEndpoint: Endpoint<EmptyResponse> = .addDevice(
+            userId: userPayload.id,
+            deviceId: "01",
+            pushProvider: .apn
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -240,7 +248,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // Call addDevice
         var completionCalledError: Error?
-        currentUserUpdater.addDevice(token: .init(), currentUserId: .unique) {
+        currentUserUpdater.addDevice(token: .init(), currentUserId: .unique, pushProvider: .apn) {
             completionCalledError = $0
         }
 
@@ -267,7 +275,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // Call fetchDevices
         var completionCalledError: Error?
-        currentUserUpdater.addDevice(token: .init(repeating: 1, count: 1), currentUserId: .unique) {
+        currentUserUpdater.addDevice(
+            token: .init(repeating: 1, count: 1),
+            currentUserId: .unique,
+            pushProvider: .apn
+        ) {
             completionCalledError = $0
         }
         
@@ -297,7 +309,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         assert(currentUser?.currentDevice == nil)
 
         // Call addDevice
-        currentUserUpdater.addDevice(token: .init(repeating: 1, count: 1), currentUserId: .unique) {
+        currentUserUpdater.addDevice(
+            token: .init(repeating: 1, count: 1),
+            currentUserId: .unique,
+            pushProvider: .apn
+        ) {
             // No error should be returned
             XCTAssertNil($0)
         }

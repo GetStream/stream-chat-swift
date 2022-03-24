@@ -159,6 +159,36 @@ class ComposerVC_Tests: XCTestCase {
         AssertSnapshot(composerVC)
     }
     
+    func test_commandWithNonEmptyArgs_hasSendButtonDisabled() {
+        let composerVC = ComposerVC()
+        composerVC.appearance = Appearance.default
+        
+        composerVC.content = .initial()
+        composerVC.content.addCommand(.init(
+            name: "ARGNEEDED",
+            description: "some command",
+            set: "special",
+            args: "[text]"
+        ))
+        
+        AssertSnapshot(composerVC)
+    }
+    
+    func test_commandWithEmptyArgs_hasSendButtonEnabled() {
+        let composerVC = ComposerVC()
+        composerVC.appearance = Appearance.default
+        
+        composerVC.content = .initial()
+        composerVC.content.addCommand(.init(
+            name: "NOARGNEEDED",
+            description: "some command",
+            set: "special",
+            args: ""
+        ))
+        
+        AssertSnapshot(composerVC)
+    }
+    
     func test_whenSuggestionsLookupIsLocal_onlyChannelMembersAreShown() {
         final class ComposerContainerVC: UIViewController {
             var composerVC: ComposerVC!

@@ -11,14 +11,23 @@ extension Endpoint {
     ///   - userId: UserId for adding the device.
     ///   - deviceId: DeviceId to be added. DeviceId is obtained via
     ///   `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
+    ///   - pushProvider: The push provider for this device.
     /// - Returns: The endpoint for adding a device.
-    static func addDevice(userId: UserId, deviceId: DeviceId) -> Endpoint<EmptyResponse> {
+    static func addDevice(
+        userId: UserId,
+        deviceId: DeviceId,
+        pushProvider: PushProvider
+    ) -> Endpoint<EmptyResponse> {
         .init(
             path: .devices,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["user_id": userId, "id": deviceId, "push_provider": "apn"]
+            body: [
+                "user_id": userId,
+                "id": deviceId,
+                "push_provider": pushProvider.rawValue
+            ]
         )
     }
     

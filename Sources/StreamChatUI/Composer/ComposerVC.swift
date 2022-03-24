@@ -61,7 +61,12 @@ open class ComposerVC: _ViewController,
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
-            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
+            // If there is a command and it doesn't require an arg, content is not empty
+            if let command = command, command.args.isEmpty {
+                return false
+            }
+            // All other cases
+            return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
         }
 
         /// A boolean that checks if the composer is replying in a thread
@@ -860,15 +865,14 @@ open class ComposerVC: _ViewController,
     // MARK: - UIDocumentPickerViewControllerDelegate
     
     open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let type: AttachmentType = .file
-        
         for fileURL in urls {
+            let attachmentType = AttachmentType(fileExtension: fileURL.pathExtension)
             do {
-                try addAttachmentToContent(from: fileURL, type: type)
+                try addAttachmentToContent(from: fileURL, type: attachmentType)
             } catch {
                 handleAddAttachmentError(
                     attachmentURL: fileURL,
-                    attachmentType: type,
+                    attachmentType: attachmentType,
                     error: error
                 )
                 break
