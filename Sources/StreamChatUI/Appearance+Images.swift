@@ -340,6 +340,7 @@ public extension Appearance {
         public var userAvatarPlaceholder3: UIImage = loadImageSafely(with: "pattern3")
         public var userAvatarPlaceholder4: UIImage = loadImageSafely(with: "pattern4")
         public var userAvatarPlaceholder5: UIImage = loadImageSafely(with: "pattern5")
+        public var videoAttachmentPlaceholder: UIImage = loadImageSafely(with: "placeholder")
 
         public var avatarPlaceholders: [UIImage] {
             [

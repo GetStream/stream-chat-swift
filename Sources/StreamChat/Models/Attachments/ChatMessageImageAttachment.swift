@@ -20,6 +20,9 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     public var title: String?
     /// A link to the image.
     public var imageURL: URL
+    public var isGifURL: Bool {
+        return imageURL.pathExtension == "gif"
+    }
     /// A link to the image preview.
     public var imagePreviewURL: URL
     /// An extra data.

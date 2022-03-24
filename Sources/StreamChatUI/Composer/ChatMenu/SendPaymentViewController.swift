@@ -14,6 +14,7 @@ struct SendPaymentOptionView: View {
     @State private var selectedPaymentMode: WalletAttachmentPayload.PaymentTheme = .none
     @State private var tapLock = false
     @Binding var amount: String!
+    var paymentType: WalletAttachmentPayload.PaymentType!
     var didSelectPayment: ((WalletAttachmentPayload.PaymentTheme) -> Void)?
 
     let rows = [
@@ -22,13 +23,16 @@ struct SendPaymentOptionView: View {
     var paymentTypes: [WalletAttachmentPayload.PaymentTheme] {
         return WalletAttachmentPayload.PaymentTheme.allCases
     }
+    private var paymentTypeDescription: String {
+        return paymentType == .request ? "REQUESTING" : "SENDING"
+    }
     var body: some View {
         ZStack {
             Color(UIColor(rgb: 0x1E1F1F))
             Spacer()
                 .frame(height: 15)
             VStack(spacing: 0) {
-                Text("SENDING \(amount) ONE")
+                Text("\(paymentTypeDescription) \(amount) ONE")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.white.opacity(0.6))
                     .frame(maxWidth: .infinity, alignment: .leading)
