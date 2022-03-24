@@ -46,7 +46,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     open func setUp() {
         keyboardDismissMode = .onDrag
         rowHeight = UITableView.automaticDimension
-        estimatedRowHeight = 150
+        if #available(iOS 13, *), components._messageListDiffingEnabled {
+            estimatedRowHeight = UITableView.automaticDimension
+        } else {
+            estimatedRowHeight = 150
+        }
         separatorStyle = .none
         transform = .mirrorY
     }
@@ -209,6 +213,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
         case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
             moveRow(at: fromIndex, to: toIndex)
+            reloadRows(at: [fromIndex, toIndex], with: .automatic)
 
         case let .update(_, index: index):
             reloadRows(at: [index], with: .automatic)

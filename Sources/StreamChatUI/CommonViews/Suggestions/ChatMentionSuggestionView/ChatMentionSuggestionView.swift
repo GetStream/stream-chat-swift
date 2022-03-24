@@ -65,21 +65,11 @@ open class ChatMentionSuggestionView: _View, ThemeProvider {
 
     override open func updateContent() {
         usernameLabel.text = content?.name
-
-        if let subtitle = content?.id {
-            usernameTagLabel.text = "@" + subtitle
-        } else {
-            usernameTagLabel.text = ""
-        }
-
-        if content?.name == nil {
-            usernameLabel.isHidden = true
-        }
-
-        if content?.id == nil {
-            usernameTagLabel.isHidden = true
-        }
-
+        usernameLabel.isHidden = usernameLabel.text?.isEmpty ?? true
+        
+        usernameTagLabel.text = content.map { "@" + $0.id }
+        usernameTagLabel.isHidden = usernameTagLabel.text?.isEmpty ?? true
+        
         avatarView.content = content
     }
 

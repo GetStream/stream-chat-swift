@@ -56,7 +56,7 @@ extension Assert {
     ) -> Assertion {
         // We can't use this as the default parameter because of the string interpolation.
         var defaultMessage: String {
-            "\"\(String(describing: expression1()))\" not equal to \"\(String(describing: expression2()))\""
+            "Found difference for \n" + diff(expression1(), expression2()).joined(separator: ", ")
         }
         
         return willBeTrue(

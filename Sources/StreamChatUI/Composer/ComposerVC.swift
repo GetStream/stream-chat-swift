@@ -61,7 +61,12 @@ open class ComposerVC: _ViewController,
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
-            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
+            // If there is a command and it doesn't require an arg, content is not empty
+            if let command = command, command.args.isEmpty {
+                return false
+            }
+            // All other cases
+            return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
         }
 
         /// A boolean that checks if the composer is replying in a thread
@@ -250,6 +255,16 @@ open class ComposerVC: _ViewController,
         picker.delegate = self
         return picker
     }()
+    
+    /// The View Controller for taking a picture.
+    open private(set) lazy var cameraVC: UIViewController = {
+        let camera = UIImagePickerController()
+        camera.sourceType = .camera
+        camera.modalPresentationStyle = .overFullScreen
+        camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? ["public.image"]
+        camera.delegate = self
+        return camera
+    }()
 
     /// The view controller for selecting file attachments.
     open private(set) lazy var filePickerVC: UIViewController = {
@@ -431,6 +446,10 @@ open class ComposerVC: _ViewController,
         present(filePickerVC, animated: true)
     }
     
+    open func showCamera() {
+        present(cameraVC, animated: true)
+    }
+    
     /// Returns actions for attachments picker.
     open var attachmentsPickerActions: [UIAlertAction] {
         let showFilePickerAction = UIAlertAction(
@@ -445,10 +464,22 @@ open class ComposerVC: _ViewController,
             handler: { [weak self] _ in self?.showMediaPicker() }
         )
         
+        let showCameraAction = UIAlertAction(
+            title: L10n.Composer.Picker.camera,
+            style: .default,
+            handler: { [weak self] _ in self?.showCamera() }
+        )
+        
         let cancelAction = UIAlertAction(
             title: L10n.Composer.Picker.cancel,
             style: .cancel
         )
+        
+        let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
+        
+        if isCameraAvailable {
+            return [showCameraAction, showMediaPickerAction, showFilePickerAction, cancelAction]
+        }
         
         return [showMediaPickerAction, showFilePickerAction, cancelAction]
     }
@@ -650,7 +681,7 @@ open class ComposerVC: _ViewController,
             )
         } else {
             usersCache = searchUsers(
-                channel.lastActiveWatchers.map { $0 } + channel.lastActiveMembers.map { $0 },
+                channel.lastActiveMembers,
                 by: typingMention,
                 excludingId: currentUserId
             )
@@ -825,15 +856,14 @@ open class ComposerVC: _ViewController,
     // MARK: - UIDocumentPickerViewControllerDelegate
     
     open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let type: AttachmentType = .file
-        
         for fileURL in urls {
+            let attachmentType = AttachmentType(fileExtension: fileURL.pathExtension)
             do {
-                try addAttachmentToContent(from: fileURL, type: type)
+                try addAttachmentToContent(from: fileURL, type: attachmentType)
             } catch {
                 handleAddAttachmentError(
                     attachmentURL: fileURL,
-                    attachmentType: type,
+                    attachmentType: attachmentType,
                     error: error
                 )
                 break

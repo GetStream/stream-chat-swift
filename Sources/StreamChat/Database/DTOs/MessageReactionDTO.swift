@@ -49,7 +49,8 @@ extension MessageReactionDTO {
         NSCompoundPredicate(orPredicateWithSubpredicates: [
             NSPredicate(format: "localStateRaw == %@", LocalReactionState.unknown.rawValue),
             NSPredicate(format: "localStateRaw == %@", LocalReactionState.sending.rawValue),
-            NSPredicate(format: "localStateRaw == %@", LocalReactionState.pendingSend.rawValue)
+            NSPredicate(format: "localStateRaw == %@", LocalReactionState.pendingSend.rawValue),
+            NSPredicate(format: "localStateRaw == %@", LocalReactionState.deletingFailed.rawValue)
         ])
     }()
 

@@ -4,9 +4,52 @@
 
 import Foundation
 
+/// Keys that you can use to sort Message search results.
 public enum MessageSearchSortingKey: String, SortingKey {
+    /// Sort messages by their relevance to the query.
+    /// - Warning: This sorting key will not take effect on iOS SDK. We suggest using other sorting keys for now.
     case relevance
+    
+    /// Sort messages by their `id`.
     case id
+    
+    /// Sort messages by their `created_at` dates.
+    case createdAt
+    
+    /// Sort messages by their `updated_at` dates.
+    case updatedAt
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        let value: String
+        
+        switch self {
+        case .createdAt: value = "created_at"
+        case .updatedAt: value = "updated_at"
+        case .relevance: value = "relevance"
+        case .id: value = "id"
+        }
+        
+        try container.encode(value)
+    }
+    
+    private var canUseAsSortDescriptor: Bool {
+        switch self {
+        case .relevance: return false
+        case .id: return true
+        case .createdAt: return true
+        case .updatedAt: return true
+        }
+    }
+    
+    /// Default sort descriptor for Message search. Corresponds to `created_at`
+    static let defaultSortDescriptor: NSSortDescriptor = {
+        NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)
+    }()
+    
+    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
+        canUseAsSortDescriptor ? .init(key: rawValue, ascending: isAscending) : nil
+    }
 }
 
 public protocol AnyMessageSearchFilterScope {}

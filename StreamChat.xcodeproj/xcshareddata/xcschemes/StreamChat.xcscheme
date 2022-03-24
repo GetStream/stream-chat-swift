@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1310"
+   LastUpgradeVersion = "1320"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -31,9 +31,6 @@
          <TestPlanReference
             reference = "container:Tests/StreamChatTests/StreamChatTestPlan.xctestplan"
             default = "YES">
-         </TestPlanReference>
-         <TestPlanReference
-            reference = "container:Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>

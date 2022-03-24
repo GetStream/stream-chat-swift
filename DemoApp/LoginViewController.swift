@@ -54,6 +54,11 @@ class LoginViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        // Disconnect the current client
+        if ChatClient.shared != nil {
+            ChatClient.shared = nil
+        }
         
         navigationController?.isNavigationBarHidden = true
         if let selectedRow = tableView.indexPathForSelectedRow {

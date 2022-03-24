@@ -47,6 +47,7 @@
 "composer.picker.title" = "Choose attachment type: ";
 "composer.picker.file" = "File";
 "composer.picker.media" = "Photo or Video";
+"composer.picker.camera" = "Camera";
 "composer.picker.cancel" = "Cancel";
 
 "composer.suggestions.commands.header" = "Instant Commands";

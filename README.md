@@ -16,7 +16,10 @@
 
 # The official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/)
 
-The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications.
+The **StreamChatUI SDK** for UIKit is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/) when developing with UIKit, a service for building chat and messaging applications.
+
+## SwiftUI
+We also have an official SDK for SwiftUI called **[StreamChatSwiftUI SDK](https://github.com/GetStream/stream-chat-swif)**. Our [SwiftUI specific SDK is available here](https://github.com/GetStream/stream-chat-swif).
 
 ---
 

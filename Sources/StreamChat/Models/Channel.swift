@@ -29,6 +29,9 @@ public struct ChatChannel {
     /// If the channel was deleted, this field contains the date of the deletion.
     public let deletedAt: Date?
     
+    /// If the channel was truncated, this field contains the date of the truncation.
+    public let truncatedAt: Date?
+    
     /// Flag for representing hidden state for the channel.
     public let isHidden: Bool
     
@@ -95,10 +98,12 @@ public struct ChatChannel {
     /// An option to enable ban users.
 //    public let banEnabling: BanEnabling
     
-    /// Latest messages present on the channel.
+    /// Latest messages present on the channel. The first item of the array, is the most recent message.
     ///
     /// This field contains only the latest messages of the channel. You can get all existing messages in the channel by creating
     /// and using a `ChatChannelController` for this channel id.
+    ///
+    /// The amount of latest messages is controlled by the `ChatClientConfig.LocalCaching.latestMessagesLimit`.
     ///
     /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
     public var latestMessages: [ChatMessage] { _latestMessages }
@@ -156,6 +161,7 @@ public struct ChatChannel {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
+        truncatedAt: Date? = nil,
         isHidden: Bool,
         createdBy: ChatUser? = nil,
         config: ChannelConfig = .init(),
@@ -194,6 +200,7 @@ public struct ChatChannel {
         self.reads = reads
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
+        self.truncatedAt = truncatedAt
         
         $_unreadCount = (unreadCount, underlyingContext)
         $_latestMessages = (latestMessages, underlyingContext)

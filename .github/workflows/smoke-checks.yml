@@ -7,26 +7,29 @@ on:
       - develop
   pull_request:
     branches:
-      - main
-      - develop
+      - '**'
   release:
     types:
       - created
   workflow_dispatch:
 
-concurrency: 
+concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-      
+
 env:
   HOMEBREW_NO_INSTALL_CLEANUP=1: 1 # Disable cleanup for homebrew, we don't need it on CI
+  XCODE_VERSION: 13.2.1
+  IOS_VERSION: "15.2"
+  IOS_SIMULATOR_DEVICE: "iPhone 12"
+  IOS_SIMULATOR_DEVICE_WITH_VERSION: "iPhone 12 (15.2)"
 
 jobs:
   automated-code-review:
     name: Automated Code Review
     runs-on: macos-11
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: ./.github/actions/set-build-image-var
       - name: Cache RubyGems
         uses: actions/cache@v2
@@ -54,7 +57,7 @@ jobs:
     name: Test LLC (Debug)
     runs-on: macos-11
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
@@ -73,7 +76,7 @@ jobs:
         restore-keys: ${{ runner.os }}-mint-
     - uses: ./.github/actions/bootstrap
     - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test device:"iPhone 12"
+      run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
     - uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
@@ -95,7 +98,7 @@ jobs:
     name: Test UI (Debug)
     runs-on: macos-11
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
@@ -136,7 +139,7 @@ jobs:
     name: Build LLC + UI (Xcode 12)
     runs-on: macos-11
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
@@ -156,11 +159,11 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Build LLC (Xcode 12)
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_12.5.1.app/Contents/Developer"
+        XCODE_VERSION: "12.5.1"
       run: bundle exec fastlane test device:"iPhone 12" build_for_testing:true
     - name: Build UI (Xcode 12)
       env:
-        DEVELOPER_DIR: "/Applications/Xcode_12.5.1.app/Contents/Developer"
+        XCODE_VERSION: "12.5.1"
       run: bundle exec fastlane test_ui device:"iPhone 12" build_for_testing:true
     - uses: 8398a7/action-slack@v3
       with:
@@ -177,7 +180,7 @@ jobs:
     name: Build Sample + Demo Apps
     runs-on: macos-11
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
@@ -249,7 +252,7 @@ jobs:
     name: Test Integration (SPM)
     runs-on: macos-11
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
@@ -284,7 +287,7 @@ jobs:
     name: Test Integration (CocoaPods)
     runs-on: macos-11
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems

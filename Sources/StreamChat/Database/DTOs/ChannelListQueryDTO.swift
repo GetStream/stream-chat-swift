@@ -16,13 +16,19 @@ class ChannelListQueryDTO: NSManagedObject {
     
     @NSManaged var channels: Set<ChannelDTO>
     
-    /// Channels that are being read by the current user (the subset of `channels`)
-    @NSManaged var openChannels: Set<ChannelDTO>
-    
     static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
         let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
         request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
         return try? context.fetch(request).first
+    }
+    
+    /// The fetch request that returns all existed queries from the database.
+    static var allQueriesFetchRequest: NSFetchRequest<ChannelListQueryDTO> {
+        let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
+        request.sortDescriptors = [
+            NSSortDescriptor(keyPath: \ChannelListQueryDTO.filterHash, ascending: false)
+        ]
+        return request
     }
 }
 
@@ -51,5 +57,18 @@ extension NSManagedObjectContext {
         newDTO.filterJSONData = jsonData
         
         return newDTO
+    }
+    
+    func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
+        let queries: [ChannelListQueryDTO]
+        
+        do {
+            queries = try fetch(ChannelListQueryDTO.allQueriesFetchRequest)
+        } catch {
+            log.error("Failed to load channel list queries from the database: \(error).")
+            queries = []
+        }
+        
+        return queries
     }
 }

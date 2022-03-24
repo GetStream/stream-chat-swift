@@ -80,16 +80,14 @@ open class ChatSuggestionsVC: _ViewController,
             \.contentSize,
             options: [.new],
             changeHandler: { [weak self] collectionView, change in
-                DispatchQueue.main.async {
-                    guard let self = self, let newSize = change.newValue else { return }
-
-                    // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
-                    // once again, not looping it to 0 value so this controller can resize again.
-                    let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
-
-                    let newHeight = min(newSize.height, cellHeight * self.numberOfVisibleRows)
-                    self.heightConstraints.constant = newHeight
-                }
+                guard let self = self, let newSize = change.newValue else { return }
+                
+                // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
+                // once again, not looping it to 0 value so this controller can resize again.
+                let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
+                
+                let newHeight = min(newSize.height, cellHeight * self.numberOfVisibleRows)
+                self.heightConstraints.constant = newHeight
             }
         )
     }
@@ -268,7 +266,7 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
         _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
-        usersCache = searchController.users.map { $0 }
+        usersCache = searchController.userArray
         collectionView.reloadData()
     }
 }

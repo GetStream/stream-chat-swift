@@ -52,7 +52,6 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     private var playerStatusObserver: NSKeyValueObservation?
     private var playerItemObserver: NSKeyValueObservation?
     private var itemDurationObserver: NSKeyValueObservation?
-    private var itemEndPlayingObserver: Any?
     
     /// A content displayed by the view.
     open var content: Content = .initial {
@@ -209,18 +208,16 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     /// Unsubscribes from all notifications.
     /// Is invoked with old player when new player is set or when current view is deallocated.
     open func unsubscribeFromPlayerNotifications(_ player: AVPlayer?) {
-        if let observer = playerTimeChangesObserver {
-            player?.removeTimeObserver(observer)
-            playerTimeChangesObserver = nil
-        }
-        
+        playerTimeChangesObserver.map { player?.removeTimeObserver($0) }
+        playerTimeChangesObserver = nil
+
+        playerStatusObserver?.invalidate()
         playerStatusObserver = nil
+
+        playerItemObserver?.invalidate()
         playerItemObserver = nil
-        
-        if let observer = itemEndPlayingObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-        
+
+        itemDurationObserver?.invalidate()
         itemDurationObserver = nil
     }
     

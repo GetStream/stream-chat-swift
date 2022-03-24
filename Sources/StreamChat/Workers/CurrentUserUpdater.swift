@@ -56,10 +56,12 @@ class CurrentUserUpdater: Worker {
     /// - Parameters:
     ///   - token: Device token, obtained via `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
     ///   - currentUserId: The current user identifier.
+    ///   - pushProvider: The push provider for this device.
     ///   - completion: Called when device is successfully registered, or with error.
     func addDevice(
         token: Data,
         currentUserId: UserId,
+        pushProvider: PushProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
         let deviceId = token.deviceToken
@@ -80,7 +82,8 @@ class CurrentUserUpdater: Worker {
             .request(
                 endpoint: .addDevice(
                     userId: currentUserId,
-                    deviceId: deviceId
+                    deviceId: deviceId,
+                    pushProvider: pushProvider
                 ),
                 completion: { result in
                     if let error = result.error {

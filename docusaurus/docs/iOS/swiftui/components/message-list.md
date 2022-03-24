@@ -8,6 +8,8 @@ The message list view in the SwiftUI SDK allows several customization options. T
 
 If you are developing an app with this use-case, you can customize the [message avatars](../custom-avatar), [reactions](../message-reactions), [theming and presentation logic](../../getting-started) and the different types of [attachments](../attachments).
 
+## Message List Configuration
+
 Additionally, you can control the display of the helper views around the message (date indicators, avatars) and paddings, via the `MessageListConfig`'s properties `MessageDisplayOptions` and `MessagePaddings`. The `MessageListConfig` is part of the `Utils` class in `StreamChat`. Here's an example on how to hide the date indicators and avatars, while also increasing the horizontal padding.
 
 ```swift
@@ -23,6 +25,37 @@ let messageListConfig = MessageListConfig(
 let utils = Utils(messageListConfig: messageListConfig)
 streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
+
+You can also modify the background of the message list to any SwiftUI `View` (`Color`, `LinearGradient`, `Image` etc.). In order to do this, you would need to implement the `makeMessageListBackground` method in the `ViewFactory`.
+
+```swift
+func makeMessageListBackground(
+    colors: ColorPalette,
+    isInThread: Bool
+) -> some View {
+    LinearGradient(gradient: Gradient(
+        colors: [.white, .red, .black]), 
+        startPoint: .top, 
+        endPoint: .bottom
+    )
+}
+```
+
+In this method, you receive the `colors` used in the SDK, but you can also use your own colors like in the example above. If you want to have a different background for message threads, use the `isInThread` value to distinguish between a regular message list and a thread.
+
+If you want to change the background of the message bubbles, you can update the `messageCurrentUserBackground` and `messageOtherUserBackground` in the `ColorPalette` on `StreamChat` setup. These values are arrays of `UIColor` - if you want to have a gradient background just provide all the colors that the gradient should be consisted of.
+
+```swift
+var colors = ColorPalette()
+colors.messageCurrentUserBackground = [UIColor.red, UIColor.white]
+colors.messageOtherUserBackground = [UIColor.white, UIColor.red]
+        
+let appearance = Appearance(colors: colors)
+        
+streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
+```
+
+## Custom Message Container View
 
 However, if you are building a livestream app similar to Twitch, you will need a different type of user interface for the message views. The SwiftUI SDK allows swapping the message container view with your own implementation, without needing to implement the whole message list, the composer or the reactions. In order to do this, you need to implement the method `makeMessageContainerView` in the `ViewFactory` protocol.
 

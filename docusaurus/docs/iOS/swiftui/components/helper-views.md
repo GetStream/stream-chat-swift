@@ -48,6 +48,19 @@ func makeNoChannelsView() -> some View {
 }
 ```
 
+## Changing the Background of the Channel List
+
+You can change the background of the channel list to be any SwiftUI `View` (`Color`, `LinearGradient`, `Image` etc.). In order to do this, you will need to implement the `makeChannelListBackground` in the `ViewFactory`.
+
+```swift
+func makeChannelListBackground(colors: ColorPalette) -> some View {
+    Color(colors.background)
+        .edgesIgnoringSafeArea(.bottom)
+}
+```
+
+In this method, you receive the `colors` used in the SDK, but you can ignore them if you want to use custom colors that are not setup via the SDK. 
+
 ## Changing the Chat Channel List Item
 
 You can swap the channel list item that is displayed in the channel list with your own implementation. In order to do that, you should implement the `makeChannelListItem` in the `ViewFactory` protocol.
@@ -94,7 +107,7 @@ In the channel list item creation method, you are provided with several paramete
 - `avatar`: the avatar of the channel.
 - `onlineIndicatorShown`: whether the online indicator (about last active members) is shown on the avatar.
 - `disabled`: whether the user interactions with the channel are disabled. You should use this value while the view is being swiped, in order to avoid clicking the channel list item instead.
-- `selectedChannel`: binding of the current channel selection info (channel and optional message).
+- `selectedChannel`: binding of the currently selected channel selection info (channel and optional message).
 - `swipedChannelId`: optional id of the swiped channel id.
 - `channelDestination`: closure that creates the channel destination.
 - `onItemTap`: called when a channel list item is tapped.
@@ -117,6 +130,44 @@ public func makeChannelListDividerItem() -> some View {
 ```
 
 If you want your list to not have a divider whatsoever, you can simply return an `EmptyView` here.
+
+## Changing the Top Bar
+
+By default, the SwiftUI SDK shows a search bar at the top of the channel list. This component lets you search through messages matching the search term inside the channels. When you tap on a search result, the corresponding channel is opened, automatically scrolling to the searched message.
+
+In order to replace this component with your own (or completely remove it by returning an `EmptyView`), you need to implement the `makeChannelListTopView` method:
+
+```swift
+func makeChannelListTopView(
+    searchText: Binding<String>
+) -> some View {
+    SearchBar(text: searchText)
+}
+```
+
+In this method, a binding of the search text is provided, in case you want to implement your custom search bar.
+
+## Changing the Footer View
+
+You can add a view at the bottom of the channel list. There are two options here - a footer shown when you scroll to the end of the channel list and a sticky footer that's always visible.
+
+To add a footer at the bottom of the channel list, you need to implement the `makeChannelListFooterView` method:
+
+```swift
+public func makeChannelListFooterView() -> some View {
+    SomeFooterView()
+}
+```
+
+To add a sticky footer, always visible at the bottom of the channel list, you need to implement the `makeChannelListStickyFooterView` method:
+
+```swift
+func makeChannelListStickyFooterView() -> some View {
+    SomeStickyFooterView()
+}
+```
+
+Both methods return an `EmptyView` by default.
 
 Remember to always inject your custom view factory in your view hierarchy:
 

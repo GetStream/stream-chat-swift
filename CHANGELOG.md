@@ -3,6 +3,62 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add support for multiple push providers [#1864](https://github.com/GetStream/stream-chat-swift/issues/1864)
+### 🐞 Fixed
+- Fix payload for reaction when using `enforce_unique` [#1861](https://github.com/GetStream/stream-chat-swift/issues/1861)
+- Use IndexPath's item instead of row for macOS compatibility [#1859](https://github.com/GetStream/stream-chat-swift/pull/1859)
+- Fix commands without arguments cannot be sent without text [#1869](https://github.com/GetStream/stream-chat-swift/issues/1869)
+- Fix mime-type for file attachments [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
+- Fix pasting long text into composer won't update input height [#1875](https://github.com/GetStream/stream-chat-swift/issues/1875)
+
+## StreamChatUI
+### 🐞 Fixed
+- Resolve attachment type when importing file from file picker [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
+
+# [4.12.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.12.0)
+_March 16, 2022_
+
+## StreamChat
+### ✅ Added
+- Add Offline Support (Connection & events recovery, and offline actions queuing) [#1831](https://github.com/GetStream/stream-chat-swift/pull/1831)
+- Add `MessageSearchSortingKey.createdAt` and `updatedAt` for sorting options [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+### 🐞 Fixed
+- Fix `ChatMessageSearchController` not respecting `sort` param [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+- Fix `ChatMessageSearchController` not removing old search results [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+- Fix `ChatMessageSearchController` making empty searches [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+
+## StreamChatUI
+### 🔄 Changed
+- ⚠️ Change default message deleted visibility to `.alwaysVisible` [#1851](https://github.com/GetStream/stream-chat-swift/pull/1851)
+   - **Note:** This change is required to be align with the other SDK Platforms. If you still want the older behaviour, you should set the `ChatClientConfig.deletedMessagesVisibility` to `.visibleForCurrentUser`.
+### ✅ Added
+- Make it possible to customize the message view only in the popup actions [#1844](https://github.com/GetStream/stream-chat-swift/pull/1844)
+### 🐞 Fixed
+- Fix blurred avatar views when using image merger [#1841](https://github.com/GetStream/stream-chat-swift/pull/1841)
+- Fix "Only visible to you" shown when deleted messages visible for all users [#1847](https://github.com/GetStream/stream-chat-swift/pull/1847)
+- Fix channels list cell staying as selected when in Airplane mode [#1831](https://github.com/GetStream/stream-chat-swift/pull/1831)
+
+# [4.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.11.0)
+_March 01, 2022_
+
+### ✅ Added
+- Add Support for Message List Data Source Diffing (Experimental) [#1770](https://github.com/GetStream/stream-chat-swift/pull/1770)
+- Show Camera option on the ComposerVC [#1798](https://github.com/GetStream/stream-chat-swift/pull/1798)
+- `ChannelController`'s `truncateChannel` function now allows you to specify `systemMessage`, `hardDelete`, `skipPush` properties [#1799](https://github.com/GetStream/stream-chat-swift/pull/1799)
+- Added `truncatedAt` property to `ChatChannel`
+- Added increased logging for CoreData crashes caused by lingering models from previous sessions [#1814](https://github.com/GetStream/stream-chat-swift/issues/1814)
+
+### 🐞 Fixed
+- Fix `ChatMentionSuggestionView` permanently hiding subviews [#1800](https://github.com/GetStream/stream-chat-swift/issues/1800)
+- Fix showing channel watchers in mention suggestions list [#1803](https://github.com/GetStream/stream-chat-swift/issues/1803)
+- System message is now properly shown when channel is truncated [#1799](https://github.com/GetStream/stream-chat-swift/pull/1799)
+- Fix Memory Leaks when opening and closing channels [#1812](https://github.com/GetStream/stream-chat-swift/pull/1812)
+
+# [4.10.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.10.1)
+_February 16, 2022_
+
 ### 🔄 Changed
 - `ChannelListVC` now keeps track of channels where user is a member only instead of all channels loaded in the SDK. [#1785](https://github.com/GetStream/stream-chat-swift/pull/1785)
 

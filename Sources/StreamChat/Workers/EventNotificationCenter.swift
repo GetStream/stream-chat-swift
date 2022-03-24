@@ -11,14 +11,10 @@ class EventNotificationCenter: NotificationCenter {
     /// The database used when evaluating middlewares.
     let database: DatabaseContainer
     
-    /// Events are processed in batches to reduce database writes. This interval is the max number of seconds
-    /// an event can wait before its processing started.
-    ///
-    /// Mutating this value doesn't affect the existing batch and the new value is applied for the following batch.
-    ///
-    var eventBatchPeriod: TimeInterval = 0.5
-    
-    @Atomic var pendingEvents: [Event] = []
+    // We post events on a queue different from database.writable context
+    // queue to prevent a deadlock happening when @CoreDataLazy (with `context.performAndWait` inside)
+    // model is accessed in event handlers.
+    var eventPostingQueue = DispatchQueue.main
     
     init(database: DatabaseContainer) {
         self.database = database
@@ -33,61 +29,29 @@ class EventNotificationCenter: NotificationCenter {
         middlewares.append(middleware)
     }
 
-    func process(_ event: Event) {
-        var shouldScheduleProcessing = false
-        _pendingEvents {
-            shouldScheduleProcessing = $0.isEmpty
-            $0.append(event)
-        }
+    func process(_ events: [Event], postNotifications: Bool = true, completion: (() -> Void)? = nil) {
+        var eventsToPost = [Event]()
         
-        if shouldScheduleProcessing {
-            scheduleProcessing()
-        }
+        database.write({ session in
+            eventsToPost = events.compactMap {
+                self.middlewares.process(event: $0, session: session)
+            }
+        }, completion: { _ in
+            guard postNotifications else {
+                completion?()
+                return
+            }
+            
+            self.eventPostingQueue.sync {
+                eventsToPost.forEach { self.post(Notification(newEventReceived: $0, sender: self)) }
+                completion?()
+            }
+        })
     }
-    
-    /// Custom overload for `HealthCheckEvent`
-    ///
-    /// When we receive this event, we first create the `CurrentUserDTO`
-    /// and then inform the `connectionIdWaiters` of `ChatClient`
-    /// that we're connected. Using the normal `process` func, by the time
-    /// we inform the waiters, DB save is not finished so `CurrentUserDTO`
-    /// does not exist in DB yet. Using this overload makes sure that
-    /// we process the event fully before calling completion closures.
-    func process(_ healthCheckEvent: HealthCheckEvent, completion: @escaping ((ConnectionId) -> Void)) {
-        database.write { session in
-            // We don't want to publish `HealthCheckEvent`, so we discard the output
-            _ = self.middlewares.process(event: healthCheckEvent, session: session)
-        } completion: { _ in
-            completion(healthCheckEvent.connectionId)
-        }
-    }
-    
-    /// Starts the timer and schedules the processing of events
-    private func scheduleProcessing() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + eventBatchPeriod) { [weak self] in
-            guard let self = self else { return }
+}
 
-            var eventsToPublish: [Event] = []
-            self.database.write({ session in
-                var eventsToProcess: [Event] = []
-                self._pendingEvents {
-                    eventsToProcess = $0
-                    $0.removeAll()
-                }
-                
-                eventsToPublish = eventsToProcess.compactMap {
-                    self.middlewares.process(event: $0, session: session)
-                }
-            }, completion: { _ in
-                // We post events on a queue different from database.writable context
-                // queue to prevent a deadlock happening when @CoreDataLazy (with `context.performAndWait` inside)
-                // model is accessed in event handlers.
-                DispatchQueue.main.async {
-                    eventsToPublish.forEach {
-                        self.post(Notification(newEventReceived: $0, sender: self))
-                    }
-                }
-            })
-        }
+extension EventNotificationCenter {
+    func process(_ event: Event, postNotification: Bool = true, completion: (() -> Void)? = nil) {
+        process([event], postNotifications: postNotification, completion: completion)
     }
 }
