@@ -279,6 +279,7 @@ open class ChatChannelVC:
 
         if let cid = channelController?.cid {
             headerView.channelController = client?.channelController(for: cid)
+            headerView.updateContent()
         }
         if channelController?.channelQuery.type == .announcement {
             messageComposerVC?.composerView.isUserInteractionEnabled = false
