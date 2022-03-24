@@ -15,10 +15,8 @@ extension Notification.Name {
     public static let showSnackBar = Notification.Name("kStreamshowSnackBar")
     public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
     public static let disburseFundAction = Notification.Name("kStreamChatDisburseFundTapAction")
+    public static let showActivityAction = Notification.Name("kStreamChatshowActivityAction")
 }
-
-// TODO: Need to check memory issue
-fileprivate var sendMessageLock = false
 
 /// The possible errors that can occur in attachment validation
 public enum AttachmentValidationError: Error {
@@ -342,7 +340,7 @@ open class ComposerVC: _ViewController,
         bindMenuController()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let `self` = self else { return }
-            if self.keyboardHeight == 0.0 {
+            if self.keyboardHeight == 0.0 && self.channelController?.channel?.type != .announcement {
                 self.composerView.inputMessageView.textView.becomeFirstResponder()
             }
         }

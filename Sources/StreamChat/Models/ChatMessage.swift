@@ -141,6 +141,10 @@ public struct ChatMessage {
     /// The message pinning information. Is `nil` if the message is not pinned.
     public let pinDetails: MessagePinDetails?
     
+    public var firstAttachmentId: AttachmentId? {
+        return _attachments.first?.id
+    }
+    
     internal init(
         id: MessageId,
         cid: ChannelId,

@@ -15,7 +15,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
     public var player: AVPlayer {
         playerView.player
     }
-    
+
     /// Image view to be used for zoom in/out animation.
     open private(set) lazy var animationPlaceholderImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints

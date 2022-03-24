@@ -55,7 +55,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     // MARK: - METHODS
     private func setup() {
         self.view.backgroundColor = .clear
-        btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
+        btnBack?.setImage(Appearance.default.images.closeCircle, for: .normal)
         btnAddFriend?.isHidden = true
         titleLabel.text = selectionType.title
         self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)

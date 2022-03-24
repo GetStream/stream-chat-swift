@@ -22,6 +22,19 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
+    
+    func getExtraDataArray(key: String) -> [RawJSON]? {
+        if let extraData = self[key] {
+            switch extraData {
+            case .array(let array):
+                return array
+            default:
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
 }
 
 // MARK: - DAO
@@ -178,6 +191,14 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
+    
+    var isTreasureGroup: Bool {
+        if let isTreasureGroup = self["isTreasureGroup"] {
+            return fetchRawData(raw: isTreasureGroup) as? Bool ?? false
+        } else {
+            return false
+        }
+    }
 }
 
 // MARK: - RedPacketAmountBubble txId
@@ -189,4 +210,31 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
+}
+
+// MARK: - Announcement
+public extension Dictionary where Key == String, Value == RawJSON {
+    var tag: [String]? {
+        guard let tags = getExtraDataArray(key: "tags") else {
+            return nil
+        }
+        return tags.map { fetchRawData(raw: $0) as? String ?? "" }
+    }
+    
+    var cta: String? {
+        if let ctaStr = self["cta"] {
+            return fetchRawData(raw: ctaStr) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var ctaData: String? {
+        if let ctaDataStr = self["cta_data"] {
+            return fetchRawData(raw: ctaDataStr) as? String
+        } else {
+            return nil
+        }
+    }
+
 }
