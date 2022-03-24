@@ -85,6 +85,9 @@ open class ChatMessageLayoutOptionsResolver {
             // The bubbles with thread look like continuous bubbles
             options.insert(.continuousBubble)
         }
+        if isRedPacketAmountCell(message) {
+            options.insert(.avatar)
+        }
         if hasReactions(channel, message, appearance) {
             options.insert(.reactions)
         }
@@ -94,7 +97,9 @@ open class ChatMessageLayoutOptionsResolver {
 
         return options
     }
-
+    private func isRedPacketAmountCell(_ message: ChatMessage?) -> Bool {
+        message?.extraData.keys.contains("RedPacketOtherAmountReceived") ?? false
+    }
     func hasQuotedMessage(_ message: ChatMessage) -> Bool {
         message.quotedMessage?.id != nil
     }

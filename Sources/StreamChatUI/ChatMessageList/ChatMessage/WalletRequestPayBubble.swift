@@ -21,7 +21,7 @@ class WalletRequestPayBubble: UITableViewCell {
     public private(set) var pickUpButton: UIButton!
     public private(set) var lblDetails: UILabel!
     private var detailsStack: UIStackView!
-    var options: ChatMessageLayoutOptions?
+    public var layoutOptions: ChatMessageLayoutOptions?
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     var isSender = false
@@ -29,7 +29,12 @@ class WalletRequestPayBubble: UITableViewCell {
     var chatClient: ChatClient?
     var client: ChatClient?
     var walletPaymentType: WalletAttachmentPayload.PaymentType = .pay
-
+    open var messageAuthorAvatarSize: CGSize { .init(width: 32, height: 32) }
+    public private(set) var authorAvatarView: ChatAvatarView?
+    public private(set) var metadataContainer: ContainerStackView?
+    public private(set) var authorAvatarSpacer: UIView?
+    public private(set) var authorNameLabel: UILabel?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -56,9 +61,9 @@ class WalletRequestPayBubble: UITableViewCell {
         ])
         if isSender {
             viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth).isActive = true
-            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: MessageOutgoingPadding).isActive = true
         } else {
-            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8).isActive = true
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: MessageIncomingPadding).isActive = true
             viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -cellWidth).isActive = true
         }
 
@@ -164,8 +169,114 @@ class WalletRequestPayBubble: UITableViewCell {
             timestampLabel.heightAnchor.constraint(equalToConstant: 15)
         ])
         timestampLabel.transform = .mirrorY
+            // TODO
+//        guard let options = layoutOptions else {
+//            log.assertionFailure("Layout options are missing")
+//            return
+//        }
+//
+//        layout(options: options, isSender: isSender)
+        
     }
+    open func layout(options: ChatMessageLayoutOptions, isSender: Bool) {
+        
+        var constraintsToActivate: [NSLayoutConstraint] = []
 
+        // Avatar view
+        if options.contains(.avatar) {
+            let avatarView = createAvatarView()
+            contentView.addSubview(avatarView)
+            avatarView.backgroundColor = .red
+            constraintsToActivate += [
+                avatarView.widthAnchor.pin(equalToConstant: messageAuthorAvatarSize.width),
+                avatarView.heightAnchor.pin(equalToConstant: messageAuthorAvatarSize.height),
+                avatarView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
+                avatarView.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor, constant: 0),
+                
+            ]
+
+        }
+
+        // Avatar spacer
+        if options.contains(.avatarSizePadding) {
+            let avatarSpacer = createAvatarSpacer()
+            viewContainer.addSubview(avatarSpacer)
+            constraintsToActivate += [
+                avatarSpacer.widthAnchor.pin(equalToConstant: messageAuthorAvatarSize.width),
+                avatarSpacer.heightAnchor.pin(equalToConstant: messageAuthorAvatarSize.height),
+                avatarSpacer.bottomAnchor.constraint(equalTo: viewContainer.bottomAnchor, constant: 0),
+                avatarSpacer.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor, constant: 0),
+            ]
+            avatarSpacer.transform = .mirrorY
+        }
+        
+        NSLayoutConstraint.activate(constraintsToActivate)
+        
+        if isSender {
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth + messageAuthorAvatarSize.width)
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: MessageOutgoingPadding).isActive = true
+        } else {
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: MessageIncomingPadding).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -(cellWidth + messageAuthorAvatarSize.width)).isActive = true
+        }
+//        var metadataSubviews: [UIView] = []
+//        if options.contains(.authorName) {
+//            metadataSubviews.append(createAuthorNameLabel())
+//        }
+//        if options.contains(.timestamp) {
+//            metadataSubviews.append(createTimestampLabel())
+//        }
+//        metadataContainer = ContainerStackView(
+//            arrangedSubviews: options.contains(.flipped) ? metadataSubviews.reversed() : metadataSubviews
+//        )
+//
+//        let mainContainerSubviews = [
+//            authorAvatarView ?? authorAvatarSpacer,
+//        ].compactMap { $0 }
+//
+//        //bubbleThreadMetaContainer.addArrangedSubview(metadataContainer!)
+//        viewContainer.addSubview(metadataContainer!)
+//        timestampLabel.textAlignment = isSender ? .right : .left
+//        NSLayoutConstraint.activate([
+//            metadataContainer!.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor, constant: 0),
+//            metadataContainer!.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor, constant: 0),
+//            metadataContainer!.bottomAnchor.constraint(equalTo: subContainer.topAnchor, constant: -8),
+//            metadataContainer!.topAnchor.constraint(equalTo: viewContainer.topAnchor, constant: 0),
+//            //metadataContainer!.heightAnchor.constraint(equalToConstant: 15)
+//        ])
+        //metadataContainer!.transform = .mirrorY
+    }
+    open func createAvatarView() -> ChatAvatarView {
+        if authorAvatarView == nil {
+            authorAvatarView = Components.default
+                .avatarView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return authorAvatarView!
+    }
+    /// Instantiates, configures and assigns `createAvatarSpacer` when called for the first time.
+    /// - Returns: The `authorAvatarSpacer` subview.
+    open func createAvatarSpacer() -> UIView {
+        if authorAvatarSpacer == nil {
+            authorAvatarSpacer = UIView().withoutAutoresizingMaskConstraints
+        }
+        return authorAvatarSpacer!
+    }
+    /// Instantiates, configures and assigns `authorNameLabel` when called for the first time.
+    /// - Returns: The `authorNameLabel` subview.
+    open func createAuthorNameLabel() -> UILabel {
+        if authorNameLabel == nil {
+            authorNameLabel = UILabel()
+                .withAdjustingFontForContentSizeCategory
+                .withBidirectionalLanguagesSupport
+                .withoutAutoresizingMaskConstraints
+
+            authorNameLabel!.textColor = Appearance.default.colorPalette.subtitleText
+            authorNameLabel!.font = Appearance.default.fonts.footnote
+        }
+        return authorNameLabel!
+    }
     private func createTimestampLabel() -> UILabel {
         if timestampLabel == nil {
             timestampLabel = UILabel()
