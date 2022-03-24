@@ -168,6 +168,9 @@ open class InputTextView: UITextView, AppearanceProvider {
             clipboardAttachmentDelegate?.inputTextView(self, didPasteImage: pasteboardImage)
         } else {
             super.paste(sender)
+            // On text paste, textView height will not change automatically
+            // so we must call this function
+            setTextViewHeight()
         }
     }
 }
