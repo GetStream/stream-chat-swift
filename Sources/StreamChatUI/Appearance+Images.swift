@@ -194,6 +194,21 @@ public extension Appearance {
                 return Appearance.default.images.sendArrow.tinted(with: .white)
             }
         }()
+        public var menuRedPacket: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "heart.rectangle")?.withRenderingMode(.alwaysTemplate)
+            } else {
+                return nil
+            }
+        }()
+
+        public var menuGiftPacket: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "gift")?.withRenderingMode(.alwaysTemplate)
+            } else {
+                return nil
+            }
+        }()
 
         // MARK: - Reactions
 
@@ -413,7 +428,6 @@ public extension Appearance {
         public var menuDao: UIImage = loadImageSafely(with: "dao")
         public var menuMedia: UIImage = loadImageSafely(with: "media")
         public var menuNft: UIImage = loadImageSafely(with: "nft")
-        public var menuRedPacket: UIImage = loadImageSafely(with: "redPacketMenu")
         public var menuWeather: UIImage = loadImageSafely(with: "weather")
         public var menuCrypto: UIImage = loadImageSafely(with: "crypto")
         public var backMenuOption: UIImage = loadImageSafely(with: "back")
