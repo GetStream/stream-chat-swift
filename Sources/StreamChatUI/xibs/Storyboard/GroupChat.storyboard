@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -210,106 +209,100 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eol-SJ-p51">
-                                <rect key="frame" x="0.0" y="-50" width="414" height="996"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.3956361109" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wmg-bO-KgA">
-                                <rect key="frame" x="5" y="530.5" width="404" height="362.5"/>
-                                <color key="backgroundColor" name="viewBackground"/>
+                                <rect key="frame" x="5" y="0.0" width="404" height="893"/>
+                                <color key="backgroundColor" red="0.11764705882352941" green="0.11764705882352941" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="zEJ-PD-S0X">
-                                <rect key="frame" x="55" y="575.5" width="304" height="276.5"/>
+                                <rect key="frame" x="55" y="45" width="304" height="98.5"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="ze2-YJ-Rqk">
-                                        <rect key="frame" x="10" y="0.0" width="284" height="95.5"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="ze2-YJ-Rqk">
+                                        <rect key="frame" x="0.0" y="0.0" width="304" height="98.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Leave Chatroom" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTq-La-9ii">
-                                                <rect key="frame" x="0.0" y="0.0" width="284" height="34"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="304" height="34"/>
                                                 <fontDescription key="fontDescription" name="AppleSDGothicNeo-Bold" family="Apple SD Gothic Neo" pointSize="28"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Are you sure you want to leave this chatroom? If you leave, your chat history will be permanently deleted." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Fr-is-VB2">
-                                                <rect key="frame" x="0.0" y="45" width="284" height="50.5"/>
-                                                <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="14"/>
+                                                <rect key="frame" x="0.0" y="48" width="304" height="50.5"/>
+                                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="0.80213180853396049" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ndd-Nb-Rj1">
-                                        <rect key="frame" x="6.5" y="95.5" width="291" height="181"/>
-                                        <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDR-z1-HGp">
-                                                <rect key="frame" x="0.0" y="0.0" width="291" height="88"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="88" id="qBB-0t-BZ5"/>
-                                                </constraints>
-                                            </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S7M-bp-k8X">
-                                                <rect key="frame" x="0.0" y="88" width="291" height="41"/>
-                                                <color key="backgroundColor" red="1" green="0.41176470588235292" blue="0.38039215686274508" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="41" id="2BH-Ib-fVA"/>
-                                                    <constraint firstAttribute="width" constant="291" id="BK6-qZ-idC"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                <state key="normal" title="Delete Chatroom">
-                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="actionButton:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="pgW-wy-VX9"/>
-                                                </connections>
-                                            </button>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OFW-94-1D4">
-                                                <rect key="frame" x="0.0" y="129" width="291" height="11"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="11" id="ht6-Tv-bqG"/>
-                                                </constraints>
-                                            </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pJJ-cM-lop">
-                                                <rect key="frame" x="0.0" y="140" width="291" height="41"/>
-                                                <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="41" id="nau-gg-gqF"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                <state key="normal" title="Cancel">
-                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="0.69862594085485752" colorSpace="custom" customColorSpace="sRGB"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="cancelButtonAction:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="uXa-Jc-kM2"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                    </stackView>
+                                </subviews>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ndd-Nb-Rj1">
+                                <rect key="frame" x="40" y="143.5" width="334" height="181"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDR-z1-HGp">
+                                        <rect key="frame" x="0.0" y="0.0" width="334" height="88"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="88" id="qBB-0t-BZ5"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S7M-bp-k8X">
+                                        <rect key="frame" x="0.0" y="88" width="334" height="41"/>
+                                        <color key="backgroundColor" red="1" green="0.41176470588235292" blue="0.38039215686274508" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="41" id="2BH-Ib-fVA"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="17"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Delete Chatroom">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="actionButton:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="pgW-wy-VX9"/>
+                                        </connections>
+                                    </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OFW-94-1D4">
+                                        <rect key="frame" x="0.0" y="129" width="334" height="11"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="11" id="ht6-Tv-bqG"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pJJ-cM-lop">
+                                        <rect key="frame" x="0.0" y="140" width="334" height="41"/>
+                                        <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="41" id="nau-gg-gqF"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="17"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Cancel">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="0.69862594085485752" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="cancelButtonAction:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="uXa-Jc-kM2"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="TG8-uv-uNI"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="TG8-uv-uNI" firstAttribute="bottom" secondItem="zEJ-PD-S0X" secondAttribute="bottom" constant="10" id="3yV-5i-eDm"/>
+                            <constraint firstItem="ndd-Nb-Rj1" firstAttribute="top" secondItem="zEJ-PD-S0X" secondAttribute="bottom" id="4K8-d8-eDS"/>
                             <constraint firstAttribute="bottom" secondItem="wmg-bO-KgA" secondAttribute="bottom" constant="3" id="BaT-dj-7RZ"/>
-                            <constraint firstAttribute="bottom" secondItem="Eol-SJ-p51" secondAttribute="bottom" constant="-50" id="Mjj-Ks-Lgc"/>
+                            <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="ndd-Nb-Rj1" secondAttribute="trailing" constant="40" id="DjZ-g1-ET4"/>
                             <constraint firstItem="zEJ-PD-S0X" firstAttribute="leading" secondItem="GND-di-ziF" secondAttribute="leading" constant="55" id="dJC-CR-rZN"/>
-                            <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="Eol-SJ-p51" secondAttribute="trailing" id="guZ-Pg-gZ7"/>
                             <constraint firstItem="wmg-bO-KgA" firstAttribute="top" secondItem="zEJ-PD-S0X" secondAttribute="top" constant="-45" id="hC9-JS-SF9"/>
                             <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="zEJ-PD-S0X" secondAttribute="trailing" constant="55" id="iOs-C1-v5c"/>
                             <constraint firstAttribute="trailing" secondItem="wmg-bO-KgA" secondAttribute="trailing" constant="5" id="m6Y-NO-CsJ"/>
-                            <constraint firstItem="Eol-SJ-p51" firstAttribute="top" secondItem="GND-di-ziF" secondAttribute="top" constant="-50" id="mhg-FZ-sqN"/>
+                            <constraint firstItem="wmg-bO-KgA" firstAttribute="top" secondItem="GND-di-ziF" secondAttribute="top" id="vKz-F4-nMO"/>
+                            <constraint firstItem="ndd-Nb-Rj1" firstAttribute="leading" secondItem="TG8-uv-uNI" secondAttribute="leading" constant="40" id="vft-cF-CpY"/>
                             <constraint firstItem="wmg-bO-KgA" firstAttribute="leading" secondItem="TG8-uv-uNI" secondAttribute="leading" constant="5" id="xhg-SU-Wd0"/>
-                            <constraint firstItem="Eol-SJ-p51" firstAttribute="leading" secondItem="TG8-uv-uNI" secondAttribute="leading" id="zb3-qs-NMw"/>
+                            <constraint firstItem="ndd-Nb-Rj1" firstAttribute="centerX" secondItem="GND-di-ziF" secondAttribute="centerX" id="zrU-W3-Lqi"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="actionButton" destination="S7M-bp-k8X" id="GyN-J6-Zws"/>
-                        <outlet property="backgroundView" destination="Eol-SJ-p51" id="vY1-NL-pXt"/>
                         <outlet property="cancelButton" destination="pJJ-cM-lop" id="uD7-rj-oB3"/>
                         <outlet property="containerView" destination="wmg-bO-KgA" id="Nbv-NY-0Yd"/>
                         <outlet property="messageLabel" destination="8Fr-is-VB2" id="t7Z-fb-DL7"/>
@@ -328,129 +321,119 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9UO-3b-BOU">
-                                <rect key="frame" x="0.0" y="-50" width="414" height="996"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.69921802340132866" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ING-X5-D6f">
-                                <rect key="frame" x="5" y="455.5" width="404" height="437.5"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bfk-yA-CwT" customClass="StreamChatBackButton" customModule="StreamChatUI" customModuleProvider="target">
-                                        <rect key="frame" x="359" y="20" width="30" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="30" id="0ii-ab-QS0"/>
-                                            <constraint firstAttribute="width" secondItem="bfk-yA-CwT" secondAttribute="height" multiplier="1:1" id="V1x-3O-hwS"/>
-                                        </constraints>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" image="closePopup"/>
-                                        <connections>
-                                            <action selector="btnBackAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="S6b-mB-0eS"/>
-                                            <action selector="closeButtonAction:" destination="8Gr-P8-lcO" eventType="touchUpInside" id="kbe-3C-MOI"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" name="viewBackground"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B09-jQ-gyg">
+                                <rect key="frame" x="0.0" y="44" width="414" height="447"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstItem="bfk-yA-CwT" firstAttribute="top" secondItem="ING-X5-D6f" secondAttribute="top" constant="20" id="Alv-ck-TiM"/>
-                                    <constraint firstAttribute="trailing" secondItem="bfk-yA-CwT" secondAttribute="trailing" constant="15" id="mBW-Oc-T5w"/>
+                                    <constraint firstAttribute="height" constant="447" id="dxs-PZ-s3T"/>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="CgD-Mo-dFy">
-                                <rect key="frame" x="55" y="500.5" width="304" height="351.5"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9UO-3b-BOU">
+                                <rect key="frame" x="0.0" y="-50" width="414" height="996"/>
+                                <color key="backgroundColor" red="0.11764705882352941" green="0.11764705882352941" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bfk-yA-CwT" customClass="StreamChatBackButton" customModule="StreamChatUI" customModuleProvider="target">
+                                <rect key="frame" x="364" y="20" width="30" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="30" id="0ii-ab-QS0"/>
+                                    <constraint firstAttribute="width" secondItem="bfk-yA-CwT" secondAttribute="height" multiplier="1:1" id="V1x-3O-hwS"/>
+                                </constraints>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="closePopup"/>
+                                <connections>
+                                    <action selector="btnBackAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="S6b-mB-0eS"/>
+                                    <action selector="closeButtonAction:" destination="8Gr-P8-lcO" eventType="touchUpInside" id="kbe-3C-MOI"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Invitation to Join" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D1v-d7-SBf">
+                                <rect key="frame" x="10" y="55" width="394" height="29"/>
+                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="24"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vBK-54-kMK" customClass="ChatChannelAvatarView" customModule="StreamChatUI" customModuleProvider="target">
+                                <rect key="frame" x="163" y="144" width="88" height="88"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="Ind-9d-dZk">
-                                        <rect key="frame" x="103" y="0.0" width="98" height="94.5"/>
-                                        <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vBK-54-kMK" customClass="ChatChannelAvatarView" customModule="StreamChatUI" customModuleProvider="target">
-                                                <rect key="frame" x="17" y="0.0" width="64" height="64"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="64" id="Bhy-2u-KSz"/>
-                                                    <constraint firstAttribute="width" secondItem="vBK-54-kMK" secondAttribute="height" multiplier="1:1" id="aBG-4J-OLZ"/>
-                                                </constraints>
-                                            </view>
-                                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZJa-VS-frx">
-                                                <rect key="frame" x="19" y="69.5" width="60" height="60"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="60" id="ccx-gZ-cBR"/>
-                                                    <constraint firstAttribute="width" secondItem="ZJa-VS-frx" secondAttribute="height" multiplier="1:1" id="x2S-rh-ItD"/>
-                                                </constraints>
-                                            </imageView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Name" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ssm-YS-BFP">
-                                                <rect key="frame" x="0.0" y="75" width="98" height="19.5"/>
-                                                <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="16"/>
-                                                <color key="textColor" name="White87%"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="lpe-ZZ-pmQ">
-                                        <rect key="frame" x="6.5" y="109.5" width="291" height="242"/>
-                                        <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IdM-iU-3JR" customClass="CollectionViewGroupUserList" customModule="StreamChatUI" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="291" height="160"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="160" id="Vu2-4a-xKS"/>
-                                                </constraints>
-                                            </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OMX-Ch-bDf">
-                                                <rect key="frame" x="0.0" y="175" width="291" height="41"/>
-                                                <color key="backgroundColor" red="1" green="0.41176470590000003" blue="0.3803921569" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="291" id="1zM-BO-FPe"/>
-                                                    <constraint firstAttribute="height" constant="41" id="oRV-Ms-KFy"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="18"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                <state key="normal" title="Join Group">
-                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="joinGroupButtonAction:" destination="8Gr-P8-lcO" eventType="touchUpInside" id="2rP-Sd-ud4"/>
-                                                </connections>
-                                            </button>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4c9-V4-gQQ">
-                                                <rect key="frame" x="0.0" y="231" width="291" height="11"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="11" id="NUu-4h-MtY"/>
-                                                </constraints>
-                                            </view>
-                                        </subviews>
-                                    </stackView>
+                                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZJa-VS-frx">
+                                        <rect key="frame" x="0.0" y="0.0" width="88" height="88"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
                                 </subviews>
-                            </stackView>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="88" id="Bhy-2u-KSz"/>
+                                    <constraint firstAttribute="width" secondItem="vBK-54-kMK" secondAttribute="height" multiplier="1:1" id="aBG-4J-OLZ"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OMX-Ch-bDf">
+                                <rect key="frame" x="20" y="403" width="374" height="48"/>
+                                <color key="backgroundColor" red="0.5490196078431373" green="0.69803921568627447" blue="0.97254901960784312" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="4Bc-up-08y"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="18"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Join Group">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="joinGroupButtonAction:" destination="8Gr-P8-lcO" eventType="touchUpInside" id="2rP-Sd-ud4"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ssm-YS-BFP">
+                                <rect key="frame" x="15" y="252" width="384" height="19.5"/>
+                                <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="16"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UvW-Ot-7KF">
+                                <rect key="frame" x="30" y="286.5" width="354" height="0.0"/>
+                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="12"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="sFk-zC-uEL"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="ING-X5-D6f" firstAttribute="leading" secondItem="sFk-zC-uEL" secondAttribute="leading" constant="5" id="8pr-VP-PPI"/>
-                            <constraint firstAttribute="trailing" secondItem="ING-X5-D6f" secondAttribute="trailing" constant="5" id="HBP-s5-VsB"/>
+                            <constraint firstItem="vBK-54-kMK" firstAttribute="top" secondItem="D1v-d7-SBf" secondAttribute="bottom" constant="60" id="17b-ql-ffQ"/>
+                            <constraint firstItem="sFk-zC-uEL" firstAttribute="trailing" secondItem="bfk-yA-CwT" secondAttribute="trailing" constant="20" id="1J0-Wu-HaE"/>
+                            <constraint firstItem="ssm-YS-BFP" firstAttribute="centerX" secondItem="4EF-hn-QRC" secondAttribute="centerX" id="6Ne-on-VB7"/>
+                            <constraint firstItem="UvW-Ot-7KF" firstAttribute="top" secondItem="ssm-YS-BFP" secondAttribute="bottom" constant="15" id="E7l-Nq-gAO"/>
                             <constraint firstAttribute="bottom" secondItem="9UO-3b-BOU" secondAttribute="bottom" constant="-50" id="Heo-el-43C"/>
-                            <constraint firstItem="sFk-zC-uEL" firstAttribute="trailing" secondItem="CgD-Mo-dFy" secondAttribute="trailing" constant="55" id="Lvo-mF-nzS"/>
+                            <constraint firstItem="OMX-Ch-bDf" firstAttribute="bottom" secondItem="B09-jQ-gyg" secondAttribute="bottom" constant="-40" id="Irh-PR-ewy"/>
+                            <constraint firstItem="D1v-d7-SBf" firstAttribute="leading" secondItem="sFk-zC-uEL" secondAttribute="leading" constant="10" id="M3w-Pl-msO"/>
+                            <constraint firstItem="ssm-YS-BFP" firstAttribute="leading" secondItem="sFk-zC-uEL" secondAttribute="leading" constant="15" id="NIS-F6-nlM"/>
                             <constraint firstItem="sFk-zC-uEL" firstAttribute="trailing" secondItem="9UO-3b-BOU" secondAttribute="trailing" id="ODe-a3-WiK"/>
-                            <constraint firstItem="sFk-zC-uEL" firstAttribute="bottom" secondItem="CgD-Mo-dFy" secondAttribute="bottom" constant="10" id="Qxa-zD-5W4"/>
-                            <constraint firstItem="CgD-Mo-dFy" firstAttribute="leading" secondItem="4EF-hn-QRC" secondAttribute="leading" constant="55" id="YAi-TI-lBW"/>
+                            <constraint firstItem="bfk-yA-CwT" firstAttribute="top" secondItem="4EF-hn-QRC" secondAttribute="top" constant="20" id="PQb-yd-9fC"/>
+                            <constraint firstItem="UvW-Ot-7KF" firstAttribute="leading" secondItem="sFk-zC-uEL" secondAttribute="leading" constant="30" id="PYY-oK-vPY"/>
                             <constraint firstItem="9UO-3b-BOU" firstAttribute="top" secondItem="4EF-hn-QRC" secondAttribute="top" constant="-50" id="YzE-8I-nYm"/>
                             <constraint firstItem="9UO-3b-BOU" firstAttribute="leading" secondItem="sFk-zC-uEL" secondAttribute="leading" id="ZRt-ak-lw4"/>
-                            <constraint firstItem="ING-X5-D6f" firstAttribute="top" secondItem="CgD-Mo-dFy" secondAttribute="top" constant="-45" id="mBS-5p-0EA"/>
-                            <constraint firstAttribute="bottom" secondItem="ING-X5-D6f" secondAttribute="bottom" constant="3" id="uxc-Qa-581"/>
+                            <constraint firstItem="sFk-zC-uEL" firstAttribute="trailing" secondItem="ssm-YS-BFP" secondAttribute="trailing" constant="15" id="abG-oy-ZbM"/>
+                            <constraint firstItem="D1v-d7-SBf" firstAttribute="top" secondItem="4EF-hn-QRC" secondAttribute="top" constant="55" id="bBq-X9-ZIr"/>
+                            <constraint firstItem="B09-jQ-gyg" firstAttribute="trailing" secondItem="sFk-zC-uEL" secondAttribute="trailing" id="ep9-YR-iPh"/>
+                            <constraint firstItem="vBK-54-kMK" firstAttribute="centerX" secondItem="4EF-hn-QRC" secondAttribute="centerX" id="fBv-ND-xCp"/>
+                            <constraint firstItem="B09-jQ-gyg" firstAttribute="top" secondItem="sFk-zC-uEL" secondAttribute="top" id="fRQ-fI-uGv"/>
+                            <constraint firstItem="sFk-zC-uEL" firstAttribute="trailing" secondItem="OMX-Ch-bDf" secondAttribute="trailing" constant="20" id="hBl-8M-FcJ"/>
+                            <constraint firstItem="sFk-zC-uEL" firstAttribute="trailing" secondItem="UvW-Ot-7KF" secondAttribute="trailing" constant="30" id="o3U-3s-geu"/>
+                            <constraint firstItem="sFk-zC-uEL" firstAttribute="trailing" secondItem="D1v-d7-SBf" secondAttribute="trailing" constant="10" id="qJ7-5I-UhM"/>
+                            <constraint firstItem="OMX-Ch-bDf" firstAttribute="leading" secondItem="sFk-zC-uEL" secondAttribute="leading" constant="20" id="uBM-vX-0gJ"/>
+                            <constraint firstItem="B09-jQ-gyg" firstAttribute="leading" secondItem="sFk-zC-uEL" secondAttribute="leading" id="wRG-vQ-gS8"/>
+                            <constraint firstItem="ssm-YS-BFP" firstAttribute="top" secondItem="vBK-54-kMK" secondAttribute="bottom" constant="20" id="xbp-v5-Orh"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="backgroundView" destination="9UO-3b-BOU" id="fIu-ao-422"/>
                         <outlet property="closeButton" destination="bfk-yA-CwT" id="wfR-oB-Y4f"/>
-                        <outlet property="containerView" destination="ING-X5-D6f" id="BML-b1-NXs"/>
                         <outlet property="groupImageView" destination="vBK-54-kMK" id="qe3-ZT-kBU"/>
                         <outlet property="groupNameLabel" destination="ssm-YS-BFP" id="ymk-ZD-Wvx"/>
                         <outlet property="joinGroupButton" destination="OMX-Ch-bDf" id="N5T-xW-MtZ"/>
-                        <outlet property="usersCollectionView" destination="IdM-iU-3JR" id="Jnk-Gl-ilR"/>
+                        <outlet property="lblGroupDetails" destination="UvW-Ot-7KF" id="6eO-rQ-tf5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RnR-RD-6G7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4716" y="836"/>
+            <point key="canvasLocation" x="4715.9420289855079" y="835.71428571428567"/>
         </scene>
         <!--Share Invite LinkVC-->
         <scene sceneID="dJE-Ub-KSd">

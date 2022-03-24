@@ -15,10 +15,8 @@ extension Notification.Name {
     public static let showSnackBar = Notification.Name("kStreamshowSnackBar")
     public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
     public static let disburseFundAction = Notification.Name("kStreamChatDisburseFundTapAction")
+    public static let showActivityAction = Notification.Name("kStreamChatshowActivityAction")
 }
-
-// TODO: Need to check memory issue
-fileprivate var sendMessageLock = false
 
 /// The possible errors that can occur in attachment validation
 public enum AttachmentValidationError: Error {

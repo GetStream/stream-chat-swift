@@ -131,7 +131,7 @@ open class ChatMessageListVC:
         
         view.addSubview(scrollToLatestMessageButton)
         listView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
-        scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
+        scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -6).isActive = true
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
         setScrollToLatestMessageButton(visible: false, animated: false)

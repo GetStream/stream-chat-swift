@@ -60,7 +60,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     // MARK: - METHODS
     public func setup() {
         self.view.backgroundColor = .clear
-        btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
+        btnBack?.setImage(Appearance.default.images.closeCircle, for: .normal)
         btnAddFriend?.setTitle("", for: .normal)
         btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
         btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
