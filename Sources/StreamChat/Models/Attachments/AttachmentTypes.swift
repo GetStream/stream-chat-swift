@@ -103,10 +103,7 @@ public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBy
     /// the attachment type through its extension/mime-type.
     public init(fileExtension: String) {
         let attachmentFileType = AttachmentFileType(ext: fileExtension)
-        guard let mainMimeType = attachmentFileType.mimeType.split(separator: "/").first else {
-            self = .file
-            return
-        }
+        let mainMimeType = attachmentFileType.mimeType.split(separator: "/").first
         switch mainMimeType {
         case "image":
             self = .image
@@ -114,8 +111,6 @@ public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBy
             self = .video
         case "audio":
             self = .audio
-        case "text", "application":
-            self = .file
         default:
             self = .file
         }
