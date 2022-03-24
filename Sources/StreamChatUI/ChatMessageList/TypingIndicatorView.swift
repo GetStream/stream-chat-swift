@@ -41,13 +41,12 @@ open class TypingIndicatorView: _View, ThemeProvider {
         addSubview(componentContainerView)
         componentContainerView.pin(anchors: [.centerY, .centerX], to: layoutMarginsGuide)
         componentContainerView.pin(anchors: [.top, .bottom], to: self)
-        componentContainerView.addArrangedSubview(typingAnimationView)
-
         componentContainerView.addArrangedSubview(informationLabel)
-        componentContainerView.alignment = .center
-
-        typingAnimationView.heightAnchor.pin(equalToConstant: 5).isActive = true
-        typingAnimationView.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
+        componentContainerView.addArrangedSubview(typingAnimationView)
+        componentContainerView.alignment = .bottom
+        componentContainerView.spacing = 4
+        typingAnimationView.heightAnchor.pin(equalToConstant: 7).isActive = true
+        typingAnimationView.bottomAnchor.pin(equalTo: bottomAnchor, constant: 4).isActive = true
         informationLabel.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
     }
 
