@@ -32,7 +32,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         fetchGroupDetails()
     }
     // MARK: - METHOD
-    open func setupUI() {
+    private func setupUI() {
         view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         let name = self.channelController?.channel?.name ?? ""
         lblTitle.text = name
@@ -40,9 +40,9 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView.register(chatUserNib, forCellReuseIdentifier: chatUserID)
-        let attchmentID = TableViewCellGroupDetailsAttachmentsList.reuseID
-        let attachmentNib = UINib(nibName: attchmentID, bundle: nil)
-        tableView.register(attachmentNib, forCellReuseIdentifier: attchmentID)
+        let attachmentID = TableViewCellGroupDetailsAttachmentsList.reuseID
+        let attachmentNib = UINib(nibName: attachmentID, bundle: nil)
+        tableView.register(attachmentNib, forCellReuseIdentifier: attachmentID)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.bounces = false
@@ -50,7 +50,10 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
-        notificationSwitch.isOn = !(channelController?.channel?.isMuted ?? true)
+        notificationSwitch.isOn = false
+        if let isMuted = channelController?.channel?.isMuted {
+            notificationSwitch.isOn = !isMuted
+        }
     }
     
     private func fetchGroupDetails() {
@@ -69,7 +72,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                     let offlineUser = filteredUsers.filter({ $0.isOnline == false})
                     let alphabetUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == true && $0.isOnline == false}.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
                     let otherUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
-                    
+                    // Adding filtered list to user list array
                     usersList.append(contentsOf: onlineUser)
                     usersList.append(contentsOf: alphabetUsers)
                     usersList.append(contentsOf: otherUsers)
@@ -108,7 +111,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         tableView.endUpdates()
     }
     
-    public func muteNotification() {
+    private func muteNotification() {
         self.channelController?.muteChannel { [weak self] error in
             guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications muted" : "Error while muted group notifications"
@@ -119,7 +122,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         }
     }
     
-    public func unMuteNotification() {
+    private func unMuteNotification() {
         self.channelController?.unmuteChannel { [weak self] error in
             guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications unmuted" : "Error while unmute group notifications"
@@ -218,18 +221,3 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
     }
 }
 
-// MARK: - AttachmentType
-extension AttachmentType {
-    init(tagValue: Int) {
-        switch tagValue {
-        case 0:
-            self.init(rawValue: AttachmentType.image.rawValue)
-        case 1:
-            self.init(rawValue: AttachmentType.file.rawValue)
-        case 2:
-            self.init(rawValue: AttachmentType.linkPreview.rawValue)
-        default:
-            self.init(rawValue: AttachmentType.unknown.rawValue)
-        }
-    }
-}
