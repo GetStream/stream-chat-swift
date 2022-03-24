@@ -35,10 +35,6 @@ public class JoinGroupRequestVC: UIViewController {
         backgroundView.backgroundColor = Appearance.default.colorPalette.panModelColor
     }
     
-    @objc func backgroundViewAction() {
-        self.dismiss(animated: true, completion: nil)
-    }
-    
     @IBAction func closeButtonAction(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }

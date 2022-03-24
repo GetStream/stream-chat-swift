@@ -68,6 +68,7 @@ public class ChatAlertVC: UIViewController {
     }
 }
 
+//MARK: PanModalPresentable
 extension ChatAlertVC: PanModalPresentable {
     public var panScrollable: UIScrollView? {
         return nil
