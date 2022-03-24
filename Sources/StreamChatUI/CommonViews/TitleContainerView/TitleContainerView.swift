@@ -89,4 +89,8 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
             subtitleLabel.text = content.subtitle
         }
     }
+
+    open func updateSubtitle(_ text: String) {
+        subtitleLabel.text = text
+    }
 }
