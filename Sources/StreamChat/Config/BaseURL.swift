@@ -66,17 +66,17 @@ public struct BaseURL: CustomStringConvertible {
 }
 
 // MARK:
-fileprivate extension BaseURL {
 
+private extension BaseURL {
     #if DEBUG
     private static func mockServerUrls(with urlString: String) -> (restAPIBaseURL: URL, webSocketBaseURL: URL) {
-            let env = ProcessInfo.processInfo.environment
-            let httpHost = env["MOCK_SERVER_HTTP_HOST"] ?? "https://\(urlString)/"
-            let websocketHost = env["MOCK_SERVER_WEBSOCKET_HOST"] ?? "wss://\(urlString)/"
-            let port = env["MOCK_SERVER_PORT"] ?? "443"
-            let restAPIBaseURL = URL(string: "\(httpHost):\(port)/")!
-            let webSocketBaseURL = URL(string: "\(websocketHost):\(port)/")!
-            return (restAPIBaseURL: restAPIBaseURL, webSocketBaseURL: webSocketBaseURL)
-        }
+        let env = ProcessInfo.processInfo.environment
+        let httpHost = env["MOCK_SERVER_HTTP_HOST"] ?? "https://\(urlString)/"
+        let websocketHost = env["MOCK_SERVER_WEBSOCKET_HOST"] ?? "wss://\(urlString)/"
+        let port = env["MOCK_SERVER_PORT"] ?? "443"
+        let restAPIBaseURL = URL(string: "\(httpHost):\(port)/")!
+        let webSocketBaseURL = URL(string: "\(websocketHost):\(port)/")!
+        return (restAPIBaseURL: restAPIBaseURL, webSocketBaseURL: webSocketBaseURL)
+    }
     #endif
 }

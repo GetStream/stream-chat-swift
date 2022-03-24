@@ -42,7 +42,7 @@ public struct AccessibleView<T: UIView>: AccessibilityView {
 
     public init(wrappedValue: T? = nil, accessibilityIdentifier: String = "\(type(of: T.self))") {
         self.wrappedValue = wrappedValue
-        self.accessibilityViewIdentifier = accessibilityIdentifier
+        accessibilityViewIdentifier = accessibilityIdentifier
         setAccessibilityIdentifier()
     }
 
