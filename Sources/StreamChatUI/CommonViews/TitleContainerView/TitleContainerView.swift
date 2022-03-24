@@ -74,6 +74,7 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
             titleContainerView.addArrangedSubviews([titleLabel])
         }
         containerView.addArrangedSubviews([titleContainerView, subtitleLabel])
+        containerView.spacing = 3
         embed(containerView)
     }
     
@@ -90,7 +91,7 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
         }
     }
 
-    open func updateSubtitle(_ text: String) {
-        subtitleLabel.text = text
+    open func updateSubtitle(isHide: Bool) {
+        self.subtitleLabel.alpha = isHide ? 0 : 1
     }
 }

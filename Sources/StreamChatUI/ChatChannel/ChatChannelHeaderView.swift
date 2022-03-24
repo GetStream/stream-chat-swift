@@ -32,6 +32,12 @@ open class ChatChannelHeaderView:
         }
     }
 
+    /// A View which displays information about current users who are typing.
+    open private(set) lazy var typingIndicatorView: TypingIndicatorView = components
+        .typingIndicatorView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     /// A Boolean value indicating whether the typing events are enabled.
     open var isTypingEventsEnabled: Bool {
         channelController?.areTypingEventsEnabled == true
@@ -52,6 +58,15 @@ open class ChatChannelHeaderView:
         super.setUp()
 
         makeTimer()
+        setupTypingIndicator()
+    }
+
+    private func setupTypingIndicator() {
+        insertSubview(typingIndicatorView, at: 0)
+        typingIndicatorView.isHidden = true
+        typingIndicatorView.heightAnchor.pin(equalToConstant: 15).isActive = true
+        typingIndicatorView.pin(anchors: [.leading, .trailing], to: self)
+        typingIndicatorView.bottomAnchor.pin(equalTo: bottomAnchor).isActive = true
     }
 
     override open func setUpLayout() {
@@ -68,6 +83,31 @@ open class ChatChannelHeaderView:
             self.titleContainerView.content = (title?.trimStringBy(count: 25), self.subtitleText, self.channelController?.channelQuery.type == .announcement ? true : false, self.channelController?.channel?.isMuted ?? false)
             self.titleContainerView.setUpLayout()
         }
+    }
+
+    /// Shows typing Indicator.
+    /// - Parameter typingUsers: typing users gotten from `channelController`
+    open func showTypingIndicator(typingUsers: [ChatUser]) {
+        guard isTypingEventsEnabled else { return }
+
+        if let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name {
+            typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingUsers.count - 1)
+        } else {
+            // If we somehow cannot fetch any user name, we simply show that `Someone is typing`
+            typingIndicatorView.content = L10n.MessageList.TypingIndicator.typingUnknown
+        }
+        isUserTyping = true
+        titleContainerView.updateSubtitle(isHide: true)
+        typingIndicatorView.isHidden = false
+    }
+
+    /// Hides typing Indicator.
+    open func hideTypingIndicator() {
+        guard isTypingEventsEnabled, typingIndicatorView.isVisible else { return }
+        isUserTyping = true
+        typingIndicatorView.isHidden = true
+        titleContainerView.updateSubtitle(isHide: false)
+        updateContent()
     }
 
     /// The title text used to render the title label. By default it is the channel name.
@@ -171,6 +211,7 @@ open class ChatChannelHeaderView:
     ) {
         switch channel {
         case .update, .create:
+            guard !self.isUserTyping else { return }
             updateContentIfNeeded()
         default:
             break
@@ -208,26 +249,6 @@ open class ChatChannelHeaderView:
     ) {
         // By default the header view is not interested in message events
         // but this can be overridden by subclassing this component.
-    }
-
-    private func showTypingIndicator(typingUsers: [ChatUser]) {
-        guard isTypingEventsEnabled else { return }
-        var typingString = ""
-        if let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name {
-            typingString = L10n.MessageList.TypingIndicator.users(name, typingUsers.count - 1)
-        } else {
-            // If we somehow cannot fetch any user name, we simply show that `Someone is typing`
-            typingString = L10n.MessageList.TypingIndicator.typingUnknown
-        }
-        self.titleContainerView.updateSubtitle(typingString)
-        isUserTyping = true
-    }
-
-    /// Hides typing Indicator.
-    private  func hideTypingIndicator() {
-        guard isTypingEventsEnabled else { return }
-        isUserTyping = false
-        updateContent()
     }
 
     deinit {

@@ -39,7 +39,7 @@ open class TypingIndicatorView: _View, ThemeProvider {
         super.setUpLayout()
         
         addSubview(componentContainerView)
-        componentContainerView.pin(anchors: [.leading, .trailing], to: layoutMarginsGuide)
+        componentContainerView.pin(anchors: [.centerY, .centerX], to: layoutMarginsGuide)
         componentContainerView.pin(anchors: [.top, .bottom], to: self)
         componentContainerView.addArrangedSubview(typingAnimationView)
 
@@ -54,14 +54,14 @@ open class TypingIndicatorView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         
-        backgroundColor = appearance.colorPalette.overlayBackground
-        informationLabel.textColor = appearance.colorPalette.subtitleText
-        informationLabel.font = appearance.fonts.body
+        informationLabel.textAlignment = .center
+        informationLabel.font = appearance.fonts.caption1
+        informationLabel.textColor = appearance.colorPalette.chatNavigationTitleColor
     }
 
     override open func updateContent() {
         super.updateContent()
         
-        informationLabel.text = content
+        informationLabel.text = content?.trimStringBy(count: 30)
     }
 }
