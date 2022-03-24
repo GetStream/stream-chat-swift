@@ -35,7 +35,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     // MARK: - VARIABLES
     public var channelController: ChatChannelController!
     public var selectionType = ChatAddFriendVC.SelectionType.addFriend
-    public lazy var chatUserList: ChatUserListVC = {
+    private lazy var chatUserList: ChatUserListVC = {
         let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
         return obj!
     }()
@@ -53,7 +53,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         setup()
     }
     // MARK: - METHODS
-    public func setup() {
+    private func setup() {
         self.view.backgroundColor = .clear
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
         btnAddFriend?.isHidden = true

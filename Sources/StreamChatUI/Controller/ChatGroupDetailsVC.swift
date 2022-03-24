@@ -22,21 +22,22 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     @IBOutlet private var notificationSwitch: UISwitch!
     // MARK: - VARIABLES
     public var groupInviteLink: String?
-    public var selectedUsers: [ChatChannelMember] = []
     public var channelController: ChatChannelController?
+    private var groupMembers: [ChatChannelMember] = []
     private let sectionWiseList = GroupDetailsSection.allCases
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        fetchGroupDetails()
+        fetchGroupMembers()
     }
     // MARK: - METHOD
     private func setupUI() {
         view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         let name = self.channelController?.channel?.name ?? ""
         lblTitle.text = name
-        self.updateMemberCount()
+        let members = channelController?.channel?.lastActiveMembers ?? []
+        self.updateMemberCount(members: members)
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView.register(chatUserNib, forCellReuseIdentifier: chatUserID)
@@ -56,7 +57,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         }
     }
     
-    private func fetchGroupDetails() {
+    private func fetchGroupMembers() {
         if let cid = channelController?.cid {
             let controller = ChatClient.shared.memberListController(query: .init(cid: cid))
             controller.synchronize { [weak self] error in
@@ -76,16 +77,16 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                     usersList.append(contentsOf: onlineUser)
                     usersList.append(contentsOf: alphabetUsers)
                     usersList.append(contentsOf: otherUsers)
-                    weakSelf.updateMemberCount()
+                    weakSelf.updateMemberCount(members: usersList)
                     weakSelf.updateFilteredUserList(list: usersList)
                 }
             }
         }
     }
     
-    private func updateMemberCount() {
-        let friendCount = selectedUsers.count
-        let onlineUser = selectedUsers.filter( {$0.isOnline}).count ?? 0
+    private func updateMemberCount(members: [ChatChannelMember]) {
+        let friendCount = members.count
+        let onlineUser = members.filter( {$0.isOnline}).count ?? 0
         lblSubtitle.text = "\(friendCount) friends, \(onlineUser) online"
     }
     
@@ -93,15 +94,15 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         var indexPathForInsert = [IndexPath]()
         var indexPathForDelete = [IndexPath]()
         for (userIndex,user) in list.enumerated() {
-            if let oldUserIndex = selectedUsers.firstIndex(where: { $0.id.lowercased() == user.id.lowercased() }) {
+            if let oldUserIndex = groupMembers.firstIndex(where: { $0.id.lowercased() == user.id.lowercased() }) {
                 if oldUserIndex != userIndex {
-                    selectedUsers.remove(at: oldUserIndex)
+                    groupMembers.remove(at: oldUserIndex)
                     indexPathForDelete.append(IndexPath.init(row: oldUserIndex, section: 0))
-                    selectedUsers.insert(user, at: userIndex)
+                    groupMembers.insert(user, at: userIndex)
                     indexPathForInsert.append(IndexPath.init(row: userIndex, section: 0))
                 }
             } else {
-                selectedUsers.insert(user, at: userIndex)
+                groupMembers.insert(user, at: userIndex)
                 indexPathForInsert.append(IndexPath.init(row: userIndex, section: 0))
             }
         }
@@ -146,7 +147,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         controller.groupInviteLink = self.groupInviteLink
         controller.channelController = channelVC
         controller.selectionType = .addFriend
-        controller.existingUsers = selectedUsers
+        controller.existingUsers = groupMembers
         controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
@@ -167,7 +168,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                 if error == nil {
                     DispatchQueue.main.async {
                         Snackbar.show(text: "Group Member updated")
-                        weakSelf.fetchGroupDetails()
+                        weakSelf.fetchGroupMembers()
                     }
                 } else {
                     Snackbar.show(text: "Error operation could be completed")
@@ -195,7 +196,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch sectionWiseList[section] {
         case .userList:
-            return selectedUsers.count
+            return groupMembers.count
         default:
             return 0
         }
@@ -210,7 +211,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
                 for: indexPath) as? TableViewCellChatUser else {
                 return UITableViewCell()
             }
-            let user: ChatChannelMember = selectedUsers[indexPath.row]
+            let user: ChatChannelMember = groupMembers[indexPath.row]
             cell.configGroupDetails(channelMember: user, selectedImage: nil)
             cell.backgroundColor = .clear
             cell.selectionStyle = .none
