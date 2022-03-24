@@ -102,6 +102,7 @@ enum MenuType: Int, CaseIterable {
     case contributeToFund = 9
     case polling = 10
     case contact = 11
+    case gift = 12
 
     func getTitle() -> String {
         switch self {
@@ -127,17 +128,19 @@ enum MenuType: Int, CaseIterable {
             return "Polling"
         case .contact:
             return "Contact"
+        case .gift:
+            return "Gift"
         }
     }
 
     func getImage() -> UIImage {
         switch self {
         case .media:
-            return Appearance.default.images.menuWeather
+            return Appearance.default.images.menuMedia
         case .disburseFund:
             return Appearance.default.images.disburseFund
         case .weather:
-            return Appearance.default.images.menuContact
+            return Appearance.default.images.menuWeather
         case .crypto:
             return Appearance.default.images.menuCrypto
         case .oneN:
@@ -145,7 +148,7 @@ enum MenuType: Int, CaseIterable {
         case .nft:
             return Appearance.default.images.menuNft
         case .redPacket:
-            return Appearance.default.images.menuRedPacket
+            return Appearance.default.images.menuRedPacket ?? .init()
         case .dao:
             return Appearance.default.images.menuDao
         case .contributeToFund:
@@ -154,6 +157,8 @@ enum MenuType: Int, CaseIterable {
             return Appearance.default.images.contributeToFund
         case .contact:
             return Appearance.default.images.menuContact
+        case .gift:
+            return Appearance.default.images.menuGiftPacket ?? .init()
         }
     }
 
@@ -162,7 +167,7 @@ enum MenuType: Int, CaseIterable {
     }
 
     static func getNonDaoMenu() -> [MenuType] {
-        return [.media, .contact, .weather, .crypto, .oneN, .nft, .redPacket, .dao]
+        return [.media, .contact, .weather, .crypto, .oneN, .nft, .redPacket, .gift]
     }
 }
 

@@ -520,6 +520,9 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         guard self.sectionWiseList.indices.contains(section) else {
             return 0
         }
+        guard self.sectionWiseList.indices.contains(section) else {
+            return 0
+        }
         switch self.sectionWiseList[section].sectionType {
         case .createChatHeader, .pagination, .noHeader, .loadingData:
             return 0

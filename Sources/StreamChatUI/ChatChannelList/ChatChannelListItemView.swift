@@ -45,7 +45,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
-    
+
     /// The `UILabel` instance showing the last message or typing users if any.
     open private(set) lazy var subtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
@@ -102,7 +102,8 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             return content.channel.isDirectMessageChannel ? "Video" : "\(authorName) Video"
         } else if !lastMessage.giphyAttachments.isEmpty {
             return content.channel.isDirectMessageChannel ? "Gif" : "\(authorName) Gif"
-        } else if lastMessage.attachments(payloadType: WalletAttachmentPayload.self).first != nil {
+        } else if lastMessage.attachments(payloadType: WalletAttachmentPayload.self).first != nil &&
+                    lastMessage.attachments(payloadType: WalletAttachmentPayload.self).first?.type != AttachmentType.unknown {
             return content.channel.isDirectMessageChannel ? "Request Payment" : "\(authorName) Request Payment"
         } else if lastMessage.extraData.keys.contains("redPacketPickup") {
             return content.channel.isDirectMessageChannel ? "Red Packet" : "\(authorName) Red Packet"
@@ -181,7 +182,6 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     }
     
     override open func updateContent() {
-        titleLabel.text = titleText
         subtitleLabel.text = subtitleText
         timestampLabel.text = timestampText
         avatarView.content = (content?.channel, content?.currentUserId)
@@ -194,7 +194,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             titleLabel.text = titleText
         }
     }
-    
+
     private func setTitleWithMuteIcon() {
         let fullString = NSMutableAttributedString(string: titleText ?? "")
         let imageAttachment = NSTextAttachment()
