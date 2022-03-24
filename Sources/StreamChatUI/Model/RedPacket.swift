@@ -26,6 +26,7 @@ public struct RedPacket {
     public var participantsCount: Int?
     public var endTime: String?
     public var packetId: String?
+    public var packetAddress: String?
     public var strFormattedAmount: String?
     //number of fraction digits in amount
     public var fractionDigits: Int = 0
@@ -50,6 +51,7 @@ public struct RedPacket {
         dictOut["maxOne"] = .string(maxOne ?? "0")
         dictOut["endTime"] = .string(endTime ?? "0")
         dictOut["packetId"] = .string(packetId ?? "")
+        dictOut["packetAddress"] = .string(packetAddress ?? "")
         dictOut["isExpired"] = .bool(false)
         return dictOut
     }

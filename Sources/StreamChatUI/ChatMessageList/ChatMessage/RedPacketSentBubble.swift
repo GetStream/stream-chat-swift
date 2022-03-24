@@ -313,15 +313,40 @@ class RedPacketSentBubble: UITableViewCell {
 
     @objc private func btnPickButtonAction() {
         if isAllowToPick() {
-            guard let redPacket = getRedPacketExtraData(), isSender == false else {
-                return
-            }
-            if let packetId = redPacket["packetId"] {
-                let redPacketId = fetchRawData(raw: packetId) as? String ?? ""
-                var userInfo = [String: Any]()
-                userInfo["packetId"] = redPacketId
-                NotificationCenter.default.post(name: .pickUpRedPacket, object: nil, userInfo: userInfo)
-            }
+            guard let redPacket = getRedPacketExtraData(),
+                  isSender == false else {
+                      return
+                  }
+            NotificationCenter.default.post(name: .pickUpGiftPacket, object: nil, userInfo: redPacket)
         }
+//        if isAllowToPick() {
+//            guard let redPacket = getRedPacketExtraData(),
+//                  isSender == false,
+//                  let packetId = redPacket["packetId"],
+//                  let packetAddress = redPacket["packetAddress"],
+//                  let amount = redPacket["amount"],
+//                  let maxOne = redPacket["maxOne"] else {
+//                return
+//            }
+//            let giftPacketId = fetchRawData(raw: packetId) as? String ?? ""
+//            let giftPacketAddress = fetchRawData(raw: packetAddress) as? String ?? ""
+//            var userInfo = [String: Any]()
+//            userInfo["packetId"] = giftPacketId
+//            userInfo["packetAddress"] = giftPacketAddress
+//            userInfo["amount"] = amount
+//            userInfo["maxOne"] = maxOne
+//            NotificationCenter.default.post(name: .pickUpGiftPacket, object: nil, userInfo: redPacket)
+//
+            
+            
+            
+//            if let packetId = redPacket["packetId"], let packetAddress =  {
+//                let redPacketId = fetchRawData(raw: packetId) as? String ?? ""
+//                var userInfo = [String: Any]()
+//                userInfo["packetId"] = redPacketId
+//                userInfo["packetAddress"] = packetAddress
+//                NotificationCenter.default.post(name: .pickUpGiftPacket, object: nil, userInfo: userInfo)
+//            }
+        //}
     }
 }
