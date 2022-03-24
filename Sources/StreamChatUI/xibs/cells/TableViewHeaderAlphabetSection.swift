@@ -15,6 +15,7 @@ class TableViewHeaderAlphabetSection: UITableViewHeaderFooterView {
     static var identifier: String {
         return String(describing: self)
     }
+    // MARK: - @IBOutlet
     @IBOutlet public weak var lblTitle: UILabel!
     @IBOutlet public weak var titleContainerView: UIView!
 }

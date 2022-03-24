@@ -163,6 +163,10 @@
 		6EC85CDE27D5EB9400063EB8 /* CollectionViewCellGroupUsers.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6EC85CDA27D5EB9400063EB8 /* CollectionViewCellGroupUsers.xib */; };
 		6EC85CE027D5EC8400063EB8 /* CollectionViewGroupUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC85CDF27D5EC8400063EB8 /* CollectionViewGroupUserList.swift */; };
 		6EC85CE127D5EC8400063EB8 /* CollectionViewGroupUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC85CDF27D5EC8400063EB8 /* CollectionViewGroupUserList.swift */; };
+		6ECB403927ECA95400044B90 /* TableViewCellEmptyChatListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB403727ECA95400044B90 /* TableViewCellEmptyChatListData.swift */; };
+		6ECB403A27ECA95400044B90 /* TableViewCellEmptyChatListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB403727ECA95400044B90 /* TableViewCellEmptyChatListData.swift */; };
+		6ECB403B27ECA95400044B90 /* TableViewCellEmptyChatListData.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ECB403827ECA95400044B90 /* TableViewCellEmptyChatListData.xib */; };
+		6ECB403C27ECA95400044B90 /* TableViewCellEmptyChatListData.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ECB403827ECA95400044B90 /* TableViewCellEmptyChatListData.xib */; };
 		6ED0BE5227C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */; };
 		6ED0BE5327C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */; };
 		6ED0BE5427C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ED0BE5127C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib */; };
@@ -1722,6 +1726,8 @@
 		6EC85CD927D5EB9400063EB8 /* CollectionViewCellGroupUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCellGroupUsers.swift; sourceTree = "<group>"; };
 		6EC85CDA27D5EB9400063EB8 /* CollectionViewCellGroupUsers.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionViewCellGroupUsers.xib; sourceTree = "<group>"; };
 		6EC85CDF27D5EC8400063EB8 /* CollectionViewGroupUserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewGroupUserList.swift; sourceTree = "<group>"; };
+		6ECB403727ECA95400044B90 /* TableViewCellEmptyChatListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellEmptyChatListData.swift; sourceTree = "<group>"; };
+		6ECB403827ECA95400044B90 /* TableViewCellEmptyChatListData.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCellEmptyChatListData.xib; sourceTree = "<group>"; };
 		6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewHeaderCreateChat.swift; sourceTree = "<group>"; };
 		6ED0BE5127C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewHeaderCreateChat.xib; sourceTree = "<group>"; };
 		6ED3E44027B4D4C900A05C0A /* ChatBaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBaseVC.swift; sourceTree = "<group>"; };
@@ -5520,6 +5526,8 @@
 				6E297C0E27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib */,
 				6EC116A227EB507800DD49F9 /* TableViewHeaderAlphabetSection.swift */,
 				6EC116A527EB509E00DD49F9 /* TableViewHeaderAlphabetSection.xib */,
+				6ECB403727ECA95400044B90 /* TableViewCellEmptyChatListData.swift */,
+				6ECB403827ECA95400044B90 /* TableViewCellEmptyChatListData.xib */,
 			);
 			path = cells;
 			sourceTree = "<group>";
@@ -6414,6 +6422,7 @@
 				CD24C70E27844C3500F6378D /* Wallet.storyboard in Resources */,
 				88F0D743257E50B000F4B050 /* Localizable.strings in Resources */,
 				CD24C70C27844BC500F6378D /* PrivateGroup.storyboard in Resources */,
+				6ECB403C27ECA95400044B90 /* TableViewCellEmptyChatListData.xib in Resources */,
 				6E41867C27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */,
 				6ED0BE5527C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib in Resources */,
 				6E41868627C3CD630061E03F /* SFProDisplay-Heavy.ttf in Resources */,
@@ -6490,6 +6499,7 @@
 				6EC85CDD27D5EB9400063EB8 /* CollectionViewCellGroupUsers.xib in Resources */,
 				6E41867D27C3CD630061E03F /* SFProText-Semibold.ttf in Resources */,
 				6EC116A627EB509E00DD49F9 /* TableViewHeaderAlphabetSection.xib in Resources */,
+				6ECB403B27ECA95400044B90 /* TableViewCellEmptyChatListData.xib in Resources */,
 				ED5DD0CB27CCAC3A000B3E9A /* AnnouncementTableViewCell.xib in Resources */,
 				6ED0BE5427C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib in Resources */,
 				6E92FD3C27BCEEAD00DA89B6 /* Assets.xcassets in Resources */,
@@ -7344,6 +7354,7 @@
 				6ED0BE5327C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift in Sources */,
 				CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */,
 				ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */,
+				6ECB403A27ECA95400044B90 /* TableViewCellEmptyChatListData.swift in Sources */,
 				ED95B3F52769DF850049DD53 /* RedPacketExpired.swift in Sources */,
 				6E0D12EA27B3CF85003DD1AA /* TableViewCellChatUser.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
@@ -7732,6 +7743,7 @@
 				DA640FC12535CFA100D32944 /* ChannelMemberListSortingKey.swift in Sources */,
 				7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */,
 				792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */,
+				6ECB403927ECA95400044B90 /* TableViewCellEmptyChatListData.swift in Sources */,
 				79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */,
 				F688643624E6DA8700A71361 /* CurrentUserController.swift in Sources */,
 				88BEBCD32536FD7600D9E8B7 /* MemberListController+Combine.swift in Sources */,

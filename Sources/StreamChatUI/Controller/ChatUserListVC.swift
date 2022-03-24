@@ -24,19 +24,10 @@ public class ChatUserListVC: UIViewController {
         case singleUser, group, privateGroup , addFriend
     }
     public enum HeaderType {
-        case createChatHeader, noHeader, alphabetHeader, loadingData, pagination
+        case emptyData, createChatHeader, noHeader, alphabetHeader, loadingData, pagination
     }
     // MARK: - @IBOutlet
-    @IBOutlet private weak var searchFieldStack: UIStackView!
-    @IBOutlet private weak var searchBarContainerView: UIView!
-    @IBOutlet private weak var searchBarView: UIView!
-    @IBOutlet private weak var daoButton: UIButton!
-    @IBOutlet private weak var searchField: UITextField!
-    @IBOutlet private weak var alertView: UIView!
-    @IBOutlet private weak var alertImage: UIImageView!
-    @IBOutlet private weak var alertText: UILabel!
     @IBOutlet private weak var containerView: UIView!
-    @IBOutlet private weak var noMatchView: UIView!
     private var tableView: UITableView?
     // MARK: - VARIABLES
     public var viewModel = UserListViewModel(sortType: .sortByLastSeen)
@@ -69,11 +60,8 @@ public class ChatUserListVC: UIViewController {
 extension ChatUserListVC {
     private func setupUI() {
         self.updateUI()
-        self.setupSearch()
         self.setupTableView()
         self.tableView?.reloadData()
-        searchBarView.layer.cornerRadius = 20.0
-        searchBarContainerView.isHidden = !isSearchBarVisible
         // UserListCallback
         self.viewModel.bCallbackDataLoadingStateUpdated = { [weak self] loadingState in
             guard let weakSelf = self else { return }
@@ -89,11 +77,6 @@ extension ChatUserListVC {
         }
     }
 
-    private func setupSearch() {
-        self.searchField.autocorrectionType = .no
-        self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
-    }
-    
     private func setupTableView() {
         addCreateChatHeader()
         tableView?.removeFromSuperview()
@@ -116,13 +99,13 @@ extension ChatUserListVC {
         tableView?.estimatedRowHeight = 44.0
         tableView?.rowHeight = UITableView.automaticDimension
         tableView?.register(TableViewHeaderAlphabetSection.nib, forHeaderFooterViewReuseIdentifier: TableViewHeaderAlphabetSection.identifier)
-        let chatUserID = TableViewCellChatUser.reuseId
-        let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
-        tableView?.register(chatUserNib, forCellReuseIdentifier: chatUserID)
-        let createChatHeader = UINib(nibName: TableViewHeaderCreateChat.reuseID, bundle: nil)
-        tableView?.register(createChatHeader, forCellReuseIdentifier: TableViewHeaderCreateChat.reuseID)
+        tableView?.register(TableViewCellChatUser.nib, forCellReuseIdentifier: TableViewCellChatUser.reuseId)
+        tableView?.register(TableViewHeaderCreateChat.nib, forCellReuseIdentifier: TableViewHeaderCreateChat.reuseID)
+        tableView?.register(TableViewCellEmptyChatListData.nib, forCellReuseIdentifier: TableViewCellEmptyChatListData.identifier)
+        // adding table view to container view
         self.containerView.addSubview(tableView!)
         tableView!.backgroundColor = .clear
+        // updating tableview frame
         containerView.updateChildViewContraint(childView: tableView!)
     }
     
@@ -131,18 +114,17 @@ extension ChatUserListVC {
     }
     
     private func updateUI() {
-        noMatchView.isHidden = true
         switch self.viewModel.dataLoadingState {
         case .error:
             self.sectionWiseList.removeAll()
-            hideShowEmptyView(hidden: false)
             addCreateChatHeader()
+            hideShowEmptyView(hidden: true)
             self.tableView?.reloadData()
             break
         case .searchingError:
             self.sectionWiseList.removeAll()
-            hideShowEmptyView(hidden: false)
             addCreateChatHeader()
+            hideShowEmptyView(hidden: true)
             self.tableView?.reloadData()
             break
         case .searching:
@@ -152,17 +134,15 @@ extension ChatUserListVC {
             break
         case .loading:
             self.sectionWiseList.removeAll()
-            hideShowEmptyView(hidden: true)
             addCreateChatHeader()
             addLoadingDataSection()
+            hideShowEmptyView(hidden: true)
             self.tableView?.reloadData()
             break
         case .loadMoreData:
-            hideShowEmptyView(hidden: true)
             addPaginationSection()
             break
         case .completed:
-            hideShowEmptyView(hidden: true)
             DispatchQueue.main.async { [weak self] in
                 guard let weakSelf = self else { return }
                 // User will add and append from this function
@@ -171,24 +151,25 @@ extension ChatUserListVC {
                 let userCount = weakSelf.sectionWiseList.filter({ $0.sectionType != .createChatHeader}).filter({$0.users.count > 0 })
                 if weakSelf.viewModel.searchText != nil && userCount.count == 0 {
                     weakSelf.sectionWiseList.removeAll()
-                    weakSelf.hideShowEmptyView(hidden: false)
                     weakSelf.addCreateChatHeader()
+                    weakSelf.hideShowEmptyView(hidden: false)
                     weakSelf.tableView?.reloadData()
                 }
             }
             break
         case .none:
             self.sectionWiseList.removeAll()
-            self.noMatchView.isHidden = true
+            hideShowEmptyView(hidden: true)
             self.tableView?.reloadData()
             break
         }
     }
     
     private func hideShowEmptyView(hidden: Bool) {
-        noMatchView.isHidden = hidden
-        alertImage.image = Appearance.Images.systemMagnifying
-        alertText.text = "No user matches these keywords..."
+        let _ = self.removeSection(sectionType: .emptyData)
+        if !hidden {
+            sectionWiseList.append(ChatUserListData.init(letter: "", sectionType: .emptyData))
+        }
     }
     
     private func addCreateChatHeader() {
@@ -258,6 +239,9 @@ public extension ChatUserListVC {
     private func updateUserList(newData: ChatUserListData) {
         self.tableView?.performBatchUpdates({ [weak self] in
             guard let weakSelf = self else { return }
+            if let emptyDataSection = weakSelf.removeSection(sectionType: .emptyData) {
+                weakSelf.tableView?.deleteSections(emptyDataSection, with: .none)
+            }
             if let loadingSection = weakSelf.removeSection(sectionType: .loadingData) {
                 weakSelf.tableView?.deleteSections(loadingSection, with: .none)
             }
@@ -292,12 +276,13 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
     public func numberOfSections(in tableView: UITableView) -> Int {
         return sectionWiseList.count
     }
+    
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard self.sectionWiseList.indices.contains(section) else {
             return 0
         }
         switch self.sectionWiseList[section].sectionType {
-        case .createChatHeader,.pagination:
+        case .emptyData, .createChatHeader, .pagination:
             return 1
         case .loadingData:
             return 10
@@ -305,6 +290,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return sectionWiseList[section].users.count
         }
     }
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard self.sectionWiseList.indices.contains(indexPath.section) else {
             let cell = UITableViewCell.init(frame: .zero)
@@ -313,6 +299,16 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         }
         let sectionType = sectionWiseList[indexPath.section].sectionType
         switch sectionType {
+        case .emptyData:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: TableViewCellEmptyChatListData.identifier,
+                for: indexPath) as? TableViewCellEmptyChatListData else {
+                    return UITableViewCell()
+                }
+            cell.backgroundColor = .clear
+            cell.selectedBackgroundView = nil
+            cell.configureCell()
+            return cell
         case .loadingData:
             let reuseID = TableViewCellChatUser.reuseId
             guard let cell = tableView.dequeueReusableCell(
@@ -393,7 +389,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return
         }
         switch self.sectionWiseList[indexPath.section].sectionType {
-        case .createChatHeader, .pagination, .loadingData:
+        case .emptyData, .createChatHeader, .pagination, .loadingData:
             return
         default:
             break
@@ -470,7 +466,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return nil
         }
         switch self.sectionWiseList[section].sectionType {
-        case .createChatHeader, .pagination, .noHeader, .loadingData:
+        case .emptyData, .createChatHeader, .pagination, .noHeader, .loadingData:
             return nil
         case .alphabetHeader:
             guard self.sectionWiseList.indices.contains(section) else {
@@ -492,7 +488,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return nil
         }
         switch self.sectionWiseList[section].sectionType {
-        case .createChatHeader, .pagination, .noHeader, .loadingData:
+        case .emptyData, .createChatHeader, .pagination, .noHeader, .loadingData:
             return nil
         case .alphabetHeader:
             let footerView = UIView()
@@ -508,7 +504,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return 0
         }
         switch self.sectionWiseList[section].sectionType {
-        case .createChatHeader, .pagination, .noHeader, .loadingData:
+        case .emptyData, .createChatHeader, .pagination, .noHeader, .loadingData:
             return 0
         case .alphabetHeader:
             return 45
@@ -524,7 +520,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             return 0
         }
         switch self.sectionWiseList[section].sectionType {
-        case .createChatHeader, .pagination, .noHeader, .loadingData:
+        case .emptyData, .createChatHeader, .pagination, .noHeader, .loadingData:
             return 0
         case .alphabetHeader:
             return 20
