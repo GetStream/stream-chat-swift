@@ -61,7 +61,12 @@ open class ComposerVC: _ViewController,
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
-            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
+            // If there is a command and it doesn't require an arg, content is not empty
+            if let command = command, command.args.isEmpty {
+                return false
+            }
+            // All other cases
+            return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
         }
 
         /// A boolean that checks if the composer is replying in a thread
