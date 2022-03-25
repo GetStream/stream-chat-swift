@@ -486,21 +486,12 @@ open class ComposerVC: _ViewController,
     
     /// Action that handles tap on attachments button in composer.
     @objc open func showAttachmentsPicker(sender: UIButton) {
-        // The UI doesn't support mix of image and file attachments so we are limiting this option.
-        // Files in the message composer are scrolling vertically and images horizontally.
-        // There is no techical limitation for multiple attachment types.
-        if content.attachments.isEmpty {
-            presentAlert(
-                message: L10n.Composer.Picker.title,
-                preferredStyle: .actionSheet,
-                actions: attachmentsPickerActions,
-                sourceView: sender
-            )
-        } else if content.attachments.contains(where: { $0.type == .file }) {
-            showFilePicker()
-        } else if content.attachments.contains(where: { $0.type == .image || $0.type == .video }) {
-            showMediaPicker()
-        }
+        presentAlert(
+            message: L10n.Composer.Picker.title,
+            preferredStyle: .actionSheet,
+            actions: attachmentsPickerActions,
+            sourceView: sender
+        )
     }
     
     @objc open func shrinkInput(sender: UIButton) {

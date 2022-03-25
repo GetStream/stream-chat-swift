@@ -19,7 +19,11 @@ open class AttachmentViewCatalog {
         let attachmentCounts = message.attachmentCounts
         
         if attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.video) {
-            return components.galleryAttachmentInjector
+            if attachmentCounts.keys.contains(.file) {
+                return components.mixedAttachmentInjector
+            } else {
+                return components.galleryAttachmentInjector
+            }
         } else if attachmentCounts.keys.contains(.giphy) {
             return components.giphyAttachmentInjector
         } else if attachmentCounts.keys.contains(.file) {
