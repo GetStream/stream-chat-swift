@@ -10,9 +10,6 @@ extension ChatChannel {
         // The idea is that in a further iteration we provide a runtime evaluation of the filter to determine
         // if the channel matches the filter. This is a costly operation, and it is recommended to avoid it.
         // The recommended approach is to pass `filterBlock` when initializing a `ChatChannelListController`
-        //
-        // This default implementation is the same we had in ChatChannelListVC's conformance of the deprecated methods
-        // from ChatChannelListControllerDelegate, so no changes are expected for the end user.
-        membership != nil
+        true
     }
 }

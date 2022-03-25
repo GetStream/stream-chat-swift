@@ -14,6 +14,10 @@ extension ChatClient {
     }
 
     /// Creates a new `ChannelListController` with the provided channel query and filter block.
+    ///
+    /// When passing `filterBlock`, make sure the runtime logic matches the one expected by the filter passed in the query object.
+    /// If they don't match, there can be jumps when loading the list.
+    ///
     /// - Parameters:
     ///   - query: The query specify the filter and sorting of the channels the controller should fetch.
     ///   - filterBlock: A block that determines whether the channels belongs to this controller.
@@ -393,6 +397,16 @@ public extension ChatChannelListControllerDelegate {
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {}
+
+    @available(*, deprecated, message: "Please use `filterBlock` when initializing a `ChatChannelListController`")
+    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        channel.membership != nil
+    }
+
+    @available(*, deprecated, message: "Please use `filterBlock` when initializing a `ChatChannelListController`")
+    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        channel.membership != nil
+    }
 }
 
 extension ClientError {
