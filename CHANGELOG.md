@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### ⚠️ Changed
-- `AttachmentsPreviewVC` constains significant deprecations [#1877](https://github.com/GetStream/stream-chat-swift/pull/1877)
+- `AttachmentsPreviewVC` contains significant deprecations [#1877](https://github.com/GetStream/stream-chat-swift/pull/1877)
 ### ✅ Added
 - Add Mixed Attachments UI Support [#1877](https://github.com/GetStream/stream-chat-swift/pull/1877)
 ### 🐞 Fixed
