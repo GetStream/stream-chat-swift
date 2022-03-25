@@ -102,6 +102,14 @@ Get next PR number from github to be used in CHANGELOG
 
 Runs tests in Debug config
 
+### test_e2e_mock
+
+```sh
+[bundle exec] fastlane test_e2e_mock
+```
+
+Runs e2e ui tests using mock server in Debug config
+
 ### test_ui
 
 ```sh

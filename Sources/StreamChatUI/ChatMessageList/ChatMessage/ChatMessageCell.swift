@@ -13,13 +13,16 @@ public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
 
     /// The container that holds the date separator and the message content view.
     /// This is internal since it is a temporary solution.
-    internal lazy var containerStackView = UIStackView().withoutAutoresizingMaskConstraints
+    internal lazy var containerStackView = UIStackView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "containerStackView")
 
     /// The date separator view that groups messages from the same day.
     /// This is internal since it is a temporary solution.
     internal lazy var dateSeparatorView: ChatMessageListDateSeparatorView = components
         .messageListDateSeparatorView.init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "dateSeparatorView")
     
     /// The message content view the cell is showing.
     public private(set) var messageContentView: ChatMessageContentView?
@@ -89,7 +92,9 @@ public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
         }
 
         // Instantiate message content view of the given type
-        messageContentView = contentViewClass.init().withoutAutoresizingMaskConstraints
+        messageContentView = contentViewClass.init()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "messageContentView")
         messageContentView!.setUpLayoutIfNeeded(
             options: options,
             attachmentViewInjectorType: attachmentViewInjectorType

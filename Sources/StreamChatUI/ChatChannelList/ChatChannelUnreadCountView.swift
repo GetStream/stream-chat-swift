@@ -12,6 +12,7 @@ open class ChatChannelUnreadCountView: _View, ThemeProvider, SwiftUIRepresentabl
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
+        .withAccessibilityIdentifier(identifier: "unreadCountLabel")
 
     /// The data this view component shows.
     open var content: ChannelUnreadCount = .noUnread {

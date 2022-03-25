@@ -16,6 +16,7 @@ open class ChatMessageListDateSeparatorView: _View, AppearanceProvider {
         .withBidirectionalLanguagesSupport
         .withAdjustingFontForContentSizeCategory
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "textLabel")
 
     override open func setUpLayout() {
         super.setUpLayout()

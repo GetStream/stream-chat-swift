@@ -1,0 +1,28 @@
+{
+  "event": {
+    "type": "typing.start",
+    "cid": "messaging:general",
+    "channel_id": "general",
+    "channel_type": "messaging",
+    "user": {
+      "id": "luke_skywalker",
+      "role": "user",
+      "created_at": "2020-12-07T11:36:47.059906Z",
+      "updated_at": "2022-03-08T10:24:54.481883Z",
+      "last_active": "2022-03-08T10:28:13.311924202Z",
+      "banned": false,
+      "online": true,
+      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "extraData": {},
+      "testing-this": 3.14,
+      "yetAnotherField": "40",
+      "extra_data": {},
+      "image": "https://bit.ly/2TIt8NR",
+      "testing": false,
+      "birthland": "Tatooine",
+      "name": "Luke Skywalker"
+    },
+    "created_at": "2022-03-08T10:29:07.915394545Z"
+  },
+  "duration": "4.61ms"
+}

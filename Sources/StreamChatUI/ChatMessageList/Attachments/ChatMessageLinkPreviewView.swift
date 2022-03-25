@@ -11,28 +11,34 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
     /// Image view showing link's preview image.
     public private(set) lazy var imagePreview = UIImageView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "imagePreview")
 
     /// Background for `authorLabel`.
     public private(set) lazy var authorBackground = UIView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "authorBackground")
 
     /// Label showing author of the link.
     public private(set) lazy var authorLabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
+        .withAccessibilityIdentifier(identifier: "authorLabel")
     
     /// Label showing `title`.
     public private(set) lazy var titleLabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
+        .withAccessibilityIdentifier(identifier: "titleLabel")
 
     /// Text view for showing `content`'s `text`.
     public private(set) lazy var bodyTextView = UITextView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "bodyTextView")
 
     /// `ContainerStackView` for labels with text metadata.
     public private(set) lazy var textStack = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "textStack")
 
     /// Constraint for `authorLabel`.
     open var authorOnImageConstraint: NSLayoutConstraint?

@@ -6,6 +6,25 @@ import Foundation
 import StreamChat
 import UIKit
 
+// Protocol that provides accessibility features
+protocol AccessibilityView {
+    // Identifier for view
+    var accessibilityViewIdentifier: String { get }
+
+    // This function is called once the view is being added to the view hiearchy
+    func setAccessibilityIdentifier()
+}
+
+extension AccessibilityView where Self: UIView {
+    var accessibilityViewIdentifier: String {
+        "\(type(of: self))"
+    }
+
+    func setAccessibilityIdentifier() {
+        accessibilityIdentifier = accessibilityViewIdentifier
+    }
+}
+
 // Just a protocol to formalize the methods required
 public protocol Customizable {
     /// Main point of customization for the view functionality.
@@ -82,7 +101,7 @@ extension AppearanceProvider where Self: _View {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _View: UIView, Customizable {
+open class _View: UIView, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     fileprivate var isInitialized: Bool = false
     
@@ -91,7 +110,8 @@ open class _View: UIView, Customizable {
         guard !isInitialized, superview != nil else { return }
         
         isInitialized = true
-        
+
+        setAccessibilityIdentifier()
         setUp()
         setUpLayout()
         setUpAppearance()
@@ -123,7 +143,7 @@ open class _View: UIView, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _CollectionViewCell: UICollectionViewCell, Customizable {
+open class _CollectionViewCell: UICollectionViewCell, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -132,7 +152,8 @@ open class _CollectionViewCell: UICollectionViewCell, Customizable {
         guard !isInitialized, superview != nil else { return }
         
         isInitialized = true
-        
+
+        setAccessibilityIdentifier()
         setUp()
         setUpLayout()
         setUpAppearance()
@@ -164,7 +185,7 @@ open class _CollectionViewCell: UICollectionViewCell, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _CollectionReusableView: UICollectionReusableView, Customizable {
+open class _CollectionReusableView: UICollectionReusableView, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
 
@@ -174,6 +195,7 @@ open class _CollectionReusableView: UICollectionReusableView, Customizable {
 
         isInitialized = true
 
+        setAccessibilityIdentifier()
         setUp()
         setUpLayout()
         setUpAppearance()
@@ -205,7 +227,7 @@ open class _CollectionReusableView: UICollectionReusableView, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _Control: UIControl, Customizable {
+open class _Control: UIControl, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -214,7 +236,8 @@ open class _Control: UIControl, Customizable {
         guard !isInitialized, superview != nil else { return }
         
         isInitialized = true
-        
+
+        setAccessibilityIdentifier()
         setUp()
         setUpLayout()
         setUpAppearance()
@@ -246,7 +269,7 @@ open class _Control: UIControl, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _Button: UIButton, Customizable {
+open class _Button: UIButton, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -255,7 +278,8 @@ open class _Button: UIButton, Customizable {
         guard !isInitialized, superview != nil else { return }
         
         isInitialized = true
-        
+
+        setAccessibilityIdentifier()
         setUp()
         setUpLayout()
         setUpAppearance()
@@ -287,7 +311,7 @@ open class _Button: UIButton, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _NavigationBar: UINavigationBar, Customizable {
+open class _NavigationBar: UINavigationBar, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -296,7 +320,8 @@ open class _NavigationBar: UINavigationBar, Customizable {
         guard !isInitialized, superview != nil else { return }
         
         isInitialized = true
-        
+
+        setAccessibilityIdentifier()
         setUp()
         setUpLayout()
         setUpAppearance()
@@ -396,7 +421,7 @@ private enum TraitCollectionReloadStack {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _TableViewCell: UITableViewCell, Customizable {
+open class _TableViewCell: UITableViewCell, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
 
@@ -406,6 +431,7 @@ open class _TableViewCell: UITableViewCell, Customizable {
 
         isInitialized = true
 
+        setAccessibilityIdentifier()
         setUp()
         setUpLayout()
         setUpAppearance()
