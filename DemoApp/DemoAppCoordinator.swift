@@ -308,6 +308,7 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
         if message?.isSentByCurrentUser == true && AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
             actions.append(hardDeleteActionItem())
         }
+        actions.append(translateActionItem())
         return actions
     }
 
@@ -326,6 +327,19 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
             appearance: appearance
         )
     }
+    
+    open func translateActionItem() -> ChatMessageActionItem {
+        TranslateActionitem(
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                self.messageController.translate(to: .turkish) { _ in
+                    self.delegate?.chatMessageActionsVCDidFinish(self)
+                }
+                
+            },
+            appearance: appearance
+        )
+    }
 
     public struct HardDeleteActionItem: ChatMessageActionItem {
         public var title: String { "Hard Delete Message" }
@@ -339,6 +353,21 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
         ) {
             self.action = action
             icon = appearance.images.messageActionDelete
+        }
+    }
+    
+    public struct TranslateActionitem: ChatMessageActionItem {
+        public var title: String { "Translate to Turkish" }
+        public var isDestructive: Bool { false }
+        public let icon: UIImage
+        public let action: (ChatMessageActionItem) -> Void
+        
+        public init(
+            action: @escaping (ChatMessageActionItem) -> Void,
+            appearance: Appearance = .default
+        ) {
+            self.action = action
+            icon = UIImage(systemName: "flag.fill")!
         }
     }
 }
