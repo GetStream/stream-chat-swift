@@ -40,6 +40,7 @@ open class ChatChannelHeaderView:
     open private(set) lazy var titleContainerView: TitleContainerView = components
         .titleContainerView.init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "titleContainerView")
 
     override open func setUp() {
         super.setUp()

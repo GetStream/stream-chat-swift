@@ -40,6 +40,7 @@ open class ChatChannelListVC: _ViewController,
     open private(set) lazy var collectionView: UICollectionView =
         UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "collectionView")
     
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
     open private(set) lazy var userAvatarView: CurrentChatUserAvatarView = components

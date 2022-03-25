@@ -1,0 +1,21 @@
+{
+  "channel_id": "general",
+  "channel_type": "messaging",
+  "user": {
+    "id": "han_solo",
+    "banned": false,
+    "extraData": {},
+    "last_active": "2022-03-14T17:40:28.46466Z",
+    "created_at": "2020-12-07T11:37:34.230369Z",
+    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+    "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+    "updated_at": "2022-02-21T17:19:11.835801Z",
+    "birthland": "Corellia",
+    "role": "user",
+    "online": true,
+    "name": "Han Solo"
+  },
+  "created_at": "2022-03-14T17:44:18.01494046Z",
+  "type": "message.read",
+  "cid": "messaging:general"
+}

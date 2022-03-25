@@ -47,27 +47,39 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
     // -------------
     /// The spots gallery items takes.
     public private(set) lazy var itemSpots = [
-        UIView().withoutAutoresizingMaskConstraints,
-        UIView().withoutAutoresizingMaskConstraints,
-        UIView().withoutAutoresizingMaskConstraints,
-        UIView().withoutAutoresizingMaskConstraints
+        UIView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "FirstItem"),
+        UIView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "SecondItem"),
+        UIView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "ThirdItem"),
+        UIView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "FourthItem")
     ]
 
     /// Overlay to be displayed when `content` contains more items than the gallery can display.
     public private(set) lazy var moreItemsOverlay = UILabel()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "MoreItems")
     
     /// Container holding all previews.
     public private(set) lazy var previewsContainerView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "previewsContainerView")
     
     /// Left container for previews.
     public private(set) lazy var leftPreviewsContainerView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "leftPreviewsContainerView")
     
     /// Right container for previews.
     public private(set) lazy var rightPreviewsContainerView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "rightPreviewsContainerView")
 
     // MARK: - Overrides
 
