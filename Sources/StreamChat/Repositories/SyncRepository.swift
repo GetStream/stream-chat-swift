@@ -99,7 +99,6 @@ class SyncRepository {
         operations.append(contentsOf: watchChannelOperations)
 
         // 3. Refetch channel lists queries, link only what backend returns (the 1st page)
-        // 4. Clean up local message history for channels that are outdated/will get outdated
         // We use `context.synchedChannelIds` to keep track of the channels that were synched both in the previous step and
         // after each ChannelListController recovery.
         let refetchChannelListQueryOperations: [AsyncOperation] = activeChannelListControllers.allObjects
@@ -111,6 +110,9 @@ class SyncRepository {
                 )
             }
         operations.append(contentsOf: refetchChannelListQueryOperations)
+
+        // 4. Clean up unwanted channels
+        operations.append(CleanUnwantedChannelsOperation(database: database, context: context))
 
         // 5. Run offline actions requests
         if config.isLocalStorageEnabled {

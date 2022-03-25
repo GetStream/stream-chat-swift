@@ -53,22 +53,24 @@ class ChannelListUpdater: Worker {
                         let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
                         let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
 
-                        let localQueryLeftovers = localQueryCIDs
-                            .subtracting(synchedChannelIds)
-                            .subtracting(watchedChannelIds)
+                        let updatedChannels = synchedChannelIds.union(watchedChannelIds)
+                        let localNotInRemote = localQueryCIDs.subtracting(remoteQueryCIDs)
+                        let localInRemote = localQueryCIDs.intersection(remoteQueryCIDs)
 
-                        // We are going to clean those channels that are present in the both the local and remote query,
-                        // and that have not been synched nor watched. Those are outdated, can contain gaps.
-                        let cidsToClean = localQueryLeftovers.intersection(remoteQueryCIDs)
-                        session.cleanChannels(cids: cidsToClean)
-
-                        // We are also going to keep track of the unwanted channels, and unlink them from their original queries.
-                        // Those are the ones that exist locally but we are not interested in anymore in this context.
-                        unwantedCids = localQueryLeftovers.subtracting(cidsToClean)
-                        for cid in unwantedCids {
+                        // We unlink those local channels that are no longer in remote
+                        for cid in localNotInRemote {
                             guard let channelDTO = session.channel(cid: cid) else { continue }
                             queryDTO.channels.remove(channelDTO)
                         }
+
+                        // We are going to clean those channels that are present in the both the local and remote query,
+                        // and that have not been synched nor watched. Those are outdated, can contain gaps.
+                        let cidsToClean = localInRemote.subtracting(updatedChannels)
+                        session.cleanChannels(cids: cidsToClean)
+
+                        // We are also going to keep track of the unwanted channels
+                        // Those are the ones that exist locally but we are not interested in anymore in this context.
+                        unwantedCids = localNotInRemote.subtracting(updatedChannels)
                     },
                     completion: { result in
                         switch result {

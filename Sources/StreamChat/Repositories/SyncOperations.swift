@@ -127,7 +127,7 @@ final class CleanUnwantedChannelsOperation: AsyncOperation {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
             log.info("4. Clean up unwanted channels", subsystems: .offlineSupport)
 
-            guard let database = database else {
+            guard let database = database, !context.unwantedChannelIds.isEmpty else {
                 done(.continue)
                 return
             }
