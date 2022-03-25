@@ -15,19 +15,6 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
         components.messageReactionItemView
     }
 
-    // returns the selection of reactions that should be rendered by this view
-    open var reactions: [ChatMessageReactionData] {
-        guard let content = content else { return [] }
-        return content.reactions.filter { reaction in
-            guard appearance.images.availableReactions[reaction.type] != nil else {
-                log
-                    .warning(
-                        "reaction with type \(reaction.type) is not registered in appearance.images.availableReactions, skipping"
-                    )
-                return false
-            }
-            return true
-        }
     }
 
     // MARK: - Subviews
