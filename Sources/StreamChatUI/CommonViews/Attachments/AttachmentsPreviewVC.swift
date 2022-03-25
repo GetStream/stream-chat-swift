@@ -135,7 +135,11 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     }
     
     open func setupVerticalStackView() {
+        verticalScrollView.isHidden = false
+
         let verticalAttachmentPreviews = attachmentPreviews(for: [.vertical])
+        verticalStackView.removeAllArrangedSubviews()
+        verticalStackView.addArrangedSubviews(verticalAttachmentPreviews)
 
         // If the content is bigger than the max vertical items and the scroll view height
         // constraint is not yet created, append to the vertical constraint and activate it.
@@ -146,22 +150,29 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
                     .height
                 let spacingSize = CGFloat(verticalAttachmentPreviews.count + 1) * verticalStackView.spacing.rawValue
                 let maxScrollViewHeight: CGFloat = CGFloat(maxNumberOfVerticalItems) * attachmentHeight + spacingSize
-                
+
                 verticalScrollViewHeightConstraint = verticalScrollView.heightAnchor.pin(
                     lessThanOrEqualToConstant: maxScrollViewHeight
                 )
                 verticalScrollViewHeightConstraint?.isActive = true
             }
+
+            // When adding a vertical attachment, make sure the last item is visible
+            scrollVerticalViewToBottom()
+        } else {
             // If the content is lower than the max vertical items,
             // reset the scroll view height constraint.
-        } else {
             verticalScrollViewHeightConstraint?.isActive = false
             verticalScrollViewHeightConstraint = nil
         }
+    }
 
-        verticalScrollView.isHidden = false
-        
-        verticalStackView.removeAllArrangedSubviews()
-        verticalStackView.addArrangedSubviews(verticalAttachmentPreviews)
+    // Scrolls to the bottom of the vertical scroll view.
+    open func scrollVerticalViewToBottom() {
+        if let lastAttachmentView = verticalScrollView.subviews.last {
+            DispatchQueue.main.async {
+                self.verticalScrollView.scrollRectToVisible(lastAttachmentView.frame, animated: true)
+            }
+        }
     }
 }
