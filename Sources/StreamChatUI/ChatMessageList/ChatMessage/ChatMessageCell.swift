@@ -25,7 +25,6 @@ public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
         .withAccessibilityIdentifier(identifier: "dateSeparatorView")
     
     /// The message content view the cell is showing.
-    @AccessibleView(accessibilityIdentifier: "messageContentView")
     public private(set) var messageContentView: ChatMessageContentView?
     
     /// The minimum spacing below the cell.
@@ -93,7 +92,9 @@ public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
         }
 
         // Instantiate message content view of the given type
-        messageContentView = contentViewClass.init().withoutAutoresizingMaskConstraints
+        messageContentView = contentViewClass.init()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "messageContentView")
         messageContentView!.setUpLayoutIfNeeded(
             options: options,
             attachmentViewInjectorType: attachmentViewInjectorType

@@ -79,34 +79,28 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// Shows a spacer where the author avatar should be.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.avatarSizePadding`.
-    @AccessibleView(accessibilityIdentifier: "authorAvatarSpacer")
     public private(set) var authorAvatarSpacer: UIView?
 
     /// Shows message text content.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.text`.
-    @AccessibleView(accessibilityIdentifier: "textView")
     public private(set) var textView: UITextView?
 
     /// Shows message timestamp.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.timestamp`.
-    @AccessibleView(accessibilityIdentifier: "timestampLabel")
     public private(set) var timestampLabel: UILabel?
 
     /// Shows message author name.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.authorName`.
-    @AccessibleView(accessibilityIdentifier: "authorNameLabel")
     public private(set) var authorNameLabel: UILabel?
 
     /// Shows the icon part of the indicator saying the message is visible for current user only.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options
     /// containing `.onlyVisibleForYouIndicator`.
-    @AccessibleView(accessibilityIdentifier: "onlyVisibleForYouIconImageView")
     public private(set) var onlyVisibleForYouIconImageView: UIImageView?
 
     /// Shows the text part of the indicator saying the message is visible for current user only.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options
     /// containing `.onlyVisibleForYouIndicator`
-    @AccessibleView(accessibilityIdentifier: "onlyVisibleForYouLabel")
     public private(set) var onlyVisibleForYouLabel: UILabel?
 
     /// Shows error indicator.
@@ -127,7 +121,6 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// Shows the # of thread replies on the message.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
-    @AccessibleView(accessibilityIdentifier: "threadReplyCountButton")
     public private(set) var threadReplyCountButton: UIButton?
 
     /// Shows the avatar of the user who left the latest thread reply.
@@ -169,7 +162,6 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// The container which holds `errorIndicatorView`
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.errorIndicator`.
-    @AccessibleView(accessibilityIdentifier: "errorIndicatorContainer")
     public private(set) var errorIndicatorContainer: UIView?
 
     /// Constraint between bubble and reactions.
@@ -602,7 +594,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `textView` subview.
     open func createTextView() -> UITextView {
         if textView == nil {
-            textView = OnlyLinkTappableTextView().withoutAutoresizingMaskConstraints
+            textView = OnlyLinkTappableTextView()
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "textView")
             textView?.isEditable = false
             textView?.dataDetectorTypes = .link
             textView?.isScrollEnabled = false
@@ -632,7 +626,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `authorAvatarSpacer` subview.
     open func createAvatarSpacer() -> UIView {
         if authorAvatarSpacer == nil {
-            authorAvatarSpacer = UIView().withoutAutoresizingMaskConstraints
+            authorAvatarSpacer = UIView()
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "authorAvatarSpacer")
         }
         return authorAvatarSpacer!
     }
@@ -664,7 +660,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `threadReplyCountButton` subview.
     open func createThreadReplyCountButton() -> UIButton {
         if threadReplyCountButton == nil {
-            threadReplyCountButton = UIButton(type: .custom).withoutAutoresizingMaskConstraints
+            threadReplyCountButton = UIButton(type: .custom)
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "threadReplyCountButton")
             threadReplyCountButton!.titleLabel?.font = appearance.fonts.footnoteBold
             threadReplyCountButton!.titleLabel?.adjustsFontForContentSizeCategory = true
             threadReplyCountButton!.addTarget(self, action: #selector(handleTapOnThread), for: .touchUpInside)
@@ -735,7 +733,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `errorIndicatorContainer` subview.
     open func createErrorIndicatorContainer() -> UIView {
         if errorIndicatorContainer == nil {
-            errorIndicatorContainer = UIView().withoutAutoresizingMaskConstraints
+            errorIndicatorContainer = UIView()
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "errorIndicatorContainer")
             errorIndicatorContainer!.layer.zPosition = 1
         }
         return errorIndicatorContainer!
@@ -758,6 +758,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 .withAdjustingFontForContentSizeCategory
                 .withBidirectionalLanguagesSupport
                 .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "timestampLabel")
 
             timestampLabel!.textColor = appearance.colorPalette.subtitleText
             timestampLabel!.font = appearance.fonts.footnote
@@ -773,6 +774,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 .withAdjustingFontForContentSizeCategory
                 .withBidirectionalLanguagesSupport
                 .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "authorNameLabel")
 
             authorNameLabel!.textColor = appearance.colorPalette.subtitleText
             authorNameLabel!.font = appearance.fonts.footnote
@@ -786,6 +788,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         if onlyVisibleForYouIconImageView == nil {
             onlyVisibleForYouIconImageView = UIImageView()
                 .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "onlyVisibleForYouIconImageView")
 
             onlyVisibleForYouIconImageView!.tintColor = appearance.colorPalette.subtitleText
             onlyVisibleForYouIconImageView!.image = appearance.images.onlyVisibleToCurrentUser
@@ -802,6 +805,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 .withAdjustingFontForContentSizeCategory
                 .withBidirectionalLanguagesSupport
                 .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "onlyVisibleForYouLabel")
 
             onlyVisibleForYouLabel!.textColor = appearance.colorPalette.subtitleText
             onlyVisibleForYouLabel!.text = L10n.Message.onlyVisibleToYou

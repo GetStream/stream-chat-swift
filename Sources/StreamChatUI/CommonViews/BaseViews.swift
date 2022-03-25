@@ -25,32 +25,6 @@ extension AccessibilityView where Self: UIView {
     }
 }
 
-/// Property wrapper that allows you to set `accesibleIdentifier` on `View` that is not instantiated && not declared as `lazy`
-///
-/// Usage:
-///     @AccessibleView(accessibilityIdentifier: "textView")
-///     var textView: UITextView?
-@propertyWrapper
-public struct AccessibleView<T: UIView>: AccessibilityView {
-    private(set) var accessibilityViewIdentifier: String
-
-    public var wrappedValue: T? {
-        didSet {
-            setAccessibilityIdentifier()
-        }
-    }
-
-    public init(wrappedValue: T? = nil, accessibilityIdentifier: String = "\(type(of: T.self))") {
-        self.wrappedValue = wrappedValue
-        accessibilityViewIdentifier = accessibilityIdentifier
-        setAccessibilityIdentifier()
-    }
-
-    func setAccessibilityIdentifier() {
-        wrappedValue?.accessibilityIdentifier = accessibilityViewIdentifier
-    }
-}
-
 // Just a protocol to formalize the methods required
 public protocol Customizable {
     /// Main point of customization for the view functionality.
