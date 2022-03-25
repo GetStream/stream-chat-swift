@@ -1,4 +1,4 @@
-# [StreamChat](https://getstream.io/chat/) (low-level) iOS SDK 
+# [StreamChat](https://getstream.io/chat/) (low-level) iOS SDK
 
 <p align="center">
   <img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Low%20Level%20SDK.png"/>
@@ -8,20 +8,20 @@
   <a href="https://cocoapods.org/pods/StreamChat"><img src="https://img.shields.io/cocoapods/v/StreamChat.svg" /></a>
   <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.2-orange.svg" /></a>
   <a href="https://github.com/GetStream/stream-chat-swift/actions"><img src="https://github.com/GetStream/stream-chat-swift/workflows/CI/badge.svg" /></a>
-  <a href="https://codecov.io/gh/GetStream/stream-chat-swift"><img src="https://codecov.io/gh/GetStream/stream-chat-swift/branch/main/graph/badge.svg" /></a>
+  <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 
 The **StreamChat SDK**  is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications.
 
---- 
+---
 
-## Important ⚠️ 
+## Important ⚠️
 
-**StreamChat** is a low level client for Stream chat service and is meant to be used when you want to build a fully custom UI. 
+**StreamChat** is a low level client for Stream chat service and is meant to be used when you want to build a fully custom UI.
 
 For the majority of common use cases, using our highly composable and customizable [**StreamChatUI**](https://github.com/GetStream/stream-chat-swift/tree/main) is preferable.
 
---- 
+---
 
 ## Main Features
 
@@ -58,7 +58,7 @@ For the majority of common use cases, using our highly composable and customizab
 import StreamChat
 
 /// The root object of the SDK
-let chatClient: ChatClient = {    
+let chatClient: ChatClient = {
     let config = ChatClientConfig(apiKey: APIKey("<# YOU API KEY #>"))
     // If you don't have your API key yet, visit https://getstream.io/chat/trial to get it for free.
 
@@ -85,7 +85,7 @@ This method allows you to create the controller objects in advance and load and 
 
 // Using a `ChannelController` for a quick object mutation:
 
-chatClient.channelController(for: <channel cid>).deleteChannel { error in 
+chatClient.channelController(for: <channel cid>).deleteChannel { error in
     // handle error if needed
 }
 
@@ -112,7 +112,7 @@ class ViewController: UIViewController, ChatChannelListControllerDelegate {
         // Controllers which don't need explicit synchronization with remote servers don't have the `synchronize()` method.
         controller.synchronize()
     }
-    
+
     func controller(_ controller: ChatChannelListController, didChangeChannels changes: [ListChange<ChatChannel>]) {
         // The list channels changes, update your UI
     }
@@ -121,7 +121,7 @@ class ViewController: UIViewController, ChatChannelListControllerDelegate {
 
 ### Model Objects
 
-Model objects are immutable snapshots of chat entities at a certain point in time. They are lightweight, disposable objects, and their life-cycle is usually very short. 
+Model objects are immutable snapshots of chat entities at a certain point in time. They are lightweight, disposable objects, and their life-cycle is usually very short.
 
 Typically, you'd ask a `Controller` object for the current state of its models, update your UI, and throw the model objects away.
 
@@ -173,7 +173,7 @@ let controller = chatClient.channelListController(
 )
 
 controller.channelsPublisher
-    .sink { channels in 
+    .sink { channels in
        // update your UI
     }
     .store(at: &cancellables)
