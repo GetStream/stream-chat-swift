@@ -236,7 +236,7 @@ class RedPacketSentBubble: UITableViewCell {
         } else {
             lblDetails.text = "Split randomly between: \(participants) users"
         }
-        lblExpire.text = "Expires in 30 minutes!"
+        lblExpire.text = "Expires in 15 minutes!"
     }
 
     private func getEndTime() -> Date? {
@@ -260,13 +260,13 @@ class RedPacketSentBubble: UITableViewCell {
             if let endDate = getEndTime() {
                 let minutes = Date().minutesFromCurrentDate(endDate)
                 if minutes <= 0 {
-                    Snackbar.show(text: "Expired - better luck next time!")
+                    Snackbar.show(text: "", messageType: StreamChatMessageType.redPacketExpired)
                     return false
                 } else {
                     return true
                 }
             } else {
-                Snackbar.show(text: "Expired - better luck next time!")
+                Snackbar.show(text: "", messageType: StreamChatMessageType.redPacketExpired)
                 return false
             }
         }
