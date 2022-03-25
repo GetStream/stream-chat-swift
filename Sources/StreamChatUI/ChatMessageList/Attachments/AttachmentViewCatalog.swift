@@ -20,7 +20,7 @@ open class AttachmentViewCatalog {
         
         if attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.video) {
             if attachmentCounts.keys.contains(.file) {
-                return MixedAttachmentViewInjector.self
+                return components.mixedAttachmentInjector
             } else {
                 return components.galleryAttachmentInjector
             }
