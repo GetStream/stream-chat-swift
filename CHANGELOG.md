@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix pasting long text into composer won't update input height [#1875](https://github.com/GetStream/stream-chat-swift/issues/1875)
 
 ## StreamChatUI
+### ⚠️ Changed
+- `AttachmentsPreviewVC` contains significant deprecations [#1877](https://github.com/GetStream/stream-chat-swift/pull/1877)
+### ✅ Added
+- Add Mixed Attachments UI Support [#1877](https://github.com/GetStream/stream-chat-swift/pull/1877)
 ### 🐞 Fixed
 - Resolve attachment type when importing file from file picker [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
 

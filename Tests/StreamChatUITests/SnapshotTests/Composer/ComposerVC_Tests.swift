@@ -158,6 +158,16 @@ class ComposerVC_Tests: XCTestCase {
         
         AssertSnapshot(composerVC)
     }
+
+    func test_attachmentsPreview_withMultipleAttachmentTypes() {
+        let composerVC = ComposerVC()
+        composerVC.appearance = Appearance.default
+
+        composerVC.content = .initial()
+        composerVC.content.attachments = [.mockFile, .mockFile, .mockImage, .mockVideo]
+
+        AssertSnapshot(composerVC)
+    }
     
     func test_commandWithNonEmptyArgs_hasSendButtonDisabled() {
         let composerVC = ComposerVC()
