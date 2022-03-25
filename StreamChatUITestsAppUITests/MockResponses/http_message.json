@@ -1,0 +1,43 @@
+{
+  "message": {
+    "id": "8CEC7FFF-3842-4ECC-85EC-9D0B82A6AA58",
+    "text": "Fefe",
+    "html": "<p>Fefe</p>\n",
+    "type": "regular",
+    "user": {
+      "id": "luke_skywalker",
+      "role": "user",
+      "created_at": "2020-12-07T11:36:47.059906Z",
+      "updated_at": "2022-03-08T15:30:07.960068Z",
+      "last_active": "2022-03-08T15:57:33.831192082Z",
+      "banned": false,
+      "online": true,
+      "testing-this": 3.14,
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "birthland": "Tatooine",
+      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "extra_data": {},
+      "testing": false,
+      "extraData": {},
+      "yetAnotherField": "40",
+      "name": "Luke Skywalker"
+    },
+    "attachments": [],
+    "latest_reactions": [],
+    "own_reactions": [],
+    "reaction_counts": {},
+    "reaction_scores": {},
+    "reply_count": 0,
+    "cid": "messaging:general",
+    "created_at": "2022-03-08T15:57:47.255945Z",
+    "updated_at": "2022-03-08T15:57:47.255945Z",
+    "shadowed": false,
+    "mentioned_users": [],
+    "silent": false,
+    "pinned": false,
+    "pinned_at": null,
+    "pinned_by": null,
+    "pin_expires": null
+  },
+  "duration": "64.73ms"
+}

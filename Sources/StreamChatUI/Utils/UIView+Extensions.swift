@@ -41,6 +41,11 @@ extension UIView {
         return self
     }
 
+    func withAccessibilityIdentifier(identifier: String) -> Self {
+        accessibilityIdentifier = identifier
+        return self
+    }
+
     var isVisible: Bool {
         get { !isHidden }
         set { isHidden = !newValue }

@@ -86,6 +86,10 @@ final class MessageUpdaterMock: MessageUpdater {
     @Atomic var clearSearchResults_query: MessageSearchQuery?
     @Atomic var clearSearchResults_completion: ((Error?) -> Void)?
     
+    @Atomic var translate_messageId: MessageId?
+    @Atomic var translate_language: TranslationLanguage?
+    @Atomic var translate_completion: ((Error?) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -161,6 +165,10 @@ final class MessageUpdaterMock: MessageUpdater {
         
         clearSearchResults_query = nil
         clearSearchResults_completion = nil
+        
+        translate_messageId = nil
+        translate_language = nil
+        translate_completion = nil
     }
     
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
@@ -329,5 +337,15 @@ final class MessageUpdaterMock: MessageUpdater {
     ) {
         clearSearchResults_query = query
         clearSearchResults_completion = completion
+    }
+    
+    override func translate(
+        messageId: MessageId,
+        to language: TranslationLanguage,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        translate_messageId = messageId
+        translate_language = language
+        translate_completion = completion
     }
 }

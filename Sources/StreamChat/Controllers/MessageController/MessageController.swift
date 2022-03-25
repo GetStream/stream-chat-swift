@@ -536,6 +536,21 @@ public extension ChatMessageController {
             }
         }
     }
+    
+    /// Translates the message to the given language.
+    /// The translated message will be returned via `didChangeMessage` delegate callback.
+    /// Translation will be in `message.translations[language]`
+    /// - Parameters:
+    ///   - language: The language message text should be translated to.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
+    ///                 If operation fails, the completion is called with the error.
+    func translate(to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.translate(messageId: messageId, to: language) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Environment

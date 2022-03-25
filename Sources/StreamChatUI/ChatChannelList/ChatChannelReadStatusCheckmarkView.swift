@@ -19,7 +19,9 @@ open class ChatChannelReadStatusCheckmarkView: _View, AppearanceProvider, SwiftU
     }
         
     /// The `UIImageView` instance that shows the read/unread status image.
-    open private(set) lazy var imageView = UIImageView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var imageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "imageView")
     
     override open func tintColorDidChange() {
         super.tintColorDidChange()

@@ -1883,6 +1883,62 @@ final class MessageController_Tests: XCTestCase {
         // Assert controller is kept alive.
         AssertAsync.staysTrue(weakController != nil)
     }
+    
+    // MARK: - Translate message
+    
+    func test_translate_propagatesError() {
+        // Simulate `translate` call and catch the completion.
+        var completionError: Error?
+        controller.translate(to: .english) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+        
+        // Simulate network response with the error.
+        let updaterError = TestError()
+        env.messageUpdater.translate_completion!(updaterError)
+        
+        // Assert error is propagated.
+        AssertAsync.willBeEqual(completionError as? TestError, updaterError)
+    }
+    
+    func test_translate_propagatesNilError() {
+        // Simulate `transate` call and catch the completion.
+        var completionIsCalled = false
+        controller.translate(to: .english) { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+        
+        // Simulate successful updater call.
+        env.messageUpdater.translate_completion!(nil)
+        
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+    }
+    
+    func test_translate_callsUpdater_withCorrectValues() {
+        // Simulate `resendMessage` call.
+        controller.translate(to: .english)
+        // Assert updater is called with correct `messageId` and language
+        XCTAssertEqual(env.messageUpdater.translate_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.translate_language, .english)
+    }
+    
+    func test_translate_keepsControllerAlive() {
+        // Simulate `resendMessage` call.
+        controller.translate(to: .english)
+        
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive.
+        AssertAsync.staysTrue(weakController != nil)
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {

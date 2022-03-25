@@ -70,6 +70,7 @@ public extension ChatMessage {
             currentUserReactions: { currentUserReactions },
             isSentByCurrentUser: isSentByCurrentUser,
             pinDetails: pinDetails,
+            translations: nil,
             underlyingContext: nil
         )
     }

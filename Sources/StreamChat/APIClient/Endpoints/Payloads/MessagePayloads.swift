@@ -56,6 +56,8 @@ struct MessageSearchResultsPayload: Decodable {
 /// An object describing the incoming message JSON payload.
 class MessagePayload: Decodable {
     let id: String
+    /// Only messages from `translate` endpoint contain `cid`
+    let cid: ChannelId?
     let type: MessageType
     let user: UserPayload
     let createdAt: Date
@@ -80,6 +82,7 @@ class MessagePayload: Decodable {
     let attachments: [MessageAttachmentPayload]
     let isSilent: Bool
     let isShadowed: Bool
+    let translations: [TranslationLanguage: String]?
 
     var pinned: Bool
     var pinnedBy: UserPayload?
@@ -93,6 +96,7 @@ class MessagePayload: Decodable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
+        cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
         type = try container.decode(MessageType.self, forKey: .type)
         user = try container.decode(UserPayload.self, forKey: .user)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
@@ -140,10 +144,13 @@ class MessagePayload: Decodable {
         pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
         pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
         quotedMessageId = try container.decodeIfPresent(MessageId.self, forKey: .quotedMessageId)
+        // Translations are only available for messages returned via `message.translate()`
+        translations = (try container.decodeIfPresent(MessageTranslationsPayload.self, forKey: .i18n))?.translated
     }
     
     init(
         id: String,
+        cid: ChannelId? = nil,
         type: MessageType,
         user: UserPayload,
         createdAt: Date,
@@ -171,9 +178,11 @@ class MessagePayload: Decodable {
         pinned: Bool = false,
         pinnedBy: UserPayload? = nil,
         pinnedAt: Date? = nil,
-        pinExpires: Date? = nil
+        pinExpires: Date? = nil,
+        translations: [TranslationLanguage: String]? = nil
     ) {
         self.id = id
+        self.cid = cid
         self.type = type
         self.user = user
         self.createdAt = createdAt
@@ -202,6 +211,7 @@ class MessagePayload: Decodable {
         self.pinnedAt = pinnedAt
         self.pinExpires = pinExpires
         self.quotedMessageId = quotedMessageId
+        self.translations = translations
     }
 }
 

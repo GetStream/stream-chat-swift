@@ -284,6 +284,7 @@ class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(request.httpMethod, endpoint.method.rawValue)
         XCTAssertEqual(request.url?.scheme, baseURL.scheme)
         XCTAssertEqual(request.url?.host, baseURL.host)
+        XCTAssertEqual(request.url?.port, baseURL.port)
         XCTAssertEqual(request.url?.path, "/" + endpoint.path.value)
         
         // Check custom query items

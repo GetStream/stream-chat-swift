@@ -212,4 +212,23 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)/action", endpoint.path.value)
     }
+    
+    func test_translate_buildsCorrectly() {
+        let messageId: MessageId = .unique
+        let language = TranslationLanguage.allCases.randomElement()!
+        
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+            path: .translateMessage(messageId),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["language": language.languageCode]
+        )
+        
+        let endpoint: Endpoint<MessagePayload.Boxed> = .translate(messageId: messageId, to: language)
+        
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)/translate", endpoint.path.value)
+    }
 }

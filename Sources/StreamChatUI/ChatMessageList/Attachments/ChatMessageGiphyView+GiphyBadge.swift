@@ -7,7 +7,9 @@ import UIKit
 extension ChatMessageGiphyView {
     open class GiphyBadge: _View, AppearanceProvider {
         public private(set) lazy var title: UILabel = {
-            let label = UILabel().withoutAutoresizingMaskConstraints
+            let label = UILabel()
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "title")
             label.text = "GIPHY"
             label.textColor = appearance.colorPalette.staticColorText
             label.font = appearance.fonts.bodyBold
@@ -18,9 +20,12 @@ extension ChatMessageGiphyView {
             image: appearance
                 .images
                 .commandGiphy
-        )
+        ).withAccessibilityIdentifier(identifier: "lightning")
+
         public private(set) lazy var contentStack: UIStackView = {
-            let stack = UIStackView(arrangedSubviews: [lightning, title]).withoutAutoresizingMaskConstraints
+            let stack = UIStackView(arrangedSubviews: [lightning, title])
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "contentStack")
             stack.axis = .horizontal
             stack.alignment = .center
             return stack

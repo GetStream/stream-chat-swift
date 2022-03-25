@@ -31,6 +31,7 @@ open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
     /// The list view that is listened for being scrolled.
     public weak var listView: UITableView? {
         didSet {
+            listView?.accessibilityIdentifier = "listView"
             contentOffsetObservation = listView?.observe(\.contentOffset) { [weak self] tb, _ in
                 guard let self = self else { return }
                 
