@@ -241,6 +241,61 @@ final class SyncOperations_Tests: XCTestCase {
             "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 1
         )
     }
+
+    // MARK: - CleanUnwantedChannelsOperation
+
+    func test_CleanUnwantedChannelsOperation_noUnwantedChannels() throws {
+        let context = SyncContext()
+
+        try addChannel(with: ChannelId.unique, numberOfMessages: 3)
+
+        let operation = CleanUnwantedChannelsOperation(database: database, context: context)
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(database.writeSessionCounter, 0)
+    }
+
+    func test_CleanUnwantedChannelsOperation_unwantedChannels_failure() throws {
+        let channelId = ChannelId.unique
+        let context = SyncContext()
+        context.unwantedChannelIds = [channelId]
+        database.write_errorResponse = ClientError.ChannelDoesNotExist(cid: channelId)
+
+        let operation = CleanUnwantedChannelsOperation(database: database, context: context)
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(database.writeSessionCounter, 3)
+    }
+
+    func test_CleanUnwantedChannelsOperation_unwantedChannels_success() throws {
+        let channelId = ChannelId.unique
+        let context = SyncContext()
+        context.unwantedChannelIds = [channelId]
+
+        try addChannel(with: channelId, numberOfMessages: 3)
+        let originalChannels = try allChannels()
+        XCTAssertEqual(originalChannels.count, 1)
+        XCTAssertEqual(originalChannels.first?.messages.count, 3)
+
+        let operation = CleanUnwantedChannelsOperation(database: database, context: context)
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(database.writeSessionCounter, 1)
+        let channels = try allChannels()
+        XCTAssertEqual(channels.count, 1)
+        XCTAssertEqual(channels.first?.messages.count, 0)
+    }
+
+    private func allChannels() throws -> [ChannelDTO] {
+        try database.viewContext.fetch(ChannelDTO.allChannelsFetchRequest)
+    }
+
+    private func addChannel(with cid: ChannelId, numberOfMessages: Int) throws {
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: numberOfMessages))
+        }
+        database.writeSessionCounter = 0
+    }
 }
 
 extension Operation {
