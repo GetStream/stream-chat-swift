@@ -5,7 +5,7 @@
 import Foundation
 import XCTest
 
-public func XCTAssertEqual<T: Equatable>(_ received: T, _ expected: T, file: StaticString = #file, line: UInt = #line) {
+public func XCTAssertEqual<T: Equatable>(_ expected: T, _ received: T, file: StaticString = #file, line: UInt = #line) {
     if TestRunnerEnvironment.isCI {
         // Use built-in `XCTAssertEqual` when running on the CI to get CI-friendly logs.
         XCTAssertEqual(received, expected, "", file: file, line: line)
@@ -330,8 +330,8 @@ private extension Mirror {
 ///
 /// - Returns: List of differences
 public func diff<T>(
-    _ expected: T,
     _ received: T,
+    _ expected: T,
     indentationType: Difference.IndentationType = .pipe,
     skipPrintingOnDiffCount: Bool = false
 ) -> [String] {
