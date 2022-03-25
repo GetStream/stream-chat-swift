@@ -5,7 +5,7 @@
 import Foundation
 
 /// The injector used to combine multiple types of attachment views.
-public class MixedAttachmentViewInjector: AttachmentViewInjector {
+open class MixedAttachmentViewInjector: AttachmentViewInjector {
     open lazy var injectors = [
         contentView.components.galleryAttachmentInjector.init(contentView),
         contentView.components.filesAttachmentInjector.init(contentView)
@@ -17,5 +17,9 @@ public class MixedAttachmentViewInjector: AttachmentViewInjector {
 
     override open func contentViewDidUpdateContent() {
         injectors.forEach { $0.contentViewDidUpdateContent() }
+    }
+    
+    override open func contentViewDidPrepareForReuse() {
+        injectors.forEach { $0.contentViewDidPrepareForReuse() }
     }
 }
