@@ -173,7 +173,7 @@ extension UserListViewModel {
                         weakSelf.dataLoadingState = .completed
                     }
                 } else {
-                    weakSelf.dataLoadingState = .error
+                    weakSelf.dataLoadingState = weakSelf.searchText == nil ? .error : .searchingError
                 }
             }
         } else {

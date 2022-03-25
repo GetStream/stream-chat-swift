@@ -29,6 +29,7 @@ public class ChatUserListVC: UIViewController {
     // MARK: - @IBOutlet
     @IBOutlet private weak var containerView: UIView!
     private var tableView: UITableView?
+    private let safeDataLoadQueue: DispatchQueue = DispatchQueue.init(label: "ChatListUpdateQueue")
     // MARK: - VARIABLES
     public var viewModel = UserListViewModel(sortType: .sortByLastSeen)
     public var sortType: Em_ChatUserListFilterTypes = .sortByLastSeen {
@@ -65,8 +66,10 @@ extension ChatUserListVC {
         // UserListCallback
         self.viewModel.bCallbackDataLoadingStateUpdated = { [weak self] loadingState in
             guard let weakSelf = self else { return }
-            DispatchQueue.main.async {
-                weakSelf.updateUI()
+            weakSelf.safeDataLoadQueue.async { [weak self] in
+                DispatchQueue.main.async {
+                    self?.updateUI()
+                }
             }
         }
         self.viewModel.bCallbackDataUserList = { [weak self] users in
@@ -118,25 +121,21 @@ extension ChatUserListVC {
         case .error:
             self.sectionWiseList.removeAll()
             addCreateChatHeader()
-            hideShowEmptyView(hidden: true)
             self.tableView?.reloadData()
             break
         case .searchingError:
             self.sectionWiseList.removeAll()
-            addCreateChatHeader()
-            hideShowEmptyView(hidden: true)
             self.tableView?.reloadData()
             break
         case .searching:
             self.sectionWiseList.removeAll()
-            hideShowEmptyView(hidden: true)
+            addLoadingDataSection()
             self.tableView?.reloadData()
             break
         case .loading:
             self.sectionWiseList.removeAll()
             addCreateChatHeader()
             addLoadingDataSection()
-            hideShowEmptyView(hidden: true)
             self.tableView?.reloadData()
             break
         case .loadMoreData:
@@ -151,7 +150,6 @@ extension ChatUserListVC {
                 let userCount = weakSelf.sectionWiseList.filter({ $0.sectionType != .createChatHeader}).filter({$0.users.count > 0 })
                 if weakSelf.viewModel.searchText != nil && userCount.count == 0 {
                     weakSelf.sectionWiseList.removeAll()
-                    weakSelf.addCreateChatHeader()
                     weakSelf.hideShowEmptyView(hidden: false)
                     weakSelf.tableView?.reloadData()
                 }
@@ -159,7 +157,6 @@ extension ChatUserListVC {
             break
         case .none:
             self.sectionWiseList.removeAll()
-            hideShowEmptyView(hidden: true)
             self.tableView?.reloadData()
             break
         }
