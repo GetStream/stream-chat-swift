@@ -6,7 +6,7 @@ import Foundation
 import XCTest
 
 extension XCTestCase {
-    func waitUntil(timeout: TimeInterval = 0.1, _ action: (_ done: @escaping () -> Void) -> Void) {
+    func waitUntil(timeout: TimeInterval = 0.5, _ action: (_ done: @escaping () -> Void) -> Void) {
         let expectation = XCTestExpectation(description: "Action completed")
         action {
             if Thread.isMainThread {
