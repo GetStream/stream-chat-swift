@@ -304,6 +304,7 @@ open class ComposerVC: _ViewController,
 
         composerView.inputMessageView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.confirmButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
+        composerView.inputMessageView.emojiButton
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         //composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
         composerView.dismissButton.addTarget(self, action: #selector(clearContent(sender:)), for: .touchUpInside)
@@ -546,6 +547,11 @@ open class ComposerVC: _ViewController,
             }
         }
 
+        (composerView.inputMessageView.emojiButton as? EmojiButton)?.didSelectEmoji = { [weak self] emojiPicker in
+            guard let `self` = self else { return }
+            print(emojiPicker)
+        }
+
     }
 
     // MARK: - Actions
@@ -569,6 +575,18 @@ open class ComposerVC: _ViewController,
         }
         content.clear()
         self.composerView.leadingContainer.isHidden = false
+    }
+
+    // Disable custom Emoji menu
+    @objc open func showEmojiMenu(_ sender: UIButton) {
+        // EMOJI integration
+        sender.isSelected.toggle()
+        if sender.isSelected {
+            let emoji = EmojiMenuViewController()
+            showInputViewController(emoji)
+        } else {
+            hideInputView()
+        }
     }
     
     /// Shows a photo/media picker.

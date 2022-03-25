@@ -108,8 +108,7 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         inputTextContainer.addArrangedSubview(commandLabelView)
         inputTextContainer.addArrangedSubview(textView)
         inputTextContainer.addArrangedSubview(clearButton)
-        // TODO: Will add it when we will implement emoji feature.
-        //inputTextContainer.addArrangedSubview(emojiButton)
+        inputTextContainer.addArrangedSubview(emojiButton)
         inputTextContainer.addArrangedSubview(sendButton)
         inputTextContainer.addArrangedSubview(emptyView)
 
