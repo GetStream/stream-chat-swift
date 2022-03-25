@@ -71,7 +71,7 @@ open class ChatMessageLayoutOptionsResolver {
             return options
         }
 
-        if isLastInSequence && !message.isSentByCurrentUser {
+        if isLastInSequence && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.avatar)
         }
         if isLastInSequence && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
@@ -85,8 +85,9 @@ open class ChatMessageLayoutOptionsResolver {
             // The bubbles with thread look like continuous bubbles
             options.insert(.continuousBubble)
         }
-        if isRedPacketAmountCell(message) {
+        if isRedPacketAmountCell(message) && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.avatar)
+            options.insert(.authorName)
         }
         if hasReactions(channel, message, appearance) {
             options.insert(.reactions)

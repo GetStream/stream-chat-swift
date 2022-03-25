@@ -124,14 +124,14 @@
 		6E0D12EC27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */; };
 		6E1BA5C427C62A70004046D2 /* StreamChatBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */; };
 		6E1BA5C527C62A70004046D2 /* StreamChatBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */; };
-		6E3DEF6A27D3501C0095E0E3 /* JoinGroupRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */; };
-		6E3DEF6B27D3501C0095E0E3 /* JoinGroupRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */; };
 		6E297C0F27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E297C0D27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift */; };
 		6E297C1027CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E297C0D27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift */; };
 		6E297C1127CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E297C0E27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib */; };
 		6E297C1227CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E297C0E27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib */; };
 		6E297C5027CF963E002BE0AF /* StreamChatCustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E297C4F27CF963E002BE0AF /* StreamChatCustomButton.swift */; };
 		6E297C5127CF963E002BE0AF /* StreamChatCustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E297C4F27CF963E002BE0AF /* StreamChatCustomButton.swift */; };
+		6E3DEF6A27D3501C0095E0E3 /* JoinGroupRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */; };
+		6E3DEF6B27D3501C0095E0E3 /* JoinGroupRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */; };
 		6E41867B27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */; };
 		6E41867C27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */; };
 		6E41867D27C3CD630061E03F /* SFProText-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867627C3CD630061E03F /* SFProText-Semibold.ttf */; };
@@ -148,9 +148,21 @@
 		6E4D4FD927C8D03B007FFE83 /* UserListDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D4FD727C8D03B007FFE83 /* UserListDataSource.swift */; };
 		6E4D4FDB27C8D927007FFE83 /* UserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D4FDA27C8D927007FFE83 /* UserListViewModel.swift */; };
 		6E4D4FDC27C8D927007FFE83 /* UserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D4FDA27C8D927007FFE83 /* UserListViewModel.swift */; };
+		6E6A40D627EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6A40D427EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.swift */; };
+		6E6A40D727EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6A40D427EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.swift */; };
+		6E6A40D827EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E6A40D527EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.xib */; };
+		6E6A40D927EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E6A40D527EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.xib */; };
+		6E6A40DC27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6A40DA27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.swift */; };
+		6E6A40DD27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6A40DA27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.swift */; };
+		6E6A40DE27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E6A40DB27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.xib */; };
+		6E6A40DF27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E6A40DB27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.xib */; };
 		6E92FD3A27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */; };
 		6E92FD3B27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */; };
 		6E92FD3C27BCEEAD00DA89B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779B12563FA6B00BA79B6 /* Assets.xcassets */; };
+		6EBB724127CD003D00FAF482 /* SkeletonView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724027CD003D00FAF482 /* SkeletonView.framework */; };
+		6EBB724227CD003D00FAF482 /* SkeletonView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724027CD003D00FAF482 /* SkeletonView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EBB724527CD005400FAF482 /* SkeletonView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724427CD005400FAF482 /* SkeletonView.framework */; };
+		6EBB724627CD005400FAF482 /* SkeletonView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724427CD005400FAF482 /* SkeletonView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EC85CD727D5EA3C00063EB8 /* ShareInviteLinkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC85CD627D5EA3C00063EB8 /* ShareInviteLinkVC.swift */; };
 		6EC85CD827D5EA3C00063EB8 /* ShareInviteLinkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC85CD627D5EA3C00063EB8 /* ShareInviteLinkVC.swift */; };
 		6EC85CDB27D5EB9400063EB8 /* CollectionViewCellGroupUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC85CD927D5EB9400063EB8 /* CollectionViewCellGroupUsers.swift */; };
@@ -159,10 +171,6 @@
 		6EC85CDE27D5EB9400063EB8 /* CollectionViewCellGroupUsers.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6EC85CDA27D5EB9400063EB8 /* CollectionViewCellGroupUsers.xib */; };
 		6EC85CE027D5EC8400063EB8 /* CollectionViewGroupUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC85CDF27D5EC8400063EB8 /* CollectionViewGroupUserList.swift */; };
 		6EC85CE127D5EC8400063EB8 /* CollectionViewGroupUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC85CDF27D5EC8400063EB8 /* CollectionViewGroupUserList.swift */; };
-		6EBB724127CD003D00FAF482 /* SkeletonView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724027CD003D00FAF482 /* SkeletonView.framework */; };
-		6EBB724227CD003D00FAF482 /* SkeletonView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724027CD003D00FAF482 /* SkeletonView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6EBB724527CD005400FAF482 /* SkeletonView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724427CD005400FAF482 /* SkeletonView.framework */; };
-		6EBB724627CD005400FAF482 /* SkeletonView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EBB724427CD005400FAF482 /* SkeletonView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6ED0BE5227C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */; };
 		6ED0BE5327C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */; };
 		6ED0BE5427C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6ED0BE5127C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib */; };
@@ -1693,10 +1701,10 @@
 		6E0D12E727B3CF85003DD1AA /* TableViewCellChatUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellChatUser.swift; sourceTree = "<group>"; };
 		6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewCellChatUser.xib; sourceTree = "<group>"; };
 		6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatBackButton.swift; sourceTree = "<group>"; };
-		6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGroupRequestVC.swift; sourceTree = "<group>"; };
 		6E297C0D27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellGroupDetailsAttachmentsList.swift; sourceTree = "<group>"; };
 		6E297C0E27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCellGroupDetailsAttachmentsList.xib; sourceTree = "<group>"; };
 		6E297C4F27CF963E002BE0AF /* StreamChatCustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatCustomButton.swift; sourceTree = "<group>"; };
+		6E3DEF6927D3501C0095E0E3 /* JoinGroupRequestVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGroupRequestVC.swift; sourceTree = "<group>"; };
 		6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFCompactText-Regular.ttf"; sourceTree = "<group>"; };
 		6E41867627C3CD630061E03F /* SFProText-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProText-Semibold.ttf"; sourceTree = "<group>"; };
 		6E41867727C3CD630061E03F /* SFProText-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProText-Regular.ttf"; sourceTree = "<group>"; };
@@ -1705,13 +1713,17 @@
 		6E41867A27C3CD630061E03F /* SFProDisplay-Heavy.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProDisplay-Heavy.ttf"; sourceTree = "<group>"; };
 		6E4D4FD727C8D03B007FFE83 /* UserListDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListDataSource.swift; sourceTree = "<group>"; };
 		6E4D4FDA27C8D927007FFE83 /* UserListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewModel.swift; sourceTree = "<group>"; };
+		6E6A40D427EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellWallePayBubbleIncoming.swift; sourceTree = "<group>"; };
+		6E6A40D527EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCellWallePayBubbleIncoming.xib; sourceTree = "<group>"; };
+		6E6A40DA27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellWallePayBubbleOutgoing.swift; sourceTree = "<group>"; };
+		6E6A40DB27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCellWallePayBubbleOutgoing.xib; sourceTree = "<group>"; };
 		6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatNavTitleLabel.swift; sourceTree = "<group>"; };
+		6EBB724027CD003D00FAF482 /* SkeletonView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SkeletonView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EBB724427CD005400FAF482 /* SkeletonView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SkeletonView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC85CD627D5EA3C00063EB8 /* ShareInviteLinkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareInviteLinkVC.swift; sourceTree = "<group>"; };
 		6EC85CD927D5EB9400063EB8 /* CollectionViewCellGroupUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCellGroupUsers.swift; sourceTree = "<group>"; };
 		6EC85CDA27D5EB9400063EB8 /* CollectionViewCellGroupUsers.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionViewCellGroupUsers.xib; sourceTree = "<group>"; };
 		6EC85CDF27D5EC8400063EB8 /* CollectionViewGroupUserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewGroupUserList.swift; sourceTree = "<group>"; };
-		6EBB724027CD003D00FAF482 /* SkeletonView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SkeletonView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EBB724427CD005400FAF482 /* SkeletonView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SkeletonView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewHeaderCreateChat.swift; sourceTree = "<group>"; };
 		6ED0BE5127C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewHeaderCreateChat.xib; sourceTree = "<group>"; };
 		6ED3E44027B4D4C900A05C0A /* ChatBaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBaseVC.swift; sourceTree = "<group>"; };
@@ -5502,6 +5514,10 @@
 				6EC85CDA27D5EB9400063EB8 /* CollectionViewCellGroupUsers.xib */,
 				6E297C0D27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.swift */,
 				6E297C0E27CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib */,
+				6E6A40D427EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.swift */,
+				6E6A40D527EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.xib */,
+				6E6A40DA27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.swift */,
+				6E6A40DB27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.xib */,
 			);
 			path = cells;
 			sourceTree = "<group>";
@@ -6365,7 +6381,9 @@
 				6E0D12CF27B3C908003DD1AA /* ChatSharedFilesVC.xib in Resources */,
 				CDA1FB08278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib in Resources */,
 				6E41867E27C3CD630061E03F /* SFProText-Semibold.ttf in Resources */,
+				6E6A40DF27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.xib in Resources */,
 				6E41868427C3CD630061E03F /* SFProDisplay-Bold.ttf in Resources */,
+				6E6A40D927EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.xib in Resources */,
 				CD24C70E27844C3500F6378D /* Wallet.storyboard in Resources */,
 				88F0D743257E50B000F4B050 /* Localizable.strings in Resources */,
 				CD24C70C27844BC500F6378D /* PrivateGroup.storyboard in Resources */,
@@ -6440,6 +6458,7 @@
 			files = (
 				6E41868127C3CD630061E03F /* SFProDisplay-Regular.ttf in Resources */,
 				6E0D12CE27B3C908003DD1AA /* ChatSharedFilesVC.xib in Resources */,
+				6E6A40DE27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.xib in Resources */,
 				6ED3E45127B53AE200A05C0A /* AttachmentListCollectionViewCell.xib in Resources */,
 				6E0D12EB27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */,
 				6E0D12DF27B3CDF4003DD1AA /* TableViewHeaderChatUserList.xib in Resources */,
@@ -6447,6 +6466,7 @@
 				6E41867D27C3CD630061E03F /* SFProText-Semibold.ttf in Resources */,
 				6ED0BE5427C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib in Resources */,
 				6E92FD3C27BCEEAD00DA89B6 /* Assets.xcassets in Resources */,
+				6E6A40D827EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.xib in Resources */,
 				6E41868327C3CD630061E03F /* SFProDisplay-Bold.ttf in Resources */,
 				6E41868527C3CD630061E03F /* SFProDisplay-Heavy.ttf in Resources */,
 				6E297C1127CF5496002BE0AF /* TableViewCellGroupDetailsAttachmentsList.xib in Resources */,
@@ -7140,6 +7160,7 @@
 				847D602B2679EED400FB701D /* VideoAttachmentGalleryCell.swift in Sources */,
 				AD87D097263C7783008B466C /* CommandButton.swift in Sources */,
 				224165A825910A2C00ED7F78 /* CheckboxControl.swift in Sources */,
+				6E6A40D727EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.swift in Sources */,
 				79FA4A84263BFD1100EC33DA /* GalleryAttachmentViewInjector.swift in Sources */,
 				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
 				796CBD1C25FF9552003299B0 /* UIStackView+Extensions.swift in Sources */,
@@ -7163,6 +7184,7 @@
 				88D66E762599DF1400CFC102 /* ChatMessageReactionAppearance.swift in Sources */,
 				ED1D146B2786C08F005A0EAB /* WalletAttachmentComposerPreview.swift in Sources */,
 				F80BCA0A263011F500F2107B /* ImageAttachmentGalleryCell.swift in Sources */,
+				6E6A40DD27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.swift in Sources */,
 				843F0BC326775CDB00B342CB /* Cache.swift in Sources */,
 				8830513E263031C40069D731 /* ChatMessageLayoutOptions.swift in Sources */,
 				792DD9D9256BC542001DB91B /* BaseViews.swift in Sources */,
@@ -7531,6 +7553,7 @@
 				792CA62624CEE93700D70A5E /* ChannelListUpdater.swift in Sources */,
 				882C5756252C791400E60C44 /* ChannelMemberListUpdater.swift in Sources */,
 				79896D5E25065ECD00BA8F1C /* ChannelRead.swift in Sources */,
+				6E6A40DC27EDF4A4002213C3 /* TableViewCellWallePayBubbleOutgoing.swift in Sources */,
 				6EEFB79527BB83AD007224C2 /* DimmedView.swift in Sources */,
 				847E946E269C687300E31D0C /* EventsController.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
@@ -7683,6 +7706,7 @@
 				79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */,
 				F688643624E6DA8700A71361 /* CurrentUserController.swift in Sources */,
 				88BEBCD32536FD7600D9E8B7 /* MemberListController+Combine.swift in Sources */,
+				6E6A40D627EDCF04002213C3 /* TableViewCellWallePayBubbleIncoming.swift in Sources */,
 				888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */,
 				790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */,
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,
