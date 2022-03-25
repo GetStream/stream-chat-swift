@@ -550,6 +550,14 @@ open class ComposerVC: _ViewController,
         (composerView.inputMessageView.emojiButton as? EmojiButton)?.didSelectEmoji = { [weak self] emojiPicker in
             guard let `self` = self else { return }
             print(emojiPicker)
+            var stickerData = [String: RawJSON]()
+            stickerData["stickerUrl"] = .string(emojiPicker.stickerImg)
+            self.channelController?
+                .createNewMessage(
+                    text: "Sticker",
+                    extraData: stickerData,
+                    completion: nil
+                )
         }
 
     }
