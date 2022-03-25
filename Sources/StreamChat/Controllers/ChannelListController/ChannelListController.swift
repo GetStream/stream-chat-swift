@@ -353,7 +353,8 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
         didChangeChannels changes: [ListChange<ChatChannel>]
     )
     
-    /// **This method is deprecated:** "Please use `filterBlock` when initializing a `ChatChannelListController`"
+    /// **⚠️ This method is deprecated:** Please use `filterBlock` when initializing a `ChatChannelListController`
+    ///
     /// (We are not using @available annotations because they do not get emitted in protocol conformances)
     ///
     /// The controller asks the delegate if the newly inserted `ChatChannel` should be linked to this Controller's query.
@@ -368,7 +369,8 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
         shouldAddNewChannelToList channel: ChatChannel
     ) -> Bool
 
-    /// **This method is deprecated:** "Please use `filterBlock` when initializing a `ChatChannelListController`"
+    /// **⚠️ This method is deprecated:** Please use `filterBlock` when initializing a `ChatChannelListController`
+    ///
     /// (We are not using @available annotations because they do not get emitted in protocol conformances)
     ///
     /// The controller asks the delegate if the newly updated `ChatChannel` should be linked to this Controller's query.
