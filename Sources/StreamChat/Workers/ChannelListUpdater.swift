@@ -34,11 +34,12 @@ class ChannelListUpdater: Worker {
         for query: ChannelListQuery,
         watchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<[ChatChannel], Error>) -> Void
+        completion: @escaping (Result<(synched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: .channelsPageSize, offset: 0)
-        
+
+        var unwantedCids = Set<ChannelId>()
         // Fetches the channels matching the query, and stores them in the database.
         apiClient.recoveryRequest(endpoint: .channels(query: query)) { [weak self] result in
             switch result {
@@ -51,23 +52,32 @@ class ChannelListUpdater: Worker {
                         
                         let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
                         let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
-                        let queryAlreadySynched = remoteQueryCIDs.intersection(synchedChannelIds)
-                        
-                        // We are going to unlink & clear those channels that are not present in the remote query,
-                        // and that have not been synched nor watched. Those are outdated.
-                        let cidsToRemove = localQueryCIDs
-                            .subtracting(queryAlreadySynched)
+
+                        let localQueryLeftovers = localQueryCIDs
+                            .subtracting(synchedChannelIds)
                             .subtracting(watchedChannelIds)
-                        
-                        for cid in cidsToRemove {
+
+                        // We are going to clean those channels that are present in the both the local and remote query,
+                        // and that have not been synched nor watched. Those are outdated, can contain gaps.
+                        let cidsToClean = localQueryLeftovers.intersection(remoteQueryCIDs)
+                        session.cleanChannels(cids: cidsToClean)
+
+                        // We are also going to keep track of the unwanted channels, and unlink them from their original queries.
+                        // Those are the ones that exist locally but we are not interested in anymore in this context.
+                        unwantedCids = localQueryLeftovers.subtracting(cidsToClean)
+                        for cid in unwantedCids {
                             guard let channelDTO = session.channel(cid: cid) else { continue }
-                            
-                            channelDTO.resetEphemeralValues()
-                            channelDTO.messages.removeAll()
                             queryDTO.channels.remove(channelDTO)
                         }
                     },
-                    completion: completion
+                    completion: { result in
+                        switch result {
+                        case let .success(synchedChannels):
+                            completion(.success((synchedChannels, unwantedCids)))
+                        case let .failure(error):
+                            completion(.failure(error))
+                        }
+                    }
                 )
             case let .failure(error):
                 completion(.failure(error))

@@ -252,6 +252,14 @@ extension NSManagedObjectContext {
         
         delete(dto)
     }
+
+    func cleanChannels(cids: Set<ChannelId>) {
+        for cid in cids {
+            guard let channelDTO = channel(cid: cid) else { continue }
+            channelDTO.resetEphemeralValues()
+            channelDTO.messages.removeAll()
+        }
+    }
 }
 
 // To get the data from the DB

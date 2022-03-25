@@ -9,6 +9,7 @@ final class SyncContext {
     var localChannelIds: [ChannelId] = []
     var synchedChannelIds: Set<ChannelId> = Set()
     var watchedChannelIds: Set<ChannelId> = Set()
+    var unwantedChannelIds: Set<ChannelId> = Set()
 }
 
 private let syncOperationsMaximumRetries = 2
@@ -103,10 +104,11 @@ final class RefetchChannelListQueryOperation: AsyncOperation {
                 synchedChannelIds: context.synchedChannelIds
             ) { result in
                 switch result {
-                case let .success(channels):
+                case let .success((synchedChannels, unwantedCids)):
                     log.info("Successfully refetched query for \(controller.query.debugDescription)", subsystems: .offlineSupport)
-                    let queryChannelIds = channels.map(\.cid)
+                    let queryChannelIds = synchedChannels.map(\.cid)
                     context.synchedChannelIds = context.synchedChannelIds.union(queryChannelIds)
+                    context.unwantedChannelIds = context.unwantedChannelIds.union(unwantedCids)
                     done(.continue)
                 case let .failure(error):
                     log.error(
@@ -114,6 +116,36 @@ final class RefetchChannelListQueryOperation: AsyncOperation {
                         subsystems: .offlineSupport
                     )
                     done(.retry)
+                }
+            }
+        }
+    }
+}
+
+final class CleanUnwantedChannelsOperation: AsyncOperation {
+    init(database: DatabaseContainer, context: SyncContext) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
+            log.info("4. Clean up unwanted channels", subsystems: .offlineSupport)
+
+            guard let database = database else {
+                done(.continue)
+                return
+            }
+
+            // We are going to clean those channels that are not present in remote queries, and that have not
+            // been synched nor watched.
+            database.write { session in
+                let idsToRemove = context.unwantedChannelIds.subtracting(context.synchedChannelIds)
+                session.cleanChannels(cids: idsToRemove)
+            } completion: { error in
+                if let error = error {
+                    log.error(
+                        "Failed removing unwanted channels: \(error)",
+                        subsystems: .offlineSupport
+                    )
+                    done(.retry)
+                } else {
+                    done(.continue)
                 }
             }
         }
