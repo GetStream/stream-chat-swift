@@ -54,7 +54,6 @@
 		430156EE26B2E20B0006E7EA /* ChannelPayloadWithCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156ED26B2E20B0006E7EA /* ChannelPayloadWithCustom.json */; };
 		430156F026B2E2170006E7EA /* ChannelPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156EF26B2E2170006E7EA /* ChannelPayload.json */; };
 		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
-		43016E1426B7189D0054E805 /* CustomMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1326B7189D0054E805 /* CustomMessageContentView.swift */; };
 		43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
 		437FCA0726D67BE40000223C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA0626D67BE40000223C /* NotificationService.swift */; };
 		437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 437FCA0426D67BE40000223C /* DemoAppPush.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -2180,7 +2179,6 @@
 		430156ED26B2E20B0006E7EA /* ChannelPayloadWithCustom.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelPayloadWithCustom.json; sourceTree = "<group>"; };
 		430156EF26B2E2170006E7EA /* ChannelPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelPayload.json; sourceTree = "<group>"; };
 		430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload_Tests.swift; sourceTree = "<group>"; };
-		43016E1326B7189D0054E805 /* CustomMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMessageContentView.swift; sourceTree = "<group>"; };
 		43016E1526B734410054E805 /* ChatUser+CustomFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatUser+CustomFields.swift"; sourceTree = "<group>"; };
 		437FC9E226D53F140000223C /* ChatSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChatSample.entitlements; sourceTree = "<group>"; };
 		437FC9E826D630860000223C /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
@@ -3969,7 +3967,6 @@
 				43016E1526B734410054E805 /* ChatUser+CustomFields.swift */,
 				792DDAA025711AF2001DB91B /* CreateChatViewController.swift */,
 				792DDAA725753BEA001DB91B /* CreateGroupViewController.swift */,
-				43016E1326B7189D0054E805 /* CustomMessageContentView.swift */,
 				648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */,
 				7933064825712C8B00FBB586 /* DemoUsers.swift */,
 				792DDA5D256FB69E001DB91B /* LoginViewController.swift */,
@@ -8479,7 +8476,6 @@
 			files = (
 				6428DD5526201DCC0065DA1D /* BannerShowingConnectionDelegate.swift in Sources */,
 				AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */,
-				43016E1426B7189D0054E805 /* CustomMessageContentView.swift in Sources */,
 				647F66D5261E22C200111B19 /* BannerView.swift in Sources */,
 				AD75CB6B27886746005F5FF7 /* OptionsSelectorViewController.swift in Sources */,
 				648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */,
