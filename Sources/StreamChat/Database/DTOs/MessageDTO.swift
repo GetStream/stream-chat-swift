@@ -29,6 +29,8 @@ class MessageDTO: NSManagedObject {
 
     @NSManaged var latestReactions: [String]
     @NSManaged var ownReactions: [String]
+    
+    @NSManaged var translations: [String: String]?
 
     @NSManaged var user: UserDTO
     @NSManaged var mentionedUsers: Set<UserDTO>
@@ -523,6 +525,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.pinnedBy = try saveUser(payload: pinnedBy)
         }
         
+        dto.translations = payload.translations?.mapKeys { $0.languageCode }
+        
         return dto
     }
 
@@ -745,6 +749,7 @@ private extension ChatMessage {
         isShadowed = dto.isShadowed
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
+        translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
                 
         if let extraData = dto.extraData, !extraData.isEmpty {
             do {

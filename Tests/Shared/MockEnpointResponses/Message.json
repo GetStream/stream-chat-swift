@@ -12,6 +12,11 @@
             "love" : 1
         },
         "type" : "regular",
+        "i18n" : {
+            "it_text" : "si sono qui",
+            "nl_text" : "ja ik ben hier",
+            "language" : "it"
+        },
         "latest_reactions" : [
             {
                 "score" : 1,

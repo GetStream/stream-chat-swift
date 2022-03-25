@@ -175,6 +175,7 @@ extension ChatMessage {
             currentUserReactions: { [] },
             isSentByCurrentUser: false,
             pinDetails: nil,
+            translations: nil,
             underlyingContext: nil
         )
     }

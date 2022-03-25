@@ -570,6 +570,23 @@ class MessageUpdater: Worker {
             completion?(error)
         }
     }
+    
+    func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
+            switch result {
+            case let .success(boxedMessage):
+                self.database.write { session in
+                    try session.saveMessage(
+                        payload: boxedMessage.message,
+                        for: boxedMessage.message.cid,
+                        syncOwnReactions: false
+                    )
+                } completion: { completion?($0) }
+            case let .failure(error):
+                completion?(error)
+            }
+        })
+    }
 }
 
 // MARK: - Private

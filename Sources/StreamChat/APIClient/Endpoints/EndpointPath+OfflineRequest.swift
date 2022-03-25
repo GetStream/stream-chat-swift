@@ -12,7 +12,7 @@ extension EndpointPath {
         case .createChannel, .connect, .sync, .users, .guest, .members, .search, .devices, .channels, .updateChannel,
              .deleteChannel, .channelUpdate, .muteChannel, .showChannel, .truncateChannel, .markChannelRead,
              .markAllChannelsRead, .channelEvent, .stopWatchingChannel, .pinnedMessages, .uploadAttachment, .message,
-             .replies, .reactions, .messageAction, .banMember, .flagUser, .flagMessage, .muteUser:
+             .replies, .reactions, .messageAction, .banMember, .flagUser, .flagMessage, .muteUser, .translateMessage:
             return false
         }
     }
