@@ -78,7 +78,7 @@ struct ChannelPayload: Decodable {
     }
 }
 
-struct ChannelDetailPayload: Decodable {
+struct ChannelDetailPayload {
     let cid: ChannelId
     
     let name: String?
@@ -88,25 +88,25 @@ struct ChannelDetailPayload: Decodable {
     let extraData: [String: RawJSON]
 
     /// A channel type.
-    public let typeRawValue: String
+    let typeRawValue: String
     
     /// The last message date.
-    public let lastMessageAt: Date?
+    let lastMessageAt: Date?
     /// A channel created date.
-    public let createdAt: Date
+    let createdAt: Date
     /// A channel deleted date.
-    public let deletedAt: Date?
+    let deletedAt: Date?
     /// A channel updated date.
-    public let updatedAt: Date
+    let updatedAt: Date
     /// A channel truncated date.
     let truncatedAt: Date?
     
     /// A creator of the channel.
-    public let createdBy: UserPayload?
+    let createdBy: UserPayload?
     /// A config.
-    public let config: ChannelConfig
+    let config: ChannelConfig
     /// Checks if the channel is frozen.
-    public let isFrozen: Bool
+    let isFrozen: Bool
     
     /// Checks if the channel is hidden.
     /// Backend only sends this field for `QueryChannel` and `QueryChannels` API calls,
@@ -123,88 +123,50 @@ struct ChannelDetailPayload: Decodable {
     
     /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
-    public let team: TeamId?
+    let team: TeamId?
     
     /// Cooldown duration for the channel, if it's in slow mode.
     /// This value will be 0 if the channel is not in slow mode.
     let cooldownDuration: Int
-    
-    public init(from decoder: Decoder) throws {
+}
+
+extension ChannelDetailPayload: Decodable {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ChannelCodingKeys.self)
-        typeRawValue = try container.decode(String.self, forKey: .typeRawValue)
-        cid = try container.decode(ChannelId.self, forKey: .cid)
-        // Unfortunately, the built-in URL decoder fails, if the string is empty. We need to
-        // provide custom decoding to handle URL? as expected.
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
-        let config = try container.decode(ChannelConfig.self, forKey: .config)
-        self.config = config
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
-        truncatedAt = try container.decodeIfPresent(Date.self, forKey: .truncatedAt)
-        createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
-        // For `hidden`, we don't fallback to `false`
-        // since this field is not sent for all API calls and for events
-        // We can't assume anything regarding this flag when it's absent
-        isHidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
-        lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
-        isFrozen = try container.decode(Bool.self, forKey: .frozen)
-        team = try container.decodeIfPresent(String.self, forKey: .team)
-        memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0
-        
-        members = try container.decodeIfPresent([MemberPayload].self, forKey: .members)
-        
-        cooldownDuration = try container.decodeIfPresent(Int.self, forKey: .cooldownDuration) ?? 0
-        
+         
+        let extraData: [String: RawJSON]
         if var payload = try? [String: RawJSON](from: decoder) {
             payload.removeValues(forKeys: ChannelCodingKeys.allCases.map(\.rawValue))
             extraData = payload
         } else {
             extraData = [:]
         }
-    }
-    
-    // MARK: - For testing
-    
-    internal init(
-        cid: ChannelId,
-        name: String?,
-        imageURL: URL?,
-        extraData: [String: RawJSON],
-        typeRawValue: String,
-        lastMessageAt: Date?,
-        createdAt: Date,
-        deletedAt: Date?,
-        updatedAt: Date,
-        truncatedAt: Date?,
-        isHidden: Bool? = nil,
-        createdBy: UserPayload?,
-        config: ChannelConfig,
-        isFrozen: Bool,
-        memberCount: Int,
-        team: String?,
-        members: [MemberPayload]?,
-        cooldownDuration: Int
-    ) {
-        self.cid = cid
-        self.name = name
-        self.imageURL = imageURL
-        self.extraData = extraData
-        self.typeRawValue = typeRawValue
-        self.lastMessageAt = lastMessageAt
-        self.createdAt = createdAt
-        self.deletedAt = deletedAt
-        self.updatedAt = updatedAt
-        self.truncatedAt = truncatedAt
-        self.createdBy = createdBy
-        self.config = config
-        self.isFrozen = isFrozen
-        self.memberCount = memberCount
-        self.team = team
-        self.members = members
-        self.cooldownDuration = cooldownDuration
-        self.isHidden = isHidden
+        
+        self.init(
+            cid: try container.decode(ChannelId.self, forKey: .cid),
+            name: try container.decodeIfPresent(String.self, forKey: .name),
+            // Unfortunately, the built-in URL decoder fails, if the string is empty. We need to
+            // provide custom decoding to handle URL? as expected.
+            imageURL: try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:)),
+            extraData: extraData,
+            typeRawValue: try container.decode(String.self, forKey: .typeRawValue),
+            lastMessageAt: try container.decodeIfPresent(Date.self, forKey: .lastMessageAt),
+            createdAt: try container.decode(Date.self, forKey: .createdAt),
+            deletedAt: try container.decodeIfPresent(Date.self, forKey: .deletedAt),
+            updatedAt: try container.decode(Date.self, forKey: .updatedAt),
+            truncatedAt: try container.decodeIfPresent(Date.self, forKey: .truncatedAt),
+            createdBy: try container.decodeIfPresent(UserPayload.self, forKey: .createdBy),
+            config: try container.decode(ChannelConfig.self, forKey: .config),
+            isFrozen: try container.decode(Bool.self, forKey: .frozen),
+            // For `hidden`, we don't fallback to `false`
+            // since this field is not sent for all API calls and for events
+            // We can't assume anything regarding this flag when it's absent
+            isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),
+            members: try container.decodeIfPresent([MemberPayload].self, forKey: .members),
+            memberCount: try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0,
+            team: try container.decodeIfPresent(String.self, forKey: .team),
+            cooldownDuration: try container.decodeIfPresent(Int.self, forKey: .cooldownDuration) ?? 0
+        )
     }
 }
 

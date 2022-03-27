@@ -53,9 +53,10 @@ extension ChannelDetailPayload {
                 updatedAt: .unique
             ),
             isFrozen: true,
+            isHidden: nil,
+            members: members,
             memberCount: 100,
             team: .unique,
-            members: members,
             cooldownDuration: .random(in: 0...120)
         )
     }
