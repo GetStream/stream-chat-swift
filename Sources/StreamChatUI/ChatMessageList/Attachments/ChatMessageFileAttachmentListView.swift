@@ -24,6 +24,7 @@ open class ChatMessageFileAttachmentListView: _View, ComponentsProvider {
         containerStackView.pin(to: layoutMarginsGuide)
         
         containerStackView.axis = .vertical
+        containerStackView.distribution = .equal
         containerStackView.spacing = 4
     }
 
