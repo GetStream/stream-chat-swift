@@ -20,6 +20,64 @@ final class ChannelDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
+    func test_saveChannel_channelReadsAreSavedBeforeMessages() throws {
+        // GIVEN
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        
+        let anotherMember: MemberPayload = .dummy(user: .dummy(userId: .unique))
+        let anotherMemberRead: ChannelReadPayload = .init(
+            user: anotherMember.user,
+            lastReadAt: .init(),
+            unreadMessagesCount: 0
+        )
+        
+        let ownMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            createdAt: anotherMemberRead.lastReadAt.addingTimeInterval(-10)
+        )
+        
+        let ownPinnedMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            createdAt: anotherMemberRead.lastReadAt.addingTimeInterval(-20),
+            pinned: true,
+            pinnedByUserId: anotherMember.user.id
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            members: [currentUserMember, anotherMember],
+            membership: currentUserMember,
+            messages: [ownMessage],
+            pinnedMessages: [ownPinnedMessage],
+            channelReads: [anotherMemberRead]
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: channelPayload.channel.cid)?.asModel()
+        )
+        let loadedOwnMessage = try XCTUnwrap(
+            channel.latestMessages.first { $0.id == ownMessage.id }
+        )
+        let loadedOwnPinnedMessage = try XCTUnwrap(
+            channel.pinnedMessages.first { $0.id == ownPinnedMessage.id }
+        )
+        
+        // THEN
+        //
+        // Messages have reads.
+        XCTAssertTrue(loadedOwnMessage.readBy.contains { $0.id == anotherMember.user.id })
+        XCTAssertTrue(loadedOwnPinnedMessage.readBy.contains { $0.id == anotherMember.user.id })
+    }
+    
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
     
