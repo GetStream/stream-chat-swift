@@ -536,6 +536,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
+
+        // Calculate reads if the message is authored by the current user.
+        if payload.user.id == currentUser?.user.id {
+            dto.reads = Set(
+                channelDTO.reads.filter {
+                    $0.lastReadAt >= payload.createdAt && $0.user.id != payload.user.id
+                }
+            )
+        }
         
         return dto
     }
