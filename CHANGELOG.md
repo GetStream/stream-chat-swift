@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix commands without arguments cannot be sent without text [#1869](https://github.com/GetStream/stream-chat-swift/issues/1869)
 - Fix mime-type for file attachments [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
 - Fix pasting long text into composer won't update input height [#1875](https://github.com/GetStream/stream-chat-swift/issues/1875)
+- Fix long file names overlapped by the close button [#1880](https://github.com/GetStream/stream-chat-swift/issues/1880)
+- Fix long file names being truncated at the end instead at the middle [#1880](https://github.com/GetStream/stream-chat-swift/issues/1880)
 
 ## StreamChatUI
 ### ⚠️ Changed
