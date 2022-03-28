@@ -20,7 +20,9 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
 
     private var gifLoadingHandler = SwiftyGifLoadingHandler()
 
-    public private(set) lazy var imageView = UIImageView().withoutAutoresizingMaskConstraints
+    public private(set) lazy var imageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "imageView")
 
     public private(set) lazy var badge = components
         .giphyBadgeView

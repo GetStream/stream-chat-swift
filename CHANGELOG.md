@@ -3,7 +3,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Introduce message localization. See [docs](https://getstream.io/chat/docs/ios-swift/translation/?language=swift) for more info [#1867](https://github.com/GetStream/stream-chat-swift/issues/1867)
+- Add support for multiple push providers [#1864](https://github.com/GetStream/stream-chat-swift/issues/1864)
+### 🐞 Fixed
+- Fix payload for reaction when using `enforce_unique` [#1861](https://github.com/GetStream/stream-chat-swift/issues/1861)
+- Use IndexPath's item instead of row for macOS compatibility [#1859](https://github.com/GetStream/stream-chat-swift/pull/1859)
+- Fix commands without arguments cannot be sent without text [#1869](https://github.com/GetStream/stream-chat-swift/issues/1869)
+- Fix mime-type for file attachments [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
+- Fix pasting long text into composer won't update input height [#1875](https://github.com/GetStream/stream-chat-swift/issues/1875)
+
+## StreamChatUI
+### ⚠️ Changed
+- `AttachmentsPreviewVC` contains significant deprecations [#1877](https://github.com/GetStream/stream-chat-swift/pull/1877)
+### ✅ Added
+- Add Mixed Attachments UI Support [#1877](https://github.com/GetStream/stream-chat-swift/pull/1877)
+### 🐞 Fixed
+- Resolve attachment type when importing file from file picker [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
 
 # [4.12.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.12.0)
 _March 16, 2022_

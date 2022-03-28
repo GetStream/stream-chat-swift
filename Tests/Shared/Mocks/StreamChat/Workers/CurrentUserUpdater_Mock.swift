@@ -15,6 +15,7 @@ final class CurrentUserUpdaterMock: CurrentUserUpdater {
     
     @Atomic var addDevice_token: Data?
     @Atomic var addDevice_currentUserId: UserId?
+    @Atomic var addDevice_pushProvider: PushProvider?
     @Atomic var addDevice_completion: ((Error?) -> Void)?
     
     @Atomic var removeDevice_id: String?
@@ -41,10 +42,12 @@ final class CurrentUserUpdaterMock: CurrentUserUpdater {
     override func addDevice(
         token: Data,
         currentUserId: UserId,
+        pushProvider: PushProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
         addDevice_token = token
         addDevice_currentUserId = currentUserId
+        addDevice_pushProvider = pushProvider
         addDevice_completion = completion
     }
     

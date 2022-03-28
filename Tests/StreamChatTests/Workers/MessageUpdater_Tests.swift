@@ -2220,4 +2220,101 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
+    
+    // MARK: - Translate message
+    
+    func test_translate_makesCorrectAPICall() throws {
+        let messageId: MessageId = .unique
+        let language = TranslationLanguage.allCases.randomElement()!
+        
+        // Make translate call
+        messageUpdater.translate(messageId: messageId, to: language)
+        
+        // Assert correct endpoint is called.
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.translate(messageId: messageId, to: language)))
+    }
+    
+    func test_translate_propagatesSuccessfulResponse() throws {
+        let messageId: MessageId = .unique
+        let language = TranslationLanguage.allCases.randomElement()!
+        let cid: ChannelId = .unique
+        
+        try database.createChannel(cid: cid)
+        
+        // Make translate call
+        var completionCalled = false
+        messageUpdater.translate(messageId: messageId, to: language) { error in
+            completionCalled = true
+            XCTAssertNil(error)
+        }
+        
+        // Simulate successful response
+        apiClient.test_simulateResponse(
+            Result<MessagePayload.Boxed, Error>.success(
+                .init(
+                    message: .dummy(
+                        messageId: messageId,
+                        authorUserId: .unique,
+                        cid: cid
+                    )
+                )
+            )
+        )
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_translate_propagatesRequestError() throws {
+        let messageId: MessageId = .unique
+        let language = TranslationLanguage.allCases.randomElement()!
+        
+        // Make translate call
+        var completionCalled = false
+        let testError = TestError()
+        messageUpdater.translate(messageId: messageId, to: language) { error in
+            completionCalled = true
+            XCTAssertEqual(error as? TestError, testError)
+        }
+        
+        // Simulate failure response
+        apiClient.test_simulateResponse(
+            Result<MessagePayload.Boxed, Error>.failure(testError)
+        )
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_translate_propagatesDatabaseError() throws {
+        let messageId: MessageId = .unique
+        let language = TranslationLanguage.allCases.randomElement()!
+        let cid: ChannelId = .unique
+        
+        try database.createChannel(cid: cid)
+        
+        // Update database container to throw the error on write
+        let testError = TestError()
+        database.write_errorResponse = testError
+        
+        // Make translate call
+        var completionCalled = false
+        messageUpdater.translate(messageId: messageId, to: language) { error in
+            completionCalled = true
+            XCTAssertEqual(error as? TestError, testError)
+        }
+        
+        // Simulate successful response
+        apiClient.test_simulateResponse(
+            Result<MessagePayload.Boxed, Error>.success(
+                .init(
+                    message: .dummy(
+                        messageId: messageId,
+                        authorUserId: .unique,
+                        cid: cid
+                    )
+                )
+            )
+        )
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
 }

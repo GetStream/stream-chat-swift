@@ -20,12 +20,14 @@ extension ChatMessageFileAttachmentListView {
             .withoutAutoresizingMaskConstraints
             .withBidirectionalLanguagesSupport
             .withAdjustingFontForContentSizeCategory
+            .withAccessibilityIdentifier(identifier: "fileNameLabel")
         
         /// Label indicating size of the file.
         open private(set) lazy var fileSizeLabel = UILabel()
             .withoutAutoresizingMaskConstraints
             .withBidirectionalLanguagesSupport
             .withAdjustingFontForContentSizeCategory
+            .withAccessibilityIdentifier(identifier: "fileSizeLabel")
         
         /// Animated indicator showing progress of uploading of a file.
         open private(set) lazy var loadingIndicator = components
@@ -34,20 +36,27 @@ extension ChatMessageFileAttachmentListView {
             .withoutAutoresizingMaskConstraints
         
         /// imageView indicating action for the file attachment. (Download / Retry upload...)
-        open private(set) lazy var actionIconImageView = UIImageView().withoutAutoresizingMaskConstraints
+        open private(set) lazy var actionIconImageView = UIImageView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "actionIconImageView")
 
         open private(set) lazy var mainContainerStackView: ContainerStackView = ContainerStackView()
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "mainContainerStackView")
         
         /// Stack containing loading indicator and label with fileSize.
         open private(set) lazy var spinnerAndSizeStack: ContainerStackView = ContainerStackView()
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "spinnerAndSizeStack")
 
         /// Stack containing file name and and the size of the file.
         open private(set) lazy var fileNameAndSizeStack: ContainerStackView = ContainerStackView()
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "fileNameAndSizeStack")
 
-        open private(set) lazy var fileIconImageView = UIImageView().withoutAutoresizingMaskConstraints
+        open private(set) lazy var fileIconImageView = UIImageView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "fileIconImageView")
 
         override open func setUp() {
             super.setUp()

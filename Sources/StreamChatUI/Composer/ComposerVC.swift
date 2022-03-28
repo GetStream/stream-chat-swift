@@ -61,7 +61,12 @@ open class ComposerVC: _ViewController,
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
-            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
+            // If there is a command and it doesn't require an arg, content is not empty
+            if let command = command, command.args.isEmpty {
+                return false
+            }
+            // All other cases
+            return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
         }
 
         /// A boolean that checks if the composer is replying in a thread
@@ -481,21 +486,12 @@ open class ComposerVC: _ViewController,
     
     /// Action that handles tap on attachments button in composer.
     @objc open func showAttachmentsPicker(sender: UIButton) {
-        // The UI doesn't support mix of image and file attachments so we are limiting this option.
-        // Files in the message composer are scrolling vertically and images horizontally.
-        // There is no techical limitation for multiple attachment types.
-        if content.attachments.isEmpty {
-            presentAlert(
-                message: L10n.Composer.Picker.title,
-                preferredStyle: .actionSheet,
-                actions: attachmentsPickerActions,
-                sourceView: sender
-            )
-        } else if content.attachments.contains(where: { $0.type == .file }) {
-            showFilePicker()
-        } else if content.attachments.contains(where: { $0.type == .image || $0.type == .video }) {
-            showMediaPicker()
-        }
+        presentAlert(
+            message: L10n.Composer.Picker.title,
+            preferredStyle: .actionSheet,
+            actions: attachmentsPickerActions,
+            sourceView: sender
+        )
     }
     
     @objc open func shrinkInput(sender: UIButton) {
@@ -860,15 +856,14 @@ open class ComposerVC: _ViewController,
     // MARK: - UIDocumentPickerViewControllerDelegate
     
     open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let type: AttachmentType = .file
-        
         for fileURL in urls {
+            let attachmentType = AttachmentType(fileExtension: fileURL.pathExtension)
             do {
-                try addAttachmentToContent(from: fileURL, type: type)
+                try addAttachmentToContent(from: fileURL, type: attachmentType)
             } catch {
                 handleAddAttachmentError(
                     attachmentURL: fileURL,
-                    attachmentType: type,
+                    attachmentType: attachmentType,
                     error: error
                 )
                 break

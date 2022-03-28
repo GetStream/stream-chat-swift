@@ -53,7 +53,8 @@ class MessageDTO_Tests: XCTestCase {
             pinnedByUserId: .unique,
             pinnedAt: .unique,
             pinExpires: .unique,
-            isShadowed: true
+            isShadowed: true,
+            translations: [.english: .unique]
         )
         
         try! database.writeSynchronously { session in
@@ -155,6 +156,7 @@ class MessageDTO_Tests: XCTestCase {
             Set(messagePayload.attachmentIDs(cid: channelId)),
             loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
         )
+        XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
     }
     
     func test_messagePayload_withExtraData_isStoredAndLoadedFromDB() {

@@ -18,9 +18,11 @@ open class ChatMessageInteractiveAttachmentView: _View, ThemeProvider {
         .giphyView
         .init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "preview")
 
     public private(set) lazy var separator = UIView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "separator")
 
     public private(set) lazy var actionsStackView: UIStackView = {
         let stack = UIStackView()
@@ -28,7 +30,9 @@ open class ChatMessageInteractiveAttachmentView: _View, ThemeProvider {
         stack.alignment = .fill
         stack.distribution = .fillEqually
         stack.spacing = 1
-        return stack.withoutAutoresizingMaskConstraints
+        return stack
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "actionsStackView")
     }()
 
     // MARK: - Overrides

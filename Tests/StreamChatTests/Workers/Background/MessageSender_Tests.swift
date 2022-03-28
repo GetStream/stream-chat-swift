@@ -48,7 +48,6 @@ class MessageSender_Tests: XCTestCase {
     func test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments() throws {
         let message1Id: MessageId = .unique
         var message2Id: MessageId!
-        var message3Id: MessageId!
 
         let message = ChatMessage.mock(id: message1Id, cid: cid, text: "Message sent", author: .unique)
         messageRepository.sendMessageResult = .success(message)
@@ -84,8 +83,9 @@ class MessageSender_Tests: XCTestCase {
             )
             message2.localMessageState = .pendingSend
             message2Id = message2.id
-            
-            let message3 = try session.createNewMessage(
+
+            // Create 3rd message
+            try session.createNewMessage(
                 in: self.cid,
                 text: "Message without local state",
                 pinning: nil,
@@ -94,14 +94,12 @@ class MessageSender_Tests: XCTestCase {
                 attachments: [],
                 extraData: [:]
             )
-            message3Id = message3.id
         }
 
         // Check only the message1 was sent
         AssertAsync {
             Assert.willBeTrue(self.messageRepository.sendMessageIds.contains(where: { $0 == message1Id }))
-            Assert.staysFalse(self.messageRepository.sendMessageIds.contains(where: { $0 == message2Id }))
-            Assert.staysFalse(self.messageRepository.sendMessageIds.contains(where: { $0 == message3Id }))
+            Assert.willBeTrue(self.messageRepository.sendMessageIds.count == 1)
         }
 
         XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 1)
@@ -118,7 +116,7 @@ class MessageSender_Tests: XCTestCase {
         // Check message2 was sent.
         AssertAsync {
             Assert.willBeTrue(self.messageRepository.sendMessageIds.contains(where: { $0 == message2Id }))
-            Assert.staysFalse(self.messageRepository.sendMessageIds.contains(where: { $0 == message3Id }))
+            Assert.willBeTrue(self.messageRepository.sendMessageIds.count == 2)
         }
         XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 2)
     }

@@ -594,7 +594,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `textView` subview.
     open func createTextView() -> UITextView {
         if textView == nil {
-            textView = OnlyLinkTappableTextView().withoutAutoresizingMaskConstraints
+            textView = OnlyLinkTappableTextView()
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "textView")
             textView?.isEditable = false
             textView?.dataDetectorTypes = .link
             textView?.isScrollEnabled = false
@@ -624,7 +626,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `authorAvatarSpacer` subview.
     open func createAvatarSpacer() -> UIView {
         if authorAvatarSpacer == nil {
-            authorAvatarSpacer = UIView().withoutAutoresizingMaskConstraints
+            authorAvatarSpacer = UIView()
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "authorAvatarSpacer")
         }
         return authorAvatarSpacer!
     }
@@ -656,7 +660,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `threadReplyCountButton` subview.
     open func createThreadReplyCountButton() -> UIButton {
         if threadReplyCountButton == nil {
-            threadReplyCountButton = UIButton(type: .custom).withoutAutoresizingMaskConstraints
+            threadReplyCountButton = UIButton(type: .custom)
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "threadReplyCountButton")
             threadReplyCountButton!.titleLabel?.font = appearance.fonts.footnoteBold
             threadReplyCountButton!.titleLabel?.adjustsFontForContentSizeCategory = true
             threadReplyCountButton!.addTarget(self, action: #selector(handleTapOnThread), for: .touchUpInside)
@@ -727,7 +733,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `errorIndicatorContainer` subview.
     open func createErrorIndicatorContainer() -> UIView {
         if errorIndicatorContainer == nil {
-            errorIndicatorContainer = UIView().withoutAutoresizingMaskConstraints
+            errorIndicatorContainer = UIView()
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "errorIndicatorContainer")
             errorIndicatorContainer!.layer.zPosition = 1
         }
         return errorIndicatorContainer!
@@ -750,6 +758,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 .withAdjustingFontForContentSizeCategory
                 .withBidirectionalLanguagesSupport
                 .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "timestampLabel")
 
             timestampLabel!.textColor = appearance.colorPalette.subtitleText
             timestampLabel!.font = appearance.fonts.footnote
@@ -765,6 +774,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 .withAdjustingFontForContentSizeCategory
                 .withBidirectionalLanguagesSupport
                 .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "authorNameLabel")
 
             authorNameLabel!.textColor = appearance.colorPalette.subtitleText
             authorNameLabel!.font = appearance.fonts.footnote
@@ -778,6 +788,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         if onlyVisibleForYouIconImageView == nil {
             onlyVisibleForYouIconImageView = UIImageView()
                 .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "onlyVisibleForYouIconImageView")
 
             onlyVisibleForYouIconImageView!.tintColor = appearance.colorPalette.subtitleText
             onlyVisibleForYouIconImageView!.image = appearance.images.onlyVisibleToCurrentUser
@@ -794,6 +805,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 .withAdjustingFontForContentSizeCategory
                 .withBidirectionalLanguagesSupport
                 .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "onlyVisibleForYouLabel")
 
             onlyVisibleForYouLabel!.textColor = appearance.colorPalette.subtitleText
             onlyVisibleForYouLabel!.text = L10n.Message.onlyVisibleToYou

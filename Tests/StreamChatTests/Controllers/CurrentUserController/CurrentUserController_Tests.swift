@@ -414,7 +414,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     // MARK: addDevice
     
-    func test_addDevice_callCurrentUserUpdater_withCorrectValues() {
+    func test_addDevice_callsCurrentUserUpdaterWithCorrectValues() {
         // Simulate current user
         env.currentUserObserverItem = .mock(id: .unique)
         
@@ -424,6 +424,21 @@ final class CurrentUserController_Tests: XCTestCase {
         
         // Assert updater is called with correct data
         XCTAssertEqual(env.currentUserUpdater.addDevice_token, expectedToken)
+        XCTAssertEqual(env.currentUserUpdater.addDevice_pushProvider, PushProvider.apn)
+        XCTAssertNotNil(env.currentUserUpdater.addDevice_completion)
+    }
+
+    func test_addDevice_whenPushProviderIsFirebase_callsCurrentUserUpdaterWithCorrectValues() {
+        // Simulate current user
+        env.currentUserObserverItem = .mock(id: .unique)
+
+        let expectedToken = "test".data(using: .utf8)!
+
+        controller.addDevice(token: expectedToken, pushProvider: .firebase)
+
+        // Assert updater is called with correct data
+        XCTAssertEqual(env.currentUserUpdater.addDevice_token, expectedToken)
+        XCTAssertEqual(env.currentUserUpdater.addDevice_pushProvider, PushProvider.firebase)
         XCTAssertNotNil(env.currentUserUpdater.addDevice_completion)
     }
     

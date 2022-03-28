@@ -33,6 +33,7 @@ extension MessagePayload {
         deletedAt: Date? = nil,
         updatedAt: Date = .unique,
         channel: ChannelDetailPayload? = nil,
+        cid: ChannelId? = nil,
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
         pinnedAt: Date? = nil,
@@ -40,10 +41,12 @@ extension MessagePayload {
         isSilent: Bool = false,
         isShadowed: Bool = false,
         reactionScores: [MessageReactionType: Int] = ["like": 1],
-        reactionCounts: [MessageReactionType: Int] = ["like": 1]
+        reactionCounts: [MessageReactionType: Int] = ["like": 1],
+        translations: [TranslationLanguage: String]? = nil
     ) -> MessagePayload {
         .init(
             id: messageId,
+            cid: cid,
             type: type ?? (parentId == nil ? .regular : showReplyInChannel == true ? .regular : .reply),
             user: UserPayload.dummy(userId: authorUserId) as UserPayload,
             createdAt: createdAt != nil ? createdAt! : XCTestCase.channelCreatedDate
@@ -72,7 +75,8 @@ extension MessagePayload {
             pinned: pinned,
             pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload : nil,
             pinnedAt: pinnedAt,
-            pinExpires: pinExpires
+            pinExpires: pinExpires,
+            translations: translations
         )
     }
 }

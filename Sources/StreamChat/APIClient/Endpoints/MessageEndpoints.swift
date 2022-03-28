@@ -64,19 +64,20 @@ extension Endpoint {
         extraData: [String: RawJSON],
         messageId: MessageId
     ) -> Endpoint<EmptyResponse> {
-        .init(
+        let body = MessageReactionRequestPayload(
+            enforceUnique: enforceUnique,
+            reaction: ReactionRequestPayload(
+                type: type,
+                score: score,
+                extraData: extraData
+            )
+        )
+        return .init(
             path: .addReaction(messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "reaction": MessageReactionRequestPayload(
-                    type: type,
-                    score: score,
-                    enforceUnique: enforceUnique,
-                    extraData: extraData
-                )
-            ]
+            body: body
         )
     }
     
@@ -110,5 +111,15 @@ extension Endpoint {
     
     static func search(query: MessageSearchQuery) -> Endpoint<MessageSearchResultsPayload> {
         .init(path: .search, method: .get, queryItems: nil, requiresConnectionId: false, body: ["payload": query])
+    }
+    
+    static func translate(messageId: MessageId, to language: TranslationLanguage) -> Endpoint<MessagePayload.Boxed> {
+        .init(
+            path: .translateMessage(messageId),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["language": language.languageCode]
+        )
     }
 }

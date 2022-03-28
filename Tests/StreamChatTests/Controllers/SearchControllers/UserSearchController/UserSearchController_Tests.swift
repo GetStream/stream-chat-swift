@@ -123,8 +123,8 @@ class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetched)
         // Assert correct list changes are reported
         XCTAssertEqual(delegate.didChangeUsers_changes, [
-            .insert(user1, index: .init(row: 0, section: 0)),
-            .insert(user2, index: .init(row: 1, section: 0))
+            .insert(user1, index: .init(item: 0, section: 0)),
+            .insert(user2, index: .init(item: 1, section: 0))
         ])
         
         // Clean up the state for 2nd query call
@@ -160,12 +160,12 @@ class UserSearchController_Tests: XCTestCase {
         // Assert correct list changes are reported
         XCTAssertEqual(delegate.didChangeUsers_changes, [
             // Assert deletions for 1st query are reported in reverse order
-            .remove(user2, index: .init(row: 1, section: 0)),
-            .remove(user1, index: .init(row: 0, section: 0)),
+            .remove(user2, index: .init(item: 1, section: 0)),
+            .remove(user1, index: .init(item: 0, section: 0)),
             
             // Assert insertions for 2nd query are reported in normal order
-            .insert(user3, index: .init(row: 0, section: 0)),
-            .insert(user4, index: .init(row: 1, section: 0))
+            .insert(user3, index: .init(item: 0, section: 0)),
+            .insert(user4, index: .init(item: 1, section: 0))
         ])
     }
     
@@ -204,8 +204,8 @@ class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetched)
         // Assert correct list changes are reported
         XCTAssertEqual(delegate.didChangeUsers_changes, [
-            .insert(user1, index: .init(row: 0, section: 0)),
-            .insert(user2, index: .init(row: 1, section: 0))
+            .insert(user1, index: .init(item: 0, section: 0)),
+            .insert(user2, index: .init(item: 1, section: 0))
         ])
         
         // Save controller's state
@@ -325,8 +325,8 @@ class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetched)
         // Assert correct list changes are reported
         XCTAssertEqual(delegate.didChangeUsers_changes, [
-            .insert(user1, index: .init(row: 0, section: 0)),
-            .insert(user2, index: .init(row: 1, section: 0))
+            .insert(user1, index: .init(item: 0, section: 0)),
+            .insert(user2, index: .init(item: 1, section: 0))
         ])
         
         // Clean up the state for 2nd query call
@@ -362,12 +362,12 @@ class UserSearchController_Tests: XCTestCase {
         // Assert correct list changes are reported
         XCTAssertEqual(delegate.didChangeUsers_changes, [
             // Assert deletions for 1st query are reported in reverse order
-            .remove(user2, index: .init(row: 1, section: 0)),
-            .remove(user1, index: .init(row: 0, section: 0)),
+            .remove(user2, index: .init(item: 1, section: 0)),
+            .remove(user1, index: .init(item: 0, section: 0)),
             
             // Assert insertions for 2nd query are reported in normal order
-            .insert(user3, index: .init(row: 0, section: 0)),
-            .insert(user4, index: .init(row: 1, section: 0))
+            .insert(user3, index: .init(item: 0, section: 0)),
+            .insert(user4, index: .init(item: 1, section: 0))
         ])
     }
     
@@ -405,8 +405,8 @@ class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetched)
         // Assert correct list changes are reported
         XCTAssertEqual(delegate.didChangeUsers_changes, [
-            .insert(user1, index: .init(row: 0, section: 0)),
-            .insert(user2, index: .init(row: 1, section: 0))
+            .insert(user1, index: .init(item: 0, section: 0)),
+            .insert(user2, index: .init(item: 1, section: 0))
         ])
         
         // Save controller's state
@@ -560,8 +560,8 @@ class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetched)
         // Assert correct list changes are reported
         XCTAssertEqual(delegate.didChangeUsers_changes, [
-            .insert(user2, index: .init(row: 1, section: 0)),
-            .insert(user3, index: .init(row: 2, section: 0))
+            .insert(user2, index: .init(item: 1, section: 0)),
+            .insert(user3, index: .init(item: 2, section: 0))
         ])
     }
     
