@@ -271,6 +271,7 @@ open class ComposerVC: _ViewController,
 
     private var walletInputView: WalletQuickInputViewController?
     private var menuController: ChatMenuViewController?
+    private var emoji: UIViewController?
     private var isMenuShowing = false
     private var keyboardHeight: CGFloat {
         return KeyboardService.shared.measuredSize
@@ -303,6 +304,7 @@ open class ComposerVC: _ViewController,
         }
 
         composerView.inputMessageView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
+        composerView.inputMessageView.emojiButton.addTarget(self, action: #selector(showEmojiMenu), for: .touchUpInside)
         composerView.confirmButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.inputMessageView.emojiButton
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
@@ -547,18 +549,20 @@ open class ComposerVC: _ViewController,
             }
         }
 
-        (composerView.inputMessageView.emojiButton as? EmojiButton)?.didSelectEmoji = { [weak self] emojiPicker in
-            guard let `self` = self else { return }
-            print(emojiPicker)
-            var stickerData = [String: RawJSON]()
-            stickerData["stickerUrl"] = .string(emojiPicker.stickerImg)
-            self.channelController?
-                .createNewMessage(
-                    text: "Sticker",
-                    extraData: stickerData,
-                    completion: nil
-                )
-        }
+
+        // TODO: Emoji selection
+//        (composerView.inputMessageView.emojiButton as? EmojiButton)?.didSelectEmoji = { [weak self] emojiPicker in
+//            guard let `self` = self else { return }
+//            print(emojiPicker)
+//            var stickerData = [String: RawJSON]()
+//            stickerData["stickerUrl"] = .string(emojiPicker.stickerImg)
+//            self.channelController?
+//                .createNewMessage(
+//                    text: "Sticker",
+//                    extraData: stickerData,
+//                    completion: nil
+//                )
+//        }
 
     }
 
@@ -585,13 +589,16 @@ open class ComposerVC: _ViewController,
         self.composerView.leadingContainer.isHidden = false
     }
 
-    // Disable custom Emoji menu
     @objc open func showEmojiMenu(_ sender: UIButton) {
         // EMOJI integration
         sender.isSelected.toggle()
         if sender.isSelected {
-            let emoji = EmojiMenuViewController()
-            showInputViewController(emoji)
+            if #available(iOS 13.0, *) {
+                emoji = EmojiMenuViewController.instantiateController(storyboard: .wallet)
+                showInputViewController(emoji)
+            } else {
+                // Fallback on earlier versions
+            }
         } else {
             hideInputView()
         }

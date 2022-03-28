@@ -218,6 +218,14 @@ public extension Appearance {
             }
         }()
 
+        public var addIcon: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "plus")?.withRenderingMode(.alwaysTemplate)
+            } else {
+                return nil
+            }
+        }()
+
         // MARK: - Reactions
 
         public var reactionLoveSmall: UIImage = loadImageSafely(with: "reaction_love_small")

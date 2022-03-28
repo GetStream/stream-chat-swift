@@ -10,6 +10,7 @@ import StreamChat
 import UIKit
 import Stipop
 
+/*
 open class EmojiButton: _Button, AppearanceProvider {
     public let stipopButton = SPUIButton(type: .system)
     public var didSelectEmoji: ((_ sticker: SPSticker) -> Void)?
@@ -43,3 +44,14 @@ extension EmojiButton: SPUIDelegate {
         stipopButton.setImage(normalStateImage, for: .normal)
     }
 }
+*/
+
+open class EmojiButton: _Button, AppearanceProvider {
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+        let normalStateImage = appearance.images.emojiIcon
+        setImage(normalStateImage, for: .normal)
+    }
+}
+

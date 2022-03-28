@@ -2,11 +2,13 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -285,7 +287,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timeless" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ycs-2s-2WE">
-                                <rect key="frame" x="30" y="59" width="314" height="23.5"/>
+                                <rect key="frame" x="30" y="59" width="314" height="24"/>
                                 <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="20"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -350,7 +352,7 @@
                                         </constraints>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="HD2-Nr-6Qe">
-                                        <rect key="frame" x="88.5" y="208" width="237" height="44"/>
+                                        <rect key="frame" x="88.5" y="209" width="237" height="44"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QYb-xw-347">
                                                 <rect key="frame" x="0.0" y="0.0" width="111" height="44"/>
@@ -397,7 +399,7 @@
                                         </subviews>
                                     </stackView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fnk-oM-sbS">
-                                        <rect key="frame" x="30" y="145" width="354" height="33"/>
+                                        <rect key="frame" x="30" y="145" width="354" height="34"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="18"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1011,6 +1013,71 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B1K-dw-PSd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1047.8260869565217" y="40.848214285714285"/>
+        </scene>
+        <!--Emoji Menu View Controller-->
+        <scene sceneID="Jtl-UV-9ED">
+            <objects>
+                <viewController storyboardIdentifier="EmojiMenuViewController" id="Dil-iR-SwJ" customClass="EmojiMenuViewController" customModule="StreamChatUI" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4ki-Ei-aSo">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="6yO-sD-uPy">
+                                <rect key="frame" x="5" y="44" width="404" height="818"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="cpe-JB-gwJ">
+                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="StickerCollectionCell" id="Pgm-oG-jkw" customClass="StickerCollectionCell" customModule="StreamChatUI" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Sep-3Z-Ibs">
+                                            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NH8-LI-1cl">
+                                                    <rect key="frame" x="5" y="5" width="118" height="118"/>
+                                                    <color key="backgroundColor" red="1" green="0.41176470590000003" blue="0.3803921569" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </imageView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="NH8-LI-1cl" secondAttribute="bottom" constant="5" id="GFe-lM-PkP"/>
+                                                <constraint firstAttribute="trailing" secondItem="NH8-LI-1cl" secondAttribute="trailing" constant="5" id="SZH-84-MCp"/>
+                                                <constraint firstItem="NH8-LI-1cl" firstAttribute="leading" secondItem="Sep-3Z-Ibs" secondAttribute="leading" constant="5" id="cnq-I5-5Ct"/>
+                                                <constraint firstItem="NH8-LI-1cl" firstAttribute="top" secondItem="Sep-3Z-Ibs" secondAttribute="top" constant="5" id="vxd-BQ-GX7"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <connections>
+                                            <outlet property="imgSticker" destination="NH8-LI-1cl" id="SDw-8C-f8L"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="Dil-iR-SwJ" id="Cfg-BT-Tel"/>
+                                    <outlet property="delegate" destination="Dil-iR-SwJ" id="9nO-R3-De2"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="e2l-6g-8gG"/>
+                        <color key="backgroundColor" red="0.11764705882352941" green="0.12156862745098039" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="6yO-sD-uPy" firstAttribute="leading" secondItem="e2l-6g-8gG" secondAttribute="leading" constant="5" id="9mK-z3-1yr"/>
+                            <constraint firstItem="e2l-6g-8gG" firstAttribute="trailing" secondItem="6yO-sD-uPy" secondAttribute="trailing" constant="5" id="Af8-dl-QTI"/>
+                            <constraint firstItem="6yO-sD-uPy" firstAttribute="top" secondItem="e2l-6g-8gG" secondAttribute="top" id="HRo-6E-sJK"/>
+                            <constraint firstItem="e2l-6g-8gG" firstAttribute="bottom" secondItem="6yO-sD-uPy" secondAttribute="bottom" id="dck-8H-JO1"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="collectionEmoji" destination="6yO-sD-uPy" id="Bpt-qo-woa"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="LbC-DZ-unx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1716" y="41"/>
         </scene>
     </scenes>
     <resources>
