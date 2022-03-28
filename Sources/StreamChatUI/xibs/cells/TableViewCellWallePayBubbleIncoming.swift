@@ -13,7 +13,8 @@ import Nuke
 public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
     public static let reuseId: String = "TableViewCellWallePayBubbleIncoming"
     public static let nib: UINib = UINib.init(nibName: reuseId, bundle: nil)
-    //MARK: -  @IBOutlet
+    
+    // MARK: -  @IBOutlet
     @IBOutlet private weak var viewContainer: UIView!
     @IBOutlet private weak var subContainer: UIView!
     @IBOutlet private weak var sentThumbImageView: UIImageView!
@@ -26,7 +27,11 @@ public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
     @IBOutlet private weak var authorNameLabel: UILabel!
     @IBOutlet private weak var avatarViewContainerView: UIView!
     @IBOutlet private weak var cellWidthConstraint: NSLayoutConstraint!
-    //MARK: -  Variables
+    @IBOutlet private weak var viewContainerTopConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var viewContainerLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var AvatarContainerWidthConstraint: NSLayoutConstraint!
+    
+    // MARK: -  Variables
     private var cellWidth: CGFloat {
         return (UIScreen.main.bounds.width * 0.3)
     }
@@ -38,7 +43,8 @@ public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
     var chatClient: ChatClient?
     var client: ChatClient?
     var walletPaymentType: WalletAttachmentPayload.PaymentType = .pay
-    //MARK: -  View Cycle
+    
+    // MARK: -  View Cycle
     public override func awakeFromNib() {
         super.awakeFromNib()
         selectionStyle = .none
@@ -54,35 +60,44 @@ public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    //MARK: -  Methods
+    // MARK: -  Methods
     func configureCell(isSender: Bool) {
+        self.isSender = isSender
+        // Constraint
+        viewContainerTopConstraint.constant = MessageTopPadding
+        viewContainerLeadingConstraint.constant = MessageLeftPadding
+        AvatarContainerWidthConstraint.constant = 0
+        // authorAvatarView
         authorAvatarView.contentMode = .scaleAspectFill
         authorAvatarView.layer.cornerRadius = authorAvatarView.bounds.width / 2
         authorAvatarView.backgroundColor = .clear
+        // viewContainer
         viewContainer.backgroundColor = .clear
         viewContainer.clipsToBounds = true
+        // subContainer
         subContainer.backgroundColor = Appearance.default.colorPalette.background6
         subContainer.layer.cornerRadius = 12
         subContainer.clipsToBounds = true
+        // sentThumbImageView
         sentThumbImageView.backgroundColor = Appearance.default.colorPalette.background6
         sentThumbImageView.contentMode = .scaleAspectFill
         sentThumbImageView.clipsToBounds = true
-        
-        walletPaymentType = content?.attachments(payloadType: WalletAttachmentPayload.self).first?.paymentType ?? .pay
-
+        // lblDetails
         lblDetails.textAlignment = .center
         lblDetails.numberOfLines = 0
         lblDetails.textColor = .white.withAlphaComponent(0.6)
         lblDetails.font = Appearance.default.fonts.body.withSize(11)
-        
+        // timestampLabel
         timestampLabel.textAlignment = .left
         timestampLabel.textColor = Appearance.default.colorPalette.subtitleText
         timestampLabel.font = Appearance.default.fonts.footnote
-        
+        // authorNameLabel
+        authorNameLabel.text = content?.author.name ?? ""
         authorNameLabel.textAlignment = .left
         authorNameLabel.textColor = Appearance.default.colorPalette.subtitleText
         authorNameLabel.font = Appearance.default.fonts.footnote
-        
+        // walletPaymentType
+        walletPaymentType = content?.attachments(payloadType: WalletAttachmentPayload.self).first?.paymentType ?? .pay
         if walletPaymentType == .request {
             let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first
             if isSender  {
@@ -99,6 +114,7 @@ public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
             }
             lblDetails.text = "REQUEST: \(requestedAmount(raw: payload?.extraData) ?? "0") ONE"
         }
+        // pickUpButton
         pickUpButton.setTitle("Pay", for: .normal)
         pickUpButton.addTarget(self, action: #selector(btnSendPacketAction), for: .touchUpInside)
         pickUpButton.setTitleColor(.white, for: .normal)
@@ -106,8 +122,6 @@ public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
         pickUpButton.backgroundColor = Appearance.default.colorPalette.redPacketButton
         pickUpButton.clipsToBounds = true
         pickUpButton.layer.cornerRadius = 20
-        // author name
-        authorNameLabel.text = content?.author.name ?? ""
         // Avatar
         let placeholder = Appearance.default.images.userAvatarPlaceholder1
         if let imageURL = content?.author.imageURL {
@@ -121,14 +135,14 @@ public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
         } else {
             authorAvatarView.image = placeholder
         }
-        //
+        // avatarViewContainerView
         avatarViewContainerView.isHidden = true
         if let options = layoutOptions {
-            avatarViewContainerView.isHidden = !options.contains(.avatar)
+            //avatarViewContainerView.isHidden = !options.contains(.avatar)
             authorNameLabel.isHidden = !options.contains(.authorName)
             timestampLabel.isHidden = !options.contains(.timestamp)
         }
-        cellWidthConstraint.constant = avatarViewContainerView.isHidden ? cellWidth : (cellWidth - avatarViewContainerView.bounds.width)
+        //cellWidthConstraint.constant = avatarViewContainerView.isHidden ? cellWidth : (cellWidth - avatarViewContainerView.bounds.width)
     }
     
     func configData() {

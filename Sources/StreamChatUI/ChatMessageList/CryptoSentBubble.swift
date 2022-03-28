@@ -36,7 +36,7 @@ class CryptoSentBubble: UITableViewCell {
         viewContainer.clipsToBounds = true
         contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
+            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: MessageTopPadding),
             viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4),
             viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth),
             viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),

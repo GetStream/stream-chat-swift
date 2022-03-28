@@ -5,8 +5,11 @@
 import StreamChat
 import UIKit
 import SafariServices
-let MessageIncomingPadding: CGFloat = 14.0
-let MessageOutgoingPadding: CGFloat = -14.0
+
+// Padding for messages bubble view
+let MessageLeftPadding: CGFloat = 8.0
+let MessageRightPadding: CGFloat = -8.0
+let MessageTopPadding: CGFloat = 15
 /// Controller that shows list of messages and composer together in the selected channel.
 @available(iOSApplicationExtension, unavailable)
 open class ChatMessageListVC:
@@ -96,8 +99,7 @@ open class ChatMessageListVC:
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
         listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
         listView.register(TableViewCellWallePayBubbleIncoming.nib, forCellReuseIdentifier: TableViewCellWallePayBubbleIncoming.reuseId)
-        listView.register(TableViewCellWallePayBubbleOutgoing.nib, forCellReuseIdentifier: TableViewCellWallePayBubbleOutgoing.reuseId)
-        
+        listView.register(TableViewCellRedPacketDrop.nib, forCellReuseIdentifier: TableViewCellRedPacketDrop.reuseId)
         //setupEmptyState()
 //        if let numberMessage = dataSource?.numberOfMessages(in: self) {
 //            viewEmptyState.isHidden = numberMessage != 0
@@ -364,7 +366,7 @@ open class ChatMessageListVC:
                 return cell
             }
         } else if isRedPacketCell(message) {
-            //if isMessageFromCurrentUser {
+            if isMessageFromCurrentUser {
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: "RedPacketSentBubble",
                     for: indexPath) as? RedPacketSentBubble else {
@@ -375,7 +377,17 @@ open class ChatMessageListVC:
                 cell.configureCell(isSender: isMessageFromCurrentUser)
                 cell.configData()
                 return cell
-            //}
+            }
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: TableViewCellRedPacketDrop.reuseId,
+                for: indexPath) as? TableViewCellRedPacketDrop else {
+                return UITableViewCell()
+            }
+            cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
+            cell.content = message
+            cell.configureCell(isSender: isMessageFromCurrentUser)
+            cell.configData()
+            return cell
         }
         else if isRedPacketNoPickUpCell(message) {
             guard let cell = tableView.dequeueReusableCell(
@@ -387,7 +399,7 @@ open class ChatMessageListVC:
                 cell.channel = channel
             }
             cell.client = client
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser)
             cell.configData()
@@ -403,7 +415,7 @@ open class ChatMessageListVC:
                 cell.channel = channel
             }
             cell.chatClient = client
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser, with: .EXPIRED)
             cell.configData()
@@ -417,7 +429,7 @@ open class ChatMessageListVC:
             if let channel = dataSource?.channel(for: self) {
                 cell.channel = channel
             }
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser, with: .RECEIVED)
             cell.configData()
@@ -444,10 +456,11 @@ open class ChatMessageListVC:
         } else if isWalletRequestPayCell(message) {
             if isMessageFromCurrentUser {
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: TableViewCellWallePayBubbleOutgoing.reuseId,
-                    for: indexPath) as? TableViewCellWallePayBubbleOutgoing else {
+                    withIdentifier: "RequestBubble",
+                    for: indexPath) as? WalletRequestPayBubble else {
                     return UITableViewCell()
                 }
+                cell.isSender = isMessageFromCurrentUser
                 cell.client = client
                 cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
