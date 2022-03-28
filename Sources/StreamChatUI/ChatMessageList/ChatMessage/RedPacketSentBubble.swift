@@ -241,9 +241,7 @@ class RedPacketSentBubble: UITableViewCell {
 
     private func getEndTime() -> Date? {
         let strEndTime = content?.extraData.redPacketEndTime ?? ""
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withInternetDateTime]
-        if let date = dateFormatter.date(from: "\(strEndTime)") {
+        if let date = ISO8601DateFormatter.redPacketExpirationFormatter.date(from: "\(strEndTime)") {
             return date
         } else {
             return nil
