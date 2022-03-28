@@ -28,7 +28,7 @@ struct ChannelPayload: Decodable {
     
     let isHidden: Bool?
 
-    private enum CodingKeys: String, CodingKey {
+    internal enum CodingKeys: String, CodingKey {
         case channel
         case messages
         case pinnedMessages = "pinned_messages"

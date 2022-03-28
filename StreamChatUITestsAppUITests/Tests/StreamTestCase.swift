@@ -29,7 +29,6 @@ class StreamTestCase: XCTestCase {
 
     override func tearDownWithError() throws {
         app.terminate()
-        server.clearMessageDetails()
         server.stop()
         server = nil
         

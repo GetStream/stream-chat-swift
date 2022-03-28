@@ -58,6 +58,8 @@ jobs:
     runs-on: macos-11
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 100
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - uses: actions/setup-python@v3.0.0
@@ -129,6 +131,40 @@ jobs:
         xcode: "13.0"
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"iPhone 12 (15.0)"
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        job_name: "Test UI (Debug)"
+        fields: message,commit,author,action,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
+
+  build-and-test-e2e-debug:
+    name: Test E2E UI (Debug)
+    runs-on: macos-11
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - run: bundle install
+    - name: Run UI Tests (Debug)
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}"
+    - name: Archive test results
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: xctestresult
+        path: fastlane/test_output/*.xcresult
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
