@@ -56,6 +56,18 @@ open class ChatMessageContentView: _View, ThemeProvider {
         didSet { updateContentIfNeeded() }
     }
 
+    // The computed reactions of the message to displayed by the reactions view.
+    open var reactionsData: [ChatMessageReactionData] {
+        // TODO: Maybe extract this to a ChatMessage -> ChatMessageReactionData Mapping Component?
+        guard let content = content else {
+            return []
+        }
+
+        let userReactionIDs = Set(content.currentUserReactions.map(\.type))
+        return content.reactionScores
+            .map { .init(type: $0.key, score: $0.value, isChosenByCurrentUser: userReactionIDs.contains($0.key)) }
+    }
+
     /// A formatter that converts the message timestamp to textual representation.
     public lazy var timestampFormatter: MessageTimestampFormatter = appearance.formatters.messageTimestamp
 
@@ -536,13 +548,11 @@ open class ChatMessageContentView: _View, ThemeProvider {
         // Reactions view
         reactionsBubbleView?.tailDirection = content
             .map { $0.isSentByCurrentUser ? .toTrailing : .toLeading }
-        reactionsView?.content = content.map {
-            .init(
-                useBigIcons: false,
-                reactions: $0.reactions,
-                didTapOnReaction: nil
-            )
-        }
+        reactionsView?.content = .init(
+            useBigIcons: false,
+            reactions: reactionsData,
+            didTapOnReaction: nil
+        )
     }
 
     override open func tintColorDidChange() {
@@ -812,15 +822,6 @@ open class ChatMessageContentView: _View, ThemeProvider {
             onlyVisibleForYouLabel!.font = appearance.fonts.footnote
         }
         return onlyVisibleForYouLabel!
-    }
-}
-
-private extension ChatMessage {
-    var reactions: [ChatMessageReactionData] {
-        let userReactionIDs = Set(currentUserReactions.map(\.type))
-        return reactionScores
-            .sorted { $0.key.rawValue < $1.key.rawValue }
-            .map { .init(type: $0.key, score: $0.value, isChosenByCurrentUser: userReactionIDs.contains($0.key)) }
     }
 }
 

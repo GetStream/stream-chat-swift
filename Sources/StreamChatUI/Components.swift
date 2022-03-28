@@ -229,13 +229,14 @@ public struct Components {
     // MARK: - Reaction Picker components
     
     /// The Reaction picker VC.
+    /// // TODO: Rename ChatMessageReactionsPickerVC
     public var reactionPickerVC: ChatMessageReactionsVC.Type = ChatMessageReactionsVC.self
 
     /// The view that shows reactions bubble.
     public var reactionPickerBubbleView: ChatReactionPickerBubbleView.Type = DefaultChatReactionPickerBubbleView.self
 
     /// The view that shows the list of reaction toggles/buttons.
-    public var reactionPickerReactionsView: ChatMessageReactionsView.Type = ChatReactionPickerReactionsView.self
+    public var reactionPickerReactionsView: ChatMessageReactionsView.Type = ChatMessageReactionsView.self
 
     /// The view that renders a single reaction view button.
     public var reactionPickerReactionItemView: ChatMessageReactionItemView.Type = ChatMessageReactionItemView.self

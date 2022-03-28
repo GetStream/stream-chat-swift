@@ -15,6 +15,9 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
         components.messageReactionItemView
     }
 
+    /// The sorting order of how the reactions data will be displayed.
+    public var reactionsSorting: ((ChatMessageReactionData, ChatMessageReactionData) -> Bool) = { lhs, rhs in
+        lhs.type.rawValue < rhs.type.rawValue
     }
 
     // MARK: - Subviews
@@ -40,7 +43,7 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
 
         guard let content = content else { return }
 
-        content.reactions.forEach { reaction in
+        content.reactions.sorted(by: reactionsSorting).forEach { reaction in
             if appearance.images.availableReactions[reaction.type] == nil {
                 log
                     .warning(

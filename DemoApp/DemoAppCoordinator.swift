@@ -105,6 +105,8 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.messageListDateOverlayEnabled = true
         Components.default._messageListDiffingEnabled = true
         Components.default.messageActionsVC = CustomChatMessageActionsVC.self
+        Components.default.messageReactionsView = CustomChatMessageReactionsView.self
+        Components.default.reactionPickerReactionsView = CustomChatMessageReactionsView.self
         
         let localizationProvider = Appearance.default.localizationProvider
         Appearance.default.localizationProvider = { key, table in
@@ -396,6 +398,29 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
         ) {
             self.action = action
             icon = UIImage(systemName: "flag.fill")!
+        }
+    }
+}
+
+class CustomChatMessageReactionsView: ChatMessageReactionsView {
+    override func setUp() {
+        super.setUp()
+
+        reactionsSorting = { lhs, rhs in
+            lhs.type.position < rhs.type.position
+        }
+    }
+}
+
+extension MessageReactionType {
+    var position: Int {
+        switch rawValue {
+        case "love": return 0
+        case "haha": return 1
+        case "like": return 2
+        case "sad": return 3
+        case "wow": return 4
+        default: return 5
         }
     }
 }
