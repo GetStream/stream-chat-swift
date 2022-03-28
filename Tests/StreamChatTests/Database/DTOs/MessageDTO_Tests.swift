@@ -158,6 +158,25 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(message.readByCount, expectedReadBy.count)
     }
     
+    func test_numberOfReads() {
+        let context = database.viewContext
+
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let channelReadsCount = 5
+
+        let message = MessageDTO.loadOrCreate(id: messageId, context: context)
+        for _ in 0..<channelReadsCount {
+            let read = ChannelReadDTO.loadOrCreate(cid: cid, userId: .unique, context: context)
+            message.reads.insert(read)
+        }
+        
+        XCTAssertEqual(
+            MessageDTO.numberOfReads(for: messageId, context: context),
+            channelReadsCount
+        )
+    }
+    
     func test_messagePayload_isStoredAndLoadedFromDB() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique

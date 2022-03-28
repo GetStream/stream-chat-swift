@@ -73,6 +73,7 @@ public extension ChatMessage {
             pinDetails: pinDetails,
             translations: nil,
             readBy: { readBy },
+            readByCount: { readBy.count },
             underlyingContext: nil
         )
     }

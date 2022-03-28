@@ -326,6 +326,12 @@ class MessageDTO: NSManagedObject {
         request.fetchOffset = offset
         return load(by: request, context: context)
     }
+    
+    static func numberOfReads(for messageId: MessageId, context: NSManagedObjectContext) -> Int {
+        let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        request.predicate = NSPredicate(format: "readMessagesFromCurrentUser.id CONTAINS %@", messageId)
+        return (try? context.count(for: request)) ?? 0
+    }
 }
 
 extension MessageDTO {
@@ -858,6 +864,12 @@ private extension ChatMessage {
         }
         
         $_readBy = (readBy, dto.managedObjectContext)
+        
+        let readByCount = {
+            MessageDTO.numberOfReads(for: dto.id, context: context)
+        }
+        
+        $_readByCount = (readByCount, dto.managedObjectContext)
     }
 }
 

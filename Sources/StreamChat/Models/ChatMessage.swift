@@ -157,9 +157,19 @@ public struct ChatMessage {
     /// who read this message (excluding the current user).
     ///
     /// - Note: For the message authored by other members this field is always empty.
+    /// - Important: The `readBy` loades and evaluates user models. If you're interested only in `count`,
+    /// it's recommended to use `readByCount` instead of `readBy.count` for better performance.
     public var readBy: Set<ChatUser> { _readBy }
     
     @CoreDataLazy internal var _readBy: Set<ChatUser>
+    
+    /// For the message authored by the current user this field contains number of channel members
+    /// who has read this message (excluding the current user).
+    ///
+    /// - Note: For the message authored by other channel members this field always returns `0`.
+    public var readByCount: Int { readBy.count }
+    
+    @CoreDataLazy internal var _readByCount: Int
     
     internal init(
         id: MessageId,
@@ -194,6 +204,7 @@ public struct ChatMessage {
         pinDetails: MessagePinDetails?,
         translations: [TranslationLanguage: String]?,
         readBy: @escaping () -> Set<ChatUser>,
+        readByCount: @escaping () -> Int,
         underlyingContext: NSManagedObjectContext?
     ) {
         self.id = id
@@ -229,6 +240,7 @@ public struct ChatMessage {
         $_currentUserReactions = (currentUserReactions, underlyingContext)
         $_quotedMessage = (quotedMessage, underlyingContext)
         $_readBy = (readBy, underlyingContext)
+        $_readByCount = (readByCount, underlyingContext)
     }
 }
 
