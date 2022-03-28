@@ -177,14 +177,14 @@ extension XCTestCase {
                     team: .unique,
                     cooldownDuration: .random(in: 0...120)
                 ),
-                isHidden: false,
                 watcherCount: watchers?.count ?? 1,
                 watchers: watchers ?? [dummyUser],
                 members: members,
                 membership: includeMembership ? members.first : nil,
                 messages: payloadMessages,
                 pinnedMessages: pinnedMessages,
-                channelReads: [dummyChannelRead]
+                channelReads: [dummyChannelRead],
+                isHidden: false
             )
         
         return payload
@@ -291,7 +291,8 @@ extension XCTestCase {
                 membership: member,
                 messages: [dummyMessageWithNoExtraData],
                 pinnedMessages: [dummyMessageWithNoExtraData],
-                channelReads: [dummyChannelReadWithNoExtraData]
+                channelReads: [dummyChannelReadWithNoExtraData],
+                isHidden: nil
             )
         
         return payload

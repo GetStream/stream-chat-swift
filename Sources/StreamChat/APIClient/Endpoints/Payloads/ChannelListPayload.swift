@@ -9,7 +9,7 @@ struct ChannelListPayload: Decodable {
     let channels: [ChannelPayload]
 }
 
-struct ChannelPayload: Decodable {
+struct ChannelPayload {
     let channel: ChannelDetailPayload
     
     let watcherCount: Int?
@@ -27,7 +27,9 @@ struct ChannelPayload: Decodable {
     let channelReads: [ChannelReadPayload]
     
     let isHidden: Bool?
+}
 
+extension ChannelPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case channel
         case messages
@@ -42,39 +44,18 @@ struct ChannelPayload: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
-        isHidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
-        watchers = try container.decodeIfPresent([UserPayload].self, forKey: .watchers)
-        watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
-        members = try container.decode([MemberPayload].self, forKey: .members)
-        membership = try container.decodeIfPresent(MemberPayload.self, forKey: .membership)
-        messages = try container.decode([MessagePayload].self, forKey: .messages)
-        pinnedMessages = try container.decode([MessagePayload].self, forKey: .pinnedMessages)
-        channelReads = try container.decodeIfPresent([ChannelReadPayload].self, forKey: .channelReads) ?? []
-    }
-    
-    // MARK: - For testing
-    
-    init(
-        channel: ChannelDetailPayload,
-        isHidden: Bool? = nil,
-        watcherCount: Int,
-        watchers: [UserPayload]?,
-        members: [MemberPayload],
-        membership: MemberPayload?,
-        messages: [MessagePayload],
-        pinnedMessages: [MessagePayload],
-        channelReads: [ChannelReadPayload]
-    ) {
-        self.channel = channel
-        self.isHidden = isHidden
-        self.watcherCount = watcherCount
-        self.watchers = watchers
-        self.members = members
-        self.membership = membership
-        self.messages = messages
-        self.pinnedMessages = pinnedMessages
-        self.channelReads = channelReads
+        
+        self.init(
+            channel: try container.decode(ChannelDetailPayload.self, forKey: .channel),
+            watcherCount: try container.decodeIfPresent(Int.self, forKey: .watcherCount),
+            watchers: try container.decodeIfPresent([UserPayload].self, forKey: .watchers),
+            members: try container.decode([MemberPayload].self, forKey: .members),
+            membership: try container.decodeIfPresent(MemberPayload.self, forKey: .membership),
+            messages: try container.decode([MessagePayload].self, forKey: .messages),
+            pinnedMessages: try container.decode([MessagePayload].self, forKey: .pinnedMessages),
+            channelReads: try container.decodeIfPresent([ChannelReadPayload].self, forKey: .channelReads) ?? [],
+            isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden)
+        )
     }
 }
 
