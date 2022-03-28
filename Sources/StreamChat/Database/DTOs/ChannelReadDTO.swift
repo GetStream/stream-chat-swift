@@ -64,22 +64,6 @@ class ChannelReadDTO: NSManagedObject {
 
 extension NSManagedObjectContext {
     func saveChannelRead(
-        cid: ChannelId,
-        userId: UserId,
-        lastReadAt: Date,
-        unreadMessageCount: Int
-    ) -> ChannelReadDTO {
-        let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
-        
-        dto.user = UserDTO.loadOrCreate(id: userId, context: self)
-        
-        dto.lastReadAt = lastReadAt
-        dto.unreadMessageCount = Int32(unreadMessageCount)
-        
-        return dto
-    }
-    
-    func saveChannelRead(
         payload: ChannelReadPayload,
         for cid: ChannelId
     ) throws -> ChannelReadDTO {
@@ -98,10 +82,13 @@ extension NSManagedObjectContext {
             // We have a read object saved, we can update it
             read.lastReadAt = at
             read.unreadMessageCount = 0
-        } else if let channel = channel(cid: cid), channel.members.contains(where: { $0.user.id == userId }) {
             // We don't have a read object, but the user is a member.
             // We can safely create a read object for the user
-            _ = saveChannelRead(cid: cid, userId: userId, lastReadAt: at, unreadMessageCount: 0)
+            let read = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
+            read.channel = channel
+            read.user = member.user
+            read.lastReadAt = at
+            read.unreadMessageCount = 0
         } else {
             // If we don't have a read object saved for the user,
             // and the user is not a member,

@@ -183,20 +183,6 @@ extension DatabaseSession_Mock {
         return try underlyingSession.saveChannelRead(payload: payload, for: cid)
     }
     
-    func saveChannelRead(
-        cid: ChannelId,
-        userId: UserId,
-        lastReadAt: Date,
-        unreadMessageCount: Int
-    ) -> ChannelReadDTO {
-        underlyingSession.saveChannelRead(
-            cid: cid,
-            userId: userId,
-            lastReadAt: lastReadAt,
-            unreadMessageCount: unreadMessageCount
-        )
-    }
-    
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
         underlyingSession.markChannelAsRead(cid: cid, userId: userId, at: at)
     }
