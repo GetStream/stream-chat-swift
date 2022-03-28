@@ -42,7 +42,17 @@ class MessageDTO: NSManagedObject {
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
-
+    
+    /// If the message is sent by the current user, this field
+    /// contains channel reads of other channel members (excluding the current user),
+    /// where `read.lastRead >= self.createdAt`.
+    ///
+    /// If the message has a channel read of a member, it is considered as seen/read by
+    /// that member.
+    ///
+    /// For messages authored NOT by the current user this field is always empty.
+    @NSManaged var reads: Set<ChannelReadDTO>
+    
     @NSManaged var pinned: Bool
     @NSManaged var pinnedBy: UserDTO?
     @NSManaged var pinnedAt: Date?
@@ -833,6 +843,12 @@ private extension ChatMessage {
         }
 
         $_quotedMessage = ({ dto.quotedMessage?.asModel() }, dto.managedObjectContext)
+        
+        let readBy = {
+            Set(dto.reads.map(\.user).map { $0.asModel() })
+        }
+        
+        $_readBy = (readBy, dto.managedObjectContext)
     }
 }
 

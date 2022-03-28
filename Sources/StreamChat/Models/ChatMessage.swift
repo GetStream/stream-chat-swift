@@ -152,6 +152,14 @@ public struct ChatMessage {
     
     /// Internationalization and localization for the message. Only available for translated messages.
     public let translations: [TranslationLanguage: String]?
+
+    /// If the message is authored by the current user this field contains the list of channel members
+    /// who read this message (excluding the current user).
+    ///
+    /// - Note: For the message authored by other members this field is always empty.
+    public var readBy: Set<ChatUser> { _readBy }
+    
+    @CoreDataLazy internal var _readBy: Set<ChatUser>
     
     internal init(
         id: MessageId,
@@ -185,6 +193,7 @@ public struct ChatMessage {
         isSentByCurrentUser: Bool,
         pinDetails: MessagePinDetails?,
         translations: [TranslationLanguage: String]?,
+        readBy: @escaping () -> Set<ChatUser>,
         underlyingContext: NSManagedObjectContext?
     ) {
         self.id = id
@@ -219,6 +228,7 @@ public struct ChatMessage {
         $_latestReactions = (latestReactions, underlyingContext)
         $_currentUserReactions = (currentUserReactions, underlyingContext)
         $_quotedMessage = (quotedMessage, underlyingContext)
+        $_readBy = (readBy, underlyingContext)
     }
 }
 
