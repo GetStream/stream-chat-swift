@@ -79,9 +79,19 @@ extension NSManagedObjectContext {
     
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
         if let read = loadChannelRead(cid: cid, userId: userId) {
+            let previousLastReadAt = read.lastReadAt
+            
             // We have a read object saved, we can update it
             read.lastReadAt = at
             read.unreadMessageCount = 0
+            
+            // Mark messages authored by the current user sent within `previousLastReadAt...at` window
+            // as seen by the channel member with `userId`.
+            markMessagesFromCurrentUserAsRead(
+                for: read,
+                previousReadAt: previousLastReadAt
+            )
+        } else if let channel = channel(cid: cid), let member = channel.members.first(where: { $0.user.id == userId }) {
             // We don't have a read object, but the user is a member.
             // We can safely create a read object for the user
             let read = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
@@ -89,6 +99,13 @@ extension NSManagedObjectContext {
             read.user = member.user
             read.lastReadAt = at
             read.unreadMessageCount = 0
+            
+            // Mark all locally existed messages authored by the current user
+            // as seen by the channel member with `userId`.
+            markMessagesFromCurrentUserAsRead(
+                for: read,
+                previousReadAt: .distantPast
+            )
         } else {
             // If we don't have a read object saved for the user,
             // and the user is not a member,
@@ -106,6 +123,27 @@ extension NSManagedObjectContext {
     
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO] {
         ChannelReadDTO.load(userId: userId, context: self)
+    }
+    
+    private func markMessagesFromCurrentUserAsRead(
+        for read: ChannelReadDTO,
+        previousReadAt: Date
+    ) {
+        guard read.user.currentUser == nil else {
+            // Current user is not accounted in his own message reads.
+            return
+        }
+        
+        let messages = MessageDTO.loadCurrentUserMessages(
+            in: read.channel.cid,
+            createdAtFrom: previousReadAt,
+            createdAtThrough: read.lastReadAt,
+            context: self
+        )
+        
+        for message in messages {
+            message.reads.insert(read)
+        }
     }
 }
 

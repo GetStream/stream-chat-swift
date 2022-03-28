@@ -113,7 +113,7 @@ class MessageDTO: NSManagedObject {
     private static func onlyOwnDeletedMessagesPredicate() -> NSCompoundPredicate {
         .init(orPredicateWithSubpredicates: [
             // Non-deleted messages.
-            .init(format: "deletedAt == nil"),
+            nonDeletedMessagesPredicate(),
             // Deleted messages sent by current user excluding ephemeral ones.
             NSCompoundPredicate(andPredicateWithSubpredicates: [
                 .init(format: "deletedAt != nil"),
@@ -148,7 +148,7 @@ class MessageDTO: NSManagedObject {
     }
 
     /// Returns a predicate that filters out all deleted messages
-    private static func nonDeletedMessagesPredicate() -> NSCompoundPredicate {
+    private static func nonDeletedMessagesPredicate() -> NSPredicate {
         .init(format: "deletedAt == nil")
     }
 
@@ -325,6 +325,29 @@ class MessageDTO: NSManagedObject {
         request.fetchLimit = limit
         request.fetchOffset = offset
         return load(by: request, context: context)
+    }
+    
+    static func loadCurrentUserMessages(
+        in cid: String,
+        createdAtFrom: Date,
+        createdAtThrough: Date,
+        context: NSManagedObjectContext
+    ) -> [MessageDTO] {
+        let subpredicates: [NSPredicate] = [
+            .init(format: "channel.cid == %@", cid),
+            .init(format: "user.currentUser != nil"),
+            .init(format: "createdAt > %@", createdAtFrom as NSDate),
+            .init(format: "createdAt <= %@", createdAtThrough as NSDate),
+            .init(format: "localMessageStateRaw == nil"),
+            nonTruncatedMessagesPredicate(),
+            nonDeletedMessagesPredicate()
+        ]
+        
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+        
+        return (try? context.fetch(request)) ?? []
     }
     
     static func numberOfReads(for messageId: MessageId, context: NSManagedObjectContext) -> Int {
