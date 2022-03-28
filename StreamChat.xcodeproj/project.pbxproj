@@ -523,6 +523,7 @@
 		84AA4E3626F264610056A684 /* EventDTOConverterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AA4E3526F264610056A684 /* EventDTOConverterMiddleware.swift */; };
 		84ABB015269F0A84003A4585 /* EventsController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABB014269F0A84003A4585 /* EventsController+Combine.swift */; };
 		84ABF69A274E570600EDDA68 /* EventBatcher_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABF699274E570600EDDA68 /* EventBatcher_Tests.swift */; };
+		84C11BDF27FB2B4600000A9E /* ChannelPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C11BDE27FB2B4600000A9E /* ChannelPayload.swift */; };
 		84CC56EC267B3F6B00DF2784 /* AnyAttachmentPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC56EA267B3D5900DF2784 /* AnyAttachmentPayload_Tests.swift */; };
 		84CF9C73274D473D00BCDE2D /* EventBatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9C72274D473D00BCDE2D /* EventBatcher.swift */; };
 		84D5BC59277B188E00A65C75 /* PinnedMessagesPagination_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BC58277B188E00A65C75 /* PinnedMessagesPagination_Tests.swift */; };
@@ -2726,6 +2727,7 @@
 		84ABB014269F0A84003A4585 /* EventsController+Combine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventsController+Combine.swift"; sourceTree = "<group>"; };
 		84ABF699274E570600EDDA68 /* EventBatcher_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBatcher_Tests.swift; sourceTree = "<group>"; };
 		84ABF69B274E66AA00EDDA68 /* EventBatcher_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBatcher_Mock.swift; sourceTree = "<group>"; };
+		84C11BDE27FB2B4600000A9E /* ChannelPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelPayload.swift; sourceTree = "<group>"; };
 		84CC56EA267B3D5900DF2784 /* AnyAttachmentPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentPayload_Tests.swift; sourceTree = "<group>"; };
 		84CF9C72274D473D00BCDE2D /* EventBatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBatcher.swift; sourceTree = "<group>"; };
 		84D5BC58277B188E00A65C75 /* PinnedMessagesPagination_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinnedMessagesPagination_Tests.swift; sourceTree = "<group>"; };
@@ -5442,6 +5444,7 @@
 		A344076127D753530044F150 /* DummyData */ = {
 			isa = PBXGroup;
 			children = (
+				84C11BDE27FB2B4600000A9E /* ChannelPayload.swift */,
 				79D7A1CD2593A40900D3C2BF /* ChannelDetailPayload.swift */,
 				A3D9D68227EDE35100725066 /* ChatChannel.swift */,
 				A3C7BAC427E4DBA900BBF4FA /* ChatChannelMember.swift */,
@@ -8766,6 +8769,7 @@
 				A3C3BC6C27E8AA4300224761 /* TestEvent.swift in Sources */,
 				A3C3BC3527E87F3200224761 /* EventBatcher_Mock.swift in Sources */,
 				A311B43127E8BC8400CFCF6D /* ConnectionDetailsProviderDelegate_Spy.swift in Sources */,
+				84C11BDF27FB2B4600000A9E /* ChannelPayload.swift in Sources */,
 				A3C3BC8227E8AB6200224761 /* String+Date.swift in Sources */,
 				A3D9D68327EDE35100725066 /* ChatChannel.swift in Sources */,
 				A3C3BC2327E87F1800224761 /* ChatChannelWatcherListController_Mock.swift in Sources */,
