@@ -385,7 +385,7 @@ public class Logger {
         lineNumber: UInt = #line
     ) {
         guard !condition() else { return }
-        if RuntimeCheck.assertionsEnabled {
+        if StreamRuntimeCheck.assertionsEnabled {
             Swift.assert(condition(), String(describing: message()), file: fileName, line: lineNumber)
         }
         log(
@@ -410,7 +410,7 @@ public class Logger {
         fileName: StaticString = #file,
         lineNumber: UInt = #line
     ) {
-        if RuntimeCheck.assertionsEnabled {
+        if StreamRuntimeCheck.assertionsEnabled {
             Swift.assertionFailure(String(describing: message()), file: fileName, line: lineNumber)
         }
         log(

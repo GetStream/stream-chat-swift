@@ -85,3 +85,6 @@ Dependencies/
 
 # Environment Variables
 .env
+
+# Ignore internal scheme
+StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme

@@ -11,6 +11,10 @@ extension ChatClient {
     static var shared: ChatClient!
 }
 
+var isStreamInternalConfiguration: Bool {
+    ProcessInfo.processInfo.environment["STREAM_DEV"] != nil
+}
+
 final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     var connectionController: ChatConnectionController?
     let navigationController: UINavigationController
@@ -103,9 +107,11 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.messageContentView = CustomMessageContentView.self
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
-        Components.default._messageListDiffingEnabled = true
+        Components.default._messageListDiffingEnabled = isStreamInternalConfiguration
         Components.default.messageActionsVC = CustomChatMessageActionsVC.self
-        
+
+        StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
+
         let localizationProvider = Appearance.default.localizationProvider
         Appearance.default.localizationProvider = { key, table in
             let localizedString = localizationProvider(key, table)
