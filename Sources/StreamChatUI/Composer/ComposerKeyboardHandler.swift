@@ -79,7 +79,7 @@ open class ComposerKeyboardHandler: KeyboardHandler {
             let rootTabBarHeight = shouldAddTabBarHeight ? rootTabBar!.frame.height : 0
 
             composerBottomConstraint?.constant = -(
-                intersectedKeyboardHeight + originalBottomConstraintValue + rootTabBarHeight
+                intersectedKeyboardHeight + originalBottomConstraintValue + rootTabBarHeight - UIView.safeAreaBottom
             )
         }
 
