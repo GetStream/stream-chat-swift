@@ -5,8 +5,6 @@ source_directory: Sources/
 output_directory: reports
 ignore:
   - "Tests/**/*"
-  - "**/*_Tests.swift"
-  - "**/*_Mock.swift"
   - "**/*_Vendor.swift"
   - "**/Generated/*.swift"
   - "Sources/StreamChat/StreamStarscream"
