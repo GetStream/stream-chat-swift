@@ -55,6 +55,46 @@ let appearance = Appearance(colors: colors)
 streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
 ```
 
+## Applying Custom Modifier
+
+You can customize the message list further, by applying your own custom view modifier. In order to do this, you need to implement the method `makeMessageListModifier`, which by default doesn't apply anything additional to the view. Here's an example how to add vertical padding to the message list:
+
+```swift
+func makeMessageListModifier() -> some ViewModifier {
+    VerticalPaddingViewModifier()
+}
+
+struct VerticalPaddingViewModifier: ViewModifier {
+    
+    public func body(content: Content) -> some View {
+        content
+            .padding(.vertical, 8)
+    }
+    
+}
+```
+
+You can also apply a custom modifier to the message view. This comes in handy if you want to change the bubbles UI, such as the corner radius, the direction of the bubbles, paddings or even remove the bubble altogether. In order to do this, you will need to implement the `makeMessageViewModifier` in the `ViewFactory`. The default implementation returns the bubble that is used throughout our demo app. The following snippet shows how to create your own message view modifier:
+
+```swift
+func makeMessageViewModifier(for messageModifierInfo: MessageModifierInfo) -> some ViewModifier {
+    CustomMessageBubbleModifier(
+        message: messageModifierInfo.message,
+        isFirst: messageModifierInfo.isFirst,
+        injectedBackgroundColor: messageModifierInfo.injectedBackgroundColor,
+        cornerRadius: messageModifierInfo.cornerRadius,
+        forceLeftToRight: messageModifierInfo.forceLeftToRight
+    )
+}
+```
+
+In this method, the `MessageModifierInfo` is provided. This struct contains information that is needed to the modifier to apply the needed styling. It contains the following properties:
+- `message`: The message that will be displayed.
+- `isFirst`: Whether the message is first in the group. Ignore this value if you want to avoid message grouping.
+- `injectedBackgroundColor`: Possibility to inject custom background color, based on the different types of message cells. You can provide your own color logic here as well.
+- `cornerRadius`: The corner radius for rounding the cells. 
+- `forceLeftToRight`: Use this value if you want to force the direction of the bubble to be left to right.   
+
 ## Custom Message Container View
 
 However, if you are building a livestream app similar to Twitch, you will need a different type of user interface for the message views. The SwiftUI SDK allows swapping the message container view with your own implementation, without needing to implement the whole message list, the composer or the reactions. In order to do this, you need to implement the method `makeMessageContainerView` in the `ViewFactory` protocol.
