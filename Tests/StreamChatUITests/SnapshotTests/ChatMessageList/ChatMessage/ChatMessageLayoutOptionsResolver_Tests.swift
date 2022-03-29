@@ -1266,6 +1266,194 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
         )
     }
+    
+    // MARK: - Delivery status
+
+    func test_optionsForMessage_whenMessageIsSentByAnotherUser_doesNotIncludeDeliveryStatusIndicator() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+        
+        let messageSentByAnotherUser: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            isSentByCurrentUser: false
+        )
+
+        let layoutOptions = optionsResolver.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([messageSentByAnotherUser]),
+            appearance: appearance
+        )
+        
+        XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+    
+    func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeDeliveryStatusIndicator() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+        
+        let deletedMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            type: .deleted,
+            author: .mock(id: .unique),
+            deletedAt: .unique,
+            isSentByCurrentUser: false
+        )
+
+        let layoutOptions = optionsResolver.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([deletedMessage]),
+            appearance: appearance
+        )
+
+        // Assert `.deliveryStatusIndicator` is not included
+        XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+    
+    func test_optionsForMessage_whenLastMessageActionIsFailed_doesNotIncludeDeliveryStatusIndicator() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+        
+        for failedState: LocalMessageState in [.sendingFailed, .syncingFailed, .deletingFailed] {
+            let messageWithFailedState: ChatMessage = .mock(
+                id: .unique,
+                cid: .unique,
+                text: .unique,
+                author: .mock(id: .unique),
+                deletedAt: nil,
+                localState: failedState,
+                isSentByCurrentUser: true
+            )
+
+            let layoutOptions = optionsResolver.optionsForMessage(
+                at: .init(item: 0, section: 0),
+                in: channel,
+                with: .init([messageWithFailedState]),
+                appearance: appearance
+            )
+            
+            XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
+        }
+    }
+    
+    func test_optionsForMessage_whenHasPendingLocalState_includesDeliveryStatusIndicator() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+        
+        for pendingState: LocalMessageState in [.pendingSend, .sending, .pendingSync, .syncing, .deleting] {
+            let messageInPendingState: ChatMessage = .mock(
+                id: .unique,
+                cid: .unique,
+                text: .unique,
+                author: .mock(id: .unique),
+                deletedAt: nil,
+                localState: pendingState,
+                isSentByCurrentUser: true
+            )
+
+            let layoutOptions = optionsResolver.optionsForMessage(
+                at: .init(item: 0, section: 0),
+                in: channel,
+                with: .init([messageInPendingState]),
+                appearance: appearance
+            )
+            
+            XCTAssertTrue(layoutOptions.contains(.deliveryStatusIndicator))
+        }
+    }
+    
+    func test_optionsForMessage_whenMessageExistsRemotelyAndReadEventsEnabled_includesDeliveryStatusIndicator() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+        
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: .unique,
+            author: .mock(id: .unique),
+            deletedAt: nil,
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let layoutOptions = optionsResolver.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+        
+        XCTAssertTrue(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+    
+    func test_optionsForMessage_whenMessageExistsRemotelyAndReadEventsDisabled_doesNotIncludeDeliveryStatusIndicator() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: false)
+        )
+        
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: .unique,
+            author: .mock(id: .unique),
+            deletedAt: nil,
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let layoutOptions = optionsResolver.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+        
+        XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+    
+    func test_optionsForMessage_whenMessageIsEphemeral_doesNotIncludeDeliveryStatusIndicator() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+        
+        let ephemeralMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: .unique,
+            type: .ephemeral,
+            author: .mock(id: .unique),
+            deletedAt: nil,
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let layoutOptions = optionsResolver.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([ephemeralMessage]),
+            appearance: appearance
+        )
+        
+        XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
+    }
 }
 
 private extension Array where Element == (ChatMessage, Bool) {
