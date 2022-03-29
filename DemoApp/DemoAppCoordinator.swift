@@ -11,7 +11,7 @@ extension ChatClient {
     static var shared: ChatClient!
 }
 
-var isStreamInternalConfiguration: Bool {
+private var isStreamInternalConfiguration: Bool {
     ProcessInfo.processInfo.environment["STREAM_DEV"] != nil
 }
 
