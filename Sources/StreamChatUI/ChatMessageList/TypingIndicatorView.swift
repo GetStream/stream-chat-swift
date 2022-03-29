@@ -72,7 +72,7 @@ open class TypingIndicatorView: _View, ThemeProvider {
     }
 
     // Restart Animation 
-    @objc func handleAppDidBecomeActive() {
+    @objc private func handleAppDidBecomeActive() {
         typingAnimationView.startAnimating()
     }
 }
