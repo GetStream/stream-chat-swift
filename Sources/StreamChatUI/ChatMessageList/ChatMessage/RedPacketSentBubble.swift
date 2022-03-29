@@ -258,13 +258,13 @@ class RedPacketSentBubble: UITableViewCell {
             if let endDate = getEndTime() {
                 let minutes = Date().minutesFromCurrentDate(endDate)
                 if minutes <= 0 {
-                    Snackbar.show(text: "", messageType: StreamChatMessageType.redPacketExpired)
+                    Snackbar.show(text: "", messageType: StreamChatMessageType.RedPacketExpired)
                     return false
                 } else {
                     return true
                 }
             } else {
-                Snackbar.show(text: "", messageType: StreamChatMessageType.redPacketExpired)
+                Snackbar.show(text: "", messageType: StreamChatMessageType.RedPacketExpired)
                 return false
             }
         }
