@@ -58,20 +58,6 @@ open class ChatMessageListVC:
         return overlay
     }()
 
-    /// A View which displays information about current users who are typing.
-    open private(set) lazy var typingIndicatorView: TypingIndicatorView = components
-        .typingIndicatorView
-        .init()
-        .withoutAutoresizingMaskConstraints
-
-    /// The height of the typing indicator view
-    open private(set) var typingIndicatorViewHeight: CGFloat = 28
-
-    /// A Boolean value indicating whether the typing events are enabled.
-    open var isTypingEventsEnabled: Bool {
-        dataSource?.channel(for: self)?.config.typingEventsEnabled == true
-    }
-
     /// A button to scroll the collection view to the bottom.
     /// Visible when there is unread message and the collection view is not at the bottom already.
     open private(set) lazy var scrollToLatestMessageButton: ScrollToLatestMessageButton = components
@@ -129,12 +115,6 @@ open class ChatMessageListVC:
         view.addSubview(listView)
         listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
 
-        view.addSubview(typingIndicatorView)
-        typingIndicatorView.isHidden = true
-        typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
-        typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
-        typingIndicatorView.bottomAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
-        
         view.addSubview(scrollToLatestMessageButton)
         listView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
         scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -6).isActive = true
@@ -292,28 +272,6 @@ open class ChatMessageListVC:
             cid: cid,
             client: client
         )
-    }
-    
-    /// Shows typing Indicator.
-    /// - Parameter typingUsers: typing users gotten from `channelController`
-    open func showTypingIndicator(typingUsers: [ChatUser]) {
-        guard isTypingEventsEnabled else { return }
-
-        if let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name {
-            typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingUsers.count - 1)
-        } else {
-            // If we somehow cannot fetch any user name, we simply show that `Someone is typing`
-            typingIndicatorView.content = L10n.MessageList.TypingIndicator.typingUnknown
-        }
-
-        typingIndicatorView.isHidden = false
-    }
-    
-    /// Hides typing Indicator.
-    open func hideTypingIndicator() {
-        guard isTypingEventsEnabled, typingIndicatorView.isVisible else { return }
-
-        typingIndicatorView.isHidden = true
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
