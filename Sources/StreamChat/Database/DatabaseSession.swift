@@ -237,6 +237,12 @@ protocol ChannelReadDatabaseSession {
     
     /// Sets the channel `cid` as read for `userId`
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date)
+    
+    /// Removes the read object of the given user in the given channel if it exists.
+    /// - Parameters:
+    ///   - cid: The channel identifier which should be marked as unread.
+    ///   - userId: The user identifier who's read should be removed.
+    func markChannelAsUnread(cid: ChannelId, by userId: UserId)
 }
 
 protocol ChannelMuteDatabaseSession {

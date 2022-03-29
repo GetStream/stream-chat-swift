@@ -116,6 +116,12 @@ extension NSManagedObjectContext {
             )
         }
     }
+    
+    func markChannelAsUnread(cid: ChannelId, by userId: UserId) {
+        guard let read = loadChannelRead(cid: cid, userId: userId) else { return }
+                
+        delete(read)
+    }
 
     func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
         ChannelReadDTO.load(cid: cid, userId: userId, context: self)

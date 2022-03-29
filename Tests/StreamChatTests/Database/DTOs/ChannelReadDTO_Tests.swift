@@ -271,6 +271,41 @@ final class ChannelReadDTO_Tests: XCTestCase {
         // THEN
         XCTAssertTrue(observer.updatedMessageIDs.isEmpty)
     }
+    
+    // MARK: - markChannelAsUnread
+    
+    func test_markChannelAsUnread_whenReadExists_removesIt() throws {
+        // GIVEN
+        let member: MemberPayload = .dummy()
+        let read = ChannelReadPayload(
+            user: member.user,
+            lastReadAt: .init(),
+            unreadMessagesCount: 10
+        )
+        
+        let channel: ChannelPayload = .dummy(
+            members: [member],
+            channelReads: [read]
+        )
+                
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        
+        var readDTO: ChannelReadDTO? {
+            ChannelReadDTO.load(cid: channel.channel.cid, userId: read.user.id, context: database.viewContext)
+        }
+        XCTAssertNotNil(readDTO)
+            
+        // WHEN
+        database.viewContext.markChannelAsUnread(
+            cid: channel.channel.cid,
+            by: member.user.id
+        )
+        
+        // THEN
+        XCTAssertNil(readDTO)
+    }
 }
 
 // MARK: - Helpers
