@@ -8,6 +8,13 @@ public var log: Logger {
     LogConfig.logger
 }
 
+public enum StreamRuntimeCheck {
+    /// Enables assertions thrown by the Stream SDK.
+    ///
+    /// When set to false, a message will be logged on console, but the assertion will not be thrown.
+    public static var assertionsEnabled = false
+}
+
 /// Entity for identifying which subsystem the log message comes from.
 public struct LogSubsystem: OptionSet {
     public let rawValue: Int
@@ -378,7 +385,9 @@ public class Logger {
         lineNumber: UInt = #line
     ) {
         guard !condition() else { return }
-        Swift.assert(condition(), String(describing: message()), file: fileName, line: lineNumber)
+        if RuntimeCheck.assertionsEnabled {
+            Swift.assert(condition(), String(describing: message()), file: fileName, line: lineNumber)
+        }
         log(
             .error,
             functionName: functionName,
@@ -401,7 +410,9 @@ public class Logger {
         fileName: StaticString = #file,
         lineNumber: UInt = #line
     ) {
-        Swift.assertionFailure(String(describing: message()), file: fileName, line: lineNumber)
+        if RuntimeCheck.assertionsEnabled {
+            Swift.assertionFailure(String(describing: message()), file: fileName, line: lineNumber)
+        }
         log(
             .error,
             functionName: functionName,

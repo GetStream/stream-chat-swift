@@ -84,7 +84,12 @@
           "combine/messages",
           "combine/events"
         ]
-      },
+    },
+    {
+      "Advanced": [
+        "advanced/assertions"
+      ]
+    },
     {
       "Guides": [
         "guides/importance-of-synchronize",
