@@ -54,7 +54,7 @@ open class ChatMessageLayoutOptionsResolver {
         if !isLastInSequence {
             options.insert(.continuousBubble)
         }
-        if !isLastInSequence && !message.isSentByCurrentUser {
+        if !isLastInSequence && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.avatarSizePadding)
         }
         if isLastInSequence {
