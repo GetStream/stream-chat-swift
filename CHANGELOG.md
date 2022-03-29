@@ -15,12 +15,8 @@ _March 29, 2022_
 ### 🐞 Fixed
 - Fix payload for reaction when using `enforce_unique` [#1861](https://github.com/GetStream/stream-chat-swift/issues/1861)
 - Use IndexPath's item instead of row for macOS compatibility [#1859](https://github.com/GetStream/stream-chat-swift/pull/1859)
-- Fix commands without arguments cannot be sent without text [#1869](https://github.com/GetStream/stream-chat-swift/issues/1869)
 - Fix mime-type for file attachments [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
-- Fix pasting long text into composer won't update input height [#1875](https://github.com/GetStream/stream-chat-swift/issues/1875)
 - Properly decode `removed_from_channel` event when channel is incomplete [#1881](https://github.com/GetStream/stream-chat-swift/pull/1881)
-- Fix long file names overlapped by the close button [#1880](https://github.com/GetStream/stream-chat-swift/issues/1880)
-- Fix long file names being truncated at the end instead of the middle [#1880](https://github.com/GetStream/stream-chat-swift/issues/1880)
 
 ## StreamChatUI
 ### ⚠️ Changed
@@ -29,6 +25,10 @@ _March 29, 2022_
 - Add Mixed Attachments UI Support [#1877](https://github.com/GetStream/stream-chat-swift/pull/1877)
 ### 🐞 Fixed
 - Resolve attachment type when importing file from file picker [#1873](https://github.com/GetStream/stream-chat-swift/pull/1873)
+- Fix long file names overlapped by the close button [#1880](https://github.com/GetStream/stream-chat-swift/issues/1880)
+- Fix long file names being truncated at the end instead of the middle [#1880](https://github.com/GetStream/stream-chat-swift/issues/1880)
+- Fix commands without arguments cannot be sent without text [#1869](https://github.com/GetStream/stream-chat-swift/issues/1869)
+- Fix pasting long text into composer won't update input height [#1875](https://github.com/GetStream/stream-chat-swift/issues/1875)
 
 # [4.12.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.12.0)
 _March 16, 2022_
