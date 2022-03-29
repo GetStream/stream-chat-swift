@@ -10,8 +10,8 @@ import SwiftUI
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
     public static let sendOneAction = Notification.Name("kStreamChatSendOneAction")
-    public static let sendRedPacketTapAction = Notification.Name("kStreamChatSendRedPacketTapAction")
-    public static let pickUpRedPacket = Notification.Name("kStreamChatPickUpRedPacket")
+    public static let sendGiftPacketTapAction = Notification.Name("kStreamChatSendGiftPacketTapAction")
+    public static let pickUpGiftPacket = Notification.Name("kStreamChatPickUpGiftPacket")
     public static let showSnackBar = Notification.Name("kStreamshowSnackBar")
     public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
     public static let disburseFundAction = Notification.Name("kStreamChatDisburseFundTapAction")
@@ -741,7 +741,7 @@ open class ComposerVC: _ViewController,
         guard let channelId = channelController?.channel?.cid else { return }
         var userInfo = [String: Any]()
         userInfo["channelId"] = channelId
-        NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
+        NotificationCenter.default.post(name: .sendGiftPacketTapAction, object: nil, userInfo: userInfo)
     }
 
     private func animateMenuButton() {
