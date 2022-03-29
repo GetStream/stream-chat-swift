@@ -11,7 +11,7 @@
   <a href="https://getstream.io/chat/docs/sdk/ios/"><img src="https://img.shields.io/badge/iOS-11%2B-lightblue" /></a>
   <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.2-orange.svg" /></a>
   <a href="https://github.com/GetStream/stream-chat-swift/actions"><img src="https://github.com/GetStream/stream-chat-swift/actions/workflows/smoke-checks.yml/badge.svg" /></a>
-  <a href="https://codecov.io/gh/GetStream/stream-chat-swift"><img src="https://codecov.io/gh/GetStream/stream-chat-swift/branch/main/graph/badge.svg" /></a>
+  <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 
 # The official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/)
@@ -19,7 +19,7 @@
 The **StreamChatUI SDK** for UIKit is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/) when developing with UIKit, a service for building chat and messaging applications.
 
 ## SwiftUI
-We also have an official SDK for SwiftUI called **[StreamChatSwiftUI SDK](https://github.com/GetStream/stream-chat-swif)**. Our [SwiftUI specific SDK is available here](https://github.com/GetStream/stream-chat-swif).
+We also have an official SDK for SwiftUI called **[StreamChatSwiftUI SDK](https://github.com/GetStream/stream-chat-swiftui)**.
 
 ---
 
