@@ -33,6 +33,9 @@ struct MemberEventMiddleware: EventMiddleware {
                     break
                 }
                 
+                // Mark channel as unread
+                session.markChannelAsUnread(cid: event.cid, by: event.user.id)
+                
                 // We remove the member from the channel
                 channel.members.remove(member)
                 if let membership = channel.membership, membership.user.id == event.user.id {

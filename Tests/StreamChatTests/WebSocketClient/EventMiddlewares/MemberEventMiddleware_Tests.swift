@@ -280,6 +280,31 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         )
     }
     
+    func test_memberRemovedEvent_marksChannelAsUnread() throws {
+        let mockSession = DatabaseSession_Mock(underlyingSession: database.viewContext)
+
+        // GIVEN
+        let member: MemberPayload = .dummy()
+        let channelPayload: ChannelPayload = .dummy(members: [member])
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        // WHEN
+        let eventPayload: EventPayload = .init(
+            eventType: .memberRemoved,
+            cid: channelPayload.channel.cid,
+            user: member.user,
+            createdAt: .unique
+        )
+        let event = try MemberRemovedEventDTO(from: eventPayload)
+        _ = middleware.handle(event: event, session: mockSession)
+        
+        // THEN
+        XCTAssertEqual(mockSession.markChannelAsUnreadParams?.cid, event.cid)
+        XCTAssertEqual(mockSession.markChannelAsUnreadParams?.userId, event.user.id)
+    }
+    
     // MARK: - MemberUpdatedEvent
     
     func tests_middleware_forwardsMemberUpdatedEvent_ifDatabaseWriteGeneratesError() throws {
