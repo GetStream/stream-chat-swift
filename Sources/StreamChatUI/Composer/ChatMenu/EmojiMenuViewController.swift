@@ -16,6 +16,7 @@ class EmojiMenuViewController: UIViewController {
 
     // MARK: Outlets
     @IBOutlet weak var collectionEmoji: UICollectionView!
+    @IBOutlet weak var activityView: UIActivityIndicatorView!
     @IBOutlet weak var collectionMenu: UICollectionView!
 
     // MARK: Variables
@@ -37,7 +38,7 @@ class EmojiMenuViewController: UIViewController {
                 self.packageList = result.body?.packageList ?? []
                 self.collectionMenu.reloadData()
                 guard let packageId = self.packageList.first?.packageID else { return }
-                self.loadSticker(stickerId: "\(packageId)")
+                self.loadRecentSticker()
             }
             .store(in: &stickerCalls)
     }
@@ -53,6 +54,23 @@ class EmojiMenuViewController: UIViewController {
                 self.collectionEmoji.reloadData()
             }
             .store(in: &stickerCalls)
+    }
+
+    private func loadRecentSticker() {
+        StickerApi.recentSticker()
+            .sink { finish in
+                print(finish)
+            } receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.stickers = result.body?.stickerList ?? []
+                self.collectionEmoji.reloadData()
+            }
+            .store(in: &stickerCalls)
+    }
+
+    private func updateLoadingView() {
+        activityView.isHidden = self.stickers.count != 0
+        collectionEmoji.isHidden = self.stickers.count != 0
     }
 
     @IBAction func btnShowPackage(_ sender: Any) {

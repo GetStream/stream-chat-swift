@@ -1022,6 +1022,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="u8N-cu-hBs">
+                                <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                                <color key="color" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="6yO-sD-uPy">
                                 <rect key="frame" x="5" y="94" width="404" height="802"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1122,6 +1126,8 @@
                             <constraint firstItem="aae-de-nmf" firstAttribute="top" secondItem="e2l-6g-8gG" secondAttribute="top" constant="10" id="4ZF-eo-QSN"/>
                             <constraint firstItem="6yO-sD-uPy" firstAttribute="leading" secondItem="e2l-6g-8gG" secondAttribute="leading" constant="5" id="9mK-z3-1yr"/>
                             <constraint firstItem="e2l-6g-8gG" firstAttribute="trailing" secondItem="6yO-sD-uPy" secondAttribute="trailing" constant="5" id="Af8-dl-QTI"/>
+                            <constraint firstItem="u8N-cu-hBs" firstAttribute="centerX" secondItem="4ki-Ei-aSo" secondAttribute="centerX" id="Eyx-GH-ZUT"/>
+                            <constraint firstItem="u8N-cu-hBs" firstAttribute="centerY" secondItem="4ki-Ei-aSo" secondAttribute="centerY" id="M1p-50-LH3"/>
                             <constraint firstItem="e2l-6g-8gG" firstAttribute="trailing" secondItem="cdY-bP-K8s" secondAttribute="trailing" constant="15" id="Nle-i9-AR8"/>
                             <constraint firstItem="6yO-sD-uPy" firstAttribute="top" secondItem="aae-de-nmf" secondAttribute="bottom" constant="10" id="VXt-44-8UR"/>
                             <constraint firstAttribute="bottom" secondItem="6yO-sD-uPy" secondAttribute="bottom" id="dck-8H-JO1"/>
@@ -1131,6 +1137,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityView" destination="u8N-cu-hBs" id="aKk-Pq-h5M"/>
                         <outlet property="collectionEmoji" destination="6yO-sD-uPy" id="Bpt-qo-woa"/>
                         <outlet property="collectionMenu" destination="aae-de-nmf" id="Zcu-wF-5v1"/>
                     </connections>

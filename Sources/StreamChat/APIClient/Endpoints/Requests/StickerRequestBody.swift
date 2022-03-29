@@ -69,6 +69,11 @@ public struct PackageInfoBody: Codable {
     public let package: Package?
 }
 
+public struct RecentStickerBody: Codable {
+    public let stickerList: [Sticker]?
+    public let pageMap: [String: Int]?
+}
+
 // MARK: EmptyResponse
 public struct EmptyStipopResponse: Codable { }
 

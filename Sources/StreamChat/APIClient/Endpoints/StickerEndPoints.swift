@@ -60,6 +60,15 @@ extension StickerApi {
     public static func stickerSend(stickerId: Int) -> AnyPublisher<ResponseBody<EmptyStipopResponse>, Error> {
         let url = base.absoluteString + "analytics/send/\(stickerId)?userId=\(userId)"
         var request = (URLRequest(url: URL(string: url)!))
+        request.httpMethod = "POST"
+        return agent.run(request)
+            .map(\.value)
+            .eraseToAnyPublisher()
+    }
+
+    public static func recentSticker() -> AnyPublisher<ResponseBody<RecentStickerBody>, Error> {
+        let url = base.absoluteString + "package/send/\(userId)"
+        var request = (URLRequest(url: URL(string: url)!))
         request.httpMethod = "GET"
         return agent.run(request)
             .map(\.value)
