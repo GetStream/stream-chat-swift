@@ -11,7 +11,7 @@ import Foundation
 public struct StreamChatMessageType {
     public static let ChatGroupMute = 100
     public static let ChatGroupUnMute = 101
-    public static let redPacketExpired = 102
+    public static let RedPacketExpired = 102
 }
 class Snackbar {
     static func show(text: String, messageType: Int? = nil) {
