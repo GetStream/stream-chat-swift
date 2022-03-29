@@ -14,6 +14,8 @@ StreamRuntimeCheck.assertionsEnabled = true
 
 The default value for this property is `false`
 
+Independently of the value of this flag, a message will always be printed in the console.
+
 :::note
 When enabling Stream assertions, the default behavior of assertions still apply:
 - In playgrounds and -Onone builds (the default for Xcode’s Debug configuration): If the condition evaluates to false, stop program execution in a debuggable state after printing the message.
