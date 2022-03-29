@@ -8,21 +8,22 @@ import CoreData
 import XCTest
 
 final class EventNotificationCenter_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
     
     override func tearDown() {
+        AssertAsync.canBeReleased(&database)
         database = nil
         super.tearDown()
     }
     
     func test_init_worksCorrectly() {
         // Create middlewares
-        let middlewares: [EventMiddlewareMock] = [
+        let middlewares: [EventMiddleware_Mock] = [
             .init(),
             .init(),
             .init()
@@ -33,7 +34,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         middlewares.forEach(center.add)
 
         // Assert middlewares are assigned correctly
-        let centerMiddlewares = center.middlewares as! [EventMiddlewareMock]
+        let centerMiddlewares = center.middlewares as! [EventMiddleware_Mock]
         XCTAssertEqual(middlewares.count, centerMiddlewares.count)
         zip(middlewares, centerMiddlewares).forEach {
             XCTAssertTrue($0.0 === $0.1)
@@ -42,7 +43,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
     
     func test_addMiddleware_worksCorrectly() {
         // Create middlewares
-        let middlewares: [EventMiddlewareMock] = [
+        let middlewares: [EventMiddleware_Mock] = [
             .init(),
             .init(),
             .init()
@@ -55,7 +56,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         middlewares.forEach(center.add)
         
         // Assert middlewares are assigned correctly
-        let centerMiddlewares = center.middlewares as! [EventMiddlewareMock]
+        let centerMiddlewares = center.middlewares as! [EventMiddleware_Mock]
         XCTAssertEqual(middlewares.count, centerMiddlewares.count)
         zip(middlewares, centerMiddlewares).forEach {
             XCTAssertTrue($0.0 === $0.1)
@@ -63,7 +64,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
     }
     
     func test_eventIsNotPublished_ifSomeMiddlewareDoesNotForwardEvent() {
-        let consumingMiddleware = EventMiddlewareMock { _, _ in nil }
+        let consumingMiddleware = EventMiddleware_Mock { _, _ in nil }
 
         // Create a notification center with blocking middleware
         let center = EventNotificationCenter(database: database)
@@ -107,7 +108,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         var usedSession: DatabaseSession?
         
         // Inject spy middleware
-        center.add(middleware: EventMiddlewareMock(closure: { event, session in
+        center.add(middleware: EventMiddleware_Mock(closure: { event, session in
             usedSession = session
             XCTAssertTrue(self.database.isWriteSessionInProgress)
             return event
@@ -221,7 +222,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         let eventLogger = EventLogger(center)
         
         // Add event swapping middleware
-        center.add(middleware: EventMiddlewareMock { event, session in
+        center.add(middleware: EventMiddleware_Mock { event, session in
             // Assert expected event is received
             XCTAssertEqual(event as? TestEvent, originalEvent)
             

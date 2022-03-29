@@ -7,7 +7,7 @@
 import XCTest
 
 final class MessagePayload_Tests: XCTestCase {
-    let messageJSON = XCTestCase.mockData(fromFile: "Message", bundle: .testTools)
+    let messageJSON = XCTestCase.mockData(fromFile: "Message")
     let messageJSONWithCorruptedAttachments = XCTestCase.mockData(
         fromFile: "MessageWithBrokenAttachments",
         bundle: .testTools
@@ -200,7 +200,7 @@ final class MessageRequestBody_Tests: XCTestCase {
 
 final class MessageRepliesPayload_Tests: XCTestCase {
     func test_isSerialized() throws {
-        let mockJSON = XCTestCase.mockData(fromFile: "Messages", bundle: .testTools)
+        let mockJSON = XCTestCase.mockData(fromFile: "Messages")
         let payload = try JSONDecoder.default.decode(MessageRepliesPayload.self, from: mockJSON)
         
         // Assert 2 messages successfully decoded.
@@ -210,7 +210,7 @@ final class MessageRepliesPayload_Tests: XCTestCase {
 
 final class MessageReactionsPayload_Tests: XCTestCase {
     func test_isSerialized() throws {
-        let mockJSON = XCTestCase.mockData(fromFile: "MessageReactionsPayload", bundle: .testTools)
+        let mockJSON = XCTestCase.mockData(fromFile: "MessageReactionsPayload")
         let payload = try JSONDecoder.default.decode(MessageReactionsPayload.self, from: mockJSON)
 
         // Assert 2 reactions successfully decoded.

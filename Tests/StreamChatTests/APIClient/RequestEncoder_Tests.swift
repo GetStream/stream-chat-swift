@@ -10,7 +10,7 @@ final class RequestEncoder_Tests: XCTestCase {
     var encoder: RequestEncoder!
     var baseURL: URL!
     var apiKey: APIKey!
-    fileprivate var connectionDetailsProvider: TestConnectionDetailsProviderDelegate!
+    fileprivate var connectionDetailsProvider: ConnectionDetailsProviderDelegate_Spy!
     
     override func setUp() {
         super.setUp()
@@ -19,11 +19,10 @@ final class RequestEncoder_Tests: XCTestCase {
         baseURL = .unique()
         encoder = DefaultRequestEncoder(baseURL: baseURL, apiKey: apiKey)
         
-        connectionDetailsProvider = TestConnectionDetailsProviderDelegate()
+        connectionDetailsProvider = ConnectionDetailsProviderDelegate_Spy()
         encoder.connectionDetailsProviderDelegate = connectionDetailsProvider
 
-        let time = VirtualTime()
-        VirtualTimeTimer.time = time
+        VirtualTimeTimer.time = VirtualTime()
     }
 
     override func tearDown() {
@@ -31,7 +30,7 @@ final class RequestEncoder_Tests: XCTestCase {
         baseURL = nil
         apiKey = nil
         connectionDetailsProvider = nil
-        VirtualTimeTimer.time = nil
+        VirtualTimeTimer.invalidate()
 
         super.tearDown()
     }

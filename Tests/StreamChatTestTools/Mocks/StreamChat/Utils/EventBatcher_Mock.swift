@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class EventBatcherMock: EventBatcher {
+final class EventBatcher_Mock: EventBatcher {
     var currentBatch: [Event] = []
     
     let handler: ([Event]) -> Void

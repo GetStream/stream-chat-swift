@@ -7,10 +7,10 @@
 import XCTest
 
 final class MessageEditor_Tests: XCTestCase {
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
-    var messageRepository: MessageRepositoryMock!
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
+    var messageRepository: MessageRepository_Spy!
     var editor: MessageEditor!
     
     // MARK: - Setup
@@ -18,20 +18,27 @@ final class MessageEditor_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
-        messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
+        messageRepository = MessageRepository_Spy(database: database, apiClient: apiClient)
         editor = MessageEditor(messageRepository: messageRepository, database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
         apiClient.cleanUp()
-        apiClient = nil
-        messageRepository.clear()
+
+        AssertAsync {
+            Assert.canBeReleased(&messageRepository)
+            Assert.canBeReleased(&editor)
+            Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&apiClient)
+            Assert.canBeReleased(&database)
+        }
+
         messageRepository = nil
         editor = nil
-        webSocketClient = nil
+        apiClient = nil
         database = nil
 
         super.tearDown()

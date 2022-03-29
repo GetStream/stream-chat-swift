@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of `WebSocketClient`.
-final class WebSocketClientMock: WebSocketClient {
+final class WebSocketClient_Mock: WebSocketClient {
     let init_sessionConfiguration: URLSessionConfiguration
     let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
@@ -51,18 +51,18 @@ final class WebSocketClientMock: WebSocketClient {
         disconnect_source = source
     }
     
-    var mockEventsBatcher: EventBatcherMock {
-        eventsBatcher as! EventBatcherMock
+    var mockEventsBatcher: EventBatcher_Mock {
+        eventsBatcher as! EventBatcher_Mock
     }
 }
 
-extension WebSocketClientMock {
+extension WebSocketClient_Mock {
     convenience init() {
         self.init(
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             eventDecoder: EventDecoder(),
-            eventNotificationCenter: EventNotificationCenterMock(database: DatabaseContainerMock())
+            eventNotificationCenter: EventNotificationCenter_Mock(database: DatabaseContainer_Spy())
         )
     }
 }
@@ -70,9 +70,9 @@ extension WebSocketClientMock {
 extension WebSocketClient.Environment {
     static var mock: Self {
         .init(
-            createPingController: WebSocketPingControllerMock.init,
-            createEngine: WebSocketEngineMock.init,
-            eventBatcherBuilder: { EventBatcherMock(handler: $0) }
+            createPingController: WebSocketPingController_Mock.init,
+            createEngine: WebSocketEngine_Mock.init,
+            eventBatcherBuilder: { EventBatcher_Mock(handler: $0) }
         )
     }
 }

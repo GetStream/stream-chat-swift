@@ -8,9 +8,9 @@
 import XCTest
 
 final class ChatPushNotificationContent_Tests: XCTestCase {
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
     var currentUserUpdater: CurrentUserUpdater!
     var clientWithOffline: ChatClient!
     let apiKey: APIKey = .init("123")
@@ -26,15 +26,15 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
 
         clientWithOffline = ChatClient(config: configOffline)
 
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
 
         var env = ChatClient.Environment()
         env.databaseContainerBuilder = { _, _, _, _, _, _ in self.database }
         env.apiClientBuilder = { _, _, _, _, _, _ in self.apiClient }
         
-        clientWithOffline = ChatClientMock(
+        clientWithOffline = ChatClient_Mock(
             config: configOffline,
             workerBuilders: [],
             environment: env

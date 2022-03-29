@@ -54,7 +54,7 @@ final class ChatConnectionController_Tests: XCTestCase {
     
     func test_delegate_isAssignedCorrectly() {
         // Set the delegate
-        let delegate = TestConnectionControllerDelegate(expectedQueueId: callbackQueueID)
+        let delegate = ConnectionController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly
@@ -63,7 +63,7 @@ final class ChatConnectionController_Tests: XCTestCase {
     
     func test_delegate_isReferencedWeakly() {
         // Create the delegate
-        var delegate: TestConnectionControllerDelegate? = .init(expectedQueueId: callbackQueueID)
+        var delegate: ConnectionController_Delegate? = .init(expectedQueueId: callbackQueueID)
         
         // Set the delegate
         controller.delegate = delegate
@@ -77,7 +77,7 @@ final class ChatConnectionController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutConnectionStatusChanges() {
         // Set the delegate
-        let delegate = TestConnectionControllerDelegate(expectedQueueId: callbackQueueID)
+        let delegate = ConnectionController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert no connection status changes received so far
@@ -131,11 +131,11 @@ final class ChatConnectionController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    var chatClientUpdater: ChatClientUpdaterMock!
+    var chatClientUpdater: ChatClientUpdater_Mock!
 
     lazy var connectionControllerEnvironment: ChatConnectionController
         .Environment = .init(chatClientUpdaterBuilder: { [unowned self] in
-            self.chatClientUpdater = ChatClientUpdaterMock(client: $0)
+            self.chatClientUpdater = ChatClientUpdater_Mock(client: $0)
             return self.chatClientUpdater!
         })
 }

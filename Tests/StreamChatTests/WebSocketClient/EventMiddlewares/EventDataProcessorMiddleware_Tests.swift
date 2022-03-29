@@ -8,16 +8,16 @@ import XCTest
 
 final class EventDataProcessorMiddleware_Tests: XCTestCase {
     var middleware: EventDataProcessorMiddleware!
-    fileprivate var database: DatabaseContainerMock!
+    fileprivate var database: DatabaseContainer_Spy!
     
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = EventDataProcessorMiddleware()
     }
     
     override func tearDown() {
-        middleware = nil
+        AssertAsync.canBeReleased(&database)
         database = nil
         super.tearDown()
     }
@@ -214,7 +214,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let testEvent = TestEvent(payload: eventPayload)
         
         // Simulate the DB fails to save the payload
-        let session = DatabaseSessionMock(underlyingSession: database.viewContext)
+        let session = DatabaseSession_Mock(underlyingSession: database.viewContext)
         session.errorToReturn = TestError()
         
         // Let the middleware handle the event

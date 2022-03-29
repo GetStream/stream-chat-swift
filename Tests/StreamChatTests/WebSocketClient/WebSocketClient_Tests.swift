@@ -15,16 +15,16 @@ final class WebSocketClient_Tests: XCTestCase {
     
     var time: VirtualTime!
     var endpoint: Endpoint<EmptyResponse>!
-    private var decoder: EventDecoderMock!
-    var engine: WebSocketEngineMock? { webSocketClient.engine as? WebSocketEngineMock }
+    private var decoder: EventDecoder_Mock!
+    var engine: WebSocketEngine_Mock? { webSocketClient.engine as? WebSocketEngine_Mock }
     var connectionId: String!
     var user: ChatUser!
-    var requestEncoder: TestRequestEncoder!
-    var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
-    var eventsBatcher: EventBatcherMock { webSocketClient.eventsBatcher as! EventBatcherMock }
+    var requestEncoder: RequestEncoder_Spy!
+    var pingController: WebSocketPingController_Mock { webSocketClient.pingController as! WebSocketPingController_Mock }
+    var eventsBatcher: EventBatcher_Mock { webSocketClient.eventsBatcher as! EventBatcher_Mock }
     
-    var eventNotificationCenter: EventNotificationCenterMock!
-    private var eventNotificationCenterMiddleware: EventMiddlewareMock!
+    var eventNotificationCenter: EventNotificationCenter_Mock!
+    private var eventNotificationCenterMiddleware: EventMiddleware_Mock!
     
     var database: DatabaseContainer!
     
@@ -38,13 +38,13 @@ final class WebSocketClient_Tests: XCTestCase {
             userInfo: UserInfo(id: .unique)
         )
         
-        decoder = EventDecoderMock()
+        decoder = EventDecoder_Mock()
         
-        requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
+        requestEncoder = RequestEncoder_Spy(baseURL: .unique(), apiKey: .init(.unique))
         
-        database = DatabaseContainerMock()
-        eventNotificationCenter = EventNotificationCenterMock(database: database)
-        eventNotificationCenterMiddleware = EventMiddlewareMock()
+        database = DatabaseContainer_Spy()
+        eventNotificationCenter = EventNotificationCenter_Mock(database: database)
+        eventNotificationCenterMiddleware = EventMiddleware_Mock()
         eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
         
         var environment = WebSocketClient.Environment.mock
@@ -63,13 +63,17 @@ final class WebSocketClient_Tests: XCTestCase {
     }
 
     override func tearDown() {
+        AssertAsync.canBeReleased(&webSocketClient)
+        AssertAsync.canBeReleased(&eventNotificationCenter)
+        AssertAsync.canBeReleased(&eventNotificationCenterMiddleware)
+        AssertAsync.canBeReleased(&database)
+
         webSocketClient = nil
         eventNotificationCenter = nil
         eventNotificationCenterMiddleware = nil
         database = nil
-
+        VirtualTimeTimer.invalidate()
         time = nil
-        VirtualTimeTimer.time = nil
         endpoint = nil
         decoder = nil
         connectionId = nil

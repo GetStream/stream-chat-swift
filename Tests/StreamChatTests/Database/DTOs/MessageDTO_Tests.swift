@@ -12,10 +12,11 @@ final class MessageDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
     
     override func tearDown() {
+        AssertAsync.canBeReleased(&database)
         database = nil
         super.tearDown()
     }

@@ -19,6 +19,7 @@ final class UserController_SwiftUI_Tests: iOS13TestCase {
     }
     
     override func tearDown() {
+        AssertAsync.canBeReleased(&userController)
         userController = nil
         
         super.tearDown()

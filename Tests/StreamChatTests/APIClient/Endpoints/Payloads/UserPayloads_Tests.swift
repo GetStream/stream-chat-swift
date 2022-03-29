@@ -7,8 +7,8 @@
 import XCTest
 
 final class UserPayload_Tests: XCTestCase {
-    let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser", bundle: .testTools)
-    let otherUserJSON = XCTestCase.mockData(fromFile: "OtherUser", bundle: .testTools)
+    let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser")
+    let otherUserJSON = XCTestCase.mockData(fromFile: "OtherUser")
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(UserPayload.self, from: currentUserJSON)
@@ -105,7 +105,7 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
 
 final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_isSerialized() throws {
-        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromFile: "UserUpdateResponse", bundle: .testTools)
+        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromFile: "UserUpdateResponse")
         let payload = try JSONDecoder.default.decode(
             UserUpdateResponse.self, from: currentUserUpdateResponseJSON
         )

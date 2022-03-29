@@ -16,8 +16,8 @@ final class EventsController_SwiftUI_Tests: iOS13TestCase {
     override func setUp() {
         super.setUp()
         
-        notificationCenter = EventNotificationCenterMock(
-            database: DatabaseContainerMock()
+        notificationCenter = EventNotificationCenter_Mock(
+            database: DatabaseContainer_Spy()
         )
         controller = EventsController(
             notificationCenter: notificationCenter

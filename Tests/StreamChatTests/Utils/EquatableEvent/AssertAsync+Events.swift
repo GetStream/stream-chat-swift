@@ -23,7 +23,7 @@ extension Assert {
         _ expression2: @autoclosure @escaping () -> [Event],
         timeout: TimeInterval = defaultTimeout,
         message: @autoclosure @escaping () -> String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> Assertion {
         var equatableCollection1: [EquatableEvent] { expression1().map(\.asEquatable) }

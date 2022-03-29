@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class ChannelListControllerMock: ChatChannelListController {
+final class ChannelListController_Mock: ChatChannelListController {
     @Atomic var synchronize_called = false
 
     var channels_simulated: [ChatChannel]?

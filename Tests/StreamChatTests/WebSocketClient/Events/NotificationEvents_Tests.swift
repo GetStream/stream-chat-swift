@@ -20,7 +20,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     }
     
     func test_messageNew() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationMessageNew", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationMessageNew")
         let event = try eventDecoder.decode(from: json) as? NotificationMessageNewEventDTO
         XCTAssertEqual(event?.message.user.id, "steep-moon-9")
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "general"))
@@ -30,7 +30,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     }
     
     func test_notificationMessageNew_withMissingFields() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationMessageNew+MissingFields", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationMessageNew+MissingFields")
         let event = try eventDecoder.decode(from: json) as? NotificationMessageNewEventDTO
         XCTAssertEqual(event?.message.user.id, "steep-moon-9")
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "general"))
@@ -40,14 +40,14 @@ final class NotificationsEvents_Tests: XCTestCase {
     }
     
     func test_markAllRead() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationMarkAllRead", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationMarkAllRead")
         let event = try eventDecoder.decode(from: json) as? NotificationMarkAllReadEventDTO
         XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21))
     }
     
     func test_markRead() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationMarkRead", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationMarkRead")
         let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.user.id, "steep-moon-9")
@@ -55,21 +55,21 @@ final class NotificationsEvents_Tests: XCTestCase {
     }
     
     func test_channelSomeMutedChannels() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
         XCTAssertEqual(event?.currentUser.id, "luke_skywalker")
         XCTAssertEqual(event?.payload.currentUser?.mutedChannels.isEmpty, false)
     }
     
     func test_channelNoMutedChannels() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithNoMutedChannels", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
         XCTAssertEqual(event?.currentUser.id, "luke_skywalker")
         XCTAssertEqual(event?.payload.currentUser?.mutedChannels.isEmpty, true)
     }
 
     func test_addToChannel() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
         let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E"))
         // Check if there is existing channel object in the payload.
@@ -81,7 +81,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     }
     
     func test_notificationAddedToChannelEventDTO_withMissingFields() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel+MissingFields", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel+MissingFields")
         let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E"))
         XCTAssertEqual(
@@ -92,13 +92,13 @@ final class NotificationsEvents_Tests: XCTestCase {
     }
     
     func test_removedFromChannel() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationRemovedFromChannel", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationRemovedFromChannel")
         let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
     
     func test_channelDeleted() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationChannelDeleted", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "NotificationChannelDeleted")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelDeletedEventDTO
 
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "!members-BSM7Tb6_XBXTGOaqZXCFh_4c4UQsYomWNkgQ0YgiGJw"))
@@ -110,7 +110,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationMessageNewEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let cid: ChannelId = .unique
@@ -145,7 +145,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationMarkAllReadEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -173,7 +173,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationMarkReadEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -203,7 +203,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationMutesUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -229,7 +229,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationAddedToChannelEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -259,7 +259,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationRemovedFromChannelEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -293,7 +293,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationChannelMutesUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -319,7 +319,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationInvitedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -353,7 +353,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationInviteAcceptedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -388,7 +388,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationInviteRejectedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -423,7 +423,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationChannelDeletedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(

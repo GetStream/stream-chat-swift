@@ -6,77 +6,7 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-extension ChatClient {
-    static var defaultMockedConfig: ChatClientConfig {
-        var config = ChatClientConfig(apiKey: .init("--== Mock ChatClient ==--"))
-        config.isLocalStorageEnabled = false
-        config.isClientInActiveMode = false
-        return config
-    }
-
-    /// Create a new instance of mock `ChatClient`
-    static func mock(config: ChatClientConfig? = nil) -> ChatClient {
-        .init(
-            config: config ?? defaultMockedConfig,
-            environment: .init(
-                apiClientBuilder: APIClient_Mock.init,
-                webSocketClientBuilder: {
-                    WebSocketClient_Mock(
-                        sessionConfiguration: $0,
-                        requestEncoder: $1,
-                        eventDecoder: $2,
-                        eventNotificationCenter: $3
-                    )
-                },
-                databaseContainerBuilder: {
-                    try DatabaseContainerMock(
-                        kind: $0,
-                        shouldFlushOnStart: $1,
-                        shouldResetEphemeralValuesOnStart: $2,
-                        localCachingSettings: $3,
-                        deletedMessagesVisibility: $4,
-                        shouldShowShadowedMessages: $5
-                    )
-                }
-            )
-        )
-    }
-}
-
-extension ChatClient {
-    static var mock: ChatClient {
-        ChatClientMock(
-            config: .init(apiKey: .init(.unique)),
-            workerBuilders: [],
-            environment: .mock
-        )
-    }
-    
-    var mockAPIClient: APIClientMock {
-        apiClient as! APIClientMock
-    }
-    
-    var mockWebSocketClient: WebSocketClientMock {
-        webSocketClient as! WebSocketClientMock
-    }
-    
-    var mockDatabaseContainer: DatabaseContainerMock {
-        databaseContainer as! DatabaseContainerMock
-    }
-
-    func simulateProvidedConnectionId(connectionId: ConnectionId?) {
-        guard let connectionId = connectionId else {
-            webSocketClient(
-                mockWebSocketClient,
-                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: nil))
-            )
-            return
-        }
-        webSocketClient(mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: connectionId))
-    }
-}
-
-final class ChatClientMock: ChatClient {
+final class ChatClient_Mock: ChatClient {
     @Atomic var init_config: ChatClientConfig
     @Atomic var init_tokenProvider: TokenProvider?
     @Atomic var init_environment: Environment
@@ -122,7 +52,7 @@ final class ChatClientMock: ChatClient {
 
     override func fetchCurrentUserIdFromDatabase() -> UserId? {
         fetchCurrentUserIdFromDatabase_called = true
-        
+
         return super.fetchCurrentUserIdFromDatabase()
     }
 
@@ -149,7 +79,7 @@ final class ChatClientMock: ChatClient {
     // MARK: - Clean Up
 
     func cleanUp() {
-        (apiClient as? APIClientMock)?.cleanUp()
+        (apiClient as? APIClient_Spy)?.cleanUp()
 
         fetchCurrentUserIdFromDatabase_called = false
 
@@ -160,15 +90,89 @@ final class ChatClientMock: ChatClient {
 
         completeTokenWaiters_called = false
         completeTokenWaiters_token = nil
+
+        _backgroundWorkers?.removeAll()
+        init_tokenProvider = nil
+        init_completion = nil
+    }
+}
+
+extension ChatClient {
+    static var defaultMockedConfig: ChatClientConfig {
+        var config = ChatClientConfig(apiKey: .init("--== Mock ChatClient ==--"))
+        config.isLocalStorageEnabled = false
+        config.isClientInActiveMode = false
+        return config
+    }
+
+    /// Create a new instance of mock `ChatClient`
+    static func mock(config: ChatClientConfig? = nil) -> ChatClient {
+        .init(
+            config: config ?? defaultMockedConfig,
+            environment: .init(
+                apiClientBuilder: APIClient_Spy.init,
+                webSocketClientBuilder: {
+                    WebSocketClient_Mock(
+                        sessionConfiguration: $0,
+                        requestEncoder: $1,
+                        eventDecoder: $2,
+                        eventNotificationCenter: $3
+                    )
+                },
+                databaseContainerBuilder: {
+                    try DatabaseContainer_Spy(
+                        kind: $0,
+                        shouldFlushOnStart: $1,
+                        shouldResetEphemeralValuesOnStart: $2,
+                        localCachingSettings: $3,
+                        deletedMessagesVisibility: $4,
+                        shouldShowShadowedMessages: $5
+                    )
+                }
+            )
+        )
+    }
+}
+
+extension ChatClient {
+    static var mock: ChatClient {
+        ChatClient_Mock(
+            config: .init(apiKey: .init(.unique)),
+            workerBuilders: [],
+            environment: .mock
+        )
+    }
+    
+    var mockAPIClient: APIClient_Spy {
+        apiClient as! APIClient_Spy
+    }
+    
+    var mockWebSocketClient: WebSocketClient_Mock {
+        webSocketClient as! WebSocketClient_Mock
+    }
+    
+    var mockDatabaseContainer: DatabaseContainer_Spy {
+        databaseContainer as! DatabaseContainer_Spy
+    }
+
+    func simulateProvidedConnectionId(connectionId: ConnectionId?) {
+        guard let connectionId = connectionId else {
+            webSocketClient(
+                mockWebSocketClient,
+                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: nil))
+            )
+            return
+        }
+        webSocketClient(mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: connectionId))
     }
 }
 
 extension ChatClient.Environment {
     static var mock: ChatClient.Environment {
         .init(
-            apiClientBuilder: APIClientMock.init,
+            apiClientBuilder: APIClient_Spy.init,
             webSocketClientBuilder: {
-                WebSocketClientMock(
+                WebSocketClient_Mock(
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     eventDecoder: $2,
@@ -177,7 +181,7 @@ extension ChatClient.Environment {
             },
             databaseContainerBuilder: {
                 do {
-                    return try DatabaseContainerMock(
+                    return try DatabaseContainer_Spy(
                         kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
                         shouldFlushOnStart: $1,
                         shouldResetEphemeralValuesOnStart: $2,
@@ -186,15 +190,15 @@ extension ChatClient.Environment {
                         shouldShowShadowedMessages: $5
                     )
                 } catch {
-                    XCTFail("Unable to initialize DatabaseContainerMock \(error)")
-                    fatalError("Unable to initialize DatabaseContainerMock \(error)")
+                    XCTFail("Unable to initialize DatabaseContainer_Spy \(error)")
+                    fatalError("Unable to initialize DatabaseContainer_Spy \(error)")
                 }
             },
             requestEncoderBuilder: DefaultRequestEncoder.init,
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,
             notificationCenterBuilder: EventNotificationCenter.init,
-            clientUpdaterBuilder: ChatClientUpdaterMock.init
+            clientUpdaterBuilder: ChatClientUpdater_Mock.init
         )
     }
 
@@ -215,22 +219,5 @@ extension ChatClient.Environment {
                 )
             }
         )
-    }
-}
-
-// ===== TEMP =====
-
-final class APIClient_Mock: APIClient {
-    override func request<Response>(
-        endpoint: Endpoint<Response>,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) where Response: Decodable {
-        // Do nothing for now
-    }
-}
-
-final class WebSocketClient_Mock: WebSocketClient {
-    override func connect() {
-        // Do nothing for now
     }
 }

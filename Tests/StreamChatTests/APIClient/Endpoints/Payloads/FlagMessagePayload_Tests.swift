@@ -8,7 +8,7 @@ import XCTest
 
 final class FlagMessagePayload_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
-        let json = XCTestCase.mockData(fromFile: "FlagMessagePayload+DefaultExtraData", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "FlagMessagePayload+DefaultExtraData")
         let payload = try JSONDecoder.default.decode(FlagMessagePayload.self, from: json)
         
         // Assert current user payload is deserialized correctly.
@@ -25,7 +25,7 @@ final class FlagMessagePayload_Tests: XCTestCase {
     }
 
     func test_json_isDeserialized_withCustomData() throws {
-        let json = XCTestCase.mockData(fromFile: "FlagMessagePayload+CustomExtraData", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "FlagMessagePayload+CustomExtraData")
         let payload = try JSONDecoder.default.decode(FlagMessagePayload.self, from: json)
             
         // Assert current user payload is deserialized correctly.

@@ -7,10 +7,10 @@
 import XCTest
 
 final class MessageSender_Tests: XCTestCase {
-    var messageRepository: MessageRepositoryMock!
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
+    var messageRepository: MessageRepository_Spy!
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
     
     var sender: MessageSender!
     
@@ -19,10 +19,10 @@ final class MessageSender_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
-        messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
+        messageRepository = MessageRepository_Spy(database: database, apiClient: apiClient)
         sender = MessageSender(messageRepository: messageRepository, database: database, apiClient: apiClient)
         
         cid = .unique
@@ -33,13 +33,20 @@ final class MessageSender_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
-        apiClient = nil
+
+        AssertAsync {
+            Assert.canBeReleased(&sender)
+            Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&messageRepository)
+            Assert.canBeReleased(&apiClient)
+            Assert.canBeReleased(&database)
+        }
+
         sender = nil
         webSocketClient = nil
-        messageRepository.clear()
         messageRepository = nil
+        apiClient = nil
         database = nil
-        cid = nil
 
         super.tearDown()
     }

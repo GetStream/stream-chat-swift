@@ -6,7 +6,7 @@ import CoreData
 @testable import StreamChat
 import XCTest
 
-final class EntityDatabaseObserverMock<Item, DTO: NSManagedObject>: EntityDatabaseObserver<Item, DTO> {
+final class EntityDatabaseObserver_Mock<Item, DTO: NSManagedObject>: EntityDatabaseObserver<Item, DTO> {
     var synchronizeError: Error?
     var startObservingCalled: Bool = false
     

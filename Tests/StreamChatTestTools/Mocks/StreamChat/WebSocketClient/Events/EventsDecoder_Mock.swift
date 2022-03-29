@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class EventDecoderMock: AnyEventDecoder {
+final class EventDecoder_Mock: AnyEventDecoder {
     var decode_calledWithData: Data?
     var decodedEvent: Result<Event, Error>!
 

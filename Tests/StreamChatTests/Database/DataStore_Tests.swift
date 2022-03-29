@@ -15,6 +15,8 @@ final class DataStore_Tests: XCTestCase {
     }
     
     override func tearDown() {
+        AssertAsync.canBeReleased(&_client)
+        (_client as? ChatClient_Mock)?.cleanUp()
         _client = nil
         super.tearDown()
     }

@@ -7,8 +7,8 @@
 import XCTest
 
 final class UserListUpdater_Tests: XCTestCase {
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
     var database: DatabaseContainer!
     
     var listUpdater: UserListUpdater!
@@ -16,15 +16,23 @@ final class UserListUpdater_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
         
         listUpdater = UserListUpdater(database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
         apiClient.cleanUp()
+
+        AssertAsync {
+            Assert.canBeReleased(&apiClient)
+            Assert.canBeReleased(&listUpdater)
+            Assert.canBeReleased(&database)
+            Assert.canBeReleased(&webSocketClient)
+        }
+
         apiClient = nil
         listUpdater = nil
         database = nil

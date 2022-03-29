@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class MessageRepositoryMock: MessageRepository, Spy {
+final class MessageRepository_Spy: MessageRepository, Spy {
     var recordedFunctions: [String] = []
     var sendMessageIds: [MessageId] {
         Array(sendMessageCalls.keys)
@@ -15,6 +15,7 @@ final class MessageRepositoryMock: MessageRepository, Spy {
     var sendMessageCalls: [MessageId: (Result<ChatMessage, MessageRepositoryError>) -> Void] = [:]
     var saveSuccessfullyDeletedMessageError: Error?
     let lock = NSLock()
+    var updatedMessageLocalState: LocalMessageState?
 
     override func sendMessage(
         with messageId: MessageId,
@@ -51,11 +52,15 @@ final class MessageRepositoryMock: MessageRepository, Spy {
         completion?(saveSuccessfullyDeletedMessageError)
     }
 
-    var updatedMessageLocalState: LocalMessageState?
-
     override func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping () -> Void) {
         record()
         updatedMessageLocalState = localState
         completion()
+    }
+
+    func clear() {
+        recordedFunctions.removeAll()
+        sendMessageCalls.removeAll()
+        sendMessageResult = nil
     }
 }

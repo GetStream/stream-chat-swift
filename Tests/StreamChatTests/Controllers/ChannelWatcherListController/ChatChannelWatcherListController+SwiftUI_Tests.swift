@@ -9,7 +9,7 @@ import XCTest
 @available(iOS 13, *)
 final class WatcherListController_SwiftUI_Tests: iOS13TestCase {
     var query: ChannelWatcherListQuery!
-    var watcherListController: ChatChannelWatcherListControllerMock!
+    var watcherListController: ChatChannelWatcherListController_Mock!
 
     // MARK: - Setup
 
@@ -22,8 +22,8 @@ final class WatcherListController_SwiftUI_Tests: iOS13TestCase {
 
     override func tearDown() {
         query = nil
+        AssertAsync.canBeReleased(&watcherListController)
         watcherListController = nil
-
         super.tearDown()
     }
 

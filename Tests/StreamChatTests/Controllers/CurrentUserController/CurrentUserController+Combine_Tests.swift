@@ -10,18 +10,19 @@ import XCTest
 
 @available(iOS 13, *)
 final class CurrentUserController_Combine_Tests: iOS13TestCase {
-    var currentUserController: CurrentUserControllerMock!
+    var currentUserController: CurrentUserController_Mock!
     var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         super.setUp()
-        currentUserController = CurrentUserControllerMock()
+        currentUserController = CurrentUserController_Mock()
         cancellables = []
     }
     
     override func tearDown() {
         // Release existing subscriptions and make sure the controller gets released, too
         cancellables = nil
+        AssertAsync.canBeReleased(&currentUserController)
         currentUserController = nil
         super.tearDown()
     }
@@ -37,7 +38,7 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
         
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: CurrentUserControllerMock? = currentUserController
+        weak var controller: CurrentUserController_Mock? = currentUserController
         currentUserController = nil
 
         let newCurrentUser: CurrentChatUser = .mock(id: .unique)
@@ -60,7 +61,7 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
         
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: CurrentUserControllerMock? = currentUserController
+        weak var controller: CurrentUserController_Mock? = currentUserController
         currentUserController = nil
 
         let newUnreadCount: UnreadCount = .dummy

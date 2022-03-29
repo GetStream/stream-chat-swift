@@ -7,7 +7,7 @@
 import XCTest
 
 final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     var middleware: ChannelTruncatedEventMiddleware!
 
     // MARK: - Set up
@@ -15,14 +15,13 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = .init()
     }
 
     override func tearDown() {
-        middleware = nil
+        AssertAsync.canBeReleased(&database)
         database = nil
-
         super.tearDown()
     }
 

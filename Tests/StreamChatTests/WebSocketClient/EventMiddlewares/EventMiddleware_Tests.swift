@@ -14,12 +14,12 @@ final class EventMiddleware_Tests: XCTestCase {
     }
     
     func test_middlewareEvaluation() throws {
-        var database: DatabaseContainer! = DatabaseContainerMock()
+        var database: DatabaseContainer! = DatabaseContainer_Spy()
         let usedSession = database.viewContext
         
         let chain: [EventMiddleware] = [
             // Adds `1` to the event synchronously
-            EventMiddlewareMock { event, session in
+            EventMiddleware_Mock { event, session in
                 // Assert the correct session is used
                 XCTAssertEqual(session as! NSManagedObjectContext, usedSession)
                 
@@ -28,7 +28,7 @@ final class EventMiddleware_Tests: XCTestCase {
             },
             
             // Adds `2` to the event synchronously
-            EventMiddlewareMock { event, session in
+            EventMiddleware_Mock { event, session in
                 // Assert the correct session is used
                 XCTAssertEqual(session as! NSManagedObjectContext, usedSession)
                 

@@ -16,6 +16,7 @@ final class ChatConnectionController_SwiftUI_Tests: iOS13TestCase {
     }
     
     override func tearDown() {
+        AssertAsync.canBeReleased(&connectionController)
         connectionController = nil
         super.tearDown()
     }

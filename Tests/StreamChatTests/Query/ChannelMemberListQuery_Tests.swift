@@ -121,7 +121,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
         
         // Create database container
-        let database = try DatabaseContainerMock(kind: .inMemory)
+        let database = try DatabaseContainer_Spy(kind: .inMemory)
         
         try database.writeSynchronously { session in
             // Save channel to database
@@ -169,7 +169,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
         
         // Create database container
-        let database = try DatabaseContainerMock(kind: .inMemory)
+        let database = try DatabaseContainer_Spy(kind: .inMemory)
         
         try database.writeSynchronously { session in
             // Save channel to database
@@ -217,7 +217,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
         
         // Create database container
-        let database = try DatabaseContainerMock(kind: .inMemory)
+        let database = try DatabaseContainer_Spy(kind: .inMemory)
         
         try database.writeSynchronously { session in
             // Save channel to database
@@ -275,7 +275,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
         
         // Create database container
-        let database = try DatabaseContainerMock(kind: .inMemory)
+        let database = try DatabaseContainer_Spy(kind: .inMemory)
         
         try database.writeSynchronously { session in
             // Save channel to database
@@ -339,7 +339,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
         
         // Create database container
-        let database = try DatabaseContainerMock(kind: .inMemory)
+        let database = try DatabaseContainer_Spy(kind: .inMemory)
         
         try database.writeSynchronously { session in
             // Save channel to database

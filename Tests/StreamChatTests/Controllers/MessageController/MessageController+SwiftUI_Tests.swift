@@ -16,6 +16,7 @@ final class MessageController_SwiftUI_Tests: iOS13TestCase {
     }
     
     override func tearDown() {
+        AssertAsync.canBeReleased(&messageController)
         messageController = nil
         super.tearDown()
     }

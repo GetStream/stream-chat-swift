@@ -4,11 +4,6 @@
 
 import Foundation
 @_exported import StreamChatTestHelpers
+import XCTest
 
 public final class StreamChatTestTools {}
-
-extension Bundle {
-    public static var testTools: Bundle {
-        Bundle(for: StreamChatTestTools.self)
-    }
-}

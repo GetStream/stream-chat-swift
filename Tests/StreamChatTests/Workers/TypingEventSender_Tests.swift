@@ -7,18 +7,18 @@
 import XCTest
 
 final class TypingEventsSender_Tests: XCTestCase {
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
     var time: VirtualTime!
     var eventSender: TypingEventsSender!
     
     override func setUp() {
         super.setUp()
         
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
         
         time = VirtualTime()
         VirtualTimeTimer.time = time
@@ -28,8 +28,8 @@ final class TypingEventsSender_Tests: XCTestCase {
     }
     
     override func tearDown() {
+        VirtualTimeTimer.invalidate()
         time = nil
-        VirtualTimeTimer.time = nil
         eventSender = nil
         database = nil
         apiClient.cleanUp()

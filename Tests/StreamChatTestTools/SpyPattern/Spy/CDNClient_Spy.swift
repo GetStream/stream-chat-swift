@@ -4,7 +4,7 @@
 
 import StreamChat
 
-final class CDNClient_Mock: CDNClient, Spy {
+final class CDNClient_Spy: CDNClient, Spy {
     var recordedFunctions: [String] = []
 
     static var maxAttachmentSize: Int64 { .max }

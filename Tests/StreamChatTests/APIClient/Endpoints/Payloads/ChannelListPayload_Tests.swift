@@ -7,26 +7,27 @@
 import XCTest
 
 final class ChannelListPayload_Tests: XCTestCase {
-    let channelJSON: Data = {
-        let url = Bundle(for: StreamChatTestTools.self).url(forResource: "ChannelsQuery", withExtension: "json")!
-        return try! Data(contentsOf: url)
-    }()
-    
     func test_channelQueryJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: channelJSON)
+        // GIVEN
+        let url = XCTestCase.mockData(fromFile: "ChannelsQuery")
+
+        // WHEN
+        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
+
+        // THEN
         XCTAssertEqual(payload.channels.count, 20)
     }
 }
 
 final class ChannelPayload_Tests: XCTestCase {
-    let channelJSON: Data = {
-        let url = Bundle(for: StreamChatTestTools.self).url(forResource: "Channel", withExtension: "json")!
-        return try! Data(contentsOf: url)
-    }()
-    
     func test_channelJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(ChannelPayload.self, from: channelJSON)
-        
+        // GIVEN
+        let url = XCTestCase.mockData(fromFile: "Channel")
+
+        // WHEN
+        let payload = try JSONDecoder.default.decode(ChannelPayload.self, from: url)
+
+        // THEN
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.watchers?.count, 3)
         XCTAssertEqual(payload.members.count, 4)

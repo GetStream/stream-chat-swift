@@ -7,23 +7,24 @@
 import XCTest
 
 final class EventSender_Tests: XCTestCase {
-    var apiClient: APIClientMock!
+    var apiClient: APIClient_Spy!
     var database: DatabaseContainer!
     var sender: EventSender!
     
     override func setUp() {
         super.setUp()
         
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
         sender = EventSender(database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
         apiClient.cleanUp()
-        apiClient = nil
-        database = nil
-        sender = nil
+        AssertAsync {
+            Assert.canBeReleased(&sender)
+            Assert.canBeReleased(&database)
+        }
 
         super.tearDown()
     }

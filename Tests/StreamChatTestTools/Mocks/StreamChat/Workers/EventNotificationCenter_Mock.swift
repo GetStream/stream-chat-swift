@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of `EventNotificationCenter`
-final class EventNotificationCenterMock: EventNotificationCenter {
+final class EventNotificationCenter_Mock: EventNotificationCenter {
     lazy var mock_process = MockFunc<([Event], Bool, (() -> Void)?), Void>.mock(for: process)
     
     override func process(

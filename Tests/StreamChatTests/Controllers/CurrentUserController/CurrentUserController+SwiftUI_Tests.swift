@@ -8,14 +8,15 @@ import XCTest
 
 @available(iOS 13, *)
 final class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
-    var currentUserController: CurrentUserControllerMock!
+    var currentUserController: CurrentUserController_Mock!
     
     override func setUp() {
         super.setUp()
-        currentUserController = CurrentUserControllerMock()
+        currentUserController = CurrentUserController_Mock()
     }
     
     override func tearDown() {
+        AssertAsync.canBeReleased(&currentUserController)
         currentUserController = nil
         super.tearDown()
     }

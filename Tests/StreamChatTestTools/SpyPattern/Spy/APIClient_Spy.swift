@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 /// Mock implementation of APIClient allowing easy control and simulation of responses.
-final class APIClientMock: APIClient, Spy {
+final class APIClient_Spy: APIClient, Spy {
     var recordedFunctions: [String] = []
 
     /// The last endpoint `request` function was called with.
@@ -38,9 +38,15 @@ final class APIClientMock: APIClient, Spy {
         request_completion = nil
         request_expectation = .init()
 
+        recoveryRequest_endpoint = nil
+        recoveryRequest_allRecordedCalls = []
+        recoveryRequest_completion = nil
+
         uploadFile_attachment = nil
         uploadFile_progress = nil
         uploadFile_completion = nil
+
+        flushRequestsQueue()
     }
 
     override init(
@@ -128,13 +134,13 @@ final class APIClientMock: APIClient, Spy {
     }
 }
 
-extension APIClientMock {
+extension APIClient_Spy {
     convenience init() {
         self.init(
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
-            CDNClient: CDNClient_Mock(),
+            CDNClient: CDNClient_Spy(),
             tokenRefresher: { _ in },
             queueOfflineRequest: { _ in }
         )

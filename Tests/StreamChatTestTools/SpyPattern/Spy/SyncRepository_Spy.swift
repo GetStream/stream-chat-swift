@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class SyncRepositoryMock: SyncRepository, Spy {
+final class SyncRepository_Spy: SyncRepository, Spy {
     var recordedFunctions: [String] = []
     var syncMissingEventsResult: Result<[ChannelId], SyncError>?
     var _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
@@ -16,7 +16,7 @@ final class SyncRepositoryMock: SyncRepository, Spy {
         let _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
         let channelRepository = ChannelListUpdater(database: client.databaseContainer, apiClient: client.apiClient)
         let messageRepository = MessageRepository(database: client.databaseContainer, apiClient: client.apiClient)
-        let offlineRepository = OfflineRequestsRepositoryMock(
+        let offlineRepository = OfflineRequestsRepository_Spy(
             messageRepository: messageRepository,
             database: client.databaseContainer,
             apiClient: client.apiClient

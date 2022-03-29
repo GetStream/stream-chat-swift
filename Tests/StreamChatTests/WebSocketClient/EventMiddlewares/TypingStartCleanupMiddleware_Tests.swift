@@ -21,14 +21,16 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         time = VirtualTime()
         VirtualTimeTimer.time = time
 
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
 
     override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+
         database = nil
-        time = nil
-        VirtualTimeTimer.time = nil
         currentUser = nil
+        VirtualTimeTimer.invalidate()
+        time = nil
 
         super.tearDown()
     }

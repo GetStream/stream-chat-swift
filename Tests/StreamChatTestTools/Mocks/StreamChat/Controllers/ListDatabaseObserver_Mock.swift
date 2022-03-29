@@ -6,7 +6,7 @@ import CoreData
 @testable import StreamChat
 import XCTest
 
-final class ListDatabaseObserverMock<Item, DTO: NSManagedObject>: ListDatabaseObserver<Item, DTO> {
+final class ListDatabaseObserver_Mock<Item, DTO: NSManagedObject>: ListDatabaseObserver<Item, DTO> {
     var synchronizeError: Error?
     
     override func startObserving() throws {

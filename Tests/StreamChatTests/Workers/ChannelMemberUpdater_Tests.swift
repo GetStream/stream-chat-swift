@@ -7,9 +7,9 @@
 import XCTest
 
 final class ChannelMemberUpdater_Tests: XCTestCase {
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
     
     var updater: ChannelMemberUpdater!
     
@@ -18,20 +18,22 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
         
         updater = .init(database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
-        webSocketClient = nil
         apiClient.cleanUp()
-        apiClient = nil
-        database = nil
-        updater = nil
-        
+        AssertAsync {
+            Assert.canBeReleased(&updater)
+            Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&apiClient)
+            Assert.canBeReleased(&database)
+        }
+
         super.tearDown()
     }
     

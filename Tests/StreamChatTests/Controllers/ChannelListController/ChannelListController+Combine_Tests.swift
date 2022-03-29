@@ -10,18 +10,19 @@ import XCTest
 
 @available(iOS 13, *)
 final class ChannelListController_Combine_Tests: iOS13TestCase {
-    var channelListController: ChannelListControllerMock!
+    var channelListController: ChannelListController_Mock!
     var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         super.setUp()
-        channelListController = ChannelListControllerMock()
+        channelListController = ChannelListController_Mock()
         cancellables = []
     }
     
     override func tearDown() {
         // Release existing subscriptions and make sure the controller gets released, too
         cancellables = nil
+        AssertAsync.canBeReleased(&channelListController)
         channelListController = nil
         super.tearDown()
     }
@@ -37,7 +38,7 @@ final class ChannelListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
         
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChannelListControllerMock? = channelListController
+        weak var controller: ChannelListController_Mock? = channelListController
         channelListController = nil
         
         controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
@@ -56,7 +57,7 @@ final class ChannelListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
         
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChannelListControllerMock? = channelListController
+        weak var controller: ChannelListController_Mock? = channelListController
         channelListController = nil
 
         let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])

@@ -16,7 +16,7 @@ final class Batch_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        VirtualTimeTimer.time = nil
+        VirtualTimeTimer.invalidate()
         
         super.tearDown()
     }

@@ -34,7 +34,7 @@ func AssertSnapshot(
     suffix: String? = nil,
     record: Bool = false,
     line: UInt = #line,
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     function: String = #function
 ) {
     let viewController = isEmbeddedInNavigationController ? UINavigationController(rootViewController: vc) : vc
@@ -75,7 +75,7 @@ func AssertSnapshot(
     suffix: String? = nil,
     record: Bool = false,
     line: UInt = #line,
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     function: String = #function
 ) {
     // Test the variants in multiple orders to make sure there's
@@ -106,7 +106,7 @@ func AssertSnapshot<View: UIViewControllerRepresentable>(
     suffix: String? = nil,
     record: Bool = false,
     line: UInt = #line,
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     function: String = #function
 ) {
     let hostingVC = UIHostingController(rootView: view)
@@ -144,7 +144,7 @@ func AssertSnapshot<View: SwiftUI.View>(
     suffix: String? = nil,
     record: Bool = false,
     line: UInt = #line,
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     function: String = #function
 ) {
     // Test the variants in multiple orders to make sure there's

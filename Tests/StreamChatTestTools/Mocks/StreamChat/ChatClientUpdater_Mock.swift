@@ -5,7 +5,7 @@
 @testable import StreamChat
 
 /// Mock implementation of `ChatClientUpdater`
-final class ChatClientUpdaterMock: ChatClientUpdater {
+final class ChatClientUpdater_Mock: ChatClientUpdater {
     @Atomic var prepareEnvironment_newToken: Token?
     var prepareEnvironment_called: Bool { prepareEnvironment_newToken != nil }
 

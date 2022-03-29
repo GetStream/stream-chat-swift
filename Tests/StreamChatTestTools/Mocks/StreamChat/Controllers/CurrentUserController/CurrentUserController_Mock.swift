@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class CurrentUserControllerMock: CurrentChatUserController {
+final class CurrentUserController_Mock: CurrentChatUserController {
     var currentUser_simulated: CurrentChatUser?
     override var currentUser: CurrentChatUser? {
         currentUser_simulated ?? super.currentUser

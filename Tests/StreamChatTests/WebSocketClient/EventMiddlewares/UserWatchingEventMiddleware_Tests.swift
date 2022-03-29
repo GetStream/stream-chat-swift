@@ -7,7 +7,7 @@
 import XCTest
 
 final class UserWatchingEventMiddleware_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     var middleware: UserWatchingEventMiddleware!
     
     // MARK: - Set up
@@ -15,14 +15,13 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = .init()
     }
     
     override func tearDown() {
-        middleware = nil
+        AssertAsync.canBeReleased(&database)
         database = nil
-        
         super.tearDown()
     }
     
@@ -48,7 +47,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         )
         
         // Set error to be thrown on write.
-        let session = DatabaseSessionMock(underlyingSession: database.viewContext)
+        let session = DatabaseSession_Mock(underlyingSession: database.viewContext)
         let error = TestError()
         session.errorToReturn = error
         

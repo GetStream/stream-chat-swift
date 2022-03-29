@@ -25,6 +25,10 @@ final class VirtualTime {
     init(initialTime: TimeInterval = 0) {
         currentTime = initialTime
     }
+
+    func invalidate() {
+        scheduledTimers.forEach { $0.cancel() }
+    }
     
     /// Simulates running the virtual time.
     ///

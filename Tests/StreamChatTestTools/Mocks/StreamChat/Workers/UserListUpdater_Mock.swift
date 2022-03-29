@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of UserListUpdater
-final class UserListUpdaterMock: UserListUpdater {
+final class UserListUpdater_Mock: UserListUpdater {
     @Atomic var update_queries: [UserListQuery] = []
     @Atomic var update_policy: UpdatePolicy?
     @Atomic var update_completion: ((Error?) -> Void)?

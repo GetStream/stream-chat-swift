@@ -7,7 +7,12 @@ import Foundation
 
 struct VirtualTimeTimer: StreamChat.Timer {
     static var time: VirtualTime!
-    
+
+    static func invalidate() {
+        time.invalidate()
+        time = nil
+    }
+
     static func schedule(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) -> TimerControl {
         Self.time.scheduleTimer(
             interval: timeInterval,

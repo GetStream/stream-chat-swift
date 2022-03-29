@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of MessageUpdater
-final class MessageUpdaterMock: MessageUpdater {
+final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var getMessage_cid: ChannelId?
     @Atomic var getMessage_messageId: MessageId?
     @Atomic var getMessage_completion: ((Error?) -> Void)?

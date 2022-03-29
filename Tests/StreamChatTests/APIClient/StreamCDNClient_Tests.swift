@@ -76,7 +76,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         
         // Set up a successful mock network response for the request
         let mockResponseData = try JSONEncoder.stream.encode(["file": URL.unique()])
-        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 234, responseBody: mockResponseData)
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 234, responseBody: mockResponseData)
         
         // Set up a decoder response
         // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
@@ -121,7 +121,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         let encoderError = TestError()
 
         // Set up a mock network response from the request
-        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 444, error: networkError)
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 444, error: networkError)
 
         // Set up a decoder response to return `encoderError`
         decoder.decodeRequestResponse = .failure(encoderError)

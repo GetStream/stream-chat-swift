@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of `ChannelMemberUpdater`
-final class ChannelMemberUpdaterMock: ChannelMemberUpdater {
+final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
     @Atomic var banMember_userId: UserId?
     @Atomic var banMember_cid: ChannelId?
     @Atomic var banMember_timeoutInMinutes: Int??

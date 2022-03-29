@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class LoggerMock: Logger, Spy {
+final class Logger_Spy: Logger, Spy {
     var originalLogger: Logger?
     var recordedFunctions: [String] = []
 
@@ -35,7 +35,7 @@ final class LoggerMock: Logger, Spy {
         _ message: @autoclosure () -> Any,
         subsystems: LogSubsystem = .other,
         functionName: StaticString = #function,
-        fileName: StaticString = #file,
+        fileName: StaticString = #filePath,
         lineNumber: UInt = #line
     ) {
         record()
@@ -45,7 +45,7 @@ final class LoggerMock: Logger, Spy {
         _ message: @autoclosure () -> Any,
         subsystems: LogSubsystem = .other,
         functionName: StaticString = #function,
-        fileName: StaticString = #file,
+        fileName: StaticString = #filePath,
         lineNumber: UInt = #line
     ) {
         record()

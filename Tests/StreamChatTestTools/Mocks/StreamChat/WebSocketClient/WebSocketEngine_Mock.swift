@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class WebSocketEngineMock: WebSocketEngine {
+final class WebSocketEngine_Mock: WebSocketEngine {
     var request: URLRequest
     var sessionConfiguration: URLSessionConfiguration
     var isConnected: Bool = false

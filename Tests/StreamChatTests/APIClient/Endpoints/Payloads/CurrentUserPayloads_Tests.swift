@@ -8,10 +8,10 @@ import Foundation
 import XCTest
 
 final class CurrentUserPayload_Tests: XCTestCase {
-    let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser", bundle: .testTools)
+    let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser")
     
     func test_currentUserJSON_customRoleIsDecodedCorrectly() throws {
-        let json = XCTestCase.mockData(fromFile: "CurrentUserCustomRole", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "CurrentUserCustomRole")
         let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: json)
         XCTAssertEqual(payload.role, UserRole("banana-master"))
     }

@@ -9,7 +9,7 @@ import XCTest
 @available(iOS 13, *)
 final class MemberListController_SwiftUI_Tests: iOS13TestCase {
     var query: ChannelMemberListQuery!
-    var memberListController: ChatChannelMemberListControllerMock!
+    var memberListController: ChatChannelMemberListController_Mock!
     
     // MARK: - Setup
     
@@ -22,8 +22,8 @@ final class MemberListController_SwiftUI_Tests: iOS13TestCase {
     
     override func tearDown() {
         query = nil
+        AssertAsync.canBeReleased(&memberListController)
         memberListController = nil
-        
         super.tearDown()
     }
     

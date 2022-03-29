@@ -19,7 +19,7 @@ final class ChannelListController_Tests: XCTestCase {
     /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
     
-    var database: DatabaseContainerMock { client.databaseContainer as! DatabaseContainerMock }
+    var database: DatabaseContainer_Spy { client.databaseContainer as! DatabaseContainer_Spy }
     
     override func setUp() {
         super.setUp()
@@ -37,7 +37,10 @@ final class ChannelListController_Tests: XCTestCase {
         controllerCallbackQueueID = nil
         
         database.shouldCleanUpTempDBFiles = true
-        
+
+        controller = nil
+        client.mockAPIClient.cleanUp()
+        client = nil
         env.channelListUpdater?.cleanUp()
         
         AssertAsync {
@@ -564,7 +567,7 @@ final class ChannelListController_Tests: XCTestCase {
     // MARK: - Delegate tests
     
     func test_settingDelegate_leadsToFetchingLocalData() {
-        let delegate = TestChannelListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelListController_Delegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
@@ -577,7 +580,7 @@ final class ChannelListController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestChannelListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelListController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert delegate is notified about state changes
@@ -595,7 +598,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_delegateMethodsAreCalled() throws {
         // Set the delegate
-        let delegate = TestChannelListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelListController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -885,11 +888,11 @@ final class ChannelListController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var channelListUpdater: ChannelListUpdaterMock?
+    @Atomic var channelListUpdater: ChannelListUpdater_Spy?
     
     lazy var environment: ChatChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
-            self.channelListUpdater = ChannelListUpdaterMock(
+            self.channelListUpdater = ChannelListUpdater_Spy(
                 database: $0,
                 apiClient: $1
             )

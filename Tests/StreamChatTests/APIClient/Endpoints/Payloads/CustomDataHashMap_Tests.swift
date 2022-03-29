@@ -63,13 +63,13 @@ final class CustomDataHashMap_Tests: XCTestCase {
 
 extension CustomDataHashMap_Tests {
     func assertEmptyCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
-        let jsonData = XCTestCase.mockData(fromFile: fileName, bundle: .testTools)
+        let jsonData = XCTestCase.mockData(fromFile: fileName)
         let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
         XCTAssertEqual(payload.extraData, [:])
     }
 
     func assertCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
-        let jsonData = XCTestCase.mockData(fromFile: fileName, bundle: .testTools)
+        let jsonData = XCTestCase.mockData(fromFile: fileName)
         let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
 
         XCTAssertEqual(payload.extraData["secret_note"], .string("Anakin is Vader!"))

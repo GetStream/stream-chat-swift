@@ -9,11 +9,11 @@ import XCTest
 final class SyncRepository_Tests: XCTestCase {
     var _activeChannelControllers: NSHashTable<ChatChannelController>!
     var _activeChannelListControllers: NSHashTable<ChatChannelListController>!
-    var client: ChatClientMock!
-    var channelRepository: ChannelListUpdaterMock!
-    var offlineRequestsRepository: OfflineRequestsRepositoryMock!
-    var database: DatabaseContainerMock!
-    var apiClient: APIClientMock!
+    var client: ChatClient_Mock!
+    var channelRepository: ChannelListUpdater_Spy!
+    var offlineRequestsRepository: OfflineRequestsRepository_Spy!
+    var database: DatabaseContainer_Spy!
+    var apiClient: APIClient_Spy!
 
     var repository: SyncRepository!
 
@@ -28,10 +28,10 @@ final class SyncRepository_Tests: XCTestCase {
         _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
-        client = ChatClientMock(config: config)
-        channelRepository = ChannelListUpdaterMock(database: client.databaseContainer, apiClient: client.apiClient)
-        let messageRepository = MessageRepositoryMock(database: client.databaseContainer, apiClient: client.apiClient)
-        offlineRequestsRepository = OfflineRequestsRepositoryMock(
+        client = ChatClient_Mock(config: config)
+        channelRepository = ChannelListUpdater_Spy(database: client.databaseContainer, apiClient: client.apiClient)
+        let messageRepository = MessageRepository_Spy(database: client.databaseContainer, apiClient: client.apiClient)
+        offlineRequestsRepository = OfflineRequestsRepository_Spy(
             messageRepository: messageRepository,
             database: client.databaseContainer,
             apiClient: client.apiClient
@@ -72,7 +72,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_syncLocalState_localStorageDisabled() throws {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = false
-        let client = ChatClientMock(config: config)
+        let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
@@ -161,7 +161,7 @@ final class SyncRepository_Tests: XCTestCase {
             createChannel: true
         )
 
-        let chatController = ChatChannelControllerMock(client: client)
+        let chatController = ChatChannelController_Spy(client: client)
         chatController.state = .remoteDataFetched
         _activeChannelControllers.add(chatController)
 
@@ -361,7 +361,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_queueOfflineRequest_localStorageDisabled() {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = false
-        let client = ChatClientMock(config: config)
+        let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
@@ -389,7 +389,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_queueOfflineRequest_localStorageEnabled() {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
-        let client = ChatClientMock(config: config)
+        let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
             activeChannelControllers: _activeChannelControllers,

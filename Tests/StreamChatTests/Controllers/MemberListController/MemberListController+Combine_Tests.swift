@@ -24,8 +24,8 @@ final class MemberListController_Combine_Tests: iOS13TestCase {
     
     override func tearDown() {
         cancellables = nil
+        AssertAsync.canBeReleased(&memberListController)
         memberListController = nil
-        
         super.tearDown()
     }
     

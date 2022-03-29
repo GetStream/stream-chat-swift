@@ -7,7 +7,7 @@ import CoreData
 import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.
-final class DatabaseContainerMock: DatabaseContainer, Spy {
+final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     @Atomic var recordedFunctions: [String] = []
 
     /// If set, the `write` completion block is called with this value.
@@ -18,6 +18,12 @@ final class DatabaseContainerMock: DatabaseContainer, Spy {
     @Atomic var recreatePersistentStore_called = false
     @Atomic var recreatePersistentStore_errorResponse: Error?
     @Atomic var resetEphemeralValues_called = false
+
+    /// `true` if there is currently an active writing session
+    @Atomic var isWriteSessionInProgress: Bool = false
+
+    /// Every time a write session finishes this counter is increased
+    @Atomic var writeSessionCounter: Int = 0
     
     /// If set to `true` and the mock will remove its database files once deinited.
     var shouldCleanUpTempDBFiles = false
@@ -84,12 +90,6 @@ final class DatabaseContainerMock: DatabaseContainer, Spy {
         
         try super.recreatePersistentStore()
     }
-
-    /// `true` if there is currently an active writing session
-    @Atomic var isWriteSessionInProgress: Bool = false
-    
-    /// Every time a write session finishes this counter is increased
-    @Atomic var writeSessionCounter: Int = 0
     
     override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         record()

@@ -18,15 +18,17 @@ final class EventsController_Combine_Tests: iOS13TestCase {
     override func setUp() {
         super.setUp()
         
-        notificationCenter = EventNotificationCenterMock(database: DatabaseContainerMock())
+        notificationCenter = EventNotificationCenter_Mock(database: DatabaseContainer_Spy())
         controller = EventsController(notificationCenter: notificationCenter)
         cancellables = []
     }
     
     override func tearDown() {
         cancellables = nil
-        notificationCenter = nil
-        controller = nil
+        AssertAsync {
+            Assert.canBeReleased(&notificationCenter)
+            Assert.canBeReleased(&controller)
+        }
 
         super.tearDown()
     }

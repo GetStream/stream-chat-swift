@@ -9,7 +9,7 @@ import XCTest
 final class WebSocketPingController_Tests: XCTestCase {
     var time: VirtualTime!
     var pingController: WebSocketPingController!
-    private var delegate: TestWebSocketPingControllerDelegate!
+    private var delegate: WebSocketPingController_Delegate!
     
     override func setUp() {
         super.setUp()
@@ -17,13 +17,13 @@ final class WebSocketPingController_Tests: XCTestCase {
         VirtualTimeTimer.time = time
         pingController = .init(timerType: VirtualTimeTimer.self, timerQueue: .main)
         
-        delegate = TestWebSocketPingControllerDelegate()
+        delegate = WebSocketPingController_Delegate()
         pingController.delegate = delegate
     }
     
     override func tearDown() {
+        VirtualTimeTimer.invalidate()
         time = nil
-        VirtualTimeTimer.time = nil
         pingController = nil
         delegate = nil
         super.tearDown()

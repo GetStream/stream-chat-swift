@@ -11,7 +11,7 @@ private var assertNetworkRequestTimeout: TimeInterval = TestRunnerEnvironment.is
 
 /// Synchronously waits for a network request to be made and asserts its properties.
 ///
-/// The function always uses the latest request `RequestRecorderURLProtocol` records. If no request has
+/// The function always uses the latest request `RequestRecorderURLProtocol_Mock` records. If no request has
 /// been made within the `timeout` period, this assertion fails with the time-out error.
 ///
 /// The values specified in the `headers`, `queryParameters` and `body` represents the mandatory subset of
@@ -33,10 +33,10 @@ func AssertNetworkRequest(
     queryParameters: [String: String]?,
     body: Data?,
     timeout: TimeInterval = assertNetworkRequestTimeout,
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     line: UInt = #line
 ) {
-    guard let request = RequestRecorderURLProtocol.waitForRequest(timeout: timeout) else {
+    guard let request = RequestRecorderURLProtocol_Mock.waitForRequest(timeout: timeout) else {
         XCTFail("Waiting for request timed out. No request was made.", file: file, line: line)
         return
     }

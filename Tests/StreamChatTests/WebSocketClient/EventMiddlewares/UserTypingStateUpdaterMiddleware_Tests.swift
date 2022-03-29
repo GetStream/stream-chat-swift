@@ -7,7 +7,7 @@
 import XCTest
 
 final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     var middleware: UserTypingStateUpdaterMiddleware!
     
     // MARK: - Set up
@@ -15,14 +15,13 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = UserTypingStateUpdaterMiddleware()
     }
     
     override func tearDown() {
-        middleware = nil
+        AssertAsync.canBeReleased(&database)
         database = nil
-
         super.tearDown()
     }
     

@@ -7,16 +7,16 @@
 import XCTest
 
 final class OfflineRequestsRepository_Tests: XCTestCase {
-    var messageRepository: MessageRepositoryMock!
+    var messageRepository: MessageRepository_Spy!
     var repository: OfflineRequestsRepository!
-    var database: DatabaseContainerMock!
-    var apiClient: APIClientMock!
+    var database: DatabaseContainer_Spy!
+    var apiClient: APIClient_Spy!
 
     override func setUp() {
         let client = ChatClient.mock
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
-        messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        messageRepository = MessageRepository_Spy(database: database, apiClient: apiClient)
         repository = OfflineRequestsRepository(messageRepository: messageRepository, database: database, apiClient: apiClient)
     }
 
@@ -99,7 +99,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let jsonData = XCTestCase.mockData(fromFile: "Message", bundle: .testTools)
+        let jsonData = XCTestCase.mockData(fromFile: "Message")
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 
         waitForExpectations(timeout: 0.1, handler: nil)
@@ -152,7 +152,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let jsonData = XCTestCase.mockData(fromFile: "Message", bundle: .testTools)
+        let jsonData = XCTestCase.mockData(fromFile: "Message")
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 
         waitForExpectations(timeout: 0.1, handler: nil)

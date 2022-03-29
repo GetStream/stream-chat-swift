@@ -7,17 +7,17 @@
 import XCTest
 
 final class SyncOperations_Tests: XCTestCase {
-    var client: ChatClientMock!
-    var syncRepository: SyncRepositoryMock!
-    var channelRepository: ChannelListUpdaterMock!
-    var database: DatabaseContainerMock!
+    var client: ChatClient_Mock!
+    var syncRepository: SyncRepository_Spy!
+    var channelRepository: ChannelListUpdater_Spy!
+    var database: DatabaseContainer_Spy!
 
     override func setUp() {
         super.setUp()
-        client = ChatClientMock(config: ChatClientConfig(apiKeyString: .unique))
-        channelRepository = ChannelListUpdaterMock(database: client.databaseContainer, apiClient: client.apiClient)
+        client = ChatClient_Mock(config: ChatClientConfig(apiKeyString: .unique))
+        channelRepository = ChannelListUpdater_Spy(database: client.databaseContainer, apiClient: client.apiClient)
         database = client.mockDatabaseContainer
-        syncRepository = SyncRepositoryMock(client: client)
+        syncRepository = SyncRepository_Spy(client: client)
     }
 
     override func tearDown() {
@@ -97,7 +97,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_WatchChannelOperation_notAvailableOnRemote() {
         let context = SyncContext()
-        let controller = ChatChannelControllerMock(client: client)
+        let controller = ChatChannelController_Spy(client: client)
         controller.state = .initialized
         let operation = WatchChannelOperation(controller: controller, context: context)
 
@@ -109,7 +109,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_WatchChannelOperation_availableOnRemote_alreadySynched() {
         let context = SyncContext()
-        let controller = ChatChannelControllerMock(client: client)
+        let controller = ChatChannelController_Spy(client: client)
         controller.state = .remoteDataFetched
         context.synchedChannelIds.insert(controller.cid!)
 
@@ -123,7 +123,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchFailure_shouldRetry() {
         let context = SyncContext()
-        let controller = ChatChannelControllerMock(client: client)
+        let controller = ChatChannelController_Spy(client: client)
         controller.state = .remoteDataFetched
         controller.watchActiveChannelError = ClientError("")
 
@@ -137,7 +137,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchSuccess() {
         let context = SyncContext()
-        let controller = ChatChannelControllerMock(client: client)
+        let controller = ChatChannelController_Spy(client: client)
         controller.state = .remoteDataFetched
         controller.watchActiveChannelError = nil
 

@@ -20,21 +20,21 @@ final class ChannelEvents_Tests: XCTestCase {
     }
     
     func test_updated() throws {
-        let json = XCTestCase.mockData(fromFile: "ChannelUpdated", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "ChannelUpdated")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         XCTAssertEqual(event?.payload.user?.id, "broken-waterfall-5")
     }
     
     func test_updated_usingServerSideAuth() throws {
-        let json = XCTestCase.mockData(fromFile: "ChannelUpdated_ServerSide", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "ChannelUpdated_ServerSide")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         XCTAssertNil(event?.payload.user?.id)
     }
     
     func test_deleted() throws {
-        let json = XCTestCase.mockData(fromFile: "ChannelDeleted", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "ChannelDeleted")
         let event = try eventDecoder.decode(from: json) as? ChannelDeletedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "default-channel-1"))
         XCTAssertEqual(event?.createdAt.description, "2021-04-23 09:38:47 +0000")
@@ -45,13 +45,13 @@ final class ChannelEvents_Tests: XCTestCase {
     }
     
     func test_ChannelHiddenEvent_decoding() throws {
-        var json = XCTestCase.mockData(fromFile: "ChannelHidden", bundle: .testTools)
+        var json = XCTestCase.mockData(fromFile: "ChannelHidden")
         var event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO)
         XCTAssertEqual(event.cid, ChannelId(type: .messaging, id: "default-channel-6"))
         XCTAssertEqual(event.createdAt.description, "2021-04-23 07:03:54 +0000")
         XCTAssertEqual(event.isHistoryCleared, false)
 
-        json = XCTestCase.mockData(fromFile: "ChannelHidden+HistoryCleared", bundle: .testTools)
+        json = XCTestCase.mockData(fromFile: "ChannelHidden+HistoryCleared")
         event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO)
         XCTAssertEqual(event.cid, ChannelId(type: .messaging, id: "default-channel-6"))
         XCTAssertEqual(event.createdAt.description, "2021-04-23 07:03:54 +0000")
@@ -59,20 +59,20 @@ final class ChannelEvents_Tests: XCTestCase {
     }
     
     func test_ChannelVisibleEvent_decoding() throws {
-        let json = XCTestCase.mockData(fromFile: "ChannelVisible", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "ChannelVisible")
         let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-6"))
     }
     
     func test_visible() throws {
         // Channel is visible again.
-        let json = XCTestCase.mockData(fromFile: "ChannelVisible", bundle: .testTools)
+        let json = XCTestCase.mockData(fromFile: "ChannelVisible")
         let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-6"))
     }
 
     func test_channelTruncatedEvent() throws {
-        let mockData = XCTestCase.mockData(fromFile: "ChannelTruncated", bundle: .testTools)
+        let mockData = XCTestCase.mockData(fromFile: "ChannelTruncated")
 
         let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
@@ -83,7 +83,7 @@ final class ChannelEvents_Tests: XCTestCase {
     }
     
     func test_channelTruncatedEventWithMessage() throws {
-        let mockData = XCTestCase.mockData(fromFile: "ChannelTruncated_with_message", bundle: .testTools)
+        let mockData = XCTestCase.mockData(fromFile: "ChannelTruncated_with_message")
 
         let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "8372DE11-E"))
@@ -98,7 +98,7 @@ final class ChannelEvents_Tests: XCTestCase {
     
     func test_channelUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let cid: ChannelId = .unique
@@ -132,7 +132,7 @@ final class ChannelEvents_Tests: XCTestCase {
     
     func test_channelDeletedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -161,7 +161,7 @@ final class ChannelEvents_Tests: XCTestCase {
     
     func test_channelTruncatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -190,7 +190,7 @@ final class ChannelEvents_Tests: XCTestCase {
     
     func test_channelVisibleEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -218,7 +218,7 @@ final class ChannelEvents_Tests: XCTestCase {
     
     func test_channelHiddenEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(

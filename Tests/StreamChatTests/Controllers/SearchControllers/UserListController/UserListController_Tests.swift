@@ -32,13 +32,18 @@ final class UserListController_Tests: XCTestCase {
     
     override func tearDown() {
         query = nil
-        client = nil
-        controller = nil
         controllerCallbackQueueID = nil
-        
+
+        (client as? ChatClient_Mock)?.cleanUp()
         env.userListUpdater?.cleanUp()
+        AssertAsync {
+            Assert.canBeReleased(&controller)
+            Assert.canBeReleased(&client)
+            Assert.canBeReleased(&env)
+        }
+        controller = nil
+        client = nil
         env = nil
-        
         super.tearDown()
     }
     
@@ -212,7 +217,7 @@ final class UserListController_Tests: XCTestCase {
     // MARK: - Delegate tests
     
     func test_settingDelegate_leadsToFetchingLocalData() {
-        let delegate = TestUserListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = UserListController_Delegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
@@ -225,7 +230,7 @@ final class UserListController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestUserListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = UserListController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert delegate is notified about state changes
@@ -243,7 +248,7 @@ final class UserListController_Tests: XCTestCase {
     
     func test_delegateMethodsAreCalled() throws {
         // Set the delegate
-        let delegate = TestUserListControllerDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = UserListController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -316,11 +321,11 @@ final class UserListController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userListUpdater: UserListUpdaterMock?
+    @Atomic var userListUpdater: UserListUpdater_Mock?
     
     lazy var environment: ChatUserListController.Environment =
         .init(userQueryUpdaterBuilder: { [unowned self] in
-            self.userListUpdater = UserListUpdaterMock(
+            self.userListUpdater = UserListUpdater_Mock(
                 database: $0,
                 apiClient: $1
             )

@@ -222,7 +222,7 @@ public class Logger {
     public func callAsFunction(
         _ level: LogLevel,
         functionName: StaticString = #function,
-        fileName: StaticString = #file,
+        fileName: StaticString = #filePath,
         lineNumber: UInt = #line,
         message: @autoclosure () -> Any,
         subsystems: LogSubsystem = .other

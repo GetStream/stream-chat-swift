@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of `RetryStrategy`.
-final class MockRetryStrategy: RetryStrategy, Spy {
+final class RetryStrategy_Spy: RetryStrategy, Spy {
     var recordedFunctions: [String] = []
     var consecutiveFailuresCount: Int = 0
     

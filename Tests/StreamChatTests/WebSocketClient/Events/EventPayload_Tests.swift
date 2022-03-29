@@ -7,7 +7,7 @@
 import XCTest
 
 final class EventPayload_Tests: XCTestCase {
-    let eventJSON = XCTestCase.mockData(fromFile: "NotificationAddedToChannel", bundle: .testTools)
+    let eventJSON = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
     var eventDecoder: EventDecoder!
 
     override func setUp() {

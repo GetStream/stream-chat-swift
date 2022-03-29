@@ -30,3 +30,14 @@ public extension XCTestCase {
         }
     }
 }
+
+public extension URL {
+    static let localYodaImage = Bundle.testTools
+        .url(forResource: "yoda", withExtension: "jpg")!
+
+    static let localYodaQuote = Bundle.testTools
+        .url(forResource: "yoda", withExtension: "txt")!
+
+    static let localYodaQuoteLongFileName = Bundle.testTools
+        .url(forResource: "yoda_with_long_file_name", withExtension: "txt")!
+}

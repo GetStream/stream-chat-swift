@@ -7,13 +7,14 @@
 import XCTest
 
 final class UserListPayload_Tests: XCTestCase {
-    let usersJSON: Data = {
-        let url = Bundle(for: StreamChatTestTools.self).url(forResource: "UsersQuery", withExtension: "json")!
-        return try! Data(contentsOf: url)
-    }()
-    
     func test_usersQueryJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserListPayload.self, from: usersJSON)
+        // GIVEN
+        let url = XCTestCase.mockData(fromFile: "UsersQuery")
+
+        // WHEN
+        let payload = try JSONDecoder.default.decode(UserListPayload.self, from: url)
+
+        // THEN
         XCTAssertEqual(payload.users.count, 20)
     }
 }

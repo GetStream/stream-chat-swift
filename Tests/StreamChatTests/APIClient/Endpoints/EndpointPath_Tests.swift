@@ -86,7 +86,7 @@ final class EndpointPathTests: XCTestCase {
 }
 
 extension EndpointPathTests {
-    private func assertResultEncodingAndDecoding(_ value: EndpointPath, _ file: StaticString = #file, _ line: UInt = #line) {
+    private func assertResultEncodingAndDecoding(_ value: EndpointPath, _ file: StaticString = #filePath, _ line: UInt = #line) {
         do {
             let encoded = try JSONEncoder.stream.encode(value)
             let result = try JSONDecoder.stream.decode(EndpointPath.self, from: encoded)

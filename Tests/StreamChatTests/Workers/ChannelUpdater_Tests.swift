@@ -7,16 +7,16 @@
 import XCTest
 
 final class ChannelUpdater_Tests: XCTestCase {
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
     
     var channelUpdater: ChannelUpdater!
     
     override func setUp() {
         super.setUp()
 
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
         
         channelUpdater = ChannelUpdater(database: database, apiClient: apiClient)
     }
@@ -25,8 +25,10 @@ final class ChannelUpdater_Tests: XCTestCase {
         apiClient.cleanUp()
         apiClient = nil
         channelUpdater = nil
+
+        AssertAsync.canBeReleased(&database)
         database = nil
-        
+
         super.tearDown()
     }
     

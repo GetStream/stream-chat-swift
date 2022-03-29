@@ -22,6 +22,7 @@ final class ChatConnectionController_Combine_Tests: iOS13TestCase {
     override func tearDown() {
         // Release existing subscriptions and make sure the controller gets released, too
         cancellables = nil
+        AssertAsync.canBeReleased(&connectionController)
         connectionController = nil
         super.tearDown()
     }

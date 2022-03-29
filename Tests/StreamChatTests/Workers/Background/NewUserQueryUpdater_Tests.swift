@@ -9,9 +9,9 @@ import XCTest
 final class NewUserQueryUpdater_Tests: XCTestCase {
     private var env: TestEnvironment!
     
-    var database: DatabaseContainerMock!
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
+    var database: DatabaseContainer_Spy!
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
     
     var newUserQueryUpdater: NewUserQueryUpdater?
     
@@ -19,9 +19,9 @@ final class NewUserQueryUpdater_Tests: XCTestCase {
         super.setUp()
         env = TestEnvironment()
         
-        database = DatabaseContainerMock()
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
+        database = DatabaseContainer_Spy()
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
         
         newUserQueryUpdater = NewUserQueryUpdater(
             database: database,
@@ -32,11 +32,13 @@ final class NewUserQueryUpdater_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
-        apiClient = nil
-        newUserQueryUpdater = nil
-        webSocketClient = nil
-        env = nil
-        database = nil
+        AssertAsync {
+            Assert.canBeReleased(&newUserQueryUpdater)
+            Assert.canBeReleased(&database)
+            Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&apiClient)
+            Assert.canBeReleased(&env)
+        }
         
         super.tearDown()
     }
@@ -133,10 +135,10 @@ final class NewUserQueryUpdater_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    var userListUpdater: UserListUpdaterMock?
+    var userListUpdater: UserListUpdater_Mock?
     
     lazy var environment = NewUserQueryUpdater.Environment(createUserListUpdater: { [unowned self] in
-        self.userListUpdater = UserListUpdaterMock(
+        self.userListUpdater = UserListUpdater_Mock(
             database: $0,
             apiClient: $1
         )

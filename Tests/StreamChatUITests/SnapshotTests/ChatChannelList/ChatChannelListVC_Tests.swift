@@ -12,7 +12,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
     var vc: ChatChannelListVC!
     var mockedChannelListController: ChatChannelListController_Mock!
     var mockedCurrentUserController: CurrentChatUserController_Mock!
-    var mockedRouter: ChatChannelListRouter_Mock { vc.router as! ChatChannelListRouter_Mock }
+    var mockedRouter: ChatChannelListRouterMock { vc.router as! ChatChannelListRouterMock }
 
     var channels: [ChatChannel] = []
     
@@ -44,7 +44,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         vc.controller = mockedChannelListController
         
         var components = Components.mock
-        components.channelListRouter = ChatChannelListRouter_Mock.self
+        components.channelListRouter = ChatChannelListRouterMock.self
         vc.components = components
 
         channels = .dummy()

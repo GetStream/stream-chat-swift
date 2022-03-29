@@ -5,3 +5,5 @@
 import Foundation
 
 @_exported import StreamChatTestHelpers
+
+final class StreamChatTests {}

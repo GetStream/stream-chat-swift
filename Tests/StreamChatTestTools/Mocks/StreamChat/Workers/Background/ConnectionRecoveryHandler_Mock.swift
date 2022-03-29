@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of `ConnectionRecoveryHandler`
-final class ConnectionRecoveryHandlerMock: ConnectionRecoveryHandler {
+final class ConnectionRecoveryHandler_Mock: ConnectionRecoveryHandler {
     lazy var mock_webSocketClientDidUpdateConnectionState = MockFunc.mock(for: webSocketClient)
     
     func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {

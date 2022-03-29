@@ -5,11 +5,11 @@
 import Foundation
 @testable import StreamChat
 
-final class ChatChannelControllerMock: ChatChannelController, Spy {
+final class ChatChannelController_Spy: ChatChannelController, Spy {
     var watchActiveChannelError: Error?
     var recordedFunctions: [String] = []
 
-    init(client: ChatClientMock) {
+    init(client: ChatClient_Mock) {
         super.init(channelQuery: .init(cid: .unique), channelListQuery: nil, client: client)
     }
 
@@ -19,7 +19,7 @@ final class ChatChannelControllerMock: ChatChannelController, Spy {
     }
 }
 
-final class ChannelControllerMock: ChatChannelController {
+final class ChannelControllerSpy: ChatChannelController {
     @Atomic var synchronize_called = false
 
     var channel_simulated: ChatChannel?

@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of `EventSender`
-final class EventSenderMock: EventSender {
+final class EventSender_Mock: EventSender {
     @Atomic var sendEvent_payload: Any?
     @Atomic var sendEvent_cid: ChannelId?
     @Atomic var sendEvent_completion: ((Error?) -> Void)?

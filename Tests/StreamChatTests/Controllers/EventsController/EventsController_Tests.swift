@@ -24,8 +24,10 @@ final class EventsController_Tests: XCTestCase {
     
     override func tearDown() {
         callbackQueueID = nil
-        controller = nil
-        client = nil
+        AssertAsync {
+            Assert.canBeReleased(&controller)
+            Assert.canBeReleased(&client)
+        }
         
         super.tearDown()
     }
@@ -72,7 +74,7 @@ final class EventsController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: callbackQueueID)
         
         // Create and set the delegate.
-        let delegate = TestEventsControllerDelegate(expectedQueueId: callbackQueueID)
+        let delegate = EventsController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Create `event -> should be processed` mapping.
@@ -106,7 +108,7 @@ final class EventsController_Tests: XCTestCase {
     
     func test_whenEventsNotificationIsObserved_theUnknownUserEvent_isForwardedToDelegate() {
         // Create and set the delegate.
-        let delegate = TestEventsControllerDelegate(expectedQueueId: callbackQueueID)
+        let delegate = EventsController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Create `event -> should be processed` mapping.
@@ -123,7 +125,7 @@ final class EventsController_Tests: XCTestCase {
     
     func test_whenEventsNotificationIsObserved_theUnknownChannelEvent_isForwardedToDelegate() throws {
         // Create and set the delegate.
-        let delegate = TestEventsControllerDelegate(expectedQueueId: callbackQueueID)
+        let delegate = EventsController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Create `event -> should be processed` mapping.

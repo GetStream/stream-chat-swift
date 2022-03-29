@@ -11,10 +11,11 @@ final class AttachmentDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
     
     override func tearDown() {
+        AssertAsync.canBeReleased(&database)
         database = nil
         super.tearDown()
     }
@@ -56,7 +57,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         
-        let giphyWithActionsJSON = XCTestCase.mockData(fromFile: "AttachmentPayloadGiphyWithActions", bundle: .testTools)
+        let giphyWithActionsJSON = XCTestCase.mockData(fromFile: "AttachmentPayloadGiphyWithActions")
         let attachment = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: giphyWithActionsJSON)
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 

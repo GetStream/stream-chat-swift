@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of ChannelListUpdater
-final class ChannelListUpdaterMock: ChannelListUpdater, Spy {
+final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     var recordedFunctions: [String] = []
 
     @Atomic var update_queries: [ChannelListQuery] = []

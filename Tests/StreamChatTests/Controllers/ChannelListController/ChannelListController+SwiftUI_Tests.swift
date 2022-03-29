@@ -8,14 +8,15 @@ import XCTest
 
 @available(iOS 13, *)
 final class ChannelListController_SwiftUI_Tests: iOS13TestCase {
-    var channelListController: ChannelListControllerMock!
+    var channelListController: ChannelListController_Mock!
     
     override func setUp() {
         super.setUp()
-        channelListController = ChannelListControllerMock()
+        channelListController = ChannelListController_Mock()
     }
     
     override func tearDown() {
+        AssertAsync.canBeReleased(&channelListController)
         channelListController = nil
         super.tearDown()
     }
