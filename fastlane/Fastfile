@@ -607,3 +607,36 @@ lane :emerge_upload do
     sha: sha
   )
 end
+
+desc "Get code coverage report and run complexity analysis for Sonar"
+lane :sonar_upload do
+  version_number = get_version_number(
+    xcodeproj: 'StreamChat.xcodeproj',
+    target: 'StreamChat'
+  )[/\d+\.\d+\.\d/]
+
+  slather
+
+  lizard(
+    source_folder: './Sources/',
+    language: 'swift',
+    export_type: 'xml',
+    report_file: 'reports/lizard.xml'
+  )
+
+  if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
+    sonar(
+      sonar_login: ENV['SONAR_TOKEN'],
+      pull_request_branch: ENV['GITHUB_HEAD_REF'],
+      pull_request_base: ENV['GITHUB_BASE_REF'],
+      pull_request_key: ENV['PR_NUMBER'],
+      project_version: version_number
+    )
+  else
+    sonar(
+      sonar_login: ENV['SONAR_TOKEN'],
+      branch_name: git_branch,
+      project_version: version_number
+    )
+  end
+end
