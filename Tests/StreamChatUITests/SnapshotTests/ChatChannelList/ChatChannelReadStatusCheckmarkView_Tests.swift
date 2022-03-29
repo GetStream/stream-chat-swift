@@ -28,7 +28,7 @@ final class ChatChannelReadStatusCheckmarkView_Tests: XCTestCase {
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.colorPalette.inactiveTint = .green
-        appearance.images.readByAll = TestImages.yoda.image
+        appearance.images.messageDeliveryStatusRead = TestImages.yoda.image
         
         let view = ChatChannelReadStatusCheckmarkView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()

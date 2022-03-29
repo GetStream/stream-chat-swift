@@ -42,10 +42,10 @@ open class ChatChannelReadStatusCheckmarkView: _View, AppearanceProvider, SwiftU
         case .empty:
             imageView.image = nil
         case .read:
-            imageView.image = appearance.images.readByAll
+            imageView.image = appearance.images.messageDeliveryStatusRead
             imageView.tintColor = tintColor
         case .unread:
-            imageView.image = appearance.images.messageSent
+            imageView.image = appearance.images.messageDeliveryStatusSent
             imageView.tintColor = appearance.colorPalette.inactiveTint
         }
     }
