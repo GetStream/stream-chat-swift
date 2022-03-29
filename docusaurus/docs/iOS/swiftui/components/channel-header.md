@@ -77,10 +77,10 @@ public struct CustomChatChannelHeader: ToolbarContent {
 
 Our custom header implementation exposes an onTapTrailing callback, that will be called when the trailing button is tapped (for example for displaying an edit view). The implementation of this button will be done in a `ViewModifier`, since the `ToolbarContent` can't keep `@State` variables.
 
-The next step is to provide a new implementation of the `ChannelHeaderViewModifier`. In our case, we need to provide handling for the onTapTrailing method from the `CustomChatChannelHeader`. To do this, we will introduce a new `@State` variable in the modifier and change its state to true when the button is tapped.
+The next step is to provide a new implementation of the `ChatChannelHeaderViewModifier`. In our case, we need to provide handling for the onTapTrailing method from the `CustomChatChannelHeader`. To do this, we will introduce a new `@State` variable in the modifier and change its state to true when the button is tapped.
 
 ```swift
-struct CustomChannelModifier: ChannelHeaderViewModifier {
+struct CustomChannelModifier: ChatChannelHeaderViewModifier {
 
     var channel: ChatChannel
 
@@ -111,7 +111,7 @@ class CustomFactory: ViewFactory {
 
     public static let shared = CustomFactory()
 
-    func makeChannelHeaderViewModifier(for channel: ChatChannel) -> some ChannelHeaderViewModifier {
+    func makeChannelHeaderViewModifier(for channel: ChatChannel) -> some ChatChannelHeaderViewModifier {
         CustomChannelModifier(channel: channel)
     }
 

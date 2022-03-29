@@ -71,6 +71,7 @@ extension ChatMessageFileAttachmentListView {
             fileSizeLabel.textColor = appearance.colorPalette.subtitleText
             fileSizeLabel.font = appearance.fonts.subheadlineBold
             fileNameLabel.font = appearance.fonts.bodyBold
+            fileNameLabel.lineBreakMode = .byTruncatingMiddle
             fileIconImageView.contentMode = .center
             backgroundColor = appearance.colorPalette.popoverBackground
             layer.cornerRadius = 12

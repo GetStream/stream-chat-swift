@@ -179,6 +179,25 @@ var body: some Scene {
 }
 ```
 
+## Applying Custom Modifier
+
+You can customize the channel list further, by applying your own custom view modifier. In order to do this, you need to implement the method `makeChannelListModifier`, which by default doesn't apply anything additional to the view. Here's an example how to add vertical padding to the channel list:
+
+```swift
+func makeChannelListModifier() -> some ViewModifier {
+    VerticalPaddingViewModifier()
+}
+
+struct VerticalPaddingViewModifier: ViewModifier {
+    
+    public func body(content: Content) -> some View {
+        content
+            .padding(.vertical, 8)
+    }
+    
+}
+```
+
 ## Customizing the Leading and Trailing Areas
 
 When the user swipes to the right, the SDK by default shows two buttons - one for deleting the channel and one for showing more options. You can customize this view by implementing the `makeTrailingSwipeActionsView` in the `ViewFactory`. Please note that the width of this view is fixed. It's up to the integrating code how the available width will be filled.
