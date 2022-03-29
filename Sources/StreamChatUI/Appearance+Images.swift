@@ -226,6 +226,24 @@ public extension Appearance {
             }
         }()
 
+        public var downloadSticker: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "arrow.down.circle")?.withRenderingMode(.alwaysTemplate)
+            } else {
+                return nil
+            }
+        }()
+
+        public var downloadStickerFill: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "arrow.down.circle.fill")?.withRenderingMode(.alwaysTemplate)
+            } else {
+                return nil
+            }
+        }()
+
+
+
         // MARK: - Reactions
 
         public var reactionLoveSmall: UIImage = loadImageSafely(with: "reaction_love_small")

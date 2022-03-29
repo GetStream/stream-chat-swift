@@ -6,6 +6,7 @@ import Foundation
 import StreamChat
 import UIKit
 import SwiftUI
+import Stipop
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
@@ -272,6 +273,7 @@ open class ComposerVC: _ViewController,
     private var walletInputView: WalletQuickInputViewController?
     private var menuController: ChatMenuViewController?
     private var emoji: UIViewController?
+    private var emojiPickerView: UIViewController!
     private var isMenuShowing = false
     private var keyboardHeight: CGFloat {
         return KeyboardService.shared.measuredSize
@@ -548,22 +550,6 @@ open class ComposerVC: _ViewController,
                 break
             }
         }
-
-
-        // TODO: Emoji selection
-//        (composerView.inputMessageView.emojiButton as? EmojiButton)?.didSelectEmoji = { [weak self] emojiPicker in
-//            guard let `self` = self else { return }
-//            print(emojiPicker)
-//            var stickerData = [String: RawJSON]()
-//            stickerData["stickerUrl"] = .string(emojiPicker.stickerImg)
-//            self.channelController?
-//                .createNewMessage(
-//                    text: "Sticker",
-//                    extraData: stickerData,
-//                    completion: nil
-//                )
-//        }
-
     }
 
     // MARK: - Actions
@@ -595,6 +581,24 @@ open class ComposerVC: _ViewController,
         if sender.isSelected {
             if #available(iOS 13.0, *) {
                 emoji = EmojiMenuViewController.instantiateController(storyboard: .wallet)
+                if let emoji = emoji as? EmojiMenuViewController {
+                    emoji.didSelectSticker = { [weak self] sticker in
+                        guard let `self` = self, let stickerImg = sticker.stickerImg else { return }
+                        var stickerData = [String: RawJSON]()
+                        stickerData["stickerUrl"] = .string(stickerImg)
+                        self.channelController?
+                            .createNewMessage(
+                                text: "Sticker",
+                                extraData: stickerData,
+                                completion: nil
+                            )
+                    }
+                    emoji.didSelectMarketPlace = { [weak self] in
+                        guard let `self` = self else { return }
+                        self.emojiPickerView = EmojiPickerViewController.instantiateController(storyboard: .wallet)
+                        UIApplication.shared.keyWindow?.rootViewController?.present(self.emojiPickerView, animated: true, completion: nil)
+                    }
+                }
                 showInputViewController(emoji)
             } else {
                 // Fallback on earlier versions

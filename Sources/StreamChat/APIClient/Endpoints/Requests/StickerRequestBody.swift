@@ -8,12 +8,12 @@
 import Foundation
 
 public struct PackageList: Codable {
-    let packageID: Int?
-    let packageImg: String?
-    let packageName, packageCategory, isWish: String?
-    let order: Int?
-    let language, isNew, isDownload, isView: String?
-    let packageKeywords, packageAnimated, artistName: String?
+    public let packageID: Int?
+    public let packageImg: String?
+    public let packageName, packageCategory, isWish: String?
+    public let order: Int?
+    public let language, isNew, isDownload, isView: String?
+    public let packageKeywords, packageAnimated, artistName: String?
 
     enum CodingKeys: String, CodingKey {
         case packageID = "packageId"
@@ -69,6 +69,8 @@ public struct PackageInfoBody: Codable {
     public let package: Package?
 }
 
+// MARK: EmptyResponse
+public struct EmptyStipopResponse: Codable { }
 
 // MARK: - Header
 public struct Header: Codable {

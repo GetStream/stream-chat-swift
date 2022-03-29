@@ -14,153 +14,129 @@ import Nuke
 @available(iOS 13.0, *)
 class EmojiMenuViewController: UIViewController {
 
-    // MARK: Variables
+    // MARK: Outlets
     @IBOutlet weak var collectionEmoji: UICollectionView!
+    @IBOutlet weak var collectionMenu: UICollectionView!
+
+    // MARK: Variables
     var viewModel: EmojiMenuViewModel?
     private var stickerCalls = Set<AnyCancellable>()
     var stickers = [Sticker]()
+    var packageList = [PackageList]()
+    var didSelectSticker: ((Sticker) -> ())?
+    var didSelectMarketPlace: (() -> ())?
 
     //MARK: Override
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel = EmojiMenuViewModel()
-        viewModel?.getPackageInfo("445")
-
-        viewModel?.$stickers
-            .sink { [weak self ] stickers in
+        StickerApi.mySticker()
+            .sink { error in
+                print(error)
+            } receiveValue: { [weak self] result in
                 guard let `self` = self else { return }
-                self.stickers = stickers
+                self.packageList = result.body?.packageList ?? []
+                self.collectionMenu.reloadData()
+                guard let packageId = self.packageList.first?.packageID else { return }
+                self.loadSticker(stickerId: "\(packageId)")
+            }
+            .store(in: &stickerCalls)
+    }
+
+    private func loadSticker(stickerId: String) {
+        StickerApi.stickerInfo(id: stickerId)
+            .sink { error in
+                // TODO: Handle error state
+                print(error)
+            } receiveValue: { [weak self] result in
+                guard let `self` = self else { return }
+                self.stickers = result.body?.package?.stickers ?? []
                 self.collectionEmoji.reloadData()
             }
             .store(in: &stickerCalls)
-
-
     }
-//
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        if #available(iOS 14.0.0, *) {
-//            self.children.forEach { vc in
-//                vc.removeFromParent()
-//            }
-//            var chatMenuView = EmojiMenuView()
-//            let controller = UIHostingController(rootView: chatMenuView)
-//            addChild(controller)
-//            controller.view.translatesAutoresizingMaskIntoConstraints = false
-//            controller.view.clipsToBounds = true
-//            self.view.addSubview(controller.view)
-//            controller.didMove(toParent: self)
-//            self.view.clipsToBounds = true
-//            NSLayoutConstraint.activate([
-//                controller.view.widthAnchor.constraint(equalTo: self.view.widthAnchor),
-//                controller.view.heightAnchor.constraint(equalTo: self.view.heightAnchor),
-//                controller.view.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-//                controller.view.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
-//            ])
-//        } else {
-//            // Fallback on earlier versions
-//        }
-//    }
+
+    @IBAction func btnShowPackage(_ sender: Any) {
+        didSelectMarketPlace?()
+    }
 }
 
 @available(iOS 13.0, *)
 extension EmojiMenuViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return stickers.count
+        if collectionView == collectionEmoji {
+            return stickers.count
+        } else {
+            return packageList.count
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StickerCollectionCell", for: indexPath) as? StickerCollectionCell else {
-            return UICollectionViewCell()
-        }
-        if let stickerUrl = URL(string: stickers[indexPath.row].stickerImg ?? "") {
-            if stickerUrl.pathExtension == "gif" {
-                cell.imgSticker.setGifFromURL(stickerUrl)
-            } else {
-                Nuke.loadImage(with: stickerUrl, into: cell.imgSticker)
+        if collectionView == collectionEmoji {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StickerCollectionCell", for: indexPath) as? StickerCollectionCell else {
+                return UICollectionViewCell()
             }
+            cell.configureSticker(sticker: stickers[indexPath.row])
+            return cell
         } else {
-            cell.imgSticker = nil
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StickerMenuCollectionCell", for: indexPath) as? StickerMenuCollectionCell else {
+                return UICollectionViewCell()
+            }
+            cell.configureMenu(package: packageList[indexPath.row])
+            return cell
         }
-        cell.imgSticker.backgroundColor = .clear
-        return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width / 4
-        return .init(width: width, height: width)
+        if collectionView == collectionEmoji {
+            let width = collectionView.bounds.width / 4
+            return .init(width: width, height: width)
+        } else {
+            return .init(width: 30, height: 30)
+        }
     }
 
-    
-}
-
-@available(iOS 14.0.0, *)
-struct EmojiMenuView: View {
-    let rows = [
-        GridItem(.flexible())
-    ]
-    var viewModel = EmojiMenuViewModel()
-    let emojiType = EmojiType.allCases
-
-    let stickerColumns = [
-        GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())
-    ]
-    
-    var body: some View {
-        ZStack {
-            VStack{
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHGrid(rows: rows, alignment: .center) {
-                        ForEach(emojiType, id: \.self) { type  in
-                            ZStack(alignment: .topLeading) {
-                                Button(action: {
-
-                                }, label: {
-                                    Image(uiImage: type.emojiImage())
-                                        .foregroundColor(.white)
-                                })
-                            }
-                            .frame(height: 30)
-                            .padding(.horizontal, 15)
-                        }
-                    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == collectionEmoji {
+            didSelectSticker?(stickers[indexPath.row])
+            StickerApi.stickerSend(stickerId: stickers[indexPath.row].stickerID ?? 0)
+                .sink { success in
+                    print(success)
+                } receiveValue: { result in
+                    print(result)
                 }
-                .frame(height: 30)
-                Spacer()
-                emojiView
-                    .padding()
-            }
-        }
-        .background(Color(UIColor(rgb: 0x1E1F1F)))
-        .onAppear {
-            viewModel.getPackageInfo("550")
+                .store(in: &stickerCalls)
+        } else {
+            loadSticker(stickerId: "\(packageList[indexPath.row].packageID ?? 0)")
         }
     }
-}
-
-@available(iOS 14.0.0, *)
-extension EmojiMenuView {
-    var emojiView: some View {
-        return GeometryReader { proxy in
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVGrid(columns: stickerColumns) {
-                    ForEach(viewModel.stickers, id: \.stickerID) { sticker  in
-                        VStack {
-                            if let imageUrl = URL(string: sticker.stickerImg ?? "") {
-                                RemoteImageView(url: imageUrl)
-                            }
-                        }
-                        .frame(width: proxy.size.width / 4, height: proxy.size.width / 4)
-                    }
-                }
-            }
-        }
-    }
+    
 }
 
 class StickerCollectionCell: UICollectionViewCell {
     @IBOutlet weak var imgSticker: UIImageView!
+
+    func configureSticker(sticker: Sticker) {
+        if let stickerUrl = URL(string: sticker.stickerImg ?? "") {
+            if stickerUrl.pathExtension == "gif" {
+                imgSticker.setGifFromURL(stickerUrl)
+            } else {
+                Nuke.loadImage(with: stickerUrl, into: imgSticker)
+            }
+        } else {
+            imgSticker = nil
+        }
+        imgSticker.backgroundColor = .clear
+    }
 }
+
+class StickerMenuCollectionCell: UICollectionViewCell {
+    @IBOutlet weak var imgMenu: UIImageView!
+
+    func configureMenu(package: PackageList) {
+        Nuke.loadImage(with: package.packageImg, into: imgMenu)
+    }
+}
+
 
 enum EmojiType: CaseIterable {
     case activity
