@@ -14,12 +14,16 @@
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 
-# The official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/)
+This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications. This library includes both a low-level SDK and a set of reusable UI components.
 
-The **StreamChatUI SDK** for UIKit is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/) when developing with UIKit, a service for building chat and messaging applications.
+## Low Level Client (LLC)
+The **StreamChat SDK** is a low level client for Stream chat service that doesn't contain any UI components. It is meant to be used when you want to build a fully custom UI. For the majority of use cases though, we recommend using our highly customizable UI SDK's.
 
-## SwiftUI
-We also have an official SDK for SwiftUI called **[StreamChatSwiftUI SDK](https://github.com/GetStream/stream-chat-swiftui)**.
+## UIKit SDK
+The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application needs to support iOS 13 and below, this is the right UI SDK for you.
+
+## SwiftUI SDK
+The **StreamChatSwiftUI SDK** is our UI SDK for SwiftUI components. If your application needs only needs to support iOS 14 and above, this is the right UI SDK for you. This SDK is available in another repository **[stream-chat-swiftui](https://github.com/GetStream/stream-chat-swiftui)**.
 
 ---
 
