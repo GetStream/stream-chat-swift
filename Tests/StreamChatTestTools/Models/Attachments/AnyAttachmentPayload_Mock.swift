@@ -7,6 +7,7 @@ import Foundation
 
 public extension AnyAttachmentPayload {
     static let mockFile = try! Self(localFileURL: .localYodaQuote, attachmentType: .file)
+    static let mockFileWithLongName = try! Self(localFileURL: .localYodaQuoteLongFileName, attachmentType: .file)
     static let mockImage = try! Self(localFileURL: .localYodaImage, attachmentType: .image)
     static let mockVideo = try! Self(localFileURL: .localYodaQuote, attachmentType: .video)
 }
@@ -19,6 +20,9 @@ public extension URL {
 
     static let localYodaQuote = Bundle(for: ThisBundle.self)
         .url(forResource: "yoda", withExtension: "txt")!
+
+    static let localYodaQuoteLongFileName = Bundle(for: ThisBundle.self)
+        .url(forResource: "yoda_with_long_file_name", withExtension: "txt")!
 }
 
 public extension AnyAttachmentPayload {
