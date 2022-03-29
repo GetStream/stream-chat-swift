@@ -324,34 +324,53 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open func swipeableViewActionViews(for indexPath: IndexPath) -> [UIView] {
-        let deleteView = CellActionView().withoutAutoresizingMaskConstraints
-        deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
 
-        deleteView.actionButton.backgroundColor = appearance.colorPalette.alert
-        deleteView.actionButton.tintColor = .white
-
-        deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
-
-        /*let moreView = CellActionView().withoutAutoresizingMaskConstraints
-        moreView.actionButton.setImage(appearance.images.more, for: .normal)
-
-        moreView.actionButton.backgroundColor = appearance.colorPalette.background1
-        moreView.actionButton.tintColor = appearance.colorPalette.text
-
-        moreView.action = { self.moreButtonPressedForCell(at: indexPath) }
-
-        return [moreView, deleteView]*/
-        return [deleteView]
+        let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
+        if controller.channelQuery.type == .announcement {
+            let muteAction = CellActionView().withoutAutoresizingMaskConstraints
+            if controller.channel?.isMuted ?? false {
+                muteAction.actionButton.setImage(appearance.images.unMute, for: .normal)
+            } else {
+                muteAction.actionButton.setImage(appearance.images.mute, for: .normal)
+            }
+            muteAction.actionButton.backgroundColor = appearance.colorPalette.alert
+            muteAction.actionButton.tintColor = appearance.colorPalette.text
+            muteAction.action = { self.deleteButtonPressedForCell(at: indexPath) }
+            return [muteAction]
+        } else {
+            let deleteView = CellActionView().withoutAutoresizingMaskConstraints
+            deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
+            deleteView.actionButton.backgroundColor = appearance.colorPalette.alert
+            deleteView.actionButton.tintColor = .white
+            deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
+            return [deleteView]
+        }
     }
 
     /// This function is called when delete button is pressed from action items of a cell.
     /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
     open func deleteButtonPressedForCell(at indexPath: IndexPath) {
-        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] alert in
+        var isbroadcastChannel = false
+        var isMute = false
+        let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
+        isbroadcastChannel = controller.channelQuery.type == .announcement
+        isMute = controller.channel?.isMuted ?? false
+        let deleteAction = UIAlertAction(title: isbroadcastChannel ? "\(isMute ? "Unmute" : "Mute")" : "Delete", style: .destructive) { [weak self] alert in
             guard let self = self else { return }
             let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
-            if controller.channelQuery.type == .announcement {
+            if isbroadcastChannel {
+                guard let currentUserId = ChatClient.shared.currentUserId else { return }
+                if controller.channel?.isMuted ?? false {
+                    controller.unmuteChannel(completion: nil)
+                    // TODO: disable for now
+                    // Add user in channel to enable notification
+                    // controller.addMembers(userIds: [currentUserId], completion: nil)
+                    return;
+                }
                 controller.muteChannel(completion: nil)
+                // TODO: disable for now
+                // Remove user from channel to disable notification
+                // controller.removeMembers(userIds: [currentUserId], completion: nil)
             } else {
                 controller.hideChannel(clearHistory: true, completion: nil)
             }
@@ -369,7 +388,11 @@ open class ChatChannelListVC: _ViewController,
                 self.collectionView.layoutIfNeeded()
             }
         }
-        let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation?\nIt'll be permanently deleted.", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
+        var alertTitle = "Would you like to delete this conversation?\nIt'll be permanently deleted."
+        if isbroadcastChannel {
+            alertTitle = "Do you want to \(isMute ? "Unmute" : "Mute") this channel?"
+        }
+        let alert = UIAlertController.showAlert(title: alertTitle, message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
         self.present(alert, animated: true, completion: nil)
     }
 

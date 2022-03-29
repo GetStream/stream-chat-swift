@@ -8,12 +8,14 @@
 import UIKit
 import StreamChat
 import Nuke
+import AVKit
 
 class WalletRequestPayBubble: UITableViewCell {
 
     public private(set) var viewContainer: UIView!
     public private(set) var subContainer: UIView!
     public private(set) var sentThumbImageView: UIImageView!
+    public private(set) var playerView: UIView!
     public private(set) var timestampLabel: UILabel!
     public private(set) var descriptionLabel: UILabel!
     public private(set) var requestMessageLabel: UILabel!
@@ -95,7 +97,7 @@ class WalletRequestPayBubble: UITableViewCell {
         NSLayoutConstraint.activate([
             descriptionLabel.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 10),
             descriptionLabel.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: -4),
-            descriptionLabel.bottomAnchor.constraint(equalTo: sentThumbImageView.topAnchor, constant: -8),
+            descriptionLabel.bottomAnchor.constraint(equalTo: sentThumbImageView.topAnchor, constant: -11),
         ])
         descriptionLabel.transform = .mirrorY
         descriptionLabel.textAlignment = .center
@@ -105,11 +107,7 @@ class WalletRequestPayBubble: UITableViewCell {
         lblDetails = createDetailsLabel()
         if walletPaymentType == .request {
             let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first
-            if isSender  {
-                descriptionLabel.text = "Payment Requested"
-            } else {
-                descriptionLabel.text = "\(requestedUserName(raw: payload?.extraData) ?? "-") Requests Payment"
-            }
+            descriptionLabel.text = "Payment Requested"
             if let themeURL = requestedThemeURL(raw: payload?.extraData), let imageUrl = URL(string: themeURL) {
                 if imageUrl.pathExtension == "gif" {
                     sentThumbImageView.setGifFromURL(imageUrl)
@@ -117,7 +115,7 @@ class WalletRequestPayBubble: UITableViewCell {
                     Nuke.loadImage(with: themeURL, into: sentThumbImageView)
                 }
             }
-            lblDetails.text = "REQUEST: \(requestedAmount(raw: payload?.extraData) ?? "0") ONE"
+            lblDetails.text = "AMOUNT: \(requestedAmount(raw: payload?.extraData) ?? "0") ONE"
         }
         detailsStack = UIStackView(arrangedSubviews: [lblDetails])
         detailsStack.axis = .vertical
@@ -130,7 +128,7 @@ class WalletRequestPayBubble: UITableViewCell {
         NSLayoutConstraint.activate([
             detailsStack.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 10),
             detailsStack.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: -10),
-            detailsStack.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: -10)
+            detailsStack.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: -6)
         ])
 
         pickUpButton = UIButton()
@@ -141,13 +139,13 @@ class WalletRequestPayBubble: UITableViewCell {
         pickUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         pickUpButton.backgroundColor = Appearance.default.colorPalette.redPacketButton
         pickUpButton.clipsToBounds = true
-        pickUpButton.layer.cornerRadius = 20
+        pickUpButton.layer.cornerRadius = 16
         subContainer.addSubview(pickUpButton)
         NSLayoutConstraint.activate([
             pickUpButton.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 12),
             pickUpButton.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: -12),
-            pickUpButton.heightAnchor.constraint(equalToConstant: 40),
-            pickUpButton.bottomAnchor.constraint(equalTo: detailsStack.topAnchor, constant: -20),
+            pickUpButton.heightAnchor.constraint(equalToConstant: 32),
+            pickUpButton.bottomAnchor.constraint(equalTo: detailsStack.topAnchor, constant: -15),
             pickUpButton.topAnchor.constraint(equalTo: subContainer.topAnchor, constant: 20)
         ])
         pickUpButton.transform = .mirrorY

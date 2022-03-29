@@ -35,6 +35,7 @@ class TableViewCellRedPacketDrop: UITableViewCell {
     @IBOutlet private weak var viewContainerTopConstraint: NSLayoutConstraint!
     @IBOutlet private weak var viewContainerLeadingConstraint: NSLayoutConstraint!
     @IBOutlet private weak var AvatarContainerWidthConstraint: NSLayoutConstraint!
+    
     // MARK: -  Variables
     var layoutOptions: ChatMessageLayoutOptions?
     var content: ChatMessage?
