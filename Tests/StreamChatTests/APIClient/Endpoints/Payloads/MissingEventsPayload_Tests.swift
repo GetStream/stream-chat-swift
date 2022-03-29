@@ -68,4 +68,25 @@ final class MissingEventsPayload_Tests: XCTestCase {
         XCTAssertEqual(eventUser.isInvisible, expectedUser.isInvisible)
         XCTAssertEqual(eventUser.extraData, expectedUser.extraData)
     }
+
+    func test_missingEventsPayload_incompleteChannels_isDeserialized() throws {
+        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload-IncompleteChannel")
+        let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
+        XCTAssertEqual(payload.eventPayloads.count, 4)
+
+        let expectedTypes: [EventType] = [
+            .notificationRemovedFromChannel,
+            .notificationAddedToChannel,
+            .notificationRemovedFromChannel,
+            .notificationAddedToChannel
+        ]
+
+        // Channel is not decoded because it is incomplete, but rest is decoded.
+        for (event, type) in zip(payload.eventPayloads, expectedTypes) {
+            XCTAssertNil(event.channel)
+            XCTAssertEqual(event.user?.id, "broken-waterfall-5")
+            XCTAssertEqual(event.createdAt, "2020-09-07T12:25:50.702323Z".toDate())
+            XCTAssertEqual(event.eventType, type)
+        }
+    }
 }
