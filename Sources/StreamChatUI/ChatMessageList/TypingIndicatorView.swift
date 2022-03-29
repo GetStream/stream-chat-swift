@@ -33,6 +33,13 @@ open class TypingIndicatorView: _View, ThemeProvider {
         super.setUp()
         
         typingAnimationView.startAnimating()
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     override open func setUpLayout() {
@@ -62,5 +69,10 @@ open class TypingIndicatorView: _View, ThemeProvider {
         super.updateContent()
         
         informationLabel.text = content?.trimStringBy(count: 30)
+    }
+
+    // Restart Animation 
+    @objc func handleAppDidBecomeActive() {
+        typingAnimationView.startAnimating()
     }
 }
