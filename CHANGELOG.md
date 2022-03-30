@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add support for  multiple active channel lists at the same time [#1879](https://github.com/GetStream/stream-chat-swift/pull/1879)
 
 # [4.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.0)
 _March 29, 2022_
@@ -12,7 +14,6 @@ _March 29, 2022_
 ### ✅ Added
 - Introduce message translations. See [docs](https://getstream.io/chat/docs/ios-swift/translation/?language=swift) for more info [#1867](https://github.com/GetStream/stream-chat-swift/issues/1867)
 - Add support for multiple push providers [#1864](https://github.com/GetStream/stream-chat-swift/issues/1864)
-- Add support for  multiple active channel lists at the same time [#1879](https://github.com/GetStream/stream-chat-swift/pull/1879)
 ### 🐞 Fixed
 - Fix payload for reaction when using `enforce_unique` [#1861](https://github.com/GetStream/stream-chat-swift/issues/1861)
 - Use IndexPath's item instead of row for macOS compatibility [#1859](https://github.com/GetStream/stream-chat-swift/pull/1859)
