@@ -367,6 +367,5 @@ class WalletRequestPayBubble: UITableViewCell {
             userInfo["channelId"] = channelId
             NotificationCenter.default.post(name: .sendGiftPacketTapAction, object: nil, userInfo: userInfo)
         }
-
     }
 }

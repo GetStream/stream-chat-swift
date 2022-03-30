@@ -265,16 +265,11 @@ class TableViewCellRedPacketDrop: UITableViewCell {
     }
 
     @objc private func btnPickButtonAction() {
-        if isAllowToPick() {
-            guard let redPacket = getRedPacketExtraData(), isSender == false else {
-                return
-            }
-            if let packetId = redPacket["packetId"] {
-                let redPacketId = fetchRawData(raw: packetId) as? String ?? ""
-                var userInfo = [String: Any]()
-                userInfo["packetId"] = redPacketId
-                NotificationCenter.default.post(name: .pickUpRedPacket, object: nil, userInfo: userInfo)
-            }
+        guard isAllowToPick(),
+              let extraData = content?.extraData,
+              isSender == false else {
+            return
         }
+        NotificationCenter.default.post(name: .pickUpGiftPacket, object: nil, userInfo: extraData)
     }
 }
