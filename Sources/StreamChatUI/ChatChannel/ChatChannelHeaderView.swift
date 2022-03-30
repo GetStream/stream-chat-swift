@@ -32,9 +32,22 @@ open class ChatChannelHeaderView:
         }
     }
 
+    /// A View which displays information about current users who are typing.
+    open private(set) lazy var typingIndicatorView: TypingIndicatorView = components
+        .typingIndicatorView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    /// A Boolean value indicating whether the typing events are enabled.
+    open var isTypingEventsEnabled: Bool {
+        channelController?.areTypingEventsEnabled == true
+    }
+
     /// The amount of time it updates the online status of the members.
     /// By default it is 60 seconds.
     open var statusUpdateInterval: TimeInterval { 60 }
+
+    private var isUserTyping = false
 
     /// A view that displays a title label and subtitle in a container stack view.
     open private(set) lazy var titleContainerView: TitleContainerView = components
@@ -45,6 +58,15 @@ open class ChatChannelHeaderView:
         super.setUp()
 
         makeTimer()
+        setupTypingIndicator()
+    }
+
+    private func setupTypingIndicator() {
+        insertSubview(typingIndicatorView, at: 0)
+        typingIndicatorView.isHidden = true
+        typingIndicatorView.heightAnchor.pin(equalToConstant: 15).isActive = true
+        typingIndicatorView.pin(anchors: [.leading, .trailing], to: self)
+        typingIndicatorView.bottomAnchor.pin(equalTo: bottomAnchor).isActive = true
     }
 
     override open func setUpLayout() {
@@ -61,6 +83,31 @@ open class ChatChannelHeaderView:
             self.titleContainerView.content = (title?.trimStringBy(count: 25), self.subtitleText, self.channelController?.channelQuery.type == .announcement ? true : false, self.channelController?.channel?.isMuted ?? false)
             self.titleContainerView.setUpLayout()
         }
+    }
+
+    /// Shows typing Indicator.
+    /// - Parameter typingUsers: typing users gotten from `channelController`
+    open func showTypingIndicator(typingUsers: [ChatUser]) {
+        guard isTypingEventsEnabled else { return }
+
+        if let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name {
+            typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingUsers.count - 1)
+        } else {
+            // If we somehow cannot fetch any user name, we simply show that `Someone is typing`
+            typingIndicatorView.content = L10n.MessageList.TypingIndicator.typingUnknown
+        }
+        isUserTyping = true
+        titleContainerView.updateSubtitle(isHide: true)
+        typingIndicatorView.isHidden = false
+    }
+
+    /// Hides typing Indicator.
+    open func hideTypingIndicator() {
+        guard isTypingEventsEnabled, typingIndicatorView.isVisible else { return }
+        isUserTyping = true
+        typingIndicatorView.isHidden = true
+        titleContainerView.updateSubtitle(isHide: false)
+        updateContent()
     }
 
     /// The title text used to render the title label. By default it is the channel name.
@@ -151,7 +198,8 @@ open class ChatChannelHeaderView:
             withTimeInterval: statusUpdateInterval,
             repeats: true
         ) { [weak self] _ in
-            self?.updateContentIfNeeded()
+            guard let `self` = self, !self.isUserTyping else { return }
+            self.updateContentIfNeeded()
         }
     }
 
@@ -163,6 +211,7 @@ open class ChatChannelHeaderView:
     ) {
         switch channel {
         case .update, .create:
+            guard !self.isUserTyping else { return }
             updateContentIfNeeded()
         default:
             break
@@ -173,8 +222,17 @@ open class ChatChannelHeaderView:
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
-        // By default the header view is not interested in typing events
-        // but this can be overridden by subclassing this component.
+        guard channelController.areTypingEventsEnabled else { return }
+
+        let typingUsersWithoutCurrentUser = typingUsers
+            .sorted { $0.id < $1.id }
+            .filter { $0.id != ChatClient.shared.currentUserId }
+
+        if typingUsersWithoutCurrentUser.isEmpty {
+            self.hideTypingIndicator()
+        } else {
+            self.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
+        }
     }
 
     open func channelController(
