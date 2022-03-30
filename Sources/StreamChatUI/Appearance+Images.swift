@@ -242,7 +242,13 @@ public extension Appearance {
             }
         }()
 
-
+        public var clock: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "clock")?.withRenderingMode(.alwaysTemplate).tinted(with: UIColor.white.withAlphaComponent(0.6))
+            } else {
+                return nil
+            }
+        }()
 
         // MARK: - Reactions
 
@@ -473,13 +479,5 @@ public extension Appearance {
 
         // MARK: QR Code Option
         public var shareImageIcon: UIImage = loadImageSafely(with: "share_image_icon")
-
-        // MARK: EMOJI MENU
-        public var activity: UIImage = loadImageSafely(with: "activity")
-        public var animals_Nature: UIImage = loadImageSafely(with: "animals_Nature")
-        public var objects: UIImage = loadImageSafely(with: "objects")
-        public var shape: UIImage = loadImageSafely(with: "shape")
-        public var smileys_People: UIImage = loadImageSafely(with: "smileys_People")
-        public var travel_Places: UIImage = loadImageSafely(with: "travel_Places")
     }
 }

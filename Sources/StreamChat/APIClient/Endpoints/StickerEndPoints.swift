@@ -51,7 +51,7 @@ extension StickerApi {
     public static func downloadStickers(packageId: Int) -> AnyPublisher<ResponseBody<EmptyStipopResponse>, Error> {
         let url = base.absoluteString + "download/\(packageId)?userId=\(userId)&isPurchase=N"
         var request = (URLRequest(url: URL(string: url)!))
-        request.httpMethod = "GET"
+        request.httpMethod = "POST"
         return agent.run(request)
             .map(\.value)
             .eraseToAnyPublisher()
@@ -70,6 +70,15 @@ extension StickerApi {
         let url = base.absoluteString + "package/send/\(userId)"
         var request = (URLRequest(url: URL(string: url)!))
         request.httpMethod = "GET"
+        return agent.run(request)
+            .map(\.value)
+            .eraseToAnyPublisher()
+    }
+
+    public static func hideStickers(packageId: Int) -> AnyPublisher<ResponseBody<EmptyStipopResponse>, Error> {
+        let url = base.absoluteString + "mysticker/hide/\(userId)/\(packageId)"
+        var request = (URLRequest(url: URL(string: url)!))
+        request.httpMethod = "PUT"
         return agent.run(request)
             .map(\.value)
             .eraseToAnyPublisher()

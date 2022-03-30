@@ -81,3 +81,15 @@ public struct EmptyStipopResponse: Codable { }
 public struct Header: Codable {
     public let status, message, code: String?
 }
+
+
+// MARK: StickerMENU
+public class StickerMenu {
+    public let image: String!
+    public let menuId: Int!
+
+    public init(image: String, menuId: Int) {
+        self.image = image
+        self.menuId = menuId
+    }
+}

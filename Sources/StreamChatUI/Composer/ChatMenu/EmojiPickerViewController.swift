@@ -15,6 +15,7 @@ import Nuke
 class EmojiPickerViewController: UIViewController {
 
     // MARK: Outlets
+    @IBOutlet weak var segmentController: UISegmentedControl!
     @IBOutlet weak var tblPicker: UITableView!
 
     // MARK: Variables
@@ -24,15 +25,19 @@ class EmojiPickerViewController: UIViewController {
     private var currentPage : Int = 0
     private var totalCount: Int = 0
     private var isLoadingList : Bool = false
-    private var downloadedPackage = [Int]()
+    var downloadedPackage = [Int]()
+    private var isMyPackage = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         packages.removeAll()
+        view.backgroundColor = Appearance.default.colorPalette.stickerBg
         fetchStickers(pageNumber: 0)
+        segmentController.selectedSegmentTintColor = Appearance.default.colorPalette.themeBlue
     }
 
     func loadMoreSticker(){
+        guard !isMyPackage else { return }
         currentPage += 1
         fetchStickers(pageNumber: currentPage)
     }
@@ -53,6 +58,37 @@ class EmojiPickerViewController: UIViewController {
                 self.tblPicker.reloadData()
             }
             .store(in: &stickerCalls)
+    }
+
+    private func fetchMySticker() {
+        StickerApi.mySticker()
+            .sink { result in
+                print(result)
+            } receiveValue: { [weak self] result in
+                guard let `self` = self else { return }
+                self.packages = result.body?.packageList ?? []
+                self.downloadedPackage = self.packages.compactMap { $0.packageID ?? 0}
+                self.tblPicker.reloadData()
+            }
+            .store(in: &stickerCalls)
+    }
+
+    private func deletePackage(_ packageId: Int) {
+        StickerApi.hideStickers(packageId: packageId)
+            .sink { result in } receiveValue: { _ in }
+            .store(in: &stickerCalls)
+    }
+
+    @IBAction func segmentDidiChange(_ sender: UISegmentedControl) {
+        packages.removeAll()
+        tblPicker.reloadData()
+        if sender.selectedSegmentIndex == 0 {
+            isMyPackage = false
+            fetchStickers(pageNumber: 0)
+        } else {
+            isMyPackage = true
+            fetchMySticker()
+        }
     }
 
 }
@@ -76,16 +112,17 @@ extension EmojiPickerViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-       let lastSectionIndex = tableView.numberOfSections - 1
-       let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
-       if indexPath.section ==  lastSectionIndex && indexPath.row == lastRowIndex {
-           let spinner = UIActivityIndicatorView(style: .white)
-           spinner.startAnimating()
-           spinner.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
-           self.tblPicker.tableFooterView = spinner
-           self.tblPicker.tableFooterView?.isHidden = false
-       }
-   }
+        let lastSectionIndex = tableView.numberOfSections - 1
+        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
+        guard !isMyPackage else { return }
+        if indexPath.section ==  lastSectionIndex && indexPath.row == lastRowIndex {
+            let spinner = UIActivityIndicatorView(style: .white)
+            spinner.startAnimating()
+            spinner.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
+            self.tblPicker.tableFooterView = spinner
+            self.tblPicker.tableFooterView?.isHidden = false
+        }
+    }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if (((scrollView.contentOffset.y + scrollView.frame.size.height) > scrollView.contentSize.height ) && !isLoadingList){
@@ -106,6 +143,22 @@ extension EmojiPickerViewController: UITableViewDelegate, UITableViewDataSource 
             }, receiveValue: { _ in
             })
             .store(in: &stickerCalls)
+    }
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        isMyPackage
+    }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let delete = UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
+            self.deletePackage(self.packages[indexPath.row].packageID ?? 0)
+            self.packages.remove(at: indexPath.row)
+            self.tblPicker.deleteRows(at: [indexPath], with: .automatic)
+            completionHandler(true)
+        }
+        let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete])
+        swipeActionConfig.performsFirstActionWithFullSwipe = false
+        return swipeActionConfig
     }
 }
 

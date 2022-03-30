@@ -15,172 +15,175 @@ import Nuke
 class EmojiMenuViewController: UIViewController {
 
     // MARK: Outlets
-    @IBOutlet weak var collectionEmoji: UICollectionView!
-    @IBOutlet weak var activityView: UIActivityIndicatorView!
+    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var collectionMenu: UICollectionView!
 
     // MARK: Variables
-    var viewModel: EmojiMenuViewModel?
+    // -1 to load recent stickers
+    private var selectedPack: Int = -1
     private var stickerCalls = Set<AnyCancellable>()
     var stickers = [Sticker]()
-    var packageList = [PackageList]()
+    var menus = [StickerMenu]()
+    var package = [PackageList]()
     var didSelectSticker: ((Sticker) -> ())?
-    var didSelectMarketPlace: (() -> ())?
+    var didSelectMarketPlace: (([Int]) -> ())?
+    private var pageController: UIPageViewController?
+    private var currentIndex: Int = 0
+    private var initialVC: EmojiContainerViewController!
+    private var addPackageGroup = DispatchGroup()
 
     //MARK: Override
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchSticker()
+        addPackageGroup.notify(queue: .main) { [weak self] in
+            guard let `self` = self else { return }
+            self.fetchSticker()
+        }
+    }
+
+    @IBAction func btnShowPackage(_ sender: Any) {
+        didSelectMarketPlace?(menus.compactMap { $0.menuId })
+    }
+
+    private func fetchSticker() {
+        self.menus.removeAll()
+        self.package.removeAll()
+        self.menus.append(.init(image: "", menuId: -1))
         StickerApi.mySticker()
             .sink { error in
                 print(error)
             } receiveValue: { [weak self] result in
                 guard let `self` = self else { return }
-                self.packageList = result.body?.packageList ?? []
+                // TODO: Check for multiple api call
+                self.menus.removeAll()
+                self.package.removeAll()
+                self.menus.append(.init(image: "", menuId: -1))
+                let packageList = result.body?.packageList ?? []
+                self.package = packageList
+                self.menus.append(contentsOf: packageList.compactMap { StickerMenu.init(image: $0.packageImg ?? "", menuId: $0.packageID ?? 0) })
+                self.setupPageController()
+                self.checkAndAddDefaultSticker()
                 self.collectionMenu.reloadData()
-                guard let packageId = self.packageList.first?.packageID else { return }
-                self.loadRecentSticker()
             }
             .store(in: &stickerCalls)
     }
 
-    private func loadSticker(stickerId: String) {
-        StickerApi.stickerInfo(id: stickerId)
-            .sink { error in
-                // TODO: Handle error state
-                print(error)
-            } receiveValue: { [weak self] result in
-                guard let `self` = self else { return }
-                self.stickers = result.body?.package?.stickers ?? []
-                self.collectionEmoji.reloadData()
+    private func checkAndAddDefaultSticker() {
+        // 1. mushroom movie valentines -> 6223
+        // 2. cute duck duggy -> 7227
+        // 3. sweetanka
+        // 4. tubby nugget 2 -> 5851
+        // 5. cute baby axolotl: animated -> 5682
+
+        if package.count == 0 {
+            [6223, 7227, 5851, 5682].forEach { packageId in
+                addPackageGroup.enter()
+                StickerApi.downloadStickers(packageId: packageId)
+                    .sink { [weak self] _ in
+                        guard let `self` = self else { return }
+                        self.addPackageGroup.leave()
+                    } receiveValue: { _ in }
+                    .store(in: &stickerCalls)
             }
-            .store(in: &stickerCalls)
+        }
     }
 
-    private func loadRecentSticker() {
-        StickerApi.recentSticker()
-            .sink { finish in
-                print(finish)
-            } receiveValue: { [weak self] result in
-                guard let self = self else { return }
-                self.stickers = result.body?.stickerList ?? []
-                self.collectionEmoji.reloadData()
-            }
-            .store(in: &stickerCalls)
+    private func setupPageController() {
+        pageController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        guard let pageController = pageController else {
+            return
+        }
+        pageController.dataSource = self
+        pageController.delegate = self
+        pageController.view.backgroundColor = .clear
+        pageController.view.frame = containerView.bounds
+        addChild(pageController)
+        containerView.addSubview(pageController.view)
+        initialVC = EmojiContainerViewController(with: menus.first ?? .init(image: "", menuId: -1))
+        pageController.setViewControllers([initialVC], direction: .forward, animated: true, completion: nil)
+        pageController.didMove(toParent: self)
+    }
+}
+
+@available(iOS 13.0, *)
+extension EmojiMenuViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let currentVC = viewController as? EmojiContainerViewController else {
+            return nil
+        }
+        var index = currentVC.view.tag ?? 0
+        if index == 0 {
+            return nil
+        }
+        index -= 1
+        let emojiContainer = EmojiContainerViewController(with: menus[index])
+        emojiContainer.view.tag = index
+        return emojiContainer
     }
 
-    private func updateLoadingView() {
-        activityView.isHidden = self.stickers.count != 0
-        collectionEmoji.isHidden = self.stickers.count != 0
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let currentVC = viewController as? EmojiContainerViewController else {
+            return nil
+        }
+        var index = currentVC.view.tag ?? 0
+        if index >= self.menus.count - 1 {
+            return nil
+        }
+        index += 1
+        let emojiContainer = EmojiContainerViewController(with: menus[index])
+        emojiContainer.view.tag = index
+        return emojiContainer
     }
 
-    @IBAction func btnShowPackage(_ sender: Any) {
-        didSelectMarketPlace?()
+    func presentationCount(for pageViewController: UIPageViewController) -> Int {
+        return menus.count
+    }
+
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        if (!completed) {
+            return
+        }
+        let index = pageViewController.viewControllers!.first!.view.tag
+        currentIndex = index
+        guard menus.count > currentIndex else { return }
+        selectedPack = menus[currentIndex].menuId
+        collectionMenu.reloadData()
+        collectionMenu.scrollToItem(at: .init(row: currentIndex, section: 0), at: .right, animated: true)
     }
 }
 
 @available(iOS 13.0, *)
 extension EmojiMenuViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == collectionEmoji {
-            return stickers.count
-        } else {
-            return packageList.count
-        }
+        return menus.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == collectionEmoji {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StickerCollectionCell", for: indexPath) as? StickerCollectionCell else {
-                return UICollectionViewCell()
-            }
-            cell.configureSticker(sticker: stickers[indexPath.row])
-            return cell
-        } else {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StickerMenuCollectionCell", for: indexPath) as? StickerMenuCollectionCell else {
-                return UICollectionViewCell()
-            }
-            cell.configureMenu(package: packageList[indexPath.row])
-            return cell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StickerMenuCollectionCell", for: indexPath) as? StickerMenuCollectionCell else {
+            return UICollectionViewCell()
         }
+        cell.configureMenu(menu: menus[indexPath.row], selectedId: selectedPack)
+        return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView == collectionEmoji {
-            let width = collectionView.bounds.width / 4
-            return .init(width: width, height: width)
-        } else {
-            return .init(width: 30, height: 30)
-        }
+        return .init(width: 40, height: 40)
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == collectionEmoji {
-            didSelectSticker?(stickers[indexPath.row])
-            StickerApi.stickerSend(stickerId: stickers[indexPath.row].stickerID ?? 0)
-                .sink { success in
-                    print(success)
-                } receiveValue: { result in
-                    print(result)
-                }
-                .store(in: &stickerCalls)
-        } else {
-            loadSticker(stickerId: "\(packageList[indexPath.row].packageID ?? 0)")
-        }
+        let direction: UIPageViewController.NavigationDirection = indexPath.row < currentIndex ? .reverse : .forward
+        let emojiContainer = EmojiContainerViewController(with: menus[indexPath.row])
+        guard selectedPack != menus[indexPath.row].menuId else { return }
+        emojiContainer.view.tag = indexPath.row
+        selectedPack = menus[indexPath.row].menuId
+        currentIndex = menus.firstIndex(where: { $0.menuId == selectedPack}) ?? 0
+        collectionView.reloadData()
+        pageController?.setViewControllers([emojiContainer], direction: direction, animated: true, completion: nil)
     }
-    
-}
 
-class StickerCollectionCell: UICollectionViewCell {
-    @IBOutlet weak var imgSticker: UIImageView!
-
-    func configureSticker(sticker: Sticker) {
-        if let stickerUrl = URL(string: sticker.stickerImg ?? "") {
-            if stickerUrl.pathExtension == "gif" {
-                imgSticker.setGifFromURL(stickerUrl)
-            } else {
-                Nuke.loadImage(with: stickerUrl, into: imgSticker)
-            }
-        } else {
-            imgSticker = nil
-        }
-        imgSticker.backgroundColor = .clear
-    }
-}
-
-class StickerMenuCollectionCell: UICollectionViewCell {
-    @IBOutlet weak var imgMenu: UIImageView!
-
-    func configureMenu(package: PackageList) {
-        Nuke.loadImage(with: package.packageImg, into: imgMenu)
-    }
-}
-
-
-enum EmojiType: CaseIterable {
-    case activity
-    case animalsNature
-    case objects
-    case shape
-    case smileysPeople
-    case travelPlaces
-    case add
-
-    func emojiImage() -> UIImage {
-        switch self {
-        case .activity:
-            return Appearance.default.images.activity
-        case .animalsNature:
-            return Appearance.default.images.animals_Nature
-        case .objects:
-            return Appearance.default.images.objects
-        case .shape:
-            return Appearance.default.images.shape
-        case .smileysPeople:
-            return Appearance.default.images.smileys_People
-        case .travelPlaces:
-            return Appearance.default.images.travel_Places
-        case .add:
-            return Appearance.default.images.addIcon ?? .init()
-        }
-    }
 }

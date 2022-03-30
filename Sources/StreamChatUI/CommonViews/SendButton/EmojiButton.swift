@@ -51,7 +51,10 @@ open class EmojiButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         let normalStateImage = appearance.images.emojiIcon
+        let selectedStateImage = appearance.images.menuKeyboard
+        self.tintColor = .init(rgb: 0x737373)
         setImage(normalStateImage, for: .normal)
+        setImage(selectedStateImage, for: .selected)
     }
 }
 

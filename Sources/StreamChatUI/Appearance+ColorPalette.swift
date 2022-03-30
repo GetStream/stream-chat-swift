@@ -82,6 +82,7 @@ public extension Appearance {
         public var placeHolderBalanceBG: UIColor = .placeHolderBalanceBG
 
         public var showMoreButtonBg: UIColor = .init(rgb: 0x38383A)
+        public var stickerBg: UIColor = .init(rgb: 0x1E1F1F)
     }
 }
 

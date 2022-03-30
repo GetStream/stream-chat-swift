@@ -17,6 +17,7 @@ extension Notification.Name {
     public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
     public static let disburseFundAction = Notification.Name("kStreamChatDisburseFundTapAction")
     public static let showActivityAction = Notification.Name("kStreamChatshowActivityAction")
+    public static let sendSticker = Notification.Name("kStreamChatSendSticker")
 }
 
 /// The possible errors that can occur in attachment validation
@@ -361,6 +362,7 @@ open class ComposerVC: _ViewController,
     override open func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.addObserver(self, selector: #selector(btnSendSticker(_:)), name: .sendSticker, object: nil)
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -582,20 +584,12 @@ open class ComposerVC: _ViewController,
             if #available(iOS 13.0, *) {
                 emoji = EmojiMenuViewController.instantiateController(storyboard: .wallet)
                 if let emoji = emoji as? EmojiMenuViewController {
-                    emoji.didSelectSticker = { [weak self] sticker in
-                        guard let `self` = self, let stickerImg = sticker.stickerImg else { return }
-                        var stickerData = [String: RawJSON]()
-                        stickerData["stickerUrl"] = .string(stickerImg)
-                        self.channelController?
-                            .createNewMessage(
-                                text: "Sticker",
-                                extraData: stickerData,
-                                completion: nil
-                            )
-                    }
-                    emoji.didSelectMarketPlace = { [weak self] in
+                    emoji.didSelectMarketPlace = { [weak self] downloadedSticker in
                         guard let `self` = self else { return }
                         self.emojiPickerView = EmojiPickerViewController.instantiateController(storyboard: .wallet)
+                        if let emojiPickerView = self.emojiPickerView as? EmojiPickerViewController {
+                            emojiPickerView.downloadedPackage = downloadedSticker
+                        }
                         UIApplication.shared.keyWindow?.rootViewController?.present(self.emojiPickerView, animated: true, completion: nil)
                     }
                 }
@@ -764,6 +758,21 @@ open class ComposerVC: _ViewController,
         var userInfo = [String: Any]()
         userInfo["channelId"] = channelId
         NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
+    }
+
+    @objc func btnSendSticker(_ notification: Notification) {
+        guard let sticker = notification.userInfo?["sticker"] as? Sticker,
+              let stickerImg = sticker.stickerImg else {
+            return 
+        }
+        var stickerData = [String: RawJSON]()
+        stickerData["stickerUrl"] = .string(stickerImg)
+        self.channelController?
+            .createNewMessage(
+                text: "Sticker",
+                extraData: stickerData,
+                completion: nil
+            )
     }
 
     @objc open func disburseFundAction() {
