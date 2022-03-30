@@ -216,112 +216,66 @@ class RedPacketSentBubble: UITableViewCell {
     }
 
     private func configRedPacket() {
-        guard let redPacket = getRedPacketExtraData() else {
+        guard let extraData = content?.extraData else {
             return
         }
-        if let title = redPacket["title"] {
-            let redPacketTitle = fetchRawData(raw: title) as? String ?? ""
-            descriptionLabel.text = redPacketTitle
-        }
-        if let maxOne = redPacket["maxOne"] {
-            let one = fetchRawData(raw: maxOne) as? String ?? "0"
-            lblTotal.text = "Total: \(one) ONE"
+        descriptionLabel.text = extraData.redPacketTitle
+        if let maxOne = extraData.redPacketMaxOne {
+            lblTotal.text = "Total: \(maxOne) ONE"
         } else {
             lblTotal.text = "Total: 0 ONE"
         }
-        if let minOne = redPacket["minOne"] {
-            let one = fetchRawData(raw: minOne) as? String ?? "0"
-            lblMax.text = "Max: \(one) ONE"
+        if let minOne = extraData.redPacketMinOne {
+            lblMax.text = "Max: \(minOne) ONE"
         } else {
             lblMax.text = "Max: 0 ONE"
         }
-        if let participants = redPacket["participantsCount"] {
-            let participantCount = fetchRawData(raw: participants) as? String ?? "0"
-            let intParticipants = Int(participantCount) ?? 0
-            if intParticipants <= 1 {
-                lblDetails.text = "First user receives 100% of the packet!"
-            } else {
-                lblDetails.text = "Split randomly between: \(intParticipants) users"
-            }
-        }
-//        if let endTime = redPacket["endTime"] {
-//            let strEndTime = fetchRawData(raw: endTime) as? String ?? ""
-//            let dateFormatter = DateFormatter()
-//            dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
-//            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-//            if let date = dateFormatter.date(from: strEndTime) {
-//
-//            }
-//        }
-        lblExpire.text = "Expires in 30 minutes!"
-    }
-
-    private func getRedPacketExtraData() -> [String: RawJSON]? {
-        if let extraData = content?.extraData["redPacketPickup"] {
-            switch extraData {
-            case .dictionary(let dictionary):
-                return dictionary
-            default:
-                return nil
-            }
+        let participants = Int(extraData.redPacketParticipantsCount ?? "0") ?? 0
+        if participants <= 1 {
+            lblDetails.text = "First user receives 100% of the packet!"
         } else {
-            return nil
+            lblDetails.text = "Split randomly between: \(participants) users"
         }
+        lblExpire.text = "Expires in 15 minutes!"
     }
 
-    private func getEndTime(raw: [String: RawJSON]?) -> Date? {
-        guard let rawData = raw else { return nil }
-        if let endTime = rawData ["endTime"] {
-            let strEndTime = fetchRawData(raw: endTime) as? String ?? ""
-            let dateFormatter = ISO8601DateFormatter()
-            dateFormatter.formatOptions = [.withInternetDateTime]
-            if let date = dateFormatter.date(from: "\(strEndTime)") {
-                return date
-            } else {
-                return nil
-            }
+    private func getEndTime() -> Date? {
+        let strEndTime = content?.extraData.redPacketEndTime ?? ""
+        if let date = ISO8601DateFormatter.redPacketExpirationFormatter.date(from: "\(strEndTime)") {
+            return date
         } else {
             return nil
         }
     }
 
     private func isAllowToPick() -> Bool {
-        guard let redPacket = getRedPacketExtraData() else {
-            Snackbar.show(text: "Expired - better luck next time!")
-            return false
-        }
         // check userId
         if content?.isSentByCurrentUser ?? false {
             Snackbar.show(text: "You can not pickup your own packet")
             return false
         } else {
             // check end time
-            if let endDate = getEndTime(raw: redPacket) {
+            if let endDate = getEndTime() {
                 let minutes = Date().minutesFromCurrentDate(endDate)
                 if minutes <= 0 {
-                    Snackbar.show(text: "Expired - better luck next time!")
+                    Snackbar.show(text: "", messageType: StreamChatMessageType.RedPacketExpired)
                     return false
                 } else {
                     return true
                 }
             } else {
-                Snackbar.show(text: "Expired - better luck next time!")
+                Snackbar.show(text: "", messageType: StreamChatMessageType.RedPacketExpired)
                 return false
             }
         }
     }
 
     @objc private func btnPickButtonAction() {
-        if isAllowToPick() {
-            guard let redPacket = getRedPacketExtraData(), isSender == false else {
-                return
-            }
-            if let packetId = redPacket["packetId"] {
-                let redPacketId = fetchRawData(raw: packetId) as? String ?? ""
-                var userInfo = [String: Any]()
-                userInfo["packetId"] = redPacketId
-                NotificationCenter.default.post(name: .pickUpRedPacket, object: nil, userInfo: userInfo)
-            }
+        guard isAllowToPick(),
+              let extraData = content?.extraData,
+              isSender == false else {
+            return
         }
+        NotificationCenter.default.post(name: .pickUpGiftPacket, object: nil, userInfo: extraData)
     }
 }

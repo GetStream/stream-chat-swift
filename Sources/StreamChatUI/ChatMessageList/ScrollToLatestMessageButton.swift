@@ -30,9 +30,9 @@ open class ScrollToLatestMessageButton: _Button, ThemeProvider {
         super.setUpAppearance()
         
         setImage(appearance.images.scrollDownArrow, for: .normal)
-        backgroundColor = .white//appearance.colorPalette.background8
-        layer.addShadow(color: appearance.colorPalette.shadow)
-        tintColor = .black//appearance.colorPalette.tappableLinkTint
+        backgroundColor = appearance.colorPalette.showMoreButtonBg
+        tintColor = .white
+        self.imageEdgeInsets = .init(top: 3, left: 0, bottom: 0, right: 0)
     }
     
     override open func setUpLayout() {

@@ -58,7 +58,7 @@ public extension Appearance {
         public var userSelected: UIImage = loadImageSafely(with: "chat_UserStatus")
         public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
-        static let closeCircle: UIImage = loadImageSafely(with: "close_circle")
+        public let closeCircle: UIImage = loadImageSafely(with: "close_circle")
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
         public var back: UIImage = loadImageSafely(with: "icn_back")
         public var onlyVisibleToCurrentUser = loadImageSafely(with: "eye")
@@ -211,6 +211,21 @@ public extension Appearance {
         public var handPointUp: UIImage? = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "hand.point.up")?.withTintColor(.white.withAlphaComponent(0.6))
+            } else {
+                return nil
+            }
+        }()
+        public var menuRedPacket: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "heart.rectangle")?.withRenderingMode(.alwaysTemplate)
+            } else {
+                return nil
+            }
+        }()
+
+        public var menuGiftPacket: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "gift")?.withRenderingMode(.alwaysTemplate)
             } else {
                 return nil
             }
@@ -435,7 +450,6 @@ public extension Appearance {
         public var menuDao: UIImage = loadImageSafely(with: "dao")
         public var menuMedia: UIImage = loadImageSafely(with: "media")
         public var menuNft: UIImage = loadImageSafely(with: "nft")
-        public var menuRedPacket: UIImage = loadImageSafely(with: "redPacketMenu")
         public var menuWeather: UIImage = loadImageSafely(with: "weather")
         public var menuCrypto: UIImage = loadImageSafely(with: "crypto")
         public var backMenuOption: UIImage = loadImageSafely(with: "back")
@@ -443,5 +457,8 @@ public extension Appearance {
         public var disburseFund: UIImage = loadImageSafely(with: "disburseFund")
         public var polling: UIImage = loadImageSafely(with: "polling")
         public var contributeToFund: UIImage = loadImageSafely(with: "fundIcon")
+
+        // MARK: QR Code Option
+        public var shareImageIcon: UIImage = loadImageSafely(with: "share_image_icon")
     }
 }

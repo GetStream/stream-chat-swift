@@ -12,6 +12,7 @@ import StreamChat
 @available(iOS 14.0.0, *)
 struct SendPaymentOptionView: View {
     @State private var selectedPaymentMode: WalletAttachmentPayload.PaymentTheme = .none
+    @State private var tapLock = false
     @Binding var amount: String!
     var paymentType: WalletAttachmentPayload.PaymentType!
     var didSelectPayment: ((WalletAttachmentPayload.PaymentTheme) -> Void)?
@@ -57,9 +58,12 @@ struct SendPaymentOptionView: View {
                                 }
                             }
                             .onTapGesture {
-                                self.selectedPaymentMode = type
+                                guard !tapLock else { return }
+                                selectedPaymentMode = type
+                                tapLock = true
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                     self.didSelectPayment?(type)
+                                    self.tapLock = false
                                 }
                             }
                             .cornerRadius(4)

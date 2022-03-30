@@ -66,6 +66,8 @@ public extension Appearance {
         public var redPacketExpired: UIColor = .init(rgb: 0x758796)
         public var stepperBackground: UIColor = .init(rgb: 0x282828)
         public var stepperForeground: UIColor = .init(rgb: 0x3A3A3D)
+        public var qrBackground: UIColor = .init(rgb: 0x2C2C2E)
+        public var panModelColor: UIColor = .init(rgb: 0x1E1E1F)
         
         public var tabbarBackground: UIColor = .tabBarBackground
         public var chatViewBackground: UIColor = .chatViewBackground
@@ -80,6 +82,7 @@ public extension Appearance {
         public var placeHolderBalanceBG: UIColor = .placeHolderBalanceBG
         public var groupDetailBackground: UIColor = .groupDetailBackground
         public var groupDetailContainerBG: UIColor = .groupDetailContainerBG
+        public var showMoreButtonBg: UIColor = .init(rgb: 0x38383A)
     }
 }
 

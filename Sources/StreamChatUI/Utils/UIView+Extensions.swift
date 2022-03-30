@@ -221,7 +221,6 @@ extension UIView {
 }
 
 extension UIView {
-
     static var hasNotch: Bool {
         if let window = UIApplication.shared.keyWindowInConnectedScenes {
             return window.safeAreaInsets.bottom > 0
@@ -263,5 +262,12 @@ extension UIView {
             }
          }
          return 0
+    }
+
+    func asImage(rect: CGRect) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: rect)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
     }
 }

@@ -70,3 +70,11 @@ extension NumberFormatter {
         return formatter
     }()
 }
+
+extension ISO8601DateFormatter {
+    static let redPacketExpirationFormatter: ISO8601DateFormatter = {
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [.withInternetDateTime]
+        return dateFormatter
+    }()
+}
