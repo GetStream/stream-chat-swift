@@ -295,6 +295,7 @@ open class ChatChannelVC:
 
         if let cid = channelController?.cid {
             headerView.channelController = client?.channelController(for: cid)
+            headerView.updateContent()
         }
         if channelController?.channelQuery.type == .announcement {
             messageComposerVC?.composerView.isUserInteractionEnabled = false
@@ -531,7 +532,9 @@ open class ChatChannelVC:
                 return
             }
             qrCodeVc.strContent = weakSelf.getGroupLink()
-            weakSelf.pushWithAnimation(controller: qrCodeVc)
+            qrCodeVc.groupName = weakSelf.channelController?.channel?.name
+            qrCodeVc.modalPresentationStyle = .fullScreen
+            UIApplication.shared.keyWindow?.rootViewController?.present(qrCodeVc, animated: true, completion: nil)
         }
     }
     
@@ -555,9 +558,7 @@ open class ChatChannelVC:
                 }
             }
         }
-        controller.modalPresentationStyle = .overCurrentContext
-        controller.modalTransitionStyle = .crossDissolve
-        self.present(controller, animated: true, completion: nil)
+        self.presentPanModal(controller)
     }
     
     public func leaveGroupDeleteGroupAction() {
@@ -570,9 +571,7 @@ open class ChatChannelVC:
             guard let weakSelf = self else { return }
             weakSelf.deleteThisChannel()
         }
-        controller.modalPresentationStyle = .overCurrentContext
-        controller.modalTransitionStyle = .crossDissolve
-        self.present(controller, animated: true, completion: nil)
+        self.presentPanModal(controller)
     }
     
     private func deleteThisChannel() {
@@ -790,17 +789,8 @@ open class ChatChannelVC:
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
-        guard channelController.areTypingEventsEnabled else { return }
-
-        let typingUsersWithoutCurrentUser = typingUsers
-            .sorted { $0.id < $1.id }
-            .filter { $0.id != self.client?.currentUserId }
-
-        if typingUsersWithoutCurrentUser.isEmpty {
-            messageListVC?.hideTypingIndicator()
-        } else {
-            messageListVC?.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
-        }
+        // By default the channel message view is not interested in message events
+        // but this can be overridden by subclassing this component.
     }
 
     // TODO: - Invite and other action need to implement
@@ -815,7 +805,9 @@ open class ChatChannelVC:
                 return
             }
             qrCodeVc.strContent = self.getGroupLink()
-            self.pushWithAnimation(controller: qrCodeVc)
+            qrCodeVc.groupName = self.channelController?.channel?.name
+            qrCodeVc.modalPresentationStyle = .fullScreen
+            UIApplication.shared.keyWindow?.rootViewController?.present(qrCodeVc, animated: true, completion: nil)
         }
         // search
         // To do:- will add in future release
