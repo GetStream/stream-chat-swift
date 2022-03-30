@@ -52,3 +52,8 @@ if [[ ${INSTALL_SONAR-default} == true ]]; then
     pip install lizard
     brew install sonar-scanner
 fi
+
+# Copy internal Xcode scheme to the right folder for
+echo
+echo -e "👉 Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
+cp Scripts/DemoApp-StreamDevelopers.xcscheme StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme
