@@ -49,6 +49,60 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
         for view in backgroundViews {
             view.backgroundColor = appearance.colorPalette.groupDetailBackground
         }
+        closures()
+    }
+
+    private func closures() {
+        viewModel.reloadTable = {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {
+                    return
+                }
+                self.tableView.reloadData()
+            }
+        }
+    }
+
+    private func deleteAndLeaveChannel() {
+        guard let channelController = viewModel.channelController,
+              let channelId = channelController.channel?.cid else {
+                  Snackbar.show(text: "Error when deleting the channel")
+            return
+        }
+        let memberListController = channelController.client.memberListController(query: .init(cid: channelId))
+        memberListController.synchronize { error in
+            guard error == nil else {
+                Snackbar.show(text: "Error when deleting the channel")
+                return
+            }
+            let userIds: [UserId] = memberListController.members.map({ member in
+                return member.id
+            })
+            channelController.removeMembers(userIds: Set(userIds)) { _ in
+                channelController.deleteChannel { [weak self] error in
+                    guard error == nil, let self = self else {
+                        Snackbar.show(text: error?.localizedDescription ?? "")
+                        return
+                    }
+                    Snackbar.show(text: "Group deleted successfully")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                        guard let self = self else { return }
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
+                }
+            }
+        }
+    }
+
+    private func isUserAdmin() -> Bool {
+        guard let channel = viewModel.channelController?.channel else {
+            return false
+        }
+        if channel.membership?.memberRole == .admin || channel.membership?.memberRole == .owner {
+            return true
+        } else {
+            return false
+        }
     }
 }
 
@@ -67,7 +121,7 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
         case .profile:
             return 1
         case .userList:
-            return 50
+            return viewModel.channelMembers.count
         default:
             return 0
         }
@@ -88,14 +142,19 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
             cell.cellDelegate = self
             cell.configCell(
                 controller: controller,
-                screenType: viewModel.screenType)
+                screenType: viewModel.screenType,
+                members: viewModel.chatMemberController?.members.count ?? 0)
             return cell
         case .userList:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: TableViewCellChatUser.reuseId,
                 for: indexPath) as? TableViewCellChatUser else {
-                return UITableViewCell()
-            }
+                      return UITableViewCell()
+                  }
+            let user: ChatChannelMember = viewModel.channelMembers[indexPath.row]
+            cell.configGroupDetails(channelMember: user, selectedImage: nil)
+            cell.backgroundColor = .clear
+            cell.selectionStyle = .none
             return cell
         }
     }
@@ -104,7 +163,7 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
         guard let view = ChannelMemberCountView.instanceFromNib() else {
             return nil
         }
-        view.setParticipantsCount(16)
+        view.setParticipantsCount(viewModel.chatMemberController?.members.count ?? 0)
         return view
     }
 
@@ -148,7 +207,7 @@ extension ChatGroupDetailsVC: ChannelDetailHeaderTVCellDelegate {
                            }
                            if error == nil {
                                Snackbar.show(text: "Member added successfully")
-                               self.tableView.reloadData()
+                               self.viewModel.initChannelMembers()
                            } else {
                                Snackbar.show(text: "Error while adding member")
                            }
@@ -162,6 +221,57 @@ extension ChatGroupDetailsVC: ChannelDetailHeaderTVCellDelegate {
     }
 
     func shareChannelLinkAction() {
+        guard let channelController = viewModel.channelController else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let weakSelf = self else { return }
+            guard let qrCodeVc: GroupQRCodeVC = GroupQRCodeVC.instantiateController(storyboard: .PrivateGroup) else {
+                return
+            }
+            qrCodeVc.groupName = channelController.channel?.name
+            qrCodeVc.modalPresentationStyle = .fullScreen
+            if channelController.channel?.type == .dao {
+                qrCodeVc.strContent = channelController.channel?.extraData.daoJoinLink
+            } else {
+                qrCodeVc.strContent = channelController.channel?.extraData.joinLink
+            }
+            UIApplication.shared.keyWindow?.rootViewController?.present(qrCodeVc, animated: true, completion: nil)
+        }
+    }
+
+    func leaveChannel() {
+        guard let channelController = viewModel.channelController else { return }
+        var alertTitle = ""
+        if isUserAdmin() {
+            alertTitle = "Would you like to delete this group?\nIt'll be permanently deleted."
+        } else {
+            alertTitle = "Would you like to leave this group?"
+        }
+        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            if self.isUserAdmin() {
+                self.deleteAndLeaveChannel()
+            } else {
+                if let userId = ChatClient.shared.currentUserId {
+                    channelController.removeMembers(userIds: [userId]) { error in
+                        if error == nil {
+                            self.navigationController?.popToRootViewController(animated: true)
+                        } else {
+                            Snackbar.show(text: "Error while removing member")
+                        }
+                    }
+                }
+            }
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+        }
+        let alert = UIAlertController.showAlert(
+            title: alertTitle,
+            message: nil,
+            actions: [deleteAction, cancelAction],
+            preferredStyle: .actionSheet)
+        present(alert, animated: true, completion: nil)
     }
 }
 /*

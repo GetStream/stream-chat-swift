@@ -460,7 +460,7 @@
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="close_circle"/>
                                 <connections>
-                                    <action selector="btnBackAction:" destination="SAe-Ah-TTU" eventType="touchUpInside" id="Q1C-a8-zC7"/>
+                                    <action selector="btnBackAction:" destination="SAe-Ah-TTU" eventType="touchUpInside" id="I7G-2V-jgY"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scan to Join" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aDd-O7-osb">
@@ -493,10 +493,10 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="btnBack" destination="nwg-XV-jTB" id="iy5-lE-HtJ"/>
+                        <outlet property="btnBack" destination="nwg-XV-jTB" id="0J3-dR-NlV"/>
                         <outlet property="btnShare" destination="yav-7y-bXx" id="AdH-v7-KCc"/>
                         <outlet property="imgQRCode" destination="Lkp-0V-Tr2" id="MNE-DS-Sqk"/>
-                        <outlet property="lblName" destination="VJ2-Tm-dZV" id="OAr-6n-ygv"/>
+                        <outlet property="lblName" destination="VJ2-Tm-dZV" id="0Oz-fj-i3a"/>
                         <outlet property="qrCodeView" destination="iZU-JB-Wsq" id="Tqu-rL-3xO"/>
                         <outlet property="viewPreview" destination="XkE-vy-dH1" id="mgM-l5-kqf"/>
                         <outlet property="viewQR" destination="FKU-Lb-hGh" id="run-cy-jg8"/>

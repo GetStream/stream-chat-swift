@@ -12,6 +12,7 @@ import StreamChat
 protocol ChannelDetailHeaderTVCellDelegate: class {
     func addFriendAction()
     func shareChannelLinkAction()
+    func leaveChannel()
 }
 
 class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
@@ -21,6 +22,13 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     var screenType: ChatGroupDetailViewModel.ScreenType?
     private var isChannelMuted = false
     weak var cellDelegate: ChannelDetailHeaderTVCellDelegate?
+
+    // MARK: - enum
+    enum Tags: Int {
+        case mute = 11
+        case addOrShare = 12
+        case leave = 13
+    }
 
     // MARK: - outlets
     @IBOutlet weak var avatarView: ChatChannelAvatarView!
@@ -33,6 +41,10 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     @IBOutlet weak var imgCenterAction: UIImageView!
     @IBOutlet weak var lblMute: UILabel!
     @IBOutlet weak var lblCenterAction: UILabel!
+    @IBOutlet weak var centerContainerView: UIView!
+    @IBOutlet weak var btnAddOrShare: UIButton!
+    @IBOutlet weak var viewChannelActions: UIView!
+    @IBOutlet weak var channelActionsTop: NSLayoutConstraint! // 37, 0
 
     // MARK: - view life cycle
     override func awakeFromNib() {
@@ -89,6 +101,9 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     }
 
     @IBAction func btnShareOrAddFriendAction(_ sender: UIButton) {
+        guard !isDirectMessageChannel() else {
+            return
+        }
         if isUserAdmin() {
             cellDelegate?.addFriendAction()
         } else {
@@ -97,9 +112,12 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     }
 
     @IBAction func btnLeaveAction(_ sender: UIButton) {
-        print(#function)
+        cellDelegate?.leaveChannel()
     }
 
+    @objc private func qrCodePressed(_ sender: UIButton) {
+        cellDelegate?.shareChannelLinkAction()
+    }
 
     // MARK: - functions
     private func setupUI() {
@@ -112,35 +130,65 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
             container.layer.cornerRadius = 12
             container.clipsToBounds = true
         }
-        setupDescStackView()
+        addChannelDescViews()
     }
 
-    func configCell(controller: ChatChannelController, screenType: ChatGroupDetailViewModel.ScreenType) {
+    func configCell(
+        controller: ChatChannelController,
+        screenType: ChatGroupDetailViewModel.ScreenType,
+        members: Int) {
         channelController = controller
         self.screenType = screenType
-        setupChannelContent()
+            setupChannelContent(members: members)
     }
 
-    private func setupChannelContent() {
+    private func setupChannelContent(members: Int) {
         guard let channelController = channelController else {
             return
         }
+        if isDirectMessageChannel() {
+            lblTitle.attributedText = getTitle(
+                name: createChannelTitle(for: channelController.channel,
+                                            ChatClient.shared.currentUserId ?? ""))
+            centerContainerView.alpha = 0.5
+            btnAddOrShare.isEnabled = false
+        } else {
+            lblTitle.attributedText = getTitle(name: channelController.channel?.name ?? "-")
+            btnAddOrShare.isEnabled = true
+        }
         isChannelMuted = channelController.channel?.isMuted ?? false
-        lblTitle.attributedText = getTitle(name: channelController.channel?.name ?? "-")
         avatarView.content = (channelController.channel, ChatClient.shared.currentUserId)
-        channelController.synchronize { [weak self] error in
-            guard let self = self else {
-                return
-            }
-            let totalFriends = max((channelController.channel?.memberCount ?? 0) - 1, 0)
-            if totalFriends <= 1 {
-                self.lblSubTitle.text = "\(totalFriends) Friend"
-            } else {
-                self.lblSubTitle.text = "\(totalFriends) Friends"
-            }
+        let totalFriends = max(members - 1, 0)
+        if totalFriends <= 1 {
+            lblSubTitle.text = "\(totalFriends) Friend"
+        } else {
+            lblSubTitle.text = "\(totalFriends) Friends"
         }
         setMuteButton()
         setMiddleButton()
+        addChannelDescViews()
+    }
+
+    private func addChannelDescViews() {
+        descStackView.subviews.forEach { (view) in
+            view.removeFromSuperview()
+        }
+        descStackView.customize(
+            backgroundColor: appearance.colorPalette.groupDetailContainerBG,
+            radiusSize: 12)
+        if isDirectMessageChannel() {
+            walletAddressView()
+            userNameView()
+            bioView()
+        } else {
+            shareLinkView()
+            descriptionView()
+        }
+    }
+
+    private func toggleChannelActionView(isHidden: Bool) {
+        viewChannelActions.isHidden = isHidden
+        channelActionsTop.constant = isHidden ? 0 : 37
     }
 
     private func setMuteButton() {
@@ -196,18 +244,123 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
         return title
     }
 
-    private func setupDescStackView() {
-        descStackView.customize(
-            backgroundColor: appearance.colorPalette.groupDetailContainerBG,
-            radiusSize: 12)
-        descStackView.removeAllArrangedSubviews()
-        if let stackSubView = ChannelDetailDescView.instanceFromNib() {
+    private func walletAddressView() {
+        guard let stackSubView = ChannelDetailDescView.instanceFromNib(),
+              isDirectMessageChannel(),
+              let channel = channelController?.channel,
+              let otherMember = Array(channel.lastActiveMembers)
+            .first(where: { member in member.id != ChatClient.shared.currentUserId }) else {
+            return
+        }
+        stackSubView.lblTitle.text = "wallet address"
+        stackSubView.lblDesc.text = otherMember.id.trimStringByFirstLastCount(firstCount: 7, lastCount: 5)
+        stackSubView.viewQRCode.isHidden = true
+        stackSubView.viewSeparator.isHidden = false
+        descStackView.addArrangedSubview(stackSubView)
+    }
+
+    private func userNameView() {
+        guard let stackSubView = ChannelDetailDescView.instanceFromNib(),
+              isDirectMessageChannel(),
+              let channel = channelController?.channel,
+              let otherMember = Array(channel.lastActiveMembers)
+            .first(where: { member in member.id != ChatClient.shared.currentUserId }) else {
+            return
+        }
+        stackSubView.lblTitle.text = "username"
+        if let userName = otherMember.name {
+            stackSubView.lblDesc.text = "@\(userName)"
+        } else {
+            stackSubView.lblDesc.text = "-"
+        }
+        stackSubView.viewQRCode.isHidden = false
+        stackSubView.btnQRCode.addTarget(self, action: #selector(qrCodePressed(_:)), for: .touchUpInside)
+        stackSubView.viewSeparator.isHidden = false
+        descStackView.addArrangedSubview(stackSubView)
+    }
+
+    private func bioView() {
+        guard let stackSubView = ChannelDetailDescView.instanceFromNib() else {
+            return
+        }
+        stackSubView.lblTitle.text = "bio"
+        stackSubView.lblDesc.text = "-"
+        stackSubView.viewQRCode.isHidden = true
+        stackSubView.viewSeparator.isHidden = true
+        descStackView.addArrangedSubview(stackSubView)
+    }
+
+    private func shareLinkView() {
+        guard let stackSubView = ChannelDetailDescView.instanceFromNib() else {
+            return
+        }
+        var channelLink: String?
+        if channelController?.channel?.type == .dao {
+            channelLink = channelController?.channel?.extraData.daoJoinLink
+        } else {
+            channelLink = channelController?.channel?.extraData.joinLink
+        }
+        if channelLink != nil {
+            stackSubView.lblTitle.text = "share link"
+            stackSubView.lblDesc.text = channelLink
+            stackSubView.viewQRCode.isHidden = false
+            stackSubView.btnQRCode.addTarget(self, action: #selector(qrCodePressed(_:)), for: .touchUpInside)
+            stackSubView.viewSeparator.isHidden = false
             descStackView.addArrangedSubview(stackSubView)
         }
-        if let stackSubView1 = ChannelDetailDescView.instanceFromNib() {
-            stackSubView1.viewQRCode.isHidden = true
-            stackSubView1.viewSeparator.isHidden = true
-            descStackView.addArrangedSubview(stackSubView1)
+    }
+
+    private func descriptionView() {
+        guard let stackSubView = ChannelDetailDescView.instanceFromNib() else {
+            return
         }
+        var descText: String?
+        if channelController?.channel?.type == .dao {
+            descText = channelController?.channel?.extraData.daoDescription
+        } else {
+            descText = channelController?.channel?.extraData.channelDescription
+        }
+        if descText != nil {
+            stackSubView.lblTitle.text = "description"
+            stackSubView.lblDesc.text = descText
+            stackSubView.viewQRCode.isHidden = true
+            stackSubView.viewSeparator.isHidden = true
+            descStackView.addArrangedSubview(stackSubView)
+        }
+    }
+
+    private func isDirectMessageChannel() -> Bool {
+        if channelController?.channel?.isDirectMessageChannel ?? false {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+func createChannelTitle(for channel: ChatChannel?, _ currentUserId: UserId?) -> String {
+    guard let channel = channel, let currentUserId = currentUserId else { return "Unnamed channel" }
+    let channelName = channel.name ?? channel.cid.description
+    if channel.isDirectMessageChannel {
+        let otherMember = Array(channel.lastActiveMembers).first(where: { member in member.id != currentUserId })
+        // Naming priority for a DM:
+        // 1. other member's name
+        // 2. other member's id
+        // 3. channel name
+        // 4. channel id
+        if let otherMember = otherMember {
+            if let otherMemberName = otherMember.name, !otherMemberName.isEmpty {
+                return otherMemberName
+            } else {
+                return otherMember.id
+            }
+        } else {
+            return channelName
+        }
+    } else {
+        // Naming priority for a channel:
+        // 1. channel name
+        // 2. channel id
+        return channelName
     }
 }

@@ -201,7 +201,7 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </stackView>
-                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="zDd-ZJ-7x3">
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="zDd-ZJ-7x3">
                         <rect key="frame" x="16" y="254" width="351" height="122"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </stackView>
@@ -228,6 +228,9 @@
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="avatarView" destination="Ttw-L2-J1c" id="fbf-nn-gmz"/>
+                <outlet property="btnAddOrShare" destination="iNB-AQ-hTQ" id="XPh-Jz-2Df"/>
+                <outlet property="centerContainerView" destination="6RS-km-Rxy" id="9lx-sN-GUA"/>
+                <outlet property="channelActionsTop" destination="zEW-SR-3F1" id="XcH-vM-5Zb"/>
                 <outlet property="descStackView" destination="zDd-ZJ-7x3" id="nOs-BQ-MTb"/>
                 <outlet property="imgCenterAction" destination="h2h-pM-FhK" id="rQ8-yP-1ed"/>
                 <outlet property="imgMute" destination="sg3-UI-CE9" id="jLe-zr-QmC"/>
@@ -235,6 +238,7 @@
                 <outlet property="lblMute" destination="ILc-8M-E7v" id="0ha-1P-Rp3"/>
                 <outlet property="lblSubTitle" destination="8mq-Az-qd6" id="I60-8x-Fce"/>
                 <outlet property="lblTitle" destination="eJn-2b-114" id="5BV-j9-D5P"/>
+                <outlet property="viewChannelActions" destination="2BY-Yc-tNB" id="q6E-Qt-BLs"/>
                 <outletCollection property="containers" destination="6RS-km-Rxy" collectionClass="NSMutableArray" id="pNN-Wl-gC3"/>
                 <outletCollection property="channelActionText" destination="wh7-Ga-9Ni" collectionClass="NSMutableArray" id="T0u-yX-9jg"/>
                 <outletCollection property="containers" destination="igd-GG-f7v" collectionClass="NSMutableArray" id="FwI-O9-HyL"/>
