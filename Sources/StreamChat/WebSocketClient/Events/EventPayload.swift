@@ -100,7 +100,7 @@ class EventPayload: Decodable {
         user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         memberContainer = try container.decodeIfPresent(MemberContainerPayload.self, forKey: .memberContainer)
-        channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        channel = try? container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
         message = try container.decodeIfPresent(MessagePayload.self, forKey: .message)
         reaction = try container.decodeIfPresent(MessageReactionPayload.self, forKey: .reaction)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)

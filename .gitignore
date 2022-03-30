@@ -74,6 +74,8 @@ Example/Carthage/.env
 Example/Carthage/fastlane/report.xml
 Sample/Cocoapods/Podfile.lock
 docusaurus/.env
+reports/
+.scannerwork/
 
 # Ignore Products folder
 Products/

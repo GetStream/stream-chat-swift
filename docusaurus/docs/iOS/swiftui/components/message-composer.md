@@ -11,6 +11,24 @@ The message composer is the component that allows you to send messages consistin
 - Trailing composer view - displayed in the right part of the component. Usually used for sending the message.
 - Attachment picker view - component that allows you to pick several different types of attachments. The default component has three types of attachments (images and videos from the photo library, files and camera input). When an attachment is selected, by default it is added to the composer's input view. You can inject custom views (alternative pickers) in the component itself as well. 
 
+## Applying a Custom Modifier
+
+If you want to customize the background, paddings and other styling properties of the composer view, you can apply a custom modifier by implementing the method `makeComposerViewModifier` in the `ViewFactory`. Here's an example that changes the background of the composer view.
+
+```swift
+func makeComposerViewModifier() -> some ViewModifier {
+    BackgroundViewModifier()
+}
+
+struct BackgroundViewModifier: ViewModifier {
+    
+    public func body(content: Content) -> some View {
+        content
+            .background(Color.red)
+    }
+}
+```
+
 ## Customizing the Leading Composer View
 
 You can completely swap the leading composer view with your own implementation. This might be useful if you want to change the behaviour of the attachment picker (provide a different one), or even just hide the component. 
