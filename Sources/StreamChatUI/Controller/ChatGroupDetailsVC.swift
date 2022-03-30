@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import StreamChat
 
 public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
     
@@ -84,6 +85,7 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
                   let controller = viewModel.channelController else {
                 return UITableViewCell()
             }
+            cell.cellDelegate = self
             cell.configCell(
                 controller: controller,
                 screenType: viewModel.screenType)
@@ -116,6 +118,50 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
         case .userList:
             return 20
         }
+    }
+}
+
+// MARK: - Cell Delegate
+extension ChatGroupDetailsVC: ChannelDetailHeaderTVCellDelegate {
+    func addFriendAction() {
+        guard let channelController = viewModel.channelController else { return }
+           guard let controller = ChatAddFriendVC
+                   .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
+               return
+           }
+           do {
+               let memberListController = try ChatClient.shared.memberListController(
+                query: .init(cid: .init(cid: channelController.channel?.cid.description ?? "")))
+               memberListController.synchronize { [weak self] error in
+                   guard error == nil, let self = self else {
+                       return
+                   }
+                   controller.channelController = channelController
+                   controller.groupInviteLink = channelController.channel?.extraData.joinLink
+                   controller.selectionType = .addFriend
+                   controller.existingUsers = memberListController.members.shuffled()
+                   controller.bCallbackAddFriend = { selectedUser in
+                       let selectedUserId: [String] = selectedUser.map { $0.id}
+                       channelController.addMembers(userIds: Set(selectedUserId)) { [weak self] error in
+                           guard let self = self else {
+                               return
+                           }
+                           if error == nil {
+                               Snackbar.show(text: "Member added successfully")
+                               self.tableView.reloadData()
+                           } else {
+                               Snackbar.show(text: "Error while adding member")
+                           }
+                       }
+                   }
+                   self.presentPanModal(controller)
+               }
+           } catch {
+               Snackbar.show(text: "something went wrong!")
+           }
+    }
+
+    func shareChannelLinkAction() {
     }
 }
 /*

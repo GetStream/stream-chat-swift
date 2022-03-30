@@ -42,7 +42,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     private var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
     private var isFullScreen = false
     public var selectedUsers = [ChatUser]()
-    public var existingUsers = [ChatUser]()
+    public var existingUsers = [ChatChannelMember]()
     public var bCallbackAddFriend:(([ChatUser]) -> Void)?
     public var bCallbackInviteFriend:(([ChatUser]) -> Void)?
     public var groupInviteLink: String?

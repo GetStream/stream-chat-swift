@@ -9,12 +9,18 @@
 import UIKit
 import StreamChat
 
+protocol ChannelDetailHeaderTVCellDelegate: class {
+    func addFriendAction()
+    func shareChannelLinkAction()
+}
+
 class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
 
     // MARK: - variables
     var channelController: ChatChannelController?
     var screenType: ChatGroupDetailViewModel.ScreenType?
     private var isChannelMuted = false
+    weak var cellDelegate: ChannelDetailHeaderTVCellDelegate?
 
     // MARK: - outlets
     @IBOutlet weak var avatarView: ChatChannelAvatarView!
@@ -83,7 +89,11 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     }
 
     @IBAction func btnShareOrAddFriendAction(_ sender: UIButton) {
-        print(#function)
+        if isUserAdmin() {
+            cellDelegate?.addFriendAction()
+        } else {
+            cellDelegate?.shareChannelLinkAction()
+        }
     }
 
     @IBAction func btnLeaveAction(_ sender: UIButton) {
@@ -118,8 +128,17 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
         isChannelMuted = channelController.channel?.isMuted ?? false
         lblTitle.attributedText = getTitle(name: channelController.channel?.name ?? "-")
         avatarView.content = (channelController.channel, ChatClient.shared.currentUserId)
-        let totalFriends = max((channelController.channel?.memberCount ?? 0) - 1, 0)
-        lblSubTitle.text = "\(totalFriends) Friends"
+        channelController.synchronize { [weak self] error in
+            guard let self = self else {
+                return
+            }
+            let totalFriends = max((channelController.channel?.memberCount ?? 0) - 1, 0)
+            if totalFriends <= 1 {
+                self.lblSubTitle.text = "\(totalFriends) Friend"
+            } else {
+                self.lblSubTitle.text = "\(totalFriends) Friends"
+            }
+        }
         setMuteButton()
         setMiddleButton()
     }
