@@ -236,5 +236,124 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
+}
 
+// MARK: - RedPacket PickUp Bubble
+public extension Dictionary where Key == String, Value == RawJSON {
+    private var redPacketExtraData: [String: RawJSON] {
+        if let extraData = self["redPacketPickup"] {
+            switch extraData {
+            case .dictionary(let dictionary):
+                return dictionary
+            default:
+                return [:]
+            }
+        } else {
+            return [:]
+        }
+    }
+
+    var redPacketTitle: String? {
+        if let title = redPacketExtraData["title"] {
+            return fetchRawData(raw: title) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketMyName: String? {
+        if let myName = redPacketExtraData["myName"] {
+            return fetchRawData(raw: myName) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketMyWalletAddress: String? {
+        if let myWalletAddress = redPacketExtraData["myWalletAddress"] {
+            return fetchRawData(raw: myWalletAddress) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketMyImageUrl: String? {
+        if let myImageUrl = redPacketExtraData["myImageUrl"] {
+            return fetchRawData(raw: myImageUrl) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketChannelUsers: String? {
+        if let channelUsers = redPacketExtraData["channelUsers"] {
+            return fetchRawData(raw: channelUsers) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketAmount: String? {
+        if let amount = redPacketExtraData["amount"] {
+            return fetchRawData(raw: amount) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketChannelId: String? {
+        if let channelId = redPacketExtraData["channelId"] {
+            return fetchRawData(raw: channelId) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketParticipantsCount: String? {
+        if let participantsCount = redPacketExtraData["participantsCount"] {
+            return fetchRawData(raw: participantsCount) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketMinOne: String? {
+        if let minOne = redPacketExtraData["minOne"] {
+            return fetchRawData(raw: minOne) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketMaxOne: String? {
+        if let maxOne = redPacketExtraData["maxOne"] {
+            return fetchRawData(raw: maxOne) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketEndTime: String? {
+        if let endTime = redPacketExtraData["endTime"] {
+            return fetchRawData(raw: endTime) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketID: String? {
+        if let packetId = redPacketExtraData["packetId"] {
+            return fetchRawData(raw: packetId) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var redPacketAddress: String? {
+        if let packetAddress = redPacketExtraData["packetAddress"] {
+            return fetchRawData(raw: packetAddress) as? String
+        } else {
+            return nil
+        }
+    }
 }

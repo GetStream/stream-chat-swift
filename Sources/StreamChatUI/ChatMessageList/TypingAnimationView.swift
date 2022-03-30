@@ -13,7 +13,7 @@ open class TypingAnimationView: _View, AppearanceProvider {
     open var opacityToValue: Double = 0.3
     open var opacityDuration: TimeInterval = 1
     open var numberOfDots: Int = 3
-    open var dotSpacing: CGFloat = 2
+    open var dotSpacing: CGFloat = 1.5
 
     /// Defines the width of the view
     /// It is computed by multiplying the dotLayer width with spacing and number of dots.

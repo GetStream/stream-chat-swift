@@ -294,7 +294,7 @@ class RedPacketBubble: UITableViewCell {
         guard let channelId = channel?.cid else { return }
         var userInfo = [String: Any]()
         userInfo["channelId"] = channelId
-        NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
+        NotificationCenter.default.post(name: .sendGiftPacketTapAction, object: nil, userInfo: userInfo)
     }
 }
 /**
