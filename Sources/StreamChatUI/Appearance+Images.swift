@@ -162,6 +162,20 @@ public extension Appearance {
                 return nil
             }
         }()
+        public lazy var bell: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "bell")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var bellSlash: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "bell.slash")
+            } else {
+                return nil
+            }
+        }()
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
         public var openAttachments: UIImage = loadImageSafely(with: "clip")

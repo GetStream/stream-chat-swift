@@ -356,12 +356,11 @@ open class ChatChannelVC:
     }
     
     @objc func headerViewAction(_ sender: Any) {
-        if self.channelController?.channel?.isDirectMessageChannel ?? true {
+        guard let channelController = channelController,
+              let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
             return
         }
-        guard let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
-            return
-        }
+        controller.viewModel = .init(controller: channelController, screenType: .channelDetail)
         //controller.groupInviteLink = self.getGroupLink()
         //controller.channelController = channelController
         self.pushWithAnimation(controller: controller)

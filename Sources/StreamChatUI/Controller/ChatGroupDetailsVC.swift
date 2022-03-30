@@ -10,6 +10,9 @@ import UIKit
 public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
     
     // MARK: - Variables
+    var viewModel: ChatGroupDetailViewModel!
+
+    // MARK: - Enums
     enum TableViewSections: Int {
         case profile
         case userList
@@ -19,7 +22,8 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
     @IBOutlet weak var heightSafeAreaTop: NSLayoutConstraint!
     @IBOutlet weak var imgMore: StreamChatBackButton!
     @IBOutlet weak var tableView: UITableView!
-    
+    @IBOutlet var backgroundViews: [UIView]!
+
     // MARK: - view life cycle
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,12 +42,16 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
     // MARK: - Functions
     private func setupUI() {
         heightSafeAreaTop.constant = UIView.safeAreaTop
-        view.backgroundColor = appearance.colorPalette.groupDetailBackground
         imgMore.setImage(appearance.images.moregreyCircle, for: .normal)
         tableView.register(.init(nibName: "ChannelDetailHeaderTVCell", bundle: nil), forCellReuseIdentifier: "ChannelDetailHeaderTVCell")
+        tableView.register(.init(nibName: "TableViewCellChatUser", bundle: nil), forCellReuseIdentifier: "TableViewCellChatUser")
+        for view in backgroundViews {
+            view.backgroundColor = appearance.colorPalette.groupDetailBackground
+        }
     }
 }
 
+// MARK: - TableView delegates
 extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
     
     public func numberOfSections(in tableView: UITableView) -> Int {
@@ -58,7 +66,7 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
         case .profile:
             return 1
         case .userList:
-            return 0
+            return 50
         default:
             return 0
         }
@@ -72,12 +80,41 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
         case .profile:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: "ChannelDetailHeaderTVCell",
-                for: indexPath) as? ChannelDetailHeaderTVCell else {
+                for: indexPath) as? ChannelDetailHeaderTVCell,
+                  let controller = viewModel.channelController else {
+                return UITableViewCell()
+            }
+            cell.configCell(
+                controller: controller,
+                screenType: viewModel.screenType)
+            return cell
+        case .userList:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: TableViewCellChatUser.reuseId,
+                for: indexPath) as? TableViewCellChatUser else {
                 return UITableViewCell()
             }
             return cell
+        }
+    }
+
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let view = ChannelMemberCountView.instanceFromNib() else {
+            return nil
+        }
+        view.setParticipantsCount(16)
+        return view
+    }
+
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        guard let section = TableViewSections(rawValue: section) else {
+            return 0
+        }
+        switch section {
+        case .profile:
+            return 0
         case .userList:
-            return UITableViewCell()
+            return 20
         }
     }
 }

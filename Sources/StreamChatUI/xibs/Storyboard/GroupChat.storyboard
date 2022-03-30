@@ -1198,7 +1198,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemRedColor"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="M8T-sh-qZy" firstAttribute="centerY" secondItem="PiS-Ri-7WV" secondAttribute="centerY" id="9wI-6a-HBg"/>
                                     <constraint firstAttribute="height" constant="44" id="Oax-vs-dpS"/>
@@ -1207,7 +1207,7 @@
                                     <constraint firstItem="HH2-Ns-psp" firstAttribute="centerY" secondItem="PiS-Ri-7WV" secondAttribute="centerY" id="lBa-4K-HUr"/>
                                 </constraints>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Yij-eM-4Ob">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Yij-eM-4Ob">
                                 <rect key="frame" x="0.0" y="64" width="414" height="832"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
@@ -1216,6 +1216,7 @@
                                 </connections>
                             </tableView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="SgM-be-uqJ"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="Yij-eM-4Ob" secondAttribute="bottom" id="4zh-nh-LWm"/>
@@ -1234,6 +1235,9 @@
                         <outlet property="heightSafeAreaTop" destination="ZYc-0o-s1v" id="7Sd-1U-T09"/>
                         <outlet property="imgMore" destination="M8T-sh-qZy" id="LTu-uI-j4i"/>
                         <outlet property="tableView" destination="Yij-eM-4Ob" id="qru-cs-mG0"/>
+                        <outletCollection property="backgroundViews" destination="PiS-Ri-7WV" collectionClass="NSMutableArray" id="zKy-eC-6eg"/>
+                        <outletCollection property="backgroundViews" destination="Mz8-ec-b7k" collectionClass="NSMutableArray" id="7qy-0m-39o"/>
+                        <outletCollection property="backgroundViews" destination="fS4-uL-Zue" collectionClass="NSMutableArray" id="JIQ-v8-7AL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PnH-rP-XfH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1280,9 +1284,6 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
