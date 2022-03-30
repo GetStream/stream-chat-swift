@@ -330,7 +330,7 @@ open class ChatMessageListVC:
                         for: indexPath) as? CryptoReceiveBubble else {
                             return UITableViewCell()
                         }
-                    cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                    cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
                     cell.content = message
                     cell.client = client
                     cell.configData()
