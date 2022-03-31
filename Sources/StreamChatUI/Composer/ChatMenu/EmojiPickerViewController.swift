@@ -138,11 +138,18 @@ extension EmojiPickerViewController: UITableViewDelegate, UITableViewDataSource 
         guard let packageId = packages[indexPath.row].packageID else { return }
         downloadedPackage.append(packageId)
         tableView.reloadRows(at: [indexPath], with: .automatic)
-        StickerApi.downloadStickers(packageId: packages[indexPath.row].packageID ?? 0)
-            .sink(receiveCompletion: { _ in
-            }, receiveValue: { _ in
-            })
-            .store(in: &stickerCalls)
+        if packages[indexPath.row].isDownload != "Y" {
+            StickerApi.downloadStickers(packageId: packages[indexPath.row].packageID ?? 0)
+                .sink(receiveCompletion: { _ in
+            }, receiveValue: { _ in })
+                .store(in: &stickerCalls)
+        } else {
+            StickerApi.hideStickers(packageId: packages[indexPath.row].packageID ?? 0)
+                .sink(receiveCompletion: { _ in
+                }, receiveValue: { _ in
+                })
+                .store(in: &stickerCalls)
+        }
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

@@ -1048,12 +1048,12 @@
                                                     <rect key="frame" x="21.5" y="-7.5" width="36" height="36"/>
                                                     <subviews>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="z9v-8t-DUs">
-                                                            <rect key="frame" x="3" y="3.5" width="30" height="29"/>
+                                                            <rect key="frame" x="5.5" y="6" width="25" height="24"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="30" id="JHt-8i-rXg"/>
-                                                                <constraint firstAttribute="height" constant="30" id="Ymk-9S-H64"/>
+                                                                <constraint firstAttribute="width" constant="25" id="JHt-8i-rXg"/>
+                                                                <constraint firstAttribute="height" constant="25" id="Ymk-9S-H64"/>
                                                             </constraints>
-                                                            <imageReference key="image" image="clock" catalog="system" symbolScale="medium"/>
+                                                            <imageReference key="image" image="clock" catalog="system" symbolScale="default"/>
                                                         </imageView>
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1087,9 +1087,9 @@
                                     <outlet property="delegate" destination="Dil-iR-SwJ" id="aMR-Nh-odS"/>
                                 </connections>
                             </collectionView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DKM-bj-1GF">
+                            <view alpha="0.59999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DKM-bj-1GF">
                                 <rect key="frame" x="368" y="47" width="1" height="37"/>
-                                <color key="backgroundColor" red="0.20392156862745098" green="0.20392156862745098" blue="0.20392156862745098" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.38066007653061223" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="QyM-Gy-lqi"/>
                                 </constraints>
@@ -1100,22 +1100,22 @@
                                     <constraint firstAttribute="width" constant="40" id="6z5-u9-v8K"/>
                                     <constraint firstAttribute="height" constant="40" id="Sfb-Xb-axY"/>
                                 </constraints>
-                                <color key="tintColor" red="0.20392156862745098" green="0.20392156862745098" blue="0.20392156862745098" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="tintColor" red="1" green="1" blue="1" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="plus" catalog="system"/>
                                 <connections>
                                     <action selector="btnShowPackage:" destination="Dil-iR-SwJ" eventType="touchUpInside" id="8Rm-kY-KaQ"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d8x-97-zAk">
-                                <rect key="frame" x="0.0" y="83" width="414" height="1"/>
-                                <color key="backgroundColor" red="0.20392156862745098" green="0.20392156862745098" blue="0.20392156862745098" alpha="1" colorSpace="calibratedRGB"/>
+                            <view alpha="0.59999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d8x-97-zAk">
+                                <rect key="frame" x="0.0" y="88" width="414" height="1"/>
+                                <color key="backgroundColor" red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.36179315476190477" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="WZL-8G-5S4"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BDG-zO-ZkC">
-                                <rect key="frame" x="0.0" y="84" width="414" height="812"/>
+                                <rect key="frame" x="0.0" y="89" width="414" height="807"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
@@ -1126,7 +1126,7 @@
                             <constraint firstItem="d8x-97-zAk" firstAttribute="leading" secondItem="4ki-Ei-aSo" secondAttribute="leading" id="Ivn-pc-Vre"/>
                             <constraint firstItem="e2l-6g-8gG" firstAttribute="trailing" secondItem="cdY-bP-K8s" secondAttribute="trailing" constant="5" id="Nle-i9-AR8"/>
                             <constraint firstAttribute="bottom" secondItem="BDG-zO-ZkC" secondAttribute="bottom" id="OgU-Bw-JrY"/>
-                            <constraint firstItem="BDG-zO-ZkC" firstAttribute="top" secondItem="aae-de-nmf" secondAttribute="bottom" id="Uh4-7e-iDi"/>
+                            <constraint firstItem="BDG-zO-ZkC" firstAttribute="top" secondItem="aae-de-nmf" secondAttribute="bottom" constant="5" id="Uh4-7e-iDi"/>
                             <constraint firstItem="DKM-bj-1GF" firstAttribute="bottom" secondItem="aae-de-nmf" secondAttribute="bottom" id="Vwt-gD-dBL"/>
                             <constraint firstItem="BDG-zO-ZkC" firstAttribute="leading" secondItem="e2l-6g-8gG" secondAttribute="leading" id="Z5C-lx-07u"/>
                             <constraint firstAttribute="trailing" secondItem="d8x-97-zAk" secondAttribute="trailing" id="cqY-CC-yRu"/>

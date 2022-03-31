@@ -12,3 +12,7 @@ public struct Constants {
     public static let blockExplorer = "https://explorer.harmony.one/tx/"
     public static let privateGroupRadius = 0.5 //km
 }
+
+public struct UserdefaultKey {
+    public static let downloadedSticker = "downloadedSticker"
+}

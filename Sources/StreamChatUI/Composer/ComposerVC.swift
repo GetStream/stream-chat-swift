@@ -7,6 +7,7 @@ import StreamChat
 import UIKit
 import SwiftUI
 import Stipop
+import GiphyUISDK
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
@@ -710,6 +711,7 @@ open class ComposerVC: _ViewController,
     private func hideInputView() {
         self.composerView.inputMessageView.textView.inputView = nil
         self.composerView.inputMessageView.textView.reloadInputViews()
+        emoji = nil
     }
 
     private func showInputViewController(_ uiViewController: UIViewController?) {
