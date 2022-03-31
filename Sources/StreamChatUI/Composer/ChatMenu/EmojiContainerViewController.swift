@@ -17,7 +17,7 @@ class EmojiContainerViewController: UIViewController {
 
     // MARK: Variables
     private var collectionEmoji: UICollectionView!
-    private var giphy: GiphyViewController!
+    private var giphy: GiphyGridController!
     private var loadingIndicator: UIActivityIndicatorView!
     private var imgSticker: UIImageView!
     private var lblStickerName: UILabel!
@@ -33,14 +33,18 @@ class EmojiContainerViewController: UIViewController {
     init(with menu: StickerMenu) {
         super.init(nibName: nil, bundle: nil)
         self.menu = menu
-        self.setup()
+        if menu.menuId == -2 {
+            setupGifLayout()
+        } else {
+            self.setupSticker()
+        }
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
 
-    private func setup() {
+    private func setupSticker() {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
@@ -106,6 +110,30 @@ class EmojiContainerViewController: UIViewController {
         loadingIndicator.isHidden = true
     }
 
+    private func setupGifLayout() {
+        gifView = UIView()
+        view.insertSubview(gifView, at: 0)
+        gifView.translatesAutoresizingMaskIntoConstraints = false
+        gifView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        gifView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        gifView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        gifView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
+        giphy = GiphyGridController()
+        addChild(giphy)
+        view.addSubview(giphy.view)
+        giphy.view.translatesAutoresizingMaskIntoConstraints = false
+        giphy.view.leftAnchor.constraint(equalTo: gifView.safeLeftAnchor).isActive = true
+        giphy.view.rightAnchor.constraint(equalTo: gifView.safeRightAnchor).isActive = true
+        giphy.view.topAnchor.constraint(equalTo: gifView.safeTopAnchor).isActive = true
+        giphy.view.bottomAnchor.constraint(equalTo: gifView.safeBottomAnchor).isActive = true
+        giphy.didMove(toParent: self)
+        let trendingGIFs = GPHContent.trending(mediaType: .gif)
+        giphy.content = trendingGIFs
+        giphy.delegate = self
+        giphy.update()
+    }
+
     private func showNoStickerView() {
         imgSticker.isHidden = true
         btnDownload.isHidden = true
@@ -124,11 +152,7 @@ class EmojiContainerViewController: UIViewController {
         StickerApi.downloadStickers(packageId: menu?.menuId ?? 0)
             .sink { [weak self] finish in
                 guard let `self` = self else { return }
-                self.updateLoadingView(isHidden: true)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                    guard let `self` = self else { return }
-                    self.loadSticker(stickerId: "\(self.menu?.menuId ?? 0)")
-                }
+                self.loadSticker(stickerId: "\(self.menu?.menuId ?? 0)")
             } receiveValue: { _ in }
             .store(in: &stickerCalls)
 
@@ -141,7 +165,7 @@ class EmojiContainerViewController: UIViewController {
         }
         if stickerId == -1 {
             loadRecentSticker()
-        } else {
+        } else if stickerId != -2 {
             loadSticker(stickerId: "\(stickerId)")
         }
     }
@@ -260,6 +284,8 @@ class StickerMenuCollectionCell: UICollectionViewCell {
     func configureMenu(menu: StickerMenu, selectedId: Int) {
         if menu.menuId == -1 {
             imgMenu.image = Appearance.default.images.clock
+        } else if menu.menuId == -2 {
+            imgMenu.image = Appearance.default.images.commandGiphy
         } else {
             Nuke.loadImage(with: menu.image, into: imgMenu)
         }
@@ -272,3 +298,15 @@ class StickerMenuCollectionCell: UICollectionViewCell {
     }
 }
 
+@available(iOS 13.0, *)
+extension EmojiContainerViewController: GPHGridDelegate {
+    func contentDidUpdate(resultCount: Int, error: Error?) { }
+
+    func didSelectMedia(media: GPHMedia, cell: UICollectionViewCell) {
+        NotificationCenter.default.post(name: .sendSticker, object: nil, userInfo: ["giphyUrl": media.url(rendition: .downsized, fileType: .gif)])
+    }
+
+    func didSelectMoreByYou(query: String) { }
+
+    func didScroll(offset: CGFloat) { }
+}

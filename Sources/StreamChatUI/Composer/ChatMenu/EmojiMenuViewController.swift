@@ -61,7 +61,10 @@ class EmojiMenuViewController: UIViewController {
                 guard let `self` = self else { return }
                 self.menus.removeAll()
                 self.package.removeAll()
+                // menuID -1 for recent sticker
+                // menuID -2 for gif sticker
                 self.menus.append(.init(image: "", menuId: -1, name: ""))
+                self.menus.append(.init(image: "", menuId: -2, name: ""))
                 let packageList = result.body?.packageList ?? []
                 self.package = packageList
                 self.menus.append(contentsOf: packageList.compactMap { StickerMenu.init(image: $0.packageImg ?? "", menuId: $0.packageID ?? 0, name: $0.packageName ?? "") })

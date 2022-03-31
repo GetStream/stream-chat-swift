@@ -9,12 +9,14 @@ import Foundation
 import StreamChat
 import Nuke
 import AVKit
+import Stipop
 
 class ChatMessageStickerBubble: _TableViewCell {
 
     public private(set) var viewContainer: UIView!
     public private(set) var subContainer: UIView!
-    public private(set) var sentThumbImageView: UIImageView!
+    public private(set) var sentThumbStickerView: SPUIStickerView!
+    public private(set) var sentThumbGifView: UIImageView!
     var content: ChatMessage?
     var isSender = false
 
@@ -28,11 +30,14 @@ class ChatMessageStickerBubble: _TableViewCell {
         super.init(coder: coder)
     }
 
-    private var cellWidth: CGFloat {
-        return 100
-    }
+    private var cellWidth: CGFloat = 100.0
 
     func configureCell(isSender: Bool) {
+        if let giphyUrl = content?.extraData.giphyUrl {
+            cellWidth = 200
+        } else {
+            cellWidth = 100
+        }
         if viewContainer != nil {
             viewContainer.removeFromSuperview()
         }
@@ -65,31 +70,46 @@ class ChatMessageStickerBubble: _TableViewCell {
             subContainer.heightAnchor.constraint(equalToConstant: cellWidth),
         ])
 
-        sentThumbImageView = UIImageView()
-        sentThumbImageView.backgroundColor = Appearance.default.colorPalette.background6
-        sentThumbImageView.transform = .mirrorY
-        sentThumbImageView.contentMode = .scaleAspectFill
-        sentThumbImageView.translatesAutoresizingMaskIntoConstraints = false
-        sentThumbImageView.clipsToBounds = true
-        subContainer.addSubview(sentThumbImageView)
+
+        sentThumbStickerView = SPUIStickerView()
+        sentThumbStickerView.backgroundColor = Appearance.default.colorPalette.background6
+        sentThumbStickerView.transform = .mirrorY
+        sentThumbStickerView.contentMode = .scaleAspectFill
+        sentThumbStickerView.translatesAutoresizingMaskIntoConstraints = false
+        sentThumbStickerView.clipsToBounds = true
+        subContainer.addSubview(sentThumbStickerView)
         NSLayoutConstraint.activate([
-            sentThumbImageView.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 0),
-            sentThumbImageView.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: 0),
-            sentThumbImageView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
-            sentThumbImageView.heightAnchor.constraint(equalToConstant: cellWidth)
+            sentThumbStickerView.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 0),
+            sentThumbStickerView.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: 0),
+            sentThumbStickerView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
+            sentThumbStickerView.heightAnchor.constraint(equalToConstant: cellWidth)
         ])
         subContainer.transform = .mirrorY
+
+        sentThumbGifView = UIImageView()
+        sentThumbGifView.backgroundColor = Appearance.default.colorPalette.background6
+        sentThumbGifView.transform = .mirrorY
+        sentThumbGifView.contentMode = .scaleAspectFill
+        sentThumbGifView.translatesAutoresizingMaskIntoConstraints = false
+        sentThumbGifView.clipsToBounds = true
+        subContainer.addSubview(sentThumbGifView)
+        NSLayoutConstraint.activate([
+            sentThumbGifView.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 0),
+            sentThumbGifView.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: 0),
+            sentThumbGifView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
+            sentThumbGifView.heightAnchor.constraint(equalToConstant: cellWidth)
+        ])
+
         viewContainer.heightAnchor.constraint(equalToConstant: cellWidth).isActive = true
         viewContainer.backgroundColor = .clear
-
-        if let url = content?.extraData.stickerUrl, let imageAttachment = URL(string: url) {
-            if imageAttachment.pathExtension == "gif" {
-                sentThumbImageView.setGifFromURL(imageAttachment)
-            } else {
-                Nuke.loadImage(with: imageAttachment, into: sentThumbImageView)
-            }
-        } else {
-            sentThumbImageView.image = nil
+        if let giphyUrl = content?.extraData.giphyUrl, let gifUrl = URL(string: giphyUrl) {
+            sentThumbGifView.setGifFromURL(gifUrl)
+            sentThumbGifView.isHidden = false
+            sentThumbStickerView.isHidden = true
+        } else if let sticker = content?.extraData.stickerUrl {
+            sentThumbStickerView.setSticker(sticker ?? "", sizeOptimized: true)
+            sentThumbGifView.isHidden = true
+            sentThumbStickerView.isHidden = false
         }
     }
 }

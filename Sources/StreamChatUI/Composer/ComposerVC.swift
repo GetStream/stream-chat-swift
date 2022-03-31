@@ -7,7 +7,6 @@ import StreamChat
 import UIKit
 import SwiftUI
 import Stipop
-import GiphyUISDK
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
@@ -763,6 +762,17 @@ open class ComposerVC: _ViewController,
     }
 
     @objc func btnSendSticker(_ notification: Notification) {
+        if let giphyImage = notification.userInfo?["giphyUrl"] as? String {
+            var stickerData = [String: RawJSON]()
+            stickerData["giphyUrl"] = .string(giphyImage)
+            self.channelController?
+                .createNewMessage(
+                    text: "GIF",
+                    extraData: stickerData,
+                    completion: nil
+                )
+            return
+        }
         guard let sticker = notification.userInfo?["sticker"] as? Sticker,
               let stickerImg = sticker.stickerImg else {
             return 

@@ -367,4 +367,12 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
+
+    var giphyUrl: String? {
+        if let stickerUrl = self["giphyUrl"] {
+            return fetchRawData(raw: stickerUrl) as? String
+        } else {
+            return nil
+        }
+    }
 }

@@ -542,7 +542,7 @@ open class ChatMessageListVC:
     }
 
     private func isStickerCell(_ message: ChatMessage?) -> Bool {
-        message?.extraData.keys.contains("stickerUrl") ?? false
+        return (message?.extraData.keys.contains("stickerUrl") ?? false) || (message?.extraData.keys.contains("giphyUrl") ?? false)
     }
 
     private func isRedPacketExpiredCell(_ message: ChatMessage?) -> Bool {

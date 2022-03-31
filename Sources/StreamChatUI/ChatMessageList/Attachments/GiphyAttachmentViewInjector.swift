@@ -38,6 +38,7 @@ public class GiphyAttachmentViewInjector: AttachmentViewInjector {
     
     override open func contentViewDidUpdateContent() {
         giphyImageView.content = giphyAttachments.first
+        print(giphyAttachments)
     }
 }
 
