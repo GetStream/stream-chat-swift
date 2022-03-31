@@ -13,6 +13,7 @@ protocol ChannelDetailHeaderTVCellDelegate: class {
     func addFriendAction()
     func shareChannelLinkAction()
     func leaveChannel()
+    func showWalletQRCode()
 }
 
 class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
@@ -22,6 +23,8 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     var screenType: ChatGroupDetailViewModel.ScreenType?
     private var isChannelMuted = false
     weak var cellDelegate: ChannelDetailHeaderTVCellDelegate?
+    var user: ChatChannelMember?
+    var channelMembers = 0
 
     // MARK: - enum
     enum Tags: Int {
@@ -31,7 +34,8 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     }
 
     // MARK: - outlets
-    @IBOutlet weak var avatarView: ChatChannelAvatarView!
+    @IBOutlet weak var channelAvatar: ChatChannelAvatarView!
+    @IBOutlet weak var userAvatar: ChatUserAvatarView!
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var lblSubTitle: UILabel!
     @IBOutlet var channelActionText: [UILabel]!
@@ -44,7 +48,12 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     @IBOutlet weak var centerContainerView: UIView!
     @IBOutlet weak var btnAddOrShare: UIButton!
     @IBOutlet weak var viewChannelActions: UIView!
-    @IBOutlet weak var channelActionsTop: NSLayoutConstraint! // 37, 0
+    @IBOutlet weak var channelActionsTopSpacer: UIView!
+    @IBOutlet var socialButtons: [UIButton]!
+    @IBOutlet weak var btnEmail: UIButton!
+    @IBOutlet weak var btnTwitter: UIButton!
+    @IBOutlet weak var btnInsta: UIButton!
+    @IBOutlet weak var btnTikTok: UIButton!
 
     // MARK: - view life cycle
     override func awakeFromNib() {
@@ -116,54 +125,66 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     }
 
     @objc private func qrCodePressed(_ sender: UIButton) {
-        cellDelegate?.shareChannelLinkAction()
+        if screenType == .userdetail {
+            cellDelegate?.showWalletQRCode()
+        } else {
+            cellDelegate?.shareChannelLinkAction()
+        }
+    }
+
+    @IBAction func btnEmailAction(_ sender: UIButton) {
+    }
+
+    @IBAction func btnTwitterAction(_ sender: UIButton) {
+    }
+
+    @IBAction func btnInstaAction(_ sender: UIButton) {
+    }
+
+    @IBAction func btnTiktokAction(_ sender: UIButton) {
     }
 
     // MARK: - functions
     private func setupUI() {
-        avatarView.layer.cornerRadius = avatarView.frame.size.height / 2
-        for label in channelActionText {
-            label.textColor = appearance.colorPalette.subTitleColor
-        }
+        channelAvatar.layer.cornerRadius = channelAvatar.frame.size.height / 2
+        userAvatar.layer.cornerRadius = userAvatar.frame.size.height / 2
+        channelActionText.map { $0.textColor = appearance.colorPalette.subTitleColor}
         for container in containers {
             container.backgroundColor = appearance.colorPalette.groupDetailContainerBG
             container.layer.cornerRadius = 12
             container.clipsToBounds = true
         }
-        addChannelDescViews()
+        for btn in socialButtons {
+            btn.layer.cornerRadius = 7
+            btn.alpha = 0.2
+        }
+        btnEmail.setImage(appearance.images.socialMail, for: .normal)
+        btnTwitter.setImage(appearance.images.socialTwitter, for: .normal)
+        btnInsta.setImage(appearance.images.socialInsta, for: .normal)
+        btnTikTok.setImage(appearance.images.socialTikTok, for: .normal)
     }
 
     func configCell(
         controller: ChatChannelController,
         screenType: ChatGroupDetailViewModel.ScreenType,
-        members: Int) {
-        channelController = controller
-        self.screenType = screenType
-            setupChannelContent(members: members)
-    }
+        members: Int,
+        channelMember: ChatChannelMember?) {
+            channelController = controller
+            self.screenType = screenType
+            user = channelMember
+            channelMembers = members
+            setupChannelContent()
+        }
 
-    private func setupChannelContent(members: Int) {
+    private func setupChannelContent() {
         guard let channelController = channelController else {
             return
         }
-        if isDirectMessageChannel() {
-            lblTitle.attributedText = getTitle(
-                name: createChannelTitle(for: channelController.channel,
-                                            ChatClient.shared.currentUserId ?? ""))
-            centerContainerView.alpha = 0.5
-            btnAddOrShare.isEnabled = false
-        } else {
-            lblTitle.attributedText = getTitle(name: channelController.channel?.name ?? "-")
-            btnAddOrShare.isEnabled = true
-        }
+        setTitleAndChannelAction()
         isChannelMuted = channelController.channel?.isMuted ?? false
-        avatarView.content = (channelController.channel, ChatClient.shared.currentUserId)
-        let totalFriends = max(members - 1, 0)
-        if totalFriends <= 1 {
-            lblSubTitle.text = "\(totalFriends) Friend"
-        } else {
-            lblSubTitle.text = "\(totalFriends) Friends"
-        }
+        toggleChannelActionView()
+        setAvatar()
+        setSubTitle()
         setMuteButton()
         setMiddleButton()
         addChannelDescViews()
@@ -176,19 +197,33 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
         descStackView.customize(
             backgroundColor: appearance.colorPalette.groupDetailContainerBG,
             radiusSize: 12)
-        if isDirectMessageChannel() {
+        if screenType == .userdetail {
+            guard let chatUser = user else {
+                return
+            }
             walletAddressView()
             userNameView()
             bioView()
-        } else {
-            shareLinkView()
-            descriptionView()
+        } else if screenType == .channelDetail {
+            if isDirectMessageChannel() {
+                walletAddressView()
+                userNameView()
+                bioView()
+            } else {
+                shareLinkView()
+                descriptionView()
+            }
         }
     }
 
-    private func toggleChannelActionView(isHidden: Bool) {
-        viewChannelActions.isHidden = isHidden
-        channelActionsTop.constant = isHidden ? 0 : 37
+    private func toggleChannelActionView() {
+        if screenType == .userdetail {
+            viewChannelActions.isHidden = true
+            channelActionsTopSpacer.isHidden = true
+        } else {
+            viewChannelActions.isHidden = false
+            channelActionsTopSpacer.isHidden = false
+        }
     }
 
     private func setMuteButton() {
@@ -226,9 +261,82 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
             return false
         }
     }
+
+    private func setTitleAndChannelAction() {
+        guard let channelController = channelController else {
+            return
+        }
+        if screenType == .userdetail {
+            lblTitle.text = user?.name ?? "-"
+        } else if isDirectMessageChannel() {
+            lblTitle.attributedText = getTitle(
+                name: createChannelTitle(for: channelController.channel,
+                                            ChatClient.shared.currentUserId ?? ""))
+            centerContainerView.alpha = 0.5
+            btnAddOrShare.isEnabled = false
+        } else {
+            lblTitle.attributedText = getTitle(name: channelController.channel?.name ?? "-")
+            btnAddOrShare.isEnabled = true
+        }
+    }
+
+    private func setAvatar() {
+        if screenType == .userdetail {
+            channelAvatar.isHidden = true
+            userAvatar.isHidden = false
+            guard let member = user,
+                  let channelController = channelController else {
+                return
+            }
+            userAvatar.content = member
+        } else {
+            channelAvatar.isHidden = false
+            userAvatar.isHidden = true
+            guard let channelController = channelController else {
+                return
+            }
+            channelAvatar.content = (channelController.channel, ChatClient.shared.currentUserId)
+        }
+    }
+
+    private func setSubTitle() {
+        if isDirectMessageChannel() {
+            guard let channel = channelController?.channel,
+                  let otherMember = Array(channel.lastActiveMembers)
+                    .first(where: { member in member.id != ChatClient.shared.currentUserId }) else {
+                        return
+                    }
+            if otherMember.isOnline {
+                lblSubTitle.text = "Online"
+            } else if let lastActive = otherMember.lastActiveAt {
+                lblSubTitle.text = "Last seen " + DTFormatter.formatter.string(from: lastActive)
+            } else {
+                lblSubTitle.text = "Never seen"
+            }
+        } else if screenType == .userdetail {
+            guard let user = user else {
+                return
+            }
+            if user.isOnline {
+                lblSubTitle.text = "Online"
+            } else if let lastActive = user.lastActiveAt {
+                lblSubTitle.text = "Last seen " + DTFormatter.formatter.string(from: lastActive)
+            } else {
+                lblSubTitle.text = "Never seen"
+            }
+        } else {
+            let totalFriends = max(channelMembers - 1, 0)
+            if totalFriends <= 1 {
+                lblSubTitle.text = "\(totalFriends) Friend"
+            } else {
+                lblSubTitle.text = "\(totalFriends) Friends"
+            }
+        }
+    }
     
     private func getTitle(name: String) -> NSMutableAttributedString? {
-        guard let iconImage = appearance.images.starCircleFill?.tinted(with: appearance.colorPalette.statusColorBlue) else {
+        guard let iconImage = appearance.images.starCircleFill?
+                .tinted(with: appearance.colorPalette.statusColorBlue) else {
             return nil
         }
         let title = NSMutableAttributedString(string: "\(name) ")
@@ -245,38 +353,69 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     }
 
     private func walletAddressView() {
-        guard let stackSubView = ChannelDetailDescView.instanceFromNib(),
-              isDirectMessageChannel(),
-              let channel = channelController?.channel,
-              let otherMember = Array(channel.lastActiveMembers)
-            .first(where: { member in member.id != ChatClient.shared.currentUserId }) else {
+        guard let stackSubView = ChannelDetailDescView.instanceFromNib() else {
             return
         }
-        stackSubView.lblTitle.text = "wallet address"
-        stackSubView.lblDesc.text = otherMember.id.trimStringByFirstLastCount(firstCount: 7, lastCount: 5)
-        stackSubView.viewQRCode.isHidden = true
-        stackSubView.viewSeparator.isHidden = false
-        descStackView.addArrangedSubview(stackSubView)
+        if screenType == .userdetail {
+            guard let chatUser = user else {
+                return
+            }
+            stackSubView.lblTitle.text = "wallet address"
+            stackSubView.lblDesc.text = chatUser.id.trimStringByFirstLastCount(firstCount: 7, lastCount: 5)
+            stackSubView.viewQRCode.isHidden = true
+            stackSubView.viewSeparator.isHidden = false
+            descStackView.addArrangedSubview(stackSubView)
+        } else if screenType == .channelDetail {
+            guard isDirectMessageChannel(),
+                  let channel = channelController?.channel,
+                  let otherMember = Array(channel.lastActiveMembers)
+                    .first(where: { member in member.id != ChatClient.shared.currentUserId }) else {
+                        return
+                    }
+            stackSubView.lblTitle.text = "wallet address"
+            stackSubView.lblDesc.text = otherMember.id.trimStringByFirstLastCount(firstCount: 7, lastCount: 5)
+            stackSubView.viewQRCode.isHidden = true
+            stackSubView.viewSeparator.isHidden = false
+            descStackView.addArrangedSubview(stackSubView)
+        }
     }
 
     private func userNameView() {
-        guard let stackSubView = ChannelDetailDescView.instanceFromNib(),
-              isDirectMessageChannel(),
-              let channel = channelController?.channel,
-              let otherMember = Array(channel.lastActiveMembers)
-            .first(where: { member in member.id != ChatClient.shared.currentUserId }) else {
+        guard let stackSubView = ChannelDetailDescView.instanceFromNib() else {
             return
         }
-        stackSubView.lblTitle.text = "username"
-        if let userName = otherMember.name {
-            stackSubView.lblDesc.text = "@\(userName)"
-        } else {
-            stackSubView.lblDesc.text = "-"
+        if screenType == .userdetail {
+            guard let chatUser = user else {
+                return
+            }
+            stackSubView.lblTitle.text = "username"
+            if let userName = chatUser.name {
+                stackSubView.lblDesc.text = "@\(userName)"
+            } else {
+                stackSubView.lblDesc.text = "-"
+            }
+            stackSubView.viewQRCode.isHidden = false
+            stackSubView.btnQRCode.addTarget(self, action: #selector(qrCodePressed(_:)), for: .touchUpInside)
+            stackSubView.viewSeparator.isHidden = false
+            descStackView.addArrangedSubview(stackSubView)
+        } else  if screenType == .channelDetail {
+            guard isDirectMessageChannel(),
+                  let channel = channelController?.channel,
+                  let otherMember = Array(channel.lastActiveMembers)
+                    .first(where: { member in member.id != ChatClient.shared.currentUserId }) else {
+                        return
+                    }
+            stackSubView.lblTitle.text = "username"
+            if let userName = otherMember.name {
+                stackSubView.lblDesc.text = "@\(userName)"
+            } else {
+                stackSubView.lblDesc.text = "-"
+            }
+            stackSubView.viewQRCode.isHidden = false
+            stackSubView.btnQRCode.addTarget(self, action: #selector(qrCodePressed(_:)), for: .touchUpInside)
+            stackSubView.viewSeparator.isHidden = false
+            descStackView.addArrangedSubview(stackSubView)
         }
-        stackSubView.viewQRCode.isHidden = false
-        stackSubView.btnQRCode.addTarget(self, action: #selector(qrCodePressed(_:)), for: .touchUpInside)
-        stackSubView.viewSeparator.isHidden = false
-        descStackView.addArrangedSubview(stackSubView)
     }
 
     private func bioView() {

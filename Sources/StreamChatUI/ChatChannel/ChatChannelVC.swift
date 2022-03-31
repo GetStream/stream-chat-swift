@@ -361,9 +361,7 @@ open class ChatChannelVC:
               let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
             return
         }
-        controller.viewModel = .init(controller: channelController, screenType: .channelDetail)
-        //controller.groupInviteLink = self.getGroupLink()
-        //controller.channelController = channelController
+        controller.viewModel = .init(controller: channelController)
         self.pushWithAnimation(controller: controller)
     }
 

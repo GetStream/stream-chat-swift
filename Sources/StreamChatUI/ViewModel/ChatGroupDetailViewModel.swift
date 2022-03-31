@@ -17,6 +17,7 @@ class ChatGroupDetailViewModel: NSObject {
     var chatMemberController: ChatChannelMemberListController?
     var reloadTable: (() -> Void)?
     var channelMembers: [ChatChannelMember] = []
+    var user: ChatChannelMember?
 
     // MARK: - Enums
     enum ScreenType {
@@ -29,11 +30,20 @@ class ChatGroupDetailViewModel: NSObject {
         super.init()
     }
 
-    init(controller: ChatChannelController, screenType: ScreenType) {
+    /// for channel detail
+    init(controller: ChatChannelController) {
         super.init()
         channelController = controller
-        self.screenType = screenType
+        screenType = .channelDetail
         initChannelMembers()
+    }
+
+    /// for member detail
+    init(controller: ChatChannelController, channelMember: ChatChannelMember) {
+        super.init()
+        channelController = controller
+        screenType = .userdetail
+        user = channelMember
     }
 
     func initChannelMembers() {
@@ -76,7 +86,6 @@ class ChatGroupDetailViewModel: NSObject {
         let offlineUser = filteredUsers.filter({ $0.isOnline == false})
         let alphabetUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == true && $0.isOnline == false}.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
         let otherUsers = offlineUser.filter {($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
-
         channelMembers.append(contentsOf: onlineUser)
         channelMembers.append(contentsOf: alphabetUsers)
         channelMembers.append(contentsOf: otherUsers)

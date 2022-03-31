@@ -55,6 +55,10 @@ public extension Appearance {
                 return loadImageSafely(with: "close")
             }
         }()
+        public var socialMail: UIImage = loadImageSafely(with: "social_mail")
+        public var socialInsta: UIImage = loadImageSafely(with: "social_insta")
+        public var socialTikTok: UIImage = loadImageSafely(with: "social_tiktok")
+        public var socialTwitter: UIImage = loadImageSafely(with: "social_twitter")
         public var userSelected: UIImage = loadImageSafely(with: "chat_UserStatus")
         public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
