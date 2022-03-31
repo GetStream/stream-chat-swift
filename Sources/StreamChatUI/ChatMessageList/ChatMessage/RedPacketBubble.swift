@@ -160,7 +160,7 @@ class RedPacketBubble: UITableViewCell {
             timestampLabel.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor, constant: 0),
             timestampLabel.bottomAnchor.constraint(equalTo: subContainer.topAnchor, constant: -8),
             timestampLabel.topAnchor.constraint(equalTo: viewContainer.topAnchor, constant: 0),
-            timestampLabel.heightAnchor.constraint(equalToConstant: 15)
+            timestampLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 15),
         ])
         timestampLabel.transform = .mirrorY
     }
