@@ -1335,6 +1335,9 @@
 		F8BA4FA425E69D8F0078BA9D /* iMessageComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BA4FA325E69D8F0078BA9D /* iMessageComposerVC.swift */; };
 		F8CF04AF25EF7D9F00077209 /* iMessageCellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CF04AE25EF7D9F00077209 /* iMessageCellSeparatorView.swift */; };
 		F8FC489826038BDA00A27DC5 /* SlackChatMessageGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC489726038BDA00A27DC5 /* SlackChatMessageGalleryView.swift */; };
+		FC1A920C27F5ED23006A1E1A /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC1A920B27F5ED22006A1E1A /* ContactModel.swift */; };
+		FC1A920E27F5EDAB006A1E1A /* SCSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC1A920D27F5EDAB006A1E1A /* SCSettings.swift */; };
+		FC1A921127F5EE31006A1E1A /* UserDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC1A921027F5EE31006A1E1A /* UserDefault.swift */; };
 		FC4F2EF727F413AE00A6D729 /* ChannelDetailDescView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4F2EF627F413AE00A6D729 /* ChannelDetailDescView.swift */; };
 		FC4F2EF927F413D300A6D729 /* ChannelDetailDescView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC4F2EF827F413D300A6D729 /* ChannelDetailDescView.xib */; };
 		FC4F2EFB27F4407000A6D729 /* ChannelMemberCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4F2EFA27F4407000A6D729 /* ChannelMemberCountView.swift */; };
@@ -2868,6 +2871,9 @@
 		F8BA4FA325E69D8F0078BA9D /* iMessageComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageComposerVC.swift; sourceTree = "<group>"; };
 		F8CF04AE25EF7D9F00077209 /* iMessageCellSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageCellSeparatorView.swift; sourceTree = "<group>"; };
 		F8FC489726038BDA00A27DC5 /* SlackChatMessageGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatMessageGalleryView.swift; sourceTree = "<group>"; };
+		FC1A920B27F5ED22006A1E1A /* ContactModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactModel.swift; sourceTree = "<group>"; };
+		FC1A920D27F5EDAB006A1E1A /* SCSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCSettings.swift; sourceTree = "<group>"; };
+		FC1A921027F5EE31006A1E1A /* UserDefault.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefault.swift; sourceTree = "<group>"; };
 		FC4F2EF627F413AE00A6D729 /* ChannelDetailDescView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDetailDescView.swift; sourceTree = "<group>"; };
 		FC4F2EF827F413D300A6D729 /* ChannelDetailDescView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChannelDetailDescView.xib; sourceTree = "<group>"; };
 		FC4F2EFA27F4407000A6D729 /* ChannelMemberCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberCountView.swift; sourceTree = "<group>"; };
@@ -4728,7 +4734,9 @@
 				ED7DD40427CCF38C007CE0BA /* VideoPlayer */,
 				CD24C71A278487ED00F6378D /* Dynamics */,
 				CD24C71527846C1A00F6378D /* DPOTPView */,
+				FC1A920F27F5EE31006A1E1A /* Property Wrapper */,
 				ED1D14752786C21C005A0EAB /* Storyboard.swift */,
+				FC1A920D27F5EDAB006A1E1A /* SCSettings.swift */,
 				ACA3C98426CA23F300EB8B07 /* DateUtils_Tests.swift */,
 				ACA3C98526CA23F300EB8B07 /* DateUtils.swift */,
 				ACF73D7726CFE07900372DC0 /* Cancellable.swift */,
@@ -5554,6 +5562,7 @@
 		CDB98D102757D41F00CA7CDE /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				FC1A920B27F5ED22006A1E1A /* ContactModel.swift */,
 				CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */,
 				CD72548C275F556100CD6444 /* RedPacket.swift */,
 			);
@@ -5942,6 +5951,14 @@
 				F89C23B625E508E20082CA5B /* Info.plist */,
 			);
 			path = iMessageClone;
+			sourceTree = "<group>";
+		};
+		FC1A920F27F5EE31006A1E1A /* Property Wrapper */ = {
+			isa = PBXGroup;
+			children = (
+				FC1A921027F5EE31006A1E1A /* UserDefault.swift */,
+			);
+			path = "Property Wrapper";
 			sourceTree = "<group>";
 		};
 		FC4F2EF527F4139700A6D729 /* Views */ = {
@@ -7330,6 +7347,7 @@
 				2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */,
 				6EEFB78627BB83AD007224C2 /* UIViewController+PanModalPresenter.swift in Sources */,
 				6EEFB79627BB83AD007224C2 /* DimmedView.swift in Sources */,
+				FC1A920E27F5EDAB006A1E1A /* SCSettings.swift in Sources */,
 				88EF29FF2571288600B06EF1 /* Array+Extensions.swift in Sources */,
 				EDAB4B3F27A15D1D00F07D53 /* Snackbar.swift in Sources */,
 				F80BCA562631D4DA00F2107B /* ZoomDismissalInteractionController.swift in Sources */,
@@ -7362,6 +7380,7 @@
 				E79AC10D25831A1500C3CE5D /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
 				E73A8B2B2578EB2B00FBDC56 /* ComposerVC.swift in Sources */,
 				ADFA09C926A99E0A002A6EFA /* ChatThreadHeaderView.swift in Sources */,
+				FC1A921127F5EE31006A1E1A /* UserDefault.swift in Sources */,
 				6E92FD3B27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */,
 				CDFA6EDD2768DB0A00DC3B7F /* ActivityIndicator.swift in Sources */,
 				8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */,
@@ -7388,6 +7407,7 @@
 				ED95B3F52769DF850049DD53 /* RedPacketExpired.swift in Sources */,
 				6E0D12EA27B3CF85003DD1AA /* TableViewCellChatUser.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
+				FC1A920C27F5ED23006A1E1A /* ContactModel.swift in Sources */,
 				847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */,

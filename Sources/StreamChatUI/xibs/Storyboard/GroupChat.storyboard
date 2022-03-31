@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -1176,9 +1177,6 @@
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="contentEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
                                         <state key="normal" image="more-grey-circle"/>
-                                        <connections>
-                                            <action selector="btnMoreAction:" destination="aDp-vg-Sk6" eventType="touchUpInside" id="sxJ-Qx-BCA"/>
-                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1215,8 +1213,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnMore" destination="M8T-sh-qZy" id="eEg-lw-LoE"/>
                         <outlet property="heightSafeAreaTop" destination="ZYc-0o-s1v" id="7Sd-1U-T09"/>
-                        <outlet property="imgMore" destination="M8T-sh-qZy" id="LTu-uI-j4i"/>
                         <outlet property="tableView" destination="Yij-eM-4Ob" id="qru-cs-mG0"/>
                         <outletCollection property="backgroundViews" destination="PiS-Ri-7WV" collectionClass="NSMutableArray" id="zKy-eC-6eg"/>
                         <outletCollection property="backgroundViews" destination="Mz8-ec-b7k" collectionClass="NSMutableArray" id="7qy-0m-39o"/>

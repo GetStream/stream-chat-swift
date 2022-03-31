@@ -16,6 +16,11 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
     
     // MARK: - Variables
     var viewModel: ChatGroupDetailViewModel!
+    @UserDefaultCodable(
+        key: SCSettings.Contact.contactList.key,
+        defaultValue: nil
+    )
+    var contacts: [ContactModel]?
 
     // MARK: - Enums
     enum TableViewSections: Int {
@@ -25,7 +30,7 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
     
     // MARK: - Outlets
     @IBOutlet weak var heightSafeAreaTop: NSLayoutConstraint!
-    @IBOutlet weak var imgMore: StreamChatBackButton!
+    @IBOutlet weak var btnMore: StreamChatBackButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet var backgroundViews: [UIView]!
 
@@ -40,20 +45,17 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
         navigationController?.popViewController(animated: true)
     }
     
-    @IBAction func btnMoreAction(_ sender: Any) {
-        
-    }
-    
     // MARK: - Functions
     private func setupUI() {
         heightSafeAreaTop.constant = UIView.safeAreaTop
-        imgMore.setImage(appearance.images.moregreyCircle, for: .normal)
+        btnMore.setImage(appearance.images.moregreyCircle, for: .normal)
         tableView.register(.init(nibName: "ChannelDetailHeaderTVCell", bundle: nil), forCellReuseIdentifier: "ChannelDetailHeaderTVCell")
         tableView.register(.init(nibName: "TableViewCellChatUser", bundle: nil), forCellReuseIdentifier: "TableViewCellChatUser")
         for view in backgroundViews {
             view.backgroundColor = appearance.colorPalette.groupDetailBackground
         }
         closures()
+        addMenuToMoreButton()
     }
 
     private func closures() {
@@ -98,6 +100,14 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
         }
     }
 
+    private func isDirectMessageChannel() -> Bool {
+        if viewModel.channelController?.channel?.isDirectMessageChannel ?? false {
+            return true
+        } else {
+            return false
+        }
+    }
+
     private func isUserAdmin() -> Bool {
         guard let channel = viewModel.channelController?.channel else {
             return false
@@ -107,6 +117,114 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
         } else {
             return false
         }
+    }
+
+    private func addMenuToMoreButton() {
+        if #available(iOS 14, *) {
+            btnMore.menu = UIMenu(title: "", image: nil, identifier: nil, options: [], children: menuItems())
+            btnMore.showsMenuAsPrimaryAction = true
+        }
+    }
+
+    private func blockUnblockUser(isBlock: Bool) {
+        guard let channelId = self.viewModel.channelController?.channel?.cid,
+              let user = self.viewModel.user else {
+            return
+        }
+        let controller = ChatClient.shared.memberController(userId: user.id, in: channelId)
+        if isBlock {
+            controller.ban { error in
+                print(error)
+            }
+        } else {
+            controller.unban { error in
+                print(error)
+            }
+        }
+    }
+
+    @available(iOS 13, *)
+    private func menuItems() -> [UIAction] {
+        let reportAction = UIAction(title: "Report", image: appearance.images.exclamationMarkCircle) { _ in
+            print("report action")
+        }
+        let addContact = UIAction(title: "Add as contact", image: appearance.images.personBadgePlus) { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            self.addToContact()
+        }
+        let blockUser = UIAction(title: "Block user", image: appearance.images.block) { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            self.blockUnblockUser(isBlock: true)
+        }
+        let unblockUser = UIAction(title: "Unblock user", image: appearance.images.unblock) {  [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            self.blockUnblockUser(isBlock: true)
+        }
+        let shareContact = UIAction(title: "Share contact", image: appearance.images.personTextRectangle) { _ in
+        }
+        let nickName = UIAction(title: "Nickname", image: appearance.images.rectanglePencil) { _ in
+        }
+        if isDirectMessageChannel() {
+            return [addContact, reportAction]
+        } else if viewModel.screenType == .channelDetail {
+            return [reportAction]
+        } else if viewModel.screenType == .userdetail {
+            var arrActions = [nickName, shareContact]
+            if let contactList = contacts {
+                let selectedUser = contactList.filter { $0.walletAddress == viewModel.user?.id }
+                if selectedUser.isEmpty {
+                    arrActions.append(addContact)
+                }
+            } else {
+                arrActions.append(addContact)
+            }
+            if isUserAdmin() {
+                if viewModel.user?.isBannedFromChannel ?? false {
+                    arrActions.append(unblockUser)
+                } else {
+                    arrActions.append(blockUser)
+                }
+            }
+            arrActions.append(reportAction)
+            return arrActions
+        } else {
+            return []
+        }
+    }
+
+    private func addToContact() {
+        guard viewModel.screenType == .userdetail,
+              let member = viewModel.user else {
+            return
+        }
+        if contacts == nil {
+            var tempModel = [ContactModel]()
+            tempModel.append(ContactModel(name: member.name ?? "",
+                                          walletAddress: member.id,
+                                          avatar: member.imageURL?.absoluteString,
+                                          created: Date(),
+                                          updated: Date()))
+            contacts = tempModel
+            Snackbar.show(text: "Contact added successfully!")
+        } else {
+            let existingUser = contacts!.filter {$0.walletAddress == member.id}
+            if !existingUser.isEmpty {
+                return
+            }
+            contacts!.append(ContactModel(name: member.name ?? "",
+                                            walletAddress: member.id,
+                                               avatar: member.imageURL?.absoluteString,
+                                            created: Date(),
+                                            updated: Date()))
+            Snackbar.show(text: "Contact added successfully!")
+        }
+        addMenuToMoreButton()
     }
 }
 

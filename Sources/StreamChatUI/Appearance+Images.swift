@@ -187,6 +187,34 @@ public extension Appearance {
                 return nil
             }
         }()
+        public lazy var block: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "hand.raised.slash")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var unblock: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "hand.raised")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var rectanglePencil: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "rectangle.and.pencil.and.ellipsis")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var personTextRectangle: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "person.text.rectangle")
+            } else {
+                return nil
+            }
+        }()
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
         public var openAttachments: UIImage = loadImageSafely(with: "clip")
