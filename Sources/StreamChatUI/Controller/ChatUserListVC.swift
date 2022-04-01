@@ -26,10 +26,12 @@ public class ChatUserListVC: UIViewController {
     public enum HeaderType {
         case emptyData, createChatHeader, noHeader, alphabetHeader, loadingData, pagination
     }
+    
     // MARK: - @IBOutlet
     @IBOutlet private weak var containerView: UIView!
     private var tableView: UITableView?
     private let safeDataLoadQueue: DispatchQueue = DispatchQueue.init(label: "ChatListUpdateQueue")
+    
     // MARK: - VARIABLES
     public var viewModel = UserListViewModel(sortType: .sortByLastSeen)
     public var sortType: Em_ChatUserListFilterTypes = .sortByLastSeen {
@@ -51,6 +53,7 @@ public class ChatUserListVC: UIViewController {
     public var bCallbackGroupSelect: (() -> Void)?
     public var bCallbackGroupWeHere: (() -> Void)?
     public var bCallbackGroupJoinViaQR: (() -> Void)?
+    
     // MARK: - VIEW CYCLE
     open override func viewDidLoad() {
         super.viewDidLoad()
