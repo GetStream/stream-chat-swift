@@ -265,7 +265,7 @@ open class ChatChannelVC:
                 addChildViewController(messageComposerVC, targetView: view)
                 messageComposerVC.view.pin(anchors: [.leading, .trailing], to: view)
                 messageComposerVC.view.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
-                messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
+                messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: bottomSafeArea.topAnchor)
                 messageComposerBottomConstraint?.isActive = true
             }
         }
