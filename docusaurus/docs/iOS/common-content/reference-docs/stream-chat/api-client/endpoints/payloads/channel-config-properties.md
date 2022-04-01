@@ -53,6 +53,7 @@ Enables quoting of messages. Enabled by default.
 
 ``` swift
 public let quotesEnabled: Bool
+```
 
 ### `searchEnabled`
 
