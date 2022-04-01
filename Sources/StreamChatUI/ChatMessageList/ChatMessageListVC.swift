@@ -6,10 +6,6 @@ import StreamChat
 import UIKit
 import SafariServices
 
-// Padding for messages bubble view
-let MessageLeftPadding: CGFloat = 8.0
-let MessageRightPadding: CGFloat = -8.0
-let MessageTopPadding: CGFloat = 15
 /// Controller that shows list of messages and composer together in the selected channel.
 @available(iOSApplicationExtension, unavailable)
 open class ChatMessageListVC:

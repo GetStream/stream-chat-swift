@@ -66,8 +66,8 @@ class TableViewCellRedPacketDrop: UITableViewCell {
     func configureCell(isSender: Bool) {
         self.isSender = isSender
         // Constraint
-        viewContainerTopConstraint.constant = MessageTopPadding
-        viewContainerLeadingConstraint.constant = MessageLeftPadding
+        viewContainerTopConstraint.constant = Constants.MessageTopPadding
+        viewContainerLeadingConstraint.constant = Constants.MessageLeftPadding
         AvatarContainerWidthConstraint.constant = 0
         // authorAvatarView
         authorAvatarView.contentMode = .scaleAspectFill
@@ -189,7 +189,7 @@ class TableViewCellRedPacketDrop: UITableViewCell {
         } else {
             lblDetails.text = "Split randomly between: \(participants) users"
         }
-        lblExpire.text = "Expires in 15 minutes!"
+        lblExpire.text = "Expires in \(Constants.redPacketExpireTime) minutes!"
     }
 
     private func getEndTime() -> Date? {

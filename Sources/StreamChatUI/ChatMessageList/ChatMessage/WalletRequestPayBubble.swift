@@ -55,13 +55,13 @@ class WalletRequestPayBubble: UITableViewCell {
         contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
             viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 0),
-            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -MessageTopPadding)
+            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -Constants.MessageTopPadding)
         ])
         if isSender {
             viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth).isActive = true
-            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: MessageRightPadding).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: Constants.MessageRightPadding).isActive = true
         } else {
-            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: MessageLeftPadding).isActive = true
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: Constants.MessageLeftPadding).isActive = true
             viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -cellWidth).isActive = true
         }
 

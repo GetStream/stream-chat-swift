@@ -64,8 +64,8 @@ public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
     func configureCell(isSender: Bool) {
         self.isSender = isSender
         // Constraint
-        viewContainerTopConstraint.constant = MessageTopPadding
-        viewContainerLeadingConstraint.constant = MessageLeftPadding
+        viewContainerTopConstraint.constant = Constants.MessageTopPadding
+        viewContainerLeadingConstraint.constant = Constants.MessageLeftPadding
         AvatarContainerWidthConstraint.constant = 0
         // authorAvatarView
         authorAvatarView.contentMode = .scaleAspectFill
