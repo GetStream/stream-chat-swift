@@ -132,7 +132,7 @@ class JoinPrivateGroupVC: UIViewController {
             query: .init(
                 filter: .and([
                     .equal(.type, to: .privateMessaging),
-                    .in("password", values: [passWord])
+                    .equal("password", to: passWord)
                 ])))
         controller?.synchronize()
         controller?.delegate = self

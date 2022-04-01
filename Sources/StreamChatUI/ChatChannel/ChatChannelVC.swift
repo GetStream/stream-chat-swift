@@ -773,17 +773,8 @@ open class ChatChannelVC:
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
-        guard channelController.areTypingEventsEnabled else { return }
-
-        let typingUsersWithoutCurrentUser = typingUsers
-            .sorted { $0.id < $1.id }
-            .filter { $0.id != self.client?.currentUserId }
-
-        if typingUsersWithoutCurrentUser.isEmpty {
-            messageListVC?.hideTypingIndicator()
-        } else {
-            messageListVC?.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
-        }
+        // By default the channel message view is not interested in message events
+        // but this can be overridden by subclassing this component.
     }
 
     // TODO: - Invite and other action need to implement
