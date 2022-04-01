@@ -75,7 +75,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// Shows message author avatar.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.author`.
-    public private(set) var authorAvatarView: ChatAvatarView?
+    public private(set) var authorUserAvatarView: ChatUserAvatarView?
 
     /// Shows a spacer where the author avatar should be.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.avatarSizePadding`.
@@ -125,7 +125,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// Shows the avatar of the user who left the latest thread reply.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
-    public private(set) var threadAvatarView: ChatAvatarView?
+    public private(set) var threadUserAvatarView: ChatUserAvatarView?
 
     /// Shows the arrow from message bubble to `threadAvatarView` view.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
@@ -357,7 +357,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         insertSubview(mainContainer, at: 0)
 
         let mainContainerSubviews = [
-            authorAvatarView ?? authorAvatarSpacer,
+            authorUserAvatarView ?? authorAvatarSpacer,
             errorIndicatorContainer,
             bubbleThreadMetaContainer
         ].compactMap { $0 }
@@ -462,18 +462,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         textView?.text = content?.textContent
         
         // Avatar
-        let placeholder = appearance.images.userAvatarPlaceholder1
-        if let imageURL = content?.author.imageURL, let imageView = authorAvatarView?.imageView {
-            components.imageLoader.loadImage(
-                into: imageView,
-                url: imageURL,
-                imageCDN: components.imageCDN,
-                placeholder: placeholder,
-                preferredSize: .avatarThumbnailSize
-            )
-        } else {
-            authorAvatarView?.imageView.image = placeholder
-        }
+        authorUserAvatarView?.content = content?.author
 
         // Bubble view
         bubbleView?.content = content.map { message in
@@ -521,17 +510,8 @@ open class ChatMessageContentView: _View, ThemeProvider {
         }
 
         // The last thread participant is the author of the most recent reply.
-        let threadAvatarUrl = content?.threadParticipants.last?.imageURL
-
-        if let imageView = threadAvatarView?.imageView {
-            components.imageLoader.loadImage(
-                into: imageView,
-                url: threadAvatarUrl,
-                imageCDN: components.imageCDN,
-                placeholder: appearance.images.userAvatarPlaceholder4,
-                preferredSize: .avatarThumbnailSize
-            )
-        }
+        let threadAuthor = content?.threadParticipants.last
+        threadUserAvatarView?.content = threadAuthor
 
         // Reactions view
         reactionsBubbleView?.tailDirection = content
@@ -612,14 +592,18 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// Instantiates, configures and assigns `authorAvatarView` when called for the first time.
     /// - Returns: The `authorAvatarView` subview.
     open func createAvatarView() -> ChatAvatarView {
-        if authorAvatarView == nil {
-            authorAvatarView = components
-                .avatarView
+        if authorUserAvatarView == nil {
+            authorUserAvatarView = components
+                .userAvatarView
                 .init()
                 .withoutAutoresizingMaskConstraints
         }
-        authorAvatarView?.addTarget(self, action: #selector(handleTapOnAvatarView), for: .touchUpInside)
-        return authorAvatarView!
+        authorUserAvatarView?
+            .presenceAvatarView
+            .avatarView
+            .addTarget(self, action: #selector(handleTapOnAvatarView), for: .touchUpInside)
+
+        return authorUserAvatarView!
     }
 
     /// Instantiates, configures and assigns `createAvatarSpacer` when called for the first time.
@@ -636,13 +620,13 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// Instantiates, configures and assigns `threadAvatarView` when called for the first time.
     /// - Returns: The `threadAvatarView` subview.
     open func createThreadAvatarView() -> ChatAvatarView {
-        if threadAvatarView == nil {
-            threadAvatarView = components
-                .avatarView
+        if threadUserAvatarView == nil {
+            threadUserAvatarView = components
+                .userAvatarView
                 .init()
                 .withoutAutoresizingMaskConstraints
         }
-        return threadAvatarView!
+        return threadUserAvatarView!
     }
 
     /// Instantiates, configures and assigns `threadArrowView` when called for the first time.

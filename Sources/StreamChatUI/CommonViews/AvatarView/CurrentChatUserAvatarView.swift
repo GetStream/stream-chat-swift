@@ -9,7 +9,6 @@ import UIKit
 ///
 /// It uses `CurrentChatUserController` for its input data and is able to update the avatar automatically based
 /// on the currently logged-in user.
-///
 open class CurrentChatUserAvatarView: _Control, ThemeProvider {
     /// `StreamChat`'s controller that observe the currently logged-in user.
     open var controller: CurrentChatUserController? {
@@ -19,16 +18,17 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
             updateContentIfNeeded()
         }
     }
-    
+
     /// The view that shows the current user's avatar.
-    open private(set) lazy var avatarView: ChatAvatarView = components
-        .avatarView.init()
+    open private(set) lazy var userAvatarView: ChatUserAvatarView = components
+        .userAvatarView.init()
         .withoutAutoresizingMaskConstraints
+        .withIgnoringOnlinePresence
     
     override open func setUpAppearance() {
         super.setUpAppearance()
+
         backgroundColor = .clear
-        avatarView.imageView.backgroundColor = appearance.colorPalette.background
     }
 
     override open var isEnabled: Bool {
@@ -48,7 +48,7 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
 
     override open func setUp() {
         super.setUp()
-        avatarView.isUserInteractionEnabled = false
+        userAvatarView.isUserInteractionEnabled = false
     }
 
     override open func setUpLayout() {
@@ -57,22 +57,13 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
         heightAnchor.pin(equalToConstant: 32).isActive = true
         widthAnchor.pin(equalTo: heightAnchor).isActive = true
 
-        embed(avatarView)
-        avatarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        avatarView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        embed(userAvatarView)
+        userAvatarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        userAvatarView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
     }
     
     @objc override open func updateContent() {
-        let currentUserImageUrl = controller?.currentUser?.imageURL
-        let placeholderImage = appearance.images.userAvatarPlaceholder1
-        components.imageLoader.loadImage(
-            into: avatarView.imageView,
-            url: currentUserImageUrl,
-            imageCDN: components.imageCDN,
-            placeholder: placeholderImage,
-            preferredSize: .avatarThumbnailSize
-        )
-        
+        userAvatarView.content = controller?.currentUser
         alpha = state == .normal ? 1 : 0.5
     }
 }

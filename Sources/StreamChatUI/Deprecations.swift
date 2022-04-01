@@ -272,3 +272,68 @@ extension AttachmentsPreviewVC {
         attachmentPreviews(for: [.horizontal, .vertical])
     }
 }
+
+// MARK: Avatar View Deprecations
+
+extension Components {
+    /// A type for the view used as avatar when picking users to mention.
+    @available(*, deprecated, message: "Use userAvatarView instead")
+    public var mentionAvatarView: ChatUserAvatarView.Type {
+        get {
+            userAvatarView
+        }
+        set {
+            userAvatarView = newValue
+        }
+    }
+}
+
+extension ChatMessageReactionAuthorViewCell {
+    /// The author's avatar view.
+    @available(*, deprecated, renamed: "authorUserAvatarView")
+    open var authorAvatarView: ChatAvatarView {
+        authorUserAvatarView.presenceAvatarView.avatarView
+    }
+}
+
+extension QuotedChatMessageView {
+    /// The avatar view of the author's quoted message.
+    @available(*, deprecated, renamed: "authorUserAvatarView")
+    open var authorAvatarView: ChatAvatarView {
+        authorUserAvatarView.presenceAvatarView.avatarView
+    }
+}
+
+extension QuotedChatMessageView {
+    // Sets the avatar image from a url or sets the placeholder image if the url is `nil`.
+    /// - Parameter imageUrl: The url of the image.
+    @available(*, deprecated, message: "use setAvatar(forAuthor:) instead. This method is not called anymore.")
+    open func setAvatar(imageUrl: URL?) {
+        // Ideally we should still use this method.
+        // But because some customers have 0 warning policy, we can't do this.
+    }
+}
+
+extension CurrentChatUserAvatarView {
+    /// The view that shows the current user's avatar.
+    @available(*, deprecated, renamed: "userAvatarView")
+    open var avatarView: ChatAvatarView {
+        userAvatarView.presenceAvatarView.avatarView
+    }
+}
+
+extension ChatMessageContentView {
+    /// Shows the avatar of the user who left the latest thread reply.
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
+    @available(*, deprecated, message: "Use threadUserAvatarView instead")
+    public var threadAvatarView: ChatAvatarView? {
+        threadUserAvatarView?.presenceAvatarView.avatarView
+    }
+
+    /// Shows message author avatar.
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.author`.
+    @available(*, deprecated, message: "Use authorUserAvatarView instead")
+    public var authorAvatarView: ChatAvatarView? {
+        authorUserAvatarView?.presenceAvatarView.avatarView
+    }
+}

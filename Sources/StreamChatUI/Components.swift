@@ -13,12 +13,6 @@ public struct Components {
     /// A view used as an online activity indicator (online/offline).
     public var onlineIndicatorView: (UIView & MaskProviding).Type = OnlineIndicatorView.self
 
-    /// A view that displays the avatar image. By default a circular image.
-    public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
-
-    /// An avatar view with an online indicator.
-    public var presenceAvatarView: ChatPresenceAvatarView.Type = ChatPresenceAvatarView.self
-
     /// A `UIView` subclass which serves as container for `typingIndicator` and `UILabel` describing who is currently typing
     public var typingIndicatorView: TypingIndicatorView.Type = TypingIndicatorView.self
     
@@ -226,6 +220,24 @@ public struct Components {
     public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
         ChatMessageListUnreadCountView.self
 
+    // MARK: - Avatar Components
+
+    /// A view that displays the avatar image. It is the most basic avatar view component
+    /// and it is the foundation for the other avatar components.
+    public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
+
+    /// An avatar view with an online indicator.
+    public var presenceAvatarView: ChatPresenceAvatarView.Type = ChatPresenceAvatarView.self
+
+    /// A view that shows the avatar of a channel and the channel online presence.
+    public var channelAvatarView: ChatChannelAvatarView.Type = ChatChannelAvatarView.self
+
+    /// A view that shows a user avatar and the user online presence.
+    public var userAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
+
+    /// A view that shows the current user avatar and reacts to current user updates.
+    public var currentUserAvatarView: CurrentChatUserAvatarView.Type = CurrentChatUserAvatarView.self
+
     // MARK: - Reaction Picker components
     
     /// The Reaction picker VC.
@@ -298,9 +310,6 @@ public struct Components {
     /// The view that shows channel information.
     public var channelContentView: ChatChannelListItemView.Type = ChatChannelListItemView.self
 
-    /// The view that shows a user avatar including an indicator of the user presence (online/offline).
-    public var channelAvatarView: ChatChannelAvatarView.Type = ChatChannelAvatarView.self
-
     /// The view that shows a number of unread messages in channel.
     public var channelUnreadCountView: ChatChannelUnreadCountView.Type = ChatChannelUnreadCountView.self
 
@@ -369,14 +378,6 @@ public struct Components {
     /// The header view of the suggestion collection view.
     public var suggestionsHeaderView: ChatSuggestionsHeaderView.Type =
         ChatSuggestionsHeaderView.self
-    
-    /// A type for the view used as avatar when picking users to mention.
-    public var mentionAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
-
-    // MARK: - Current user components
-
-    /// The view that shows current user avatar.
-    public var currentUserAvatarView: CurrentChatUserAvatarView.Type = CurrentChatUserAvatarView.self
 
     // MARK: - Navigation
 

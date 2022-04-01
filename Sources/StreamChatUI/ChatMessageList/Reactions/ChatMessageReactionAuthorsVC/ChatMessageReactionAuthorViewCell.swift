@@ -36,9 +36,10 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
     open lazy var containerStack = ContainerStackView().withoutAutoresizingMaskConstraints
 
     /// The author's avatar view.
-    open lazy var authorAvatarView: ChatAvatarView = components
-        .avatarView.init()
+    open lazy var authorUserAvatarView: ChatUserAvatarView = components
+        .userAvatarView.init()
         .withoutAutoresizingMaskConstraints
+        .withIgnoringOnlinePresence
 
     /// The author's name label.
     open lazy var authorNameLabel = UILabel()
@@ -89,22 +90,22 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
             containerStack.topAnchor.pin(equalTo: contentView.topAnchor)
         ])
 
-        containerStack.addArrangedSubview(authorAvatarView)
+        containerStack.addArrangedSubview(authorUserAvatarView)
         containerStack.addArrangedSubview(authorNameLabel)
-        authorAvatarView.addSubview(reactionBubbleView)
+        authorUserAvatarView.addSubview(reactionBubbleView)
 
         reactionBubbleView.addSubview(reactionItemView)
         reactionItemView.pin(to: reactionBubbleView.layoutMarginsGuide)
 
         NSLayoutConstraint.activate([
-            authorAvatarView.widthAnchor.pin(equalToConstant: authorAvatarSize.width),
-            authorAvatarView.heightAnchor.pin(equalToConstant: authorAvatarSize.height),
-            authorNameLabel.widthAnchor.pin(equalTo: authorAvatarView.widthAnchor),
-            reactionBubbleView.bottomAnchor.pin(equalTo: authorAvatarView.bottomAnchor)
+            authorUserAvatarView.widthAnchor.pin(equalToConstant: authorAvatarSize.width),
+            authorUserAvatarView.heightAnchor.pin(equalToConstant: authorAvatarSize.height),
+            authorNameLabel.widthAnchor.pin(equalTo: authorUserAvatarView.widthAnchor),
+            reactionBubbleView.bottomAnchor.pin(equalTo: authorUserAvatarView.bottomAnchor)
         ])
 
-        reactionTrailingConstraint = reactionBubbleView.rightAnchor.pin(equalTo: authorAvatarView.centerXAnchor)
-        reactionLeadingConstraint = reactionBubbleView.leftAnchor.pin(equalTo: authorAvatarView.centerXAnchor)
+        reactionTrailingConstraint = reactionBubbleView.rightAnchor.pin(equalTo: authorUserAvatarView.centerXAnchor)
+        reactionLeadingConstraint = reactionBubbleView.leftAnchor.pin(equalTo: authorUserAvatarView.centerXAnchor)
 
         reactionTrailingConstraint?.isActive = false
         reactionLeadingConstraint?.isActive = false
@@ -116,18 +117,11 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         guard let content = self.content else {
             reactionItemView.content = nil
             authorNameLabel.text = nil
-            authorAvatarView.imageView.image = nil
+            authorUserAvatarView.content = nil
             return
         }
 
-        let placeholder = appearance.images.userAvatarPlaceholder1
-        components.imageLoader.loadImage(
-            into: authorAvatarView.imageView,
-            url: content.reaction.author.imageURL,
-            imageCDN: components.imageCDN,
-            placeholder: placeholder,
-            preferredSize: authorAvatarSize
-        )
+        authorUserAvatarView.content = content.reaction.author
 
         let reactionAuthor = content.reaction.author
         let isCurrentUser = content.currentUserId == reactionAuthor.id

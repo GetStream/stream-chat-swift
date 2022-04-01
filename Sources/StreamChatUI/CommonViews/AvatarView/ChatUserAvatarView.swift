@@ -7,6 +7,16 @@ import UIKit
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
 open class ChatUserAvatarView: _View, ThemeProvider {
+    /// Wether the avatar view should display the online indicator or not, even if the user is online.
+    public var ignoreOnlinePresence = false
+
+    /// Syntax sugar to easily configure the view without online presence.
+    public var withIgnoringOnlinePresence: Self {
+        let view = self
+        view.ignoreOnlinePresence = true
+        return view
+    }
+
     /// A view that shows the avatar image and online presence indicator.
     open private(set) lazy var presenceAvatarView: ChatPresenceAvatarView = components
         .presenceAvatarView.init()
@@ -30,7 +40,9 @@ open class ChatUserAvatarView: _View, ThemeProvider {
             placeholder: appearance.images.userAvatarPlaceholder1,
             preferredSize: .avatarThumbnailSize
         )
-        
-        presenceAvatarView.isOnlineIndicatorVisible = content?.isOnline ?? false
+
+        if !ignoreOnlinePresence {
+            presenceAvatarView.isOnlineIndicatorVisible = content?.isOnline ?? false
+        }
     }
 }

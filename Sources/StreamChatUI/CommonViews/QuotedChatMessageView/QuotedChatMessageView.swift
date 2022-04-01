@@ -61,9 +61,10 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         .withoutAutoresizingMaskConstraints
 
     /// The avatar view of the author's quoted message.
-    open private(set) lazy var authorAvatarView: ChatAvatarView = components
-        .avatarView.init()
+    open lazy var authorUserAvatarView: ChatUserAvatarView = components
+        .userAvatarView.init()
         .withoutAutoresizingMaskConstraints
+        .withIgnoringOnlinePresence
 
     /// The container view that holds the `textView` and the `attachmentPreview`.
     open private(set) lazy var contentContainerView: ContainerStackView = ContainerStackView()
@@ -105,7 +106,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         textView.textContainerInset = .zero
         textView.textColor = appearance.colorPalette.text
 
-        authorAvatarView.contentMode = .scaleAspectFit
+        authorUserAvatarView.contentMode = .scaleAspectFit
 
         contentContainerView.layer.cornerRadius = 16
         contentContainerView.layer.borderWidth = 1
@@ -127,15 +128,15 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         containerView.pin(to: layoutMarginsGuide)
         directionalLayoutMargins = .zero
 
-        containerView.addArrangedSubview(authorAvatarView)
+        containerView.addArrangedSubview(authorUserAvatarView)
         containerView.addArrangedSubview(contentContainerView)
         
         contentContainerView.addArrangedSubview(attachmentPreviewView)
         contentContainerView.addArrangedSubview(textView)
 
         NSLayoutConstraint.activate([
-            authorAvatarView.widthAnchor.pin(equalToConstant: authorAvatarSize.width),
-            authorAvatarView.heightAnchor.pin(equalToConstant: authorAvatarSize.height)
+            authorUserAvatarView.widthAnchor.pin(equalToConstant: authorAvatarSize.width),
+            authorUserAvatarView.heightAnchor.pin(equalToConstant: authorAvatarSize.height)
         ])
 
         NSLayoutConstraint.activate([
@@ -157,7 +158,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             ? appearance.colorPalette.popoverBackground
             : appearance.colorPalette.highlightedAccentBackground1
 
-        setAvatar(imageUrl: message.author.imageURL)
+        setAvatar(forAuthor: content?.message.author)
         setAvatarAlignment(avatarAlignment)
 
         if isAttachmentsEmpty {
@@ -168,34 +169,27 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         }
     }
 
-    /// Sets the avatar image from a url or sets the placeholder image if the url is `nil`.
-    /// - Parameter imageUrl: The url of the image.
-    open func setAvatar(imageUrl: URL?) {
-        let placeholder = appearance.images.userAvatarPlaceholder1
-        components.imageLoader.loadImage(
-            into: authorAvatarView.imageView,
-            url: imageUrl,
-            imageCDN: components.imageCDN,
-            placeholder: placeholder,
-            preferredSize: .avatarThumbnailSize
-        )
+    /// Sets the avatar image of the quoted message's author.
+    /// - Parameter author: The author of the quoted message.
+    open func setAvatar(forAuthor author: ChatUser?) {
+        authorUserAvatarView.content = author
     }
 
     /// Sets the avatar position in relation of the text bubble.
     /// - Parameter alignment: The avatar alignment of the author of the quoted message.
     open func setAvatarAlignment(_ alignment: QuotedAvatarAlignment) {
-        containerView.removeArrangedSubview(authorAvatarView)
+        containerView.removeArrangedSubview(authorUserAvatarView)
 
         switch alignment {
         case .leading:
-            containerView.insertArrangedSubview(authorAvatarView, at: 0)
+            containerView.insertArrangedSubview(authorUserAvatarView, at: 0)
             contentContainerView.layer.maskedCorners = [
                 .layerMinXMinYCorner,
                 .layerMaxXMinYCorner,
                 .layerMaxXMaxYCorner
             ]
         case .trailing:
-            containerView.addArrangedSubview(authorAvatarView)
+            containerView.addArrangedSubview(authorUserAvatarView)
             contentContainerView.layer.maskedCorners = [
                 .layerMinXMinYCorner,
                 .layerMaxXMinYCorner,

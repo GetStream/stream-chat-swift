@@ -15,7 +15,6 @@ open class ChatPresenceAvatarView: _View, ComponentsProvider {
     /// A view indicating whether the user this view represents is online.
     ///
     /// The type of `onlineIndicatorView` is UIView & MaskProviding in Components.
-    /// Xcode is failing to compile due to `Segmentation fault: 11` when used here.
     open private(set) lazy var onlineIndicatorView: UIView = components
         .onlineIndicatorView.init()
         .withoutAutoresizingMaskConstraints
