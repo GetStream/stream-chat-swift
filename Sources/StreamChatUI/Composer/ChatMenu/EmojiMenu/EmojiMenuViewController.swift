@@ -18,19 +18,19 @@ class EmojiMenuViewController: UIViewController {
     // MARK: Outlets
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var collectionMenu: UICollectionView!
-
+    
     // MARK: Variables
     // -1 to load recent stickers
+    // -2 to load gif
     private var selectedPack: Int = -1
-    private var stickerCalls = Set<AnyCancellable>()
-    var stickers = [Sticker]()
-    var menus = [StickerMenu]()
-    var package = [PackageList]()
-    var didSelectSticker: ((Sticker) -> ())?
-    var didSelectMarketPlace: (([Int]) -> ())?
+    private var stickers = [Sticker]()
+    private var menus = [StickerMenu]()
+    private var package = [PackageList]()
     private var pageController: UIPageViewController?
     private var currentIndex: Int = 0
     private var initialVC: EmojiContainerViewController!
+    var didSelectSticker: ((Sticker) -> ())?
+    var didSelectMarketPlace: (([Int]) -> ())?
 
     //MARK: Override
     override func viewDidLoad() {
@@ -54,25 +54,21 @@ class EmojiMenuViewController: UIViewController {
     }
 
     private func fetchSticker() {
-        StickerApi.mySticker()
-            .sink { error in
-                print(error)
-            } receiveValue: { [weak self] result in
-                guard let `self` = self else { return }
-                self.menus.removeAll()
-                self.package.removeAll()
-                // menuID -1 for recent sticker
-                // menuID -2 for gif sticker
-                self.menus.append(.init(image: "", menuId: -1, name: ""))
-                self.menus.append(.init(image: "", menuId: -2, name: ""))
-                let packageList = result.body?.packageList ?? []
-                self.package = packageList
-                self.menus.append(contentsOf: packageList.compactMap { StickerMenu.init(image: $0.packageImg ?? "", menuId: $0.packageID ?? 0, name: $0.packageName ?? "") })
-                self.setupPageController()
-                self.checkAndAddDefaultSticker()
-                self.collectionMenu.reloadData()
-            }
-            .store(in: &stickerCalls)
+        StickerApiClient.mySticker { [weak self] result in
+            guard let `self` = self else { return }
+            self.menus.removeAll()
+            self.package.removeAll()
+            // menuID -1 for recent sticker
+            // menuID -2 for gif sticker
+            self.menus.append(.init(image: "", menuId: -1, name: ""))
+            self.menus.append(.init(image: "", menuId: -2, name: ""))
+            let packageList = result.body?.packageList ?? []
+            self.package = packageList
+            self.menus.append(contentsOf: packageList.compactMap { StickerMenu.init(image: $0.packageImg ?? "", menuId: $0.packageID ?? 0, name: $0.packageName ?? "") })
+            self.setupPageController()
+            self.checkAndAddDefaultSticker()
+            self.collectionMenu.reloadData()
+        }
     }
 
     private func loadMenu(result: [StickerMenu]) {
@@ -87,16 +83,7 @@ class EmojiMenuViewController: UIViewController {
     }
 
     private func checkAndAddDefaultSticker() {
-        // 1. mushroom movie valentines -> 6223
-        // 2. cute duck duggy -> 7227
-        // 3. sweetanka
-        // 4. tubby nugget 2 -> 5851
-        // 5. cute baby axolotl: animated -> 5682
-        var defaultStickers = [StickerMenu]()
-        defaultStickers.append(.init(image: "https://img.stipop.io/2020/11/23/1606123362817_IE7darbhoR.gif", menuId: 5682, name: "Cute Baby Axolotl : Animated"))
-        defaultStickers.append(.init(image: "https://img.stipop.io/2021/7/7/1625615224234_gn8QGj9ryD.gif", menuId: 7227, name: "Cute duck Duggy 2s"))
-        defaultStickers.append(.init(image: "https://img.stipop.io/2020/12/18/1608261102770_6T1UkUst0l.gif", menuId: 5851, name: "Tubby Nugget Winter Pack"))
-        defaultStickers.append(.init(image: "https://img.stipop.io/2021/2/10/1612910010258_LqupKfShY4.gif", menuId: 6223, name: "Mushroom Movie Valentines"))
+        var defaultStickers = StickerMenu.getDefaultSticker()
         var defaultStickerIds = defaultStickers.compactMap { $0.menuId }
         menus.removeAll(where:  { defaultStickerIds.contains($0.menuId) })
         menus.append(contentsOf: defaultStickers)
@@ -172,6 +159,7 @@ extension EmojiMenuViewController: UIPageViewControllerDataSource, UIPageViewCon
         selectedPack = menus[currentIndex].menuId
         collectionMenu.reloadData()
         collectionMenu.scrollToItem(at: .init(row: currentIndex, section: 0), at: .right, animated: true)
+        HapticFeedbackGenerator.selectionHaptic()
     }
 }
 
@@ -202,6 +190,7 @@ extension EmojiMenuViewController: UICollectionViewDelegate, UICollectionViewDat
         currentIndex = menus.firstIndex(where: { $0.menuId == selectedPack}) ?? 0
         collectionView.reloadData()
         pageController?.setViewControllers([emojiContainer], direction: direction, animated: true, completion: nil)
+        HapticFeedbackGenerator.selectionHaptic()
     }
 
 }

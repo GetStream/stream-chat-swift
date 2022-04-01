@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import StreamChat
 
 public struct Constants {
     public static let blockExplorer = "https://explorer.harmony.one/tx/"
@@ -15,4 +16,5 @@ public struct Constants {
 
 public struct UserdefaultKey {
     public static let downloadedSticker = "downloadedSticker"
+    public static let visibleSticker = "visibleSticker"
 }

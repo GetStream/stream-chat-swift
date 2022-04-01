@@ -16,19 +16,45 @@ import GiphyUISDK
 class EmojiContainerViewController: UIViewController {
 
     // MARK: Variables
+    open private(set) lazy var giphy = GiphyGridController
+        .init()
+
+    open private(set) lazy var imgSticker = UIImageView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var loadingIndicator = UIActivityIndicatorView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var lblStickerName = UILabel
+        .init()
+        .withoutAutoresizingMaskConstraints
+    open private(set) lazy var btnDownload = UIButton
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var vStack = UIStackView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var hStack = UIStackView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var gifView = UIView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     private var collectionEmoji: UICollectionView!
-    private var giphy: GiphyGridController!
-    private var loadingIndicator: UIActivityIndicatorView!
-    private var imgSticker: UIImageView!
-    private var lblStickerName: UILabel!
-    private var btnDownload: UIButton!
-    private var vStack: UIStackView!
-    private var hStack: UIStackView!
-    private var gifView: UIView!
-    private var stickerCalls = Set<AnyCancellable>()
+
     var stickers = [Sticker]()
     var didSelectSticker: ((Sticker) -> ())?
     var menu: StickerMenu?
+    private var visibleSticker: [Int]  {
+        let walletStickerKey = UserdefaultKey.visibleSticker + StickerApi.userId
+        return UserDefaults.standard.value(forKey: walletStickerKey) as? [Int] ?? []
+    }
 
     init(with menu: StickerMenu) {
         super.init(nibName: nil, bundle: nil)
@@ -36,7 +62,8 @@ class EmojiContainerViewController: UIViewController {
         if menu.menuId == -2 {
             setupGifLayout()
         } else {
-            self.setupSticker()
+            setupSticker()
+            loadStickerView()
         }
     }
 
@@ -57,20 +84,16 @@ class EmojiContainerViewController: UIViewController {
         view.embed(collectionEmoji)
         collectionEmoji.backgroundColor = Appearance.default.colorPalette.stickerBg
         view.backgroundColor = Appearance.default.colorPalette.stickerBg
-
-        imgSticker = UIImageView()
-        imgSticker.translatesAutoresizingMaskIntoConstraints = false
+        
         imgSticker.clipsToBounds = true
         imgSticker.heightAnchor.constraint(equalToConstant: 70).isActive = true
         imgSticker.widthAnchor.constraint(equalToConstant: 70).isActive = true
         imgSticker.contentMode = .scaleAspectFit
 
-        lblStickerName = UILabel()
         lblStickerName.text = menu?.name
         lblStickerName.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         lblStickerName.translatesAutoresizingMaskIntoConstraints = false
 
-        btnDownload = UIButton()
         btnDownload.backgroundColor = UIColor(rgb: 0x767680).withAlphaComponent(0.25)
         btnDownload.setTitle("Download", for: .normal)
         btnDownload.addTarget(self, action: #selector(downloadSticker), for: .touchUpInside)
@@ -100,8 +123,6 @@ class EmojiContainerViewController: UIViewController {
         view.layoutIfNeeded()
         imgSticker.layer.cornerRadius = imgSticker.bounds.width / 2
 
-        loadingIndicator = UIActivityIndicatorView()
-        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loadingIndicator)
         loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
@@ -111,15 +132,13 @@ class EmojiContainerViewController: UIViewController {
     }
 
     private func setupGifLayout() {
-        gifView = UIView()
         view.insertSubview(gifView, at: 0)
-        gifView.translatesAutoresizingMaskIntoConstraints = false
         gifView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         gifView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         gifView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         gifView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
 
-        giphy = GiphyGridController()
+        giphy.clipsPreviewRenditionType = .preview
         addChild(giphy)
         view.addSubview(giphy.view)
         giphy.view.translatesAutoresizingMaskIntoConstraints = false
@@ -149,68 +168,60 @@ class EmojiContainerViewController: UIViewController {
 
     @objc private func downloadSticker() {
         updateLoadingView(isHidden: false)
-        StickerApi.downloadStickers(packageId: menu?.menuId ?? 0)
-            .sink { [weak self] finish in
-                guard let `self` = self else { return }
-                self.loadSticker(stickerId: "\(self.menu?.menuId ?? 0)")
-            } receiveValue: { _ in }
-            .store(in: &stickerCalls)
-
+        StickerApiClient.downloadStickers(packageId: menu?.menuId ?? 0) { [weak self] in
+            guard let `self` = self else { return }
+            self.loadingIndicator.isHidden = true
+            self.loadSticker(stickerId: "\(self.menu?.menuId ?? 0)")
+            var visibleSticker = self.visibleSticker
+            visibleSticker.append(self.menu?.menuId ?? 0)
+            let walletStickerKey = UserdefaultKey.visibleSticker + StickerApi.userId
+            UserDefaults.standard.set(visibleSticker, forKey: walletStickerKey)
+            UserDefaults.standard.synchronize()
+            self.collectionEmoji.isHidden = false
+        }
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    deinit {
+        debugPrint(#function)
+    }
+
+    private func loadStickerView() {
         guard let stickerId = menu?.menuId else {
             return
         }
         if stickerId == -1 {
             loadRecentSticker()
         } else if stickerId != -2 {
-            loadSticker(stickerId: "\(stickerId)")
+            if StickerMenu.getDefaultStickerIds().contains(stickerId) && !visibleSticker.contains(stickerId) {
+                self.hStack.isHidden = false
+                self.collectionEmoji.isHidden = true
+                self.configureDownloadOption()
+            } else {
+                self.hStack.isHidden = true
+                self.collectionEmoji.isHidden = false
+                self.loadSticker(stickerId: "\(stickerId)")
+            }
         }
     }
 
-    deinit {
-        print(#function)
-    }
-
-    func loadSticker(stickerId: String) {
-        StickerApi.stickerInfo(id: stickerId)
-            .sink { error in
-                // TODO: Handle error state
-                print(error)
-            } receiveValue: { [weak self] result in
-                guard let `self` = self else { return }
-                self.stickers = result.body?.package?.stickers ?? []
-                if result.body?.package?.isDownload == "N" {
-                    self.hStack.isHidden = false
-                    self.collectionEmoji.isHidden = true
-                    self.configureDownloadOption()
-                } else {
-                    self.hStack.isHidden = true
-                    self.collectionEmoji.isHidden = false
-                }
-                self.collectionEmoji.reloadData()
-            }
-            .store(in: &stickerCalls)
+    private func loadSticker(stickerId: String) {
+        StickerApiClient.stickerInfo(stickerId: stickerId) { [weak self] result in
+            guard let `self` = self else { return }
+            self.stickers = result.body?.package?.stickers ?? []
+            self.collectionEmoji.reloadData()
+        }
     }
 
     private func loadRecentSticker() {
-        StickerApi.recentSticker()
-            .sink { finish in
-                print(finish)
-            } receiveValue: { [weak self] result in
-                guard let self = self else { return }
-                self.stickers = result.body?.stickerList ?? []
-                if self.stickers.isEmpty {
-                    self.showNoStickerView()
-                } else {
-
-                }
-                self.collectionEmoji.reloadData()
-                self.collectionEmoji.isHidden = false
+        StickerApiClient.recentSticker { [weak self] result in
+            guard let self = self else { return }
+            self.stickers = result.body?.stickerList ?? []
+            if self.stickers.isEmpty {
+                self.showNoStickerView()
             }
-            .store(in: &stickerCalls)
+            self.collectionEmoji.reloadData()
+            self.collectionEmoji.isHidden = false
+        }
     }
 
     private func updateLoadingView(isHidden: Bool) {
@@ -242,60 +253,10 @@ extension EmojiContainerViewController: UICollectionViewDelegate, UICollectionVi
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         NotificationCenter.default.post(name: .sendSticker, object: nil, userInfo: ["sticker": stickers[indexPath.row]])
-        StickerApi.stickerSend(stickerId: stickers[indexPath.row].stickerID ?? 0)
-            .sink { success in
-                print(success)
-            } receiveValue: { result in
-                print(result)
-            }
-            .store(in: &stickerCalls)
+        StickerApiClient.stickerSend(stickerId: stickers[indexPath.row].stickerID ?? 0, nil)
+        HapticFeedbackGenerator.softHaptic()
     }
 
-}
-
-class StickerCollectionCell: UICollectionViewCell {
-
-    // MARK: Variables
-    private var imgSticker: SPUIStickerView!
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        imgSticker = SPUIStickerView()
-        imgSticker.translatesAutoresizingMaskIntoConstraints = false
-        embed(imgSticker,insets: .init(top: 10, leading: 10, bottom: 10, trailing: 10))
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-
-    }
-
-    func configureSticker(sticker: Sticker) {
-        imgSticker.setSticker(sticker.stickerImg ?? "", sizeOptimized: true)
-        imgSticker.backgroundColor = .clear
-    }
-}
-
-class StickerMenuCollectionCell: UICollectionViewCell {
-
-    @IBOutlet weak var imgMenu: UIImageView!
-    @IBOutlet weak var bgView: UIView!
-
-    func configureMenu(menu: StickerMenu, selectedId: Int) {
-        if menu.menuId == -1 {
-            imgMenu.image = Appearance.default.images.clock
-        } else if menu.menuId == -2 {
-            imgMenu.image = Appearance.default.images.commandGiphy
-        } else {
-            Nuke.loadImage(with: menu.image, into: imgMenu)
-        }
-        imgMenu.tintColor = .init(rgb: 0x343434)
-        imgMenu.contentMode = .scaleAspectFill
-        imgMenu.alpha = (menu.menuId == selectedId) ? 1 : 1
-        bgView.backgroundColor = (menu.menuId == selectedId) ? .init(rgb: 0x0E0E0E) : .clear
-        bgView.cornerRadius = bgView.bounds.width / 2
-        imgMenu.cornerRadius = imgMenu.bounds.width / 2
-    }
 }
 
 @available(iOS 13.0, *)

@@ -10,6 +10,7 @@ import StreamChat
 import Nuke
 import AVKit
 import Stipop
+import GiphyUISDK
 
 class ChatMessageStickerBubble: _TableViewCell {
 
@@ -86,7 +87,7 @@ class ChatMessageStickerBubble: _TableViewCell {
         ])
         subContainer.transform = .mirrorY
 
-        sentThumbGifView = UIImageView()
+        sentThumbGifView = GPHMediaView()
         sentThumbGifView.backgroundColor = Appearance.default.colorPalette.background6
         sentThumbGifView.transform = .mirrorY
         sentThumbGifView.contentMode = .scaleAspectFill

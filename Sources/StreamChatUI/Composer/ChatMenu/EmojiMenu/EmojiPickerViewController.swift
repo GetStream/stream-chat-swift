@@ -25,8 +25,8 @@ class EmojiPickerViewController: UIViewController {
     private var currentPage : Int = 0
     private var totalCount: Int = 0
     private var isLoadingList : Bool = false
-    var downloadedPackage = [Int]()
     private var isMyPackage = false
+    var downloadedPackage = [Int]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,47 +36,36 @@ class EmojiPickerViewController: UIViewController {
         segmentController.selectedSegmentTintColor = Appearance.default.colorPalette.themeBlue
     }
 
-    func loadMoreSticker(){
+    private func loadMoreSticker(){
         guard !isMyPackage else { return }
         currentPage += 1
         fetchStickers(pageNumber: currentPage)
     }
 
     private func fetchStickers(pageNumber: Int) {
-        StickerApi.trendingStickers(pageNumber: pageNumber)
-            .sink { [weak self] success in
-                guard let `self` = self else { return }
-                self.isLoadingList = false
-                debugPrint(#function)
-            } receiveValue: { [weak self] result in
-                guard let `self` = self else { return }
-                let packages = result.body?.packageList ?? []
-                self.packages.append(contentsOf: packages)
-                self.pageMap = result.body?.pageMap
-                self.totalCount = self.pageMap?["pageCount"] as? Int ?? 0
-                self.currentPage = self.pageMap?["pageNumber"] as? Int ?? 1
-                self.tblPicker.reloadData()
-            }
-            .store(in: &stickerCalls)
+        StickerApiClient.trendingStickers(pageNumber: pageNumber) { [weak self] result in
+            guard let `self` = self else { return }
+            let packages = result.body?.packageList ?? []
+            self.packages.append(contentsOf: packages)
+            self.pageMap = result.body?.pageMap
+            self.totalCount = self.pageMap?["pageCount"] as? Int ?? 0
+            self.currentPage = self.pageMap?["pageNumber"] as? Int ?? 1
+            self.tblPicker.reloadData()
+            self.isLoadingList = false
+        }
     }
 
     private func fetchMySticker() {
-        StickerApi.mySticker()
-            .sink { result in
-                print(result)
-            } receiveValue: { [weak self] result in
-                guard let `self` = self else { return }
-                self.packages = result.body?.packageList ?? []
-                self.downloadedPackage = self.packages.compactMap { $0.packageID ?? 0}
-                self.tblPicker.reloadData()
-            }
-            .store(in: &stickerCalls)
+        StickerApiClient.mySticker { [weak self] result in
+            guard let `self` = self else { return }
+            self.packages = result.body?.packageList ?? []
+            self.downloadedPackage = self.packages.compactMap { $0.packageID ?? 0}
+            self.tblPicker.reloadData()
+        }
     }
 
     private func deletePackage(_ packageId: Int) {
-        StickerApi.hideStickers(packageId: packageId)
-            .sink { result in } receiveValue: { _ in }
-            .store(in: &stickerCalls)
+        StickerApiClient.hideStickers(packageId: packageId, nil)
     }
 
     @IBAction func segmentDidiChange(_ sender: UISegmentedControl) {
@@ -139,16 +128,9 @@ extension EmojiPickerViewController: UITableViewDelegate, UITableViewDataSource 
         downloadedPackage.append(packageId)
         tableView.reloadRows(at: [indexPath], with: .automatic)
         if packages[indexPath.row].isDownload != "Y" {
-            StickerApi.downloadStickers(packageId: packages[indexPath.row].packageID ?? 0)
-                .sink(receiveCompletion: { _ in
-            }, receiveValue: { _ in })
-                .store(in: &stickerCalls)
+            StickerApiClient.downloadStickers(packageId: packages[indexPath.row].packageID ?? 0) { }
         } else {
-            StickerApi.hideStickers(packageId: packages[indexPath.row].packageID ?? 0)
-                .sink(receiveCompletion: { _ in
-                }, receiveValue: { _ in
-                })
-                .store(in: &stickerCalls)
+            StickerApiClient.hideStickers(packageId: packages[indexPath.row].packageID ?? 0, nil)
         }
     }
 
@@ -166,25 +148,5 @@ extension EmojiPickerViewController: UITableViewDelegate, UITableViewDataSource 
         let swipeActionConfig = UISwipeActionsConfiguration(actions: [delete])
         swipeActionConfig.performsFirstActionWithFullSwipe = false
         return swipeActionConfig
-    }
-}
-
-
-class PickerTableViewCell: UITableViewCell {
-    @IBOutlet weak var lblPackName: UILabel!
-    @IBOutlet weak var lblArtistName: UILabel!
-    @IBOutlet weak var imgPack: UIImageView!
-    @IBOutlet weak var btnDownload: UIButton!
-
-    func configure(with package: PackageList, downloadedPackage: [Int]) {
-        lblPackName.text = package.packageName ?? ""
-        lblArtistName.text = package.artistName ?? ""
-        Nuke.loadImage(with: URL(string: package.packageImg ?? ""), into: imgPack)
-        selectionStyle = .none
-        if !downloadedPackage.contains(package.packageID ?? 0) {
-            btnDownload.setImage(Appearance.default.images.downloadSticker, for: .normal)
-        } else {
-            btnDownload.setImage(Appearance.default.images.downloadStickerFill, for: .normal)
-        }
     }
 }

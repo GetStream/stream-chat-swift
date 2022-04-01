@@ -7,6 +7,7 @@ import StreamChat
 import UIKit
 import SwiftUI
 import Stipop
+import GiphyUISDK
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
@@ -361,6 +362,8 @@ open class ComposerVC: _ViewController,
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+        GPHCache.shared.cache.diskCapacity = 300 * 1000 * 1000
+        GPHCache.shared.cache.memoryCapacity = 300 * 1000 * 1000
         NotificationCenter.default.removeObserver(self)
         NotificationCenter.default.addObserver(self, selector: #selector(btnSendSticker(_:)), name: .sendSticker, object: nil)
     }
