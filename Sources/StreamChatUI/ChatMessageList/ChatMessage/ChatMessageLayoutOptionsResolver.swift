@@ -88,6 +88,7 @@ open class ChatMessageLayoutOptionsResolver {
         if isRedPacketAmountCell(message) && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.avatar)
             options.insert(.authorName)
+            options.insert(.timestamp)
         }
         if isWalletRequestPayCell(message) && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.avatar)
