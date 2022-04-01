@@ -64,6 +64,7 @@
                 "connect_events" : true,
                 "reactions" : true,
                 "replies" : true,
+                "quotes" : true,
                 "uploads" : true,
                 "commands" : [
                     {

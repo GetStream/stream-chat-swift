@@ -114,6 +114,7 @@
       "connect_events" : true,
       "reactions" : true,
       "replies" : true,
+      "quotes" : true,
       "uploads" : true,
       "push_notifications" : true,
       "updated_at" : "2021-09-01T17:42:21.99149Z",

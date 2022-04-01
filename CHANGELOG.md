@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 ## StreamChat
+### ✅ Added
+- `quotesEnabled` property is added to the `ChannelConfig`.
 ### ⚠️ Changed
 - Assertions are no longer thrown by default. Check `StreamRuntimeCheck` to enable them [#1885](https://github.com/GetStream/stream-chat-swift/pull/1885)
 

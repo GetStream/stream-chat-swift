@@ -37,6 +37,7 @@
       ],
       "connect_events":true,
       "replies":true,
+      "quotes":true,
       "updated_at":"2020-03-17T18:54:09.460881Z",
       "url_enrichment":true,
       "search":true,
