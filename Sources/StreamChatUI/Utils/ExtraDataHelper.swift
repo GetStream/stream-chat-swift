@@ -199,6 +199,14 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return false
         }
     }
+
+    var joinLink: String? {
+        if let joinLink = self["joinLink"] {
+            return fetchRawData(raw: joinLink) as? String
+        } else {
+            return nil
+        }
+    }
 }
 
 // MARK: - RedPacketAmountBubble txId

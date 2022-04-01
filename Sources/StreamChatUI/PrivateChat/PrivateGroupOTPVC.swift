@@ -25,7 +25,8 @@ open class PrivateGroupOTPVC: UIViewController {
     @IBOutlet weak var viewOTP: DPOTPView!
     @IBOutlet weak var lblOtpDetails: UILabel!
     @IBOutlet weak var indicator: UIActivityIndicatorView!
-
+    @IBOutlet weak var heightSafeAreaView: NSLayoutConstraint!
+    
     // MARK: - view life cycle
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +41,7 @@ open class PrivateGroupOTPVC: UIViewController {
 
     // MARK: - Functions
     private func setupUI() {
+        heightSafeAreaView.constant = UIView.safeAreaTop
         NotificationCenter.default.post(name: .hideTabbar, object: nil)
         checkLocationPermission()
         viewOTP.dpOTPViewDelegate = self
