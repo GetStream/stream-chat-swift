@@ -297,4 +297,3 @@ public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
         }
     }
 }
-
