@@ -147,7 +147,6 @@ class RedPacketSentBubble: UITableViewCell {
             timestampLabel.heightAnchor.constraint(equalToConstant: 15)
         ])
         timestampLabel.transform = .mirrorY
-        
     }
 
     private var cellWidth: CGFloat {

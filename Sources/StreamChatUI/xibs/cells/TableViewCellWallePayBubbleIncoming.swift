@@ -11,8 +11,7 @@ import StreamChat
 import Nuke
 
 public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
-    public static let reuseId: String = "TableViewCellWallePayBubbleIncoming"
-    public static let nib: UINib = UINib.init(nibName: reuseId, bundle: nil)
+    public static let nib: UINib = UINib.init(nibName: identifier, bundle: nil)
     
     // MARK: -  @IBOutlet
     @IBOutlet private weak var viewContainer: UIView!
@@ -55,11 +54,6 @@ public class TableViewCellWallePayBubbleIncoming: UITableViewCell {
         cellWidthConstraint.constant = cellWidth
     }
 
-    public override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
     // MARK: -  Methods
     func configureCell(isSender: Bool) {
         self.isSender = isSender

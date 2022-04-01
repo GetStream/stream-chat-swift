@@ -11,8 +11,7 @@ import StreamChat
 import Nuke
 
 class TableViewCellRedPacketDrop: UITableViewCell {
-    public static let reuseId: String = "TableViewCellRedPacketDrop"
-    public static let nib: UINib = UINib.init(nibName: reuseId, bundle: nil)
+    public static let nib: UINib = UINib.init(nibName: identifier, bundle: nil)
     
     // MARK: -  @IBOutlet
     @IBOutlet private weak var viewContainer: UIView!
@@ -56,12 +55,6 @@ class TableViewCellRedPacketDrop: UITableViewCell {
         cellWidthConstraint.constant = cellWidth
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-    
     // MARK: -  Methods
     func configureCell(isSender: Bool) {
         self.isSender = isSender

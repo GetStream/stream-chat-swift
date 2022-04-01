@@ -85,8 +85,8 @@ open class ChatMessageListVC:
         listView.register(.init(nibName: "AdminMessageTVCell", bundle: nil), forCellReuseIdentifier: "AdminMessageTVCell")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
         listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
-        listView.register(TableViewCellWallePayBubbleIncoming.nib, forCellReuseIdentifier: TableViewCellWallePayBubbleIncoming.reuseId)
-        listView.register(TableViewCellRedPacketDrop.nib, forCellReuseIdentifier: TableViewCellRedPacketDrop.reuseId)
+        listView.register(TableViewCellWallePayBubbleIncoming.nib, forCellReuseIdentifier: TableViewCellWallePayBubbleIncoming.identifier)
+        listView.register(TableViewCellRedPacketDrop.nib, forCellReuseIdentifier: TableViewCellRedPacketDrop.identifier)
         listView.register(.init(nibName: "AnnouncementTableViewCell", bundle: nil), forCellReuseIdentifier: "AnnouncementTableViewCell")
         //setupEmptyState()
 //        if let numberMessage = dataSource?.numberOfMessages(in: self) {
@@ -352,7 +352,7 @@ open class ChatMessageListVC:
                     return cell
                 }
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: TableViewCellRedPacketDrop.reuseId,
+                    withIdentifier: TableViewCellRedPacketDrop.identifier,
                     for: indexPath) as? TableViewCellRedPacketDrop else {
                         return UITableViewCell()
                     }
@@ -408,7 +408,6 @@ open class ChatMessageListVC:
                 cell.configData()
                 return cell
             } else if isRedPacketAmountCell(message) {
-                
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: "RedPacketAmountBubble",
                     for: indexPath) as? RedPacketAmountBubble else {
@@ -442,7 +441,7 @@ open class ChatMessageListVC:
                     return cell
                 }
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: TableViewCellWallePayBubbleIncoming.reuseId,
+                    withIdentifier: TableViewCellWallePayBubbleIncoming.identifier,
                     for: indexPath) as? TableViewCellWallePayBubbleIncoming else {
                         return UITableViewCell()
                     }
@@ -452,7 +451,6 @@ open class ChatMessageListVC:
                 cell.configureCell(isSender: isMessageFromCurrentUser)
                 cell.configData()
                 return cell
-                
             } else if isAdminMessage(message) {
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: "AdminMessageTVCell",
