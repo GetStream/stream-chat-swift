@@ -33,35 +33,46 @@ open class TypingIndicatorView: _View, ThemeProvider {
         super.setUp()
         
         typingAnimationView.startAnimating()
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
         
         addSubview(componentContainerView)
-        componentContainerView.pin(anchors: [.leading, .trailing], to: layoutMarginsGuide)
+        componentContainerView.pin(anchors: [.centerY, .centerX], to: layoutMarginsGuide)
         componentContainerView.pin(anchors: [.top, .bottom], to: self)
-        componentContainerView.addArrangedSubview(typingAnimationView)
-
         componentContainerView.addArrangedSubview(informationLabel)
-        componentContainerView.alignment = .center
-
-        typingAnimationView.heightAnchor.pin(equalToConstant: 5).isActive = true
-        typingAnimationView.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
+        componentContainerView.addArrangedSubview(typingAnimationView)
+        componentContainerView.alignment = .bottom
+        componentContainerView.spacing = 4
+        typingAnimationView.heightAnchor.pin(equalToConstant: 7).isActive = true
+        typingAnimationView.bottomAnchor.pin(equalTo: bottomAnchor, constant: 4).isActive = true
         informationLabel.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
     }
 
     override open func setUpAppearance() {
         super.setUpAppearance()
         
-        backgroundColor = appearance.colorPalette.overlayBackground
-        informationLabel.textColor = appearance.colorPalette.subtitleText
-        informationLabel.font = appearance.fonts.body
+        informationLabel.textAlignment = .center
+        informationLabel.font = appearance.fonts.caption1
+        informationLabel.textColor = appearance.colorPalette.chatNavigationTitleColor
     }
 
     override open func updateContent() {
         super.updateContent()
         
-        informationLabel.text = content
+        informationLabel.text = content?.trimStringBy(count: 30)
+    }
+
+    // Restart Animation 
+    @objc private func handleAppDidBecomeActive() {
+        typingAnimationView.startAnimating()
     }
 }
