@@ -66,6 +66,15 @@ Get next PR number from github to be used in CHANGELOG
 fastlane test
 ```
 Runs tests in Debug config
+
+### test_e2e_mock
+
+```sh
+[bundle exec] fastlane test_e2e_mock
+```
+
+Runs e2e ui tests using mock server in Debug config
+
 ### test_ui
 ```
 fastlane test_ui
@@ -151,6 +160,14 @@ Test CocoaPods Integration
 fastlane emerge_upload
 ```
 Build and upload DemoApp to Emerge
+
+### sonar_upload
+
+```sh
+[bundle exec] fastlane sonar_upload
+```
+
+Get code coverage report and run complexity analysis for Sonar
 
 ### sonar_upload
 
