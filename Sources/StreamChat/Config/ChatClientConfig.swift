@@ -57,7 +57,7 @@ public struct ChatClientConfig {
     
     /// Determines whether `ChatClient` caches the data locally. This makes it possible to browse the existing chat data also
     /// when the internet connection is not available.
-    public var isLocalStorageEnabled: Bool = false
+    public var isLocalStorageEnabled: Bool = true
     
     /// If set to `true`, `ChatClient` resets the local cache on the start.
     ///
