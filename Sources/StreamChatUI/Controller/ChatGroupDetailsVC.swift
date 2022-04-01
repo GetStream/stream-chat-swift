@@ -90,7 +90,7 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
                         Snackbar.show(text: error?.localizedDescription ?? "")
                         return
                     }
-                    Snackbar.show(text: "Group deleted successfully")
+                    Snackbar.show(text: "Channel deleted successfully")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                         guard let self = self else { return }
                         self.navigationController?.popToRootViewController(animated: true)
@@ -397,9 +397,9 @@ extension ChatGroupDetailsVC: ChannelDetailHeaderTVCellDelegate {
         guard let channelController = viewModel.channelController else { return }
         var alertTitle = ""
         if isUserAdmin() {
-            alertTitle = "Would you like to delete this group?\nIt'll be permanently deleted."
+            alertTitle = "Would you like to delete this channel?\nIt'll be permanently deleted."
         } else {
-            alertTitle = "Would you like to leave this group?"
+            alertTitle = "Would you like to leave this channel?"
         }
         let deleteAction = UIAlertAction(title: "Leave Channel", style: .destructive) { [weak self] _ in
             guard let self = self else {
