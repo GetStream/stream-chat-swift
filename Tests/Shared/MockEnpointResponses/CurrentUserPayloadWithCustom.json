@@ -107,6 +107,7 @@
                   "replies": true,
                   "mutes": true,
                   "uploads": true,
+                  "quotes": true,
                   "url_enrichment": true,
                   "custom_events": true,
                   "push_notifications": true,

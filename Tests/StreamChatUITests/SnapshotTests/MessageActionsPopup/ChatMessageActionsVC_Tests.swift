@@ -87,6 +87,18 @@ class ChatMessageActionsVC_Tests: XCTestCase {
 
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is MuteUserActionItem }))
     }
+    
+    func test_messageActions_whenQuotesEnabled_containsQuoteAction() {
+        vc.channelConfig = .mock(quotesEnabled: true)
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is InlineReplyActionItem }))
+    }
+
+    func test_messageActions_whenQuotesDisabled_doesNotContainQuoteAction() {
+        vc.channelConfig = .mock(quotesEnabled: false)
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is InlineReplyActionItem }))
+    }
 }
 
 private extension UIViewController {

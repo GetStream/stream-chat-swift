@@ -81,6 +81,7 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.connectEventsEnabled, true)
         XCTAssertEqual(config.uploadsEnabled, true)
         XCTAssertEqual(config.repliesEnabled, true)
+        XCTAssertEqual(config.quotesEnabled, true)
         XCTAssertEqual(config.searchEnabled, true)
         XCTAssertEqual(config.mutesEnabled, true)
         XCTAssertEqual(config.urlEnrichmentEnabled, true)

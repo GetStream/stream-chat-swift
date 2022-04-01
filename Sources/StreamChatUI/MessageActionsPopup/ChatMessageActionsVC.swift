@@ -81,9 +81,11 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
         switch message.localState {
         case nil:
-            var actions: [ChatMessageActionItem] = [
-                inlineReplyActionItem()
-            ]
+            var actions: [ChatMessageActionItem] = []
+            
+            if channelConfig.quotesEnabled {
+                actions.append(inlineReplyActionItem())
+            }
 
             if channelConfig.repliesEnabled && !message.isPartOfThread {
                 actions.append(threadReplyActionItem())

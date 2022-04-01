@@ -28,6 +28,7 @@
             "search": true,
             "reactions": true,
             "replies": true,
+            "quotes": true,
             "mutes": true,
             "uploads": true,
             "url_enrichment": true,

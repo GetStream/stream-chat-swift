@@ -178,6 +178,7 @@ class ChannelController_Tests: XCTestCase {
     func test_readFeatures_onNilChannel_returnsFalse() {
         XCTAssertFalse(controller.areReactionsEnabled)
         XCTAssertFalse(controller.areRepliesEnabled)
+        XCTAssertFalse(controller.areQuotesEnabled)
         XCTAssertFalse(controller.areUploadsEnabled)
         XCTAssertFalse(controller.areTypingEventsEnabled)
         XCTAssertFalse(controller.areReadEventsEnabled)
@@ -245,6 +246,22 @@ class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: payload)
         }
         XCTAssertFalse(controller.areRepliesEnabled)
+    }
+    
+    func test_readAreQuotesEnabled_whenTrue_returnsTrue() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(quotesEnabled: true))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertTrue(controller.areQuotesEnabled)
+    }
+    
+    func test_readAreQuotesEnabled_whenFalse_returnsFalse() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(quotesEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertFalse(controller.areQuotesEnabled)
     }
     
     func test_readAreUploadsEnabled_whenTrue_returnsTrue() throws {

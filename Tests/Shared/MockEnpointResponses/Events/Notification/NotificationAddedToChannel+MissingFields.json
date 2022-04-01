@@ -39,6 +39,7 @@
       "connect_events" : true,
       "reactions" : true,
       "replies" : true,
+      "quotes" : true,
       "uploads" : true,
       "push_notifications" : true,
       "updated_at" : "2021-03-01T19:26:18.406502Z",

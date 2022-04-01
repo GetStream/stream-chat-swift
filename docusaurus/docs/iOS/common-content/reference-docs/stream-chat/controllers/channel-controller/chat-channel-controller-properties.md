@@ -135,6 +135,14 @@ var areReactionsEnabled: Bool
 var areRepliesEnabled: Bool 
 ```
 
+### `areQuotesEnabled`
+
+`true` if the channel has quotes enabled. Defaults to `false` if the channel doesn't exist yet.
+
+``` swift
+var areQuotesEnabled: Bool 
+```
+
 ### `areReadEventsEnabled`
 
 `true` if the channel has read events enabled. Defaults to `false` if the channel doesn't exist yet.

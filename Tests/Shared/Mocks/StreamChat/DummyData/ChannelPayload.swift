@@ -36,6 +36,7 @@ extension ChannelDetailPayload {
                 connectEventsEnabled: true,
                 uploadsEnabled: true,
                 repliesEnabled: true,
+                quotesEnabled: true,
                 searchEnabled: true,
                 mutesEnabled: true,
                 urlEnrichmentEnabled: true,
