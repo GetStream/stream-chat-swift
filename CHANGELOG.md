@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Assertions are no longer thrown by default. Check `StreamRuntimeCheck` to enable them [#1885](https://github.com/GetStream/stream-chat-swift/pull/1885)
 - Local Storage is enabled by default. You can read more [here](https://getstream.io/chat/docs/sdk/ios/guides/offline-support) [#1890](https://github.com/GetStream/stream-chat-swift/pull/1890)
 
+## StreamChatUI
+### ⚠️ Changed
+### ✅ Added
+### 🐞 Fixed
+- MessageActions shrinks on larger messages [#1871](https://github.com/GetStream/stream-chat-swift/pull/1871)
+
 
 # [4.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.0)
 _March 29, 2022_
