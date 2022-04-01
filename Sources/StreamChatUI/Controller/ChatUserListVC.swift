@@ -21,11 +21,12 @@ public protocol ChatUserListDelegate: AnyObject {
 }
 public class ChatUserListVC: UIViewController {
     public enum ChatUserSelectionType {
-        case singleUser, group, privateGroup , addFriend
+        case singleUser, group, privateGroup, addFriend
     }
     public enum HeaderType {
         case createChatHeader, noHeader, alphabetHeader
     }
+    
     // MARK: - @IBOutlet
     @IBOutlet private weak var searchFieldStack: UIStackView!
     @IBOutlet private weak var searchBarContainerView: UIView!
@@ -38,6 +39,7 @@ public class ChatUserListVC: UIViewController {
     @IBOutlet private weak var containerView: UIView!
     @IBOutlet private weak var noMatchView: UIView!
     private var tableView: UITableView?
+    
     // MARK: - VARIABLES
     public var viewModel = UserListViewModel(sortType: .sortByLastSeen)
     public var sortType: Em_ChatUserListFilterTypes = .sortByLastSeen {
@@ -59,6 +61,8 @@ public class ChatUserListVC: UIViewController {
     public var bCallbackGroupSelect: (() -> Void)?
     public var bCallbackGroupWeHere: (() -> Void)?
     public var bCallbackGroupJoinViaQR: (() -> Void)?
+    public var bCallbackAddFriend: ((ChatUser?) -> Void)?
+    
     // MARK: - VIEW CYCLE
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,6 +116,7 @@ extension ChatUserListVC {
         tableView?.keyboardDismissMode = .onDrag
         tableView?.estimatedRowHeight = 44.0
         tableView?.rowHeight = UITableView.automaticDimension
+        tableView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: UIView.safeAreaBottom, right: 0)
         let reuseID = TableViewHeaderChatUserList.reuseId
         let nib = UINib(nibName: reuseID, bundle: nil)
         tableView?.register(nib, forCellReuseIdentifier: reuseID)
@@ -345,30 +350,24 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         guard self.viewModel.dataLoadingState == .completed else {
             return
         }
-        var user: ChatUser? = sectionWiseList[indexPath.section].users[indexPath.row]
-        if self.viewModel.existingUsers.map({ $0.id.lowercased()}).contains(user!.id.lowercased()) {
+        let user: ChatUser = sectionWiseList[indexPath.section].users[indexPath.row]
+        if self.viewModel.existingUsers.map({ $0.id.lowercased()}).contains(user.id.lowercased()) {
             return
         }
-        let selectedUserId = user!.id
+        let selectedUserId = user.id
         let client = ChatClient.shared
         guard let currentUserId = client.currentUserId else {
             return
         }
         switch userSelectionType {
         case .addFriend:
-            if let index = self.viewModel.selectedUsers.firstIndex(where: { $0.id == user!.id}) {
-                self.viewModel.selectedUsers.remove(at: index)
-            } else {
-                self.viewModel.selectedUsers.append(user!)
-            }
-            self.delegate?.chatUserDidSelect()
-            tableView.reloadRows(at: [indexPath], with: .fade)
+            self.bCallbackAddFriend?(user)
             return
         case .group:
-            if let index = self.viewModel.selectedUsers.firstIndex(where: { $0.id == user!.id}) {
+            if let index = self.viewModel.selectedUsers.firstIndex(where: { $0.id == user.id}) {
                 self.viewModel.selectedUsers.remove(at: index)
             } else {
-                self.viewModel.selectedUsers.append(user!)
+                self.viewModel.selectedUsers.append(user)
             }
             self.delegate?.chatUserDidSelect()
             tableView.reloadRows(at: [indexPath], with: .fade)

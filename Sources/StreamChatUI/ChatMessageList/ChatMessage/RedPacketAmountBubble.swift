@@ -187,7 +187,7 @@ class RedPacketAmountBubble: UITableViewCell {
             
             let imageAttachment = NSTextAttachment()
             if #available(iOS 13.0, *) {
-                imageAttachment.image = Appearance.default.images.arrowUpRightSquare.withTintColor(.white)
+                imageAttachment.image = Appearance.default.images.arrowUpRightSquare?.withTintColor(.white)
             } else {
                 // Fallback on earlier versions
             }
