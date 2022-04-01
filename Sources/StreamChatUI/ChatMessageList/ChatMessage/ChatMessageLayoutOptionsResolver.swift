@@ -7,12 +7,12 @@ import StreamChat
 
 /// Resolves layout options for the message at given `indexPath`.
 open class ChatMessageLayoutOptionsResolver {
-    /// The minimum time interval between messages to treat them as a single message group.
-    public let minTimeIntervalBetweenMessagesInGroup: TimeInterval
+    /// The maximum time interval between 2 consecutive messages sent by the same user to treat them as a single message group.
+    public let maxTimeIntervalBetweenMessagesInGroup: TimeInterval
 
-    /// Creates the `ChatMessageLayoutOptionsResolver` with the given `minTimeIntervalBetweenMessagesInGroup` value
-    public init(minTimeIntervalBetweenMessagesInGroup: TimeInterval = 30) {
-        self.minTimeIntervalBetweenMessagesInGroup = minTimeIntervalBetweenMessagesInGroup
+    /// Creates the `ChatMessageLayoutOptionsResolver` with the given `maxTimeIntervalBetweenMessagesInGroup` value
+    public init(maxTimeIntervalBetweenMessagesInGroup: TimeInterval = 30) {
+        self.maxTimeIntervalBetweenMessagesInGroup = maxTimeIntervalBetweenMessagesInGroup
     }
 
     /// Calculates layout options for the message.
@@ -126,13 +126,13 @@ open class ChatMessageLayoutOptionsResolver {
 
     /// Says whether the message at given `indexPath` is the last one in a sequence of messages
     /// sent by a single user where the time delta between near by messages
-    /// is `<= minTimeIntervalBetweenMessagesInGroup`.
+    /// is `<= maxTimeIntervalBetweenMessagesInGroup`.
     ///
     /// Returns `true` if one of the following conditions is met:
     ///     1. the message at `messageIndexPath` is the most recent one in the channel
     ///     2. the message sent after the message at `messageIndexPath` has different author
     ///     3. the message sent after the message at `messageIndexPath` has the same author but the
-    ///     time delta between messages is bigger than `minTimeIntervalBetweenMessagesInGroup`
+    ///     time delta between messages is bigger than `maxTimeIntervalBetweenMessagesInGroup`
     ///
     /// - Parameters:
     ///   - messageIndexPath: The index path of the target message.
@@ -163,8 +163,8 @@ open class ChatMessageLayoutOptionsResolver {
 
         let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
 
-        // If the message next to the current one is sent with delay > minTimeIntervalBetweenMessagesInGroup,
+        // If the message next to the current one is sent with delay > maxTimeIntervalBetweenMessagesInGroup,
         // the current message ends the sequence.
-        return delay > minTimeIntervalBetweenMessagesInGroup
+        return delay > maxTimeIntervalBetweenMessagesInGroup
     }
 }

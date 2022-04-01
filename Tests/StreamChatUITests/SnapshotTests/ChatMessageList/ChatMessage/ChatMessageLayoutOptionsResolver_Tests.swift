@@ -75,7 +75,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_includesBubbleByDefault() {
         let channelHistory: [(ChatMessage, Bool)] = .directMessagesHistory(
-            minTimeIntervalBetweenMessagesInGroup: optionsResolver.minTimeIntervalBetweenMessagesInGroup
+            minTimeIntervalBetweenMessagesInGroup: optionsResolver.maxTimeIntervalBetweenMessagesInGroup
         )
 
         for message in channelHistory.map(\.0) {
@@ -140,7 +140,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 text: .unique,
                 author: user,
                 createdAt: message1.createdAt.addingTimeInterval(
-                    -(optionsResolver.minTimeIntervalBetweenMessagesInGroup - 1)
+                    -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
                 ),
                 isSentByCurrentUser: isSentByCurrentUser
             )
@@ -239,7 +239,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
-                -(optionsResolver.minTimeIntervalBetweenMessagesInGroup - 1)
+                -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
             ),
             isSentByCurrentUser: false
         )
@@ -326,7 +326,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 text: .unique,
                 author: user,
                 createdAt: message1.createdAt.addingTimeInterval(
-                    -(optionsResolver.minTimeIntervalBetweenMessagesInGroup - 1)
+                    -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
                 ),
                 isSentByCurrentUser: isSentByCurrentUser
             )
@@ -549,7 +549,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
-                -(optionsResolver.minTimeIntervalBetweenMessagesInGroup - 1)
+                -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
             ),
             isSentByCurrentUser: false
         )
@@ -587,7 +587,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
-                -(optionsResolver.minTimeIntervalBetweenMessagesInGroup - 1)
+                -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
             ),
             isSentByCurrentUser: false
         )
@@ -681,7 +681,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
-                -(optionsResolver.minTimeIntervalBetweenMessagesInGroup - 1)
+                -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
             ),
             isSentByCurrentUser: false
         )
@@ -1219,7 +1219,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     func test_isMessageLastInSequence() {
         // Get mock channel history
         let testCases: [(ChatMessage, Bool)] = .directMessagesHistory(
-            minTimeIntervalBetweenMessagesInGroup: optionsResolver.minTimeIntervalBetweenMessagesInGroup
+            minTimeIntervalBetweenMessagesInGroup: optionsResolver.maxTimeIntervalBetweenMessagesInGroup
         )
 
         // Iterate test cases
