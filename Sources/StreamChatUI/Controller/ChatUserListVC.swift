@@ -26,6 +26,7 @@ public class ChatUserListVC: UIViewController {
     public enum HeaderType {
         case createChatHeader, noHeader, alphabetHeader
     }
+    
     // MARK: - @IBOutlet
     @IBOutlet private weak var searchFieldStack: UIStackView!
     @IBOutlet private weak var searchBarContainerView: UIView!
@@ -38,6 +39,7 @@ public class ChatUserListVC: UIViewController {
     @IBOutlet private weak var containerView: UIView!
     @IBOutlet private weak var noMatchView: UIView!
     private var tableView: UITableView?
+    
     // MARK: - VARIABLES
     public var viewModel = UserListViewModel(sortType: .sortByLastSeen)
     public var sortType: Em_ChatUserListFilterTypes = .sortByLastSeen {
@@ -60,6 +62,7 @@ public class ChatUserListVC: UIViewController {
     public var bCallbackGroupWeHere: (() -> Void)?
     public var bCallbackGroupJoinViaQR: (() -> Void)?
     public var bCallbackAddFriend: ((ChatUser?) -> Void)?
+    
     // MARK: - VIEW CYCLE
     open override func viewDidLoad() {
         super.viewDidLoad()

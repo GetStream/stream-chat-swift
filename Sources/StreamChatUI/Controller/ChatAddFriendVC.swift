@@ -20,18 +20,18 @@ public class ChatAddFriendVC: ChatBaseVC {
             }
         }
     }
+    
     // MARK: - OUTLETS
     @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var viewHeaderTitleView: UIView!
     @IBOutlet private var viewHeaderView: UIView!
-    @IBOutlet private var viewHeaderViewHeightConst: NSLayoutConstraint!
-    @IBOutlet private var viewHeaderViewTopConst: NSLayoutConstraint!
     @IBOutlet private var searchFieldStack: UIStackView!
     @IBOutlet private var searchBarContainerView: UIView!
     @IBOutlet private var tableviewContainerView: UIView!
     @IBOutlet private var searchField: UITextField!
     @IBOutlet private var viewContainerLeadingConst: NSLayoutConstraint!
     @IBOutlet private var viewContainerTrailingConst: NSLayoutConstraint!
+    
     // MARK: - VARIABLES
     public var channelController: ChatChannelController!
     public var selectionType = ChatAddFriendVC.SelectionType.addFriend
@@ -47,11 +47,13 @@ public class ChatAddFriendVC: ChatBaseVC {
     public var groupInviteLink: String?
     private var isShortFormEnabled = true
     private lazy var panModelState: PanModalPresentationController.PresentationState = .shortForm
+    
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
+    
     // MARK: - METHODS
     private func setup() {
         view.backgroundColor = .clear
@@ -60,6 +62,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         titleLabel.text = selectionType.title
         searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         searchField.delegate = self
+        searchField.tintColor = Appearance.default.colorPalette.statusColorBlue
         // Chat user list
         addChild(chatUserList)
         tableviewContainerView.addSubview(chatUserList.view)
@@ -72,8 +75,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.viewModel.fetchUserList()
         // Add friend Callback
         chatUserList.bCallbackAddFriend = { [weak self] user in
-            guard let weakSelf = self else { return }
-            guard let selectedUser = user else { return }
+            guard let weakSelf = self , let selectedUser = user else { return }
             weakSelf.searchField.resignFirstResponder()
             if weakSelf.selectionType == .addFriend {
                 weakSelf.showAddFriendConfirmPopup(user: selectedUser)
@@ -118,6 +120,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         alert.addAction(yesAction)
         present(alert, animated: true, completion: nil)
     }
+    
     // MARK: - Actions
     @IBAction private func btnBackAction(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
