@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -118,9 +118,6 @@
                                                         </constraints>
                                                         <color key="tintColor" systemColor="labelColor"/>
                                                         <state key="normal" image="chat_plus"/>
-                                                        <connections>
-                                                            <action selector="btnDoneAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="qtA-RG-jO0"/>
-                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -191,7 +188,6 @@
                         <outlet property="viewContainerTrailingConst" destination="FJh-TB-6pp" id="7hP-zv-AAz"/>
                         <outlet property="viewHeaderTitleView" destination="9UB-QW-s7a" id="gzs-M3-Yf8"/>
                         <outlet property="viewHeaderView" destination="2hX-vZ-5CS" id="Eul-kl-Ooz"/>
-                        <outlet property="viewHeaderViewTopConst" destination="I32-zy-vTe" id="5Ya-Dk-wpc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7Sh-H2-BJ2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -338,7 +334,6 @@
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="closePopup"/>
                                 <connections>
-                                    <action selector="btnBackAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="S6b-mB-0eS"/>
                                     <action selector="closeButtonAction:" destination="8Gr-P8-lcO" eventType="touchUpInside" id="kbe-3C-MOI"/>
                                 </connections>
                             </button>
@@ -456,7 +451,6 @@
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="closePopup"/>
                                         <connections>
-                                            <action selector="btnBackAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="yfX-aU-yPg"/>
                                             <action selector="closeButtonAction:" destination="eGh-u4-qAP" eventType="touchUpInside" id="4na-g0-DzY"/>
                                         </connections>
                                     </button>
