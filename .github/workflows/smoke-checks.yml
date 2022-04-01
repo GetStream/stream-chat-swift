@@ -58,6 +58,8 @@ jobs:
     runs-on: macos-11
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 100
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - uses: actions/setup-python@v3.0.0
