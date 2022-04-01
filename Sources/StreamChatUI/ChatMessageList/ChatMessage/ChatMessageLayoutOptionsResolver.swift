@@ -135,6 +135,7 @@ open class ChatMessageLayoutOptionsResolver {
     ///     2. the message sent after the message at `messageIndexPath` has different author
     ///     3. the message sent after the message at `messageIndexPath` has the same author but the
     ///     time delta between messages is bigger than `maxTimeIntervalBetweenMessagesInGroup`
+    ///     4. the message sent after the message at `messageIndexPath` is of `error` type
     ///
     /// - Parameters:
     ///   - messageIndexPath: The index path of the target message.
@@ -163,6 +164,10 @@ open class ChatMessageLayoutOptionsResolver {
         // is either a standalone or last in sequence.
         guard nextMessage.author == message.author else { return true }
 
+        // When the next message is of error type (e.g. contains invalid command/didn't pass moderation),
+        // the current message should end the group.
+        guard nextMessage.type != .error else { return true }
+        
         let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
 
         // If the message next to the current one is sent with delay > maxTimeIntervalBetweenMessagesInGroup,

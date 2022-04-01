@@ -1237,6 +1237,34 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
         }
     }
+    
+    func test_isMessageLastInSequence_whenTheNextMessageFromTheSameUserIsErrorMessage_returnsTrue() {
+        let cid: ChannelId = .unique
+        let author: ChatUser = .mock(id: .unique)
+        
+        let messageFollowedByErrorMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            author: author
+        )
+        
+        let deletedMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            type: .error,
+            author: author,
+            createdAt: messageFollowedByErrorMessage.createdAt.addingTimeInterval(1)
+        )
+        
+        XCTAssertTrue(
+            optionsResolver.isMessageLastInSequence(
+                messageIndexPath: .init(item: 1, section: 0),
+                messages: .init([deletedMessage, messageFollowedByErrorMessage])
+            )
+        )
+    }
 }
 
 private extension Array where Element == (ChatMessage, Bool) {
