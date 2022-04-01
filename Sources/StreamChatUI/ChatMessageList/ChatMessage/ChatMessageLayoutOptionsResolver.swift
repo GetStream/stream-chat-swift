@@ -10,8 +10,10 @@ open class ChatMessageLayoutOptionsResolver {
     /// The maximum time interval between 2 consecutive messages sent by the same user to treat them as a single message group.
     public let maxTimeIntervalBetweenMessagesInGroup: TimeInterval
 
-    /// Creates the `ChatMessageLayoutOptionsResolver` with the given `maxTimeIntervalBetweenMessagesInGroup` value
-    public init(maxTimeIntervalBetweenMessagesInGroup: TimeInterval = 30) {
+    /// Creates new `ChatMessageLayoutOptionsResolver`.
+    ///
+    /// - Parameter maxTimeIntervalBetweenMessagesInGroup: The maximum time interval between 2 consecutive messages sent by the same user to treat them as a single message group (`60 sec` by default).
+    public init(maxTimeIntervalBetweenMessagesInGroup: TimeInterval = 60) {
         self.maxTimeIntervalBetweenMessagesInGroup = maxTimeIntervalBetweenMessagesInGroup
     }
 
