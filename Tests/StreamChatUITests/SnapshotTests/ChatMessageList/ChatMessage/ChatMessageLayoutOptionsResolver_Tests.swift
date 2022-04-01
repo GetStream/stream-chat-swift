@@ -483,7 +483,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     // MARK: - Avatar
 
-    func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeAvatar() {
+    func test_optionsForMessage_whenDeletedMessageSentByAnotherUserIsLastInSequence_includesAvatar() {
         // Create deleted message last in sequence by another user
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
@@ -502,8 +502,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             appearance: appearance
         )
 
-        // Assert `.avatar` is not included since the message is deleted
-        XCTAssertFalse(layoutOptions.contains(.avatar))
+        // Assert `.avatar` is included
+        XCTAssertTrue(layoutOptions.contains(.avatar))
     }
 
     func test_optionsForMessage_whenMessageIsSentByCurrentUser_doesNotIncludeAvatar() {
@@ -605,15 +605,16 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
     
     // MARK: - Author name
-
-    func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeAuthorName() {
+    
+    func test_optionsForMessage_whenDeletedMessageSentByAnotherUserIsLastInSequence_includesAuthorName() {
         // Create deleted message
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
-            deletedAt: .unique
+            deletedAt: .unique,
+            isSentByCurrentUser: false
         )
 
         // Create a channel where > 2 members can be
@@ -629,8 +630,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             appearance: appearance
         )
 
-        // Assert `.authorName` is not included since the message is deleted
-        XCTAssertFalse(layoutOptions.contains(.authorName))
+        // Assert `.authorName` is included
+        XCTAssertTrue(layoutOptions.contains(.authorName))
     }
 
     func test_optionsForMessage_whenMessageIsSentByCurrentUser_doesNotIncludeAuthorName() {

@@ -74,17 +74,17 @@ open class ChatMessageLayoutOptionsResolver {
         if message.textContent?.isEmpty == false {
             options.insert(.text)
         }
-
-        guard message.isDeleted == false else {
-            return options
-        }
-
         if isLastInSequence && !message.isSentByCurrentUser {
             options.insert(.avatar)
         }
         if isLastInSequence && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.authorName)
         }
+        
+        guard message.isDeleted == false else {
+            return options
+        }
+        
         if hasQuotedMessage(message) {
             options.insert(.quotedMessage)
         }
