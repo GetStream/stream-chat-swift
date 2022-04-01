@@ -23,6 +23,10 @@ class EmojiContainerViewController: UIViewController {
         .init()
         .withoutAutoresizingMaskConstraints
 
+    open private(set) lazy var searchView = UISearchBar
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     open private(set) lazy var loadingIndicator = UIActivityIndicatorView
         .init()
         .withoutAutoresizingMaskConstraints
@@ -140,11 +144,16 @@ class EmojiContainerViewController: UIViewController {
 
         giphy.clipsPreviewRenditionType = .preview
         addChild(giphy)
-        view.addSubview(giphy.view)
+        gifView.addSubview(giphy.view)
+        searchView.placeholder = "Search Gif"
+        gifView.addSubview(searchView)
+        searchView.pin(anchors: [.top, .leading, .trailing], to: gifView)
+        searchView.searchBarStyle = .prominent
+        searchView.delegate = self
         giphy.view.translatesAutoresizingMaskIntoConstraints = false
         giphy.view.leftAnchor.constraint(equalTo: gifView.safeLeftAnchor).isActive = true
         giphy.view.rightAnchor.constraint(equalTo: gifView.safeRightAnchor).isActive = true
-        giphy.view.topAnchor.constraint(equalTo: gifView.safeTopAnchor).isActive = true
+        giphy.view.topAnchor.constraint(equalTo: searchView.bottomAnchor).isActive = true
         giphy.view.bottomAnchor.constraint(equalTo: gifView.safeBottomAnchor).isActive = true
         giphy.didMove(toParent: self)
         let trendingGIFs = GPHContent.trending(mediaType: .gif)
@@ -270,4 +279,27 @@ extension EmojiContainerViewController: GPHGridDelegate {
     func didSelectMoreByYou(query: String) { }
 
     func didScroll(offset: CGFloat) { }
+}
+
+@available(iOS 13.0, *)
+extension EmojiContainerViewController: UISearchBarDelegate {
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        var giphyPicker = GiphyViewController()
+        giphyPicker.mediaTypeConfig = [.gifs]
+        giphyPicker.delegate = self
+        UIApplication.shared.keyWindow?.rootViewController?.present(giphyPicker, animated: true, completion: nil)
+        return false
+    }
+}
+
+@available(iOS 13.0, *)
+extension EmojiContainerViewController: GiphyDelegate {
+    func didDismiss(controller: GiphyViewController?) {
+        debugPrint("deinit", controller)
+    }
+
+    func didSelectMedia(giphyViewController: GiphyViewController, media: GPHMedia) {
+        giphyViewController.dismiss(animated: true, completion: nil)
+        NotificationCenter.default.post(name: .sendSticker, object: nil, userInfo: ["giphyUrl": media.url(rendition: .downsized, fileType: .gif)])
+    }
 }
