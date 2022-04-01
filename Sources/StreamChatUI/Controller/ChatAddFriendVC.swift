@@ -54,12 +54,12 @@ public class ChatAddFriendVC: ChatBaseVC {
     }
     // MARK: - METHODS
     private func setup() {
-        self.view.backgroundColor = .clear
+        view.backgroundColor = .clear
         btnBack?.setImage(Appearance.default.images.closeCircle, for: .normal)
         btnAddFriend?.isHidden = true
         titleLabel.text = selectionType.title
-        self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
-        self.searchField.delegate = self
+        searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
+        searchField.delegate = self
         // Chat user list
         addChild(chatUserList)
         tableviewContainerView.addSubview(chatUserList.view)
@@ -98,10 +98,10 @@ public class ChatAddFriendVC: ChatBaseVC {
             if searchText.containsEmoji || searchText.isBlank {
                 return
             }
-            self.chatUserList.viewModel.searchDataUsing(searchString: searchText)
+            chatUserList.viewModel.searchDataUsing(searchString: searchText)
         } else {
-            self.chatUserList.viewModel.searchText = nil
-            self.chatUserList.viewModel.fetchUserList(true)
+            chatUserList.viewModel.searchText = nil
+            chatUserList.viewModel.fetchUserList(true)
         }
     }
     
@@ -120,7 +120,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     }
     // MARK: - Actions
     @IBAction private func btnBackAction(_ sender: UIButton) {
-        self.dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction private func invitLinkAction(_ sender: UIButton) {
@@ -150,7 +150,7 @@ public class ChatAddFriendVC: ChatBaseVC {
 // MARK: - UITextFieldDelegate
 extension ChatAddFriendVC: UITextFieldDelegate {
     public func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        if self.panModelState == .shortForm {
+        if panModelState == .shortForm {
             panModalSetNeedsLayoutUpdate()
             panModalTransition(to: .longForm)
         }
@@ -165,10 +165,10 @@ extension ChatAddFriendVC: UITextFieldDelegate {
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
     public func chatUserDidSelect() {
-        self.searchField.resignFirstResponder()
-        self.selectedUsers = self.chatUserList.viewModel.selectedUsers
-        self.btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
-        self.btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
+        searchField.resignFirstResponder()
+        selectedUsers = chatUserList.viewModel.selectedUsers
+        btnAddFriend?.isEnabled = !selectedUsers.isEmpty
+        btnInviteLink?.isEnabled = !selectedUsers.isEmpty
     }
 }
 // MARK: - Pan Modal Presentable
