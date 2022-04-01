@@ -116,6 +116,7 @@ extension ChatUserListVC {
         tableView?.keyboardDismissMode = .onDrag
         tableView?.estimatedRowHeight = 44.0
         tableView?.rowHeight = UITableView.automaticDimension
+        tableView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: UIView.safeAreaBottom, right: 0)
         let reuseID = TableViewHeaderChatUserList.reuseId
         let nib = UINib(nibName: reuseID, bundle: nil)
         tableView?.register(nib, forCellReuseIdentifier: reuseID)

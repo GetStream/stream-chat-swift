@@ -20,4 +20,15 @@ extension UIApplication {
         }
         return keyWindow?.rootViewController
     }
+    
+    var keyWindowInConnectedScenes: UIWindow? {
+        if #available(iOS 13, *) {
+            return UIApplication.shared.connectedScenes
+                .first(where: { $0 is UIWindowScene })
+                .flatMap({ $0 as? UIWindowScene })?.windows
+                .first(where: \.isKeyWindow)
+        } else {
+            return nil
+        }
+    }
 }

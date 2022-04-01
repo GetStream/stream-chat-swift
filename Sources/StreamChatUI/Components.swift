@@ -16,6 +16,9 @@ public struct Components {
 
     /// A view that displays the avatar image. By default a circular image.
     public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
+    
+    /// A view that is responsible for bottom safeArea
+    public var bottomSafeAreaView: BottomSafeAreaView.Type = BottomSafeAreaView.self
 
     /// An avatar view with an online indicator.
     public var presenceAvatarView: ChatPresenceAvatarView.Type = ChatPresenceAvatarView.self
