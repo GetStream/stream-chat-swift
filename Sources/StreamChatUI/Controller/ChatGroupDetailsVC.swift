@@ -175,7 +175,7 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
         } else if viewModel.screenType == .channelDetail {
             return [reportAction]
         } else if viewModel.screenType == .userdetail {
-            var arrActions = [nickName, shareContact]
+            var arrActions: [UIAction] = [] // [nickName, shareContact]
             if let contactList = contacts {
                 let selectedUser = contactList.filter { $0.walletAddress == viewModel.user?.id }
                 if selectedUser.isEmpty {
@@ -184,13 +184,15 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
             } else {
                 arrActions.append(addContact)
             }
+            // TODO: Will uncomment when permission issue resolved
+            /*
             if isUserAdmin() {
                 if viewModel.user?.isBannedFromChannel ?? false {
                     arrActions.append(unblockUser)
                 } else {
                     arrActions.append(blockUser)
                 }
-            }
+            }*/
             arrActions.append(reportAction)
             return arrActions
         } else {
@@ -232,11 +234,14 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
 extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
     
     public func numberOfSections(in tableView: UITableView) -> Int {
-        switch viewModel.screenType {
-        case .channelDetail:
-            return 2
-        case .userdetail:
+        if viewModel.screenType == .channelDetail && isDirectMessageChannel() {
             return 1
+        } else if viewModel.screenType == .channelDetail && !isDirectMessageChannel() {
+            return 2
+        } else if viewModel.screenType == .userdetail {
+            return 1
+        } else {
+            return 0
         }
     }
     
@@ -244,25 +249,16 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
         guard let section = TableViewSections(rawValue: section) else {
             return 0
         }
-        switch viewModel.screenType {
-        case .channelDetail:
-            switch section {
-            case .profile:
-                return 1
-            case .userList:
+        if section == .profile {
+            return 1
+        } else if section == .userList {
+            if isDirectMessageChannel() || viewModel.screenType == .userdetail {
+                return 0
+            } else {
                 return viewModel.channelMembers.count
-            default:
-                return 0
             }
-        case .userdetail:
-            switch section {
-            case .profile:
-                return 1
-            case .userList:
-                return 0
-            default:
-                return 0
-            }
+        } else {
+            return 0
         }
     }
     
@@ -307,7 +303,7 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
             return
         }
         let user = viewModel.channelMembers[indexPath.row]
-        if user.memberRole == .admin || user.memberRole == .owner {
+        if user.id == ChatClient.shared.currentUserId {
             return
         }
         controller.viewModel = .init(controller: channelController,
@@ -316,6 +312,9 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
     }
 
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let section = TableViewSections(rawValue: section), section == .userList else {
+            return nil
+        }
         guard let view = ChannelMemberCountView.instanceFromNib() else {
             return nil
         }
@@ -325,11 +324,11 @@ extension ChatGroupDetailsVC: UITableViewDelegate, UITableViewDataSource {
 
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         guard let section = TableViewSections(rawValue: section) else {
-            return 0
+            return 1
         }
         switch section {
         case .profile:
-            return 0
+            return 1
         case .userList:
             return 20
         }
@@ -341,7 +340,7 @@ extension ChatGroupDetailsVC: ChannelDetailHeaderTVCellDelegate {
     func addFriendAction() {
         guard let channelController = viewModel.channelController else { return }
            guard let controller = ChatAddFriendVC
-                   .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
+                   .instantiateController(storyboard: .GroupChat) as? ChatAddFriendVC else {
                return
            }
            do {
@@ -402,7 +401,7 @@ extension ChatGroupDetailsVC: ChannelDetailHeaderTVCellDelegate {
         } else {
             alertTitle = "Would you like to leave this group?"
         }
-        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(title: "Leave Channel", style: .destructive) { [weak self] _ in
             guard let self = self else {
                 return
             }

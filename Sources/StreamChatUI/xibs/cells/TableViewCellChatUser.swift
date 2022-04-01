@@ -70,6 +70,14 @@ extension TableViewCellChatUser {
         avatarView.backgroundColor = .clear
         nameLabel.setChatTitleColor()
         descriptionLabel.setChatSubtitleBigColor()
+        let name = (user.name ?? user.id)
+        if name.lowercased() == user.id.lowercased()  {
+            let last = user.id.suffix(5)
+            let first = user.id.prefix(7)
+            nameLabel.text = "\(first)...\(last)".capitalizingFirstLetter()
+        } else {
+            nameLabel.text = name.capitalizingFirstLetter()
+        }
         if user.isOnline {
             descriptionLabel.textColor = Appearance.default.colorPalette.statusColorBlue
             descriptionLabel.text = "Online"
