@@ -3,7 +3,7 @@
 //
 
 import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
@@ -14,7 +14,7 @@ final class ChatChannelVC_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         var components = Components.mock
-        components.channelHeaderView = ChatChannelHeaderView_Mock.self
+        components.channelHeaderView = ChatChannelHeaderViewMock.self
         vc = ChatChannelVC()
         vc.components = components
         channelControllerMock = ChatChannelController_Mock.mock()
@@ -273,7 +273,7 @@ private extension ChatChannelVC_Tests {
     }
 }
 
-private class ChatChannelHeaderView_Mock: ChatChannelHeaderView {
+private class ChatChannelHeaderViewMock: ChatChannelHeaderView {
     override var currentUserId: UserId? {
         .unique
     }

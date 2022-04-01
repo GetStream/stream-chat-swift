@@ -6,11 +6,11 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class MessageSender_Tests: XCTestCase {
-    var messageRepository: MessageRepositoryMock!
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
+final class MessageSender_Tests: XCTestCase {
+    var messageRepository: MessageRepository_Spy!
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
     
     var sender: MessageSender!
     
@@ -19,10 +19,10 @@ class MessageSender_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
-        messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
+        messageRepository = MessageRepository_Spy(database: database, apiClient: apiClient)
         sender = MessageSender(messageRepository: messageRepository, database: database, apiClient: apiClient)
         
         cid = .unique
@@ -33,7 +33,7 @@ class MessageSender_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
-        
+
         AssertAsync {
             Assert.canBeReleased(&sender)
             Assert.canBeReleased(&webSocketClient)
@@ -41,6 +41,12 @@ class MessageSender_Tests: XCTestCase {
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
         }
+
+        sender = nil
+        webSocketClient = nil
+        messageRepository = nil
+        apiClient = nil
+        database = nil
 
         super.tearDown()
     }

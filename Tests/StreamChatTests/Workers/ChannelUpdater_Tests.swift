@@ -6,27 +6,29 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelUpdater_Tests: XCTestCase {
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
+final class ChannelUpdater_Tests: XCTestCase {
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
     
     var channelUpdater: ChannelUpdater!
     
     override func setUp() {
         super.setUp()
 
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
         
         channelUpdater = ChannelUpdater(database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
         apiClient.cleanUp()
+        apiClient = nil
         channelUpdater = nil
+
         AssertAsync.canBeReleased(&database)
         database = nil
-        
+
         super.tearDown()
     }
     

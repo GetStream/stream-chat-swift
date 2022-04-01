@@ -7,10 +7,10 @@
 import XCTest
 
 final class ChannelEventsController_Tests: XCTestCase {
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
-    var notificationCenter: EventNotificationCenterMock!
-    var eventSender: EventSenderMock!
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
+    var notificationCenter: EventNotificationCenter_Mock!
+    var eventSender: EventSender_Mock!
     var callbackQueueID: UUID!
     var callbackQueue: DispatchQueue!
     
@@ -19,10 +19,10 @@ final class ChannelEventsController_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
-        notificationCenter = EventNotificationCenterMock(database: database)
-        eventSender = EventSenderMock(database: database, apiClient: apiClient)
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
+        notificationCenter = EventNotificationCenter_Mock(database: database)
+        eventSender = EventSender_Mock(database: database, apiClient: apiClient)
         callbackQueueID = UUID()
         callbackQueue = .testQueue(withId: callbackQueueID)
     }
@@ -32,7 +32,6 @@ final class ChannelEventsController_Tests: XCTestCase {
         
         apiClient.cleanUp()
         eventSender.cleanUp()
-        
         AssertAsync {
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&notificationCenter)
@@ -62,7 +61,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         let cid: ChannelId = .unique
         
         // Create channel controller for the given cid.
-        let channelController = ChannelControllerMock(channelQuery: .init(cid: cid))
+        let channelController = ChannelControllerSpy(channelQuery: .init(cid: cid))
         
         // Create channel events controller via channel controller.
         let channelEventsController = channelController.eventsController()
@@ -227,7 +226,7 @@ final class ChannelEventsController_Tests: XCTestCase {
             eventSender: eventSender,
             notificationCenter: notificationCenter
         )
-        let delegate = EventsControllerDelegateMock(expectedQueueId: callbackQueueID)
+        let delegate = EventsController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         controller.callbackQueue = callbackQueue
         

@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -19,6 +20,7 @@ final class MemberController_SwiftUI_Tests: iOS13TestCase {
     
     override func tearDown() {
         AssertAsync.canBeReleased(&memberController)
+        memberController = nil
         
         super.tearDown()
     }

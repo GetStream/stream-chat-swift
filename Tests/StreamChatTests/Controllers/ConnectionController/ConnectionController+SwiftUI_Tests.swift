@@ -3,10 +3,11 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
-class ChatConnectionController_SwiftUI_Tests: iOS13TestCase {
+final class ChatConnectionController_SwiftUI_Tests: iOS13TestCase {
     var connectionController: ChatConnectionControllerMock!
     
     override func setUp() {
@@ -16,6 +17,7 @@ class ChatConnectionController_SwiftUI_Tests: iOS13TestCase {
     
     override func tearDown() {
         AssertAsync.canBeReleased(&connectionController)
+        connectionController = nil
         super.tearDown()
     }
     
@@ -43,7 +45,7 @@ class ChatConnectionController_SwiftUI_Tests: iOS13TestCase {
     }
 }
 
-class ChatConnectionControllerMock: ChatConnectionController {
+final class ChatConnectionControllerMock: ChatConnectionController {
     var connectionStatus_simulated: ConnectionStatus?
     override var connectionStatus: ConnectionStatus {
         connectionStatus_simulated ?? super.connectionStatus

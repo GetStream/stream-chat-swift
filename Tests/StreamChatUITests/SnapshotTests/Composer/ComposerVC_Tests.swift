@@ -3,11 +3,11 @@
 //
 
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ComposerVC_Tests: XCTestCase {
+final class ComposerVC_Tests: XCTestCase {
     func testSearchByIDOrName() throws {
         let user1 = ChatUser.mock(id: "searchingThis")
         let user2 = ChatUser.mock(id: "x", name: "searchingThis")

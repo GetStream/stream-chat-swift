@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class WebSocketConnectPayload_Tests: XCTestCase {
+final class WebSocketConnectPayload_Tests: XCTestCase {
     func testEncodeWebSocketConnectPayload() throws {
         let custom: [String: RawJSON] = [
             "color": .string("blue")

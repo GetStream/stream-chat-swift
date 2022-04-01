@@ -3,23 +3,27 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class DataController_Tests: XCTestCase {
+final class DataController_Tests: XCTestCase {
     func test_delegateMethodIsCalled() {
+        // GIVEN
         let controller = DataController()
         let delegateQueueId = UUID()
-        let delegate = TestDelegate(expectedQueueId: delegateQueueId)
+        let delegate = DataController_Delegate(expectedQueueId: delegateQueueId)
         
         controller.stateMulticastDelegate.add(additionalDelegate: delegate)
         controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
         
         // Check if state is `initialized` initially.
         XCTAssertEqual(delegate.state, .initialized)
-        
+
+        // WHEN
         // Simulate state change.
         controller.state = .localDataFetched
-        
+
+        // THEN
         // Check if state of delegate method is called after state change.
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
     }
@@ -52,14 +56,5 @@ class DataController_Tests: XCTestCase {
         let controller = DataController()
         controller.state = .localDataFetchFailed(ClientError(""))
         XCTAssertFalse(controller.canBeRecovered)
-    }
-}
-
-private class TestDelegate: QueueAwareDelegate, DataControllerStateDelegate {
-    var state: DataController.State = .initialized
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
     }
 }

@@ -4,7 +4,7 @@
 
 import SnapshotTesting
 import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 

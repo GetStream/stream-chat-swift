@@ -6,7 +6,7 @@ import Foundation
 import XCTest
 
 /// Simulates user behavior
-public final class UserRobot: Robot {
+final class UserRobot: Robot {
     
     @discardableResult
     func login() -> Self {

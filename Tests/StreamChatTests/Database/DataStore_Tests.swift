@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class DataStore_Tests: XCTestCase {
+final class DataStore_Tests: XCTestCase {
     var _client: ChatClient!
     
     override func setUp() {
@@ -16,6 +16,8 @@ class DataStore_Tests: XCTestCase {
     
     override func tearDown() {
         AssertAsync.canBeReleased(&_client)
+        (_client as? ChatClient_Mock)?.cleanUp()
+        _client = nil
         super.tearDown()
     }
     

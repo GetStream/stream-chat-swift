@@ -7,7 +7,7 @@
 import XCTest
 
 final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     var middleware: UserChannelBanEventsMiddleware!
 
     // MARK: - Set up
@@ -15,14 +15,13 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = .init()
     }
 
     override func tearDown() {
-        middleware = nil
         AssertAsync.canBeReleased(&database)
-
+        database = nil
         super.tearDown()
     }
 
@@ -155,8 +154,4 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         XCTAssert(forwardedEvent is UserUnbannedEventDTO)
     }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
 }

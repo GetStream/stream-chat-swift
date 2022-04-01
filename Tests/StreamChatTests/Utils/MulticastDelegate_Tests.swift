@@ -3,15 +3,21 @@
 //
 
 @testable import StreamChat
+import StreamChatTestHelpers
 import XCTest
 
-class MulticastDelegate_Tests: XCTestCase {
+final class MulticastDelegate_Tests: XCTestCase {
     fileprivate var multicastDelegate: MulticastDelegate<TestDelegate>!
     
     override func setUp() {
         super.setUp()
         
         multicastDelegate = .init()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        multicastDelegate = nil
     }
 
     func test_invoke_shouldCallMainAndAdditionalDelegate() {

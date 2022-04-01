@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChatUI
 import XCTest
 
-class String_Extensions_Tests: XCTestCase {
+final class String_Extensions_Tests: XCTestCase {
     func test_onlyEmoji() {
         XCTAssertTrue("🍺".isSingleEmoji)
     }

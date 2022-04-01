@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelController_Tests: XCTestCase {
+final class ChannelController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
     
     var client: ChatClient!
@@ -36,9 +36,6 @@ class ChannelController_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        channelId = nil
-        controllerCallbackQueueID = nil
-        
         env?.channelUpdater?.cleanUp()
         env?.eventSender?.cleanUp()
 
@@ -48,96 +45,12 @@ class ChannelController_Tests: XCTestCase {
             Assert.canBeReleased(&env)
         }
 
+        channelId = nil
+        controllerCallbackQueueID = nil
+
         super.tearDown()
     }
-    
-    // MARK: - Helpers
-    
-    func setupControllerForNewDirectMessageChannel(
-        currentUserId: UserId,
-        otherUserId: UserId,
-        channelListQuery: ChannelListQuery? = nil
-    ) {
-        let payload = ChannelEditDetailPayload(
-            type: .messaging,
-            name: nil,
-            imageURL: nil,
-            team: nil,
-            members: [currentUserId, otherUserId],
-            invites: [],
-            extraData: [:]
-        )
-        
-        controller = ChatChannelController(
-            channelQuery: .init(channelPayload: payload),
-            channelListQuery: channelListQuery,
-            client: client,
-            environment: env.environment,
-            isChannelAlreadyCreated: false
-        )
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
-    }
-    
-    func setupControllerForNewChannel(
-        query: ChannelQuery,
-        channelListQuery: ChannelListQuery? = nil
-    ) {
-        controller = ChatChannelController(
-            channelQuery: query,
-            channelListQuery: channelListQuery,
-            client: client,
-            environment: env.environment,
-            isChannelAlreadyCreated: false
-        )
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
-        controller.synchronize()
-    }
-    
-    func setupControllerForNewMessageChannel(
-        cid: ChannelId,
-        channelListQuery: ChannelListQuery? = nil
-    ) {
-        let payload = ChannelEditDetailPayload(
-            cid: cid,
-            name: nil,
-            imageURL: nil,
-            team: nil,
-            members: [],
-            invites: [],
-            extraData: [:]
-        )
-        
-        controller = ChatChannelController(
-            channelQuery: .init(channelPayload: payload),
-            channelListQuery: channelListQuery,
-            client: client,
-            environment: env.environment,
-            isChannelAlreadyCreated: false
-        )
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
-    }
-    
-    // Helper function that creates channel with message
-    func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
-        let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        try session.saveCurrentUser(payload: dummyUserPayload)
-        try session.saveChannel(payload: dummyPayload(with: channelId))
-        let message = try session.createNewMessage(
-            in: channelId,
-            text: "Message",
-            pinning: nil,
-            quotedMessageId: nil,
-            isSilent: false,
-            attachments: [
-                .mockImage,
-                .mockFile,
-                .init(payload: TestAttachmentPayload.unique)
-            ],
-            extraData: [:]
-        )
-        return message.id
-    }
-    
+
     // MARK: - Init tests
     
     func test_init_assignsValuesCorrectly() {
@@ -1109,7 +1022,7 @@ class ChannelController_Tests: XCTestCase {
     // MARK: - Delegate tests
     
     func test_settingDelegate_leadsToFetchingLocalData() {
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
@@ -1122,7 +1035,7 @@ class ChannelController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert delegate is notified about state changes
@@ -1153,7 +1066,7 @@ class ChannelController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
 
         // Setup delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
 
         // Simulate `synchronize` call
@@ -1203,7 +1116,7 @@ class ChannelController_Tests: XCTestCase {
     }
     
     func test_channelMemberEvents_areForwardedToDelegate() throws {
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Simulate `synchronize()` call
@@ -1226,7 +1139,7 @@ class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.createUser(id: userId)
         
         // Set the queue for delegate calls
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Simulate `synchronize()` call
@@ -1249,7 +1162,7 @@ class ChannelController_Tests: XCTestCase {
     }
     
     func test_delegateMethodsAreCalled() throws {
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -1277,7 +1190,7 @@ class ChannelController_Tests: XCTestCase {
     }
     
     func test_channelUpdateDelegate_isCalled_whenChannelReadsAreUpdated() throws {
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         let userId: UserId = .unique
@@ -1334,7 +1247,7 @@ class ChannelController_Tests: XCTestCase {
         setupControllerForNewDirectMessageChannel(currentUserId: currentUserId, otherUserId: otherUserId)
         
         // Create and set delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Simulate synchronize
@@ -1394,7 +1307,7 @@ class ChannelController_Tests: XCTestCase {
         setupControllerForNewDirectMessageChannel(currentUserId: currentUserId, otherUserId: otherUserId)
         
         // Create and set delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Simulate synchronize
@@ -3448,7 +3361,7 @@ class ChannelController_Tests: XCTestCase {
     private func watchActiveChannelAndWait(
         channelQuery: ChannelQuery? = nil,
         isChannelAlreadyCreated: Bool,
-        requestBlock: (ChannelUpdaterMock?) -> Void
+        requestBlock: (ChannelUpdater_Mock?) -> Void
     ) -> Error? {
         controller = ChatChannelController(
             channelQuery: channelQuery ?? .init(cid: channelId),
@@ -3964,75 +3877,109 @@ class ChannelController_Tests: XCTestCase {
     }
 }
 
+// MARK: Test Helpers
+
+extension ChannelController_Tests {
+    // MARK: - Helpers
+
+    func setupControllerForNewDirectMessageChannel(
+        currentUserId: UserId,
+        otherUserId: UserId,
+        channelListQuery: ChannelListQuery? = nil
+    ) {
+        let payload = ChannelEditDetailPayload(
+            type: .messaging,
+            name: nil,
+            imageURL: nil,
+            team: nil,
+            members: [currentUserId, otherUserId],
+            invites: [],
+            extraData: [:]
+        )
+
+        controller = ChatChannelController(
+            channelQuery: .init(channelPayload: payload),
+            channelListQuery: channelListQuery,
+            client: client,
+            environment: env.environment,
+            isChannelAlreadyCreated: false
+        )
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+    }
+
+    func setupControllerForNewChannel(
+        query: ChannelQuery,
+        channelListQuery: ChannelListQuery? = nil
+    ) {
+        controller = ChatChannelController(
+            channelQuery: query,
+            channelListQuery: channelListQuery,
+            client: client,
+            environment: env.environment,
+            isChannelAlreadyCreated: false
+        )
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+        controller.synchronize()
+    }
+
+    func setupControllerForNewMessageChannel(
+        cid: ChannelId,
+        channelListQuery: ChannelListQuery? = nil
+    ) {
+        let payload = ChannelEditDetailPayload(
+            cid: cid,
+            name: nil,
+            imageURL: nil,
+            team: nil,
+            members: [],
+            invites: [],
+            extraData: [:]
+        )
+
+        controller = ChatChannelController(
+            channelQuery: .init(channelPayload: payload),
+            channelListQuery: channelListQuery,
+            client: client,
+            environment: env.environment,
+            isChannelAlreadyCreated: false
+        )
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+    }
+
+    // Helper function that creates channel with message
+    func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
+        let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        try session.saveCurrentUser(payload: dummyUserPayload)
+        try session.saveChannel(payload: dummyPayload(with: channelId))
+        let message = try session.createNewMessage(
+            in: channelId,
+            text: "Message",
+            pinning: nil,
+            quotedMessageId: nil,
+            isSilent: false,
+            attachments: [
+                .mockImage,
+                .mockFile,
+                .init(payload: TestAttachmentPayload.unique)
+            ],
+            extraData: [:]
+        )
+        return message.id
+    }
+}
+
 private class TestEnvironment {
-    var channelUpdater: ChannelUpdaterMock?
-    var eventSender: TypingEventsSenderMock?
-    
+    var channelUpdater: ChannelUpdater_Mock?
+    var eventSender: TypingEventsSender_Mock?
+
     lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
-            self.channelUpdater = ChannelUpdaterMock(database: $0, apiClient: $1)
+            self.channelUpdater = ChannelUpdater_Mock(database: $0, apiClient: $1)
             return self.channelUpdater!
         },
         eventSenderBuilder: { [unowned self] in
-            self.eventSender = TypingEventsSenderMock(database: $0, apiClient: $1)
+            self.eventSender = TypingEventsSender_Mock(database: $0, apiClient: $1)
             return self.eventSender!
         }
     )
-}
-
-/// A concrete `ChannelControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var willStartFetchingRemoteDataCalledCounter = 0
-    @Atomic var didStopFetchingRemoteDataCalledCounter = 0
-    @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
-    @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
-    @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didChangeTypingUsers_typingUsers: Set<ChatUser>?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
-    func controllerWillStartFetchingRemoteData(_ controller: Controller) {
-        willStartFetchingRemoteDataCalledCounter += 1
-        validateQueue()
-    }
-    
-    func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?) {
-        didStopFetchingRemoteDataCalledCounter += 1
-        validateQueue()
-    }
-    
-    func channelController(_ channelController: ChatChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
-        didUpdateMessages_messages = changes
-        validateQueue()
-    }
-    
-    func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
-        didUpdateChannel_channel = channel
-        validateQueue()
-    }
-    
-    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
-        didReceiveMemberEvent_event = event
-        validateQueue()
-    }
-    
-    func channelController(
-        _ channelController: ChatChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
-    ) {
-        didChangeTypingUsers_typingUsers = typingUsers
-        validateQueue()
-    }
-}
-
-extension UserConnectionProvider {
-    static func invalid(_ error: Error = TestError()) -> Self {
-        .closure {
-            $1(.failure(error))
-        }
-    }
 }

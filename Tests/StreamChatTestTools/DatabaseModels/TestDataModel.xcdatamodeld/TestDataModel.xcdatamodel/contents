@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="TestManagedObject" representedClassName="TestManagedObject" syncable="YES">
+        <attribute name="resetEphemeralValuesCalled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="testId" optional="YES" attributeType="String"/>
+        <attribute name="testValue" optional="YES" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="TestManagedObject" positionX="-63" positionY="-18" width="128" height="88"/>
+    </elements>
+</model>

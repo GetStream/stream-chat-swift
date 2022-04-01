@@ -6,7 +6,7 @@
 @testable import StreamChatUI
 import XCTest
 
-class ChatCommandSuggestionView_Tests: XCTestCase {
+final class ChatCommandSuggestionView_Tests: XCTestCase {
     /// Default width for the cell.
     private let defaultCellWidth: CGFloat = 250
     

@@ -7,16 +7,17 @@
 import XCTest
 
 @available(iOS 13, *)
-class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
-    var currentUserController: CurrentUserControllerMock!
+final class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
+    var currentUserController: CurrentUserController_Mock!
     
     override func setUp() {
         super.setUp()
-        currentUserController = CurrentUserControllerMock()
+        currentUserController = CurrentUserController_Mock()
     }
     
     override func tearDown() {
         AssertAsync.canBeReleased(&currentUserController)
+        currentUserController = nil
         super.tearDown()
     }
     
@@ -58,21 +59,5 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
         }
         
         AssertAsync.willBeEqual(observableObject.unreadCount, newUnreadCount)
-    }
-}
-
-class CurrentUserControllerMock: CurrentChatUserController {
-    var currentUser_simulated: CurrentChatUser?
-    override var currentUser: CurrentChatUser? {
-        currentUser_simulated ?? super.currentUser
-    }
-    
-    var unreadCount_simulated: UnreadCount?
-    override var unreadCount: UnreadCount {
-        unreadCount_simulated ?? super.unreadCount
-    }
-    
-    init() {
-        super.init(client: .mock)
     }
 }

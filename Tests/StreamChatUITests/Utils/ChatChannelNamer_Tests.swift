@@ -3,11 +3,11 @@
 //
 
 import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatChannelNamer_Tests: XCTestCase {
+final class ChatChannelNamer_Tests: XCTestCase {
     var defaultMembers: [ChatChannelMember]!
 
     override func setUp() {

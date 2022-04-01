@@ -3,7 +3,7 @@
 //
 
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -20,6 +20,7 @@ final class UserController_SwiftUI_Tests: iOS13TestCase {
     
     override func tearDown() {
         AssertAsync.canBeReleased(&userController)
+        userController = nil
         
         super.tearDown()
     }
@@ -67,21 +68,5 @@ final class UserController_SwiftUI_Tests: iOS13TestCase {
         
         // Assert the change is received.
         AssertAsync.willBeEqual(observableObject.state, newState)
-    }
-}
-
-extension ChatUser {
-    static var unique: ChatUser {
-        .mock(
-            id: .unique,
-            isOnline: true,
-            isBanned: true,
-            userRole: .user,
-            createdAt: .unique,
-            updatedAt: .unique,
-            lastActiveAt: .unique,
-            teams: [],
-            extraData: [:]
-        )
     }
 }

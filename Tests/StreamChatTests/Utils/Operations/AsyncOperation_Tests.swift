@@ -115,7 +115,11 @@ final class AsyncOperation_Tests: XCTestCase {
         waitForOperationToFinish(operation)
         XCTAssertEqual(operationBlockCalls, 0)
     }
+}
 
+// MARK: Test Helpers
+
+extension AsyncOperation_Tests {
     private func waitForOperationToFinish(_ operation: AsyncOperation) {
         let expectation = expectation(description: "operation concludes")
         let token = operation.observe(\.isFinished) { _, change in

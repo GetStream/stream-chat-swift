@@ -1969,9 +1969,9 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
 }
 
 private class TestEnvironment {
-    var messageUpdater: MessageUpdaterMock!
-    var messageObserver: EntityDatabaseObserverMock<ChatMessage, MessageDTO>!
-    var repliesObserver: ListDatabaseObserverMock<ChatMessage, MessageDTO>!
+    var messageUpdater: MessageUpdater_Mock!
+    var messageObserver: EntityDatabaseObserver_Mock<ChatMessage, MessageDTO>!
+    var repliesObserver: ListDatabaseObserver_Mock<ChatMessage, MessageDTO>!
 
     var messageObserver_synchronizeError: Error?
     
@@ -1987,7 +1987,7 @@ private class TestEnvironment {
                 return self.repliesObserver!
             },
             messageUpdaterBuilder: { [unowned self] in
-                self.messageUpdater = MessageUpdaterMock(
+                self.messageUpdater = MessageUpdater_Mock(
                     isLocalStorageEnabled: $0,
                     messageRepository: $1,
                     database: $2,

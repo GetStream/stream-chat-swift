@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatMentionSuggestionView_Tests: XCTestCase {
+final class ChatMentionSuggestionView_Tests: XCTestCase {
     /// Default reference width for the cell. Not related to any screen size.
     private static var defaultCellWidth: CGFloat = 300
 

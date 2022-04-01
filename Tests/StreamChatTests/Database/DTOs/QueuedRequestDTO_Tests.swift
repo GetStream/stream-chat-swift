@@ -7,16 +7,17 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class QueuedRequestDTO_Tests: XCTestCase {
+final class QueuedRequestDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
 
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
 
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
 
