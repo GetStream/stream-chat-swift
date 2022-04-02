@@ -20,7 +20,7 @@ class RedPacketBubble: UITableViewCell {
     public private(set) var pickUpButton: UIButton!
     public private(set) var lblDetails: UILabel!
     private var detailsStack: UIStackView!
-    var options: ChatMessageLayoutOptions?
+    var layoutOptions: ChatMessageLayoutOptions?
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     var cellType: CellType!
@@ -56,8 +56,8 @@ class RedPacketBubble: UITableViewCell {
         viewContainer.clipsToBounds = true
         contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
-            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4)
+            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 0),
+            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -Constants.MessageTopPadding)
         ])
         if isSender {
             viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth).isActive = true
@@ -160,7 +160,7 @@ class RedPacketBubble: UITableViewCell {
             timestampLabel.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor, constant: 0),
             timestampLabel.bottomAnchor.constraint(equalTo: subContainer.topAnchor, constant: -8),
             timestampLabel.topAnchor.constraint(equalTo: viewContainer.topAnchor, constant: 0),
-            timestampLabel.heightAnchor.constraint(equalToConstant: 15)
+            timestampLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 15),
         ])
         timestampLabel.transform = .mirrorY
     }
@@ -219,11 +219,16 @@ class RedPacketBubble: UITableViewCell {
     }
 
     func configData() {
-        if let createdAt = content?.createdAt {
-            timestampLabel?.text = dateFormatter.string(from: createdAt)
-        } else {
-            timestampLabel?.text = nil
+        var nameAndTimeString: String? = ""
+        if let options = layoutOptions {
+            if options.contains(.authorName), let name = content?.author.name {
+                nameAndTimeString?.append("\(name)   ")
+            }
+            if options.contains(.timestamp) , let createdAt = content?.createdAt {
+                nameAndTimeString?.append("\(dateFormatter.string(from: createdAt))")
+            }
         }
+        timestampLabel?.text = nameAndTimeString
         if cellType == .RECEIVED {
             configTopAmountCell()
         } else if cellType == .EXPIRED {

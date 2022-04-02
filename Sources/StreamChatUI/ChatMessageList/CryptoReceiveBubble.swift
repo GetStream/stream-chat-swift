@@ -19,7 +19,7 @@ class CryptoReceiveBubble: UITableViewCell {
     public private(set) var descriptionLabel: UILabel!
     public private(set) var sentCryptoLabel: UILabel!
     public private(set) var blockExplorerButton: UIButton!
-    var options: ChatMessageLayoutOptions?
+    var layoutOptions: ChatMessageLayoutOptions?
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     public var blockExpAction: ((URL) -> Void)?
@@ -36,8 +36,8 @@ class CryptoReceiveBubble: UITableViewCell {
         viewContainer.clipsToBounds = true
         self.contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
-            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4),
+            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 0),
+            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -Constants.MessageTopPadding),
             viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
             viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -cellWidth),
         ])
@@ -172,11 +172,16 @@ class CryptoReceiveBubble: UITableViewCell {
     }
 
     func configData() {
-        if let createdAt = content?.createdAt {
-            timestampLabel?.text = dateFormatter.string(from: createdAt)
-        } else {
-            timestampLabel?.text = nil
+        var nameAndTimeString: String? = ""
+        if let options = layoutOptions {
+            if options.contains(.authorName), let name = content?.author.name {
+                nameAndTimeString?.append("\(name)   ")
+            }
+            if options.contains(.timestamp) , let createdAt = content?.createdAt {
+                nameAndTimeString?.append("\(dateFormatter.string(from: createdAt))")
+            }
         }
+        timestampLabel?.text = nameAndTimeString
         configOneWallet()
     }
 

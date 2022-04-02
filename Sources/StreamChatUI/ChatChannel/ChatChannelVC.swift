@@ -156,6 +156,12 @@ open class ChatChannelVC:
     open lazy var messageListVC: ChatMessageListVC? = components
         .messageListVC
         .init()
+    
+    /// bottom safe area view
+    open lazy var bottomSafeArea: BottomSafeAreaView = components
+        .bottomSafeAreaView
+        .init()
+        .withoutAutoresizingMaskConstraints
 
     /// Controller that handles the composer view
     open private(set) lazy var messageComposerVC: ComposerVC? = components
@@ -211,7 +217,7 @@ open class ChatChannelVC:
             navigationSafeAreaView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             navigationSafeAreaView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             navigationSafeAreaView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            navigationSafeAreaView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0)
+            navigationSafeAreaView.heightAnchor.constraint(equalToConstant: UIView.safeAreaTop)
         ])
 
         view.addSubview(navigationHeaderView)
@@ -249,6 +255,16 @@ open class ChatChannelVC:
             headerView.centerXAnchor.constraint(equalTo: navigationHeaderView.centerXAnchor, constant: 0),
             headerView.widthAnchor.constraint(equalTo: navigationHeaderView.widthAnchor, multiplier: 0.6)
         ])
+        
+        view.addSubview(bottomSafeArea)
+        bottomSafeArea.backgroundColor = appearance.colorPalette.tabbarBackground
+        NSLayoutConstraint.activate([
+            bottomSafeArea.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bottomSafeArea.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomSafeArea.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomSafeArea.heightAnchor.constraint(equalToConstant: UIView.safeAreaBottom)
+        ])
+        
         if let messageListVC = messageListVC {
             addChildViewController(messageListVC, targetView: view)
             NSLayoutConstraint.activate([
@@ -260,7 +276,7 @@ open class ChatChannelVC:
                 addChildViewController(messageComposerVC, targetView: view)
                 messageComposerVC.view.pin(anchors: [.leading, .trailing], to: view)
                 messageComposerVC.view.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
-                messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
+                messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: bottomSafeArea.topAnchor)
                 messageComposerBottomConstraint?.isActive = true
             }
             if channelController?.channel?.type == .announcement, let mute = channelController?.channel?.isMuted {
@@ -391,15 +407,11 @@ open class ChatChannelVC:
     }
     
     @objc func headerViewAction(_ sender: Any) {
-        guard channelController?.channel?.type != .announcement else { return }
-        if self.channelController?.channel?.isDirectMessageChannel ?? true {
+        guard let channelController = channelController,
+              let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
             return
         }
-        guard let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
-            return
-        }
-        controller.groupInviteLink = self.getGroupLink()
-        controller.channelController = channelController
+        controller.viewModel = .init(controller: channelController)
         self.pushWithAnimation(controller: controller)
     }
 
@@ -427,37 +439,43 @@ open class ChatChannelVC:
             return
         }
         controller.groupInviteLink = self.getGroupLink()
-        controller.existingUsers = channelVC.channel?.lastActiveMembers as? [ChatUser] ?? []
-        controller.channelController = channelVC
-        controller.bCallbackInviteFriend = { [weak self] users in
-            guard let weakSelf = self else { return }
-            let ids = users.map{ $0.id}
-            weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
-                if error == nil {
-                    DispatchQueue.main.async {
-                        Snackbar.show(text: "Group invite sent")
+        let memberListController = try? ChatClient.shared.memberListController(query: .init(cid: .init(cid: channelVC.channel?.cid.description ?? "")))
+        memberListController?.synchronize{ [weak self] error in
+            guard error == nil, let self = self else {
+                return
+            }
+            controller.existingUsers = memberListController?.members.shuffled() ?? []
+            controller.channelController = channelVC
+            controller.bCallbackInviteFriend = { [weak self] users in
+                guard let weakSelf = self else { return }
+                let ids = users.map{ $0.id}
+                weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
+                    if error == nil {
+                        DispatchQueue.main.async {
+                            Snackbar.show(text: "Group invite sent")
+                        }
+                    } else {
+                        Snackbar.show(text: "Error while sending invitation link")
                     }
-                } else {
-                    Snackbar.show(text: "Error while sending invitation link")
-                }
-            })
-        }
+                })
+            }
 
-        controller.bCallbackAddFriend = { [weak self] users in
-            guard let weakSelf = self else { return }
-            let ids = users.map{ $0.id}
-            weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
-                if error == nil {
-                    // nothing
-                    DispatchQueue.main.async {
-                        Snackbar.show(text: "Group Member updated")
+            controller.bCallbackAddFriend = { [weak self] users in
+                guard let weakSelf = self else { return }
+                let ids = users.map{ $0.id}
+                weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
+                    if error == nil {
+                        // nothing
+                        DispatchQueue.main.async {
+                            Snackbar.show(text: "Group Member updated")
+                        }
+                    } else {
+                        Snackbar.show(text: "Error operation could be completed")
                     }
-                } else {
-                    Snackbar.show(text: "Error operation could be completed")
-                }
-            })
+                })
+            }
+            self.presentPanModal(controller)
         }
-        presentPanModal(controller)
     }
 
     @objc func closePinViewAction(_ sender: Any) {
@@ -544,22 +562,29 @@ open class ChatChannelVC:
         controller.channelController = channelVC
         controller.groupInviteLink = self.getGroupLink()
         controller.selectionType = .inviteUser
-        controller.existingUsers = channelVC.channel?.lastActiveMembers as? [ChatUser] ?? []
-        controller.bCallbackInviteFriend = { [weak self] users in
-            guard let weakSelf = self else { return }
-            let ids = users.map{ $0.id}
-            weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
-                if error == nil {
-                    DispatchQueue.main.async {
-                        Snackbar.show(text: "Group invite sent")
+        let memberListController = try? ChatClient.shared.memberListController(
+            query: .init(cid: .init(cid: channelVC.channel?.cid.description ?? "")))
+        memberListController?.synchronize{ [weak self] error in
+            guard let self = self else {
+                return
+            }
+            controller.bCallbackInviteFriend = { [weak self] users in
+                guard let weakSelf = self else { return }
+                let ids = users.map{ $0.id}
+                weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
+                    if error == nil {
+                        DispatchQueue.main.async {
+                            Snackbar.show(text: "Group invite sent")
+                        }
+                    } else {
+                        Snackbar.show(text: "Error while sending invitation link")
                     }
-                } else {
-                    Snackbar.show(text: "Error while sending invitation link")
-                }
-            })
+                })
+            }
+            self.presentPanModal(controller)
         }
-        presentPanModal(controller)
     }
+
     public func showGroupQRAction() {
         DispatchQueue.main.async { [weak self] in
             guard let weakSelf = self else { return }

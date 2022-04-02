@@ -11,7 +11,10 @@ import UIKit
 import Nuke
 import SkeletonView
 
-public class TableViewCellChatUser: UITableViewCell {
+public class TableViewCellChatUser: _TableViewCell, AppearanceProvider {
+    static var nib: UINib {
+        return UINib(nibName: reuseId, bundle: nil)
+    }
     public static let reuseId: String = "TableViewCellChatUser"
     // MARK: - OUTLETS
     @IBOutlet public var containerView: UIView!
@@ -41,6 +44,23 @@ public class TableViewCellChatUser: UITableViewCell {
 }
 // MARK: - Config
 extension TableViewCellChatUser {
+    private func getOwnerName(name: String) -> NSMutableAttributedString? {
+        guard let iconImage = appearance.images.crown?.tinted(with: .white) else {
+            return nil
+        }
+        let title = NSMutableAttributedString(string: "\(name) ")
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = iconImage
+        imageAttachment.bounds = .init(
+            x: 0,
+            y: -((nameLabel.font.capHeight - iconImage.size.height).rounded() / 2) - 3,
+            width: iconImage.size.width,
+            height: iconImage.size.height)
+        let imageString = NSAttributedString(attachment: imageAttachment)
+        title.append(imageString)
+        return title
+    }
+
     public func config(user: ChatUser, selectedImage: UIImage?) {
         if let imageURL = user.imageURL {
             let options = ImageLoadingOptions(
@@ -82,6 +102,24 @@ extension TableViewCellChatUser {
         self.config(user: channelMember, selectedImage: selectedImage)
         lblRole.text = ""
         lblRole.isHidden = true
+        /// userName
+        let name = (channelMember.name ?? channelMember.id)
+        if name.lowercased() == channelMember.id.lowercased()  {
+            let last = channelMember.id.suffix(5)
+            let first = channelMember.id.prefix(7)
+            if channelMember.memberRole == .owner {
+                nameLabel.attributedText = getOwnerName(name: name.capitalizingFirstLetter())
+            } else {
+                nameLabel.text = "\(first)...\(last)".capitalizingFirstLetter()
+            }
+        } else {
+            if channelMember.memberRole == .owner {
+                nameLabel.attributedText = getOwnerName(name: name.capitalizingFirstLetter())
+            } else {
+                nameLabel.text = name.capitalizingFirstLetter()
+            }
+        }
+        /// owner tag
         if channelMember.memberRole == .owner {
             lblRole.text = "Owner"
             lblRole.textColor = Appearance.default.colorPalette.statusColorBlue

@@ -25,6 +25,8 @@ public class NameGroupViewController: ChatBaseVC {
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var tagView: UIStackView!
     @IBOutlet private var tagViewPlaceHolderView: UIView!
+    @IBOutlet weak var heightSafeAreaView: NSLayoutConstraint!
+    
     // MARK: - VARIABLES
     public var client: ChatClient?
     public var selectedUsers: [ChatUser]!
@@ -36,6 +38,7 @@ public class NameGroupViewController: ChatBaseVC {
     }
     // MARK: - METHODS
     public func setupUI() {
+        heightSafeAreaView.constant = UIView.safeAreaTop
         navigationController?.navigationBar.isHidden = true
         self.btnNext?.isHidden = true
         self.view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
@@ -64,6 +67,7 @@ public class NameGroupViewController: ChatBaseVC {
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: UIView.safeAreaBottom, right: 0)
     }
     // MARK: - ACTIONS
     @objc private func textDidChange(_ sender: UITextField) {
