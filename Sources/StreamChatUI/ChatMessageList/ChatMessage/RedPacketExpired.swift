@@ -10,6 +10,8 @@ import UIKit
 import StreamChat
 
 class RedPacketExpired: UITableViewCell {
+    
+    // MARK: - Variables
     public private(set) var viewContainer: UIView!
     public private(set) var subContainer: UIView!
     public private(set) var sentThumbImageView: UIImageView!
@@ -19,13 +21,14 @@ class RedPacketExpired: UITableViewCell {
     public private(set) var pickUpButton: UIButton!
     public private(set) var lblDetails: UILabel!
     private var detailsStack: UIStackView!
-    var options: ChatMessageLayoutOptions?
+    var layoutOptions: ChatMessageLayoutOptions?
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     var isSender = false
     var channel: ChatChannel?
     var client: ChatClient?
 
+    // MARK: - View Cycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -47,8 +50,8 @@ class RedPacketExpired: UITableViewCell {
         viewContainer.clipsToBounds = true
         contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
-            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4)
+            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 0),
+            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -Constants.MessageTopPadding)
         ])
         if isSender {
             viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth).isActive = true
@@ -203,11 +206,16 @@ class RedPacketExpired: UITableViewCell {
     }
 
     func configData() {
-        if let createdAt = content?.createdAt {
-            timestampLabel?.text = dateFormatter.string(from: createdAt)
-        } else {
-            timestampLabel?.text = nil
+        var nameAndTimeString: String? = ""
+        if let options = layoutOptions {
+            if options.contains(.authorName), let name = content?.author.name {
+                nameAndTimeString?.append("\(name)   ")
+            }
+            if options.contains(.timestamp) , let createdAt = content?.createdAt {
+                nameAndTimeString?.append("\(dateFormatter.string(from: createdAt))")
+            }
         }
+        timestampLabel?.text = nameAndTimeString
     }
 
     @objc func btnSendPacketAction() {

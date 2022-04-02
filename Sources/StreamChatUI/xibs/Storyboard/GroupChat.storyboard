@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -119,9 +119,6 @@
                                                         </constraints>
                                                         <color key="tintColor" systemColor="labelColor"/>
                                                         <state key="normal" image="chat_plus"/>
-                                                        <connections>
-                                                            <action selector="btnDoneAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="qtA-RG-jO0"/>
-                                                        </connections>
                                                     </button>
                                                 </subviews>
                                             </stackView>
@@ -192,7 +189,6 @@
                         <outlet property="viewContainerTrailingConst" destination="FJh-TB-6pp" id="7hP-zv-AAz"/>
                         <outlet property="viewHeaderTitleView" destination="9UB-QW-s7a" id="gzs-M3-Yf8"/>
                         <outlet property="viewHeaderView" destination="2hX-vZ-5CS" id="Eul-kl-Ooz"/>
-                        <outlet property="viewHeaderViewTopConst" destination="I32-zy-vTe" id="5Ya-Dk-wpc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7Sh-H2-BJ2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -339,7 +335,6 @@
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="closePopup"/>
                                 <connections>
-                                    <action selector="btnBackAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="S6b-mB-0eS"/>
                                     <action selector="closeButtonAction:" destination="8Gr-P8-lcO" eventType="touchUpInside" id="kbe-3C-MOI"/>
                                 </connections>
                             </button>
@@ -457,7 +452,6 @@
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="closePopup"/>
                                         <connections>
-                                            <action selector="btnBackAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="yfX-aU-yPg"/>
                                             <action selector="closeButtonAction:" destination="eGh-u4-qAP" eventType="touchUpInside" id="4na-g0-DzY"/>
                                         </connections>
                                     </button>
@@ -1046,34 +1040,6 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8gW-gn-Hdy">
-                                <rect key="frame" x="95" y="361.5" width="224" height="173"/>
-                                <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="magnifyingglass" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="AbU-9p-mrW">
-                                        <rect key="frame" x="42" y="0.5" width="140" height="138.5"/>
-                                        <color key="tintColor" systemColor="tertiaryLabelColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="140" id="EkK-1S-91l"/>
-                                            <constraint firstAttribute="height" constant="140" id="unZ-jZ-VDd"/>
-                                        </constraints>
-                                    </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No user matches these keywords..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p83-Nl-kth">
-                                        <rect key="frame" x="0.0" y="156" width="224" height="17"/>
-                                        <fontDescription key="fontDescription" type="system" weight="light" pointSize="14"/>
-                                        <color key="textColor" systemColor="secondaryLabelColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="p83-Nl-kth" secondAttribute="trailing" id="0z1-Yc-DfZ"/>
-                                    <constraint firstAttribute="bottom" secondItem="p83-Nl-kth" secondAttribute="bottom" id="77B-VM-xEY"/>
-                                    <constraint firstItem="AbU-9p-mrW" firstAttribute="top" secondItem="8gW-gn-Hdy" secondAttribute="top" id="Eq1-fe-5lF"/>
-                                    <constraint firstItem="AbU-9p-mrW" firstAttribute="centerX" secondItem="8gW-gn-Hdy" secondAttribute="centerX" id="S7D-Fx-iZX"/>
-                                    <constraint firstItem="p83-Nl-kth" firstAttribute="leading" secondItem="8gW-gn-Hdy" secondAttribute="leading" id="cx7-FN-drI"/>
-                                    <constraint firstItem="p83-Nl-kth" firstAttribute="top" secondItem="AbU-9p-mrW" secondAttribute="bottom" constant="16" id="hIw-gn-uwL"/>
-                                </constraints>
-                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Efe-Sz-vQv"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1082,23 +1048,13 @@
                             <constraint firstItem="lc9-mm-5aZ" firstAttribute="bottom" secondItem="4j7-hX-DLb" secondAttribute="bottom" id="7Yr-e8-qxS"/>
                             <constraint firstItem="vjB-0n-oKx" firstAttribute="leading" secondItem="Efe-Sz-vQv" secondAttribute="leading" constant="16" id="Aq4-7W-uk0"/>
                             <constraint firstItem="lc9-mm-5aZ" firstAttribute="top" secondItem="vjB-0n-oKx" secondAttribute="bottom" id="BMz-mk-qcz"/>
-                            <constraint firstItem="8gW-gn-Hdy" firstAttribute="centerX" secondItem="4j7-hX-DLb" secondAttribute="centerX" id="MJT-VG-nUL"/>
                             <constraint firstItem="lc9-mm-5aZ" firstAttribute="trailing" secondItem="Efe-Sz-vQv" secondAttribute="trailing" id="Rg8-Sc-Vv3"/>
                             <constraint firstItem="lc9-mm-5aZ" firstAttribute="leading" secondItem="Efe-Sz-vQv" secondAttribute="leading" id="c8f-13-vb6"/>
                             <constraint firstItem="vjB-0n-oKx" firstAttribute="top" secondItem="Efe-Sz-vQv" secondAttribute="top" id="f8S-ae-Rw7"/>
-                            <constraint firstItem="8gW-gn-Hdy" firstAttribute="centerY" secondItem="4j7-hX-DLb" secondAttribute="centerY" id="fvf-M1-hGK"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="alertImage" destination="AbU-9p-mrW" id="DLy-ad-nXo"/>
-                        <outlet property="alertText" destination="p83-Nl-kth" id="Xca-u4-n9A"/>
                         <outlet property="containerView" destination="lc9-mm-5aZ" id="Oov-mc-pnp"/>
-                        <outlet property="daoButton" destination="bTR-g9-CbM" id="Lkn-cv-pvm"/>
-                        <outlet property="noMatchView" destination="8gW-gn-Hdy" id="0iR-gP-9eL"/>
-                        <outlet property="searchBarContainerView" destination="qoB-DJ-IzZ" id="Rda-k0-dN3"/>
-                        <outlet property="searchBarView" destination="g9h-oY-hLO" id="mM1-Wo-X8G"/>
-                        <outlet property="searchField" destination="V4l-fU-fjI" id="ohC-Am-BeS"/>
-                        <outlet property="searchFieldStack" destination="vjB-0n-oKx" id="O4B-YO-pw9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X8Z-B3-7OR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1230,7 +1186,6 @@
         <image name="chat_InviteLink" width="100" height="16"/>
         <image name="chat_plus" width="35" height="35"/>
         <image name="closePopup" width="30" height="30"/>
-        <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="more-grey-circle" width="30" height="30"/>
         <namedColor name="White87%">
             <color red="0.87800002098083496" green="0.87800002098083496" blue="0.88200002908706665" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1256,14 +1211,8 @@
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
-        <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

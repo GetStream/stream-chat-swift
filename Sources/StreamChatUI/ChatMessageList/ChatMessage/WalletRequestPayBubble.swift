@@ -23,7 +23,7 @@ class WalletRequestPayBubble: UITableViewCell {
     public private(set) var pickUpButton: UIButton!
     public private(set) var lblDetails: UILabel!
     private var detailsStack: UIStackView!
-    var options: ChatMessageLayoutOptions?
+    public var layoutOptions: ChatMessageLayoutOptions?
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     var isSender = false
@@ -31,7 +31,7 @@ class WalletRequestPayBubble: UITableViewCell {
     var chatClient: ChatClient?
     var client: ChatClient?
     var walletPaymentType: WalletAttachmentPayload.PaymentType = .pay
-
+        
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -47,20 +47,21 @@ class WalletRequestPayBubble: UITableViewCell {
     }
 
     func configureCell(isSender: Bool) {
+        self.isSender = isSender
         viewContainer = UIView()
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.backgroundColor = .clear
         viewContainer.clipsToBounds = true
         contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
-            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4)
+            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 0),
+            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -Constants.MessageTopPadding)
         ])
         if isSender {
             viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth).isActive = true
-            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: Constants.MessageRightPadding).isActive = true
         } else {
-            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8).isActive = true
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: Constants.MessageLeftPadding).isActive = true
             viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -cellWidth).isActive = true
         }
 
@@ -163,7 +164,6 @@ class WalletRequestPayBubble: UITableViewCell {
         ])
         timestampLabel.transform = .mirrorY
     }
-
     private func createTimestampLabel() -> UILabel {
         if timestampLabel == nil {
             timestampLabel = UILabel()
@@ -367,6 +367,5 @@ class WalletRequestPayBubble: UITableViewCell {
             userInfo["channelId"] = channelId
             NotificationCenter.default.post(name: .sendGiftPacketTapAction, object: nil, userInfo: userInfo)
         }
-
     }
 }
