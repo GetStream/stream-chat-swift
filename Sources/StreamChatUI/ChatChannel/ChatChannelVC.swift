@@ -82,6 +82,17 @@ open class ChatChannelVC:
         return button.withoutAutoresizingMaskConstraints
     }()
 
+    open private(set) lazy var channelAction: UIView = {
+        let actionView = UIView()
+        actionView.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
+        return actionView.withoutAutoresizingMaskConstraints
+    }()
+
+    open private(set) lazy var btnAction: UIButton = {
+        let button = UIButton()
+        return button.withoutAutoresizingMaskConstraints
+    }()
+
     open private(set) lazy var rightStackView: UIStackView = {
         let stack = UIStackView().withoutAutoresizingMaskConstraints
         stack.axis = .horizontal
@@ -252,6 +263,22 @@ open class ChatChannelVC:
                 messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
                 messageComposerBottomConstraint?.isActive = true
             }
+            if channelController?.channel?.type == .announcement, let mute = channelController?.channel?.isMuted {
+                self.navigationController?.isToolbarHidden = true
+                btnAction.setTitle(mute ? "Unmute" : "Mute", for: .normal)
+                btnAction.addTarget(self, action: #selector(muteAction), for: .touchUpInside)
+                messageComposerVC?.view.isHidden = true
+
+                view.insertSubview(channelAction, aboveSubview: messageComposerVC?.view ?? .init())
+                channelAction.pin(anchors: [.leading, .trailing], to: view)
+                channelAction.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
+                channelAction.bottomAnchor.pin(equalTo: view.bottomAnchor).isActive = true
+                channelAction.embed(btnAction)
+                btnAction.pin(to: channelAction)
+            } else {
+                self.messageComposerVC?.view.isHidden = false
+                self.navigationController?.isToolbarHidden = true
+            }
         }
         
         view.addSubview(shareView)
@@ -292,6 +319,7 @@ open class ChatChannelVC:
             messageComposerVC?.composerView.isUserInteractionEnabled = true
             messageComposerVC?.composerView.alpha = 1.0
             channelAvatarView.isHidden = false
+            messageComposerVC?.composerView.isUserInteractionEnabled = true
             moreButton.isHidden = false
         }
         let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.headerViewAction(_:)))
@@ -318,6 +346,11 @@ open class ChatChannelVC:
         NotificationCenter.default.post(name: .hideTabbar, object: nil)
     }
 
+    open override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.isToolbarHidden = true
+    }
+
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if enableKeyboardObserver {
@@ -339,8 +372,26 @@ open class ChatChannelVC:
         self.dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(name: .showTabbar, object: nil)
     }
+
+    @objc func muteAction(_ sender: UIButton) {
+        guard let isMute = channelController?.channel?.isMuted,
+              let currentUserId = ChatClient.shared.currentUserId
+        else { return }
+        if isMute {
+            self.channelController?.unmuteChannel(completion: nil)
+            // Add user in channel to enable notification
+            self.channelController?.addMembers(userIds: [currentUserId], completion: nil)
+            sender.setTitle("Mute", for: .normal)
+            return;
+        }
+        self.channelController?.muteChannel(completion: nil)
+        // Remove user from channel to disable notification
+        self.channelController?.removeMembers(userIds: [currentUserId], completion: nil)
+        sender.setTitle("Unmute", for: .normal)
+    }
     
     @objc func headerViewAction(_ sender: Any) {
+        guard channelController?.channel?.type != .announcement else { return }
         if self.channelController?.channel?.isDirectMessageChannel ?? true {
             return
         }
