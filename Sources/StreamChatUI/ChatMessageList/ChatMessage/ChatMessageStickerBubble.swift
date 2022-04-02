@@ -108,7 +108,7 @@ class ChatMessageStickerBubble: _TableViewCell {
             sentThumbGifView.isHidden = false
             sentThumbStickerView.isHidden = true
         } else if let sticker = content?.extraData.stickerUrl {
-            sentThumbStickerView.setSticker(sticker ?? "", sizeOptimized: true)
+            sentThumbStickerView.setSticker(sticker.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "", sizeOptimized: true)
             sentThumbGifView.isHidden = true
             sentThumbStickerView.isHidden = false
         }
