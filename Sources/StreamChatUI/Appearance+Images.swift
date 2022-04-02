@@ -55,6 +55,10 @@ public extension Appearance {
                 return loadImageSafely(with: "close")
             }
         }()
+        public var socialMail: UIImage = loadImageSafely(with: "social_mail")
+        public var socialInsta: UIImage = loadImageSafely(with: "social_insta")
+        public var socialTikTok: UIImage = loadImageSafely(with: "social_tiktok")
+        public var socialTwitter: UIImage = loadImageSafely(with: "social_twitter")
         public var userSelected: UIImage = loadImageSafely(with: "chat_UserStatus")
         public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
@@ -151,6 +155,62 @@ public extension Appearance {
         public lazy var exclamationMarkCircle: UIImage? = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "exclamationmark.circle")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var starCircleFill: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "star.circle.fill")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var bell: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "bell")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var bellSlash: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "bell.slash")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var crown: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "crown")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var block: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "hand.raised.slash")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var unblock: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "hand.raised")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var rectanglePencil: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "rectangle.and.pencil.and.ellipsis")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var personTextRectangle: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "person.text.rectangle")
             } else {
                 return nil
             }

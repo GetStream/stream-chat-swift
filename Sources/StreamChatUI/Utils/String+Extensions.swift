@@ -97,6 +97,16 @@ extension String {
     var isBlank: Bool {
         return self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
+
+    func trimStringByFirstLastCount(firstCount: Int, lastCount: Int) -> String {
+        let newString = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        if self.count > firstCount * 2 {
+            let prefix = String(newString.prefix(firstCount))
+            let suffix = String(newString.suffix(lastCount))
+            return "\(prefix)...\(suffix)"
+        }
+        return self
+    }
 }
 
 extension String {
