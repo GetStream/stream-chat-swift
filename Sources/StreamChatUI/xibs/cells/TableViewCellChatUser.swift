@@ -12,6 +12,9 @@ import Nuke
 import SkeletonView
 
 public class TableViewCellChatUser: _TableViewCell, AppearanceProvider {
+    static var nib: UINib {
+        return UINib(nibName: reuseId, bundle: nil)
+    }
     public static let reuseId: String = "TableViewCellChatUser"
     // MARK: - OUTLETS
     @IBOutlet public var containerView: UIView!
