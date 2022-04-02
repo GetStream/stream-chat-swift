@@ -26,7 +26,7 @@ class StickerCollectionCell: UICollectionViewCell {
     }
 
     func configureSticker(sticker: Sticker) {
-        imgSticker.setSticker(sticker.stickerImg ?? "", sizeOptimized: true)
+        imgSticker.setSticker(((sticker.stickerImg ?? "").addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""), sizeOptimized: true)
         imgSticker.backgroundColor = .clear
     }
 }
