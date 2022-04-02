@@ -10,8 +10,6 @@ import UIKit
 
 open class ContextMenuCell: UITableViewCell {
     
-    static let identifier = "ContextMenuCell"
-
     @IBOutlet open weak var titleLabel: UILabel!
     @IBOutlet open weak var iconImageView: UIImageView!
     @IBOutlet open weak var separator: UILabel!
