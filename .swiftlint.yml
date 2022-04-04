@@ -6,7 +6,6 @@ excluded:
   - Sources/StreamChatUI/Generated
   - Sources/StreamChatUI/StreamSwiftyGif
   - Sources/StreamChat/StreamStarscream
-  - Tests
   - vendor
 
 disabled_rules:
