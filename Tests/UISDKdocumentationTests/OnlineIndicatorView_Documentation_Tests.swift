@@ -15,7 +15,7 @@ class OnlineIndicatorView_Documentation_Tests: XCTestCase {
         
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 20),
-            view.heightAnchor.constraint(equalToConstant: 20)
+            view.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         generateDocs(
