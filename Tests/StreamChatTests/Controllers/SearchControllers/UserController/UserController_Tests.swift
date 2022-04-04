@@ -30,16 +30,15 @@ final class UserController_Tests: XCTestCase {
     
     override func tearDown() {
         env.userUpdater?.cleanUp()
-        
         userId = nil
         controllerCallbackQueueID = nil
-        
+
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
             Assert.canBeReleased(&env)
         }
-        
+
         super.tearDown()
     }
     
@@ -241,7 +240,7 @@ final class UserController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
         
         // Set the delegate
-        controller.delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
         
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -261,7 +260,7 @@ final class UserController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
         
         // Set the delegate
-        controller.delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
         
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -292,7 +291,7 @@ final class UserController_Tests: XCTestCase {
     // MARK: - Delegate
 
     func test_delegate_isAssignedCorrectly() {
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
 
         // Set the delegate
         controller.delegate = delegate
@@ -303,7 +302,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Synchronize
@@ -321,7 +320,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_delegate_isNotifiedAboutCreatedUser() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Create user in the database.
@@ -333,7 +332,7 @@ final class UserController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutUpdatedUser() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Create user in the database.
@@ -563,8 +562,8 @@ final class UserController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userUpdater: UserUpdaterMock?
-    @Atomic var userObserver: EntityDatabaseObserverMock<ChatUser, UserDTO>?
+    @Atomic var userUpdater: UserUpdater_Mock?
+    @Atomic var userObserver: EntityDatabaseObserver_Mock<ChatUser, UserDTO>?
     @Atomic var userObserverSynchronizeError: Error?
 
     lazy var environment: ChatUserController.Environment = .init(
@@ -586,20 +585,4 @@ private class TestEnvironment {
             return self.userObserver!
         }
     )
-}
-
-// A concrete `ChatUserControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChatUserControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateUser_change: EntityChange<ChatUser>?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        validateQueue()
-        self.state = state
-    }
-    
-    func userController(_ controller: ChatUserController, didUpdateUser change: EntityChange<ChatUser>) {
-        validateQueue()
-        didUpdateUser_change = change
-    }
 }

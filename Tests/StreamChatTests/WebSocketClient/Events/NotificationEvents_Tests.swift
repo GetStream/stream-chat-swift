@@ -6,8 +6,18 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class NotificationsEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder()
+final class NotificationsEvents_Tests: XCTestCase {
+    var eventDecoder: EventDecoder!
+
+    override func setUp() {
+        super.setUp()
+        eventDecoder = EventDecoder()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        eventDecoder = nil
+    }
     
     func test_messageNew() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationMessageNew")
@@ -100,7 +110,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationMessageNewEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let cid: ChannelId = .unique
@@ -135,7 +145,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationMarkAllReadEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -163,7 +173,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationMarkReadEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -193,7 +203,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationMutesUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -219,7 +229,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationAddedToChannelEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -249,7 +259,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationRemovedFromChannelEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -283,7 +293,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationChannelMutesUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -309,7 +319,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationInvitedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -343,7 +353,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationInviteAcceptedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -378,7 +388,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationInviteRejectedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -413,7 +423,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_notificationChannelDeletedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(

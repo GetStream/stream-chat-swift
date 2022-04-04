@@ -83,23 +83,3 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         )
     }
 }
-
-private struct PhotoMetadata: Codable, Equatable {
-    struct Location: Codable, Equatable {
-        let longitude: Double
-        let latitude: Double
-    }
-    
-    let location: Location
-    let comment: String
-    
-    static var random: Self {
-        .init(
-            location: .init(
-                longitude: .random(in: 0...100),
-                latitude: .random(in: 0...100)
-            ),
-            comment: .unique
-        )
-    }
-}

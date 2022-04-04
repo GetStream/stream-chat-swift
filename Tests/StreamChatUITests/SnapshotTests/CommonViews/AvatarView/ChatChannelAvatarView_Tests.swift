@@ -3,12 +3,12 @@
 //
 
 import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import SwiftUI
 import XCTest
 
-class ChatChannelAvatarView_Tests: XCTestCase {
+final class ChatChannelAvatarView_Tests: XCTestCase {
     var currentUserId: UserId!
     var channel: ChatChannel!
     

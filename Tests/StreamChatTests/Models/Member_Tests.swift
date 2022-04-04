@@ -5,7 +5,7 @@
 @testable import StreamChat
 import XCTest
 
-class MemberRole_Tests: XCTestCase {
+final class MemberRole_Tests: XCTestCase {
     func test_memberRole_decodesCorrectly() throws {
         func embed(_ value: String) throws -> Data {
             try JSONEncoder().encode(["role": value])

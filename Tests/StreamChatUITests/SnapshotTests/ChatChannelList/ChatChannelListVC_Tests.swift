@@ -3,16 +3,16 @@
 //
 
 import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatChannelListVC_Tests: XCTestCase {
+final class ChatChannelListVC_Tests: XCTestCase {
     var view: ChatChannelListItemView!
     var vc: ChatChannelListVC!
     var mockedChannelListController: ChatChannelListController_Mock!
     var mockedCurrentUserController: CurrentChatUserController_Mock!
-    var mockedRouter: ChatChannelListRouter_Mock { vc.router as! ChatChannelListRouter_Mock }
+    var mockedRouter: ChatChannelListRouterMock { vc.router as! ChatChannelListRouterMock }
 
     var channels: [ChatChannel] = []
     
@@ -44,7 +44,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         vc.controller = mockedChannelListController
         
         var components = Components.mock
-        components.channelListRouter = ChatChannelListRouter_Mock.self
+        components.channelListRouter = ChatChannelListRouterMock.self
         vc.components = components
 
         channels = .dummy()

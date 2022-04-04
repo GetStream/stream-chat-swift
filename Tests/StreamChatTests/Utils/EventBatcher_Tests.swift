@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class Batch_Tests: XCTestCase {
@@ -15,7 +16,7 @@ final class Batch_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        VirtualTimeTimer.time = nil
+        VirtualTimeTimer.invalidate()
         
         super.tearDown()
     }
@@ -93,10 +94,4 @@ final class Batch_Tests: XCTestCase {
         // Assert current batch is empty
         XCTAssertEqual(batcher.currentBatch, [])
     }
-}
-
-// MARK: - Helpers
-
-private struct TestEvent: Event, Equatable {
-    let uuid: UUID = .init()
 }

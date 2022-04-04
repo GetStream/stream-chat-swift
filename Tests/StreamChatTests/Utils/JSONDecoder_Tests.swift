@@ -7,16 +7,7 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-extension Calendar {
-    static var gmtCalendar: Calendar {
-        // Create a GMT calendar, to test on GMT+0 timezone
-        var calendar = Calendar(identifier: .iso8601)
-        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        return calendar
-    }
-}
-
-class JSONDecoderTests: XCTestCase {
+final class JSONDecoderTests: XCTestCase {
     private var decoder: JSONDecoder!
 
     private let key = "date"
@@ -127,7 +118,11 @@ class JSONDecoderTests: XCTestCase {
             second: 13
         )
     }
+}
 
+// MARK: Helpers
+
+extension JSONDecoderTests {
     private func json(dateString: String) -> String {
         "{\"\(key)\":\"\(dateString)\"}"
     }
@@ -145,7 +140,7 @@ class JSONDecoderTests: XCTestCase {
         // Given
         let dateJson = json(dateString: dateString)
         let data = dateJson.data(using: .utf8)!
-        
+
         // When
         let decoded: [String: Date] = try! decoder.decode([String: Date].self, from: data)
 

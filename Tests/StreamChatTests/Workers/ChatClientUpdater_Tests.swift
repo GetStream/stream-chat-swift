@@ -331,7 +331,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         config.isClientInActiveMode = false
 
         // Create `passive` client.
-        let client = ChatClientMock(config: config)
+        let client = ChatClient_Mock(config: config)
 
         // Create `ChatClientUpdater` instance.
         let updater = ChatClientUpdater(client: client)
@@ -370,7 +370,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
     func test_reloadUserIfNeeded_newUser_propagatesWebSocketClientError_whenAutomaticallyConnects() {
         // Create `active` client.
-        let client = ChatClientMock(config: .init(apiKeyString: .unique))
+        let client = ChatClient_Mock(config: .init(apiKeyString: .unique))
 
         // Create `ChatClientUpdater` instance.
         let updater = ChatClientUpdater(client: client)
@@ -428,7 +428,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
     
     func test_reloadUserIfNeeded_firstConnect() throws {
         // Create an active client without a user session.
-        let client = ChatClientMock(
+        let client = ChatClient_Mock(
             config: .init(apiKeyString: .unique),
             workerBuilders: [TestWorker.init]
         )
@@ -502,13 +502,13 @@ final class ChatClientUpdater_Tests: XCTestCase {
     private func mockClientWithUserSession(
         isActive: Bool = true,
         token: Token = .unique(userId: .unique)
-    ) -> ChatClientMock {
+    ) -> ChatClient_Mock {
         // Create a config.
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isClientInActiveMode = isActive
 
         // Create a client.
-        let client = ChatClientMock(config: config)
+        let client = ChatClient_Mock(config: config)
         client.connectUser(userInfo: .init(id: token.userId), token: token)
 
         client.currentUserId = token.userId

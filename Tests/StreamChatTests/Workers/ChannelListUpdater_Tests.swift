@@ -7,9 +7,9 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelListUpdater_Tests: XCTestCase {
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
+final class ChannelListUpdater_Tests: XCTestCase {
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
     var database: DatabaseContainer!
     
     var listUpdater: ChannelListUpdater!
@@ -17,19 +17,21 @@ class ChannelListUpdater_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
         
         listUpdater = ChannelListUpdater(database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
         apiClient.cleanUp()
-        
+
         AssertAsync {
+            Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&listUpdater)
             Assert.canBeReleased(&database)
+            Assert.canBeReleased(&webSocketClient)
         }
         
         super.tearDown()

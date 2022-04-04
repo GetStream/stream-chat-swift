@@ -7,7 +7,7 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-class MessageSearchController_Tests: XCTestCase {
+final class MessageSearchController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
     
     var client: ChatClient!
@@ -38,13 +38,15 @@ class MessageSearchController_Tests: XCTestCase {
         controllerCallbackQueueID = nil
         
         env.messageUpdater?.cleanUp()
-        
+        (client as? ChatClient_Mock)?.cleanUp()
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
             Assert.canBeReleased(&env)
         }
-        
+        controller = nil
+        client = nil
+        env = nil
         super.tearDown()
     }
     
@@ -136,7 +138,7 @@ class MessageSearchController_Tests: XCTestCase {
     
     func test_searchWithText_resultIsReported() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -192,7 +194,7 @@ class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId)
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Make a search
@@ -216,7 +218,7 @@ class MessageSearchController_Tests: XCTestCase {
         // the updater instance
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Make a search
@@ -277,7 +279,7 @@ class MessageSearchController_Tests: XCTestCase {
     
     func test_searchWithTerm_emptySearch_clearsSearch() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Make a search
@@ -341,7 +343,7 @@ class MessageSearchController_Tests: XCTestCase {
     
     func test_searchWithQuery_resultIsReported() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -396,7 +398,7 @@ class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId)
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Make a search
@@ -420,7 +422,7 @@ class MessageSearchController_Tests: XCTestCase {
         // the updater instance
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Make a search
@@ -466,7 +468,7 @@ class MessageSearchController_Tests: XCTestCase {
     
     func test_searchWithQuery_sortingIsRespected() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Make a search
@@ -557,7 +559,7 @@ class MessageSearchController_Tests: XCTestCase {
     
     func test_loadNextMessages_nextResultPage_isLoaded() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Make a search
@@ -617,11 +619,11 @@ class MessageSearchController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var messageUpdater: MessageUpdaterMock?
+    @Atomic var messageUpdater: MessageUpdater_Mock?
     
     lazy var environment: ChatMessageSearchController.Environment =
         .init(messageUpdaterBuilder: { [unowned self] in
-            self.messageUpdater = MessageUpdaterMock(
+            self.messageUpdater = MessageUpdater_Mock(
                 isLocalStorageEnabled: $0,
                 messageRepository: $1,
                 database: $2,
@@ -629,23 +631,4 @@ private class TestEnvironment {
             )
             return self.messageUpdater!
         })
-}
-
-// A concrete `MessageSearchControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChatMessageSearchControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didChangeMessages_changes: [ListChange<ChatMessage>]?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
-    func controller(
-        _ controller: ChatMessageSearchController,
-        didChangeMessages changes: [ListChange<ChatMessage>]
-    ) {
-        didChangeMessages_changes = changes
-        validateQueue()
-    }
 }

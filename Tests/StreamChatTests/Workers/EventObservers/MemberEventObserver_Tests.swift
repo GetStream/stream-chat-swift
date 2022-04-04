@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class MemberEventObserver_Tests: XCTestCase {
@@ -64,12 +65,3 @@ final class MemberEventObserver_Tests: XCTestCase {
         AssertAsync.staysEqual(receivedEvents as? [TestMemberEvent], [matchingMemberEvent])
     }
 }
-
-struct TestMemberEvent: MemberEvent, ChannelSpecificEvent, Hashable {
-    static var unique: TestMemberEvent { .init(cid: .unique, memberUserId: .unique) }
-    
-    let cid: ChannelId
-    let memberUserId: UserId
-}
-
-private struct OtherEvent: Event {}

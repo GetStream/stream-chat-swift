@@ -3,12 +3,13 @@
 //
 
 import StreamChat
+@testable import StreamChatTestTools
 import StreamChatUI
 import SwiftUI
 import XCTest
 
 @available(iOS 13.0, *)
-class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
+final class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomChannelListItemView: ChatChannelListItemView.SwiftUIView {
             @ObservedObject var dataSource: ChatChannelListItemView.ObservedObject<Self>

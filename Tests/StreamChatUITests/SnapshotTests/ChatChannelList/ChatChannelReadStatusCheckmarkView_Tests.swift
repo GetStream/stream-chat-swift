@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatChannelReadStatusCheckmarkView_Tests: XCTestCase {
+final class ChatChannelReadStatusCheckmarkView_Tests: XCTestCase {
     func test_emptyAppearance() {
         let view = ChatChannelReadStatusCheckmarkView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()

@@ -6,16 +6,17 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelDTO_Tests: XCTestCase {
+final class ChannelDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
 
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
     
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
     
@@ -363,7 +364,7 @@ class ChannelDTO_Tests: XCTestCase {
 
         let cid: ChannelId = .unique
         
-        database = DatabaseContainerMock(localCachingSettings: caching)
+        database = DatabaseContainer_Spy(localCachingSettings: caching)
         
         // Create more entities than the limits
         let allMembers: [MemberPayload] = (0..<memberLimit * 2).map { _ in .dummy() }

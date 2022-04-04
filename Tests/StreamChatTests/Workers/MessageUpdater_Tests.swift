@@ -8,10 +8,10 @@ import CoreData
 import XCTest
 
 final class MessageUpdater_Tests: XCTestCase {
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
-    var database: DatabaseContainerMock!
-    var messageRepository: MessageRepositoryMock!
+    var webSocketClient: WebSocketClient_Mock!
+    var apiClient: APIClient_Spy!
+    var database: DatabaseContainer_Spy!
+    var messageRepository: MessageRepository_Spy!
     var messageUpdater: MessageUpdater!
     
     // MARK: Setup
@@ -19,16 +19,29 @@ final class MessageUpdater_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
-        messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
+        messageRepository = MessageRepository_Spy(database: database, apiClient: apiClient)
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: true,
             messageRepository: messageRepository,
             database: database,
             apiClient: apiClient
         )
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        apiClient.cleanUp()
+
+        AssertAsync {
+            Assert.canBeReleased(&messageRepository)
+            Assert.canBeReleased(&messageUpdater)
+            Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&apiClient)
+            Assert.canBeReleased(&database)
+        }
     }
 
     func recreateUpdater(isLocalStorageEnabled: Bool) {
@@ -39,21 +52,7 @@ final class MessageUpdater_Tests: XCTestCase {
             apiClient: apiClient
         )
     }
-    
-    override func tearDown() {
-        apiClient.cleanUp()
-        
-        AssertAsync {
-            Assert.canBeReleased(&messageRepository)
-            Assert.canBeReleased(&messageUpdater)
-            Assert.canBeReleased(&webSocketClient)
-            Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&database)
-        }
-        
-        super.tearDown()
-    }
-    
+
     // MARK: Edit message
     
     func test_editMessage_propagates_CurrentUserDoesNotExist_Error() throws {
