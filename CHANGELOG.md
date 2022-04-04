@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Quote message action visibility can be controlled from the dashboard [#1891](https://github.com/GetStream/stream-chat-swift/issues/1891)
 
+# [4.13.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.1)
+_April 04, 2022_
+
+### 🚨 Fixed
+- Fix deadlock when accessing some properties from Events Delegate [#1898](https://github.com/GetStream/stream-chat-swift/issues/1898)
+
 # [4.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.0)
 _March 29, 2022_
 
