@@ -14,7 +14,7 @@ class EventNotificationCenter: NotificationCenter {
     // We post events on a queue different from database.writable context
     // queue to prevent a deadlock happening when @CoreDataLazy (with `context.performAndWait` inside)
     // model is accessed in event handlers.
-    var eventPostingQueue = DispatchQueue.main
+    var eventPostingQueue = DispatchQueue(label: "io.getstream.event-notification-center")
     
     init(database: DatabaseContainer) {
         self.database = database
@@ -42,7 +42,7 @@ class EventNotificationCenter: NotificationCenter {
                 return
             }
             
-            self.eventPostingQueue.sync {
+            self.eventPostingQueue.async {
                 eventsToPost.forEach { self.post(Notification(newEventReceived: $0, sender: self)) }
                 completion?()
             }
