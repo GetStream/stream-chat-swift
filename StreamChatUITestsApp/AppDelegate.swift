@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Empty root view controller
         let rootViewController = ViewController()
 
-        /// Embed in navigation controller
+        // Embed in navigation controller
         window = UIWindow()
         window?.rootViewController = UINavigationController(rootViewController: rootViewController)
         window?.makeKeyAndVisible()
