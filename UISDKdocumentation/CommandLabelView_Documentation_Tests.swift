@@ -19,7 +19,7 @@ class CommandLabelView_Documentation_Tests: XCTestCase {
             annotations: { view in
                 [
                     .init(view: view.iconView, descriptionLabelPosition: .topLeft),
-                    .init(view: view.nameLabel, descriptionLabelPosition: .topRight)
+                    .init(view: view.nameLabel, descriptionLabelPosition: .topRight),
                 ]
             },
             name: "CommandLabelView_documentation",

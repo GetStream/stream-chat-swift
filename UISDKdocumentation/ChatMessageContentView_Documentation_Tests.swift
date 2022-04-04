@@ -60,7 +60,7 @@ class ChatMessageContentView_Documentation_Tests: XCTestCase {
 
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 300),
-            view.heightAnchor.constraint(equalToConstant: 100)
+            view.heightAnchor.constraint(equalToConstant: 100),
         ])
 
         generateDocs(
@@ -73,7 +73,7 @@ class ChatMessageContentView_Documentation_Tests: XCTestCase {
                     .init(view: view.bubbleThreadMetaContainer, descriptionLabelPosition: .bottomRight),
                     .init(view: view.bubbleView!, lineColor: .systemTeal, descriptionLabelPosition: .top),
                     .init(view: view.metadataContainer!, lineColor: .systemTeal, descriptionLabelPosition: .bottom),
-                    .init(view: view.threadInfoContainer!, lineColor: .systemTeal, descriptionLabelPosition: .right)
+                    .init(view: view.threadInfoContainer!, lineColor: .systemTeal, descriptionLabelPosition: .right),
                  ]
             },
             name: "ChatMessageContentView_documentation",
