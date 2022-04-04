@@ -2,6 +2,7 @@ excluded:
   - Scripts
   - Package.swift
   - DocsSnippets
+  - Dependencies
 
 disabled_rules:
   - large_tuple
@@ -17,7 +18,6 @@ disabled_rules:
   - type_body_length
   - opening_brace
   - line_length
-  - empty_count
 
 opt_in_rules:
   - convenience_type
