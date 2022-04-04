@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # [4.13.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.1)
 _April 04, 2022_
 
+## StreamChat
 ### 🚨 Fixed
 - Fix deadlock when accessing some properties from Events Delegate [#1898](https://github.com/GetStream/stream-chat-swift/issues/1898)
 
