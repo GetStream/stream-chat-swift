@@ -732,7 +732,7 @@ class ChannelListController_Tests: XCTestCase {
         query = .init(filter: .in(.members, values: [.unique]), pageSize: pageSize)
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         
-        controller.loadNextChannels() { error in
+        controller.loadNextChannels { error in
             XCTAssertNil(error)
             completionCalled = true
         }

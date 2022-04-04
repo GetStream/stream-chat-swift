@@ -38,4 +38,3 @@ public final class DeviceRobot {
         return self
     }
 }
-

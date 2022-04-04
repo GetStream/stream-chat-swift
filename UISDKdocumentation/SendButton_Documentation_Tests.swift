@@ -15,7 +15,7 @@ class SendButton_Documentation_Tests: XCTestCase {
             
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 50),
-            view.heightAnchor.constraint(equalToConstant: 50),
+            view.heightAnchor.constraint(equalToConstant: 50)
         ])
         
         view.isEnabled = true
@@ -36,4 +36,3 @@ class SendButton_Documentation_Tests: XCTestCase {
 
     }
 }
-

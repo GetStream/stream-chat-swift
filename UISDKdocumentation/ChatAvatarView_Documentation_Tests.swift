@@ -16,7 +16,7 @@ class ChatAvatarView_Documentation_Tests: XCTestCase {
             
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 100),
-            view.heightAnchor.constraint(equalToConstant: 100),
+            view.heightAnchor.constraint(equalToConstant: 100)
         ])
         
         generateDocs(
@@ -27,4 +27,3 @@ class ChatAvatarView_Documentation_Tests: XCTestCase {
         )
     }
 }
-

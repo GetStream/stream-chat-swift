@@ -3,6 +3,9 @@ excluded:
   - Package.swift
   - DocsSnippets
   - Dependencies
+  - Sources/StreamChatUI/Generated
+  - Tests
+  - vendor
 
 disabled_rules:
   - large_tuple

@@ -1380,7 +1380,7 @@ final class MessageController_Tests: XCTestCase {
         ]
         env.messageUpdater.loadReactions_result = .success(mockedReactions)
 
-        controller.loadNextReactions() { error in
+        controller.loadNextReactions { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
@@ -1412,7 +1412,7 @@ final class MessageController_Tests: XCTestCase {
             .mock(type: "wow", author: .unique)
         ]
 
-        controller.loadNextReactions() { error in
+        controller.loadNextReactions { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
@@ -1456,7 +1456,7 @@ final class MessageController_Tests: XCTestCase {
         ]
         env.messageUpdater.loadReactions_result = .success(mockedReactions)
 
-        controller.loadNextReactions() { error in
+        controller.loadNextReactions { error in
             XCTAssertNil(error)
             exp.fulfill()
         }

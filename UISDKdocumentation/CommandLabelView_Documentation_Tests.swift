@@ -27,4 +27,3 @@ class CommandLabelView_Documentation_Tests: XCTestCase {
         )
     }
 }
-

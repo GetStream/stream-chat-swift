@@ -18,7 +18,7 @@ class TitleContainerView_Documentation_Tests: XCTestCase {
         
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 320),
-            view.heightAnchor.constraint(equalToConstant: 44),
+            view.heightAnchor.constraint(equalToConstant: 44)
         ])
         
         generateDocs(
@@ -26,7 +26,7 @@ class TitleContainerView_Documentation_Tests: XCTestCase {
             annotations: { view in
                [ // Annotation types for the given subviews of the view
                 .init(view: view.titleLabel, descriptionLabelPosition: .topLeft),
-                .init(view: view.subtitleLabel, descriptionLabelPosition: .topRight),
+                .init(view: view.subtitleLabel, descriptionLabelPosition: .topRight)
                ]
             },
             name: "TitleContainerView_documentation", // Name of the file, will be suffixed with dark/light trait...

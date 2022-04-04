@@ -17,7 +17,7 @@ extension StreamMockServer {
             .messageId: messageId,
             .text: text,
             .createdAt: createdAt,
-            .updatedAt: updatedAt,
+            .updatedAt: updatedAt
         ])
     }
     

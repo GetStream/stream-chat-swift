@@ -375,7 +375,7 @@ final class CurrentUserController_Tests: XCTestCase {
         env.currentUserObserverItem = .mock(id: .unique)
 
         var completionError: Error?
-        controller.synchronizeDevices() { [callbackQueueID] in
+        controller.synchronizeDevices { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
         }
@@ -391,7 +391,7 @@ final class CurrentUserController_Tests: XCTestCase {
         env.currentUserObserverItem = .mock(id: .unique)
 
         var completionError: Error?
-        controller.synchronizeDevices() { [callbackQueueID] in
+        controller.synchronizeDevices { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
         }
