@@ -34,6 +34,11 @@ class EmojiContainerViewController: UIViewController {
     open private(set) lazy var lblStickerName = UILabel
         .init()
         .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var lblStream = UILabel
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     open private(set) lazy var btnDownload = UIButton
         .init()
         .withoutAutoresizingMaskConstraints
@@ -43,6 +48,10 @@ class EmojiContainerViewController: UIViewController {
         .withoutAutoresizingMaskConstraints
 
     open private(set) lazy var hStack = UIStackView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var nameStack = UIStackView
         .init()
         .withoutAutoresizingMaskConstraints
 
@@ -95,8 +104,13 @@ class EmojiContainerViewController: UIViewController {
         imgSticker.contentMode = .scaleAspectFit
 
         lblStickerName.text = menu?.name
-        lblStickerName.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        lblStickerName.numberOfLines = 2
+        lblStickerName.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         lblStickerName.translatesAutoresizingMaskIntoConstraints = false
+
+        lblStream.text = "STREAM"
+        lblStream.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        lblStream.textColor = .white.withAlphaComponent(0.4)
 
         btnDownload.backgroundColor = UIColor(rgb: 0x767680).withAlphaComponent(0.25)
         btnDownload.setTitle("Download", for: .normal)
@@ -104,28 +118,33 @@ class EmojiContainerViewController: UIViewController {
         btnDownload.setTitleColor(.white, for: .normal)
         btnDownload.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         btnDownload.translatesAutoresizingMaskIntoConstraints = false
-        btnDownload.widthAnchor.constraint(equalToConstant: 111).isActive = true
-        btnDownload.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        btnDownload.cornerRadius = 22
+        btnDownload.widthAnchor.constraint(equalToConstant: self.view.bounds.width * 0.7).isActive = true
+        btnDownload.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        btnDownload.cornerRadius = 18
 
-        vStack = UIStackView(arrangedSubviews: [lblStickerName, btnDownload])
-        vStack.axis = .vertical
+        nameStack = UIStackView(arrangedSubviews: [lblStickerName, lblStream])
+        nameStack.axis = .vertical
+        nameStack.alignment = .leading
+        nameStack.spacing = 2
 
-        hStack = UIStackView(arrangedSubviews: [imgSticker, vStack])
+        hStack = UIStackView(arrangedSubviews: [imgSticker, nameStack])
         hStack.axis = .horizontal
+        hStack.alignment = .top
+        vStack = UIStackView(arrangedSubviews: [hStack, btnDownload])
+        vStack.axis = .vertical
         vStack.alignment = .leading
-        hStack.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(hStack)
+        vStack.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(vStack)
         hStack.alignment = .center
-        hStack.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        hStack.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -15).isActive = true
+        vStack.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        vStack.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -10).isActive = true
         hStack.isHidden = true
         hStack.spacing = 10
         vStack.spacing = 10
         collectionEmoji.isHidden = true
-        vStack.widthAnchor.constraint(equalToConstant: 130).isActive = true
+        vStack.widthAnchor.constraint(equalToConstant: self.view.bounds.width * 0.7).isActive = true
         view.layoutIfNeeded()
-        imgSticker.layer.cornerRadius = imgSticker.bounds.width / 2
+        imgSticker.layer.cornerRadius = 8
 
         view.addSubview(loadingIndicator)
         loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -203,10 +222,12 @@ class EmojiContainerViewController: UIViewController {
         } else if stickerId != -2 {
             if StickerMenu.getDefaultStickerIds().contains(stickerId) && !visibleSticker.contains(stickerId) {
                 self.hStack.isHidden = false
+                self.vStack.isHidden = false
                 self.collectionEmoji.isHidden = true
                 self.configureDownloadOption()
             } else {
                 self.hStack.isHidden = true
+                self.vStack.isHidden = true
                 self.collectionEmoji.isHidden = false
                 self.loadSticker(stickerId: "\(stickerId)")
             }
@@ -214,23 +235,49 @@ class EmojiContainerViewController: UIViewController {
     }
 
     private func loadSticker(stickerId: String) {
-        StickerApiClient.stickerInfo(stickerId: stickerId) { [weak self] result in
-            guard let `self` = self else { return }
-            self.stickers = result.body?.package?.stickers ?? []
+        // Retrieve from userdefault
+        if let stickers = UserDefaults.standard.retrieve(object: [Sticker].self, fromKey: stickerId) {
+            self.stickers = stickers
             self.collectionEmoji.reloadData()
+        } else {
+            StickerApiClient.stickerInfo(stickerId: stickerId) { [weak self] result in
+                guard let `self` = self else { return }
+                self.stickers = result.body?.package?.stickers ?? []
+                // Cache sticker in userdefault
+                UserDefaults.standard.save(customObject: self.stickers, inKey: stickerId)
+                UserDefaults.standard.synchronize()
+                self.collectionEmoji.reloadData()
+            }
         }
     }
 
-    private func loadRecentSticker() {
+    private func recentStickers() {
         StickerApiClient.recentSticker { [weak self] result in
             guard let self = self else { return }
             self.stickers = result.body?.stickerList ?? []
             if self.stickers.isEmpty {
                 self.showNoStickerView()
             }
+            UserDefaults.standard.save(customObject: self.stickers, inKey: UserdefaultKey.recentSticker)
+            UserDefaults.standard.synchronize()
             self.collectionEmoji.reloadData()
             self.collectionEmoji.isHidden = false
         }
+    }
+
+    private func loadRecentSticker() {
+        vStack.isHidden = true
+        hStack.isHidden = true
+        // Retrieve from userdefault
+        if let stickers = UserDefaults.standard.retrieve(object: [Sticker].self, fromKey: UserdefaultKey.recentSticker) {
+            self.stickers = stickers
+            collectionEmoji.reloadData()
+            collectionEmoji.isHidden = false
+            recentStickers()
+        } else {
+            recentStickers()
+        }
+
     }
 
     private func updateLoadingView(isHidden: Bool) {

@@ -22,9 +22,6 @@ class EmojiPickerViewController: UIViewController {
     private var stickerCalls = Set<AnyCancellable>()
     private var packages = [PackageList]()
     private var pageMap: [String: Int]?
-    private var currentPage : Int = 0
-    private var totalCount: Int = 0
-    private var isLoadingList : Bool = false
     private var isMyPackage = false
     var downloadedPackage = [Int]()
 
@@ -32,26 +29,17 @@ class EmojiPickerViewController: UIViewController {
         super.viewDidLoad()
         packages.removeAll()
         view.backgroundColor = Appearance.default.colorPalette.stickerBg
-        fetchStickers(pageNumber: 0)
+        fetchStickers(pageNumber: 0, animated: true)
         segmentController.selectedSegmentTintColor = Appearance.default.colorPalette.themeBlue
     }
 
-    private func loadMoreSticker(){
-        guard !isMyPackage else { return }
-        currentPage += 1
-        fetchStickers(pageNumber: currentPage)
-    }
-
-    private func fetchStickers(pageNumber: Int) {
-        StickerApiClient.trendingStickers(pageNumber: pageNumber) { [weak self] result in
+    private func fetchStickers(pageNumber: Int, animated: Bool) {
+        StickerApiClient.trendingStickers(pageNumber: pageNumber, animated: animated) { [weak self] result in
             guard let `self` = self else { return }
             let packages = result.body?.packageList ?? []
             self.packages.append(contentsOf: packages)
             self.pageMap = result.body?.pageMap
-            self.totalCount = self.pageMap?["pageCount"] as? Int ?? 0
-            self.currentPage = self.pageMap?["pageNumber"] as? Int ?? 1
             self.tblPicker.reloadData()
-            self.isLoadingList = false
         }
     }
 
@@ -68,15 +56,15 @@ class EmojiPickerViewController: UIViewController {
         StickerApiClient.hideStickers(packageId: packageId, nil)
     }
 
-    @IBAction func segmentDidiChange(_ sender: UISegmentedControl) {
+    @IBAction func segmentDidChange(_ sender: UISegmentedControl) {
         packages.removeAll()
         tblPicker.reloadData()
-        if sender.selectedSegmentIndex == 0 {
-            isMyPackage = false
-            fetchStickers(pageNumber: 0)
-        } else {
+        if sender.selectedSegmentIndex == 2 {
             isMyPackage = true
             fetchMySticker()
+        } else {
+            isMyPackage = false
+            fetchStickers(pageNumber: 0, animated: sender.selectedSegmentIndex == 0)
         }
     }
 
@@ -98,26 +86,6 @@ extension EmojiPickerViewController: UITableViewDelegate, UITableViewDataSource 
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
-    }
-
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let lastSectionIndex = tableView.numberOfSections - 1
-        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
-        guard !isMyPackage else { return }
-        if indexPath.section ==  lastSectionIndex && indexPath.row == lastRowIndex {
-            let spinner = UIActivityIndicatorView(style: .white)
-            spinner.startAnimating()
-            spinner.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
-            self.tblPicker.tableFooterView = spinner
-            self.tblPicker.tableFooterView?.isHidden = false
-        }
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (((scrollView.contentOffset.y + scrollView.frame.size.height) > scrollView.contentSize.height ) && !isLoadingList){
-            self.isLoadingList = true
-            self.loadMoreSticker()
-        }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

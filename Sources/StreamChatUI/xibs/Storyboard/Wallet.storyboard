@@ -1226,13 +1226,14 @@
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="eBE-9N-zF6">
                                 <rect key="frame" x="15" y="64" width="384" height="32"/>
                                 <segments>
-                                    <segment title="Home"/>
+                                    <segment title="Animated"/>
+                                    <segment title="Stickers"/>
                                     <segment title="My Stickers"/>
                                 </segments>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="selectedSegmentTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
-                                    <action selector="segmentDidiChange:" destination="taO-h5-ks5" eventType="valueChanged" id="K2o-MI-Iaz"/>
+                                    <action selector="segmentDidChange:" destination="taO-h5-ks5" eventType="valueChanged" id="Iyi-xI-yGe"/>
                                 </connections>
                             </segmentedControl>
                         </subviews>

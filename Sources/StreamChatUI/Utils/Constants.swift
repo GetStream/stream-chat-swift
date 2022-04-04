@@ -17,4 +17,5 @@ public struct Constants {
 public struct UserdefaultKey {
     public static let downloadedSticker = "downloadedSticker"
     public static let visibleSticker = "visibleSticker"
+    public static let recentSticker = "recentSticker"
 }

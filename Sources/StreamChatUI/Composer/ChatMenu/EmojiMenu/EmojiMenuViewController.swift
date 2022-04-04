@@ -182,14 +182,13 @@ extension EmojiMenuViewController: UICollectionViewDelegate, UICollectionViewDat
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let direction: UIPageViewController.NavigationDirection = indexPath.row < currentIndex ? .reverse : .forward
         let emojiContainer = EmojiContainerViewController(with: menus[indexPath.row])
         guard selectedPack != menus[indexPath.row].menuId else { return }
         emojiContainer.view.tag = indexPath.row
         selectedPack = menus[indexPath.row].menuId
         currentIndex = menus.firstIndex(where: { $0.menuId == selectedPack}) ?? 0
         collectionView.reloadData()
-        pageController?.setViewControllers([emojiContainer], direction: direction, animated: true, completion: nil)
+        pageController?.setViewControllers([emojiContainer], direction: .forward, animated: false, completion: nil)
         HapticFeedbackGenerator.selectionHaptic()
     }
 

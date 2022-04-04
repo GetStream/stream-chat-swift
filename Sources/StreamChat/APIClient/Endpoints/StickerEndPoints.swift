@@ -28,8 +28,8 @@ extension StickerApi {
             .eraseToAnyPublisher()
     }
 
-    public static func trendingStickers(pageNumber: Int) -> AnyPublisher<ResponseBody<MyStickerBody>, Error> {
-        let url = base.absoluteString + "package" + "?userId=\(userId)&pageNumber=\(pageNumber)"
+    public static func trendingStickers(pageNumber: Int, animated: Bool) -> AnyPublisher<ResponseBody<MyStickerBody>, Error> {
+        let url = base.absoluteString + "package" + "?userId=\(userId)&pageNumber=\(pageNumber)&animated=\(animated ? "Y" : "N")"
         var request = (URLRequest(url: URL(string: url)!))
         request.httpMethod = "GET"
         return agent.run(request)

@@ -59,8 +59,8 @@ public class StickerApiClient {
             .store(in: &stickerCalls)
     }
 
-    public static func trendingStickers(pageNumber: Int,_ completion: @escaping ((ResponseBody<MyStickerBody>) -> Void)) {
-        StickerApi.trendingStickers(pageNumber: pageNumber)
+    public static func trendingStickers(pageNumber: Int, animated: Bool, _ completion: @escaping ((ResponseBody<MyStickerBody>) -> Void)) {
+        StickerApi.trendingStickers(pageNumber: pageNumber, animated: animated)
             .sink { _  in } receiveValue: { result in completion(result) }
             .store(in: &stickerCalls)
     }
