@@ -69,6 +69,12 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
         }
     }
 
+    private func popBack() {
+        dismiss(animated: true, completion: nil)
+        navigationController?.popToRootViewController(animated: true)
+        NotificationCenter.default.post(name: .showTabbar, object: nil)
+    }
+
     private func deleteAndLeaveChannel() {
         guard let channelController = viewModel.channelController,
               let channelId = channelController.channel?.cid else {
@@ -93,7 +99,7 @@ public class ChatGroupDetailsVC: _ViewController,  AppearanceProvider {
                     Snackbar.show(text: "Channel deleted successfully")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                         guard let self = self else { return }
-                        self.navigationController?.popToRootViewController(animated: true)
+                        self.popBack()
                     }
                 }
             }
@@ -409,9 +415,12 @@ extension ChatGroupDetailsVC: ChannelDetailHeaderTVCellDelegate {
                 self.deleteAndLeaveChannel()
             } else {
                 if let userId = ChatClient.shared.currentUserId {
-                    channelController.removeMembers(userIds: [userId]) { error in
+                    channelController.removeMembers(userIds: [userId]) { [weak self] error in
+                        guard let self = self else {
+                            return
+                        }
                         if error == nil {
-                            self.navigationController?.popToRootViewController(animated: true)
+                            self.popBack()
                         } else {
                             Snackbar.show(text: "Error while removing member")
                         }
