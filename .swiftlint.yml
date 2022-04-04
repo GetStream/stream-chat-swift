@@ -3,6 +3,11 @@ excluded:
   - Package.swift
   - DocsSnippets
   - Dependencies
+  - Sources/StreamChatUI/Generated
+  - Sources/StreamChatUI/StreamSwiftyGif
+  - Sources/StreamChat/StreamStarscream
+  - vendor
+  - UISDKdocumentation
 
 disabled_rules:
   - large_tuple

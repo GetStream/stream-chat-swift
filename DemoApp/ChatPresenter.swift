@@ -260,7 +260,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                         }
                     }) :
                     .init(title: "Show channel", style: .default, handler: { [unowned self] _ in
-                        channelController.showChannel() { error in
+                        channelController.showChannel { error in
                             if let error = error {
                                 self.rootViewController.presentAlert(
                                     title: "Couldn't unhide channel \(cid)",
