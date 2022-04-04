@@ -8,6 +8,7 @@ excluded:
   - Sources/StreamChat/StreamStarscream
   - vendor
   - UISDKdocumentation
+  - Tests
 
 disabled_rules:
   - large_tuple
