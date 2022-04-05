@@ -125,7 +125,7 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
     }
 
     @objc private func qrCodePressed(_ sender: UIButton) {
-        if screenType == .userdetail {
+        if screenType == .userdetail || isDirectMessageChannel() {
             cellDelegate?.showWalletQRCode()
         } else {
             cellDelegate?.shareChannelLinkAction()

@@ -439,12 +439,24 @@ extension ChatGroupDetailsVC: ChannelDetailHeaderTVCellDelegate {
     }
 
     func showWalletQRCode() {
-        guard let user = viewModel.user else {
-            return
+        if isDirectMessageChannel() {
+            guard let channel = viewModel.channelController?.channel,
+                  let otherMember = Array(channel.lastActiveMembers)
+                    .first(where: { member in member.id != ChatClient.shared.currentUserId }) else {
+                        return
+                    }
+            var userInfo = [String: Any]()
+            userInfo["walletAddress"] = otherMember.id
+            userInfo["name"] = otherMember.name
+            NotificationCenter.default.post(name: .showWalletQRCode, object: userInfo)
+        } else {
+            guard let user = viewModel.user else {
+                return
+            }
+            var userInfo = [String: Any]()
+            userInfo["walletAddress"] = user.id
+            userInfo["name"] = user.name
+            NotificationCenter.default.post(name: .showWalletQRCode, object: userInfo)
         }
-        var userInfo = [String: Any]()
-        userInfo["walletAddress"] = user.id
-        userInfo["name"] = user.name
-        NotificationCenter.default.post(name: .showWalletQRCode, object: userInfo)
     }
 }
