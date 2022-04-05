@@ -37,7 +37,7 @@ class ChatMessageStickerBubble: _TableViewCell {
         if let giphyUrl = content?.extraData.giphyUrl {
             cellWidth = 200
         } else {
-            cellWidth = 100
+            cellWidth = 150
         }
         if viewContainer != nil {
             viewContainer.removeFromSuperview()

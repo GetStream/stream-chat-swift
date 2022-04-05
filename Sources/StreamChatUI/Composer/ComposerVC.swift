@@ -277,6 +277,16 @@ open class ComposerVC: _ViewController,
     private var emoji: UIViewController?
     private var emojiPickerView: UIViewController!
     private var isMenuShowing = false
+    private var forceKeyboardClose = false {
+        didSet {
+            if forceKeyboardClose {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    guard let `self` = self else { return }
+                    self.forceKeyboardClose = false
+                }
+            }
+        }
+    }
     private var keyboardHeight: CGFloat {
         return KeyboardService.shared.measuredSize
     }
@@ -293,10 +303,27 @@ open class ComposerVC: _ViewController,
         }
     }
 
+    @objc func didTapView() {
+        hideInputView()
+        composerView.inputMessageView.emojiButton.isSelected = false
+        composerView.inputMessageView.textView.becomeFirstResponder()
+        isMenuShowing = true
+        animateMenuButton()
+    }
+
+    @objc fileprivate func keyboardWillHide(notification: Notification) {
+        guard !forceKeyboardClose else { return }
+        composerView.inputMessageView.emojiButton.isSelected = false
+        isMenuShowing = true
+        animateMenuButton()
+    }
+
     override open func setUp() {
         super.setUp()
         KeyboardService.shared.observeKeyboard(self.view)
         composerView.inputMessageView.textView.delegate = self
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+        composerView.inputMessageView.textView.addGestureRecognizer(tapGesture)
         // Set the delegate for handling the pasting of UIImages in the text view
         composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
         self.composerView.toolKitView.isHidden = true
@@ -366,6 +393,7 @@ open class ComposerVC: _ViewController,
         GPHCache.shared.cache.memoryCapacity = 300 * 1000 * 1000
         NotificationCenter.default.removeObserver(self)
         NotificationCenter.default.addObserver(self, selector: #selector(btnSendSticker(_:)), name: .sendSticker, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -583,6 +611,8 @@ open class ComposerVC: _ViewController,
     @objc open func showEmojiMenu(_ sender: UIButton) {
         // EMOJI integration
         sender.isSelected.toggle()
+        isMenuShowing = true
+        animateMenuButton()
         if sender.isSelected {
             if #available(iOS 13.0, *) {
                 emoji = EmojiMenuViewController.instantiateController(storyboard: .wallet)
@@ -593,6 +623,7 @@ open class ComposerVC: _ViewController,
                         if let emojiPickerView = self.emojiPickerView as? EmojiPickerViewController {
                             emojiPickerView.downloadedPackage = downloadedSticker
                         }
+                        self.forceKeyboardClose = true
                         UIApplication.shared.keyWindow?.rootViewController?.present(self.emojiPickerView, animated: true, completion: nil)
                     }
                 }
@@ -711,8 +742,9 @@ open class ComposerVC: _ViewController,
     }
 
     private func hideInputView() {
-        self.composerView.inputMessageView.textView.inputView = nil
-        self.composerView.inputMessageView.textView.reloadInputViews()
+        composerView.inputMessageView.textView.inputView = nil
+        composerView.inputMessageView.textView.reloadInputViews()
+        composerView.inputMessageView.textView.tintColor = .white
         emoji = nil
     }
 
@@ -725,9 +757,11 @@ open class ComposerVC: _ViewController,
             menu.heightAnchor.constraint(equalToConstant: keyboardHeight).isActive = true
         }
         walletView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: keyboardHeight)
-        self.composerView.inputMessageView.textView.inputView = walletView
-        self.composerView.inputMessageView.textView.reloadInputViews()
-        self.composerView.inputMessageView.textView.becomeFirstResponder()
+        composerView.inputMessageView.textView.inputView = walletView
+        composerView.inputMessageView.textView.reloadInputViews()
+        composerView.inputMessageView.textView.becomeFirstResponder()
+        composerView.inputMessageView.textView.tintColor = .clear
+        composerView.inputMessageView.textView.text = nil
     }
 
     private func addWalletAttachment(
