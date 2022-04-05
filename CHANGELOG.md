@@ -10,8 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Local Storage is enabled by default. You can read more [here](https://getstream.io/chat/docs/sdk/ios/guides/offline-support) [#1890](https://github.com/GetStream/stream-chat-swift/pull/1890)
 
 ## StreamChatUI
+### 💥 Removed
+- The `toVCSnapshot`, `fromVCSnapshot` and `containerTransitionImageView` properties were removed `ZoomAnimator` because they were the root cause of animation issues when presenting the popup actions [#1899](https://github.com/GetStream/stream-chat-swift/issues/1899)
 ### ✅ Added
 - Quote message action visibility can be controlled from the dashboard [#1891](https://github.com/GetStream/stream-chat-swift/issues/1891)
+### 🐞 Fixed
+- Fix full screen live photos weird flicker when presented / dismissed to / from full screen [#1899](https://github.com/GetStream/stream-chat-swift/issues/1899)
 
 # [4.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.0)
 _March 29, 2022_
