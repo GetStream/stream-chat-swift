@@ -248,11 +248,22 @@ extension ChatChannel: Hashable {
 /// A struct describing unread counts for a channel.
 public struct ChannelUnreadCount: Decodable, Equatable {
     /// The default value representing no unread messages.
-    public static let noUnread = ChannelUnreadCount(messages: 0, mentioningMessages: 0)
+    public static let noUnread = ChannelUnreadCount(
+        messages: 0,
+        mentioningMessages: 0,
+        silentMessages: 0,
+        threadReplies: 0
+    )
     
     /// The total number of unread messages in the channel.
     public let messages: Int
     
-    /// The number of unread messages that mention the current user.
+    /// The number of unread messages mentioning the current user in the channel.
     public let mentioningMessages: Int
+    
+    /// The number of unread silent messages in the channel.
+    public let silentMessages: Int
+    
+    /// The number of unread thread replies (not sent to the channel).
+    public let threadReplies: Int
 }

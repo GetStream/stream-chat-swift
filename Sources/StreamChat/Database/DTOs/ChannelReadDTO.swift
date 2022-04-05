@@ -9,7 +9,9 @@ import Foundation
 class ChannelReadDTO: NSManagedObject {
     @NSManaged var lastReadAt: Date
     @NSManaged var unreadMessageCount: Int32
-    
+    @NSManaged var unreadSilentMessagesCount: Int32
+    @NSManaged var unreadThreadRepliesCount: Int32
+
     // MARK: - Relationships
     
     @NSManaged var channel: ChannelDTO
