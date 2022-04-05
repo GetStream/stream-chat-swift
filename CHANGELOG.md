@@ -12,10 +12,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### 💥 Removed
 - The `toVCSnapshot`, `fromVCSnapshot` and `containerTransitionImageView` properties were removed `ZoomAnimator` because they were the root cause of animation issues when presenting the popup actions [#1899](https://github.com/GetStream/stream-chat-swift/issues/1899)
+### 🔄 Changed
+- The time interval between 2 messages so they are grouped in the UI is changed from `30 sec` to `60 sec` [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
 ### ✅ Added
 - Quote message action visibility can be controlled from the dashboard [#1891](https://github.com/GetStream/stream-chat-swift/issues/1891)
 ### 🐞 Fixed
 - Fix full screen live photos weird flicker when presented / dismissed to / from full screen [#1899](https://github.com/GetStream/stream-chat-swift/issues/1899)
+- Timestamp not being shown for the message when the next message is error [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
+- Another user's avatar not being shown for deleted message last in a group [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
+
+# [4.13.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.1)
+_April 04, 2022_
+
+## StreamChat
+### 🚨 Fixed
+- Fix deadlock when accessing some properties from Events Delegate [#1898](https://github.com/GetStream/stream-chat-swift/issues/1898)
 
 # [4.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.0)
 _March 29, 2022_
