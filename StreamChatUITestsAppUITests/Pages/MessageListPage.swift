@@ -36,7 +36,6 @@ class MessageListPage {
         static var inputField: XCUIElement { app.otherElements["InputChatMessageView"] }
     }
     
-    
     enum Reactions {
         static var lol: XCUIElement { reaction(label: "reaction lol big") }
         static var like: XCUIElement { reaction(label: "reaction thumbsup big") }
