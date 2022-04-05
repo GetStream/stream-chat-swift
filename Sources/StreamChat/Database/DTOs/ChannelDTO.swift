@@ -258,6 +258,10 @@ extension NSManagedObjectContext {
             guard let channelDTO = channel(cid: cid) else { continue }
             channelDTO.resetEphemeralValues()
             channelDTO.messages.removeAll()
+            channelDTO.members.removeAll()
+            channelDTO.pinnedMessages.removeAll()
+            channelDTO.reads.removeAll()
+            channelDTO.attachments.removeAll()
         }
     }
 }
