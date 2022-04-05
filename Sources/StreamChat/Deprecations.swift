@@ -213,3 +213,8 @@ public typealias NotificationInviteAccepted = NotificationInviteAcceptedEvent
 
 @available(*, deprecated, renamed: "UnknownChannelEvent")
 public typealias UnknownEvent = UnknownChannelEvent
+
+public extension ChannelUnreadCount {
+    @available(*, deprecated, renamed: "mentioningMessages")
+    var mentionedMessages: Int { mentioningMessages }
+}

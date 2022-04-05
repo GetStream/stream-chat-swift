@@ -345,7 +345,7 @@ extension ChatChannel {
             do {
                 return ChannelUnreadCount(
                     messages: allUnreadMessages,
-                    mentionedMessages: try context.count(for: mentionedUnreadMessagesRequest)
+                    mentioningMessages: try context.count(for: mentionedUnreadMessagesRequest)
                 )
             } catch {
                 log.error("Failed to fetch unread counts for channel `\(cid)`. Error: \(error)")
