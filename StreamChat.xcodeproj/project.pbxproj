@@ -428,6 +428,7 @@
 		80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */; };
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
 		80D880432546553500908B7B /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D880422546553500908B7B /* ChatScrollView.swift */; };
+		8210AA2827FC916B005F0B32 /* ChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8210AA2727FC916B005F0B32 /* ChannelList.swift */; };
 		822F265227D8F74700E454FB /* StreamTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82AD02BC27D8E44B000611B7 /* StreamTestCase.swift */; };
 		822F265527D8F75600E454FB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82AD02A327D76A63000611B7 /* String.swift */; };
 		822F265727D8F75D00E454FB /* UserRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8298C8E827D22C3E004082D3 /* UserRobot.swift */; };
@@ -2632,6 +2633,7 @@
 		80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+Cells.swift"; sourceTree = "<group>"; };
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
 		80D880422546553500908B7B /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
+		8210AA2727FC916B005F0B32 /* ChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList.swift; sourceTree = "<group>"; };
 		822F267C27DA1E3900E454FB /* http_message.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_message.json; sourceTree = "<group>"; };
 		822F267F27DA3F7700E454FB /* http_events.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_events.json; sourceTree = "<group>"; };
 		822F268B27DA447F00E454FB /* ws_message.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ws_message.json; sourceTree = "<group>"; };
@@ -5502,6 +5504,7 @@
 				A34407F627D8C8A70044F150 /* ChatClient+shared.swift */,
 				A34407F527D8C8A70044F150 /* User.swift */,
 				A34407FB27D8C9040044F150 /* StreamChatWrapper.swift */,
+				8210AA2727FC916B005F0B32 /* ChannelList.swift */,
 			);
 			path = StreamChat;
 			sourceTree = "<group>";
@@ -9440,6 +9443,7 @@
 				A34407F827D8C8A70044F150 /* User.swift in Sources */,
 				A34407F927D8C8A70044F150 /* ChatClient+shared.swift in Sources */,
 				A34407FC27D8C9040044F150 /* StreamChatWrapper.swift in Sources */,
+				8210AA2827FC916B005F0B32 /* ChannelList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
