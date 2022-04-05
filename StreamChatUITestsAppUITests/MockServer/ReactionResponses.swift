@@ -17,11 +17,11 @@ extension StreamMockServer {
     }
     
     func mockReaction(
-        _ reaction: Dictionary<String, Any>,
+        _ reaction: [String: Any],
         messageId: Any?,
         reactionType: Any?,
         timestamp: Any?
-    ) -> Dictionary<String, Any> {
+    ) -> [String: Any] {
         let codingKeys = MessageReactionPayload.CodingKeys.self
         var mockedReaction = reaction
         mockedReaction[codingKeys.messageId.rawValue] = messageId
@@ -32,7 +32,7 @@ extension StreamMockServer {
     }
     
     func mockMessageWithReaction(
-        _ message: Dictionary<String, Any>,
+        _ message: [String: Any],
         messageId: String?,
         text: String?,
         createdAt: String?,
@@ -40,7 +40,7 @@ extension StreamMockServer {
         reactionType: String?,
         deleted: Bool = false,
         ownReaction: Bool = false
-    ) -> Dictionary<String, Any> {
+    ) -> [String: Any] {
         let latestReactionsKey = MessagePayloadsCodingKeys.latestReactions.rawValue
         let ownReactionsKey = MessagePayloadsCodingKeys.ownReactions.rawValue
         let reactionsCountsKey = MessagePayloadsCodingKeys.reactionCounts.rawValue
@@ -59,9 +59,9 @@ extension StreamMockServer {
             mockedMessage[reactionsCountsKey] = [:]
             mockedMessage[reactionsScoresKey] = [:]
         } else {
-            var latest_reactions = mockedMessage[latestReactionsKey] as! Array<Dictionary<String, Any>>
-            var reaction_counts = mockedMessage[reactionsCountsKey] as! Dictionary<String, Any>
-            var reaction_scores = mockedMessage[reactionsScoresKey] as! Dictionary<String, Any>
+            var latest_reactions = mockedMessage[latestReactionsKey] as! [[String: Any]]
+            var reaction_counts = mockedMessage[reactionsCountsKey] as! [String: Any]
+            var reaction_scores = mockedMessage[reactionsScoresKey] as! [String: Any]
             
             for (index, _) in latest_reactions.enumerated() {
                 latest_reactions[index][MessageReactionPayload.CodingKeys.type.rawValue] = reactionType
@@ -85,11 +85,11 @@ extension StreamMockServer {
         let requestJson = TestData.toJson(request.body)
         let messageKey = TopLevelKey.message.rawValue
         let reactionKey = TopLevelKey.reaction.rawValue
-        let requestReaction = requestJson[reactionKey] as! Dictionary<String, Any>
+        let requestReaction = requestJson[reactionKey] as! [String: Any]
         let reactionType = requestReaction[MessageReactionPayload.CodingKeys.type.rawValue]
         var responseJson = TestData.toJson(.httpReaction)
-        let responseMessage = responseJson[messageKey] as! Dictionary<String, Any>
-        let responseReaction = responseJson[reactionKey] as! Dictionary<String, Any>
+        let responseMessage = responseJson[messageKey] as! [String: Any]
+        let responseReaction = responseJson[reactionKey] as! [String: Any]
         let messageDetails = getMessageDetails(messageId: messageId!)
         
         responseJson[messageKey] = mockMessageWithReaction(
@@ -118,8 +118,8 @@ extension StreamMockServer {
         var json = TestData.toJson(.httpReaction)
         let messageKey = TopLevelKey.message.rawValue
         let reactionKey = TopLevelKey.reaction.rawValue
-        let message = json[messageKey] as! Dictionary<String, Any>
-        let reaction = json[reactionKey] as! Dictionary<String, Any>
+        let message = json[messageKey] as! [String: Any]
+        let reaction = json[reactionKey] as! [String: Any]
         let messageDetails = getMessageDetails(messageId: messageId!)
         let timestamp: String = TestData.currentDate
         

@@ -17,14 +17,14 @@ extension StreamMockServer {
     }
     
     func mockMessage(
-        _ message: Dictionary<String, Any>,
+        _ message: [String: Any],
         messageId: String?,
         text: String?,
         createdAt: String?,
         updatedAt: String?,
         deleted: Bool = false,
         saveDetails: Bool = false
-    ) -> Dictionary<String, Any> {
+    ) -> [String: Any] {
         let codingKeys = MessagePayloadsCodingKeys.self
         var mockedMessage = message
         mockedMessage[codingKeys.id.rawValue] = messageId
@@ -59,11 +59,11 @@ extension StreamMockServer {
     private func messageCreation(request: HttpRequest) -> HttpResponse {
         let requestJson = TestData.toJson(request.body)
         let messageKey = TopLevelKey.message.rawValue
-        let requestMessage = requestJson[messageKey] as! Dictionary<String, Any>
+        let requestMessage = requestJson[messageKey] as! [String: Any]
         let text = requestMessage[MessagePayloadsCodingKeys.text.rawValue] as! String
         let messageId = requestMessage[MessagePayloadsCodingKeys.id.rawValue] as! String
         var responseJson = TestData.toJson(.httpMessage)
-        let responseMessage = responseJson[messageKey] as! Dictionary<String, Any>
+        let responseMessage = responseJson[messageKey] as! [String: Any]
         let timestamp: String = TestData.currentDate
         responseJson[messageKey] = mockMessage(
             responseMessage,
@@ -80,7 +80,7 @@ extension StreamMockServer {
         let messageId = request.params[":message_id"]
         var json = TestData.toJson(.httpMessage)
         let messageKey = TopLevelKey.message.rawValue
-        let message = json[messageKey] as! Dictionary<String, Any>
+        let message = json[messageKey] as! [String: Any]
         let messageDetails = getMessageDetails(messageId: messageId!)
         json[messageKey] = mockMessage(
             message,

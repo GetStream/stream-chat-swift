@@ -93,7 +93,7 @@ final class ParticipantRobot: Robot {
     private func message(_ text: String = "", eventType: EventType) -> Self {
         var json = TestData.getMockResponse(fromFile: .wsMessage).json
         let messageKey = TopLevelKey.message.rawValue
-        let message = json[messageKey] as! Dictionary<String, Any>
+        let message = json[messageKey] as! [String: Any]
         let timestamp: String = TestData.currentDate
         
         switch eventType {
@@ -148,8 +148,8 @@ final class ParticipantRobot: Robot {
         var json = TestData.getMockResponse(fromFile: .wsReaction).json
         let messageKey = TopLevelKey.message.rawValue
         let reactionKey = TopLevelKey.reaction.rawValue
-        var reaction = json[reactionKey] as! Dictionary<String, Any>
-        var message = json[messageKey] as! Dictionary<String, Any>
+        var reaction = json[reactionKey] as! [String: Any]
+        var message = json[messageKey] as! [String: Any]
         let messageId = messageDetails[.messageId]
         let timestamp = TestData.currentDate
         
