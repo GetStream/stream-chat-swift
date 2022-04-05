@@ -433,6 +433,9 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
         guard let stackSubView = ChannelDetailDescView.instanceFromNib() else {
             return
         }
+        if (getChannelDescText()?.count ?? 0) == 0 {
+            stackSubView.viewSeparator.isHidden = true
+        }
         var channelLink: String?
         if channelController?.channel?.type == .dao {
             channelLink = channelController?.channel?.extraData.daoJoinLink
@@ -444,7 +447,6 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
             stackSubView.lblDesc.text = channelLink
             stackSubView.viewQRCode.isHidden = false
             stackSubView.btnQRCode.addTarget(self, action: #selector(qrCodePressed(_:)), for: .touchUpInside)
-            stackSubView.viewSeparator.isHidden = false
             descStackView.addArrangedSubview(stackSubView)
         }
     }
@@ -453,18 +455,22 @@ class ChannelDetailHeaderTVCell: _TableViewCell, AppearanceProvider {
         guard let stackSubView = ChannelDetailDescView.instanceFromNib() else {
             return
         }
-        var descText: String?
-        if channelController?.channel?.type == .dao {
-            descText = channelController?.channel?.extraData.daoDescription
-        } else {
-            descText = channelController?.channel?.extraData.channelDescription
-        }
-        if descText != nil {
+        let descText = getChannelDescText()
+        if (descText?.count ?? 0) > 0 {
             stackSubView.lblTitle.text = "description"
             stackSubView.lblDesc.text = descText
             stackSubView.viewQRCode.isHidden = true
             stackSubView.viewSeparator.isHidden = true
             descStackView.addArrangedSubview(stackSubView)
+        }
+    }
+
+    private func getChannelDescText() -> String? {
+        var descText: String?
+        if channelController?.channel?.type == .dao {
+            return channelController?.channel?.extraData.daoDescription
+        } else {
+            return channelController?.channel?.extraData.channelDescription
         }
     }
 
