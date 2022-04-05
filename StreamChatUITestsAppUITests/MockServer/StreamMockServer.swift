@@ -9,7 +9,7 @@ final class StreamMockServer {
     
     private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
-    var messageDetails: [<MessageDetail, String>] = []
+    var messageDetails: [[MessageDetail: String]] = []
     
     func start(port: UInt16) {
         do {
