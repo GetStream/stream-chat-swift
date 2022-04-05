@@ -75,6 +75,8 @@ extension NSManagedObjectContext {
         
         dto.lastReadAt = payload.lastReadAt
         dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
+        dto.unreadSilentMessagesCount = dto.user.currentUser == nil ? 0 : dto.unreadSilentMessagesCount
+        dto.unreadThreadRepliesCount = dto.user.currentUser == nil ? 0 : dto.unreadThreadRepliesCount
         
         return dto
     }
