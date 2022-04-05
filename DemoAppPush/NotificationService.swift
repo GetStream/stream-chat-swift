@@ -109,8 +109,8 @@ class NotificationService: UNNotificationServiceExtension {
         }
         
         if !chatNotification {
-            /// this was not a notification from Stream Chat
-            /// perform any other transformation to the notification if needed
+            // this was not a notification from Stream Chat
+            // perform any other transformation to the notification if needed
             contentHandler(content)
         }
     }
