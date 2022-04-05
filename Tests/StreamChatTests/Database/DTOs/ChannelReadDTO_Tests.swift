@@ -190,7 +190,11 @@ final class ChannelReadDTO_Tests: XCTestCase {
         )
                 
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: channel)
+            let channelDTO = try session.saveChannel(payload: channel)
+            
+            let readDTO = try XCTUnwrap(channelDTO.reads.first(where: { $0.user.id == read.user.id }))
+            readDTO.unreadThreadRepliesCount = 3
+            readDTO.unreadSilentMessagesCount = 2
         }
             
         // WHEN
@@ -206,6 +210,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
             ChannelReadDTO.load(cid: channel.channel.cid, userId: read.user.id, context: database.viewContext)
         )
         XCTAssertEqual(readDTO.lastReadAt, newLastReadAt)
+        XCTAssertEqual(readDTO.unreadThreadRepliesCount, 0)
+        XCTAssertEqual(readDTO.unreadSilentMessagesCount, 0)
         XCTAssertEqual(readDTO.unreadMessageCount, 0)
     }
     
@@ -235,6 +241,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(createdReadDTO.lastReadAt, readAt)
         XCTAssertEqual(createdReadDTO.unreadMessageCount, 0)
+        XCTAssertEqual(createdReadDTO.unreadThreadRepliesCount, 0)
+        XCTAssertEqual(createdReadDTO.unreadSilentMessagesCount, 0)
     }
     
     func test_markChannelAsRead_whenReadDoesNotExistAndCanNotBeCreated_doesNothing() throws {

@@ -82,34 +82,20 @@ extension NSManagedObjectContext {
     }
     
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
+        let channelRead: ChannelReadDTO
+        let previouslyReadAt: Date
+
         if let read = loadChannelRead(cid: cid, userId: userId) {
-            let previousLastReadAt = read.lastReadAt
-            
-            // We have a read object saved, we can update it
-            read.lastReadAt = at
-            read.unreadMessageCount = 0
-            
-            // Mark messages authored by the current user sent within `previousLastReadAt...at` window
-            // as seen by the channel member with `userId`.
-            markMessagesFromCurrentUserAsRead(
-                for: read,
-                previousReadAt: previousLastReadAt
-            )
+            previouslyReadAt = read.lastReadAt
+            channelRead = read
         } else if let channel = channel(cid: cid), let member = channel.members.first(where: { $0.user.id == userId }) {
+            previouslyReadAt = .distantPast
+
             // We don't have a read object, but the user is a member.
             // We can safely create a read object for the user
-            let read = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
-            read.channel = channel
-            read.user = member.user
-            read.lastReadAt = at
-            read.unreadMessageCount = 0
-            
-            // Mark all locally existed messages authored by the current user
-            // as seen by the channel member with `userId`.
-            markMessagesFromCurrentUserAsRead(
-                for: read,
-                previousReadAt: .distantPast
-            )
+            channelRead = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
+            channelRead.channel = channel
+            channelRead.user = member.user
         } else {
             // If we don't have a read object saved for the user,
             // and the user is not a member,
@@ -118,7 +104,21 @@ extension NSManagedObjectContext {
                 "Discarding read event for cid \(cid) and userId \(userId). "
                     + "This is expected when the user calls `markRead` but they're not a member."
             )
+            return
         }
+        
+        // Update channel read
+        channelRead.lastReadAt = at
+        channelRead.unreadMessageCount = 0
+        channelRead.unreadSilentMessagesCount = 0
+        channelRead.unreadThreadRepliesCount = 0
+        
+        // Mark all locally existed messages authored by the current user
+        // as seen by the channel member with `userId`.
+        markMessagesFromCurrentUserAsRead(
+            for: channelRead,
+            previousReadAt: previouslyReadAt
+        )
     }
     
     func markChannelAsUnread(cid: ChannelId, by userId: UserId) {
