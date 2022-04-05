@@ -55,7 +55,6 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var pinnedMessages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
-    @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
 
@@ -261,7 +260,6 @@ extension NSManagedObjectContext {
             channelDTO.members.removeAll()
             channelDTO.pinnedMessages.removeAll()
             channelDTO.reads.removeAll()
-            channelDTO.attachments.removeAll()
         }
     }
 }
