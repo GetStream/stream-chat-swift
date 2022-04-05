@@ -21,11 +21,11 @@ extension StreamMockServer {
         ])
     }
     
-    func getMessageDetails(messageId: String) -> Dictionary<MessageDetail, String> {
+    func getMessageDetails(messageId: String) -> [MessageDetail: String] {
         waitForMessageDetails().filter { $0[.messageId] == messageId }.first!
     }
     
-    func getMessageDetails() -> Dictionary<MessageDetail, String> {
+    func getMessageDetails() -> [MessageDetail: String] {
         waitForMessageDetails().last!
     }
     
@@ -39,7 +39,7 @@ extension StreamMockServer {
         messageDetails = []
     }
     
-    private func waitForMessageDetails() -> [Dictionary<MessageDetail, String>] {
+    private func waitForMessageDetails() -> [[MessageDetail: String]] {
         let endTime = Date().timeIntervalSince1970 * 1000 + 2000
         while messageDetails.isEmpty && endTime > Date().timeIntervalSince1970 * 1000 {}
         return messageDetails
