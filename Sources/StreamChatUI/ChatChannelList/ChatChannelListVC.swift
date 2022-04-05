@@ -320,12 +320,12 @@ open class ChatChannelListVC: _ViewController,
         )
     }
 
-    @available(*, deprecated, message: "Please use `filterBlock` when initializing a `ChatChannelListController`")
+    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
     open func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
         channel.membership != nil
     }
 
-    @available(*, deprecated, message: "Please use `filterBlock` when initializing a `ChatChannelListController`")
+    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
     open func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
         channel.membership != nil
     }

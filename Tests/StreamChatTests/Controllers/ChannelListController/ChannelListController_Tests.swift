@@ -667,7 +667,7 @@ class ChannelListController_Tests: XCTestCase {
     }
 
     private func prepareControllerWithOwnerFilter(userId: UserId, onFilterCall: @escaping () -> Void) {
-        let filterBlock: (ChatChannel) -> Bool = { channel in
+        let filter: (ChatChannel) -> Bool = { channel in
             onFilterCall()
             guard case let .string(owner) = channel.extraData["owner_id"] else { return false }
             return owner == userId
@@ -681,7 +681,7 @@ class ChannelListController_Tests: XCTestCase {
                 .notEqual(.init(rawValue: "owner_id"), to: userId)
             ]
         ))
-        controller = ChatChannelListController(query: query, client: client, filterBlock: filterBlock, environment: env.environment)
+        controller = ChatChannelListController(query: query, client: client, filter: filter, environment: env.environment)
     }
     
     // MARK: - Delegate tests

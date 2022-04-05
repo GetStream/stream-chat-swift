@@ -19,16 +19,16 @@ func controller(
 
 ### Having more than one ChannelListController active at the same time
 
-When having 2 active controllers at the same time, you need to initialize them by passing a `filterBlock`. This will make sure events are routed to the right list.
+When having 2 active controllers at the same time, you need to initialize them by passing a `filter` block. This will make sure events are routed to the right list.
 
 ```
-client.channelListController(query: query, filterBlock: { channel in
+client.channelListController(query: query, filter: { channel in
     // Your filtering logic
     return true
 })
 ```
 
-It is expected that the logic on the `filterBlock` matches the one in `query.filter`.
+It is expected that the logic on the `filter` block matches the one in `query.filter`.
 
 :::note
 Given the nature of `Filter`, having generic logic capable of using `query.filter` at runtime to determine if a ChatChannel meets the criteria is extremely expensive and complex. Instead, having a block that only checks for the particular needs of the use case is much cheaper.

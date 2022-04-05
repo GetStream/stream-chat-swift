@@ -15,18 +15,18 @@ extension ChatClient {
 
     /// Creates a new `ChannelListController` with the provided channel query and filter block.
     ///
-    /// When passing `filterBlock`, make sure the runtime logic matches the one expected by the filter passed in the query object.
+    /// When passing `filter`, make sure the runtime logic matches the one expected by the filter passed in the query object.
     /// If they don't match, there can be jumps when loading the list.
     ///
     /// - Parameters:
     ///   - query: The query specify the filter and sorting of the channels the controller should fetch.
-    ///   - filterBlock: A block that determines whether the channels belongs to this controller.
+    ///   - filter: A block that determines whether the channels belongs to this controller.
     /// - Returns: A new instance of `ChatChannelListController`
     public func channelListController(
         query: ChannelListQuery,
-        filterBlock: ((ChatChannel) -> Bool)? = nil
+        filter: ((ChatChannel) -> Bool)? = nil
     ) -> ChatChannelListController {
-        .init(query: query, client: self, filterBlock: filterBlock)
+        .init(query: query, client: self, filter: filter)
     }
 }
 
@@ -123,7 +123,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     @available(iOS 13, *)
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
-    private let filterBlock: ((ChatChannel) -> Bool)?
+    private let filter: ((ChatChannel) -> Bool)?
     private let environment: Environment
     
     /// Creates a new `ChannelListController`.
@@ -131,16 +131,16 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// - Parameters:
     ///   - query: The query used for filtering the channels.
     ///   - client: The `Client` instance this controller belongs to.
-    ///   - filterBlock: A block that determines whether the channels belongs to this controller.
+    ///   - filter: A block that determines whether the channels belongs to this controller.
     init(
         query: ChannelListQuery,
         client: ChatClient,
-        filterBlock: ((ChatChannel) -> Bool)? = nil,
+        filter: ((ChatChannel) -> Bool)? = nil,
         environment: Environment = .init()
     ) {
         self.client = client
         self.query = query
-        self.filterBlock = filterBlock
+        self.filter = filter
         self.environment = environment
         super.init()
         client.trackChannelListController(self)
@@ -187,13 +187,13 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     private func channelBelongsToController(_ channel: ChatChannel) -> Bool {
-        if let filterBlock = filterBlock {
-            return filterBlock(channel)
+        if let filter = filter {
+            return filter(channel)
         }
         do {
             return try channel.meets(query.filter)
         } catch {
-            log.error("Unable to resolve complex filter. Please pass a `filterBlock` when intializing ChatChannelListController")
+            log.error("Unable to resolve complex filter. Please pass a `filter` block when intializing ChatChannelListController")
         }
         return true
     }
@@ -357,7 +357,7 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
         didChangeChannels changes: [ListChange<ChatChannel>]
     )
     
-    /// **⚠️ This method is deprecated:** Please use `filterBlock` when initializing a `ChatChannelListController`
+    /// **⚠️ This method is deprecated:** Please use `filter` when initializing a `ChatChannelListController`
     ///
     /// (We are not using @available annotations because they do not get emitted in protocol conformances)
     ///
@@ -373,7 +373,7 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
         shouldAddNewChannelToList channel: ChatChannel
     ) -> Bool
 
-    /// **⚠️ This method is deprecated:** Please use `filterBlock` when initializing a `ChatChannelListController`
+    /// **⚠️ This method is deprecated:** Please use `filter` when initializing a `ChatChannelListController`
     ///
     /// (We are not using @available annotations because they do not get emitted in protocol conformances)
     ///
@@ -398,12 +398,12 @@ public extension ChatChannelListControllerDelegate {
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {}
 
-    @available(*, deprecated, message: "Please use `filterBlock` when initializing a `ChatChannelListController`")
+    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
     func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
         channel.membership != nil
     }
 
-    @available(*, deprecated, message: "Please use `filterBlock` when initializing a `ChatChannelListController`")
+    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
     func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
         channel.membership != nil
     }
