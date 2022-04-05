@@ -437,7 +437,7 @@ extension ChatGroupDetailsVC: ChannelDetailHeaderTVCellDelegate {
             preferredStyle: .actionSheet)
         present(alert, animated: true, completion: nil)
     }
-    
+
     func showWalletQRCode() {
         if isDirectMessageChannel() {
             guard let channel = viewModel.channelController?.channel,
