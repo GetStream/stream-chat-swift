@@ -103,7 +103,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.watchedChannelIds.count, 0)
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
         XCTAssertNotCall("recoverWatchedChannel(completion:)", on: controller)
     }
 
@@ -117,7 +117,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.watchedChannelIds.count, 0)
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
         XCTAssertNotCall("recoverWatchedChannel(completion:)", on: controller)
     }
 
@@ -131,7 +131,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.watchedChannelIds.count, 0)
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
         XCTAssertCall("recoverWatchedChannel(completion:)", on: controller, times: 3)
     }
 
@@ -145,7 +145,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.watchedChannelIds.count, 1)
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 1)
         XCTAssertCall("recoverWatchedChannel(completion:)", on: controller, times: 1)
     }
 
@@ -197,7 +197,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         let channel: ChatChannel = database.viewContext.channel(cid: channelId)!.asModel()
         let unwantedChannelId = ChannelId.unique
-        context.synchedChannelIds = [ChannelId.unique, ChannelId.unique]
+        context.watchedAndSynchedChannelIds = [ChannelId.unique, ChannelId.unique]
         context.unwantedChannelIds = [ChannelId.unique]
 
         let operation = RefetchChannelListQueryOperation(
@@ -209,8 +209,8 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.synchedChannelIds.count, 3)
-        XCTAssertTrue(context.synchedChannelIds.contains { $0.id == channelId.id })
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 3)
+        XCTAssertTrue(context.watchedAndSynchedChannelIds.contains { $0.id == channelId.id })
         XCTAssertEqual(context.unwantedChannelIds.count, 2)
         XCTAssertTrue(context.unwantedChannelIds.contains { $0.id == unwantedChannelId.id })
         XCTAssertCall(

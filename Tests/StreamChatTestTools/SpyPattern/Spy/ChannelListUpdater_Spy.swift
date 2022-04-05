@@ -15,7 +15,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     @Atomic var fetch_queries: [ChannelListQuery] = []
     @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
 
-    var resetChannelsQueryResult: Result<(synched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
+    var resetChannelsQueryResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
     
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
     
@@ -53,7 +53,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         for query: ChannelListQuery,
         watchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
+        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {
         record()
         resetChannelsQueryResult.map(completion)

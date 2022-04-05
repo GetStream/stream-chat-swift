@@ -34,7 +34,7 @@ class ChannelListUpdater: Worker {
         for query: ChannelListQuery,
         watchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
+        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: .channelsPageSize, offset: 0)
@@ -70,12 +70,14 @@ class ChannelListUpdater: Worker {
 
                         // We are also going to keep track of the unwanted channels
                         // Those are the ones that exist locally but we are not interested in anymore in this context.
-                        unwantedCids = localNotInRemote.subtracting(updatedChannels)
+                        // In this case, it is going to query local ones not appearing in remote, subtracting the ones
+                        // that are already being watched.
+                        unwantedCids = localNotInRemote.subtracting(watchedChannelIds)
                     },
                     completion: { result in
                         switch result {
-                        case let .success(synchedChannels):
-                            completion(.success((synchedChannels, unwantedCids)))
+                        case let .success(synchedAndWatchedChannels):
+                            completion(.success((synchedAndWatchedChannels, unwantedCids)))
                         case let .failure(error):
                             completion(.failure(error))
                         }
