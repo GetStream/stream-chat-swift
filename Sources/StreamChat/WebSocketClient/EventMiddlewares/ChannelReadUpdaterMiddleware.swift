@@ -55,31 +55,27 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         message: MessagePayload,
         session: DatabaseSession
     ) {
-        // Silent messages don't increase unread count
-        if message.isSilent {
-            return
-        }
-
-        // Thread replies don't increase unread count
-        if message.parentId != nil && !message.showReplyInChannel {
-            return
-        }
-
-        // Own messages don't increase unread count
         guard let currentUserId = session.currentUser?.user.id, currentUserId != message.user.id else {
+            log.debug("Own messages don't increase unread count")
             return
         }
-
-        // Try to get the existing channel read for the current user
-        if let read = session.loadChannelRead(cid: cid, userId: currentUserId) {
-            if message.createdAt > read.lastReadAt {
-                read.unreadMessageCount += 1
-            }
+        
+        guard let read = session.loadChannelRead(cid: cid, userId: currentUserId) else {
+            log.debug("There's no current user's read object for \(cid)")
+            return
+        }
+        
+        guard message.createdAt > read.lastReadAt else {
+            log.debug("Current user's channel read for \(cid) already covers message \(message.id)")
+            return
+        }
+        
+        if message.parentId != nil && !message.showReplyInChannel {
+            read.unreadThreadRepliesCount += 1
+        } else if message.isSilent {
+            read.unreadSilentMessagesCount += 1
         } else {
-            log.info(
-                "Can't increase unread count for \(cid) because the `ChannelReadDTO` for " +
-                    "the current user doesn't exist."
-            )
+            read.unreadMessageCount += 1
         }
     }
 }
