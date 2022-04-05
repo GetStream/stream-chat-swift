@@ -1,0 +1,139 @@
+{
+    "member" : {
+        "created_at" : "2020-07-21T15:51:47.118059Z",
+        "invite_rejected_at" : "2020-07-21T15:51:53.47382Z",
+        "updated_at" : "2020-07-21T15:51:53.474505Z",
+        "invited" : true,
+        "role" : "member"
+    },
+    "channel" : {
+        "created_by" : {
+            "id" : "steep-moon-9",
+            "banned" : false,
+            "unread_channels" : 3,
+            "totalUnreadCount" : 0,
+            "last_active" : "2020-07-21T15:37:34.712051Z",
+            "created_at" : "2019-12-12T15:34:00.762372Z",
+            "invisible" : false,
+            "unreadChannels" : 0,
+            "unread_count" : 21,
+            "image" : "https:\/\/api.adorable.io\/avatars\/285\/steep-moon-9.png",
+            "updated_at" : "2020-07-21T15:37:34.712051Z",
+            "role" : "user",
+            "total_unread_count" : 21,
+            "online" : true,
+            "name" : "steep-moon-9"
+        },
+        "frozen" : false,
+        "config" : {
+            "automod_behavior" : "flag",
+            "reactions" : true,
+            "typing_events" : true,
+            "mutes" : true,
+            "max_message_length" : 5000,
+            "created_at" : "2019-03-21T15:49:15.40182Z",
+            "automod" : "AI",
+            "read_events" : true,
+            "commands" : [
+                {
+                    "set" : "fun_set",
+                    "args" : "[text]",
+                    "name" : "giphy",
+                    "description" : "Post a random gif to the channel"
+                }
+            ],
+            "connect_events" : true,
+            "replies" : true,
+            "quotes" : true,
+            "updated_at" : "2020-03-17T18:54:09.460881Z",
+            "url_enrichment" : true,
+            "search" : false,
+            "message_retention" : "infinite",
+            "uploads" : true,
+            "name" : "messaging"
+        },
+        "id" : "new_channel_6293",
+        "created_at" : "2020-07-21T15:51:36.162939Z",
+        "members" : [
+            {
+                "created_at" : "2020-07-21T15:51:36.166131Z",
+                "user_id" : "steep-moon-9",
+                "updated_at" : "2020-07-21T15:51:36.166131Z",
+                "user" : {
+                    "id" : "steep-moon-9",
+                    "banned" : false,
+                    "unread_channels" : 3,
+                    "totalUnreadCount" : 0,
+                    "last_active" : "2020-07-21T15:37:34.712051Z",
+                    "created_at" : "2019-12-12T15:34:00.762372Z",
+                    "invisible" : false,
+                    "unreadChannels" : 0,
+                    "unread_count" : 21,
+                    "image" : "https:\/\/api.adorable.io\/avatars\/285\/steep-moon-9.png",
+                    "updated_at" : "2020-07-21T15:37:34.712051Z",
+                    "role" : "user",
+                    "total_unread_count" : 21,
+                    "online" : true,
+                    "name" : "steep-moon-9"
+                }
+            },
+            {
+                "created_at" : "2020-07-21T15:51:47.118059Z",
+                "invite_rejected_at" : "2020-07-21T15:51:53.47382Z",
+                "user_id" : "broken-waterfall-5",
+                "updated_at" : "2020-07-21T15:51:53.474505Z",
+                "invited" : true,
+                "user" : {
+                    "id" : "broken-waterfall-5",
+                    "banned" : false,
+                    "extraData" : {
+                        "name" : "Tester"
+                    },
+                    "unread_channels" : 0,
+                    "totalUnreadCount" : 0,
+                    "last_active" : "2020-07-21T15:44:21.447845Z",
+                    "created_at" : "2019-12-12T15:33:46.488935Z",
+                    "invisible" : false,
+                    "unreadChannels" : 0,
+                    "unread_count" : 0,
+                    "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+                    "updated_at" : "2020-07-21T15:44:21.447845Z",
+                    "role" : "user",
+                    "total_unread_count" : 0,
+                    "online" : true,
+                    "name" : "Broken waterfall"
+                }
+            }
+        ],
+        "member_count" : 2,
+        "type" : "messaging",
+        "updated_at" : "2020-07-21T15:51:36.162939Z",
+        "name" : "Channel 6293",
+        "cid" : "messaging:new_channel_6293"
+    },
+    "channel_type" : "messaging",
+    "channel_id" : "new_channel_6293",
+    "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "unread_channels" : 0,
+        "totalUnreadCount" : 0,
+        "extraData" : {
+            "name" : "Tester"
+        },
+        "last_active" : "2020-07-21T15:44:21.447845Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "invisible" : false,
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-07-21T15:44:21.447845Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "Broken waterfall"
+    },
+    "created_at" : "2020-07-21T15:51:53.487263087Z",
+    "type" : "notification.invite_rejected",
+    "cid" : "messaging:new_channel_6293"
+}

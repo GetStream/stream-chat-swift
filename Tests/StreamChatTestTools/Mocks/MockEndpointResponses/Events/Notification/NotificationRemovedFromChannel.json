@@ -1,0 +1,161 @@
+{
+  "member" : {
+    "banned" : false,
+    "shadow_banned" : false,
+    "user_id" : "anakin_skywalker",
+    "updated_at" : "2021-04-23T10:42:21.146483Z",
+    "role" : "member",
+    "created_at" : "2021-04-23T10:42:21.146483Z",
+    "user" : {
+      "banned" : false,
+      "online" : true,
+      "id" : "anakin_skywalker",
+      "role" : "user",
+      "created_at" : "2020-12-07T11:37:36.43453Z",
+      "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/6\/6f\/Anakin_Skywalker_RotS.png",
+      "updated_at" : "2021-04-15T12:25:51.702406Z",
+      "last_active" : "2021-04-23T10:54:07.572844789Z",
+      "name" : "Anakin Skywalker"
+    },
+  },
+  "channel" : {
+    "last_message_at" : "2021-04-23T10:42:32.048809Z",
+    "created_by" : {
+      "banned" : false,
+      "online" : true,
+      "id" : "leia_organa",
+      "role" : "user",
+      "created_at" : "2021-04-23T10:41:35.430918Z",
+      "image" : ".\/static\/media\/photo-1517202383675-eb0a6e27775f.1864b915.jpeg",
+      "updated_at" : "2021-04-23T10:41:38.5503Z",
+      "last_active" : "2021-04-23T10:54:09.447654705Z",
+      "name" : "leia_organa"
+    },
+    "frozen" : false,
+    "id" : "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY",
+    "created_at" : "2021-04-23T10:42:21.144202Z",
+    "members" : [
+      {
+        "banned" : false,
+        "shadow_banned" : false,
+        "role" : "member",
+        "created_at" : "2021-04-23T10:42:21.146483Z",
+        "user_id" : "c-3po",
+        "updated_at" : "2021-04-23T10:42:21.146483Z",
+        "user" : {
+          "banned" : false,
+          "online" : false,
+          "id" : "c-3po",
+          "role" : "user",
+          "created_at" : "2020-12-07T11:37:35.550588Z",
+          "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/3\/3f\/C-3PO_TLJ_Card_Trader_Award_Card.png",
+          "updated_at" : "2021-04-15T12:16:26.99681Z",
+          "last_active" : "2021-04-22T04:50:56.973457Z",
+          "name" : "C-3PO"
+        }
+      },
+      {
+        "banned" : false,
+        "shadow_banned" : false,
+        "role" : "member",
+        "created_at" : "2021-04-23T10:42:21.146483Z",
+        "user_id" : "count_dooku",
+        "updated_at" : "2021-04-23T10:42:21.146483Z",
+        "user" : {
+          "banned" : false,
+          "online" : false,
+          "id" : "count_dooku",
+          "role" : "user",
+          "created_at" : "2020-12-07T11:37:39.487938Z",
+          "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/b\/b8\/Dooku_Headshot.jpg",
+          "updated_at" : "2021-04-15T12:41:22.065746Z",
+          "last_active" : "2021-04-15T11:02:42.641941Z",
+          "name" : "Count Dooku"
+        }
+      },
+      {
+        "banned" : false,
+        "shadow_banned" : false,
+        "role" : "owner",
+        "created_at" : "2021-04-23T10:42:21.146484Z",
+        "user_id" : "leia_organa",
+        "updated_at" : "2021-04-23T10:42:21.146484Z",
+        "user" : {
+          "banned" : false,
+          "online" : true,
+          "id" : "leia_organa",
+          "role" : "user",
+          "created_at" : "2021-04-23T10:41:35.430918Z",
+          "image" : ".\/static\/media\/photo-1517202383675-eb0a6e27775f.1864b915.jpeg",
+          "updated_at" : "2021-04-23T10:41:38.5503Z",
+          "last_active" : "2021-04-23T10:54:09.447654705Z",
+          "name" : "leia_organa"
+        }
+      }
+    ],
+    "member_count" : 3,
+    "config" : {
+      "typing_events" : true,
+      "connect_events" : true,
+      "reactions" : true,
+      "replies" : true,
+      "quotes" : true,
+      "uploads" : true,
+      "push_notifications" : true,
+      "updated_at" : "2021-03-01T19:26:18.406502Z",
+      "automod_behavior" : "flag",
+      "commands" : [
+        {
+          "set" : "fun_set",
+          "args" : "[text]",
+          "name" : "giphy",
+          "description" : "Post a random gif to the channel"
+        }
+      ],
+      "url_enrichment" : true,
+      "mutes" : true,
+      "custom_events" : true,
+      "message_retention" : "infinite",
+      "name" : "messaging",
+      "automod" : "AI",
+      "automod_thresholds" : {
+        "spam" : {
+          "flag" : 0.84999999999999998,
+          "block" : 0.90000000000000002
+        },
+        "toxic" : {
+          "flag" : 0.84999999999999998,
+          "block" : 0.90000000000000002
+        },
+        "explicit" : {
+          "flag" : 0.84999999999999998,
+          "block" : 0.90000000000000002
+        }
+      },
+      "created_at" : "2021-03-01T19:26:18.406502Z",
+      "max_message_length" : 5000,
+      "blocklist_behavior" : "flag",
+      "read_events" : true,
+      "search" : true
+    },
+    "type" : "messaging",
+    "updated_at" : "2021-04-23T10:42:21.144202Z",
+    "cid" : "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"
+  },
+  "channel_type" : "messaging",
+  "channel_id" : "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY",
+  "user" : {
+    "banned" : false,
+    "online" : true,
+    "id" : "anakin_skywalker",
+    "role" : "user",
+    "created_at" : "2020-12-07T11:37:36.43453Z",
+    "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/6\/6f\/Anakin_Skywalker_RotS.png",
+    "updated_at" : "2021-04-15T12:25:51.702406Z",
+    "last_active" : "2021-04-23T10:54:07.572844789Z",
+    "name" : "Anakin Skywalker"
+  },
+  "created_at" : "2021-04-23T10:54:10.183275486Z",
+  "type" : "notification.removed_from_channel",
+  "cid" : "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"
+}

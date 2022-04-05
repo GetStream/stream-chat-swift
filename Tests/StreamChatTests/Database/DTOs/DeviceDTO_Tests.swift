@@ -6,16 +6,17 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class DeviceDTO_Tests: XCTestCase {
+final class DeviceDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
     
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
     
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
     

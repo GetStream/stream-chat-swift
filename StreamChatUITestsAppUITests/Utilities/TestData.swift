@@ -15,11 +15,11 @@ enum TestData {
     }
     
     static func getMockResponse(fromFile file: MockFile) -> String {
-        String(decoding: XCTestCase.mockData(fromFile: file.rawValue), as: UTF8.self)
+        String(decoding: XCTestCase.mockData(fromFile: file.rawValue, bundle: .test), as: UTF8.self)
     }
     
     static func mockData(fromFile file: MockFile) -> [UInt8] {
-        [UInt8](XCTestCase.mockData(fromFile: file.rawValue))
+        [UInt8](XCTestCase.mockData(fromFile: file.rawValue, bundle: .test))
     }
     
     static func toJson(_ requestBody: [UInt8]) -> [String: Any] {

@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class TypingStartCleanupMiddleware_Tests: XCTestCase {
+final class TypingStartCleanupMiddleware_Tests: XCTestCase {
     var currentUser: ChatUser!
     var time: VirtualTime!
     // The database is not really used in the middleware but it's a requirement by the protocol
@@ -21,11 +21,16 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
         time = VirtualTime()
         VirtualTimeTimer.time = time
 
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
 
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
+
+        database = nil
+        currentUser = nil
+        VirtualTimeTimer.invalidate()
+        time = nil
 
         super.tearDown()
     }

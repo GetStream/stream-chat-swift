@@ -7,24 +7,31 @@
 import XCTest
 
 final class SyncRepository_Tests: XCTestCase {
-    var _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
-    var _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
-    var client: ChatClientMock!
-    var channelRepository: ChannelListUpdaterMock!
-    var offlineRequestsRepository: OfflineRequestsRepositoryMock!
-    var database: DatabaseContainerMock!
-    var apiClient: APIClientMock!
+    var _activeChannelControllers: NSHashTable<ChatChannelController>!
+    var _activeChannelListControllers: NSHashTable<ChatChannelListController>!
+    var client: ChatClient_Mock!
+    var channelRepository: ChannelListUpdater_Spy!
+    var offlineRequestsRepository: OfflineRequestsRepository_Spy!
+    var database: DatabaseContainer_Spy!
+    var apiClient: APIClient_Spy!
 
     var repository: SyncRepository!
 
+    private var lastSyncAtValue: Date? {
+        database.viewContext.currentUser?.lastSynchedEventDate
+    }
+
     override func setUp() {
         super.setUp()
+
+        _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
+        _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
-        client = ChatClientMock(config: config)
-        channelRepository = ChannelListUpdaterMock(database: client.databaseContainer, apiClient: client.apiClient)
-        let messageRepository = MessageRepositoryMock(database: client.databaseContainer, apiClient: client.apiClient)
-        offlineRequestsRepository = OfflineRequestsRepositoryMock(
+        client = ChatClient_Mock(config: config)
+        channelRepository = ChannelListUpdater_Spy(database: client.databaseContainer, apiClient: client.apiClient)
+        let messageRepository = MessageRepository_Spy(database: client.databaseContainer, apiClient: client.apiClient)
+        offlineRequestsRepository = OfflineRequestsRepository_Spy(
             messageRepository: messageRepository,
             database: client.databaseContainer,
             apiClient: client.apiClient
@@ -44,12 +51,28 @@ final class SyncRepository_Tests: XCTestCase {
         )
     }
 
+    override func tearDown() {
+        super.tearDown()
+        _activeChannelControllers = nil
+        _activeChannelListControllers = nil
+        client.cleanUp()
+        client = nil
+        channelRepository.cleanUp()
+        channelRepository = nil
+        offlineRequestsRepository.clear()
+        offlineRequestsRepository = nil
+        database = nil
+        apiClient.cleanUp()
+        apiClient = nil
+        repository = nil
+    }
+
     // MARK: - Sync local state
 
     func test_syncLocalState_localStorageDisabled() throws {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = false
-        let client = ChatClientMock(config: config)
+        let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
@@ -138,7 +161,7 @@ final class SyncRepository_Tests: XCTestCase {
             createChannel: true
         )
 
-        let chatController = ChatChannelControllerMock(client: client)
+        let chatController = ChatChannelController_Spy(client: client)
         chatController.state = .remoteDataFetched
         _activeChannelControllers.add(chatController)
 
@@ -429,7 +452,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_queueOfflineRequest_localStorageDisabled() {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = false
-        let client = ChatClientMock(config: config)
+        let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
@@ -457,7 +480,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_queueOfflineRequest_localStorageEnabled() {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
-        let client = ChatClientMock(config: config)
+        let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
@@ -480,5 +503,63 @@ final class SyncRepository_Tests: XCTestCase {
         repository.queueOfflineRequest(endpoint: endpoint)
 
         XCTAssertCall("queueOfflineRequest(endpoint:completion:)", on: offlineRequestsRepository, times: 1)
+    }
+}
+
+extension SyncRepository_Tests {
+    func messageEventPayload(cid: ChannelId = .unique, with dates: [Date]) -> MissingEventsPayload {
+        MissingEventsPayload(eventPayloads: dates.map {
+            EventPayload(
+                eventType: .messageNew,
+                cid: cid,
+                user: .dummy(userId: ""),
+                message: .dummy(messageId: "\($0)", authorUserId: .unique, latestReactions: [], channel: .dummy(cid: cid)),
+                createdAt: $0
+            )
+        })
+    }
+
+    private func prepareForSyncLocalStorage(
+        createUser: Bool,
+        lastSynchedEventDate: Date?,
+        createChannel: Bool
+    ) throws {
+        if createUser {
+            try database.createCurrentUser()
+        }
+
+        try database.writeSynchronously { session in
+            if let lastSynchedEventDate = lastSynchedEventDate {
+                session.currentUser?.lastSynchedEventDate = lastSynchedEventDate
+            }
+            if createChannel {
+                let query = ChannelListQuery(filter: .exists(.cid))
+                try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query)
+            }
+        }
+        database.writeSessionCounter = 0
+    }
+
+    private func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {
+        database.writeSessionCounter = 0
+        let expectation = self.expectation(description: "syncLocalState completion")
+        repository.syncLocalState {
+            expectation.fulfill()
+        }
+
+        XCTAssertCall("enterRecoveryMode()", on: apiClient, times: 1)
+
+        if let result = requestResult {
+            // Simulate API Failure
+            AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)
+            guard let callback = apiClient.recoveryRequest_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
+                XCTFail("A request for /sync should have been executed")
+                return
+            }
+            callback(result)
+        }
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertCall("exitRecoveryMode()", on: apiClient, times: 1)
     }
 }

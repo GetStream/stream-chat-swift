@@ -47,6 +47,14 @@ Enables message thread replies. Enabled by default.
 public let repliesEnabled: Bool
 ```
 
+### `quotesEnabled`
+
+Enables quoting of messages. Enabled by default.
+
+``` swift
+public let quotesEnabled: Bool
+```
+
 ### `searchEnabled`
 
 Controls if messages should be searchable (this is a premium feature). Disabled by default.

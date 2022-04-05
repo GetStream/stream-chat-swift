@@ -2,11 +2,12 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
 @available(iOS 13.0, *)
-class UIViewController_Extensions_Tests: iOS13TestCase {
+final class UIViewController_Extensions_Tests: iOS13TestCase {
     func test_navigationItemProperties_arePopulatedToParent() {
         let vc = UIViewController()
 

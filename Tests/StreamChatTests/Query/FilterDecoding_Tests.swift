@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class FilterDecoding_Tests: XCTestCase {
+final class FilterDecoding_Tests: XCTestCase {
     // MARK: - Exception thrown tests
 
     func testFilterDecodingThrowExceptionOnEmpty() {
@@ -47,9 +48,11 @@ class FilterDecoding_Tests: XCTestCase {
             XCTAssertEqual(decoded, pair.filter)
         }
     }
+}
 
-    // MARK: - Private methods
+// MARK: Test Helpers
 
+extension FilterDecoding_Tests {
     private func checkDecodingFilterThrowException(json: String) {
         do {
             // When

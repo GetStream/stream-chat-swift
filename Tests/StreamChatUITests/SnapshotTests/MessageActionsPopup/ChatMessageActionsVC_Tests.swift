@@ -3,11 +3,11 @@
 //
 
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatMessageActionsVC_Tests: XCTestCase {
+final class ChatMessageActionsVC_Tests: XCTestCase {
     private var vc: ChatMessageActionsVC!
     private var chatMessageController: ChatMessageController_Mock!
     
@@ -86,6 +86,18 @@ class ChatMessageActionsVC_Tests: XCTestCase {
         vc.channelConfig = .mock(mutesEnabled: false)
 
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is MuteUserActionItem }))
+    }
+    
+    func test_messageActions_whenQuotesEnabled_containsQuoteAction() {
+        vc.channelConfig = .mock(quotesEnabled: true)
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is InlineReplyActionItem }))
+    }
+
+    func test_messageActions_whenQuotesDisabled_doesNotContainQuoteAction() {
+        vc.channelConfig = .mock(quotesEnabled: false)
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is InlineReplyActionItem }))
     }
 }
 

@@ -2,15 +2,13 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-@testable
-import StreamChat
-@testable
-import StreamChatTestTools
+@testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class StreamCDNClient_Tests: XCTestCase {
+final class StreamCDNClient_Tests: XCTestCase {
     func test_uploadFileEncoderIsCalledWithEndpoint() throws {
-        let builder = Builder()
+        let builder = TestBuilder()
         let client = builder.make()
         
         // Setup mock encoder response (it's not actually used, we just need to return something)
@@ -43,7 +41,7 @@ class StreamCDNClient_Tests: XCTestCase {
     }
     
     func test_uploadFileEncoderFailingToEncode() throws {
-        let builder = Builder()
+        let builder = TestBuilder()
         let client = builder.make()
         // Setup mock encoder response to fail with `testError`
         let testError = TestError()
@@ -68,7 +66,7 @@ class StreamCDNClient_Tests: XCTestCase {
     }
     
     func test_uploadFileSuccess() throws {
-        let builder = Builder()
+        let builder = TestBuilder()
         let decoder = builder.decoder
         let client = builder.make()
 
@@ -78,7 +76,7 @@ class StreamCDNClient_Tests: XCTestCase {
         
         // Set up a successful mock network response for the request
         let mockResponseData = try JSONEncoder.stream.encode(["file": URL.unique()])
-        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 234, responseBody: mockResponseData)
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 234, responseBody: mockResponseData)
         
         // Set up a decoder response
         // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
@@ -110,7 +108,7 @@ class StreamCDNClient_Tests: XCTestCase {
     }
     
     func test_uploadFileFailure() throws {
-        let builder = Builder()
+        let builder = TestBuilder()
         let client = builder.make()
         let decoder = builder.decoder
         
@@ -123,7 +121,7 @@ class StreamCDNClient_Tests: XCTestCase {
         let encoderError = TestError()
 
         // Set up a mock network response from the request
-        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 444, error: networkError)
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 444, error: networkError)
 
         // Set up a decoder response to return `encoderError`
         decoder.decodeRequestResponse = .failure(encoderError)
@@ -155,7 +153,7 @@ class StreamCDNClient_Tests: XCTestCase {
     }
 
     func test_callingUploadFile_createsNetworkRequest() throws {
-        let builder = Builder()
+        let builder = TestBuilder()
         let client = builder.make()
         
         let attachment = AnyChatMessageAttachment.sample(
@@ -207,27 +205,5 @@ class StreamCDNClient_Tests: XCTestCase {
     
     func test_maxAttachmentSize() {
         XCTAssertEqual(StreamCDNClient.maxAttachmentSize, 20 * 1024 * 1024)
-    }
-}
-
-private class Builder {
-    let encoder = TestRequestEncoder(
-        baseURL: .unique(),
-        apiKey: .init(.unique)
-    )
-    let decoder = TestRequestDecoder()
-    var sessionConfiguration = URLSessionConfiguration.ephemeral
-    let uniqueHeaderValue = String.unique
-    
-    func make() -> StreamCDNClient {
-        sessionConfiguration.httpAdditionalHeaders?["unique_value"] = uniqueHeaderValue
-        RequestRecorderURLProtocol.startTestSession(with: &sessionConfiguration)
-        MockNetworkURLProtocol.startTestSession(with: &sessionConfiguration)
-        
-        return StreamCDNClient(
-            encoder: encoder,
-            decoder: decoder,
-            sessionConfiguration: sessionConfiguration
-        )
     }
 }

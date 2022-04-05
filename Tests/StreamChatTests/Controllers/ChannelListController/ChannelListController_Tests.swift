@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelListController_Tests: XCTestCase {
+final class ChannelListController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
     
     var client: ChatClient!
@@ -19,7 +19,7 @@ class ChannelListController_Tests: XCTestCase {
     /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
     
-    var database: DatabaseContainerMock { client.databaseContainer as! DatabaseContainerMock }
+    var database: DatabaseContainer_Spy { client.databaseContainer as! DatabaseContainer_Spy }
     
     override func setUp() {
         super.setUp()
@@ -37,7 +37,10 @@ class ChannelListController_Tests: XCTestCase {
         controllerCallbackQueueID = nil
         
         database.shouldCleanUpTempDBFiles = true
-        
+
+        controller = nil
+        client.mockAPIClient.cleanUp()
+        client = nil
         env.channelListUpdater?.cleanUp()
         
         AssertAsync {
@@ -687,7 +690,7 @@ class ChannelListController_Tests: XCTestCase {
     // MARK: - Delegate tests
     
     func test_settingDelegate_leadsToFetchingLocalData() {
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelListController_Delegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
@@ -700,7 +703,7 @@ class ChannelListController_Tests: XCTestCase {
     
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelListController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert delegate is notified about state changes
@@ -718,7 +721,7 @@ class ChannelListController_Tests: XCTestCase {
 
     func test_delegateMethodsAreCalled() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = ChannelListController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -1008,69 +1011,14 @@ class ChannelListController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var channelListUpdater: ChannelListUpdaterMock?
+    @Atomic var channelListUpdater: ChannelListUpdater_Spy?
     
     lazy var environment: ChatChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
-            self.channelListUpdater = ChannelListUpdaterMock(
+            self.channelListUpdater = ChannelListUpdater_Spy(
                 database: $0,
                 apiClient: $1
             )
             return self.channelListUpdater!
         })
-}
-
-// A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var willChangeChannels_called = false
-    @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-
-    func controllerWillChangeChannels(_ controller: ChatChannelListController) {
-        willChangeChannels_called = true
-        validateQueue()
-    }
-
-    func controller(
-        _ controller: ChatChannelListController,
-        didChangeChannels changes: [ListChange<ChatChannel>]
-    ) {
-        didChangeChannels_changes = changes
-        validateQueue()
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        validateQueue()
-        return true
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        validateQueue()
-        return true
-    }
-}
-
-private class TestLinkDelegate: ChatChannelListControllerDelegate {
-    let shouldListNewChannel: (ChatChannel) -> Bool
-    let shouldListUpdatedChannel: (ChatChannel) -> Bool
-    init(
-        shouldListNewChannel: @escaping (ChatChannel) -> Bool,
-        shouldListUpdatedChannel: @escaping (ChatChannel) -> Bool
-    ) {
-        self.shouldListNewChannel = shouldListNewChannel
-        self.shouldListUpdatedChannel = shouldListUpdatedChannel
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        shouldListNewChannel(channel)
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        shouldListUpdatedChannel(channel)
-    }
 }

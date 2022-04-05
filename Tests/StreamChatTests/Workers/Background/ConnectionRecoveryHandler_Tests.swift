@@ -9,10 +9,10 @@ import XCTest
 
 final class ConnectionRecoveryHandler_Tests: XCTestCase {
     var handler: DefaultConnectionRecoveryHandler!
-    var mockChatClient: ChatClientMock!
-    var mockInternetConnection: InternetConnectionMock!
-    var mockBackgroundTaskScheduler: MockBackgroundTaskScheduler!
-    var mockRetryStrategy: MockRetryStrategy!
+    var mockChatClient: ChatClient_Mock!
+    var mockInternetConnection: InternetConnection_Mock!
+    var mockBackgroundTaskScheduler: BackgroundTaskScheduler_Mock!
+    var mockRetryStrategy: RetryStrategy_Spy!
     var mockTime: VirtualTime { VirtualTimeTimer.time }
         
     override func setUp() {
@@ -20,9 +20,9 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         
         VirtualTimeTimer.time = .init()
         
-        mockChatClient = ChatClientMock(config: .init(apiKeyString: .unique))
-        mockBackgroundTaskScheduler = MockBackgroundTaskScheduler()
-        mockRetryStrategy = MockRetryStrategy()
+        mockChatClient = ChatClient_Mock(config: .init(apiKeyString: .unique))
+        mockBackgroundTaskScheduler = BackgroundTaskScheduler_Mock()
+        mockRetryStrategy = RetryStrategy_Spy()
         mockInternetConnection = .init(notificationCenter: mockChatClient.eventNotificationCenter)
     }
     
@@ -32,8 +32,13 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         AssertAsync.canBeReleased(&mockInternetConnection)
         AssertAsync.canBeReleased(&mockRetryStrategy)
         AssertAsync.canBeReleased(&mockBackgroundTaskScheduler)
-        
-        VirtualTimeTimer.time = nil
+
+        handler = nil
+        mockChatClient = nil
+        mockInternetConnection = nil
+        mockRetryStrategy = nil
+        mockBackgroundTaskScheduler = nil
+        VirtualTimeTimer.invalidate()
 
         super.tearDown()
     }
@@ -483,7 +488,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     // MARK: - Websocket connection
 
     func test_webSocketStateUpdate_connecting() {
-        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        let syncRepository = SyncRepository_Spy(client: mockChatClient)
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
 
         // Simulate connection update
@@ -493,7 +498,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     }
 
     func test_webSocketStateUpdate_connected() {
-        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        let syncRepository = SyncRepository_Spy(client: mockChatClient)
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
 
         // Simulate connection update
@@ -504,7 +509,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     }
 
     func test_webSocketStateUpdate_disconnected_userInitiated() {
-        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        let syncRepository = SyncRepository_Spy(client: mockChatClient)
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
 
         // We need to set the state on the client as well
@@ -520,7 +525,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     }
 
     func test_webSocketStateUpdate_disconnected_systemInitiated() {
-        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        let syncRepository = SyncRepository_Spy(client: mockChatClient)
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
 
         // We need to set the state on the client as well
@@ -540,7 +545,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     }
 
     func test_webSocketStateUpdate_initialized() {
-        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        let syncRepository = SyncRepository_Spy(client: mockChatClient)
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
 
         // Simulate connection update
@@ -550,7 +555,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     }
 
     func test_webSocketStateUpdate_waitingForConnectionId() {
-        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        let syncRepository = SyncRepository_Spy(client: mockChatClient)
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
 
         // Simulate connection update
@@ -560,7 +565,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     }
 
     func test_webSocketStateUpdate_disconnecting() {
-        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        let syncRepository = SyncRepository_Spy(client: mockChatClient)
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
 
         // Simulate connection update
@@ -583,7 +588,7 @@ private extension ConnectionRecoveryHandler_Tests {
         let handler = DefaultConnectionRecoveryHandler(
             webSocketClient: mockChatClient.mockWebSocketClient,
             eventNotificationCenter: mockChatClient.eventNotificationCenter,
-            syncRepository: syncRepository ?? SyncRepositoryMock(client: mockChatClient),
+            syncRepository: syncRepository ?? SyncRepository_Spy(client: mockChatClient),
             backgroundTaskScheduler: mockBackgroundTaskScheduler,
             internetConnection: mockInternetConnection,
             reconnectionStrategy: mockRetryStrategy,
@@ -611,14 +616,5 @@ private extension ConnectionRecoveryHandler_Tests {
         
         ws.simulateConnectionStatus(.disconnecting(source: source))
         ws.simulateConnectionStatus(.disconnected(source: source))
-    }
-}
-
-extension ChannelListQuery: Equatable {
-    public static func == (lhs: ChannelListQuery, rhs: ChannelListQuery) -> Bool {
-        lhs.filter == rhs.filter &&
-            lhs.messagesLimit == rhs.messagesLimit &&
-            lhs.options == rhs.options &&
-            lhs.pagination == rhs.pagination
     }
 }

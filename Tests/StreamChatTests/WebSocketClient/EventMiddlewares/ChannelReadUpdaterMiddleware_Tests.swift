@@ -6,19 +6,19 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
+final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     var middleware: ChannelReadUpdaterMiddleware!
-    fileprivate var database: DatabaseContainerMock!
+    fileprivate var database: DatabaseContainer_Spy!
     
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = ChannelReadUpdaterMiddleware()
     }
     
     override func tearDown() {
-        middleware = nil
         AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
 

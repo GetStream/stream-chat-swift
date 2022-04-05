@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class ChannelEditDetailPayload_Tests: XCTestCase {
+final class ChannelEditDetailPayload_Tests: XCTestCase {
     // Test ChannelEditDetailPayload encoded correctly
     func test_channelEditDetailPayload_encodedCorrectly() throws {
         let cid: ChannelId = .unique

@@ -70,7 +70,7 @@ private extension Encodable {
     }
 }
 
-enum EndpointMethod: String, Codable {
+enum EndpointMethod: String, Codable, Equatable {
     case get = "GET"
     case post = "POST"
     case patch = "PATCH"

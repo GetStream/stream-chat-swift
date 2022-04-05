@@ -7,7 +7,7 @@
 import XCTest
 
 @available(iOS 13, *)
-class MessageController_SwiftUI_Tests: iOS13TestCase {
+final class MessageController_SwiftUI_Tests: iOS13TestCase {
     var messageController: ChatMessageController_Mock!
     
     override func setUp() {
@@ -17,6 +17,7 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
     
     override func tearDown() {
         AssertAsync.canBeReleased(&messageController)
+        messageController = nil
         super.tearDown()
     }
     

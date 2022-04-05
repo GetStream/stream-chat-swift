@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class Sorting_Tests: XCTestCase {
+final class Sorting_Tests: XCTestCase {
     func test_Encoding() throws {
         let sorting = Sorting<ChannelListSortingKey>(key: .createdAt, isAscending: true)
         

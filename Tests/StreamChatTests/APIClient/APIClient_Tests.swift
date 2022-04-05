@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class APIClient_Tests: XCTestCase {
+final class APIClient_Tests: XCTestCase {
     var apiClient: APIClient!
     
     var apiKey: APIKey!
@@ -15,9 +15,9 @@ class APIClient_Tests: XCTestCase {
     
     var uniqueHeaderValue: String!
     
-    var encoder: TestRequestEncoder!
-    var decoder: TestRequestDecoder!
-    var cdnClient: CDNClient_Mock!
+    var encoder: RequestEncoder_Spy!
+    var decoder: RequestDecoder_Spy!
+    var cdnClient: CDNClient_Spy!
     var tokenRefresher: ((@escaping () -> Void) -> Void)!
     var queueOfflineRequest: QueueOfflineRequestBlock!
 
@@ -29,17 +29,17 @@ class APIClient_Tests: XCTestCase {
         
         // Prepare the URL protocol test environment
         sessionConfiguration = .ephemeral
-        RequestRecorderURLProtocol.startTestSession(with: &sessionConfiguration)
-        MockNetworkURLProtocol.startTestSession(with: &sessionConfiguration)
+        RequestRecorderURLProtocol_Mock.startTestSession(with: &sessionConfiguration)
+        URLProtocol_Mock.startTestSession(with: &sessionConfiguration)
         sessionConfiguration.httpMaximumConnectionsPerHost = Int.max
         
         // Some random value to ensure the headers are respected
         uniqueHeaderValue = .unique
         sessionConfiguration.httpAdditionalHeaders?["unique_value"] = uniqueHeaderValue
         
-        encoder = TestRequestEncoder(baseURL: baseURL, apiKey: apiKey)
-        decoder = TestRequestDecoder()
-        cdnClient = CDNClient_Mock()
+        encoder = RequestEncoder_Spy(baseURL: baseURL, apiKey: apiKey)
+        decoder = RequestDecoder_Spy()
+        cdnClient = CDNClient_Spy()
         tokenRefresher = { _ in }
         queueOfflineRequest = { _ in }
         
@@ -55,9 +55,19 @@ class APIClient_Tests: XCTestCase {
     
     override func tearDown() {
         AssertAsync.canBeReleased(&apiClient)
+
+        apiClient = nil
+        baseURL = nil
+        sessionConfiguration = nil
+        uniqueHeaderValue = nil
+        encoder = nil
+        decoder = nil
+        cdnClient = nil
+        tokenRefresher = nil
+        queueOfflineRequest = nil
         
-        RequestRecorderURLProtocol.reset()
-        MockNetworkURLProtocol.reset()
+        RequestRecorderURLProtocol_Mock.reset()
+        URLProtocol_Mock.reset()
         
         super.tearDown()
     }
@@ -111,7 +121,7 @@ class APIClient_Tests: XCTestCase {
         let uniqueQueryItem: String = .unique
         var testRequest = URLRequest(url: URL(string: "test://test.test/\(uniquePath)?item=\(uniqueQueryItem)")!)
         testRequest.httpMethod = "post"
-        testRequest.httpBody = try! JSONEncoder.stream.encode(TestUser(name: "Leia"))
+        testRequest.httpBody = try! JSONEncoder.stream.encode(TestUser(name: "Leia", age: 1))
         testRequest.allHTTPHeaderFields?["surname"] = "Organa"
         encoder.encodeRequest = .success(testRequest)
         
@@ -130,7 +140,7 @@ class APIClient_Tests: XCTestCase {
             // the "name" header value comes from the request, "unique_value" from the session config
             headers: ["surname": "Organa", "unique_value": uniqueHeaderValue],
             queryParameters: ["item": uniqueQueryItem],
-            body: try JSONEncoder().encode(["name": "Leia"])
+            body: try JSONEncoder().encode(["name": "Leia", "age": "1"])
         )
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 1)
         XCTEnsureRequestsWereExecuted(times: 1)
@@ -143,7 +153,7 @@ class APIClient_Tests: XCTestCase {
         
         // Set up a successful mock network response for the request
         let mockNetworkResponseData = try JSONEncoder.stream.encode(TestUser(name: "Network Response"))
-        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 234, responseBody: mockNetworkResponseData)
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 234, responseBody: mockNetworkResponseData)
         
         // Set up a decoder response
         // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
@@ -176,7 +186,7 @@ class APIClient_Tests: XCTestCase {
         let encoderError = TestError()
         
         // Set up a mock network response from the request
-        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 444, error: networkError)
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 444, error: networkError)
         
         // Set up a decoder response to return `encoderError`
         decoder.decodeRequestResponse = .failure(encoderError)
@@ -524,8 +534,8 @@ class APIClient_Tests: XCTestCase {
     func test_whenInRegularModeRecoveryRequestsShouldThrowAnAssert() {
         let testUser = TestUser(name: "test")
         decoder.decodeRequestResponse = .success(testUser)
-        let loggerMock = LoggerMock()
-        loggerMock.injectMock()
+        let Logger_Spy = Logger_Spy()
+        Logger_Spy.injectMock()
 
         let lastRequestExpectation = expectation(description: "Last request completed")
         (1...5).forEach { index in
@@ -535,10 +545,10 @@ class APIClient_Tests: XCTestCase {
         }
 
         waitForExpectations(timeout: 0.1, handler: nil)
-        XCTAssertEqual(loggerMock.assertionFailureCalls, 5)
+        XCTAssertEqual(Logger_Spy.assertionFailureCalls, 5)
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 5)
         XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: 5)
-        loggerMock.restoreLogger()
+        Logger_Spy.restoreLogger()
     }
 
     func test_whenInRecoveryMode_startingMultipleRecoveryRequestsAtTheSameTimeShouldRunThemInSerial() {
@@ -623,14 +633,11 @@ class APIClient_Tests: XCTestCase {
         XCTAssertEqual(totalRequests.count, 8)
         XCTAssertEqual(Set(totalRequests).count, 5)
     }
+}
 
-    // MARK: - Helpers
+// MARK: Helpers
 
-    private func XCTEnsureRequestsWereExecuted(times: Int, file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: times, file: file, line: line)
-        XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: times, file: file, line: line)
-    }
-
+extension APIClient_Tests {
     private func createClient(
         tokenRefresher: ((@escaping () -> Void) -> Void)? = nil,
         queueOfflineRequest: QueueOfflineRequestBlock? = nil
@@ -650,162 +657,11 @@ class APIClient_Tests: XCTestCase {
             queueOfflineRequest: self.queueOfflineRequest
         )
     }
-}
 
-extension Endpoint {
-    static func mock(path: EndpointPath = .guest) -> Endpoint<ResponseType> {
-        .init(path: path, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
-    }
-}
+    // MARK: - Helpers
 
-private struct TestUser: Codable, Equatable {
-    let name: String
-}
-
-class TestRequestEncoder: RequestEncoder, Spy {
-    var recordedFunctions: [String] = []
-    let init_baseURL: URL
-    let init_apiKey: APIKey
-    
-    weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
-    
-    var encodeRequest: Result<URLRequest, Error>? = .success(URLRequest(url: .unique()))
-    var encodeRequest_endpoints: [AnyEndpoint] = []
-    var encodeRequest_completion: ((Result<URLRequest, Error>) -> Void)?
-    
-    func encodeRequest<ResponsePayload>(
-        for endpoint: Endpoint<ResponsePayload>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
-    ) where ResponsePayload: Decodable {
-        record()
-        encodeRequest_endpoints.append(AnyEndpoint(endpoint))
-        encodeRequest_completion = completion
-        
-        if let result = encodeRequest {
-            completion(result)
-        }
-    }
-    
-    required init(baseURL: URL, apiKey: APIKey) {
-        init_baseURL = baseURL
-        init_apiKey = apiKey
-    }
-}
-
-class TestRequestDecoder: RequestDecoder, Spy {
-    var recordedFunctions: [String] = []
-    var decodeRequestResponse: Result<Any, Error>?
-    var decodeRequestDelay: TimeInterval?
-
-    var decodeRequestResponse_data: Data?
-    var decodeRequestResponse_response: HTTPURLResponse?
-    var decodeRequestResponse_error: Error?
-    
-    func decodeRequestResponse<ResponseType>(
-        data: Data?,
-        response: URLResponse?,
-        error: Error?
-    ) throws -> ResponseType where ResponseType: Decodable {
-        record()
-        decodeRequestResponse_data = data
-        decodeRequestResponse_response = response as? HTTPURLResponse
-        decodeRequestResponse_error = error
-
-        guard let simulatedResponse = decodeRequestResponse else {
-            log.warning("TestRequestDecoder simulated response not set. Throwing a TestError.")
-            throw TestError()
-        }
-
-        if let decodeRequestDelay = decodeRequestDelay {
-            let group = DispatchGroup()
-            group.enter()
-            DispatchQueue.main.asyncAfter(deadline: .now() + decodeRequestDelay) { group.leave() }
-            group.wait()
-        }
-        switch simulatedResponse {
-        case let .success(response):
-            return response as! ResponseType
-        case let .failure(error):
-            throw error
-        }
-    }
-}
-
-extension AnyEncodable: Equatable {
-    public static func == (lhs: AnyEncodable, rhs: AnyEncodable) -> Bool {
-        do {
-            let encoder = JSONEncoder.default
-            let encodedLhs = try encoder.encode(lhs)
-            let encodedRhs = try encoder.encode(rhs)
-            try CompareJSONEqual(encodedLhs, encodedRhs)
-            return true
-        } catch {
-            return String(describing: lhs) == String(describing: rhs)
-        }
-    }
-}
-
-struct AnyEndpoint: Equatable {
-    let path: EndpointPath
-    let method: EndpointMethod
-    let queryItems: AnyEncodable?
-    let requiresConnectionId: Bool
-    let body: AnyEncodable?
-    let payloadType: Decodable.Type
-    
-    init<T: Decodable>(_ endpoint: Endpoint<T>) {
-        path = endpoint.path
-        method = endpoint.method
-        queryItems = endpoint.queryItems?.asAnyEncodable
-        requiresConnectionId = endpoint.requiresConnectionId
-        body = endpoint.body?.asAnyEncodable
-        payloadType = T.self
-    }
-    
-    static func == (lhs: AnyEndpoint, rhs: AnyEndpoint) -> Bool {
-        lhs.path.value == rhs.path.value
-            && lhs.method == rhs.method
-            && lhs.queryItems == rhs.queryItems
-            && lhs.requiresConnectionId == rhs.requiresConnectionId
-            && lhs.body == rhs.body
-            && lhs.payloadType == rhs.payloadType
-    }
-}
-
-extension URLSessionConfiguration {
-    // Because on < iOS13 the configuration class gets copied and we can't simply compare it's the same instance, we need to
-    // provide custom implementation for comparing. The default `Equatable` implementation of `URLSessionConfiguration`
-    // simply compares the pointers.
-    @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
-    func isTestEqual(to otherConfiguration: URLSessionConfiguration) -> Bool {
-        let commonEquatability = identifier == otherConfiguration.identifier
-            && requestCachePolicy == otherConfiguration.requestCachePolicy
-            && timeoutIntervalForRequest == otherConfiguration.timeoutIntervalForRequest
-            && timeoutIntervalForResource == otherConfiguration.timeoutIntervalForResource
-            && networkServiceType == otherConfiguration.networkServiceType
-            && allowsCellularAccess == otherConfiguration.allowsCellularAccess
-            && httpShouldUsePipelining == otherConfiguration.httpShouldUsePipelining
-            && httpShouldSetCookies == otherConfiguration.httpShouldSetCookies
-            && httpCookieAcceptPolicy == otherConfiguration.httpCookieAcceptPolicy
-            && httpAdditionalHeaders as? [String: String] == otherConfiguration.httpAdditionalHeaders as? [String: String]
-            && httpMaximumConnectionsPerHost == otherConfiguration.httpMaximumConnectionsPerHost
-            && httpCookieStorage == otherConfiguration.httpCookieStorage
-            && urlCredentialStorage == otherConfiguration.urlCredentialStorage
-            && urlCache == otherConfiguration.urlCache
-            && shouldUseExtendedBackgroundIdleMode == otherConfiguration.shouldUseExtendedBackgroundIdleMode
-            && waitsForConnectivity == otherConfiguration.waitsForConnectivity
-            && isDiscretionary == otherConfiguration.isDiscretionary
-            && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
-            && waitsForConnectivity == otherConfiguration.waitsForConnectivity
-            && isDiscretionary == otherConfiguration.isDiscretionary
-            && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
-        
-        #if os(iOS)
-        return commonEquatability
-            && multipathServiceType == otherConfiguration.multipathServiceType
-            && sessionSendsLaunchEvents == otherConfiguration.sessionSendsLaunchEvents
-        #else
-        return commonEquatability
-        #endif
+    func XCTEnsureRequestsWereExecuted(times: Int, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: times, file: file, line: line)
+        XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: times, file: file, line: line)
     }
 }
