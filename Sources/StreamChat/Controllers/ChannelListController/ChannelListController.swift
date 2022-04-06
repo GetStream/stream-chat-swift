@@ -186,12 +186,28 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    private func channelBelongsToController(_ channel: ChatChannel) -> Bool {
+    private func channelBelongsToController(_ channel: ChatChannel, change: ListChange<ChatChannel>) -> Bool {
         if let filter = filter {
             return filter(channel)
         }
+
+        // Given that at the moment some delegate methods are not yet removed, but some integrators are still using
+        // those, we need to keep using them for now.
+        // This block should be removed once `shouldAddNewChannelToList` and `shouldListUpdatedChannel` methods are
+        // fully removed.
+        let deprecatedFallback: () -> Bool? = { [unowned self] in
+            switch change {
+            case .insert:
+                return self.delegate?.controller(self, shouldAddNewChannelToList: channel)
+            case .update:
+                return self.delegate?.controller(self, shouldListUpdatedChannel: channel)
+            default:
+                return nil
+            }
+        }
+
         do {
-            return try channel.meets(query.filter)
+            return try deprecatedFallback() ?? channel.meets(query.filter)
         } catch {
             log.error("Unable to resolve complex filter. Please pass a `filter` block when intializing ChatChannelListController")
         }
@@ -207,11 +223,9 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let channels = changes.compactMap { change -> ChatChannel? in
             switch change {
             case let .insert(channel, _):
-                guard channelBelongsToController(channel) else { return nil }
-                return (delegate?.controller(self, shouldAddNewChannelToList: channel) ?? true) ? channel : nil
+                return channelBelongsToController(channel, change: change) ? channel : nil
             case let .update(channel, _):
-                guard channelBelongsToController(channel) else { return nil }
-                return (delegate?.controller(self, shouldListUpdatedChannel: channel) ?? true) ? channel : nil
+                return channelBelongsToController(channel, change: change) ? channel : nil
             default: return nil
             }
         }
@@ -223,8 +237,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             switch change {
             case let .update(channel, _):
                 // We unlink the channels that do not belong to this controller
-                guard channelBelongsToController(channel) else { return channel }
-                return (delegate?.controller(self, shouldListUpdatedChannel: channel) ?? true) ? nil : channel
+                return channelBelongsToController(channel, change: change) ? nil : channel
             default: return nil
             }
         }
