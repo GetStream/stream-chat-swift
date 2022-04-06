@@ -153,7 +153,7 @@ open class ChatChannelListVC: _ViewController,
             headerSafeAreaView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             headerSafeAreaView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             headerSafeAreaView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            headerSafeAreaView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0)
+            headerSafeAreaView.heightAnchor.constraint(equalToConstant: UIView.safeAreaTop)
         ])
 
         view.addSubview(headerView)
@@ -362,15 +362,13 @@ open class ChatChannelListVC: _ViewController,
                 guard let currentUserId = ChatClient.shared.currentUserId else { return }
                 if controller.channel?.isMuted ?? false {
                     controller.unmuteChannel(completion: nil)
-                    // TODO: disable for now
                     // Add user in channel to enable notification
-                    // controller.addMembers(userIds: [currentUserId], completion: nil)
+                     controller.addMembers(userIds: [currentUserId], completion: nil)
                     return;
                 }
                 controller.muteChannel(completion: nil)
-                // TODO: disable for now
                 // Remove user from channel to disable notification
-                // controller.removeMembers(userIds: [currentUserId], completion: nil)
+                 controller.removeMembers(userIds: [currentUserId], completion: nil)
             } else {
                 controller.hideChannel(clearHistory: true, completion: nil)
             }

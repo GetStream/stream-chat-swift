@@ -47,14 +47,6 @@ public extension Appearance {
                 return nil
             }
         }
-//        static let systemCheckMarkCircle = UIImage(systemName: "checkmark.circle.fill")
-//        static let systemPersonBadge = UIImage(systemName: "person.badge.plus")
-//        static let systemCheckmarkCircle = UIImage(systemName: "checkmark.circle.fill")
-//        static let iconArrowRight = UIImage(named: "Icon_arrow_right")
-//        static let xmas = UIImage(systemName: "xmark")
-//        static let checkMark = UIImage(systemName: "checkmark")
-//        static let backSheet = UIImage(named: "backSheet")
-        
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
         public var close: UIImage = {
             if #available(iOS 13.0, *) {
@@ -63,6 +55,10 @@ public extension Appearance {
                 return loadImageSafely(with: "close")
             }
         }()
+        public var socialMail: UIImage = loadImageSafely(with: "social_mail")
+        public var socialInsta: UIImage = loadImageSafely(with: "social_insta")
+        public var socialTikTok: UIImage = loadImageSafely(with: "social_tiktok")
+        public var socialTwitter: UIImage = loadImageSafely(with: "social_twitter")
         public var userSelected: UIImage = loadImageSafely(with: "chat_UserStatus")
         public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
@@ -71,86 +67,150 @@ public extension Appearance {
         public var back: UIImage = loadImageSafely(with: "icn_back")
         public var onlyVisibleToCurrentUser = loadImageSafely(with: "eye")
         public var more = loadImageSafely(with: "icn_more")
-        public var share: UIImage = {
+        public var moregreyCircle = loadImageSafely(with: "more-grey-circle")
+        public var share: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "square.and.arrow.up")!
+                return UIImage(systemName: "square.and.arrow.up")
             } else {
-                return loadImageSafely(with: "share")
+                return nil
             }
         }()
-        public var arrowUpRightSquare: UIImage = {
+        public var arrowUpRightSquare: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "arrow.up.right.square")!
+                return UIImage(systemName: "arrow.up.right.square")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
-        public var personBadgePlus: UIImage = {
+        public var personBadgePlus: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "person.badge.plus")!
+                return UIImage(systemName: "person.badge.plus")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
-        public var search: UIImage = {
+        public var search: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "magnifyingglass")!
+                return UIImage(systemName: "magnifyingglass")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
-        public var qrCode: UIImage = {
+        public var qrCode: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "qrcode")!
+                return UIImage(systemName: "qrcode")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
-        public var qrCodeViewFinder: UIImage = {
+        public var qrCodeViewFinder: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "qrcode.viewfinder")!
+                return UIImage(systemName: "qrcode.viewfinder")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
-        public var mute: UIImage = {
+        public var mute: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "speaker.slash")!
+                return UIImage(systemName: "speaker.slash")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
-        public var unMute: UIImage = {
+        public var unMute: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "speaker")!
+                return UIImage(systemName: "speaker")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
-        public var photo: UIImage = {
+        public var photo: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "photo")!
+                return UIImage(systemName: "photo")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
-        public var trash: UIImage = {
+        public var trash: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "trash")!
+                return UIImage(systemName: "trash")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
-        public var rectangleArrowRight: UIImage = {
+        public var rectangleArrowRight: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "rectangle.portrait.and.arrow.right")!
+                return UIImage(systemName: "rectangle.portrait.and.arrow.right")
             } else {
-                return loadImageSafely(with: "arrow")
+                return nil
             }
         }()
         public var muteChannel: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "speaker.slash.fill")!.withTintColor(.gray)
+                return UIImage(systemName: "speaker.slash.fill")?.withTintColor(.gray)
+            } else {
+                return nil
+            }
+        }()
+        public lazy var exclamationMarkCircle: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "exclamationmark.circle")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var starCircleFill: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "star.circle.fill")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var bell: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "bell")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var bellSlash: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "bell.slash")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var crown: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "crown")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var block: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "hand.raised.slash")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var unblock: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "hand.raised")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var rectanglePencil: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "rectangle.and.pencil.and.ellipsis")
+            } else {
+                return nil
+            }
+        }()
+        public lazy var personTextRectangle: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "person.text.rectangle")
             } else {
                 return nil
             }
@@ -173,25 +233,25 @@ public extension Appearance {
         public var folder: UIImage = loadImageSafely(with: "folder")
         public var restart: UIImage = loadImageSafely(with: "restart")
         public var chatIcon: UIImage = loadImageSafely(with: "chatIcon")
-        public var download: UIImage = {
+        public var download: UIImage? = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "icloud.and.arrow.down")!
             } else {
-                return loadImageSafely(with: "download")
+                return nil
             }
         }()
         public var senOneImage: UIImage? = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "paperplane.fill")?.withTintColor(.white)
             } else {
-                return Appearance.default.images.sendArrow.tinted(with: .white)
+                return nil
             }
         }()
         public var handPointUp: UIImage? = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "hand.point.up")?.withTintColor(.white.withAlphaComponent(0.6))
             } else {
-                return Appearance.default.images.sendArrow.tinted(with: .white)
+                return nil
             }
         }()
         public var menuRedPacket: UIImage? = {
@@ -398,7 +458,7 @@ public extension Appearance {
         public var fileAttachmentActionIcons: [LocalAttachmentState?: UIImage] {
             get { _fileAttachmentActionIcons ??
                 [
-                    .uploaded: download,
+                    .uploaded: download ?? UIImage(),
                     .uploadingFailed: restart,
                     nil: folder
                 ]

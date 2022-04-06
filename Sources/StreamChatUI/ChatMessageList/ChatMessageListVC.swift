@@ -86,6 +86,8 @@ open class ChatMessageListVC:
         listView.register(.init(nibName: "AdminMessageTVCell", bundle: nil), forCellReuseIdentifier: "AdminMessageTVCell")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
         listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
+        listView.register(TableViewCellWallePayBubbleIncoming.nib, forCellReuseIdentifier: TableViewCellWallePayBubbleIncoming.identifier)
+        listView.register(TableViewCellRedPacketDrop.nib, forCellReuseIdentifier: TableViewCellRedPacketDrop.identifier)
         listView.register(.init(nibName: "AnnouncementTableViewCell", bundle: nil), forCellReuseIdentifier: "AnnouncementTableViewCell")
         //setupEmptyState()
 //        if let numberMessage = dataSource?.numberOfMessages(in: self) {
@@ -325,7 +327,7 @@ open class ChatMessageListVC:
                         for: indexPath) as? CryptoReceiveBubble else {
                             return UITableViewCell()
                         }
-                    cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                    cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
                     cell.content = message
                     cell.client = client
                     cell.configData()
@@ -338,18 +340,28 @@ open class ChatMessageListVC:
                     return cell
                 }
             } else if isRedPacketCell(message) {
-                //if isMessageFromCurrentUser {
+                if isMessageFromCurrentUser {
+                    guard let cell = tableView.dequeueReusableCell(
+                        withIdentifier: "RedPacketSentBubble",
+                        for: indexPath) as? RedPacketSentBubble else {
+                            return UITableViewCell()
+                        }
+                    cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                    cell.content = message
+                    cell.configureCell(isSender: isMessageFromCurrentUser)
+                    cell.configData()
+                    return cell
+                }
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "RedPacketSentBubble",
-                    for: indexPath) as? RedPacketSentBubble else {
+                    withIdentifier: TableViewCellRedPacketDrop.identifier,
+                    for: indexPath) as? TableViewCellRedPacketDrop else {
                         return UITableViewCell()
                     }
-                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configureCell(isSender: isMessageFromCurrentUser)
                 cell.configData()
                 return cell
-                //}
             }
             else if isRedPacketNoPickUpCell(message) {
                 guard let cell = tableView.dequeueReusableCell(
@@ -361,7 +373,7 @@ open class ChatMessageListVC:
                     cell.channel = channel
                 }
                 cell.client = client
-                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configureCell(isSender: isMessageFromCurrentUser)
                 cell.configData()
@@ -377,7 +389,7 @@ open class ChatMessageListVC:
                     cell.channel = channel
                 }
                 cell.chatClient = client
-                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configureCell(isSender: isMessageFromCurrentUser, with: .EXPIRED)
                 cell.configData()
@@ -391,20 +403,19 @@ open class ChatMessageListVC:
                 if let channel = dataSource?.channel(for: self) {
                     cell.channel = channel
                 }
-                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configureCell(isSender: isMessageFromCurrentUser, with: .RECEIVED)
                 cell.configData()
                 return cell
             } else if isRedPacketAmountCell(message) {
-
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: "RedPacketAmountBubble",
                     for: indexPath) as? RedPacketAmountBubble else {
                         return UITableViewCell()
                     }
                 cell.client = client
-                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configureCell(isSender: isMessageFromCurrentUser)
                 cell.configData()
@@ -416,13 +427,27 @@ open class ChatMessageListVC:
                 }
                 return cell
             } else if isWalletRequestPayCell(message) {
+                if isMessageFromCurrentUser {
+                    guard let cell = tableView.dequeueReusableCell(
+                        withIdentifier: "RequestBubble",
+                        for: indexPath) as? WalletRequestPayBubble else {
+                            return UITableViewCell()
+                        }
+                    cell.isSender = isMessageFromCurrentUser
+                    cell.client = client
+                    cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
+                    cell.content = message
+                    cell.configureCell(isSender: isMessageFromCurrentUser)
+                    cell.configData()
+                    return cell
+                }
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "RequestBubble",
-                    for: indexPath) as? WalletRequestPayBubble else {
+                    withIdentifier: TableViewCellWallePayBubbleIncoming.identifier,
+                    for: indexPath) as? TableViewCellWallePayBubbleIncoming else {
                         return UITableViewCell()
                     }
                 cell.client = client
-                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configureCell(isSender: isMessageFromCurrentUser)
                 cell.configData()

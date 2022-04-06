@@ -29,8 +29,15 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
         let imageView = UIImageView()
         imageView.image = appearance.images.muteChannel
         imageView.tintColor = .gray
+        imageView.contentMode = .scaleAspectFit
         imageView.withoutAutoresizingMaskConstraints
         return imageView
+    }()
+
+    open private(set) lazy var muteContainerView: UIView = {
+        let view = UIView()
+        view.withoutAutoresizingMaskConstraints
+        return view
     }()
     
     /// A view that acts as the main container for the subviews
@@ -68,12 +75,19 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
     override open func setUpLayout() {
         super.setUpLayout()
         titleContainerView.removeAllArrangedSubviews()
+
+        muteContainerView.addSubview(muteImageView)
+        muteImageView.widthAnchor.constraint(equalToConstant: 11).isActive = true
+        muteImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        muteImageView.centerYAnchor.constraint(equalTo: muteContainerView.centerYAnchor, constant: 0).isActive = true
+        muteImageView.centerXAnchor.constraint(equalTo: muteContainerView.centerXAnchor, constant: 0).isActive = true
         if content.isMute {
-            titleContainerView.addArrangedSubviews([titleLabel, muteImageView])
+            titleContainerView.addArrangedSubviews([titleLabel, muteContainerView])
         } else {
             titleContainerView.addArrangedSubviews([titleLabel])
         }
         containerView.addArrangedSubviews([titleContainerView, subtitleLabel])
+        titleContainerView.spacing = 9
         containerView.spacing = 3
         embed(containerView)
     }

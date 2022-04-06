@@ -20,55 +20,50 @@ public class ChatAddFriendVC: ChatBaseVC {
             }
         }
     }
+    
     // MARK: - OUTLETS
     @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var viewHeaderTitleView: UIView!
     @IBOutlet private var viewHeaderView: UIView!
-    @IBOutlet private var viewHeaderViewHeightConst: NSLayoutConstraint!
-    @IBOutlet private var viewHeaderViewTopConst: NSLayoutConstraint!
     @IBOutlet private var searchFieldStack: UIStackView!
     @IBOutlet private var searchBarContainerView: UIView!
     @IBOutlet private var tableviewContainerView: UIView!
     @IBOutlet private var searchField: UITextField!
     @IBOutlet private var viewContainerLeadingConst: NSLayoutConstraint!
     @IBOutlet private var viewContainerTrailingConst: NSLayoutConstraint!
+    
     // MARK: - VARIABLES
     public var channelController: ChatChannelController!
     public var selectionType = ChatAddFriendVC.SelectionType.addFriend
-    public lazy var chatUserList: ChatUserListVC = {
+    private lazy var chatUserList: ChatUserListVC = {
         let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
         return obj!
     }()
-    private var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
     private var isFullScreen = false
     public var selectedUsers = [ChatUser]()
-    public var existingUsers = [ChatUser]()
+    public var existingUsers = [ChatChannelMember]()
     public var bCallbackAddFriend:(([ChatUser]) -> Void)?
     public var bCallbackInviteFriend:(([ChatUser]) -> Void)?
     public var groupInviteLink: String?
     private var isShortFormEnabled = true
     private lazy var panModelState: PanModalPresentationController.PresentationState = .shortForm
+    
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.view.layoutIfNeeded()
-    }
+    
     // MARK: - METHODS
-    public func setup() {
-        self.view.backgroundColor = .clear
+    private func setup() {
+        view.backgroundColor = .clear
         btnBack?.setImage(Appearance.default.images.closeCircle, for: .normal)
-        btnAddFriend?.setTitle("", for: .normal)
-        btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
-        btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
-        btnAddFriend?.isHidden = selectionType == .inviteUser
+        btnAddFriend?.isHidden = true
         titleLabel.text = selectionType.title
-        self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
-        self.searchField.delegate = self
-        
+        searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
+        searchField.delegate = self
+        searchField.tintColor = Appearance.default.colorPalette.statusColorBlue
+        // Chat user list
         addChild(chatUserList)
         tableviewContainerView.addSubview(chatUserList.view)
         chatUserList.didMove(toParent: self)
@@ -78,26 +73,57 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.sortType = .sortByAtoZ
         chatUserList.viewModel.existingUsers = existingUsers
         chatUserList.viewModel.fetchUserList()
+        // Add friend Callback
+        chatUserList.bCallbackAddFriend = { [weak self] user in
+            guard let weakSelf = self , let selectedUser = user else { return }
+            weakSelf.searchField.resignFirstResponder()
+            if weakSelf.selectionType == .addFriend {
+                weakSelf.showAddFriendConfirmPopup(user: selectedUser)
+            }
+        }
+        // Setup UI
         viewContainerLeadingConst.constant = 5
         viewContainerTrailingConst.constant = 5
         setupUI()
     }
     
     private func setupUI() {
-        let cornorRadius = viewContainerLeadingConst.constant > 0 ? 32 : 0
-        
+        let cornerRadius = viewContainerLeadingConst.constant > 0 ? 32 : 0
         viewHeaderView.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground
         searchBarContainerView.layer.cornerRadius = 20.0
-        viewHeaderView.layer.cornerRadius = CGFloat(cornorRadius)
+        viewHeaderView.layer.cornerRadius = CGFloat(cornerRadius)
     }
     
     @objc private func textDidChange(_ sender: UITextField) {
-        self.chatUserList.viewModel.searchDataUsing(searchString: sender.text)
+        if let searchText = sender.text, searchText.isEmpty == false {
+            if searchText.containsEmoji || searchText.isBlank {
+                return
+            }
+            chatUserList.viewModel.searchDataUsing(searchString: searchText)
+        } else {
+            chatUserList.viewModel.searchText = nil
+            chatUserList.viewModel.fetchUserList(true)
+        }
     }
+    
+    private func showAddFriendConfirmPopup(user: ChatUser) {
+        let message = "Add \(user.name ?? user.id) to the group?"
+        let alert = UIAlertController.init(title: message, message: nil, preferredStyle: .alert)
+        let noAction = UIAlertAction.init(title: "No", style: .cancel, handler: nil)
+        let yesAction = UIAlertAction.init(title: "Yes", style: .default, handler: { [weak self] action in
+            guard let weakSelf = self else { return }
+            weakSelf.bCallbackAddFriend?([user])
+            weakSelf.btnBackAction(UIButton())
+        })
+        alert.addAction(noAction)
+        alert.addAction(yesAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
     // MARK: - Actions
     @IBAction private func btnBackAction(_ sender: UIButton) {
-        self.dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction private func invitLinkAction(_ sender: UIButton) {
@@ -123,31 +149,29 @@ public class ChatAddFriendVC: ChatBaseVC {
 //        UIApplication.shared.getTopViewController()?.present(nav, animated: true, completion: nil)
 //        UIApplication.shared.windows.first?.bringSubviewToFront(nav.view)
     }
-    
-    // swiftlint:disable redundant_type_annotation
-    @IBAction private func btnDoneAction(_ sender: UIButton) {
-        if self.selectedUsers.count > 0 {
-            self.bCallbackAddFriend?(self.selectedUsers)
-            self.btnBackAction(sender)
-        }
-    }
 }
 // MARK: - UITextFieldDelegate
 extension ChatAddFriendVC: UITextFieldDelegate {
     public func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        if self.panModelState == .shortForm {
+        if panModelState == .shortForm {
             panModalSetNeedsLayoutUpdate()
             panModalTransition(to: .longForm)
         }
+        return true
+    }
+    
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
         return true
     }
 }
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
     public func chatUserDidSelect() {
-        self.selectedUsers = self.chatUserList.viewModel.selectedUsers
-        self.btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
-        self.btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
+        searchField.resignFirstResponder()
+        selectedUsers = chatUserList.viewModel.selectedUsers
+        btnAddFriend?.isEnabled = !selectedUsers.isEmpty
+        btnInviteLink?.isEnabled = !selectedUsers.isEmpty
     }
 }
 // MARK: - Pan Modal Presentable
