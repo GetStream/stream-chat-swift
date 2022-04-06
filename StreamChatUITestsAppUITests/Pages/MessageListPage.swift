@@ -55,6 +55,7 @@ class MessageListPage {
     }
     
     enum ContextMenu {
+        static var reactionsView: XCUIElement { app.otherElements["ChatReactionPickerReactionsView"] }
         static var reply: XCUIElement { action(label: "Reply") }
         static var threadReply: XCUIElement { action(label: "Thread Reply") }
         static var copy: XCUIElement { action(label: "Copy Message") }

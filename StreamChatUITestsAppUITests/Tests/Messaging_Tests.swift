@@ -70,7 +70,7 @@ final class MessagingTests: StreamTestCase {
         }
         THEN("the message is delivered") {
             userRobot
-                .waitForParticipantsMessage()
+                .waitForNewMessage(withText: message)
                 .assertMessageAuthor(author)
         }
     }
@@ -88,7 +88,9 @@ final class MessagingTests: StreamTestCase {
                 .sendMessage(message)
         }
         AND("participant deletes the message: '\(message)'") {
-            participantRobot.deleteMessage()
+            participantRobot
+                .waitForNewMessage(withText: message)
+                .deleteMessage()
         }
         THEN("the message is deleted") {
             userRobot.assertDeletedMessage()
@@ -109,7 +111,9 @@ final class MessagingTests: StreamTestCase {
                 .sendMessage(message)
         }
         AND("participant edits the message: '\(editedMessage)'") {
-            participantRobot.editMessage(editedMessage)
+            participantRobot
+                .waitForNewMessage(withText: message)
+                .editMessage(editedMessage)
         }
         THEN("the message is edited") {
             participantRobot.assertMessage(editedMessage)

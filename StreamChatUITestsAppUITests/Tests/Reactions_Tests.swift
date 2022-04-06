@@ -33,7 +33,9 @@ final class ReactionsTests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         AND("user adds the reaction") {
-            userRobot.addReaction(type: .wow)
+            userRobot
+                .addReaction(type: .wow)
+                .waitForNewReaction()
         }
         AND("user removes the reaction") {
             userRobot.deleteReaction(type: .wow)
@@ -57,8 +59,9 @@ final class ReactionsTests: StreamTestCase {
         }
         AND("user adds the reaction") {
             userRobot
-                .waitForParticipantsMessage()
+                .waitForNewMessage(withText: message)
                 .addReaction(type: .love)
+                .waitForNewReaction()
         }
         THEN("the reaction is added") {
             userRobot.assertReaction(isPresent: true)
@@ -79,8 +82,9 @@ final class ReactionsTests: StreamTestCase {
         }
         AND("user adds the reaction") {
             userRobot
-                .waitForParticipantsMessage()
+                .waitForNewMessage(withText: message)
                 .addReaction(type: .lol)
+                .waitForNewReaction()
         }
         AND("user removes the reaction") {
             userRobot.deleteReaction(type: .lol)
@@ -100,7 +104,9 @@ final class ReactionsTests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         AND("participant adds the reaction") {
-            participantRobot.addReaction(type: .like)
+            participantRobot
+                .waitForNewMessage(withText: message)
+                .addReaction(type: .like)
         }
         THEN("the reaction is added") {
             participantRobot.assertReaction(isPresent: true)
@@ -117,8 +123,9 @@ final class ReactionsTests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         AND("participant adds the reaction") {
-            participantRobot.addReaction(type: .lol)
-            userRobot.waitForParticipantsReaction()
+            participantRobot
+                .addReaction(type: .lol)
+                .waitForNewReaction()
         }
         AND("participant removes the reaction") {
             participantRobot.deleteReaction(type: .lol)

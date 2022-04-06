@@ -14,6 +14,14 @@ enum TestData {
         try! XCTUnwrap(DateFormatter.Stream.rfc3339DateString(from: Date()))
     }
     
+    static var currentTimeInterval: TimeInterval {
+        Date().timeIntervalSince1970 * 1000
+    }
+    
+    static var waitingEndTime: TimeInterval {
+        currentTimeInterval + XCUIElement.waitTimeout * 1000
+    }
+    
     static func getMockResponse(fromFile file: MockFile) -> String {
         String(decoding: XCTestCase.mockData(fromFile: file.rawValue, bundle: .test), as: UTF8.self)
     }
