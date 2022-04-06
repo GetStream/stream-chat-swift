@@ -99,6 +99,13 @@ class ChannelDTO: NSManagedObject {
         let request = fetchRequest(for: cid)
         return load(by: request, context: context).first
     }
+
+    static func load(cids: [ChannelId], context: NSManagedObjectContext) -> [ChannelDTO] {
+        guard !cids.isEmpty else { return [] }
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.predicate = NSPredicate(format: "cid IN %@", cids)
+        return load(by: request, context: context)
+    }
     
     static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
         if let existing = Self.load(cid: cid, context: context) {
@@ -253,8 +260,8 @@ extension NSManagedObjectContext {
     }
 
     func cleanChannels(cids: Set<ChannelId>) {
-        for cid in cids {
-            guard let channelDTO = channel(cid: cid) else { continue }
+        let channels = ChannelDTO.load(cids: Array(cids), context: self)
+        for channelDTO in channels {
             channelDTO.resetEphemeralValues()
             channelDTO.messages.removeAll()
             channelDTO.members.removeAll()
