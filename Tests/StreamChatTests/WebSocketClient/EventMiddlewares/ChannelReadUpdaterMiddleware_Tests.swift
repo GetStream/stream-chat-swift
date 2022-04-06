@@ -44,7 +44,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             membership: .dummy(user: currentUserPayload),
             messages: [],
             pinnedMessages: [],
-            channelReads: [currentUserReadPayload]
+            channelReads: [currentUserReadPayload],
+            isHidden: false
         )
         
         try! database.writeSynchronously { session in
@@ -879,9 +880,10 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdBy: nil,
             config: .init(),
             isFrozen: false,
+            isHidden: nil,
+            members: nil,
             memberCount: 0,
             team: "",
-            members: nil,
             cooldownDuration: .random(in: 0...120)
         )
         // Create EventPayload for NotificationMarkReadEvent

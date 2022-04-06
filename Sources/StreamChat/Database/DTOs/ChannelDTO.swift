@@ -211,7 +211,15 @@ extension NSManagedObjectContext {
         query: ChannelListQuery?
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
-
+                
+        let reads = Set(
+            try payload.channelReads.map {
+                try saveChannelRead(payload: $0, for: payload.channel.cid)
+            }
+        )
+        dto.reads.subtracting(reads).forEach { delete($0) }
+        dto.reads = reads
+        
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true) }
 
         dto.updateOldestMessageAt(payload: payload)
@@ -219,8 +227,6 @@ extension NSManagedObjectContext {
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true)
         }
-        
-        try payload.channelReads.forEach { _ = try saveChannelRead(payload: $0, for: payload.channel.cid) }
         
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
         try payload.members.forEach {

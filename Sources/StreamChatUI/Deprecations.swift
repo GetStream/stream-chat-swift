@@ -294,3 +294,17 @@ extension AttachmentsPreviewVC {
         attachmentPreviews(for: [.horizontal, .vertical])
     }
 }
+
+public extension Appearance.Images {
+    @available(*, deprecated, renamed: "messageDeliveryStatusSent")
+    var messageSent: UIImage {
+        get { messageDeliveryStatusSent }
+        set { messageDeliveryStatusSent = newValue }
+    }
+
+    @available(*, deprecated, renamed: "messageDeliveryStatusRead")
+    var readByAll: UIImage {
+        get { messageDeliveryStatusRead }
+        set { messageDeliveryStatusRead = newValue }
+    }
+}

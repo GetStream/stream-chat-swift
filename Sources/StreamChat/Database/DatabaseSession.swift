@@ -232,14 +232,6 @@ protocol ChannelReadDatabaseSession {
         for cid: ChannelId
     ) throws -> ChannelReadDTO
     
-    /// Creates a new `ChannelReadDTO` object in the database.
-    func saveChannelRead(
-        cid: ChannelId,
-        userId: UserId,
-        lastReadAt: Date,
-        unreadMessageCount: Int
-    ) -> ChannelReadDTO
-    
     /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
     /// Returns `nil` if no `ChannelReadDTO` matching the `cid` and `userId`  exists.
     func loadChannelRead(cid: ChannelId, userId: UserId) -> ChannelReadDTO?
@@ -249,6 +241,12 @@ protocol ChannelReadDatabaseSession {
     
     /// Sets the channel `cid` as read for `userId`
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date)
+    
+    /// Removes the read object of the given user in the given channel if it exists.
+    /// - Parameters:
+    ///   - cid: The channel identifier which should be marked as unread.
+    ///   - userId: The user identifier who's read should be removed.
+    func markChannelAsUnread(cid: ChannelId, by userId: UserId)
 }
 
 protocol ChannelMuteDatabaseSession {

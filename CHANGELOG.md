@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Expose `readBy/readByCount` on `ChatMessage` containing info about users who has seen this message. These fields are populated only for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
 ### 🐞 Fixed
 - Fix unread messages count bumping logic [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
     - respect muted channels
@@ -13,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Rename `mentionedMessages` to `mentions` in `ChannelUnreadCount` [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
 
 ## StreamChatUI
+### ✅ Added
+- Show delivery status indicator for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
 ### 🔄 Changed
 - Deprecate `ChatMessage.isOnlyVisibleForCurrentUser` as it does not account deleted messages visability setting [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
 - Rename components related to message footnote content in `ChatMessageContentView` [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)

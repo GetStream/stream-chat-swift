@@ -383,11 +383,15 @@ open class ChatMessageListVC: _ViewController,
             for: indexPath
         )
 
-        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+        guard
+            let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
+            let channel = dataSource?.channel(for: self)
+        else {
             return cell
         }
 
         cell.messageContentView?.delegate = self
+        cell.messageContentView?.channel = channel
         cell.messageContentView?.content = message
 
         cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
