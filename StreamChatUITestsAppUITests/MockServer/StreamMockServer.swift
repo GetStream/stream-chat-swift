@@ -14,7 +14,7 @@ final class StreamMockServer {
     
     public var messageList: [[String: Any]] {
         get {
-            return self._messageList;
+            return self._messageList
         }
         set {
             self._messageList = newValue
