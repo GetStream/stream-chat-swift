@@ -17,13 +17,9 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
             let transitionContext = transitionContext,
             let animator = animator as? ZoomAnimator,
             let fromVC = transitionContext.viewController(forKey: .from),
-            let toVC = transitionContext.viewController(forKey: .to),
-            let fromVCSnapshot = animator.fromVCSnapshot,
-            let toVCSnapshot = animator.toVCSnapshot,
             let fromImageView = animator.fromImageView,
             let toImageView = animator.toImageView,
-            let transitionImageView = animator.transitionImageView,
-            let containerTransitionImageView = animator.containerTransitionImageView
+            let transitionImageView = animator.transitionImageView
         else { return }
 
         fromImageView.isHidden = true
@@ -33,20 +29,18 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
 
         let verticalDelta: CGFloat = max(translatedPoint.y, 0.0)
         
-        let fromVCAlpha = backgroundAlpha(for: fromVCSnapshot, delta: verticalDelta)
+        let fromVCAlpha = backgroundAlpha(for: fromVC.view, delta: verticalDelta)
         let scale = self.scale(in: fromVC.view, delta: verticalDelta)
         
-        fromVCSnapshot.alpha = fromVCAlpha
-        toVCSnapshot.alpha = 1 - fromVCAlpha
+        fromVC.view.alpha = fromVCAlpha
         
-        animator.containerTransitionImageView?.transform = CGAffineTransform(scaleX: scale, y: scale)
         transitionImageView.transform = CGAffineTransform(scaleX: scale, y: scale)
 
         let newCenterX = fromImageView.center.x + translatedPoint.x
         let newCenterY = fromImageView.center.y + translatedPoint.y - transitionImageView.frame
             .height * (1 - scale) / 2.0
         let newCenter = CGPoint(x: newCenterX, y: newCenterY)
-        animator.containerTransitionImageView?.center = newCenter
+        transitionImageView.center = newCenter
         
         transitionContext.updateInteractiveTransition(1 - scale)
 
@@ -59,22 +53,15 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
             UIView.animate(
                 withDuration: duration,
                 animations: {
-                    containerTransitionImageView.transform = .identity
                     transitionImageView.transform = .identity
-                    containerTransitionImageView.frame = toVC.view.frame
-                    transitionImageView.frame = containerTransitionImageView.frame
-                    fromVCSnapshot.alpha = 1
-                    toVCSnapshot.alpha = 1
+                    transitionImageView.center = fromImageView.center
+                    fromVC.view.alpha = 1
                 },
                 completion: { _ in
-                    toVC.view.isHidden = false
-                    fromVC.view.isHidden = false
                     fromImageView.isHidden = false
                     toImageView.isHidden = false
                     transitionImageView.removeFromSuperview()
-                    fromVCSnapshot.removeFromSuperview()
-                    toVCSnapshot.removeFromSuperview()
-                    containerTransitionImageView.removeFromSuperview()
+                    animator.transitionImageView = nil
                     
                     transitionContext.cancelInteractiveTransition()
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
