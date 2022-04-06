@@ -9,11 +9,20 @@ extension StreamMockServer {
     
     // TODO: CIS-1686
     func configureChannelEndpoints() {
-        server[MockEndpoint.query] = { _ in
-            .ok(.text(TestData.getMockResponse(fromFile: .httpChannel)))
+        server[MockEndpoint.query] = { [weak self] _ in
+            self?.mockChannel(mockFile: .httpChannels) ?? .badRequest(nil)
         }
-        server[MockEndpoint.channels] = { _ in
-            .ok(.text(TestData.getMockResponse(fromFile: .httpChannelsQuery)))
+        server[MockEndpoint.channels] = { [weak self] _ in
+            self?.mockChannel(mockFile: .httpChannelQuery) ?? .badRequest(nil)
         }
+    }
+    
+    private func mockChannel(mockFile: MockFile) -> HttpResponse {
+        var json = TestData.toJson(mockFile)
+        var channels = json[TopLevelKey.channels] as! [[String: Any]]
+        let first = 0
+        channels[first][ChannelQuery.CodingKeys.messages.rawValue] = messageList
+        json[TopLevelKey.channels] = channels
+        return .ok(.json(json))
     }
 }

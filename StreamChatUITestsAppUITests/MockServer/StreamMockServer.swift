@@ -4,12 +4,22 @@
 
 @testable import StreamChat
 import Swifter
+import Foundation
 
 final class StreamMockServer {
     
     private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
-    var messageDetails: [Dictionary<MessageDetail, String>] = []
+    private var _messageList: [[String: Any]] = []
+    
+    public var messageList: [[String: Any]] {
+        get {
+            return self._messageList
+        }
+        set {
+            self._messageList = newValue
+        }
+    }
     
     func start(port: UInt16) {
         do {
@@ -39,14 +49,13 @@ final class StreamMockServer {
     private func configureWebsockets() {
         server[MockEndpoint.connect] = websocket(connected: { [weak self] session in
             self?.globalSession = session
-            self?.onConnect()
+            self?.healthCheck()
         }, disconnected: { [weak self] _ in
             self?.globalSession = nil
         })
     }
     
-    // TODO: CIS-1686
-    private func onConnect() {
+    private func healthCheck() {
         writeText(TestData.getMockResponse(fromFile: .wsHealthCheck))
     }
 }
