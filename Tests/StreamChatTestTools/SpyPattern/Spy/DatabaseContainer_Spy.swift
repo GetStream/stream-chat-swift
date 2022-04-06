@@ -101,8 +101,9 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         }
         
         if let error = write_errorResponse {
-            super.write(wrappedActions, completion: { _ in })
-            completion(error)
+            super.write(wrappedActions, completion: { _ in
+                completion(error)
+            })
         } else {
             super.write(wrappedActions, completion: completion)
         }

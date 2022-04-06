@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -7,7 +7,6 @@
         <attribute name="localStateRaw" attributeType="String" defaultValueString=""/>
         <attribute name="localURL" optional="YES" attributeType="URI"/>
         <attribute name="type" optional="YES" attributeType="String"/>
-        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="attachments" inverseEntity="ChannelDTO"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="attachments" inverseEntity="MessageDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
@@ -35,7 +34,6 @@
         <attribute name="typeRawValue" attributeType="String" defaultValueString=""/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="watcherCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="attachments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AttachmentDTO" inverseName="channel" inverseEntity="AttachmentDTO"/>
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdChannels" inverseEntity="UserDTO"/>
         <relationship name="currentlyTypingUsers" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="typingIn" inverseEntity="UserDTO"/>
         <relationship name="memberListQueries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMemberListQueryDTO" inverseName="channel" inverseEntity="ChannelMemberListQueryDTO"/>
@@ -301,8 +299,8 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="149"/>
-        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="509"/>
+        <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="134"/>
+        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="479"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelMuteDTO" positionX="9" positionY="162" width="128" height="89"/>

@@ -55,7 +55,6 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var pinnedMessages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
-    @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
 
@@ -99,6 +98,13 @@ class ChannelDTO: NSManagedObject {
     static func load(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO? {
         let request = fetchRequest(for: cid)
         return load(by: request, context: context).first
+    }
+
+    static func load(cids: [ChannelId], context: NSManagedObjectContext) -> [ChannelDTO] {
+        guard !cids.isEmpty else { return [] }
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.predicate = NSPredicate(format: "cid IN %@", cids)
+        return load(by: request, context: context)
     }
     
     static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
@@ -251,6 +257,17 @@ extension NSManagedObjectContext {
         guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
         
         delete(dto)
+    }
+
+    func cleanChannels(cids: Set<ChannelId>) {
+        let channels = ChannelDTO.load(cids: Array(cids), context: self)
+        for channelDTO in channels {
+            channelDTO.resetEphemeralValues()
+            channelDTO.messages.removeAll()
+            channelDTO.members.removeAll()
+            channelDTO.pinnedMessages.removeAll()
+            channelDTO.reads.removeAll()
+        }
     }
 }
 

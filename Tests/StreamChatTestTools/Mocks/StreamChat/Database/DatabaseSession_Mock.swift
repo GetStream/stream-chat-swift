@@ -87,6 +87,10 @@ extension DatabaseSession_Mock {
     func deleteQuery(_ query: UserListQuery) {
         underlyingSession.deleteQuery(query)
     }
+
+    func cleanChannels(cids: Set<ChannelId>) {
+        underlyingSession.cleanChannels(cids: cids)
+    }
     
     func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         try throwErrorIfNeeded()

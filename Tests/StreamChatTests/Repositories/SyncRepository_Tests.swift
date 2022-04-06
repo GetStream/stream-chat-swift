@@ -190,7 +190,7 @@ final class SyncRepository_Tests: XCTestCase {
         let chatListController = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
         chatListController.state = .remoteDataFetched
         _activeChannelListControllers.add(chatListController)
-        channelRepository.resetChannelsQueryResult = .success([])
+        channelRepository.resetChannelsQueryResult = .success(([], []))
 
         let eventDate = Date.unique
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(with: [eventDate])))
@@ -199,6 +199,37 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(lastSyncAtValue, eventDate)
         // Write: API Response, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 2)
+        XCTAssertEqual(repository.activeChannelControllers.count, 0)
+        XCTAssertEqual(repository.activeChannelListControllers.count, 1)
+        XCTAssertCall(
+            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 1
+        )
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
+    }
+
+    func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelListController_unwantedChannels(
+    ) throws {
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true
+        )
+
+        let chatListController = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
+        chatListController.state = .remoteDataFetched
+        _activeChannelListControllers.add(chatListController)
+        let unwantedId = ChannelId.unique
+        channelRepository.resetChannelsQueryResult = .success(([], [unwantedId]))
+
+        let eventDate = Date.unique
+        waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(with: [eventDate])))
+
+        // Should use first event's created at date
+        XCTAssertEqual(lastSyncAtValue, eventDate)
+        // Write: API Response, unwanted channels, lastSyncAt
+        XCTAssertEqual(database.writeSessionCounter, 3)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 1)
         XCTAssertCall(
