@@ -37,7 +37,8 @@ public extension ChatMessage {
         latestReactions: Set<ChatMessageReaction> = [],
         currentUserReactions: Set<ChatMessageReaction> = [],
         isSentByCurrentUser: Bool = false,
-        pinDetails: MessagePinDetails? = nil
+        pinDetails: MessagePinDetails? = nil,
+        readBy: Set<ChatUser> = []
     ) -> Self {
         .init(
             id: id,
@@ -71,6 +72,8 @@ public extension ChatMessage {
             isSentByCurrentUser: isSentByCurrentUser,
             pinDetails: pinDetails,
             translations: nil,
+            readBy: { readBy },
+            readByCount: { readBy.count },
             underlyingContext: nil
         )
     }

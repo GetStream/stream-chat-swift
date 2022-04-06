@@ -165,25 +165,11 @@ final class ChatChannelVC_Tests: XCTestCase {
     }
 
     func test_onlyEmojiMessageAppearance() {
-        let imageAttachment = ChatMessageImageAttachment.mock(
-            id: .unique,
-            imageURL: TestImages.yoda.url
-        ).asAnyAttachment
-        
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),
             messages: [
                 .mock(id: .unique, cid: .unique, text: "😍", author: .mock(id: .unique)),
-                .mock(id: .unique, cid: .unique, text: "👍🏻💯", author: .mock(id: .unique)),
-                .mock(id: .unique, cid: .unique, text: "Simple text", author: .mock(id: .unique), isSentByCurrentUser: true),
-                .mock(
-                    id: .unique,
-                    cid: .unique,
-                    text: "🚀",
-                    author: .mock(id: .unique),
-                    attachments: [imageAttachment],
-                    isSentByCurrentUser: false
-                )
+                .mock(id: .unique, cid: .unique, text: "👍🏻💯", author: .mock(id: .unique))
             ],
             state: .localDataFetched
         )

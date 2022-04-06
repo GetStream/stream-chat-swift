@@ -21,6 +21,162 @@ final class MessageDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
+    func test_saveMessage_messageSentByAnotherUser_hasNoReads() throws {
+        // GIVEN
+        let anotherUser: UserPayload = .dummy(userId: .unique)
+        let anotherUserMember: MemberPayload = .dummy(user: anotherUser)
+        let anotherUserMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            createdAt: .init()
+        )
+        let anotherUserRead: ChannelReadPayload = .init(
+            user: anotherUser,
+            lastReadAt: anotherUserMessage.createdAt,
+            unreadMessagesCount: 0
+        )
+        
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserRead: ChannelReadPayload = .init(
+            user: currentUser,
+            lastReadAt: anotherUserMessage.createdAt.addingTimeInterval(10),
+            unreadMessagesCount: 0
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            members: [
+                currentUserMember,
+                anotherUserMember
+            ],
+            membership: currentUserMember,
+            channelReads: [
+                currentUserRead,
+                anotherUserRead
+            ]
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            
+            let channel = try session.saveChannel(payload: channelPayload)
+            
+            try session.saveMessage(
+                payload: anotherUserMessage,
+                channelDTO: channel,
+                syncOwnReactions: false
+            )
+        }
+        
+        let message = try XCTUnwrap(
+            database.viewContext.message(id: anotherUserMessage.id)?.asModel()
+        )
+        
+        // THEN:
+        //
+        // For messages from other users reads are always empty.
+        XCTAssertTrue(message.readBy.isEmpty)
+        XCTAssertEqual(message.readByCount, 0)
+    }
+    
+    func test_saveMessage_messageSentByCurrentUser_hasReadsFromOtherMembers() throws {
+        // GIVEN
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            createdAt: .init()
+        )
+        let currentUserRead: ChannelReadPayload = .init(
+            user: currentUser,
+            lastReadAt: currentUserMessage.createdAt,
+            unreadMessagesCount: 0
+        )
+        
+        let member1ReadEarlierOwnMessage: ChannelReadPayload = .init(
+            user: .dummy(userId: .unique),
+            lastReadAt: currentUserMessage.createdAt.addingTimeInterval(-10),
+            unreadMessagesCount: 0
+        )
+        let member2ReadAtOwnMessage: ChannelReadPayload = .init(
+            user: .dummy(userId: .unique),
+            lastReadAt: currentUserMessage.createdAt,
+            unreadMessagesCount: 0
+        )
+        let member3ReadLaterOwnMessage: ChannelReadPayload = .init(
+            user: .dummy(userId: .unique),
+            lastReadAt: currentUserMessage.createdAt.addingTimeInterval(10),
+            unreadMessagesCount: 0
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            members: [
+                currentUserMember,
+                .dummy(user: member1ReadEarlierOwnMessage.user),
+                .dummy(user: member2ReadAtOwnMessage.user),
+                .dummy(user: member3ReadLaterOwnMessage.user)
+            ],
+            membership: currentUserMember,
+            channelReads: [
+                currentUserRead,
+                member1ReadEarlierOwnMessage,
+                member2ReadAtOwnMessage,
+                member3ReadLaterOwnMessage
+            ]
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            
+            let channel = try session.saveChannel(payload: channelPayload)
+            
+            try session.saveMessage(
+                payload: currentUserMessage,
+                channelDTO: channel,
+                syncOwnReactions: false
+            )
+        }
+        
+        let message = try XCTUnwrap(
+            database.viewContext.message(id: currentUserMessage.id)?.asModel()
+        )
+        
+        // THEN:
+        //
+        // Assert own message contains reads from other members that
+        // happened later message creation exluding own channel read.
+        let expectedReadBy: Set = [
+            member2ReadAtOwnMessage.user.id,
+            member3ReadLaterOwnMessage.user.id
+        ]
+        XCTAssertEqual(Set(message.readBy.map(\.id)), expectedReadBy)
+        XCTAssertEqual(message.readByCount, expectedReadBy.count)
+    }
+    
+    func test_numberOfReads() {
+        let context = database.viewContext
+
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let channelReadsCount = 5
+
+        let message = MessageDTO.loadOrCreate(id: messageId, context: context)
+        for _ in 0..<channelReadsCount {
+            let read = ChannelReadDTO.loadOrCreate(cid: cid, userId: .unique, context: context)
+            message.reads.insert(read)
+        }
+        
+        XCTAssertEqual(
+            MessageDTO.numberOfReads(for: messageId, context: context),
+            channelReadsCount
+        )
+    }
+    
     func test_messagePayload_isStoredAndLoadedFromDB() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
@@ -1605,6 +1761,162 @@ final class MessageDTO_Tests: XCTestCase {
         }
     }
 
+    // MARK: - loadCurrentUserMessages
+    
+    func test_loadCurrentUserMessages_returnsMatch() {
+        XCTAssertTrue(
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                .dummy(
+                    messageId: .unique,
+                    authorUserId: .unique,
+                    channel: .dummy()
+                )
+            )
+        )
+    }
+    
+    func test_loadCurrentUserMessages_doesNotReturnDeletedMessage() {
+        XCTAssertFalse(
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                .dummy(
+                    type: .deleted,
+                    messageId: .unique,
+                    authorUserId: .unique,
+                    deletedAt: .init(),
+                    channel: .dummy()
+                )
+            )
+        )
+    }
+    
+    func test_loadCurrentUserMessages_doesNotReturnMessageAuthoredByAnotherUser() {
+        XCTAssertFalse(
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                .dummy(
+                    messageId: .unique,
+                    authorUserId: .unique,
+                    channel: .dummy()
+                ),
+                saveAuthorAsCurrentUser: false
+            )
+        )
+    }
+    
+    func test_loadCurrentUserMessages_doesNotReturnMessageFromAnotherChannel() {
+        XCTAssertFalse(
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                .dummy(
+                    messageId: .unique,
+                    authorUserId: .unique,
+                    channel: .dummy()
+                ),
+                lookInAnotherChannel: true
+            )
+        )
+    }
+    
+    func test_loadCurrentUserMessages_doesNotReturnMessageBeforeTimewindow() {
+        let message: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            channel: .dummy()
+        )
+        
+        XCTAssertFalse(
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                message,
+                createdAtFrom: message.createdAt.addingTimeInterval(1),
+                createdAtThrough: message.createdAt.addingTimeInterval(2)
+            )
+        )
+    }
+    
+    func test_loadCurrentUserMessages_doesNotReturnMessageAtTimewindowLowerBound() {
+        let message: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            channel: .dummy()
+        )
+        
+        XCTAssertFalse(
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                message,
+                createdAtFrom: message.createdAt,
+                createdAtThrough: message.createdAt.addingTimeInterval(10)
+            )
+        )
+    }
+    
+    func test_loadCurrentUserMessages_returnsMessageAtTimewindowUpperBound() {
+        let message: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            channel: .dummy()
+        )
+        
+        XCTAssertTrue(
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                message,
+                createdAtFrom: message.createdAt.addingTimeInterval(-10),
+                createdAtThrough: message.createdAt
+            )
+        )
+    }
+    
+    func test_loadCurrentUserMessages_doesNotReturnsMessageAfterTimewindow() {
+        let message: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            channel: .dummy()
+        )
+        
+        XCTAssertFalse(
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                message,
+                createdAtFrom: message.createdAt.addingTimeInterval(-20),
+                createdAtThrough: message.createdAt.addingTimeInterval(-10)
+            )
+        )
+    }
+    
+    func test_loadCurrentUserMessages_doesNotReturnsMessageWithLocalState() {
+        let message: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            channel: .dummy()
+        )
+        
+        for localState: LocalMessageState in [
+            .pendingSend, .sending, .sendingFailed,
+            .deleting, .deletingFailed,
+            .pendingSync, .syncing, .syncingFailed
+        ] {
+            XCTAssertFalse(
+                saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                    message,
+                    messageLocalState: localState
+                )
+            )
+        }
+    }
+    
+    func test_loadCurrentUserMessages_doesNotReturnsTruncatedMessage() {
+        let truncatedAt = Date()
+        
+        let message: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: truncatedAt.addingTimeInterval(-10),
+            channel: .dummy(
+                truncatedAt: truncatedAt
+            )
+        )
+        
+        XCTAssertFalse(
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(message)
+        )
+    }
+    
     // MARK: Helpers:
 
     private func checkChannelMessagesPredicateCount(
@@ -1630,5 +1942,34 @@ final class MessageDTO_Tests: XCTestCase {
         var retrievedMessages: [MessageDTO] = []
         retrievedMessages = try database.viewContext.fetch(request)
         return retrievedMessages.filter { $0.id == message.id }.count
+    }
+    
+    private func saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+        _ message: MessagePayload,
+        lookInAnotherChannel: Bool = false,
+        createdAtFrom: Date? = nil,
+        createdAtThrough: Date? = nil,
+        saveAuthorAsCurrentUser: Bool = true,
+        messageLocalState: LocalMessageState? = nil
+    ) -> Bool {
+        let context = database.viewContext
+        
+        if saveAuthorAsCurrentUser {
+            _ = try! context.saveCurrentUser(payload: .dummy(userPayload: message.user))
+        }
+                
+        let messageDTO = try! XCTUnwrap(
+            context.saveMessage(payload: message, for: message.channel?.cid)
+        )
+        messageDTO.localMessageState = messageLocalState
+        
+        let results = MessageDTO.loadCurrentUserMessages(
+            in: lookInAnotherChannel ? .unique : message.channel!.cid.rawValue,
+            createdAtFrom: createdAtFrom ?? messageDTO.createdAt.addingTimeInterval(-10),
+            createdAtThrough: createdAtThrough ?? messageDTO.createdAt.addingTimeInterval(10),
+            context: context
+        )
+        
+        return results.contains(messageDTO)
     }
 }

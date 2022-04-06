@@ -225,6 +225,10 @@ public struct Components {
     /// The view that shows a number of unread messages on the Scroll-To-Latest-Message button in the Message List.
     public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
         ChatMessageListUnreadCountView.self
+    
+    /// The view that shows messages delivery status.
+    public var messageDeliveryStatusView: ChatMessageDeliveryStatusView.Type =
+        ChatMessageDeliveryStatusView.self
 
     // MARK: - Reaction Picker components
     

@@ -42,7 +42,17 @@ class MessageDTO: NSManagedObject {
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
-
+    
+    /// If the message is sent by the current user, this field
+    /// contains channel reads of other channel members (excluding the current user),
+    /// where `read.lastRead >= self.createdAt`.
+    ///
+    /// If the message has a channel read of a member, it is considered as seen/read by
+    /// that member.
+    ///
+    /// For messages authored NOT by the current user this field is always empty.
+    @NSManaged var reads: Set<ChannelReadDTO>
+    
     @NSManaged var pinned: Bool
     @NSManaged var pinnedBy: UserDTO?
     @NSManaged var pinnedAt: Date?
@@ -103,7 +113,7 @@ class MessageDTO: NSManagedObject {
     private static func onlyOwnDeletedMessagesPredicate() -> NSCompoundPredicate {
         .init(orPredicateWithSubpredicates: [
             // Non-deleted messages.
-            .init(format: "deletedAt == nil"),
+            nonDeletedMessagesPredicate(),
             // Deleted messages sent by current user excluding ephemeral ones.
             NSCompoundPredicate(andPredicateWithSubpredicates: [
                 .init(format: "deletedAt != nil"),
@@ -138,7 +148,7 @@ class MessageDTO: NSManagedObject {
     }
 
     /// Returns a predicate that filters out all deleted messages
-    private static func nonDeletedMessagesPredicate() -> NSCompoundPredicate {
+    private static func nonDeletedMessagesPredicate() -> NSPredicate {
         .init(format: "deletedAt == nil")
     }
 
@@ -315,6 +325,35 @@ class MessageDTO: NSManagedObject {
         request.fetchLimit = limit
         request.fetchOffset = offset
         return load(by: request, context: context)
+    }
+    
+    static func loadCurrentUserMessages(
+        in cid: String,
+        createdAtFrom: Date,
+        createdAtThrough: Date,
+        context: NSManagedObjectContext
+    ) -> [MessageDTO] {
+        let subpredicates: [NSPredicate] = [
+            .init(format: "channel.cid == %@", cid),
+            .init(format: "user.currentUser != nil"),
+            .init(format: "createdAt > %@", createdAtFrom as NSDate),
+            .init(format: "createdAt <= %@", createdAtThrough as NSDate),
+            .init(format: "localMessageStateRaw == nil"),
+            nonTruncatedMessagesPredicate(),
+            nonDeletedMessagesPredicate()
+        ]
+        
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+        
+        return (try? context.fetch(request)) ?? []
+    }
+    
+    static func numberOfReads(for messageId: MessageId, context: NSManagedObjectContext) -> Int {
+        let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        request.predicate = NSPredicate(format: "readMessagesFromCurrentUser.id CONTAINS %@", messageId)
+        return (try? context.count(for: request)) ?? 0
     }
 }
 
@@ -526,6 +565,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
+
+        // Calculate reads if the message is authored by the current user.
+        if payload.user.id == currentUser?.user.id {
+            dto.reads = Set(
+                channelDTO.reads.filter {
+                    $0.lastReadAt >= payload.createdAt && $0.user.id != payload.user.id
+                }
+            )
+        }
         
         return dto
     }
@@ -833,6 +881,18 @@ private extension ChatMessage {
         }
 
         $_quotedMessage = ({ dto.quotedMessage?.asModel() }, dto.managedObjectContext)
+        
+        let readBy = {
+            Set(dto.reads.map(\.user).map { $0.asModel() })
+        }
+        
+        $_readBy = (readBy, dto.managedObjectContext)
+        
+        let readByCount = {
+            MessageDTO.numberOfReads(for: dto.id, context: context)
+        }
+        
+        $_readByCount = (readByCount, dto.managedObjectContext)
     }
 }
 

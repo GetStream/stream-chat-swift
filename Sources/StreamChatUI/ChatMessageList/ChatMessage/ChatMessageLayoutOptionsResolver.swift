@@ -99,6 +99,9 @@ open class ChatMessageLayoutOptionsResolver {
         if message.isLastActionFailed {
             options.insert(.errorIndicator)
         }
+        if isLastInSequence && canShowDeliveryStatus(for: message, in: channel) {
+            options.insert(.deliveryStatusIndicator)
+        }
 
         return options
     }
@@ -173,5 +176,28 @@ open class ChatMessageLayoutOptionsResolver {
         // If the message next to the current one is sent with delay > maxTimeIntervalBetweenMessagesInGroup,
         // the current message ends the sequence.
         return delay > maxTimeIntervalBetweenMessagesInGroup
+    }
+    
+    func canShowDeliveryStatus(for message: ChatMessage, in channel: ChatChannel) -> Bool {
+        guard message.isSentByCurrentUser else {
+            // Delivery status can only be shown for a message sent by the current user.
+            return false
+        }
+        
+        guard message.type != .deleted, message.type != .ephemeral else {
+            // Delivery status should not be shown for deleted & ephemeral messages.
+            return false
+        }
+        
+        switch message.localState {
+        case .pendingSend, .sending, .pendingSync, .syncing, .deleting:
+            // Delivery status should always be shown for message in `pending` state.
+            return true
+        case .sendingFailed, .syncingFailed, .deletingFailed:
+            // Delivery status should not be shown for failed message (the error indicator is shown instead).
+            return false
+        case nil:
+            return channel.config.readEventsEnabled
+        }
     }
 }

@@ -351,9 +351,10 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdBy: nil,
             config: .init(),
             isFrozen: false,
+            isHidden: nil,
+            members: nil,
             memberCount: 0,
             team: "",
-            members: nil,
             cooldownDuration: .random(in: 0...120)
         )
         // Create EventPayload for NotificationMarkReadEvent
