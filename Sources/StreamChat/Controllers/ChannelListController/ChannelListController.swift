@@ -195,7 +195,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         // those, we need to keep using them for now.
         // This block should be removed once `shouldAddNewChannelToList` and `shouldListUpdatedChannel` methods are
         // fully removed.
-        let deprecatedFallback: () -> Bool? = { [unowned self] in
+        let deprecatedFallback: () -> Bool? = {
             switch change {
             case .insert:
                 return self.delegate?.controller(self, shouldAddNewChannelToList: channel)
