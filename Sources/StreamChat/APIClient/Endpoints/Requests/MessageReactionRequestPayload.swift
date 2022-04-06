@@ -6,7 +6,7 @@ import Foundation
 
 /// The type describes the outgoing JSON to `message/[message_id]/reaction` endpoint
 struct MessageReactionRequestPayload: Encodable {
-    internal enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case enforceUnique = "enforce_unique"
         case reaction
     }
