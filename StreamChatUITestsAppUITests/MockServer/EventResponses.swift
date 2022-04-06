@@ -8,12 +8,12 @@ import Swifter
 extension StreamMockServer {
     
     func configureEventEndpoints() {
-        server[MockEndpoint.event] = { request in
-            self.event(request: request)
+        server[MockEndpoint.event] = { [weak self] request in
+            self?.event(request: request) ?? .badRequest(nil)
         }
-        server[MockEndpoint.messageRead] = { request in
-            let response = self.sendEvent(.messageRead, request: request)
-            self.websocketEvent(.messageRead, user: UserDetails.lukeSkywalker)
+        server[MockEndpoint.messageRead] = { [weak self] request in
+            let response = self?.sendEvent(.messageRead, request: request) ?? .badRequest(nil)
+            self?.websocketEvent(.messageRead, user: UserDetails.lukeSkywalker)
             return response
         }
     }

@@ -9,11 +9,11 @@ import XCTest
 extension StreamMockServer {
     
     func configureMessagingEndpoints() {
-        server[MockEndpoint.message] = { request in
-            self.messageCreation(request: request)
+        server[MockEndpoint.message] = { [weak self] request in
+            self?.messageCreation(request: request) ?? .badRequest(nil)
         }
-        server[MockEndpoint.messageUpdate] = { request in
-            self.messageUpdate(request: request)
+        server[MockEndpoint.messageUpdate] = { [weak self] request in
+            self?.messageUpdate(request: request) ?? .badRequest(nil)
         }
     }
     

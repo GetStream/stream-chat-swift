@@ -9,11 +9,11 @@ extension StreamMockServer {
     
     // TODO: CIS-1686
     func configureChannelEndpoints() {
-        server[MockEndpoint.query] = { _ in
-            self.mockChannel(mockFile: .httpChannels)
+        server[MockEndpoint.query] = { [weak self] _ in
+            self?.mockChannel(mockFile: .httpChannels) ?? .badRequest(nil)
         }
-        server[MockEndpoint.channels] = { _ in
-            self.mockChannel(mockFile: .httpChannelQuery)
+        server[MockEndpoint.channels] = { [weak self] _ in
+            self?.mockChannel(mockFile: .httpChannelQuery) ?? .badRequest(nil)
         }
     }
     

@@ -9,25 +9,25 @@ import XCTest
 extension StreamMockServer {
     
     func configureReactionEndpoints() {
-        server[MockEndpoint.reaction] = { request in
+        server[MockEndpoint.reaction] = { [weak self] request in
             let messageId = try! XCTUnwrap(request.params[":message_id"])
             let requestJson = TestData.toJson(request.body)
             let requestReaction = requestJson[TopLevelKey.reaction] as! [String: Any]
             let reactionType = requestReaction[MessageReactionPayload.CodingKeys.type.rawValue] as! String
-            return self.reactionResponse(
+            return self?.reactionResponse(
                 messageId: messageId,
                 reactionType: reactionType,
                 eventType: .reactionNew
-            )
+            ) ?? .badRequest(nil)
         }
-        server[MockEndpoint.reactionUpdate] = { request in
+        server[MockEndpoint.reactionUpdate] = { [weak self] request in
             let messageId = try! XCTUnwrap(request.params[":message_id"])
             let reactionType = try! XCTUnwrap(request.params[":reaction_type"])
-            return self.reactionResponse(
+            return self?.reactionResponse(
                 messageId: messageId,
                 reactionType: reactionType,
                 eventType: .reactionDeleted
-            )
+            ) ?? .badRequest(nil)
         }
     }
 
