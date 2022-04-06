@@ -6,9 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - `quotesEnabled` property is added to the `ChannelConfig` [#1891](https://github.com/GetStream/stream-chat-swift/issues/1891)
 - Expose `readBy/readByCount` on `ChatMessage` containing info about users who has seen this message. These fields are populated only for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
+- Expose number of unread silent messages and thread replies on `ChatChannel` [#1904](https://github.com/GetStream/stream-chat-swift/issues/1904)
 ### 🔄 Changed
 - Assertions are no longer thrown by default. Check `StreamRuntimeCheck` to enable them [#1885](https://github.com/GetStream/stream-chat-swift/pull/1885)
 - Local Storage is enabled by default. You can read more [here](https://getstream.io/chat/docs/sdk/ios/guides/offline-support) [#1890](https://github.com/GetStream/stream-chat-swift/pull/1890)
+### 🐞 Fixed
+- Channel not being marked as read by the current user when it's only thread replies or silent messages sent after the last read [#1904](https://github.com/GetStream/stream-chat-swift/issues/1904)
 
 ## StreamChatUI
 ### ✅ Added
