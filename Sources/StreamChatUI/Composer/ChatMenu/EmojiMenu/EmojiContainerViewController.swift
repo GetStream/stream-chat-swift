@@ -209,10 +209,6 @@ class EmojiContainerViewController: UIViewController {
         }
     }
 
-    deinit {
-        debugPrint(#function)
-    }
-
     private func loadStickerView() {
         guard let stickerId = menu?.menuId else {
             return
@@ -284,6 +280,7 @@ class EmojiContainerViewController: UIViewController {
         collectionEmoji.isHidden = !isHidden
         loadingIndicator.isHidden = isHidden
         hStack.isHidden = !isHidden
+        btnDownload.isHidden = !isHidden
     }
 
 }
