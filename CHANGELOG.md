@@ -13,13 +13,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Channel not being marked as read by the current user when it's only thread replies or silent messages sent after the last read [#1904](https://github.com/GetStream/stream-chat-swift/issues/1904)
 
+### 🚨 Fixed
+- Fixed support for multiple active channel lists at the same time [#1879](https://github.com/GetStream/stream-chat-swift/pull/1879)
+
 ## StreamChatUI
+### 💥 Removed
+- The `toVCSnapshot`, `fromVCSnapshot` and `containerTransitionImageView` properties were removed `ZoomAnimator` because they were the root cause of animation issues when presenting the popup actions [#1899](https://github.com/GetStream/stream-chat-swift/issues/1899)
 ### ✅ Added
 - Quote message action visibility can be controlled from the dashboard [#1891](https://github.com/GetStream/stream-chat-swift/issues/1891)
 - Show delivery status indicator for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
 ### 🔄 Changed
 - The time interval between 2 messages so they are grouped in the UI is changed from `30 sec` to `60 sec` [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
 ### 🐞 Fixed
+- Fix full screen live photos weird flicker when presented / dismissed to / from full screen [#1899](https://github.com/GetStream/stream-chat-swift/issues/1899)
 - Timestamp not being shown for the message when the next message is error [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
 - Another user's avatar not being shown for deleted message last in a group [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
 

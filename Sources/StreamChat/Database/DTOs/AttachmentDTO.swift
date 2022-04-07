@@ -42,7 +42,6 @@ class AttachmentDTO: NSManagedObject {
     // MARK: - Relationships
     
     @NSManaged var message: MessageDTO
-    @NSManaged var channel: ChannelDTO
 
     override func willSave() {
         super.willSave()
@@ -91,15 +90,10 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
             throw ClientError.MessageDoesNotExist(messageId: id.messageId)
         }
 
-        guard let channelDTO = channel(cid: id.cid) else {
-            throw ClientError.ChannelDoesNotExist(cid: id.cid)
-        }
-
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         
         dto.attachmentType = payload.type
         dto.data = try JSONEncoder.default.encode(payload.payload)
-        dto.channel = channelDTO
         dto.message = messageDTO
         
         dto.localURL = nil
@@ -116,10 +110,6 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
             throw ClientError.MessageDoesNotExist(messageId: id.messageId)
         }
 
-        guard let channelDTO = channel(cid: id.cid) else {
-            throw ClientError.ChannelDoesNotExist(cid: id.cid)
-        }
-
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         
         dto.attachmentType = attachment.type
@@ -128,7 +118,6 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.localState = attachment.localFileURL == nil ? .uploaded : .pendingUpload
 
         dto.data = try JSONEncoder.stream.encode(attachment.payload.asAnyEncodable)
-        dto.channel = channelDTO
         dto.message = messageDTO
         
         return dto

@@ -2,6 +2,8 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+@testable import StreamChat
+
 enum MockFile: String {
     case httpMessage = "http_message"
     case httpChatEvent = "http_events"
@@ -9,9 +11,9 @@ enum MockFile: String {
     case wsMessage = "ws_message"
     case wsChatEvent = "ws_events"
     case wsReaction = "ws_reaction"
-    case wsHealthCheck = "HealthCheck"
-    case httpChannel = "Channel"
-    case httpChannelsQuery = "ChannelsQuery"
+    case wsHealthCheck = "ws_health_check"
+    case httpChannels = "http_channels"
+    case httpChannelQuery = "http_channel_query"
 }
 
 enum MockEndpoint {
@@ -31,17 +33,24 @@ enum MessageType: String {
     case deleted
 }
 
-enum MessageDetail: String {
-    case messageId
-    case text
-    case createdAt
-    case updatedAt
+struct TopLevelKey {
+    static let message = "message"
+    static let reaction = "reaction"
+    static let event = "event"
+    static let channels = "channels"
+    static let user = "user"
 }
 
-enum TopLevelKey: String {
-    case message
-    case reaction
-    case event
-    case type
-    case createdAt
+enum UserDetails {
+    static let hanSolo = [
+        UserPayloadsCodingKeys.id.rawValue: "han_solo",
+        UserPayloadsCodingKeys.name.rawValue: "Han Solo",
+        UserPayloadsCodingKeys.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+    ]
+
+    static let lukeSkywalker = [
+        UserPayloadsCodingKeys.id.rawValue: "luke_skywalker",
+        UserPayloadsCodingKeys.name.rawValue: "Luke Skywalker",
+        UserPayloadsCodingKeys.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+    ]
 }

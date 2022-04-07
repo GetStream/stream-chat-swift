@@ -477,13 +477,17 @@ end
 
 desc "Runs e2e ui tests using mock server in Debug config"
 lane :test_e2e_mock do |options|
+
+  setCIEnvironmentVariable('../StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan')
+
   scan(
     project: 'StreamChat.xcodeproj',
     scheme: 'StreamChatUITestsApp',
+    testplan: 'StreamChatUITestsApp',
     configuration: 'Debug',
     clean: true,
     devices: options[:device],
-    build_for_testing: options[:build_for_testing]
+    number_of_retries: 1
   )
 end
 

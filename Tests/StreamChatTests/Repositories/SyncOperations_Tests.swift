@@ -103,7 +103,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.watchedChannelIds.count, 0)
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
         XCTAssertNotCall("recoverWatchedChannel(completion:)", on: controller)
     }
 
@@ -117,7 +117,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.watchedChannelIds.count, 0)
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
         XCTAssertNotCall("recoverWatchedChannel(completion:)", on: controller)
     }
 
@@ -131,7 +131,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.watchedChannelIds.count, 0)
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
         XCTAssertCall("recoverWatchedChannel(completion:)", on: controller, times: 3)
     }
 
@@ -145,7 +145,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.watchedChannelIds.count, 1)
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 1)
         XCTAssertCall("recoverWatchedChannel(completion:)", on: controller, times: 1)
     }
 
@@ -186,7 +186,7 @@ final class SyncOperations_Tests: XCTestCase {
         )
     }
 
-    func test_RefetchChannelListQueryOperation_availableOnRemote_resetSuccess_shouldAddToSynched() throws {
+    func test_RefetchChannelListQueryOperation_availableOnRemote_resetSuccess_shouldAddToContext() throws {
         let context = SyncContext()
         let controller = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
         controller.state = .remoteDataFetched
@@ -196,20 +196,113 @@ final class SyncOperations_Tests: XCTestCase {
         }
 
         let channel: ChatChannel = database.viewContext.channel(cid: channelId)!.asModel()
+        let unwantedChannelId = ChannelId.unique
+        context.watchedAndSynchedChannelIds = [ChannelId.unique, ChannelId.unique]
+        context.unwantedChannelIds = [ChannelId.unique]
+
         let operation = RefetchChannelListQueryOperation(
             controller: controller,
             channelRepository: channelRepository,
             context: context
         )
-        channelRepository.resetChannelsQueryResult = .success([channel])
+        channelRepository.resetChannelsQueryResult = .success(([channel], [unwantedChannelId]))
+
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 3)
+        XCTAssertTrue(context.watchedAndSynchedChannelIds.contains { $0.id == channelId.id })
+        XCTAssertEqual(context.unwantedChannelIds.count, 2)
+        XCTAssertTrue(context.unwantedChannelIds.contains { $0.id == unwantedChannelId.id })
+        XCTAssertCall(
+            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 1
+        )
+    }
+
+    func test_RefetchChannelListQueryOperation_availableOnRemote_resetSuccess_shouldNotAddToContextWhenAlreadyExisting() throws {
+        let context = SyncContext()
+        let controller = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
+        controller.state = .remoteDataFetched
+        let channelId = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: channelId))
+        }
+
+        let channel: ChatChannel = database.viewContext.channel(cid: channelId)!.asModel()
+        let unwantedChannelId = ChannelId.unique
+        context.synchedChannelIds = [channelId]
+        context.unwantedChannelIds = [unwantedChannelId]
+
+        let operation = RefetchChannelListQueryOperation(
+            controller: controller,
+            channelRepository: channelRepository,
+            context: context
+        )
+        channelRepository.resetChannelsQueryResult = .success(([channel], [unwantedChannelId]))
 
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.synchedChannelIds.count, 1)
-        XCTAssertEqual(context.synchedChannelIds.first?.id, channelId.id)
+        XCTAssertTrue(context.synchedChannelIds.contains { $0.id == channelId.id })
+        XCTAssertEqual(context.unwantedChannelIds.count, 1)
+        XCTAssertTrue(context.unwantedChannelIds.contains { $0.id == unwantedChannelId.id })
         XCTAssertCall(
             "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 1
         )
+    }
+
+    // MARK: - CleanUnwantedChannelsOperation
+
+    func test_CleanUnwantedChannelsOperation_noUnwantedChannels() throws {
+        let context = SyncContext()
+
+        try addChannel(with: ChannelId.unique, numberOfMessages: 3)
+
+        let operation = CleanUnwantedChannelsOperation(database: database, context: context)
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(database.writeSessionCounter, 0)
+    }
+
+    func test_CleanUnwantedChannelsOperation_unwantedChannels_failure() throws {
+        let channelId = ChannelId.unique
+        let context = SyncContext()
+        context.unwantedChannelIds = [channelId]
+        database.write_errorResponse = ClientError.ChannelDoesNotExist(cid: channelId)
+
+        let operation = CleanUnwantedChannelsOperation(database: database, context: context)
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(database.writeSessionCounter, 3)
+    }
+
+    func test_CleanUnwantedChannelsOperation_unwantedChannels_success() throws {
+        let channelId = ChannelId.unique
+        let context = SyncContext()
+        context.unwantedChannelIds = [channelId]
+
+        try addChannel(with: channelId, numberOfMessages: 3)
+        let originalChannels = try allChannels()
+        XCTAssertEqual(originalChannels.count, 1)
+        XCTAssertEqual(originalChannels.first?.messages.count, 3)
+
+        let operation = CleanUnwantedChannelsOperation(database: database, context: context)
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(database.writeSessionCounter, 1)
+        let channels = try allChannels()
+        XCTAssertEqual(channels.count, 1)
+        XCTAssertEqual(channels.first?.messages.count, 0)
+    }
+
+    private func allChannels() throws -> [ChannelDTO] {
+        try database.viewContext.fetch(ChannelDTO.allChannelsFetchRequest)
+    }
+
+    private func addChannel(with cid: ChannelId, numberOfMessages: Int) throws {
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: numberOfMessages))
+        }
+        database.writeSessionCounter = 0
     }
 }
 
