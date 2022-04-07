@@ -213,6 +213,9 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                     newIndexPath: nil
                 )
             }
+            
+            // Publish the changes
+            self.changeAggregator.controllerDidChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
         }
         
         // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
@@ -230,9 +233,6 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
 
             // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
             try! self.startObserving()
-            
-            // Publish the changes started in `WillRemoveAllDataNotification`
-            self.changeAggregator.controllerDidChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
         }
         
         releaseNotificationObservers = { [weak notificationCenter] in

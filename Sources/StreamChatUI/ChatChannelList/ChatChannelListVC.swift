@@ -315,7 +315,10 @@ open class ChatChannelListVC: _ViewController,
             completion: { _ in
                 // Move changes from NSFetchController also can mean an update of the content.
                 // Since a `moveItem` in collections do not update the content of the cell, we need to reload those cells.
-                self.collectionView.reloadItems(at: Array(indices.move.map(\.toIndex)))
+                let moveIndexes = Array(indices.move.map(\.toIndex))
+                if !moveIndexes.isEmpty {
+                    self.collectionView.reloadItems(at: Array(indices.move.map(\.toIndex)))
+                }
             }
         )
     }
