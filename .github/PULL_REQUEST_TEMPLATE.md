@@ -7,7 +7,7 @@ _Describe why we are making this change._
 
 ### 🛠 Implementation
 
-_Provide a description of the implementation and list the most impportant changes._
+_Provide a description of the implementation and list the most important changes._
 
 ### 🎨 Showcase
 
