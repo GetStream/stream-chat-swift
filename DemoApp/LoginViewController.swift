@@ -39,7 +39,7 @@ class UserCredentialsCell: UITableViewCell {
 
 class LoginViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
-    var didRequestChatPresentation: ((UserCredentials) -> Void)!
+    var didRequestChatPresentation: ((DemoUserType) -> Void)!
     
     let builtInUsers = UserCredentials.builtInUsers
     
@@ -75,19 +75,30 @@ class LoginViewController: UIViewController {
 
 extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        builtInUsers.count + 1 // +1 for the last static cell
+        builtInUsers.count + 3 // +1 for the last static cell
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserCredentialsCell
         
         if indexPath.row == builtInUsers.count {
-            // Last cell
+            // Anonymous user
+            cell.nameLabel.text = "Anonymous user"
+            cell.descriptionLabel.text = ""
+            cell.avatarView.image = UIImage(systemName: "person")
+            cell.avatarView.backgroundColor = .clear
+        } else if indexPath.row == builtInUsers.count + 1 {
+            // Guest user
+            cell.nameLabel.text = "Guest user"
+            cell.descriptionLabel.text = "user id: guest"
+            cell.avatarView.image = UIImage(systemName: "person.fill")
+            cell.avatarView.backgroundColor = .clear
+        } else if indexPath.row == builtInUsers.count + 2 {
+            // Advanced options
             cell.nameLabel.text = "Advanced Options"
             cell.descriptionLabel.text = "Custom settings"
             cell.avatarView.image = UIImage(named: "advanced_settings")
-            cell.avatarView.backgroundColor = .systemGray
-            
+            cell.avatarView.backgroundColor = .clear
         } else {
             // Normal cell
             let user = builtInUsers[indexPath.row]
@@ -101,12 +112,24 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.row != builtInUsers.count else {
+        if indexPath.row == builtInUsers.count {
+            // Anonymous user
+            didRequestChatPresentation(.anonymous)
+        } else if indexPath.row == builtInUsers.count + 1 {
+            // Guest user
+            presentAlert(title: "Input a user id", message: nil, textFieldPlaceholder: "guest") { [weak self] userId in
+                if let userId = userId, !userId.isEmpty {
+                    self?.didRequestChatPresentation(.guest(userId))
+                } else {
+                    self?.didRequestChatPresentation(.guest("guest"))
+                }
+            }
+        } else if indexPath.row == builtInUsers.count + 2 {
             // Advanced options
             performSegue(withIdentifier: "show_advanced_options", sender: self)
-            return
+        } else {
+            // Normal cell
+            didRequestChatPresentation(.credentials(builtInUsers[indexPath.row]))
         }
-        
-        didRequestChatPresentation(builtInUsers[indexPath.row])
     }
 }
