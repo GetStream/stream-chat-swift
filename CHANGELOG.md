@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Assertions are no longer thrown by default. Check `StreamRuntimeCheck` to enable them [#1885](https://github.com/GetStream/stream-chat-swift/pull/1885)
 - Local Storage is enabled by default. You can read more [here](https://getstream.io/chat/docs/sdk/ios/guides/offline-support) [#1890](https://github.com/GetStream/stream-chat-swift/pull/1890)
 
-### 🚨 Fixed
+### 🐞 Fixed
 - Fixed support for multiple active channel lists at the same time [#1879](https://github.com/GetStream/stream-chat-swift/pull/1879)
 
 ## StreamChatUI
@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix full screen live photos weird flicker when presented / dismissed to / from full screen [#1899](https://github.com/GetStream/stream-chat-swift/issues/1899)
 - Timestamp not being shown for the message when the next message is error [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
 - Another user's avatar not being shown for deleted message last in a group [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
+- Fix audio files not rendering previews [#1907](https://github.com/GetStream/stream-chat-swift/issues/1907)
 
 # [4.13.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.1)
 _April 04, 2022_
