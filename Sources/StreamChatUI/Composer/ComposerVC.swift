@@ -859,7 +859,7 @@ open class ComposerVC: _ViewController,
         for fileURL in urls {
             var attachmentType = AttachmentType(fileExtension: fileURL.pathExtension)
             // Remove this condition when doing: https://stream-io.atlassian.net/browse/CIS-1740
-            // This is a fallback right now to treat audios as files until we don't support audios
+            // This is a fallback right now to treat audios as files until we actually support audios
             if attachmentType == .audio {
                 attachmentType = .file
             }
