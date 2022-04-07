@@ -228,7 +228,7 @@ extension ChatChannel {
     public var isDirectMessageChannel: Bool { cid.id.hasPrefix("!members") }
     
     /// returns `true` if the channel has one or more unread messages for the current user.
-    public var isUnread: Bool { unreadCount.messages > 0 }
+    public var isUnread: Bool { unreadCount != .noUnread }
 }
 
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.
@@ -248,11 +248,22 @@ extension ChatChannel: Hashable {
 /// A struct describing unread counts for a channel.
 public struct ChannelUnreadCount: Decodable, Equatable {
     /// The default value representing no unread messages.
-    public static let noUnread = ChannelUnreadCount(messages: 0, mentionedMessages: 0)
+    public static let noUnread = ChannelUnreadCount(
+        messages: 0,
+        mentioningMessages: 0,
+        silentMessages: 0,
+        threadReplies: 0
+    )
     
     /// The total number of unread messages in the channel.
-    public internal(set) var messages: Int
+    public let messages: Int
     
-    /// The number of unread messages that mention the current user.
-    public internal(set) var mentionedMessages: Int
+    /// The number of unread messages mentioning the current user in the channel.
+    public let mentioningMessages: Int
+    
+    /// The number of unread silent messages in the channel.
+    public let silentMessages: Int
+    
+    /// The number of unread thread replies (not sent to the channel).
+    public let threadReplies: Int
 }

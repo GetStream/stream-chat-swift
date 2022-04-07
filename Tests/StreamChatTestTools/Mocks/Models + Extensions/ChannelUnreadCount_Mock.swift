@@ -6,7 +6,17 @@ import Foundation
 @testable import StreamChat
 
 public extension ChannelUnreadCount {
-    static func mock(messages: Int, mentionedMessages: Int = 0) -> Self {
-        .init(messages: messages, mentionedMessages: mentionedMessages)
+    static func mock(
+        messages: Int,
+        mentioningMessages: Int = 0,
+        silentMessages: Int = 0,
+        threadReplies: Int = 0
+    ) -> Self {
+        .init(
+            messages: messages,
+            mentioningMessages: mentioningMessages,
+            silentMessages: silentMessages,
+            threadReplies: threadReplies
+        )
     }
 }

@@ -325,10 +325,8 @@ extension ChatChannel {
         let unreadCount: () -> ChannelUnreadCount = {
             guard let currentUser = context.currentUser else { return .noUnread }
             
-            let currentUserRead = reads.first(where: { $0.user.id == currentUser.user.id })
-            
-            let allUnreadMessages = currentUserRead?.unreadMessagesCount ?? 0
-            
+            let currentUserRead = dto.reads.first(where: { $0.user.id == currentUser.user.id })
+                        
             // Fetch count of all mentioned messages after last read
             // (this is not 100% accurate but it's the best we have)
             let mentionedUnreadMessagesRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
@@ -344,8 +342,10 @@ extension ChatChannel {
             
             do {
                 return ChannelUnreadCount(
-                    messages: allUnreadMessages,
-                    mentionedMessages: try context.count(for: mentionedUnreadMessagesRequest)
+                    messages: Int(currentUserRead?.unreadMessageCount ?? 0),
+                    mentioningMessages: try context.count(for: mentionedUnreadMessagesRequest),
+                    silentMessages: Int(currentUserRead?.unreadSilentMessagesCount ?? 0),
+                    threadReplies: Int(currentUserRead?.unreadThreadRepliesCount ?? 0)
                 )
             } catch {
                 log.error("Failed to fetch unread counts for channel `\(cid)`. Error: \(error)")

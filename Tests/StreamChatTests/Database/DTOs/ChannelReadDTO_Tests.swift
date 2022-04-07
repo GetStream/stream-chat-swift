@@ -22,6 +22,158 @@ final class ChannelReadDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
+    // MARK: - saveChannelRead
+    
+    func test_saveChannelRead_whenReadDoesNotExist_createsIt() throws {
+        // GIVEN
+        let readPayload = ChannelReadPayload(
+            user: .dummy(userId: .unique),
+            lastReadAt: .init(),
+            unreadMessagesCount: 10
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            members: [.dummy(user: readPayload.user)],
+            channelReads: []
+        )
+                
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            
+            // WHEN
+            try session.saveChannelRead(
+                payload: readPayload,
+                for: channelPayload.channel.cid
+            )
+        }
+        
+        // THEN
+        let readDTO = try XCTUnwrap(
+            ChannelReadDTO.load(
+                cid: channelPayload.channel.cid,
+                userId: readPayload.user.id,
+                context: database.viewContext
+            )
+        )
+        XCTAssertEqual(readDTO.lastReadAt, readPayload.lastReadAt)
+        XCTAssertEqual(Int(readDTO.unreadMessageCount), readPayload.unreadMessagesCount)
+        XCTAssertEqual(readDTO.unreadThreadRepliesCount, 0)
+        XCTAssertEqual(readDTO.unreadSilentMessagesCount, 0)
+    }
+    
+    func test_saveChannelRead_whenAnotherUserReadExists_updatesIt() throws {
+        // GIVEN
+        let userPayload: UserPayload = .dummy(userId: .unique)
+        
+        let readPayload = ChannelReadPayload(
+            user: userPayload,
+            lastReadAt: .init(),
+            unreadMessagesCount: 10
+        )
+        
+        let newReadPayload = ChannelReadPayload(
+            user: userPayload,
+            lastReadAt: readPayload.lastReadAt.addingTimeInterval(10),
+            unreadMessagesCount: 5
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            members: [.dummy(user: userPayload)],
+            channelReads: [readPayload]
+        )
+                
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            
+            let readDTO = try XCTUnwrap(
+                session.loadChannelRead(
+                    cid: channelPayload.channel.cid,
+                    userId: userPayload.id
+                )
+            )
+            readDTO.unreadThreadRepliesCount = 3
+            readDTO.unreadSilentMessagesCount = 2
+            
+            // WHEN
+            try session.saveChannelRead(
+                payload: newReadPayload,
+                for: channelPayload.channel.cid
+            )
+        }
+        
+        // THEN
+        let readDTO = try XCTUnwrap(
+            ChannelReadDTO.load(
+                cid: channelPayload.channel.cid,
+                userId: userPayload.id,
+                context: database.viewContext
+            )
+        )
+        XCTAssertEqual(readDTO.lastReadAt, newReadPayload.lastReadAt)
+        XCTAssertEqual(Int(readDTO.unreadMessageCount), newReadPayload.unreadMessagesCount)
+        XCTAssertEqual(readDTO.unreadThreadRepliesCount, 0)
+        XCTAssertEqual(readDTO.unreadSilentMessagesCount, 0)
+    }
+    
+    func test_saveChannelRead_whenCurrenUserReadExists_updatesIt() throws {
+        // GIVEN
+        let currentUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+    
+        let readPayload = ChannelReadPayload(
+            user: currentUserPayload,
+            lastReadAt: .init(),
+            unreadMessagesCount: 10
+        )
+        
+        let newReadPayload = ChannelReadPayload(
+            user: currentUserPayload,
+            lastReadAt: readPayload.lastReadAt.addingTimeInterval(10),
+            unreadMessagesCount: 5
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            members: [.dummy(user: currentUserPayload)],
+            channelReads: [readPayload]
+        )
+                
+        let unreadThreadRepliesCount: Int32 = 3
+        let unreadSilentMessagesCount: Int32 = 2
+        
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUserPayload)
+            
+            try session.saveChannel(payload: channelPayload)
+            
+            let readDTO = try XCTUnwrap(
+                session.loadChannelRead(
+                    cid: channelPayload.channel.cid,
+                    userId: currentUserPayload.id
+                )
+            )
+            readDTO.unreadThreadRepliesCount = unreadThreadRepliesCount
+            readDTO.unreadSilentMessagesCount = unreadSilentMessagesCount
+            
+            // WHEN
+            try session.saveChannelRead(
+                payload: newReadPayload,
+                for: channelPayload.channel.cid
+            )
+        }
+        
+        // THEN
+        let readDTO = try XCTUnwrap(
+            ChannelReadDTO.load(
+                cid: channelPayload.channel.cid,
+                userId: currentUserPayload.id,
+                context: database.viewContext
+            )
+        )
+        XCTAssertEqual(readDTO.lastReadAt, newReadPayload.lastReadAt)
+        XCTAssertEqual(Int(readDTO.unreadMessageCount), newReadPayload.unreadMessagesCount)
+        XCTAssertEqual(readDTO.unreadThreadRepliesCount, unreadThreadRepliesCount)
+        XCTAssertEqual(readDTO.unreadSilentMessagesCount, unreadSilentMessagesCount)
+    }
+    
     // MARK: - markChannelAsRead
     
     func test_markChannelAsRead_whenReadExists_isIsUpdated() throws {
@@ -38,7 +190,11 @@ final class ChannelReadDTO_Tests: XCTestCase {
         )
                 
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: channel)
+            let channelDTO = try session.saveChannel(payload: channel)
+            
+            let readDTO = try XCTUnwrap(channelDTO.reads.first(where: { $0.user.id == read.user.id }))
+            readDTO.unreadThreadRepliesCount = 3
+            readDTO.unreadSilentMessagesCount = 2
         }
             
         // WHEN
@@ -54,6 +210,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
             ChannelReadDTO.load(cid: channel.channel.cid, userId: read.user.id, context: database.viewContext)
         )
         XCTAssertEqual(readDTO.lastReadAt, newLastReadAt)
+        XCTAssertEqual(readDTO.unreadThreadRepliesCount, 0)
+        XCTAssertEqual(readDTO.unreadSilentMessagesCount, 0)
         XCTAssertEqual(readDTO.unreadMessageCount, 0)
     }
     
@@ -83,6 +241,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(createdReadDTO.lastReadAt, readAt)
         XCTAssertEqual(createdReadDTO.unreadMessageCount, 0)
+        XCTAssertEqual(createdReadDTO.unreadThreadRepliesCount, 0)
+        XCTAssertEqual(createdReadDTO.unreadSilentMessagesCount, 0)
     }
     
     func test_markChannelAsRead_whenReadDoesNotExistAndCanNotBeCreated_doesNothing() throws {
