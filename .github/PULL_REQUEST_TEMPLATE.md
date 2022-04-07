@@ -30,6 +30,6 @@ _Explain how this change can be tested manually, if applicable._
 - [ ] Comparison screenshots added for visual changes
 - [ ] Affected documentation updated (docusaurus, tutorial, CMS)
 
-### 🤡 Memes
+### 🤡 Meme
 
 _Provide a funny gif or image that relates to your work on this pull request. (Optional)_
