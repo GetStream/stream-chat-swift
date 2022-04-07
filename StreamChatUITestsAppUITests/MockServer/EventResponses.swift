@@ -28,10 +28,7 @@ extension StreamMockServer {
     private func sendEvent(_ eventType: String, request: HttpRequest) -> HttpResponse {
         var json = TestData.toJson(.httpChatEvent)
         var event = json[TopLevelKey.event] as! [String: Any]
-        let user = setUpUser(
-            event[EventPayload.CodingKeys.user.rawValue] as! [String: Any],
-            userDetails: UserDetails.lukeSkywalker
-        )
+        let user = setUpUser(event: event, details: UserDetails.lukeSkywalker)
         event[EventPayload.CodingKeys.user.rawValue] = user
         event[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
         event[EventPayload.CodingKeys.eventType.rawValue] = eventType

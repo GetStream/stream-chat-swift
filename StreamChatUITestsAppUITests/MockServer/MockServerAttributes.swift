@@ -8,6 +8,7 @@ enum MockFile: String {
     case httpMessage = "http_message"
     case httpChatEvent = "http_events"
     case httpReaction = "http_reaction"
+    case httpReplies = "http_replies"
     case wsMessage = "ws_message"
     case wsChatEvent = "ws_events"
     case wsReaction = "ws_reaction"
@@ -18,14 +19,17 @@ enum MockFile: String {
 
 enum MockEndpoint {
     static let connect = "/connect"
-    static let message = "/channels/messaging/:channel_id/message"
+    
     static let messageUpdate = "/messages/:message_id"
-    static let event = "/channels/messaging/:channel_id/event"
-    static let messageRead = "/channels/messaging/:channel_id/read"
+    static let replies = "/messages/:message_id/replies"
     static let reaction = "/messages/:message_id/reaction"
     static let reactionUpdate = "/messages/:message_id/reaction/:reaction_type"
+    
     static let channels = "/channels"
+    static let event = "/channels/messaging/:channel_id/event"
     static let query = "/channels/messaging/:channel_id/query"
+    static let messageRead = "/channels/messaging/:channel_id/read"
+    static let message = "/channels/messaging/:channel_id/message"
 }
 
 enum MessageType: String {
@@ -34,6 +38,7 @@ enum MessageType: String {
 }
 
 struct TopLevelKey {
+    static let messages = "messages"
     static let message = "message"
     static let reaction = "reaction"
     static let event = "event"
