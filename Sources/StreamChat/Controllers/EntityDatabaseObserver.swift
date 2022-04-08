@@ -204,6 +204,8 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             
             // Publish the changes
             self.changeAggregator.controllerDidChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
+            
+            self.frc.delegate = nil
         }
         
         // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
