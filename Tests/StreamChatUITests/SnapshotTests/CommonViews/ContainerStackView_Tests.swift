@@ -41,7 +41,7 @@ final class ContainerStackView_Tests: XCTestCase {
         }
     }
 
-    func testAppearance_withOneViewOnly() {
+    func test_appearance_withOneViewOnly() {
         let views = [self.views.first!]
 
         let containerH = ContainerStackView(
@@ -59,7 +59,7 @@ final class ContainerStackView_Tests: XCTestCase {
         AssertSnapshot(containerV, variants: [.defaultLight], suffix: "vertical")
     }
     
-    func testAppearance_withTwoImageViews() {
+    func test_appearance_withTwoImageViews() {
         let containerH = ContainerStackView(
             axis: .horizontal,
             arrangedSubviews: [
@@ -79,7 +79,7 @@ final class ContainerStackView_Tests: XCTestCase {
         AssertSnapshot(containerH, variants: [.defaultLight])
     }
     
-    func testAppearance_withTwoImageViewsWhereOneIsHidden() {
+    func test_appearance_withTwoImageViewsWhereOneIsHidden() {
         let yodaImageView = UIImageView(
             image: TestImages.yoda.image
         )
@@ -102,7 +102,7 @@ final class ContainerStackView_Tests: XCTestCase {
         AssertSnapshot(containerH, variants: [.defaultLight])
     }
     
-    func testAppearance_withDoubleHiddenImageView() {
+    func test_appearance_withDoubleHiddenImageView() {
         let yodaImageView = UIImageView(
             image: TestImages.yoda.image
         )
@@ -134,7 +134,7 @@ final class ContainerStackView_Tests: XCTestCase {
         AssertSnapshot(containerV, variants: [.defaultLight])
     }
     
-    func testAppearance_withTwoContainerStackViews() {
+    func test_appearance_withTwoContainerStackViews() {
         let leftContainer = ContainerStackView(
             axis: .vertical,
             arrangedSubviews: [
@@ -172,7 +172,7 @@ final class ContainerStackView_Tests: XCTestCase {
         AssertSnapshot(containerH, variants: [.defaultLight])
     }
     
-    func testAppearance() {
+    func test_appearance() {
         let container = ContainerStackView(
             axis: .vertical,
             alignment: .fill,

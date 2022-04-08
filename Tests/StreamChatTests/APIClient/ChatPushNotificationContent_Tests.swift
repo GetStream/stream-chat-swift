@@ -69,13 +69,13 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func testEmptyContentNotHandled() throws {
+    func test_notHandled_whenEmptyContent() throws {
         let content = UNNotificationContent()
         let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
         XCTAssertFalse(handler.handleNotification(completion: { _ in }))
     }
 
-    func testContentWithoutCategoryNotHandled() throws {
+    func test_notHandled_whenContentWithoutCategory() throws {
         let content = UNMutableNotificationContent()
         let payload = [
             "type": "message.new",
@@ -87,7 +87,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         XCTAssertFalse(handler.handleNotification(completion: { _ in }))
     }
 
-    func testContentHandled() throws {
+    func test_contentHandled_whenCorrectPayload() throws {
         let content = UNMutableNotificationContent()
         let payload = [
             "type": "message.new",
@@ -100,7 +100,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         XCTAssertTrue(handler.handleNotification(completion: { _ in }))
     }
     
-    func testCompletion() throws {
+    func test_callsCompletion_whenHandled() throws {
         let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: exampleMessageNotificationContent)
         let expectation = XCTestExpectation(description: "Receive a message content")
 
@@ -117,7 +117,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         wait(for: [expectation], timeout: defaultTimeout)
     }
     
-    func testCompletion_withUnknownEvent() throws {
+    func test_callsCompletion_whenProcessingUnknownEvent() throws {
         let content = UNMutableNotificationContent()
         content.userInfo["stream"] = [
             "type": "message.deleted"

@@ -39,7 +39,7 @@ final class JSONEncoderTests: XCTestCase {
         XCTAssertEqual(jsonString, "{\"created_at\":\"2020-04-14T10:10:00Z\"}")
     }
 
-    func testEncodingDateToRFC3339DateWithMilliseconds() {
+    func test_encodes_whenEncodingDateToRFC3339DateWithMilliseconds() {
         checkDateIsEncodingFromComponents(
             year: 2020,
             month: 10,
@@ -53,7 +53,7 @@ final class JSONEncoderTests: XCTestCase {
         )
     }
 
-    func testEncodingDateToRFC3339DateWithEmptyMilliseconds() {
+    func test_encodes_whenEncodingDateToRFC3339DateWithEmptyMilliseconds() {
         checkDateIsEncodingFromComponents(
             year: 2020,
             month: 11,
@@ -66,7 +66,7 @@ final class JSONEncoderTests: XCTestCase {
         )
     }
 
-    func testEncodingDateToRFC3339DateWithPlusTimezone() {
+    func test_encodes_whenEncodingDateToRFC3339DateWithPlusTimezone() {
         checkDateIsEncodingFromComponents(
             year: 2019,
             month: 8,
@@ -79,7 +79,7 @@ final class JSONEncoderTests: XCTestCase {
         )
     }
 
-    func testEncodingDateToRFC3339DateWithMinusTimezone() {
+    func test_encodes_whenEncodingDateToRFC3339DateWithMinusTimezone() {
         checkDateIsEncodingFromComponents(
             year: 2018,
             month: 7,
@@ -92,7 +92,7 @@ final class JSONEncoderTests: XCTestCase {
         )
     }
     
-    func testEncodingDateBefore1970() {
+    func test_encodes_whenEncodingDateBefore1970() {
         checkDateIsEncodingFromComponents(
             year: 1936,
             month: 10,

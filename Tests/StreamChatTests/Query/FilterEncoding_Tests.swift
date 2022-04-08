@@ -7,7 +7,7 @@
 import XCTest
 
 final class FilterEncoding_Tests: XCTestCase {
-    func testFilterEncodingNotDoubles() {
+    func test_filterEncodes_whenNotDoubles() {
         // Given
         let testCases = FilterCodingTestPair.allCases
         for pair in testCases {

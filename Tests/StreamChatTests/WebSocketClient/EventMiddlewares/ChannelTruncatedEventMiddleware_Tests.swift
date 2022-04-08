@@ -27,7 +27,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
 
     // MARK: - Tests
 
-    func tests_middleware_forwardsOtherEvents() throws {
+    func test_middleware_forwardsOtherEvents() throws {
         let event = TestEvent()
 
         // Handle non-reaction event
@@ -37,7 +37,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
     }
 
-    func tests_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
         let eventPayload: EventPayload = .init(
             eventType: .channelTruncated,
             cid: .unique,
@@ -58,7 +58,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is ChannelTruncatedEventDTO)
     }
 
-    func tests_middleware_handlesChannelTruncatedEventCorrectly() throws {
+    func test_middleware_handlesChannelTruncatedEventCorrectly() throws {
         let cid: ChannelId = .unique
         let date = Date()
         // Create channel truncate event
