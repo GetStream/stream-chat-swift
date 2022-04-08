@@ -209,7 +209,7 @@ final class ComposerVC_Tests: XCTestCase {
         AssertSnapshot(composerVC)
     }
     
-    func test_onlyChannelMembersAreShown_whenSuggestionsLookupIsLocal() {
+    func test_whenSuggestionsLookupIsLocal_onlyChannelMembersAreShown() {
         final class ComposerContainerVC: UIViewController {
             var composerVC: ComposerVC!
             var textWithMention = ""
