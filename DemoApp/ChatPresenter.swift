@@ -42,17 +42,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
             }),
             .init(title: "Logout", style: .destructive, handler: { _ in
                 let window = self.rootViewController.view.window!
-                guard let navigationController = UIStoryboard(name: "Main", bundle: Bundle.main)
-                    .instantiateInitialViewController() as? UINavigationController else {
-                    return
-                }
-                guard let sceneDelegate = window.windowScene?.delegate as? SceneDelegate else {
-                    return
-                }
-                sceneDelegate.coordinator = DemoAppCoordinator(navigationController: navigationController)
-                UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft, animations: {
-                    window.rootViewController = navigationController
-                })
+                DemoAppCoordinator.logout(window: window)
             })
         ])
     }

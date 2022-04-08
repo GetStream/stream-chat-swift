@@ -132,6 +132,17 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
             ) { [weak self] error in
                 if let error = error {
                     log.error("connecting the user failed \(error)")
+                    if let self = self {
+                        DispatchQueue.main.async {
+                            self.navigationController.presentAlert(
+                                title: "Connecting failed",
+                                message: "Error: \(error)",
+                                okHandler: {
+                                    DemoAppCoordinator.logout(window: self.navigationController.view.window!)
+                                }
+                            )
+                        }
+                    }
                     return
                 }
                 self?.setupRemoteNotifications()
@@ -213,6 +224,20 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         }
 
         return splitController
+    }
+    
+    static func logout(window: UIWindow) {
+        guard let navigationController = UIStoryboard(name: "Main", bundle: Bundle.main)
+            .instantiateInitialViewController() as? UINavigationController else {
+            return
+        }
+        guard let sceneDelegate = window.windowScene?.delegate as? SceneDelegate else {
+            return
+        }
+        sceneDelegate.coordinator = DemoAppCoordinator(navigationController: navigationController)
+        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft, animations: {
+            window.rootViewController = navigationController
+        })
     }
 }
 
