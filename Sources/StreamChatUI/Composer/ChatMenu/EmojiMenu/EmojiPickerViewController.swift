@@ -38,6 +38,7 @@ class EmojiPickerViewController: UIViewController {
             guard let `self` = self else { return }
             let packages = result.body?.packageList ?? []
             self.packages.append(contentsOf: packages)
+            self.packages.removeAll(where: { $0.price != "free" })
             self.pageMap = result.body?.pageMap
             self.tblPicker.reloadData()
         }
@@ -47,7 +48,6 @@ class EmojiPickerViewController: UIViewController {
         StickerApiClient.mySticker { [weak self] result in
             guard let `self` = self else { return }
             self.packages = result.body?.packageList ?? []
-            self.downloadedPackage = self.packages.compactMap { $0.packageID ?? 0}
             self.tblPicker.reloadData()
         }
     }

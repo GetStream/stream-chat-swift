@@ -14,16 +14,16 @@ public struct ResponseBody<T: Codable>: Codable {
 }
 
 // MARK: - PackageList
-public struct PackageList: Codable {
+public struct PackageList: Codable, Hashable {
     public let packageID: Int?
     public let packageImg: String?
-    public let packageName, packageCategory, isWish: String?
+    public let packageName, packageCategory, price, isWish: String?
     public let order: Int?
     public let language, isNew, isDownload, isView: String?
     public let packageKeywords, packageAnimated, artistName: String?
     enum CodingKeys: String, CodingKey {
         case packageID = "packageId"
-        case packageImg, packageName, packageCategory, isWish, order, language, isNew, isDownload, isView, packageKeywords, packageAnimated, artistName
+        case packageImg, packageName, packageCategory, isWish, order, language, isNew, isDownload, isView, packageKeywords, packageAnimated, artistName, price
     }
 }
 

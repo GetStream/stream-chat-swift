@@ -40,10 +40,6 @@ class EmojiMenuViewController: UIViewController {
         loadMenu(result: menus)
     }
 
-    deinit {
-        debugPrint("EmojiMenuViewController", #function)
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchSticker()
@@ -93,6 +89,17 @@ class EmojiMenuViewController: UIViewController {
         UserDefaults.standard.synchronize()
     }
 
+    private func setMenu(menu: StickerMenu, index: Int) {
+        let emojiContainer = EmojiContainerViewController(with: menu)
+        guard selectedPack != menu.menuId else { return }
+        emojiContainer.view.tag = index
+        selectedPack = menu.menuId
+        currentIndex = menus.firstIndex(where: { $0.menuId == selectedPack}) ?? 0
+        self.collectionMenu.reloadData()
+        pageController?.setViewControllers([emojiContainer], direction: .forward, animated: false, completion: nil)
+        HapticFeedbackGenerator.selectionHaptic()
+    }
+
     private func setupPageController() {
         if pageController == nil {
             pageController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
@@ -111,6 +118,11 @@ class EmojiMenuViewController: UIViewController {
         } else {
             pageController?.dataSource = nil
             pageController?.dataSource = self
+            guard selectedPack > 0 else { return }
+            if !package.contains(where: { $0.packageID ?? 0 == selectedPack}) {
+                guard let firstMenu = menus.first(where: { $0.menuId != -1 && $0.menuId != -2}) else { return }
+                setMenu(menu: firstMenu, index: 0)
+            }
         }
     }
 }
@@ -182,14 +194,7 @@ extension EmojiMenuViewController: UICollectionViewDelegate, UICollectionViewDat
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let emojiContainer = EmojiContainerViewController(with: menus[indexPath.row])
-        guard selectedPack != menus[indexPath.row].menuId else { return }
-        emojiContainer.view.tag = indexPath.row
-        selectedPack = menus[indexPath.row].menuId
-        currentIndex = menus.firstIndex(where: { $0.menuId == selectedPack}) ?? 0
-        collectionView.reloadData()
-        pageController?.setViewControllers([emojiContainer], direction: .forward, animated: false, completion: nil)
-        HapticFeedbackGenerator.selectionHaptic()
+        setMenu(menu: menus[indexPath.row], index: indexPath.row)
     }
 
 }

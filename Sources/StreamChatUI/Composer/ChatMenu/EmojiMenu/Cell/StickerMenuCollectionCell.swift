@@ -20,7 +20,15 @@ class StickerMenuCollectionCell: UICollectionViewCell {
         } else if menu.menuId == -2 {
             imgMenu.image = Appearance.default.images.commandGiphy
         } else {
-            Nuke.loadImage(with: menu.image, into: imgMenu)
+            Nuke.loadImage(with: menu.image, into: imgMenu) { [weak self] result in
+                guard let `self` = self else { return }
+                switch result {
+                case .success(let imageResult):
+                    self.imgMenu.image = (menu.menuId == selectedId) ? imageResult.image : imageResult.image.noir
+                case .failure(let error):
+                    debugPrint(error)
+                }
+            }
         }
         imgMenu.tintColor = .init(rgb: 0x343434)
         imgMenu.contentMode = .scaleAspectFill

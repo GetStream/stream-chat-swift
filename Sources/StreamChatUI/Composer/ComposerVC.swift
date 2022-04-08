@@ -398,7 +398,6 @@ open class ComposerVC: _ViewController,
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        NotificationCenter.default.removeObserver(self)
         dismissSuggestions()
     }
 

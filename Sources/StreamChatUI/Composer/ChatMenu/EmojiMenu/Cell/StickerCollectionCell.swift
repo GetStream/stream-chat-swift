@@ -18,7 +18,7 @@ class StickerCollectionCell: UICollectionViewCell {
         super.init(frame: frame)
         imgSticker = SPUIStickerView()
         imgSticker.translatesAutoresizingMaskIntoConstraints = false
-        embed(imgSticker,insets: .init(top: 10, leading: 10, bottom: 10, trailing: 10))
+        embed(imgSticker,insets: .init(top: 15, leading: 15, bottom: 15, trailing: 15))
     }
 
     required init?(coder: NSCoder) {
