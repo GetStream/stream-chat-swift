@@ -34,6 +34,15 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
     /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
     /// the content view is displayed outside the collection/table view.
     func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?)
+    
+    /// Gets called when delivery status indicator is tapped.
+    /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
+    /// the content view is displayed outside the collection/table view.
+    func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?)
+}
+
+public extension ChatMessageContentViewDelegate {
+    func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {}
 }
 
 /// A view that displays the message content.
@@ -607,6 +616,11 @@ open class ChatMessageContentView: _View, ThemeProvider {
     @objc open func handleTapOnReactionsView() {
         delegate?.messageContentViewDidTapOnReactionsView(indexPath?())
     }
+    
+    /// Handles tap on `deliveryStatusView` and forwards the action to the delegate.
+    @objc open func handleTapOnDeliveryStatusView() {
+        delegate?.messageContentViewDidTapOnDeliveryStatusIndicator(indexPath?())
+    }
 	
     // MARK: - Setups
 
@@ -842,6 +856,8 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 .messageDeliveryStatusView
                 .init()
                 .withAccessibilityIdentifier(identifier: "deliveryStatusView")
+            
+            deliveryStatusView!.addTarget(self, action: #selector(handleTapOnDeliveryStatusView), for: .touchUpInside)
         }
         return deliveryStatusView!
     }
