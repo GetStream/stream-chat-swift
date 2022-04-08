@@ -117,7 +117,7 @@ open class ChatChannelHeaderView:
     ) {
         switch channel {
         case .update, .create:
-            updateContentIfNeeded()
+            updateContent()
         default:
             break
         }

@@ -10,7 +10,7 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// Content of the view that contains title (first line) and subtitle (second nil)
     open var content: (title: String?, subtitle: String?) = (nil, nil) {
         didSet {
-            updateContentIfNeeded()
+            updateContent()
         }
     }
     
