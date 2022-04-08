@@ -7,7 +7,7 @@
 import XCTest
 
 final class WebSocketConnectPayload_Tests: XCTestCase {
-    func testEncodeWebSocketConnectPayload() throws {
+    func test_encodesWebSocket_whenCorrectConnectPayloadIsPassed() throws {
         let custom: [String: RawJSON] = [
             "color": .string("blue")
         ]
@@ -37,7 +37,7 @@ final class WebSocketConnectPayload_Tests: XCTestCase {
         AssertJSONEqual(serialized, expected)
     }
     
-    func testEncodeWebSocketConnectPayloadNoImage() throws {
+    func test_EncodesWebSocket_whenConnectPayloadHasNoImage() throws {
         let custom: [String: RawJSON] = [
             "color": .string("blue")
         ]

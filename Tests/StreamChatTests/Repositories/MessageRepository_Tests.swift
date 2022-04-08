@@ -32,12 +32,12 @@ final class MessageRepositoryTests: XCTestCase {
 
     // MARK: sendMessage
 
-    func tests_sendMessage_notExistent() {
+    func test_sendMessage_notExistent() {
         let result = runSendMessageAndWait(id: .unique)
         XCTAssertEqual(result?.error, MessageRepositoryError.messageDoesNotExist)
     }
 
-    func tests_sendMessage_notPendingSent() throws {
+    func test_sendMessage_notPendingSent() throws {
         let id = MessageId.unique
         try createMessage(id: id, localState: .deleting)
 
@@ -45,7 +45,7 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertEqual(result?.error, MessageRepositoryError.messageNotPendingSend)
     }
 
-    func tests_sendMessage_noChannel() throws {
+    func test_sendMessage_noChannel() throws {
         let id = MessageId.unique
         let message = try createMessage(id: id, localState: .pendingSend)
         try database.writeSynchronously { _ in
@@ -56,7 +56,7 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertEqual(result?.error, MessageRepositoryError.messageDoesNotHaveValidChannel)
     }
 
-    func tests_sendMessage_preAPIRequest() throws {
+    func test_sendMessage_preAPIRequest() throws {
         let id = MessageId.unique
         try createMessage(id: id, localState: .pendingSend)
         repository.sendMessage(with: id) { _ in }
@@ -71,7 +71,7 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertEqual(currentMessageState, .sending)
     }
 
-    func tests_sendMessage_APIFailure() throws {
+    func test_sendMessage_APIFailure() throws {
         let id = MessageId.unique
         try createMessage(id: id, localState: .pendingSend)
         let expectation = self.expectation(description: "Send Message completes")
@@ -97,7 +97,7 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertEqual(result?.error, MessageRepositoryError.failedToSendMessage)
     }
 
-    func tests_sendMessage_APISuccess() throws {
+    func test_sendMessage_APISuccess() throws {
         let id = MessageId.unique
         try createMessage(id: id, localState: .pendingSend)
         let expectation = self.expectation(description: "Send Message completes")

@@ -44,7 +44,7 @@ final class String_Extensions_Tests: XCTestCase {
         XCTAssertFalse("#".containsEmoji)
     }
     
-    func testLevenshtein() throws {
+    func test_Levenshtein() throws {
         XCTAssertEqual("".levenshtein(""), "".levenshtein(""))
         XCTAssertEqual("".levenshtein(""), 0)
         XCTAssertEqual("a".levenshtein(""), 1)

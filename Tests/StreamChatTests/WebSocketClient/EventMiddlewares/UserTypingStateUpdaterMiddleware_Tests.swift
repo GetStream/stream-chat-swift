@@ -27,7 +27,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
     
     // MARK: - Tests
     
-    func tests_middleware_forwardsNonTypingEvents() throws {
+    func test_middleware_forwardsNonTypingEvents() throws {
         let event = TestEvent()
         
         // Handle non-typing event
@@ -37,7 +37,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
     }
     
-    func tests_middleware_forwardsTypingEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsTypingEvent_ifDatabaseWriteGeneratesError() throws {
         let cid: ChannelId = .unique
         let userId: UserId = .unique
         
@@ -59,7 +59,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
     }
     
-    func tests_middleware_handlesTypingStartedEventCorrectly() throws {
+    func test_middleware_handlesTypingStartedEventCorrectly() throws {
         let cid: ChannelId = .unique
         let userId: UserId = .unique
         
@@ -88,7 +88,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(channel.currentlyTypingUsers.count, 1)
     }
     
-    func tests_middleware_handlesTypingFinishedEventCorrectly() throws {
+    func test_middleware_handlesTypingFinishedEventCorrectly() throws {
         let cid: ChannelId = .unique
         let userId: UserId = .unique
         
@@ -118,7 +118,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
     }
     
-    func tests_middleware_handlesCleanUpTypingEventCorrectly() throws {
+    func test_middleware_handlesCleanUpTypingEventCorrectly() throws {
         let cid: ChannelId = .unique
         let userId: UserId = .unique
         
