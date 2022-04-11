@@ -16,6 +16,19 @@ public enum StickerApi {
     public static var userId = ""
 }
 
+protocol EndPointType {
+    // MARK: Variables
+    var baseURL: String { get }
+    var path: String { get }
+    var httpMethod: HTTPMethod { get }
+}
+
+enum HTTPMethod: String {
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+}
+
 @available(iOS 13.0, *)
 public struct Agent {
     struct Response<T> {
@@ -41,44 +54,44 @@ public struct Agent {
 public class StickerApiClient {
     private static var stickerCalls = Set<AnyCancellable>()
 
-    public static func downloadStickers(packageId: Int,_ completion: @escaping (() -> Void)) {
-        StickerApi.downloadStickers(packageId: packageId)
-            .sink { _  in } receiveValue: { result in completion() }
+    public static func downloadStickers(packageId: Int,_ completion: @escaping ((ResponseBody<EmptyStipopResponse>) -> Void)) {
+        StickerApi.call(type: .downloadStickers(packageId: packageId))
+            .sink { _  in } receiveValue: { result in completion(result) }
             .store(in: &stickerCalls)
     }
 
     public static func mySticker(_ completion: @escaping ((ResponseBody<MyStickerBody>) -> Void)) {
-        StickerApi.mySticker()
+        StickerApi.call(type: .mySticker)
             .sink { _  in } receiveValue: { result in completion(result) }
             .store(in: &stickerCalls)
     }
 
     public static func stickerInfo(stickerId: String,_ completion: @escaping ((ResponseBody<PackageInfoBody>) -> Void)) {
-        StickerApi.stickerInfo(id: stickerId)
+        StickerApi.call(type: .stickerInfo(id: stickerId))
             .sink { _  in } receiveValue: { result in completion(result) }
             .store(in: &stickerCalls)
     }
 
     public static func trendingStickers(pageNumber: Int, animated: Bool, _ completion: @escaping ((ResponseBody<MyStickerBody>) -> Void)) {
-        StickerApi.trendingStickers(pageNumber: pageNumber, animated: animated)
+        StickerApi.call(type: .trendingStickers(pageNumber: pageNumber, animated: animated))
             .sink { _  in } receiveValue: { result in completion(result) }
             .store(in: &stickerCalls)
     }
 
     public static func stickerSend(stickerId: Int,_ completion: ((ResponseBody<EmptyStipopResponse>) -> Void)?) {
-        StickerApi.stickerSend(stickerId: stickerId)
+        StickerApi.call(type: .stickerSend(stickerId: stickerId))
             .sink { _  in } receiveValue: { result in completion?(result) }
             .store(in: &stickerCalls)
     }
 
     public static func recentSticker(_ completion: @escaping ((ResponseBody<RecentStickerBody>) -> Void)) {
-        StickerApi.recentSticker()
+        StickerApi.call(type: .recentSticker)
             .sink { _  in } receiveValue: { result in completion(result) }
             .store(in: &stickerCalls)
     }
 
     public static func hideStickers(packageId: Int, _ completion: ((ResponseBody<EmptyStipopResponse>) -> Void)?) {
-        StickerApi.hideStickers(packageId: packageId)
+        StickerApi.call(type: .hideStickers(packageId: packageId))
             .sink { _  in } receiveValue: { result in completion?(result) }
             .store(in: &stickerCalls)
     }

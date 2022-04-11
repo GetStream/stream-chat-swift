@@ -10,64 +10,55 @@ import Combine
 
 @available(iOS 13.0, *)
 extension StickerApi {
-    public static func mySticker() -> AnyPublisher<ResponseBody<MyStickerBody>, Error> {
-        let url = base.absoluteString + "mysticker/\(StickerApi.userId)?userId=\(userId)"
-        var request = (URLRequest(url: URL(string: url)!))
-        request.httpMethod = "GET"
-        return agent.run(request)
-            .map(\.value)
-            .eraseToAnyPublisher()
+    public enum RequestType: EndPointType {
+        case mySticker
+        case stickerInfo(id: String)
+        case trendingStickers(pageNumber: Int, animated: Bool)
+        case downloadStickers(packageId: Int)
+        case stickerSend(stickerId: Int)
+        case recentSticker
+        case hideStickers(packageId: Int)
+
+        // MARK: Vars & Lets
+        var baseURL: String {
+            return base.absoluteString
+        }
+
+        var path: String {
+            switch self {
+            case .mySticker:
+                return "mysticker/\(StickerApi.userId)?userId=\(userId)"
+            case .stickerInfo(id: let id):
+                return ("package/\(id)?" + "userId=\(userId)")
+            case .trendingStickers(pageNumber: let pageNumber, animated: let animated):
+                return "package" + "?userId=\(userId)&pageNumber=\(pageNumber)&animated=\(animated ? "Y" : "N")"
+            case .downloadStickers(packageId: let packageId):
+                return "download/\(packageId)?userId=\(userId)&isPurchase=N"
+            case .stickerSend(stickerId: let stickerId):
+                return "analytics/send/\(stickerId)?userId=\(userId)"
+            case .recentSticker:
+                return "package/send/\(userId)"
+            case .hideStickers(packageId: let packageId):
+                return "mysticker/hide/\(userId)/\(packageId)"
+            }
+        }
+
+        var httpMethod: HTTPMethod {
+            switch self {
+            case .mySticker, .stickerInfo, .trendingStickers, .recentSticker:
+                return .get
+            case .downloadStickers, .stickerSend:
+                return .post
+            case .hideStickers:
+                return .put
+            }
+        }
     }
 
-    public static func stickerInfo(id: String) -> AnyPublisher<ResponseBody<PackageInfoBody>, Error> {
-        let url = base.absoluteString + "package/\(id)?" + "userId=\(userId)"
+    public static func call<T>(type: RequestType) -> AnyPublisher<ResponseBody<T>, Error> {
+        let url = type.baseURL + type.path
         var request = (URLRequest(url: URL(string: url)!))
-        request.httpMethod = "GET"
-        return agent.run(request)
-            .map(\.value)
-            .eraseToAnyPublisher()
-    }
-
-    public static func trendingStickers(pageNumber: Int, animated: Bool) -> AnyPublisher<ResponseBody<MyStickerBody>, Error> {
-        let url = base.absoluteString + "package" + "?userId=\(userId)&pageNumber=\(pageNumber)&animated=\(animated ? "Y" : "N")"
-        var request = (URLRequest(url: URL(string: url)!))
-        request.httpMethod = "GET"
-        return agent.run(request)
-            .map(\.value)
-            .eraseToAnyPublisher()
-    }
-
-    public static func downloadStickers(packageId: Int) -> AnyPublisher<ResponseBody<EmptyStipopResponse>, Error> {
-        let url = base.absoluteString + "download/\(packageId)?userId=\(userId)&isPurchase=N"
-        var request = (URLRequest(url: URL(string: url)!))
-        request.httpMethod = "POST"
-        return agent.run(request)
-            .map(\.value)
-            .eraseToAnyPublisher()
-    }
-
-    public static func stickerSend(stickerId: Int) -> AnyPublisher<ResponseBody<EmptyStipopResponse>, Error> {
-        let url = base.absoluteString + "analytics/send/\(stickerId)?userId=\(userId)"
-        var request = (URLRequest(url: URL(string: url)!))
-        request.httpMethod = "POST"
-        return agent.run(request)
-            .map(\.value)
-            .eraseToAnyPublisher()
-    }
-
-    public static func recentSticker() -> AnyPublisher<ResponseBody<RecentStickerBody>, Error> {
-        let url = base.absoluteString + "package/send/\(userId)"
-        var request = (URLRequest(url: URL(string: url)!))
-        request.httpMethod = "GET"
-        return agent.run(request)
-            .map(\.value)
-            .eraseToAnyPublisher()
-    }
-
-    public static func hideStickers(packageId: Int) -> AnyPublisher<ResponseBody<EmptyStipopResponse>, Error> {
-        let url = base.absoluteString + "mysticker/hide/\(userId)/\(packageId)"
-        var request = (URLRequest(url: URL(string: url)!))
-        request.httpMethod = "PUT"
+        request.httpMethod = type.httpMethod.rawValue
         return agent.run(request)
             .map(\.value)
             .eraseToAnyPublisher()

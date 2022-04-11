@@ -5,7 +5,6 @@
 //  Created by Parth Kshatriya on 01/04/22.
 //
 
-import Foundation
 import Stipop
 import StreamChat
 
@@ -26,7 +25,8 @@ class StickerCollectionCell: UICollectionViewCell {
     }
 
     func configureSticker(sticker: Sticker) {
-        imgSticker.setSticker(((sticker.stickerImg ?? "").addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""), sizeOptimized: true)
+        let stickerImgUrl = (sticker.stickerImg ?? "").addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        imgSticker.setSticker(stickerImgUrl ?? "", sizeOptimized: true)
         imgSticker.backgroundColor = .clear
     }
 }

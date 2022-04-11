@@ -5,7 +5,6 @@
 //  Created by Parth Kshatriya on 25/03/22.
 //
 
-import Foundation
 import StreamChat
 import Nuke
 import AVKit
@@ -70,8 +69,6 @@ class ChatMessageStickerBubble: _TableViewCell {
             subContainer.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor, constant: 0),
             subContainer.heightAnchor.constraint(equalToConstant: cellWidth),
         ])
-
-
         sentThumbStickerView = SPUIStickerView()
         sentThumbStickerView.backgroundColor = Appearance.default.colorPalette.background6
         sentThumbStickerView.transform = .mirrorY
@@ -86,7 +83,6 @@ class ChatMessageStickerBubble: _TableViewCell {
             sentThumbStickerView.heightAnchor.constraint(equalToConstant: cellWidth)
         ])
         subContainer.transform = .mirrorY
-
         sentThumbGifView = GPHMediaView()
         sentThumbGifView.backgroundColor = Appearance.default.colorPalette.background6
         sentThumbGifView.transform = .mirrorY
@@ -100,15 +96,14 @@ class ChatMessageStickerBubble: _TableViewCell {
             sentThumbGifView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
             sentThumbGifView.heightAnchor.constraint(equalToConstant: cellWidth)
         ])
-
         viewContainer.heightAnchor.constraint(equalToConstant: cellWidth).isActive = true
         viewContainer.backgroundColor = .clear
         if let giphyUrl = content?.extraData.giphyUrl, let gifUrl = URL(string: giphyUrl) {
             sentThumbGifView.setGifFromURL(gifUrl)
             sentThumbGifView.isHidden = false
             sentThumbStickerView.isHidden = true
-        } else if let sticker = content?.extraData.stickerUrl {
-            sentThumbStickerView.setSticker(sticker.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "", sizeOptimized: true)
+        } else if let sticker = content?.extraData.stickerUrl?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+            sentThumbStickerView.setSticker(sticker, sizeOptimized: true)
             sentThumbGifView.isHidden = true
             sentThumbStickerView.isHidden = false
         }

@@ -275,7 +275,7 @@ open class ComposerVC: _ViewController,
     private var walletInputView: WalletQuickInputViewController?
     private var menuController: ChatMenuViewController?
     private var emoji: UIViewController?
-    private var emojiPickerView: UIViewController!
+    private var emojiPickerView: UIViewController?
     private var isMenuShowing = false
     private var forceKeyboardClose = false {
         didSet {
@@ -623,7 +623,10 @@ open class ComposerVC: _ViewController,
                             emojiPickerView.downloadedPackage = downloadedSticker
                         }
                         self.forceKeyboardClose = true
-                        UIApplication.shared.keyWindow?.rootViewController?.present(self.emojiPickerView, animated: true, completion: nil)
+                        guard let emojiPickerView = self.emojiPickerView else {
+                            return
+                        }
+                        UIApplication.shared.keyWindow?.rootViewController?.present(emojiPickerView, animated: true, completion: nil)
                     }
                 }
                 showInputViewController(emoji)

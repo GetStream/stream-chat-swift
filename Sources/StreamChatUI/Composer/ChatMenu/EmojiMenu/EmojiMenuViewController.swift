@@ -81,7 +81,7 @@ class EmojiMenuViewController: UIViewController {
     private func checkAndAddDefaultSticker() {
         var defaultStickers = StickerMenu.getDefaultSticker()
         var defaultStickerIds = defaultStickers.compactMap { $0.menuId }
-        menus.removeAll(where:  { defaultStickerIds.contains($0.menuId) })
+        menus.removeAll(where:  { defaultStickerIds.contains($0.menuId ?? 0) })
         menus.append(contentsOf: defaultStickers)
 
         //Store Menu in local
@@ -93,7 +93,7 @@ class EmojiMenuViewController: UIViewController {
         let emojiContainer = EmojiContainerViewController(with: menu)
         guard selectedPack != menu.menuId else { return }
         emojiContainer.view.tag = index
-        selectedPack = menu.menuId
+        selectedPack = menu.menuId ?? 0
         currentIndex = menus.firstIndex(where: { $0.menuId == selectedPack}) ?? 0
         self.collectionMenu.reloadData()
         pageController?.setViewControllers([emojiContainer], direction: .forward, animated: false, completion: nil)
@@ -168,7 +168,7 @@ extension EmojiMenuViewController: UIPageViewControllerDataSource, UIPageViewCon
         let index = pageViewController.viewControllers!.first!.view.tag
         currentIndex = index
         guard menus.count > currentIndex else { return }
-        selectedPack = menus[currentIndex].menuId
+        selectedPack = menus[currentIndex].menuId ?? 0
         collectionMenu.reloadData()
         collectionMenu.scrollToItem(at: .init(row: currentIndex, section: 0), at: .right, animated: true)
         HapticFeedbackGenerator.selectionHaptic()

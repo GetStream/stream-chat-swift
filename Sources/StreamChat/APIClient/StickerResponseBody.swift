@@ -84,9 +84,9 @@ public class StickerMenu: Codable, Equatable {
     public static func == (lhs: StickerMenu, rhs: StickerMenu) -> Bool {
         lhs.menuId == rhs.menuId
     }
-    public let image: String!
-    public let menuId: Int!
-    public let name: String!
+    public let image: String?
+    public let menuId: Int?
+    public let name: String?
 
     public init(image: String, menuId: Int, name: String) {
         self.image = image

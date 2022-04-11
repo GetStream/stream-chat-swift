@@ -196,7 +196,7 @@ class EmojiContainerViewController: UIViewController {
 
     @objc private func downloadSticker() {
         updateLoadingView(isHidden: false)
-        StickerApiClient.downloadStickers(packageId: menu?.menuId ?? 0) { [weak self] in
+        StickerApiClient.downloadStickers(packageId: menu?.menuId ?? 0) {  [weak self] _ in
             guard let `self` = self else { return }
             self.loadingIndicator.isHidden = true
             self.loadSticker(stickerId: "\(self.menu?.menuId ?? 0)")
@@ -217,15 +217,15 @@ class EmojiContainerViewController: UIViewController {
             loadRecentSticker()
         } else if stickerId != -2 {
             if StickerMenu.getDefaultStickerIds().contains(stickerId) && !visibleSticker.contains(stickerId) {
-                self.hStack.isHidden = false
-                self.vStack.isHidden = false
-                self.collectionEmoji.isHidden = true
-                self.configureDownloadOption()
+                hStack.isHidden = false
+                vStack.isHidden = false
+                collectionEmoji.isHidden = true
+                configureDownloadOption()
             } else {
-                self.hStack.isHidden = true
-                self.vStack.isHidden = true
-                self.collectionEmoji.isHidden = false
-                self.loadSticker(stickerId: "\(stickerId)")
+                hStack.isHidden = true
+                vStack.isHidden = true
+                collectionEmoji.isHidden = false
+                loadSticker(stickerId: "\(stickerId)")
             }
         }
     }
@@ -234,7 +234,7 @@ class EmojiContainerViewController: UIViewController {
         // Retrieve from userdefault
         if let stickers = UserDefaults.standard.retrieve(object: [Sticker].self, fromKey: stickerId) {
             self.stickers = stickers
-            self.collectionEmoji.reloadData()
+            collectionEmoji.reloadData()
         } else {
             StickerApiClient.stickerInfo(stickerId: stickerId) { [weak self] result in
                 guard let `self` = self else { return }

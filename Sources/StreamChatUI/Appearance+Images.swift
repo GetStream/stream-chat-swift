@@ -288,7 +288,7 @@ public extension Appearance {
 
         public var downloadSticker: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "arrow.down.circle")?.withRenderingMode(.alwaysTemplate)
+                return UIImage(systemName: "arrow.down.circle")
             } else {
                 return nil
             }
@@ -296,7 +296,7 @@ public extension Appearance {
 
         public var downloadStickerFill: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "arrow.down.circle.fill")?.withRenderingMode(.alwaysTemplate)
+                return UIImage(systemName: "arrow.down.circle.fill")
             } else {
                 return nil
             }
@@ -304,7 +304,9 @@ public extension Appearance {
 
         public var clock: UIImage? = {
             if #available(iOS 13.0, *) {
-                return UIImage(systemName: "clock")?.withRenderingMode(.alwaysTemplate).tinted(with: UIColor.white.withAlphaComponent(0.6))
+                return UIImage(systemName: "clock")?
+                    .withRenderingMode(.alwaysTemplate)
+                    .tinted(with: UIColor.white.withAlphaComponent(0.6))
             } else {
                 return nil
             }

@@ -96,7 +96,7 @@ extension EmojiPickerViewController: UITableViewDelegate, UITableViewDataSource 
         downloadedPackage.append(packageId)
         tableView.reloadRows(at: [indexPath], with: .automatic)
         if packages[indexPath.row].isDownload != "Y" {
-            StickerApiClient.downloadStickers(packageId: packages[indexPath.row].packageID ?? 0) { }
+            StickerApiClient.downloadStickers(packageId: packages[indexPath.row].packageID ?? 0) { _ in }
         } else {
             StickerApiClient.hideStickers(packageId: packages[indexPath.row].packageID ?? 0, nil)
         }

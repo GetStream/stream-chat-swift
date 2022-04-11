@@ -16,9 +16,8 @@ open class EmojiButton: _Button, AppearanceProvider {
         super.setUpAppearance()
         let normalStateImage = appearance.images.emojiIcon
         let selectedStateImage = appearance.images.menuKeyboard
-        self.tintColor = .init(rgb: 0x737373)
+        self.tintColor = appearance.colorPalette.emojiBg
         setImage(normalStateImage, for: .normal)
         setImage(selectedStateImage, for: .selected)
     }
 }
-

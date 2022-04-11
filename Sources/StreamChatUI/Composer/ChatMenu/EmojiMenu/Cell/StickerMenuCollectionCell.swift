@@ -11,8 +11,9 @@ import Nuke
 
 class StickerMenuCollectionCell: UICollectionViewCell {
 
-    @IBOutlet weak var imgMenu: UIImageView!
-    @IBOutlet weak var bgView: UIView!
+    //MARK: Outlets
+    @IBOutlet private weak var imgMenu: UIImageView!
+    @IBOutlet private weak var bgView: UIView!
 
     func configureMenu(menu: StickerMenu, selectedId: Int) {
         if menu.menuId == -1 {
