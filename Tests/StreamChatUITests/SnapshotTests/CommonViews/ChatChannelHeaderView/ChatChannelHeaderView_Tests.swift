@@ -7,59 +7,53 @@ import StreamChat
 @testable import StreamChatUI
 import XCTest
 
-class ChatChannelHeaderView_Tests: XCTestCase {
-    var view: ChatChannelHeaderView!
+final class ChatChannelHeaderView_Tests: XCTestCase {
+    var sut: ChatChannelHeaderView!
     var mockChannelController: ChatChannelController_Mock!
     
     override func setUp() {
         super.setUp()
         
-        mockChannelController = ChatChannelController_Mock.mock()
-        view = ChatChannelHeaderView().withoutAutoresizingMaskConstraints
-        view.backgroundColor = .gray
-        view.addSizeConstraints()
-        view.channelController = mockChannelController
+        let chatClient_mock = ChatClient_Mock.mock
+        chatClient_mock.currentUserId_mock = "mock user id"
+        mockChannelController = ChatChannelController_Mock.mock(client: chatClient_mock)
+        sut = ChatChannelHeaderView().withoutAutoresizingMaskConstraints
+        sut.backgroundColor = .darkGray
+        sut.channelController = mockChannelController
     }
     
     override func tearDown() {
-        view = nil
+        sut = nil
         mockChannelController = nil
         
         super.tearDown()
     }
     
-    func test_SetNewChannelName_IsSuccessfullyChanged() {
-        // Given
+    func test_SettingNewChannelName_ChannelNameIsSuccessfullyChanged() {
+        // GIVEN
         let newChannelName = "New Channel Name"
-        let mockChannel: ChatChannel = .mockDMChannel(name: newChannelName)
+        let mockChannel: ChatChannel = .mockNonDMChannel(name: newChannelName)
         mockChannelController.channel_mock = mockChannel
+        sut.setUpLayout()
         
-        // When
-        view.channelController(view.channelController!, didUpdateChannel: .update(mockChannel))
+        // WHEN
+        sut.channelController(sut.channelController!, didUpdateChannel: .update(mockChannel))
         
-        // Then
-        let currentChannelName = view.titleContainerView.titleLabel.text ?? ""
+        // THEN
+        let currentChannelName = sut.titleContainerView.titleLabel.text ?? ""
         XCTAssertEqual(currentChannelName.isEmpty, false)
         XCTAssertEqual(newChannelName, currentChannelName)
     }
     
     func test_ChannelNameSet() {
         let newChannelName = "New Channel Name"
+        
         mockChannelController.simulateInitial(
-            channel: .mockDMChannel(name: newChannelName),
+            channel: .mockNonDMChannel(name: newChannelName, watcherCount: 2, memberCount: 3),
             messages: [],
             state: .localDataFetched
         )
         
-        AssertSnapshot(view)
-    }
-}
-
-private extension ChatChannelHeaderView {
-    func addSizeConstraints() {
-        NSLayoutConstraint.activate([
-            widthAnchor.constraint(equalToConstant: 360),
-            heightAnchor.constraint(equalToConstant: 360)
-        ])
+        AssertSnapshot(sut)
     }
 }
