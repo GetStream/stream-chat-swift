@@ -68,14 +68,14 @@ class EmojiMenuViewController: UIViewController {
     }
 
     private func loadMenu(result: [StickerMenu]) {
-        self.menus.removeAll()
+        menus.removeAll()
         var updatedResult = result
         updatedResult.removeAll(where: { $0.menuId == -1 })
-        self.menus.append(.init(image: "", menuId: -1, name: ""))
-        self.menus.append(contentsOf: updatedResult)
-        self.checkAndAddDefaultSticker()
-        self.setupPageController()
-        self.collectionMenu.reloadData()
+        menus.append(.init(image: "", menuId: -1, name: ""))
+        menus.append(contentsOf: updatedResult)
+        checkAndAddDefaultSticker()
+        setupPageController()
+        collectionMenu.reloadData()
     }
 
     private func checkAndAddDefaultSticker() {
@@ -95,7 +95,7 @@ class EmojiMenuViewController: UIViewController {
         emojiContainer.view.tag = index
         selectedPack = menu.menuId ?? 0
         currentIndex = menus.firstIndex(where: { $0.menuId == selectedPack}) ?? 0
-        self.collectionMenu.reloadData()
+        collectionMenu.reloadData()
         pageController?.setViewControllers([emojiContainer], direction: .forward, animated: false, completion: nil)
         HapticFeedbackGenerator.selectionHaptic()
     }

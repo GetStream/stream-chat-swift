@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Stipop
 import StreamChat
 import Combine
 import Nuke

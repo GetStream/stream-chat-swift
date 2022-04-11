@@ -8,7 +8,6 @@
 
 import StreamChat
 import UIKit
-import Stipop
 
 open class EmojiButton: _Button, AppearanceProvider {
 

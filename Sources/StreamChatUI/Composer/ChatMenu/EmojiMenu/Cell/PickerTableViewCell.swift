@@ -10,10 +10,11 @@ import StreamChat
 import Nuke
 
 class PickerTableViewCell: UITableViewCell {
-    @IBOutlet weak var lblPackName: UILabel!
-    @IBOutlet weak var lblArtistName: UILabel!
-    @IBOutlet weak var imgPack: UIImageView!
-    @IBOutlet weak var btnDownload: UIButton!
+    //MARK: Outlets
+    @IBOutlet private weak var lblPackName: UILabel!
+    @IBOutlet private weak var lblArtistName: UILabel!
+    @IBOutlet private weak var imgPack: UIImageView!
+    @IBOutlet private weak var btnDownload: UIButton!
 
     func configure(with package: PackageList, downloadedPackage: [Int]) {
         lblPackName.text = package.packageName ?? ""

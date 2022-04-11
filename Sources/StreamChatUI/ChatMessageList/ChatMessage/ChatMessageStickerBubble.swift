@@ -13,11 +13,19 @@ import GiphyUISDK
 
 class ChatMessageStickerBubble: _TableViewCell {
 
-    public private(set) var viewContainer: UIView!
-    public private(set) var subContainer: UIView!
+    public private(set) var timestampLabel: UILabel?
+    public var layoutOptions: ChatMessageLayoutOptions?
+    public lazy var dateFormatter: DateFormatter = .makeDefault()
+    public lazy var mainContainer = ContainerStackView(axis: .horizontal)
+        .withoutAutoresizingMaskConstraints
+    public lazy var subContainer = ContainerStackView(axis: .vertical)
+        .withoutAutoresizingMaskConstraints
     public private(set) var sentThumbStickerView: SPUIStickerView!
     public private(set) var sentThumbGifView: UIImageView!
+    public private(set) var authorAvatarView: ChatAvatarView?
+    private var messageAuthorAvatarSize: CGSize { .init(width: 32, height: 32) }
     var content: ChatMessage?
+    var chatChannel: ChatChannel?
     var isSender = false
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -38,66 +46,52 @@ class ChatMessageStickerBubble: _TableViewCell {
         } else {
             cellWidth = 150
         }
-        if viewContainer != nil {
-            viewContainer.removeFromSuperview()
+        if mainContainer != nil && subContainer != nil {
+            mainContainer.removeFromSuperview()
+            subContainer.removeFromSuperview()
+            mainContainer.removeAllArrangedSubviews()
+            subContainer.removeAllArrangedSubviews()
+            timestampLabel = nil
+            authorAvatarView = nil
         }
-        viewContainer = UIView()
-        viewContainer.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.backgroundColor = .clear
-        viewContainer.clipsToBounds = true
-        contentView.addSubview(viewContainer)
-        viewContainer.widthAnchor.constraint(equalToConstant: cellWidth).isActive = true
+        mainContainer.addArrangedSubviews([createAvatarView(), subContainer])
+        mainContainer.alignment = .bottom
+        contentView.addSubview(mainContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
-            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4)
+            mainContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
+            mainContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4)
         ])
         if isSender {
-            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8).isActive = true
+            mainContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8).isActive = true
+            authorAvatarView?.isHidden = true
         } else {
-            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8).isActive = true
+            mainContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8).isActive = true
+            authorAvatarView?.isHidden = false
         }
 
-        subContainer = UIView()
-        subContainer.translatesAutoresizingMaskIntoConstraints = false
-        subContainer.backgroundColor = Appearance.default.colorPalette.background6
-        subContainer.layer.cornerRadius = 12
-        subContainer.clipsToBounds = true
-        viewContainer.addSubview(subContainer)
-        NSLayoutConstraint.activate([
-            subContainer.bottomAnchor.constraint(equalTo: viewContainer.bottomAnchor, constant: 0),
-            subContainer.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor, constant: 0),
-            subContainer.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor, constant: 0),
-            subContainer.heightAnchor.constraint(equalToConstant: cellWidth),
-        ])
         sentThumbStickerView = SPUIStickerView()
+        sentThumbStickerView.heightAnchor.constraint(equalToConstant: cellWidth).isActive = true
+        sentThumbStickerView.widthAnchor.constraint(equalToConstant: cellWidth).isActive = true
         sentThumbStickerView.backgroundColor = Appearance.default.colorPalette.background6
         sentThumbStickerView.transform = .mirrorY
         sentThumbStickerView.contentMode = .scaleAspectFill
+        sentThumbStickerView.layer.cornerRadius = 12
         sentThumbStickerView.translatesAutoresizingMaskIntoConstraints = false
         sentThumbStickerView.clipsToBounds = true
-        subContainer.addSubview(sentThumbStickerView)
-        NSLayoutConstraint.activate([
-            sentThumbStickerView.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 0),
-            sentThumbStickerView.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: 0),
-            sentThumbStickerView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
-            sentThumbStickerView.heightAnchor.constraint(equalToConstant: cellWidth)
-        ])
         subContainer.transform = .mirrorY
         sentThumbGifView = GPHMediaView()
         sentThumbGifView.backgroundColor = Appearance.default.colorPalette.background6
         sentThumbGifView.transform = .mirrorY
         sentThumbGifView.contentMode = .scaleAspectFill
+        sentThumbGifView.layer.cornerRadius = 12
         sentThumbGifView.translatesAutoresizingMaskIntoConstraints = false
+        sentThumbGifView.heightAnchor.constraint(equalToConstant: cellWidth).isActive = true
+        sentThumbGifView.widthAnchor.constraint(equalToConstant: cellWidth).isActive = true
         sentThumbGifView.clipsToBounds = true
         subContainer.addSubview(sentThumbGifView)
-        NSLayoutConstraint.activate([
-            sentThumbGifView.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 0),
-            sentThumbGifView.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: 0),
-            sentThumbGifView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
-            sentThumbGifView.heightAnchor.constraint(equalToConstant: cellWidth)
-        ])
-        viewContainer.heightAnchor.constraint(equalToConstant: cellWidth).isActive = true
-        viewContainer.backgroundColor = .clear
+        subContainer.addArrangedSubviews([createTimestampLabel(), sentThumbStickerView, sentThumbGifView])
+        subContainer.alignment = .leading
+        timestampLabel?.widthAnchor.constraint(equalToConstant: cellWidth).isActive = true
         if let giphyUrl = content?.extraData.giphyUrl, let gifUrl = URL(string: giphyUrl) {
             sentThumbGifView.setGifFromURL(gifUrl)
             sentThumbGifView.isHidden = false
@@ -107,5 +101,60 @@ class ChatMessageStickerBubble: _TableViewCell {
             sentThumbGifView.isHidden = true
             sentThumbStickerView.isHidden = false
         }
+        if let options = layoutOptions, let memberCount = chatChannel?.memberCount {
+            // Hide Avatar view for one-way chat
+            if memberCount <= 2 {
+                authorAvatarView?.isHidden = true
+            } else {
+                authorAvatarView?.isHidden = false
+                if !options.contains(.authorName) {
+                    authorAvatarView?.imageView.image = nil
+                } else {
+                    Nuke.loadImage(with: content?.author.imageURL, into: authorAvatarView?.imageView ?? .init())
+                }
+            }
+            timestampLabel?.isHidden = !options.contains(.timestamp)
+        }
+        if let createdAt = content?.createdAt,
+            let authorName = content?.author.name?.trimStringBy(count: 15),
+            let memberCount = chatChannel?.memberCount {
+            var authorName = (memberCount <= 2) ? "" : authorName
+            // Add extra white space in leading
+            if !isSender {
+                timestampLabel?.text = " " + authorName + "  " + dateFormatter.string(from: createdAt)
+                timestampLabel?.textAlignment = .left
+            } else {
+                timestampLabel?.text = dateFormatter.string(from: createdAt)
+                timestampLabel?.textAlignment = .right
+            }
+        } else {
+            timestampLabel?.text = nil
+        }
+    }
+
+    private func createAvatarView() -> ChatAvatarView {
+        if authorAvatarView == nil {
+            authorAvatarView = Components.default
+                .avatarView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        authorAvatarView?.widthAnchor.pin(equalToConstant: messageAuthorAvatarSize.width).isActive = true
+        authorAvatarView?.heightAnchor.pin(equalToConstant: messageAuthorAvatarSize.height).isActive = true
+        return authorAvatarView!
+    }
+
+    private func createTimestampLabel() -> UILabel {
+        if timestampLabel == nil {
+            timestampLabel = UILabel()
+                .withAdjustingFontForContentSizeCategory
+                .withBidirectionalLanguagesSupport
+                .withoutAutoresizingMaskConstraints
+
+            timestampLabel?.textColor = Appearance.default.colorPalette.subtitleText
+            timestampLabel?.font = Appearance.default.fonts.footnote
+            timestampLabel?.transform = .mirrorY
+        }
+        return timestampLabel!
     }
 }

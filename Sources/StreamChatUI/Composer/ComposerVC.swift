@@ -6,7 +6,6 @@ import Foundation
 import StreamChat
 import UIKit
 import SwiftUI
-import Stipop
 import GiphyUISDK
 
 extension Notification.Name {
@@ -804,7 +803,7 @@ open class ComposerVC: _ViewController,
         if let giphyImage = notification.userInfo?["giphyUrl"] as? String {
             var stickerData = [String: RawJSON]()
             stickerData["giphyUrl"] = .string(giphyImage)
-            self.channelController?
+            channelController?
                 .createNewMessage(
                     text: "GIF",
                     extraData: stickerData,
@@ -818,7 +817,7 @@ open class ComposerVC: _ViewController,
         }
         var stickerData = [String: RawJSON]()
         stickerData["stickerUrl"] = .string(stickerImg)
-        self.channelController?
+        channelController?
             .createNewMessage(
                 text: "Sticker",
                 extraData: stickerData,

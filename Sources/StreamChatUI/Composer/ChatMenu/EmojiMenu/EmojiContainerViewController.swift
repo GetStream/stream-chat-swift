@@ -9,7 +9,6 @@ import UIKit
 import StreamChat
 import Combine
 import Nuke
-import Stipop
 import GiphyUISDK
 
 @available(iOS 13.0, *)
@@ -338,9 +337,7 @@ extension EmojiContainerViewController: UISearchBarDelegate {
 
 @available(iOS 13.0, *)
 extension EmojiContainerViewController: GiphyDelegate {
-    func didDismiss(controller: GiphyViewController?) {
-        debugPrint("deinit", controller)
-    }
+    func didDismiss(controller: GiphyViewController?) { }
 
     func didSelectMedia(giphyViewController: GiphyViewController, media: GPHMedia) {
         giphyViewController.dismiss(animated: true, completion: nil)
