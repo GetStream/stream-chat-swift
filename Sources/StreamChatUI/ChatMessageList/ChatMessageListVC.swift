@@ -471,6 +471,19 @@ open class ChatMessageListVC: _ViewController,
                 "Tapped an avatarView. To customize the behavior, override messageContentViewDidTapOnAvatarView. Path: \(indexPath)"
             )
     }
+    
+    /// This method is triggered when delivery status indicator on the message at the given index path is tapped.
+    /// - Parameter indexPath: The index path of the message cell.
+    open func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        
+        log.info(
+            """
+            Tapped an delivery status view. To customize the behavior, override
+            messageContentViewDidTapOnDeliveryStatusIndicator. Path: \(indexPath)"
+            """
+        )
+    }
 
     // MARK: - GalleryContentViewDelegate
 
