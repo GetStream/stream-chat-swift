@@ -99,6 +99,8 @@
         "guides/working-with-attachments",
         "guides/customize-message-composer",
         "guides/message-composer-custom-attachments",
+        "guides/message-list-delivery-status",
+        "guides/customize-message-delivery-status",
         "guides/migrating-from-3-to-4",
         "guides/migrating-from-1.x-and-2.x"
       ]

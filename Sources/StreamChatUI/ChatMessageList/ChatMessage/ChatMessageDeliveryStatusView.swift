@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that displays message delivery receipts.
-open class ChatMessageDeliveryStatusView: _View, ThemeProvider {
+open class ChatMessageDeliveryStatusView: _Control, ThemeProvider {
     public struct Content {
         public var message: ChatMessage
         public var channel: ChatChannel
@@ -20,6 +20,10 @@ open class ChatMessageDeliveryStatusView: _View, ThemeProvider {
     /// The content the view displays.
     open var content: Content? {
         didSet { updateContentIfNeeded() }
+    }
+    
+    override open var isHighlighted: Bool {
+        didSet { alpha = state == .normal ? 1 : 0.5 }
     }
     
     /// The label showing number of message reads.
@@ -38,6 +42,13 @@ open class ChatMessageDeliveryStatusView: _View, ThemeProvider {
     open private(set) lazy var stackView = UIStackView()
         .withAccessibilityIdentifier(identifier: "stackView")
         .withoutAutoresizingMaskConstraints
+    
+    override open func setUp() {
+        super.setUp()
+        
+        stackView.isUserInteractionEnabled = false
+        isUserInteractionEnabled = false
+    }
     
     override open func setUpAppearance() {
         super.setUpAppearance()
