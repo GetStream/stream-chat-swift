@@ -156,14 +156,14 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ) {
         worker.update(
             channelListQuery: query
-        ) { result in
+        ) { [weak self] result in
             switch result {
             case .success:
-                self.state = .remoteDataFetched
-                self.callback { completion?(nil) }
+                self?.state = .remoteDataFetched
+                self?.callback { completion?(nil) }
             case let .failure(error):
-                self.state = .remoteDataFetchFailed(ClientError(with: error))
-                self.callback { completion?(error) }
+                self?.state = .remoteDataFetchFailed(ClientError(with: error))
+                self?.callback { completion?(error) }
             }
         }
     }

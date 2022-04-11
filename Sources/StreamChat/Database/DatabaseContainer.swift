@@ -221,38 +221,23 @@ class DatabaseContainer: NSPersistentContainer {
     ///
     func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) throws {
         if force {
-            sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
-            
-            let completionWithNotification: ((Error?) -> Void) = { [weak self] error in
-                self?.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
-                completion?(error)
-            }
-            
-            // If the current persistent store is a SQLite store, this method will reset and recreate it.
-            try recreatePersistentStore(completion: completionWithNotification)
-        } else {
-            sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
-            
-            writableContext.perform { [unowned self] in
+            writableContext.perform { [weak self] in
                 do {
-                    try self.managedObjectModel.entities.forEach { entityDescription in
-                        guard let entityName = entityDescription.name else { return }
-                        let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: entityName)
-                        
-                        let objects = try writableContext.fetch(fetchRequest)
-                        
-                        log.debug("Removing entities of type \(entityName)")
-                        
-                        objects.forEach { writableContext.delete($0) }
+                    self?.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
+                    
+                    let completionWithNotification: ((Error?) -> Void) = { error in
+                        self?.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
+                        completion?(error)
                     }
-                    log.debug("Database reset.", subsystems: .database)
-                    self.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
-                    completion?(nil)
+                    
+                    // If the current persistent store is a SQLite store, this method will reset and recreate it.
+                    try self?.recreatePersistentStore(completion: completionWithNotification)
                 } catch {
-                    log.error("Error resetting database: \(error)", subsystems: .database)
                     completion?(error)
                 }
             }
+        } else {
+            fatalError()
         }
     }
     

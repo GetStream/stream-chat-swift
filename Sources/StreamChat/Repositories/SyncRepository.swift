@@ -64,6 +64,10 @@ class SyncRepository {
         self.database = database
         self.apiClient = apiClient
     }
+    
+    deinit {
+        operationQueue.cancelAllOperations()
+    }
 
     /// Syncs the local state with the server to make sure the local database is up to date.
     /// It features queuing, serialization and retries
@@ -77,6 +81,8 @@ class SyncRepository {
     ///
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
     func syncLocalState(completion: @escaping () -> Void) {
+        // TODO: this func shouldn't run during login (if the new user == previous user or we're just starting up)
+        
         operationQueue.cancelAllOperations()
 
         log.info("Starting to recover offline state", subsystems: .offlineSupport)
