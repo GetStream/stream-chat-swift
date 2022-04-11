@@ -539,5 +539,6 @@ public extension Appearance {
 
         // MARK: QR Code Option
         public var shareImageIcon: UIImage = loadImageSafely(with: "share_image_icon")
+        public var gif: UIImage = loadImageSafely(with: "gif")
     }
 }

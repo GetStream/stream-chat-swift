@@ -109,6 +109,7 @@ extension EmojiPickerViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
             self.deletePackage(self.packages[indexPath.row].packageID ?? 0)
+            self.downloadedPackage.removeAll(where: { $0 == self.packages[indexPath.row].packageID ?? 0 })
             self.packages.remove(at: indexPath.row)
             self.tblPicker.deleteRows(at: [indexPath], with: .automatic)
             completionHandler(true)

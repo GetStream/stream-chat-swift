@@ -16,9 +16,9 @@ class StickerMenuCollectionCell: UICollectionViewCell {
 
     func configureMenu(menu: StickerMenu, selectedId: Int) {
         if menu.menuId == -1 {
-            imgMenu.image = Appearance.default.images.clock
+            imgMenu.image = (selectedId == -1 ? Appearance.default.images.clock : Appearance.default.images.clock?.noir)
         } else if menu.menuId == -2 {
-            imgMenu.image = Appearance.default.images.commandGiphy
+            imgMenu.image = (selectedId == -2 ? Appearance.default.images.gif : Appearance.default.images.gif.noir)
         } else {
             Nuke.loadImage(with: menu.image, into: imgMenu) { [weak self] result in
                 guard let `self` = self else { return }
