@@ -223,10 +223,13 @@ class DatabaseContainer: NSPersistentContainer {
         if force {
             sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
             
-            // If the current persistent store is a SQLite store, this method will reset and recreate it.
-            try recreatePersistentStore(completion: completion)
+            let completionWithNotification: ((Error?) -> Void) = { [weak self] error in
+                self?.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
+                completion?(error)
+            }
             
-            sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
+            // If the current persistent store is a SQLite store, this method will reset and recreate it.
+            try recreatePersistentStore(completion: completionWithNotification)
         } else {
             sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
             
@@ -322,6 +325,7 @@ class DatabaseContainer: NSPersistentContainer {
         log.debug("Reloading persistent store", subsystems: .database)
         
         loadPersistentStores { _, error in
+            log.debug("Persistent store reloaded with error: \(error)")
             completion?(error)
         }
     }

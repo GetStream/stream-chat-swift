@@ -58,7 +58,7 @@ class ChatClientUpdater {
             client.createBackgroundWorkers()
 
             // Reset all existing local data.
-            return try client.databaseContainer.removeAllData(force: false, completion: completion)
+            return try client.databaseContainer.removeAllData(force: true, completion: completion)
         }
 
         // Set the web-socket endpoint
