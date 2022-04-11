@@ -102,7 +102,7 @@ final class Filter_Tests: XCTestCase {
         XCTAssertEqual(jsonString.deserializeFilter(), filter)
     }
 
-    func testEncodingAndDecodingOnAllCases() {
+    func test_encodesAndDecodes_forAllFilterCases() {
         // Given
         let testCases = FilterCodingTestPair.allCases
 

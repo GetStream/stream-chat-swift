@@ -6,7 +6,7 @@
 import XCTest
 
 final class AsyncOperation_Tests: XCTestCase {
-    func testOperationCallsCompletion() {
+    func test_operationCallsCompletion_whenFinished() {
         let expectation = expectation(description: "operation concludes")
 
         let operation = AsyncOperation { _, completion in
@@ -23,7 +23,7 @@ final class AsyncOperation_Tests: XCTestCase {
         }
     }
 
-    func testOperationDoesNotRetryIfValueIsNotPassed() {
+    func test_operationDoesNotRetry_whenValueIsNotPassed() {
         var operationBlockCalls = 0
         let operation = AsyncOperation { _, completion in
             operationBlockCalls += 1
@@ -34,7 +34,7 @@ final class AsyncOperation_Tests: XCTestCase {
         XCTAssertEqual(operationBlockCalls, 1)
     }
 
-    func testOperationRetriesUpTillMaximumRetries() {
+    func test_operationRetriesUpTillMaximumRetries() {
         var operationBlockCalls = 0
         let operation = AsyncOperation(maxRetries: 2) { _, completion in
             operationBlockCalls += 1
@@ -45,7 +45,7 @@ final class AsyncOperation_Tests: XCTestCase {
         XCTAssertEqual(operationBlockCalls, 3)
     }
 
-    func testOperationRetriesUpTillSuccess() {
+    func test_operationRetriesUpTillSuccess() {
         var operationBlockCalls = 0
         let operation = AsyncOperation(maxRetries: 10) { _, completion in
             operationBlockCalls += 1
@@ -60,7 +60,7 @@ final class AsyncOperation_Tests: XCTestCase {
         XCTAssertEqual(operationBlockCalls, 2)
     }
 
-    func testOperationResetingRetriesShouldNotAccountPreviousRetries() {
+    func test_operationResetingRetriesShouldNotAccountPreviousRetries() {
         var operationBlockCalls = 0
         let operation = AsyncOperation(maxRetries: 10) { operation, completion in
             operationBlockCalls += 1
@@ -74,7 +74,7 @@ final class AsyncOperation_Tests: XCTestCase {
         XCTAssertEqual(operationBlockCalls, 12)
     }
 
-    func testOperationDoesNotRetryIfCancelled() {
+    func test_operationDoesNotRetry_whenCancelled() {
         var operationBlockCalls = 0
         let operation = AsyncOperation(maxRetries: 10) { _, completion in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -104,7 +104,7 @@ final class AsyncOperation_Tests: XCTestCase {
         XCTAssertEqual(operationBlockCalls, 1)
     }
 
-    func testOperationShouldNotStartIfCancelled() {
+    func test_operationShouldNotStart_whenCancelled() {
         var operationBlockCalls = 0
         let operation = AsyncOperation(maxRetries: 10) { _, completion in
             operationBlockCalls += 1

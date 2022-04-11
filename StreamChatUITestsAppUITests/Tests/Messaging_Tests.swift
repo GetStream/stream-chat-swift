@@ -6,7 +6,7 @@ import XCTest
 
 final class MessagingTests: StreamTestCase {
     
-    func testSendMessage() throws {
+    func test_sendsMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -20,7 +20,7 @@ final class MessagingTests: StreamTestCase {
         }
     }
 
-    func testEditMessage() throws {
+    func test_editsMessage() throws {
         let message = "test message"
         let editedMessage = "hello"
         
@@ -38,7 +38,7 @@ final class MessagingTests: StreamTestCase {
         }
     }
     
-    func testDeleteMessage() throws {
+    func test_deletesMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -55,7 +55,7 @@ final class MessagingTests: StreamTestCase {
         }
     }
     
-    func testReceiveMessage() throws {
+    func test_receivesMessage() throws {
         let message = "test message"
         let author = "Han Solo"
         
@@ -75,7 +75,7 @@ final class MessagingTests: StreamTestCase {
         }
     }
     
-    func testParticipantDeleteMessage() throws {
+    func test_messageDeleted_whenParticipantDeletesMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -97,7 +97,7 @@ final class MessagingTests: StreamTestCase {
         }
     }
     
-    func testParticipantEditMessage() throws {
+    func test_messageIsEdited_whenParticipantEditsMessage() throws {
         let message = "test message"
         let editedMessage = "hello"
         

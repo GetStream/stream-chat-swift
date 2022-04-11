@@ -27,7 +27,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
     // MARK: - Tests
 
-    func tests_middleware_forwardsNonReactionEvents() throws {
+    func test_middleware_forwardsNonReactionEvents() throws {
         let event = TestEvent()
 
         // Handle non-banned event
@@ -37,7 +37,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
     }
 
-    func tests_middleware_forwardsBanEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsBanEvent_ifDatabaseWriteGeneratesError() throws {
         let eventPayload: EventPayload = .init(
             eventType: .userBanned,
             cid: .unique,
@@ -59,7 +59,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is UserBannedEventDTO)
     }
 
-    func tests_middleware_forwardsUnbanEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsUnbanEvent_ifDatabaseWriteGeneratesError() throws {
         let eventPayload: EventPayload = .init(
             eventType: .userUnbanned,
             cid: .unique,
@@ -79,7 +79,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is UserUnbannedEventDTO)
     }
 
-    func tests_middleware_handlesUserBannedEventCorrectly() throws {
+    func test_middleware_handlesUserBannedEventCorrectly() throws {
         // Create event payload
         let eventPayload: EventPayload = .init(
             eventType: .userBanned,
@@ -111,7 +111,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssert(forwardedEvent is UserBannedEventDTO)
     }
 
-    func tests_middleware_handlesUserUnbannedEventCorrectly() throws {
+    func test_middleware_handlesUserUnbannedEventCorrectly() throws {
         // Create event payload
         let eventPayload: EventPayload = .init(
             eventType: .userUnbanned,

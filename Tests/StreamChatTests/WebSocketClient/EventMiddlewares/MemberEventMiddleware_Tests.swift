@@ -27,7 +27,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     // MARK: - Tests
     
-    func tests_middleware_forwardsNonMemberEvents() throws {
+    func test_middleware_forwardsNonMemberEvents() throws {
         let event = TestEvent()
         
         // Handle non-member event
@@ -39,7 +39,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     // MARK: - MemberAddedEvent
     
-    func tests_middleware_forwardsMemberAddedEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsMemberAddedEvent_ifDatabaseWriteGeneratesError() throws {
         // Create MemberAddedEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .memberAdded,
@@ -61,7 +61,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
     }
     
-    func tests_middleware_handlesMemberAddedEventCorrectly() throws {
+    func test_middleware_handlesMemberAddedEventCorrectly() throws {
         let cid = ChannelId.unique
         let memberId = UserId.unique
         let userId = UserId.unique
@@ -177,7 +177,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     // MARK: - MemberRemovedEvent
     
-    func tests_middleware_forwardsMemberRemovedEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsMemberRemovedEvent_ifDatabaseWriteGeneratesError() throws {
         // Create MemberAddedEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
@@ -199,7 +199,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
     }
     
-    func tests_middleware_handlesMemberRemovedEventCorrectly() throws {
+    func test_middleware_handlesMemberRemovedEventCorrectly() throws {
         let cid = ChannelId.unique
         
         // Create channel in the database.
@@ -307,7 +307,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     // MARK: - MemberUpdatedEvent
     
-    func tests_middleware_forwardsMemberUpdatedEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsMemberUpdatedEvent_ifDatabaseWriteGeneratesError() throws {
         // Create MemberAddedEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .memberUpdated,
@@ -329,7 +329,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is MemberUpdatedEventDTO)
     }
     
-    func tests_middleware_handlesMemberUpdatedEventCorrectly() throws {
+    func test_middleware_handlesMemberUpdatedEventCorrectly() throws {
         let cid = ChannelId.unique
         
         // Create channel in the database.
@@ -478,7 +478,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     // MARK: - NotificationRemovedFromChannelEvent
     
-    func tests_middleware_handlesNotificationRemovedFromChannelEventCorrectly() throws {
+    func test_middleware_handlesNotificationRemovedFromChannelEventCorrectly() throws {
         let cid = ChannelId.unique
         
         // Create channel in the database.
