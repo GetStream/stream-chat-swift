@@ -259,6 +259,15 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 }
                 queryDTO.channels.insert(channelDTO)
             }
+        } completion: { [weak self] _ in
+            let cids = channels.map(\.cid)
+            self?.worker.startWatchingChannels(withIds: cids) {
+                guard let error = $0 else { return }
+                
+                log.warning(
+                    "Failed to start watching linked channels: \(cids), error: \(error.localizedDescription)"
+                )
+            }
         }
     }
     
