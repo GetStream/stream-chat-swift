@@ -280,8 +280,45 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
         XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
     }
+    
+    func test_syncLocalState_ignoresTheCooldown() throws {
+        let lastSyncDate = Date()
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true
+        )
+        
+        let firstDate = lastSyncDate.addingTimeInterval(1)
+        let secondDate = lastSyncDate.addingTimeInterval(2)
+        let eventsPayload1 = messageEventPayload(with: [firstDate, secondDate])
+        waitForSyncLocalStateRun(requestResult: .success(eventsPayload1))
+        
+        XCTAssertEqual(lastSyncAtValue, secondDate)
+                
+        let thirdDate = secondDate.addingTimeInterval(1)
+        let eventsPayload2 = messageEventPayload(with: [thirdDate])
+        waitForSyncLocalStateRun(requestResult: .success(eventsPayload2))
+        
+        XCTAssertEqual(lastSyncAtValue, thirdDate)
+    }
 
     // MARK: - Sync existing channels events
+    
+    func test_syncExistingChannelsEvents_whenCooldownHasNotPassed_noNeedToSync() throws {
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-2),
+            createChannel: false
+        )
+        
+        let result = getSyncExistingChannelEventsResult()
+
+        guard case .noNeedToSync = result.error else {
+            XCTFail("Should return .noNeedToSync")
+            return
+        }
+    }
 
     func test_syncExistingChannelsEvents_localStorageEnabled_noChannels() throws {
         try prepareForSyncLocalStorage(

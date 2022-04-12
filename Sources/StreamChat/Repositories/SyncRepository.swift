@@ -194,7 +194,9 @@ class SyncRepository {
         isRecovery: Bool,
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
-        guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
+        // In recovery mode, `/sync` should always be called.
+        // Otherwise, the cooldown is checked.
+        guard isRecovery || Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
             completion(.failure(.noNeedToSync))
             return
         }
