@@ -10,9 +10,19 @@ import XCTest
 final class ParticipantRobot: Robot {
 
     private var server: StreamMockServer
+    private var _threadParentId: String? = nil
     
     init(_ server: StreamMockServer) {
         self.server = server
+    }
+    
+    private var threadParentId: String? {
+        get {
+            return self._threadParentId
+        }
+        set {
+            self._threadParentId = newValue
+        }
     }
     
     @discardableResult
@@ -35,19 +45,35 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func sendMessage(_ text: String) -> Self {
-        server.websocketMessage(text, eventType: .messageNew, user: participant())
+        server.websocketMessage(
+            text,
+            messageId: TestData.uniqueId,
+            eventType: .messageNew,
+            user: participant()
+        )
         return self
     }
     
     @discardableResult
     func editMessage(_ text: String) -> Self {
-        server.websocketMessage(text, eventType: .messageUpdated, user: participant())
+        let messageId = server.lastMessage[MessagePayloadsCodingKeys.id.rawValue] as! String
+        server.websocketMessage(
+            text,
+            messageId: messageId,
+            eventType: .messageUpdated,
+            user: participant()
+        )
         return self
     }
     
     @discardableResult
     func deleteMessage() -> Self {
-        server.websocketMessage(eventType: .messageDeleted, user: participant())
+        let messageId = server.lastMessage[MessagePayloadsCodingKeys.id.rawValue] as! String
+        server.websocketMessage(
+            messageId: messageId,
+            eventType: .messageDeleted,
+            user: participant()
+        )
         return self
     }
     
@@ -76,25 +102,43 @@ final class ParticipantRobot: Robot {
         return self
     }
     
-    // TODO: CIS-1685
     @discardableResult
     func replyToMessage(_ text: String) -> Self {
+        let quotedMessage = server.lastMessage
+        let quotedMessageId = quotedMessage[MessagePayloadsCodingKeys.id.rawValue] as! String
+        server.websocketMessage(
+            text,
+            messageId: TestData.uniqueId,
+            eventType: .messageNew,
+            user: participant()
+        ) { message in
+            message[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
+            message[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
+            return message
+        }
         return self
     }
     
-    // TODO: CIS-1685
     @discardableResult
     func replyToMessageInThread(_ text: String, alsoSendInChannel: Bool = false) -> Self {
+        let parentId = threadParentId ?? (server.lastMessage[MessagePayloadsCodingKeys.id.rawValue] as! String)
+        server.websocketMessage(
+            text,
+            messageId: TestData.uniqueId,
+            eventType: .messageNew,
+            user: participant()
+        ) { message in
+            message[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
+            message[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = alsoSendInChannel
+            return message
+        }
         return self
     }
     
     private func participant() -> [String: Any] {
         let json = TestData.toJson(.wsMessage)
         let message = json[TopLevelKey.message] as! [String: Any]
-        let user = server.setUpUser(
-            message[MessagePayloadsCodingKeys.user.rawValue] as! [String: Any],
-            userDetails: UserDetails.hanSolo
-        )
+        let user = server.setUpUser(event: message, details: UserDetails.hanSolo)
         return user
     }
 }
