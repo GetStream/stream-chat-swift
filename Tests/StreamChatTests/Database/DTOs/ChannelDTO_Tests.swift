@@ -680,26 +680,12 @@ final class ChannelDTO_Tests: XCTestCase {
 
     func test_channelConfigCommands_whenConvertedToDTO_thenPreserveOrder() {
         // Given
-        let config = ChannelConfig(
-            reactionsEnabled: true,
-            typingEventsEnabled: false,
-            readEventsEnabled: true,
-            connectEventsEnabled: false,
-            uploadsEnabled: true,
-            repliesEnabled: true,
-            quotesEnabled: true,
-            searchEnabled: false,
-            mutesEnabled: false,
-            urlEnrichmentEnabled: true,
-            messageRetention: "",
-            maxMessageLength: 5000,
+        let config = ChannelConfig.mock(
             commands: [
                 .init(name: "giphy", description: "", set: "", args: ""),
                 .init(name: "workout", description: "", set: "", args: ""),
                 .init(name: "location", description: "", set: "", args: "")
-            ],
-            createdAt: .unique,
-            updatedAt: .unique
+            ]
         )
 
         // When
