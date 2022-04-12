@@ -677,4 +677,37 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(channel.watcherCount, 0)
         }
     }
+
+    func test_channelConfigCommands_whenConvertedToDTO_thenPreserveOrder() {
+        // Given
+        let config = ChannelConfig(
+            reactionsEnabled: true,
+            typingEventsEnabled: false,
+            readEventsEnabled: true,
+            connectEventsEnabled: false,
+            uploadsEnabled: true,
+            repliesEnabled: true,
+            quotesEnabled: true,
+            searchEnabled: false,
+            mutesEnabled: false,
+            urlEnrichmentEnabled: true,
+            messageRetention: "",
+            maxMessageLength: 5000,
+            commands: [
+                .init(name: "giphy", description: "", set: "", args: ""),
+                .init(name: "workout", description: "", set: "", args: ""),
+                .init(name: "location", description: "", set: "", args: "")
+            ],
+            createdAt: .unique,
+            updatedAt: .unique
+        )
+
+        // When
+        let dto = config.asDTO(context: database.viewContext, cid: "test")
+
+        // Then
+        let actual = dto.commands.compactMap { $0 as? CommandDTO }.map(\.name)
+        let expected = ["giphy", "workout", "location"]
+        XCTAssertEqual(actual, expected)
+    }
 }

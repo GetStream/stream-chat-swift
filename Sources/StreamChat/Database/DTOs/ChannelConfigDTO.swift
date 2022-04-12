@@ -21,7 +21,7 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var maxMessageLength: Int32
     @NSManaged var createdAt: Date
     @NSManaged var updatedAt: Date
-    @NSManaged var commands: Set<CommandDTO>
+    @NSManaged var commands: NSOrderedSet
 
     func asModel() -> ChannelConfig {
         .init(
@@ -37,7 +37,9 @@ final class ChannelConfigDTO: NSManagedObject {
             urlEnrichmentEnabled: urlEnrichmentEnabled,
             messageRetention: messageRetention,
             maxMessageLength: Int(maxMessageLength),
-            commands: commands.map { $0.asModel() },
+            commands: commands
+                .compactMap { $0 as? CommandDTO }
+                .map { $0.asModel() },
             createdAt: createdAt,
             updatedAt: updatedAt
         )
@@ -70,7 +72,7 @@ extension ChannelConfig {
         dto.maxMessageLength = Int32(maxMessageLength)
         dto.createdAt = createdAt
         dto.updatedAt = updatedAt
-        dto.commands = Set(commands.map { $0.asDTO(context: context) })
+        dto.commands = NSOrderedSet(array: commands.map { $0.asDTO(context: context) })
         return dto
     }
 }
