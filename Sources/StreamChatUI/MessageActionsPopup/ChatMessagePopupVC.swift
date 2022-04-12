@@ -12,6 +12,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// `ContainerStackView` encapsulating underlying views `reactionsController`, `actionsController` and `messageContentView`.
     open private(set) lazy var messageContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "messageContainerStackView")
 
     /// `UIView` with `UIBlurEffect` that is shown as a background.
     open private(set) lazy var blurView: UIView = {
@@ -23,11 +24,13 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         }
         return UIVisualEffectView(effect: blur)
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "blurView")
     }()
     
     /// Container view that holds `messageContentView`.
     open private(set) lazy var messageContentContainerView = UIView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "messageContentContainerView")
 
     /// Insets for `messageContentView`'s bubble view.
     public var messageBubbleViewInsets: UIEdgeInsets = .zero
@@ -96,7 +99,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         ]
 
         if let reactionsController = reactionsController {
-            let reactionsContainerView = ContainerStackView()
+            let reactionsContainerView = ContainerStackView().withAccessibilityIdentifier(identifier: "reactionsContainerView")
             messageContainerStackView.addArrangedSubview(reactionsContainerView)
             reactionsContainerView.addArrangedSubview(.spacer(axis: .horizontal))
             
@@ -132,6 +135,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
             )
 
             let actionsContainerStackView = ContainerStackView()
+                .withAccessibilityIdentifier(identifier: "actionsContainerStackView")
             actionsContainerStackView.addArrangedSubview(.spacer(axis: .horizontal))
             messageContainerStackView.addArrangedSubview(actionsContainerStackView)
 

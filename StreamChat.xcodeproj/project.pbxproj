@@ -455,7 +455,7 @@
 		82B350FB27EA298800FEB6A0 /* ReactionResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B350FA27EA298800FEB6A0 /* ReactionResponses.swift */; };
 		82B350FD27EA2A3900FEB6A0 /* MessageResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B350FC27EA2A3900FEB6A0 /* MessageResponses.swift */; };
 		82B3510127EA2B1400FEB6A0 /* EventResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B3510027EA2B1400FEB6A0 /* EventResponses.swift */; };
-		82BA52EF27E1EF7B00951B87 /* Messaging_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52EE27E1EF7B00951B87 /* Messaging_Tests.swift */; };
+		82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */; };
 		82BA52F127E1F36B00951B87 /* Robot+CustomAssertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52F027E1F36B00951B87 /* Robot+CustomAssertions.swift */; };
 		82CED1C827DF492F006E967A /* ThreadPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CED1C727DF492F006E967A /* ThreadPage.swift */; };
 		82CED1CE27DF60AC006E967A /* http_reaction.json in Resources */ = {isa = PBXBuildFile; fileRef = 82CED1CD27DF60AC006E967A /* http_reaction.json */; };
@@ -2658,7 +2658,7 @@
 		82B350FA27EA298800FEB6A0 /* ReactionResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionResponses.swift; sourceTree = "<group>"; };
 		82B350FC27EA2A3900FEB6A0 /* MessageResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageResponses.swift; sourceTree = "<group>"; };
 		82B3510027EA2B1400FEB6A0 /* EventResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventResponses.swift; sourceTree = "<group>"; };
-		82BA52EE27E1EF7B00951B87 /* Messaging_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messaging_Tests.swift; sourceTree = "<group>"; };
+		82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList_Tests.swift; sourceTree = "<group>"; };
 		82BA52F027E1F36B00951B87 /* Robot+CustomAssertions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Robot+CustomAssertions.swift"; sourceTree = "<group>"; };
 		82CED1C727DF492F006E967A /* ThreadPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadPage.swift; sourceTree = "<group>"; };
 		82CED1CD27DF60AC006E967A /* http_reaction.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_reaction.json; sourceTree = "<group>"; };
@@ -4941,7 +4941,7 @@
 		82AD02BE27D8E453000611B7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				82BA52EE27E1EF7B00951B87 /* Messaging_Tests.swift */,
+				82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */,
 				82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */,
 				82AD02BC27D8E44B000611B7 /* StreamTestCase.swift */,
 			);
@@ -9460,7 +9460,7 @@
 				822F266127D9FDE800E454FB /* (null) in Sources */,
 				82B350FD27EA2A3900FEB6A0 /* MessageResponses.swift in Sources */,
 				822F266027D9FDB500E454FB /* URLProtocol_Mock.swift in Sources */,
-				82BA52EF27E1EF7B00951B87 /* Messaging_Tests.swift in Sources */,
+				82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */,
 				A39B040B27F196F200D6B18A /* StreamChatUITests.swift in Sources */,
 				82E4CBDE27F30E7D0013B02D /* MessageList.swift in Sources */,
 				82B3510127EA2B1400FEB6A0 /* EventResponses.swift in Sources */,

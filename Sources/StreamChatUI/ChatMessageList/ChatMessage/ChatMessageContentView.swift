@@ -139,15 +139,18 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// The root container which holds `authorAvatarView` (or the avatar padding) and `bubbleThreadMetaContainer`.
     public lazy var mainContainer = ContainerStackView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "mainContainer")
 
     /// The container which holds `bubbleView` (or `bubbleContentContainer` directly), `threadInfoContainer`, and `metadataView`
     public private(set) lazy var bubbleThreadMetaContainer = ContainerStackView(axis: .vertical, spacing: 4)
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "bubbleThreadMetaContainer")
 
     /// The container which holds `quotedMessageView` and `textView`. It will be added as a subview to `bubbleView` if it exists
     /// otherwise it will be added to `bubbleThreadMetaContainer`.
     public private(set) lazy var bubbleContentContainer = ContainerStackView(axis: .vertical)
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "bubbleContentContainer")
 
     /// The container which holds `threadArrowView`, `threadAvatarView`, and `threadReplyCountButton`
     public private(set) var threadInfoContainer: ContainerStackView?
@@ -232,7 +235,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
         // Thread info
         if options.contains(.threadInfo) {
-            threadInfoContainer = ContainerStackView()
+            threadInfoContainer = ContainerStackView().withAccessibilityIdentifier(identifier: "threadInfoContainer")
             bubbleThreadMetaContainer.addArrangedSubview(threadInfoContainer!)
 
             let arrowView = createThreadArrowView()
@@ -278,6 +281,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
             }
             if options.contains(.onlyVisibleForYouIndicator) {
                 onlyVisibleForYouContainer = ContainerStackView()
+                    .withAccessibilityIdentifier(identifier: "onlyVisibleForYouContainer")
                 onlyVisibleForYouContainer!.addArrangedSubview(createOnlyVisibleForYouIconImageView())
                 onlyVisibleForYouContainer!.addArrangedSubview(createOnlyVisibleForYouLabel())
                 metadataSubviews.append(onlyVisibleForYouContainer!)
@@ -288,7 +292,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
             metadataContainer = ContainerStackView(
                 arrangedSubviews: options.contains(.flipped) ? metadataSubviews.reversed() : metadataSubviews
-            )
+            ).withAccessibilityIdentifier(identifier: "metadataContainer")
             bubbleThreadMetaContainer.addArrangedSubview(metadataContainer!)
         }
 

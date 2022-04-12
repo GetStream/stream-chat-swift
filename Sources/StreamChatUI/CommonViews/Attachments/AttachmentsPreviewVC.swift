@@ -24,26 +24,31 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         axis: .vertical,
         spacing: 8
     ).withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "containerStackView")
     
     /// The scroll view that contains the horizontal stack.
     open private(set) lazy var horizontalScrollView: UIScrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "horizontalScrollView")
 
     /// The stack used to display the attachments previews horizontally.
     open private(set) lazy var horizontalStackView = ContainerStackView(
         axis: .horizontal,
         spacing: 8
     ).withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "horizontalStackView")
     
     /// The scroll view that contains the vertical stack.
     open private(set) lazy var verticalScrollView: UIScrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "verticalScrollView")
 
     /// The stack used to display the attachments previews vertically.
     open private(set) lazy var verticalStackView = ContainerStackView(
         axis: .vertical,
         spacing: 8
     ).withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "verticalStackView")
 
     /// The current scroll view height used to activate the scrolling on the vertical stack.
     public var verticalScrollViewHeightConstraint: NSLayoutConstraint?
