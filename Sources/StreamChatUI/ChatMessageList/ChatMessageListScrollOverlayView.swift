@@ -86,8 +86,7 @@ open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
     }
     
     /// Is invoked when a pan gesture state is changed.
-    @objc
-    open func scrollStateChanged(_ sender: UIPanGestureRecognizer) {
+    @objc open func scrollStateChanged(_ sender: UIPanGestureRecognizer) {
         switch sender.state {
         case .began:
             setAlpha(1)
