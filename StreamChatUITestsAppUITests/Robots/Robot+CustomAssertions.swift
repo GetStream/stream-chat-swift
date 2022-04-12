@@ -17,7 +17,33 @@ extension Robot {
         let messageCell = MessageListPage.cells.firstMatch
         let message = MessageListPage.Attributes.text(messageCell: messageCell)
         let actualText = message.waitForText(text).text
-        XCTAssertEqual(actualText, text, file: file, line: line)
+        XCTAssertEqual(text, actualText, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertThreadReply(
+        _ text: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let isThreadPageOpen = ThreadPage.alsoSendInChannelCheckbox.exists
+        XCTAssertTrue(isThreadPageOpen, file: file, line: line)
+        return assertMessage(text, file: file, line: line)
+    }
+    
+    @discardableResult
+    func assertQuotedMessage(
+        replyText: String,
+        quotedText: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        assertMessage(replyText, file: file, line: line)
+        let messageCell = MessageListPage.cells.firstMatch
+        let quotedMessage = MessageListPage.Attributes.quotedText(quotedText, messageCell: messageCell)
+        XCTAssertTrue(quotedMessage.exists, "Quoted message was not showed", file: file, line: line)
+        XCTAssertFalse(quotedMessage.isEnabled, "Quoted message should be disabled", file: file, line: line)
         return self
     }
     
@@ -30,7 +56,7 @@ extension Robot {
         let message = MessageListPage.Attributes.text(messageCell: messageCell)
         let expectedMessage = L10n.Message.deletedMessagePlaceholder
         let actualMessage = message.waitForText(expectedMessage).text
-        XCTAssertEqual(actualMessage, expectedMessage, "Text is wrong", file: file, line: line)
+        XCTAssertEqual(expectedMessage, actualMessage, "Text is wrong", file: file, line: line)
         return self
     }
     
@@ -43,7 +69,7 @@ extension Robot {
         let messageCell = MessageListPage.cells.firstMatch
         let textView = MessageListPage.Attributes.author(messageCell: messageCell)
         let actualAuthor = textView.waitForText(author).text
-        XCTAssertEqual(actualAuthor, author, file: file, line: line)
+        XCTAssertEqual(author, actualAuthor, file: file, line: line)
         return self
     }
 
@@ -71,7 +97,7 @@ extension Robot {
         let reaction = MessageListPage.Attributes.reactionButton(messageCell: messageCell)
         let errMessage = isPresent ? "There are no reactions" : "Reaction is presented"
         _ = isPresent ? reaction.wait() : reaction.waitForLoss()
-        XCTAssertEqual(reaction.exists, isPresent, errMessage, file: file, line: line)
+        XCTAssertEqual(isPresent, reaction.exists, errMessage, file: file, line: line)
         return self
     }
 

@@ -110,15 +110,12 @@ extension StreamMockServer {
     ) -> HttpResponse {
         var json = TestData.toJson(.httpReaction)
         let reaction = json[TopLevelKey.reaction] as! [String: Any]
-        let messageDetails = findMessageById(messageId)
+        let message = findMessageById(messageId)
         let timestamp = TestData.currentDate
-        let user = setUpUser(
-            messageDetails[MessageReactionPayload.CodingKeys.user.rawValue] as! [String: Any],
-            userDetails: UserDetails.lukeSkywalker
-        )
+        let user = setUpUser(event: message, details: UserDetails.lukeSkywalker)
         
         json[TopLevelKey.message] = mockMessageWithReaction(
-            messageDetails,
+            message,
             fromUser: user,
             reactionType: reactionType,
             timestamp: timestamp,
