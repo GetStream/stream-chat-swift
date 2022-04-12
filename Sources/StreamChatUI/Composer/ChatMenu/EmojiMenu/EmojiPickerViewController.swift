@@ -38,6 +38,7 @@ class EmojiPickerViewController: UIViewController {
             let packages = result.body?.packageList ?? []
             self.packages.append(contentsOf: packages)
             self.packages.removeAll(where: { $0.price != "free" })
+            self.packages.removeAll(where: { StickerMenu.getDefaultStickerIds().contains($0.packageID ?? 0 )})
             self.pageMap = result.body?.pageMap
             self.tblPicker.reloadData()
         }

@@ -27,7 +27,7 @@ extension StickerApi {
         var path: String {
             switch self {
             case .mySticker:
-                return "mysticker/\(StickerApi.userId)?userId=\(userId)"
+                return "mysticker/\(StickerApi.userId)?userId=\(userId)&limit=1000"
             case .stickerInfo(id: let id):
                 return ("package/\(id)?" + "userId=\(userId)")
             case .trendingStickers(pageNumber: let pageNumber, animated: let animated):
