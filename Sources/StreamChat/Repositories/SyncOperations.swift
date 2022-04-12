@@ -102,23 +102,25 @@ final class RefetchChannelListQueryOperation: AsyncOperation {
                 done(.continue)
                 return
             }
+            
+            let query = controller.query
 
             log.info("3 & 4. Refetching channel lists queries & Cleaning up local message history", subsystems: .offlineSupport)
             channelRepository.resetChannelsQuery(
-                for: controller.query,
+                for: query,
                 watchedChannelIds: context.watchedAndSynchedChannelIds,
                 synchedChannelIds: context.synchedChannelIds
             ) { result in
                 switch result {
                 case let .success((watchedChannels, unwantedCids)):
-                    log.info("Successfully refetched query for \(controller.query.debugDescription)", subsystems: .offlineSupport)
+                    log.info("Successfully refetched query for \(query.debugDescription)", subsystems: .offlineSupport)
                     let queryChannelIds = watchedChannels.map(\.cid)
                     context.watchedAndSynchedChannelIds = context.watchedAndSynchedChannelIds.union(queryChannelIds)
                     context.unwantedChannelIds = context.unwantedChannelIds.union(unwantedCids)
                     done(.continue)
                 case let .failure(error):
                     log.error(
-                        "Failed refetching query for \(controller.query.debugDescription): \(error)",
+                        "Failed refetching query for \(query.debugDescription): \(error)",
                         subsystems: .offlineSupport
                     )
                     done(.retry)
