@@ -11,6 +11,8 @@ excluded:
   - UISDKdocumentation
   - Tests
   - Sources/StreamChatUI/Deprecations.swift
+  - Sources/StreamChatUI/**/**/AttachmentViewCatalog.swift
+  - Sources/StreamChat/Controllers/DataController.swift
 
 disabled_rules:
   - large_tuple

@@ -5,6 +5,8 @@
 import StreamChat
 import UIKit
 
+// swiftlint:disable colon
+
 /// Controller responsible for displaying the channel messages.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelVC:
@@ -13,6 +15,8 @@ open class ChatChannelVC:
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     ChatChannelControllerDelegate {
+    // swiftlint:enable colon
+    
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 

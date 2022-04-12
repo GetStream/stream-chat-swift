@@ -5,7 +5,7 @@
 import Foundation
 import XCTest
 
-class ChannelListPage {
+enum ChannelListPage {
     
     static var userAvatar: XCUIElement { app.otherElements["CurrentChatUserAvatarView"] }
     
