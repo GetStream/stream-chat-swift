@@ -8,9 +8,43 @@ The message list view in the SwiftUI SDK allows several customization options. T
 
 If you are developing an app with this use-case, you can customize the [message avatars](../custom-avatar), [reactions](../message-reactions), [theming and presentation logic](../../getting-started) and the different types of [attachments](../attachments).
 
+## Directly Showing Channel View
+
+In some cases, you want to show directly the channel view, without having a channel list as the previous screen. Here's an example how to show the channel view as an initial screen, with a predefined channel:
+
+```swift
+@main
+struct TestStreamSDKApp: App {
+    
+    @Injected(\.chatClient) var chatClient
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+            
+    var body: some Scene {
+        WindowGroup {
+            ChatChannelView(
+                viewFactory: DefaultViewFactory.shared,
+                channelController: controller
+            )
+        }
+
+    }
+    
+    private var controller: ChatChannelController {
+        let controller = chatClient.channelController(
+            for: try! ChannelId(cid: "messaging:0D991C91-2"),
+           messageOrdering: .topToBottom
+        )
+        
+        return controller
+    }
+    
+}
+``` 
+
 ## Message List Configuration
 
-Additionally, you can control the display of the helper views around the message (date indicators, avatars) and paddings, via the `MessageListConfig`'s properties `MessageDisplayOptions` and `MessagePaddings`. The `MessageListConfig` is part of the `Utils` class in `StreamChat`. Here's an example on how to hide the date indicators and avatars, while also increasing the horizontal padding.
+You can control the display of the helper views around the message (date indicators, avatars) and paddings, via the `MessageListConfig`'s properties `MessageDisplayOptions` and `MessagePaddings`. The `MessageListConfig` is part of the `Utils` class in `StreamChat`. Here's an example on how to hide the date indicators and avatars, while also increasing the horizontal padding.
 
 ```swift
 let messageDisplayOptions = MessageDisplayOptions(showAvatars: false, showMessageDate: false)
@@ -24,6 +58,29 @@ let messageListConfig = MessageListConfig(
 )
 let utils = Utils(messageListConfig: messageListConfig)
 streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+Other config options you can enable or disable via the `MessageListConfig` are:
+- `messagePopoverEnabled` - the default value is true. If set to false, it will disable the message popover.
+- `doubleTapOverlayEnabled` - the default value is false. If set to true, you can show the message popover also with double tap.
+- `becomesFirstResponderOnOpen` - the default value is false. If set to true, the channel will open the keyboard on view appearance.
+
+With the `MessageDisplayOptions`, you can also customize the transitions applied to the message views. The default message view transition in the SDK is `identity`. You can use the other default ones, such as `scale`, `opacity` and `slide`, or you can create your own custom transitions. Here's an example how to do this:
+
+```swift
+var customTransition: AnyTransition {
+    .scale.combined(with:
+        AnyTransition.asymmetric(
+            insertion: .move(edge: .trailing),
+            removal: .move(edge: .leading)
+        )
+    )
+}
+
+let messageDisplayOptions = MessageDisplayOptions(
+    currentUserMessageTransition: customTransition,
+    otherUserMessageTransition: customTransition
+)
 ```
 
 You can also modify the background of the message list to any SwiftUI `View` (`Color`, `LinearGradient`, `Image` etc.). In order to do this, you would need to implement the `makeMessageListBackground` method in the `ViewFactory`.

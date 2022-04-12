@@ -101,6 +101,8 @@ If you build your own view components and you want to use the chat context provi
 @Injected(\.utils) var utils
 ```
 
+You can find more details about the dependency injection approach we are using [here](../dependency-injection).
+
 ### Putting it all Together
 
 Here's the complete code needed to customize different parts of the `StreamChat` class.
