@@ -64,9 +64,13 @@ class SyncRepository {
         self.apiClient = apiClient
     }
     
+    deinit {
+        cancelRecoveryFlow()
+    }
+    
     func syncLocalState(completion: @escaping () -> Void) {
-        operationQueue.cancelAllOperations()
-                
+        cancelRecoveryFlow()
+        
         getUser { [weak self] in
             guard let currentUser = $0 else {
                 log.error("Current user must exist", subsystems: .offlineSupport)
@@ -176,6 +180,10 @@ class SyncRepository {
                 )
             }
         }
+    }
+    
+    func cancelRecoveryFlow() {
+        operationQueue.cancelAllOperations()
     }
 
     private func getChannelIds(completion: @escaping ([ChannelId]) -> Void) {

@@ -525,6 +525,109 @@ final class SyncRepository_Tests: XCTestCase {
 
         XCTAssertCall("queueOfflineRequest(endpoint:completion:)", on: offlineRequestsRepository, times: 1)
     }
+    
+    // MARL: - cancelRecoveryFlow
+    
+    func test_syncLocalState_cancelsRecoveryFlow() throws {
+        // GIVEN
+        let mock = CancelRecoveryFlowTracker(
+            config: client.config,
+            activeChannelControllers: _activeChannelControllers,
+            activeChannelListControllers: _activeChannelListControllers,
+            channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: repository.eventNotificationCenter,
+            database: database,
+            apiClient: apiClient
+        )
+        
+        var cancelRecoveryFlowCalled = false
+        mock.cancelRecoveryFlowClosure = {
+            cancelRecoveryFlowCalled = true
+        }
+        
+        // WHEN
+        mock.syncLocalState(completion: {})
+        
+        // THEN
+        XCTAssertTrue(cancelRecoveryFlowCalled)
+    }
+    
+    func test_deinit_cancelsRecoveryFlow() throws {
+        // GIVEN
+        var mock: CancelRecoveryFlowTracker? = .init(
+            config: client.config,
+            activeChannelControllers: _activeChannelControllers,
+            activeChannelListControllers: _activeChannelListControllers,
+            channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: repository.eventNotificationCenter,
+            database: database,
+            apiClient: apiClient
+        )
+        
+        let expectation = expectation(description: "cancelRecoveryFlow completion")
+        mock?.cancelRecoveryFlowClosure = {
+            expectation.fulfill()
+        }
+        
+        // WHEN
+        mock = nil
+        
+        // THEN
+        waitForExpectations(timeout: 0.1, handler: nil)
+    }
+    
+    func test_cancelRecoveryFlow_cancelsAllOperations() throws {
+        // Prepare environment
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date(),
+            createChannel: true
+        )
+        
+        // Add active channel component
+        let channelQuery = ChannelQuery(cid: .unique)
+        let channelController = ChatChannelController(channelQuery: channelQuery, channelListQuery: nil, client: client)
+        channelController.state = .remoteDataFetched
+        _activeChannelControllers.add(channelController)
+        
+        // Add active channel list component
+        let channelListController = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
+        channelListController.state = .remoteDataFetched
+        _activeChannelListControllers.add(channelListController)
+
+        // Sync local state
+        var completionCalled = false
+        repository.syncLocalState {
+            completionCalled = true
+        }
+        
+        // Wait for /sync to be called
+        AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)
+        
+        // Let /sync operation to complete
+        let syncResponse = Result<MissingEventsPayload, Error>.success(.init(eventPayloads: []))
+        apiClient.test_simulateRecoveryResponse(syncResponse)
+        apiClient.recoveryRequest_completion = nil
+        
+        // Wait for watch operation
+        AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)
+        
+        // Cancel recovery flow
+        repository.cancelRecoveryFlow()
+        
+        // Let watch operation to complete
+        let watchResponse = Result<ChannelPayload, Error>.success(dummyPayload(with: channelQuery.cid!))
+        apiClient.test_simulateRecoveryResponse(watchResponse)
+        
+        // Assert left operations are not executed
+        AssertAsync {
+            Assert.staysTrue(self.channelRepository.recordedFunctions.isEmpty)
+            Assert.staysTrue("exitRecoveryMode()".wasNotCalled(on: self.apiClient))
+            Assert.staysFalse(completionCalled)
+        }
+    }
 }
 
 extension SyncRepository_Tests {
@@ -586,5 +689,13 @@ extension SyncRepository_Tests {
 
         waitForExpectations(timeout: 0.1, handler: nil)
         XCTAssertCall("exitRecoveryMode()", on: apiClient, times: 1)
+    }
+    
+    private class CancelRecoveryFlowTracker: SyncRepository {
+        var cancelRecoveryFlowClosure: () -> Void = {}
+        
+        override func cancelRecoveryFlow() {
+            cancelRecoveryFlowClosure()
+        }
     }
 }
