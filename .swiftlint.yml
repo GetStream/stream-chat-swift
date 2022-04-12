@@ -10,6 +10,7 @@ excluded:
   - vendor
   - UISDKdocumentation
   - Tests
+  - Sources/StreamChatUI/Deprecations.swift
 
 disabled_rules:
   - large_tuple

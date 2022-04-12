@@ -22,7 +22,7 @@ extension StreamMockServer {
     }
     
     func getMessageDetails(messageId: String) -> [MessageDetail: String] {
-        waitForMessageDetails().filter { $0[.messageId] == messageId }.first!
+        waitForMessageDetails().first(where: { $0[.messageId] == messageId })
     }
     
     func getMessageDetails() -> [MessageDetail: String] {
@@ -30,7 +30,7 @@ extension StreamMockServer {
     }
     
     func removeMessageDetails(messageId: String) {
-        let deletedMessage = messageDetails.filter { $0[.messageId] == messageId }.first!
+        let deletedMessage = messageDetails.first(where: { $0[.messageId] == messageId })
         let deletedIndex = messageDetails.firstIndex(of: deletedMessage)!
         messageDetails.remove(at: deletedIndex)
     }

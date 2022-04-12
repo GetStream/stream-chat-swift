@@ -832,7 +832,7 @@ private extension ChatMessageLayoutOptions {
     ]
     
     var hasMetadata: Bool {
-        !intersection(.metadata).isEmpty
+        !isDisjoint(with: .metadata)
     }
 }
 

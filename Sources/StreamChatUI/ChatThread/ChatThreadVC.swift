@@ -254,7 +254,7 @@ open class ChatThreadVC:
         messageComposerVC.dismissSuggestions()
     }
 
-    // MARK: -  ChatMessageControllerDelegate
+    // MARK: - ChatMessageControllerDelegate
 
     open func messageController(
         _ controller: ChatMessageController,
