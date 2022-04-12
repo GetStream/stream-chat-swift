@@ -8,40 +8,6 @@ The message list view in the SwiftUI SDK allows several customization options. T
 
 If you are developing an app with this use-case, you can customize the [message avatars](../custom-avatar), [reactions](../message-reactions), [theming and presentation logic](../../getting-started) and the different types of [attachments](../attachments).
 
-## Directly Showing Channel View
-
-In some cases, you want to show directly the channel view, without having a channel list as the previous screen. Here's an example how to show the channel view as an initial screen, with a predefined channel:
-
-```swift
-@main
-struct TestStreamSDKApp: App {
-    
-    @Injected(\.chatClient) var chatClient
-    
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-            
-    var body: some Scene {
-        WindowGroup {
-            ChatChannelView(
-                viewFactory: DefaultViewFactory.shared,
-                channelController: controller
-            )
-        }
-
-    }
-    
-    private var controller: ChatChannelController {
-        let controller = chatClient.channelController(
-            for: try! ChannelId(cid: "messaging:0D991C91-2"),
-           messageOrdering: .topToBottom
-        )
-        
-        return controller
-    }
-    
-}
-``` 
-
 ## Message List Configuration
 
 You can control the display of the helper views around the message (date indicators, avatars) and paddings, via the `MessageListConfig`'s properties `MessageDisplayOptions` and `MessagePaddings`. The `MessageListConfig` is part of the `Utils` class in `StreamChat`. Here's an example on how to hide the date indicators and avatars, while also increasing the horizontal padding.
