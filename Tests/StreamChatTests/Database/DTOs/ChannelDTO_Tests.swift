@@ -776,4 +776,34 @@ final class ChannelDTO_Tests: XCTestCase {
         let expected = ["giphy", "workout", "location"]
         XCTAssertEqual(actual, expected)
     }
+    
+    func test_asModel_populatesPreviewMessage() throws {
+        // GIVEN
+        let channelPayload: ChannelPayload = .dummy()
+        
+        let previewMessagePayload: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            text: .unique
+        )
+        
+        try database.writeSynchronously { session in
+            let chanenlDTO = try session.saveChannel(payload: channelPayload)
+            
+            chanenlDTO.previewMessage = try session.saveMessage(
+                payload: previewMessagePayload,
+                channelDTO: chanenlDTO,
+                syncOwnReactions: false
+            )
+        }
+
+        // WHEN
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: channelPayload.channel.cid)?.asModel()
+        )
+        
+        // THEN
+        let previewMessage = try XCTUnwrap(channel.previewMessage)
+        XCTAssertEqual(previewMessage.text, previewMessagePayload.text)
+    }
 }

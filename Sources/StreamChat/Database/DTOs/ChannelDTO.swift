@@ -57,6 +57,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var reads: Set<ChannelReadDTO>
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
+    @NSManaged var previewMessage: MessageDTO?
 
     override func willSave() {
         super.willSave()
@@ -432,6 +433,7 @@ extension ChatChannel {
             latestMessages: { fetchMessages() },
             pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },
             muteDetails: fetchMuteDetails,
+            previewMessage: { dto.previewMessage?.asModel() },
             underlyingContext: dto.managedObjectContext
         )
     }

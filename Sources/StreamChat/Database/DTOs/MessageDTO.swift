@@ -42,7 +42,8 @@ class MessageDTO: NSManagedObject {
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
-    
+    @NSManaged var previewOfChannel: ChannelDTO?
+
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
     /// where `read.lastRead >= self.createdAt`.
