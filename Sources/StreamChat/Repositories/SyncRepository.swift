@@ -63,6 +63,28 @@ class SyncRepository {
         self.database = database
         self.apiClient = apiClient
     }
+    
+    func syncLocalState(completion: @escaping () -> Void) {
+        operationQueue.cancelAllOperations()
+                
+        getUser { [weak self] in
+            guard let currentUser = $0 else {
+                log.error("Current user must exist", subsystems: .offlineSupport)
+                completion()
+                return
+            }
+            
+            guard let lastSyncAt = currentUser.lastSynchedEventDate else {
+                log.info("It's the first session of the current user, skipping recovery flow", subsystems: .offlineSupport)
+                self?.updateUserValue({ $0?.lastSynchedEventDate = Date() }) { _ in
+                    completion()
+                }
+                return
+            }
+            
+            self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
+        }
+    }
 
     /// Syncs the local state with the server to make sure the local database is up to date.
     /// It features queuing, serialization and retries
@@ -75,11 +97,9 @@ class SyncRepository {
     /// 5. Run offline actions requests
     ///
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
-    func syncLocalState(completion: @escaping () -> Void) {
-        operationQueue.cancelAllOperations()
-
+    private func syncLocalState(lastSyncAt: Date, completion: @escaping () -> Void) {
         log.info("Starting to recover offline state", subsystems: .offlineSupport)
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: lastSyncAt)
         var operations: [Operation] = []
 
         // Enter recovery mode so no other requests are triggered.
@@ -141,8 +161,20 @@ class SyncRepository {
     /// Syncs the events for the active chat channels using the last sync date.
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
     func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
-        getChannelIds { [weak self] channelIds in
-            self?.syncChannelsEvents(channelIds: channelIds, isRecovery: false, completion: completion)
+        getUser { [weak self] currentUser in
+            guard let lastSyncAt = currentUser?.lastSynchedEventDate else {
+                completion(.failure(.noNeedToSync))
+                return
+            }
+            
+            self?.getChannelIds { channelIds in
+                self?.syncChannelsEvents(
+                    channelIds: channelIds,
+                    lastSyncAt: lastSyncAt,
+                    isRecovery: false,
+                    completion: completion
+                )
+            }
         }
     }
 
@@ -158,38 +190,21 @@ class SyncRepository {
 
     func syncChannelsEvents(
         channelIds: [ChannelId],
+        lastSyncAt: Date,
         isRecovery: Bool,
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
-        guard !channelIds.isEmpty else {
-            completion(.success([]))
+        guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
+            completion(.failure(.noNeedToSync))
             return
         }
 
-        let syncCooldown = self.syncCooldown
-        getUser { [weak self] user in
-            guard let lastSyncAt = user?.lastSynchedEventDate else {
-                // That's the first session of the current user. Bump `lastSyncAt` with current time and return.
-                self?.updateUserValue({
-                    $0?.lastSynchedEventDate = Date()
-                }, completion: { _ in
-                    completion(.failure(.noNeedToSync))
-                })
-                return
-            }
-
-            guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
-                completion(.failure(.noNeedToSync))
-                return
-            }
-
-            self?.syncMissingEvents(
-                using: lastSyncAt,
-                channelIds: channelIds,
-                isRecoveryRequest: isRecovery,
-                completion: completion
-            )
-        }
+        syncMissingEvents(
+            using: lastSyncAt,
+            channelIds: channelIds,
+            isRecoveryRequest: isRecovery,
+            completion: completion
+        )
     }
 
     private func getUser(completion: @escaping (CurrentUserDTO?) -> Void) {
@@ -207,6 +222,12 @@ class SyncRepository {
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
+        
+        guard !channelIds.isEmpty else {
+            completion(.success([]))
+            return
+        }
+        
         let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: date, cids: channelIds)
         let requestCompletion: (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
             switch result {

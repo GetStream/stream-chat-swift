@@ -6,10 +6,15 @@ import Foundation
 
 /// A final class that holds the context for the ongoing operations during the sync process
 final class SyncContext {
+    let lastSyncAt: Date
     var localChannelIds: [ChannelId] = []
     var synchedChannelIds: Set<ChannelId> = Set()
     var watchedAndSynchedChannelIds: Set<ChannelId> = Set()
     var unwantedChannelIds: Set<ChannelId> = Set()
+    
+    init(lastSyncAt: Date) {
+        self.lastSyncAt = lastSyncAt
+    }
 }
 
 private let syncOperationsMaximumRetries = 2
@@ -43,6 +48,7 @@ final class SyncEventsOperation: AsyncOperation {
 
             syncRepository?.syncChannelsEvents(
                 channelIds: context.localChannelIds,
+                lastSyncAt: context.lastSyncAt,
                 isRecovery: true
             ) { result in
                 switch result {

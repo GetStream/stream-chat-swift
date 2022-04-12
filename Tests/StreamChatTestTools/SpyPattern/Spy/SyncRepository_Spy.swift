@@ -19,6 +19,7 @@ final class SyncRepository_Spy: SyncRepository, Spy {
 
     override func syncChannelsEvents(
         channelIds: [ChannelId],
+        lastSyncAt: Date,
         isRecovery: Bool,
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {

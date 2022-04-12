@@ -66,6 +66,60 @@ final class SyncRepository_Tests: XCTestCase {
         apiClient = nil
         repository = nil
     }
+    
+    // MARK: - First session
+    
+    func test_syncLocalState_localStorageEnabled_firstSession() throws {
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: nil,
+            createChannel: true
+        )
+        
+        let expectation = expectation(description: "syncLocalState completion")
+        repository.syncLocalState {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1, handler: nil)
+        
+        let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
+        XCTAssertTrue(Calendar.current.isDateInToday(lastSyncAt))
+        XCTAssertNotCall("enterRecoveryMode()", on: apiClient)
+        XCTAssertNotCall("exitRecoveryMode()", on: apiClient)
+    }
+    
+    func test_syncLocalState_localStorageDisabled_firstSession() throws {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalStorageEnabled = false
+        let client = ChatClient_Mock(config: config)
+        repository = SyncRepository(
+            config: client.config,
+            activeChannelControllers: _activeChannelControllers,
+            activeChannelListControllers: _activeChannelListControllers,
+            channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: repository.eventNotificationCenter,
+            database: database,
+            apiClient: apiClient
+        )
+        
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: nil,
+            createChannel: true
+        )
+        
+        let expectation = expectation(description: "syncLocalState completion")
+        repository.syncLocalState {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1, handler: nil)
+        
+        let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
+        XCTAssertTrue(Calendar.current.isDateInToday(lastSyncAt))
+        XCTAssertNotCall("enterRecoveryMode()", on: apiClient)
+        XCTAssertNotCall("exitRecoveryMode()", on: apiClient)
+    }
 
     // MARK: - Sync local state
 
@@ -83,10 +137,15 @@ final class SyncRepository_Tests: XCTestCase {
             database: database,
             apiClient: apiClient
         )
+        
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: .init(),
+            createChannel: false
+        )
 
         waitForSyncLocalStateRun()
 
-        XCTAssertNil(lastSyncAtValue)
         XCTAssertEqual(database.writeSessionCounter, 0)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
@@ -97,33 +156,15 @@ final class SyncRepository_Tests: XCTestCase {
     }
 
     func test_syncLocalState_localStorageEnabled_noChannels() throws {
-        try database.createCurrentUser()
-
-        waitForSyncLocalStateRun()
-
-        XCTAssertNil(lastSyncAtValue)
-        XCTAssertEqual(database.writeSessionCounter, 0)
-        XCTAssertEqual(repository.activeChannelControllers.count, 0)
-        XCTAssertEqual(repository.activeChannelListControllers.count, 0)
-        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
-        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
-        XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
-    }
-
-    func test_syncLocalState_localStorageEnabled_channels_noLastSynchedEventDate() throws {
-        try database.createCurrentUser()
         try prepareForSyncLocalStorage(
             createUser: true,
-            lastSynchedEventDate: nil,
-            createChannel: true
+            lastSynchedEventDate: .init(),
+            createChannel: false
         )
 
         waitForSyncLocalStateRun()
-
-        // Should set current date as last synched event value
-        XCTAssertTrue(lastSyncAtValue?.isNearlySameDate(as: Date()) == true)
-        // 1 to set last synched event
-        XCTAssertEqual(database.writeSessionCounter, 1)
+        
+        XCTAssertEqual(database.writeSessionCounter, 0)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
@@ -243,6 +284,12 @@ final class SyncRepository_Tests: XCTestCase {
     // MARK: - Sync existing channels events
 
     func test_syncExistingChannelsEvents_localStorageEnabled_noChannels() throws {
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-60),
+            createChannel: false
+        )
+        
         let result = getSyncExistingChannelEventsResult()
 
         guard let value = result.value else {
@@ -281,9 +328,6 @@ final class SyncRepository_Tests: XCTestCase {
             XCTFail("Should return .noNeedToSync")
             return
         }
-
-        let lastSyncAt = lastSyncAtValue
-        XCTAssertTrue(lastSyncAt.map(Calendar.current.isDateInToday) ?? false)
     }
 
     func test_syncExistingChannelsEvents_someChannels_lastSyncAt_TooEarly() throws {
@@ -482,13 +526,17 @@ extension SyncRepository_Tests {
 
     private func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {
         database.writeSessionCounter = 0
+        apiClient.recordedFunctions.removeAll()
+        
         let expectation = self.expectation(description: "syncLocalState completion")
         repository.syncLocalState {
             expectation.fulfill()
         }
 
-        XCTAssertCall("enterRecoveryMode()", on: apiClient, times: 1)
-
+        AssertAsync.willBeTrue(
+            "enterRecoveryMode()".wasCalled(on: apiClient, times: 1)
+        )
+        
         if let result = requestResult {
             // Simulate API Failure
             AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)

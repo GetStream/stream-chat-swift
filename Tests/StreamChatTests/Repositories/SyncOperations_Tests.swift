@@ -31,7 +31,7 @@ final class SyncOperations_Tests: XCTestCase {
     // MARK: - GetChannelIdsOperation
 
     func test_GetChannelIdsOperation_noChannels() {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let operation = GetChannelIdsOperation(database: database, context: context)
         operation.startAndWaitForCompletion()
         XCTAssertEqual(context.localChannelIds.count, 0)
@@ -43,7 +43,7 @@ final class SyncOperations_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query)
         }
 
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let operation = GetChannelIdsOperation(database: database, context: context)
         operation.startAndWaitForCompletion()
         
@@ -53,7 +53,7 @@ final class SyncOperations_Tests: XCTestCase {
     // MARK: - SyncEventsOperation
 
     func test_SyncEventsOperation_pendingDate_syncFailure_shouldRetry() throws {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         try database.createCurrentUser()
         let originalDate = Date().addingTimeInterval(-3600)
         try database.writeSynchronously { session in
@@ -67,14 +67,14 @@ final class SyncOperations_Tests: XCTestCase {
         XCTAssertEqual(context.synchedChannelIds.count, 0)
         XCTAssertEqual(database.viewContext.currentUser?.lastSynchedEventDate, originalDate)
         XCTAssertCall(
-            "syncChannelsEvents(channelIds:isRecovery:completion:)",
+            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:completion:)",
             on: syncRepository,
             times: 3
         )
     }
 
     func test_SyncEventsOperation_pendingDate_syncSuccess_shouldUpdateLastPendingConnectionDate() throws {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         try database.createCurrentUser()
         try database.writeSynchronously { session in
             session.currentUser?.lastSynchedEventDate = Date().addingTimeInterval(-3600)
@@ -87,7 +87,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(context.synchedChannelIds.count, 2)
         XCTAssertCall(
-            "syncChannelsEvents(channelIds:isRecovery:completion:)",
+            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:completion:)",
             on: syncRepository,
             times: 1
         )
@@ -96,7 +96,7 @@ final class SyncOperations_Tests: XCTestCase {
     // MARK: - WatchChannelOperation
 
     func test_WatchChannelOperation_notAvailableOnRemote() {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelController_Spy(client: client)
         controller.state = .initialized
         let operation = WatchChannelOperation(controller: controller, context: context)
@@ -108,7 +108,7 @@ final class SyncOperations_Tests: XCTestCase {
     }
 
     func test_WatchChannelOperation_availableOnRemote_alreadySynched() {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelController_Spy(client: client)
         controller.state = .remoteDataFetched
         context.synchedChannelIds.insert(controller.cid!)
@@ -122,7 +122,7 @@ final class SyncOperations_Tests: XCTestCase {
     }
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchFailure_shouldRetry() {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelController_Spy(client: client)
         controller.state = .remoteDataFetched
         controller.watchActiveChannelError = ClientError("")
@@ -136,7 +136,7 @@ final class SyncOperations_Tests: XCTestCase {
     }
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchSuccess() {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelController_Spy(client: client)
         controller.state = .remoteDataFetched
         controller.watchActiveChannelError = nil
@@ -152,7 +152,7 @@ final class SyncOperations_Tests: XCTestCase {
     // MARK: - RefetchChannelListQueryOperation
 
     func test_RefetchChannelListQueryOperation_notAvailableOnRemote() {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
         controller.state = .initialized
         let operation = RefetchChannelListQueryOperation(
@@ -168,7 +168,7 @@ final class SyncOperations_Tests: XCTestCase {
     }
 
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetFailure_shouldRetry() {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
         controller.state = .remoteDataFetched
         let operation = RefetchChannelListQueryOperation(
@@ -187,7 +187,7 @@ final class SyncOperations_Tests: XCTestCase {
     }
 
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetSuccess_shouldAddToContext() throws {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
         controller.state = .remoteDataFetched
         let channelId = ChannelId.unique
@@ -219,7 +219,7 @@ final class SyncOperations_Tests: XCTestCase {
     }
 
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetSuccess_shouldNotAddToContextWhenAlreadyExisting() throws {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
         controller.state = .remoteDataFetched
         let channelId = ChannelId.unique
@@ -253,7 +253,7 @@ final class SyncOperations_Tests: XCTestCase {
     // MARK: - CleanUnwantedChannelsOperation
 
     func test_CleanUnwantedChannelsOperation_noUnwantedChannels() throws {
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
 
         try addChannel(with: ChannelId.unique, numberOfMessages: 3)
 
@@ -265,7 +265,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_CleanUnwantedChannelsOperation_unwantedChannels_failure() throws {
         let channelId = ChannelId.unique
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         context.unwantedChannelIds = [channelId]
         database.write_errorResponse = ClientError.ChannelDoesNotExist(cid: channelId)
 
@@ -277,7 +277,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_CleanUnwantedChannelsOperation_unwantedChannels_success() throws {
         let channelId = ChannelId.unique
-        let context = SyncContext()
+        let context = SyncContext(lastSyncAt: .init())
         context.unwantedChannelIds = [channelId]
 
         try addChannel(with: channelId, numberOfMessages: 3)
