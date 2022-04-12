@@ -27,7 +27,7 @@
         <attribute name="searchEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="typingEventsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="uploadsEnabled" attributeType="Boolean" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="uploadsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="urlEnrichmentEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="config" inverseEntity="ChannelDTO"/>
         <relationship name="commands" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="CommandDTO" inverseName="channelConfig" inverseEntity="CommandDTO"/>
