@@ -29,7 +29,7 @@ final class ChatChannelHeaderView_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func test_SettingNewChannelName_ChannelNameIsSuccessfullyChanged() {
+    func test_settingNewChannelName_ChannelNameIsSuccessfullyChanged() {
         // GIVEN
         let newChannelName = "New Channel Name"
         let mockChannel: ChatChannel = .mockNonDMChannel(name: newChannelName)
@@ -45,7 +45,57 @@ final class ChatChannelHeaderView_Tests: XCTestCase {
         XCTAssertEqual(newChannelName, currentChannelName)
     }
     
-    func test_ChannelNameSet() {
+    func test_isDirectMessageChannel_AndMemberIsOnline_SubtitleText_isOnline() {
+        // GIVEN
+        let expectedSubtitleText = L10n.Message.Title.online
+        let mockChatChannelMember: ChatChannelMember = .mock(id: "different mock user id", isOnline: true)
+        let mockChannel: ChatChannel = .mockDMChannel(lastActiveMembers: [mockChatChannelMember])
+        mockChannelController.channel_mock = mockChannel
+        sut.setUpLayout()
+        
+        // WHEN
+        let subtitleText = sut.subtitleText
+        
+        // THEN
+        XCTAssertEqual(subtitleText, expectedSubtitleText)
+    }
+    
+    func test_isDirectMessageChannel_AndMemberIsOfflineWithKnownLastActiveAt_SubtitleText_isFormattedDate() {
+        // GIVEN
+        let lastActiveAt: Date = .distantPast
+        let expectedSubtitleText = sut.lastSeenDateFormatter(lastActiveAt)
+        let mockChatChannelMember: ChatChannelMember = .mock(
+            id: "different mock user id",
+            isOnline: false,
+            lastActiveAt: lastActiveAt
+        )
+        let mockChannel: ChatChannel = .mockDMChannel(lastActiveMembers: [mockChatChannelMember])
+        mockChannelController.channel_mock = mockChannel
+        sut.setUpLayout()
+        
+        // WHEN
+        let subtitleText = sut.subtitleText
+        
+        // THEN
+        XCTAssertEqual(subtitleText, expectedSubtitleText)
+    }
+    
+    func test_isDirectMessageChannel_AndMemberIsOfflineWithUnknownLastActiveAt_SubtitleText_isOffline() {
+        // GIVEN
+        let expectedSubtitleText = L10n.Message.Title.offline
+        let mockChatChannelMember: ChatChannelMember = .mock(id: "different mock user id", isOnline: false)
+        let mockChannel: ChatChannel = .mockDMChannel(lastActiveMembers: [mockChatChannelMember])
+        mockChannelController.channel_mock = mockChannel
+        sut.setUpLayout()
+        
+        // WHEN
+        let subtitleText = sut.subtitleText
+        
+        // THEN
+        XCTAssertEqual(subtitleText, expectedSubtitleText)
+    }
+    
+    func test_channelNameSet() {
         let newChannelName = "New Channel Name"
         
         mockChannelController.simulateInitial(
