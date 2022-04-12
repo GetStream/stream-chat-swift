@@ -31,6 +31,13 @@ extension StreamMockServer {
         try! XCTUnwrap(waitForMessageWithUserId(userId))
     }
     
+    func findMessagesByParrentId(_ parentId: String) -> [[String: Any]] {
+        _ = waitForMessageWithId(parentId)
+        return messageList.filter {
+            ($0[MessagePayloadsCodingKeys.parentId.rawValue] as? String) == parentId
+        }
+    }
+    
     func removeMessage(id: String) {
         let deletedMessage = try! XCTUnwrap(waitForMessageWithId(id))
         let idKey = MessagePayloadsCodingKeys.id.rawValue
@@ -51,7 +58,7 @@ extension StreamMockServer {
         var newMessageList: [[String: Any]] = []
         while newMessageList.isEmpty && endTime > TestData.currentTimeInterval {
             newMessageList = messageList.filter {
-                $0[MessagePayloadsCodingKeys.id.rawValue] as! String == id
+                ($0[MessagePayloadsCodingKeys.id.rawValue] as? String) == id
             }
         }
         return newMessageList.first
@@ -63,7 +70,7 @@ extension StreamMockServer {
         while newMessageList.isEmpty && endTime > TestData.currentTimeInterval {
             newMessageList = messageList.filter {
                 let user = $0[MessagePayloadsCodingKeys.user.rawValue] as! [String: Any]
-                return user[UserPayloadsCodingKeys.id.rawValue] as! String == userId
+                return (user[UserPayloadsCodingKeys.id.rawValue] as? String) == userId
             }
         }
         return newMessageList.first
