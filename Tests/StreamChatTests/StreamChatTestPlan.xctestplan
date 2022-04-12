@@ -4,7 +4,14 @@
       "id" : "5358EB81-7D4D-42F7-B281-016C02706988",
       "name" : "Configuration 1",
       "options" : {
-
+        "commandLineArgumentEntries" : [
+          {
+            "argument" : "-com.apple.CoreData.SQLDebug 1"
+          },
+          {
+            "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+          }
+        ]
       }
     }
   ],

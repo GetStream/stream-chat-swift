@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21D49" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -96,10 +96,18 @@
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="channelMutes" inverseEntity="UserDTO"/>
     </entity>
     <entity name="ChannelReadDTO" representedClassName="ChannelReadDTO" syncable="YES">
+        <attribute name="channelCid" optional="YES" attributeType="String"/>
         <attribute name="lastReadAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="unreadMessageCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="reads" inverseEntity="ChannelDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="channelReads" inverseEntity="UserDTO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="channel"/>
+                <constraint value="user"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="CurrentUserDTO" representedClassName="CurrentUserDTO" syncable="YES">
         <attribute name="lastSynchedEventDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -306,7 +314,7 @@
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelMuteDTO" positionX="9" positionY="162" width="128" height="89"/>
-        <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="89"/>
+        <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="119"/>
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="179"/>
         <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="89"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="239"/>

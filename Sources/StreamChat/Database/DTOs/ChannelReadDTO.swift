@@ -7,6 +7,8 @@ import Foundation
 
 @objc(ChannelReadDTO)
 class ChannelReadDTO: NSManagedObject {
+    @NSManaged var channelCid: String
+    @NSManaged var userId: String
     @NSManaged var lastReadAt: Date?
     @NSManaged var unreadMessageCount: Int32
     
@@ -27,13 +29,19 @@ class ChannelReadDTO: NSManagedObject {
     
     static func fetchRequest(userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
-        request.predicate = NSPredicate(format: "user.id == %@", userId)
+        request.predicate = NSPredicate(format: "userId == %@", userId)
         return request
     }
     
     static func fetchRequest(for cid: ChannelId, userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
-        request.predicate = NSPredicate(format: "channel.cid == %@ && user.id == %@", cid.rawValue, userId)
+        request.predicate = NSPredicate(format: "channelCid == %@ && userId == %@", cid.rawValue, userId)
+        return request
+    }
+    
+    static func fetchRequest(for cid: ChannelId, userIDs: [String]) -> NSFetchRequest<ChannelReadDTO> {
+        let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        request.predicate = NSPredicate(format: "channelCid == %@ && userId IN %@", cid.rawValue, userIDs)
         return request
     }
     
@@ -51,8 +59,11 @@ class ChannelReadDTO: NSManagedObject {
         }
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelReadDTO
+        // TODO: remove these relationships
         new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context)
         new.user = UserDTO.loadOrCreate(id: userId, context: context)
+        new.channelCid = cid.rawValue
+        new.userId = userId
         return new
     }
     
@@ -63,6 +74,42 @@ class ChannelReadDTO: NSManagedObject {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
+    func upsertMany(payload: [ChannelReadPayload], for cid: ChannelId) throws -> [ChannelReadDTO] {
+        // the IDs that we want to have sorted as comes from payload
+        let userIDs = payload.map(\.user.id)
+        var readsByUserID = [String: ChannelReadDTO]()
+
+        // 0 - fetch all existing reads
+        let existingReads = try fetch(ChannelReadDTO.fetchRequest(for: cid, userIDs: userIDs))
+        existingReads.forEach {
+            readsByUserID[$0.user.id] = $0
+        }
+
+        // 1 - create a list of members that need to be inserted
+        let readsToCreate = payload.filter {
+            readsByUserID[$0.user.id] == nil
+        }
+        
+        let insertedReads = readsToCreate.map { payload -> ChannelReadDTO in
+            let new = NSEntityDescription.insertNewObject(forEntityName: ChannelReadDTO.entityName, into: self) as! ChannelReadDTO
+            new.channelCid = cid.rawValue
+            new.userId = payload.user.id
+            new.lastReadAt = payload.lastReadAt
+            new.unreadMessageCount = Int32(payload.unreadMessagesCount)
+            return new
+        }
+
+        insertedReads.forEach {
+            readsByUserID[$0.user.id] = $0
+        }
+
+        // 2 - create a list of members that need to updated (this is done by comparing the updated_at field)
+//        let membersToUpdate = 1
+
+        // 3 - return the full list in the same order (inserted, updated and untouched)
+        return userIDs.map { readsByUserID[$0] }.compactMap { $0 }
+    }
+
     func saveChannelRead(
         cid: ChannelId,
         userId: UserId,
@@ -71,8 +118,11 @@ extension NSManagedObjectContext {
     ) -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
         
+        // TODO: remove this relationship
         dto.user = UserDTO.loadOrCreate(id: userId, context: self)
         
+        dto.userId = userId
+        dto.channelCid = cid.rawValue
         dto.lastReadAt = lastReadAt
         dto.unreadMessageCount = Int32(unreadMessageCount)
         
@@ -85,11 +135,12 @@ extension NSManagedObjectContext {
     ) throws -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self)
         
+        // TODO: remove these relationships
         dto.user = try saveUser(payload: payload.user)
-        
+        dto.channelCid = cid.rawValue
+        dto.userId = payload.user.id
         dto.lastReadAt = payload.lastReadAt
         dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
-        
         return dto
     }
     

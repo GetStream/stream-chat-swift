@@ -11,7 +11,7 @@ class ChannelListUpdater_Tests: XCTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainer!
-    
+    var client: ChatClient!
     var listUpdater: ChannelListUpdater!
     
     override func setUp() {
@@ -20,7 +20,7 @@ class ChannelListUpdater_Tests: XCTestCase {
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         database = DatabaseContainerMock()
-        
+        client = ChatClient.mock
         listUpdater = ChannelListUpdater(database: database, apiClient: apiClient)
     }
     
@@ -267,6 +267,36 @@ class ChannelListUpdater_Tests: XCTestCase {
         return (try? database.viewContext.fetch(request).first)?.channels ?? Set()
     }
     
+    func test_writeChannelListPayload() throws {
+        let channelJSON: Data = {
+            let url = Bundle(for: ChannelListUpdater_Tests.self)
+                .url(forResource: "LargeQueryChannelsPayload", withExtension: "json")!
+            return try! Data(contentsOf: url)
+        }()
+        
+        let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+
+        let setupUserExpectation = expectation(description: "setupUserExpectation")
+        client.databaseContainer.write({ session in
+            try session.saveCurrentUser(payload: dummyUserPayload)
+        }, completion: { _ in
+            setupUserExpectation.fulfill()
+        })
+        wait(for: [setupUserExpectation], timeout: 1.0)
+
+        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: channelJSON)
+        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+
+//        measure {
+        let expectation = expectation(description: "writeChannelListPayload")
+        listUpdater.writeChannelListPayload(payload: payload, query: query, completion: { result in
+            expectation.fulfill()
+            XCTAssertFalse(result.isError)
+        })
+        wait(for: [expectation], timeout: 20.0)
+//        }
+    }
+
     // MARK: - Fetch
     
     func test_fetch_makesCorrectAPICall() {

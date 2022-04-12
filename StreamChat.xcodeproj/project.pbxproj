@@ -67,6 +67,9 @@
 		43BAAD492664F59600323D8E /* UserStopTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD472664F59600323D8E /* UserStopTypingThread.json */; };
 		43BAAD4A2664F59600323D8E /* UserStartTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD482664F59600323D8E /* UserStartTypingThread.json */; };
 		43C68D9126DD37B700622533 /* DemoUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933064825712C8B00FBB586 /* DemoUsers.swift */; };
+		43DA58B628035E7F0045F1AE /* Channel.json in Resources */ = {isa = PBXBuildFile; fileRef = 798779F72498E47700015F8B /* Channel.json */; };
+		43DA58B828035F300045F1AE /* LargeQueryChannelsPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 43DA58B728035F2F0045F1AE /* LargeQueryChannelsPayload.json */; };
+		43DA58B928035F300045F1AE /* LargeQueryChannelsPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 43DA58B728035F2F0045F1AE /* LargeQueryChannelsPayload.json */; };
 		43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EB3AE12671718200954323 /* AttachmentViewCatalog.swift */; };
 		43F4750C26F4E4FF0009487D /* ChatMessageReactionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F4750B26F4E4FF0009487D /* ChatMessageReactionItemView.swift */; };
 		43F4750E26FB247C0009487D /* ChatReactionPickerReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F4750D26FB247C0009487D /* ChatReactionPickerReactionsView.swift */; };
@@ -515,7 +518,6 @@
 		822F266127D9FDE800E454FB /* XCTestCase+MockJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A62705D24BE2CD70040BFD6 /* XCTestCase+MockJSON.swift */; };
 		822F266227D9FE5E00E454FB /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */; };
 		822F266327DA009500E454FB /* HealthCheck.json in Resources */ = {isa = PBXBuildFile; fileRef = E7DB9F2426329C060090D9C7 /* HealthCheck.json */; };
-		822F266427DA01A800E454FB /* Channel.json in Resources */ = {isa = PBXBuildFile; fileRef = 798779F72498E47700015F8B /* Channel.json */; };
 		822F266527DA01AC00E454FB /* ChannelMembersQuery.json in Resources */ = {isa = PBXBuildFile; fileRef = 882C5751252C770900E60C44 /* ChannelMembersQuery.json */; };
 		822F266627DA01AF00E454FB /* ChannelPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156EF26B2E2170006E7EA /* ChannelPayload.json */; };
 		822F266727DA01B100E454FB /* ChannelPayloadWithCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156ED26B2E20B0006E7EA /* ChannelPayloadWithCustom.json */; };
@@ -2198,6 +2200,7 @@
 		43ABF8B626C513D20034BD62 /* CurrentUserCustomRole.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CurrentUserCustomRole.json; sourceTree = "<group>"; };
 		43BAAD472664F59600323D8E /* UserStopTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStopTypingThread.json; sourceTree = "<group>"; };
 		43BAAD482664F59600323D8E /* UserStartTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStartTypingThread.json; sourceTree = "<group>"; };
+		43DA58B728035F2F0045F1AE /* LargeQueryChannelsPayload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LargeQueryChannelsPayload.json; sourceTree = "<group>"; };
 		43EB3AE12671718200954323 /* AttachmentViewCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentViewCatalog.swift; sourceTree = "<group>"; };
 		43F4750B26F4E4FF0009487D /* ChatMessageReactionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionItemView.swift; sourceTree = "<group>"; };
 		43F4750D26FB247C0009487D /* ChatReactionPickerReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionPickerReactionsView.swift; sourceTree = "<group>"; };
@@ -4111,6 +4114,7 @@
 		798779F52498E47700015F8B /* MockEnpointResponses */ = {
 			isa = PBXGroup;
 			children = (
+				43DA58B728035F2F0045F1AE /* LargeQueryChannelsPayload.json */,
 				798779F72498E47700015F8B /* Channel.json */,
 				882C5751252C770900E60C44 /* ChannelMembersQuery.json */,
 				430156EF26B2E2170006E7EA /* ChannelPayload.json */,
@@ -7901,6 +7905,7 @@
 				ADCDDCC525AE1293004E15FB /* UserUpdateResponse.json in Resources */,
 				798779FB2498E47700015F8B /* Member.json in Resources */,
 				8A0CC9F824C608C500705CF9 /* ReactionDeleted.json in Resources */,
+				43DA58B828035F300045F1AE /* LargeQueryChannelsPayload.json in Resources */,
 				430156E626B2B3870006E7EA /* UserPayload.json in Resources */,
 				8AC9CBE124C74DD0006E236C /* NotificationInviteAccepted.json in Resources */,
 				883EB93925B070AB001858FD /* GuestUser+InvalidToken.json in Resources */,
@@ -8000,9 +8005,9 @@
 			files = (
 				822F266327DA009500E454FB /* HealthCheck.json in Resources */,
 				822F267727DA01D400E454FB /* OtherUser.json in Resources */,
+				43DA58B628035E7F0045F1AE /* Channel.json in Resources */,
 				822F266C27DA01BC00E454FB /* Devices.json in Resources */,
 				822F266927DA01B700E454FB /* CurrentUserCustomRole.json in Resources */,
-				822F266427DA01A800E454FB /* Channel.json in Resources */,
 				822F267027DA01C600E454FB /* MessagePayload.json in Resources */,
 				822F266627DA01AF00E454FB /* ChannelPayload.json in Resources */,
 				822F266D27DA01BF00E454FB /* FileUploadPayload.json in Resources */,
@@ -8027,6 +8032,7 @@
 				822F267827DA01D600E454FB /* UserPayload.json in Resources */,
 				822F267327DA01CC00E454FB /* MessageReactionPayloadWithCustom.json in Resources */,
 				822F267A27DA01DB00E454FB /* UsersQuery.json in Resources */,
+				43DA58B928035F300045F1AE /* LargeQueryChannelsPayload.json in Resources */,
 				822F267D27DA1E3900E454FB /* http_message.json in Resources */,
 				822F266E27DA01C200E454FB /* Member.json in Resources */,
 			);

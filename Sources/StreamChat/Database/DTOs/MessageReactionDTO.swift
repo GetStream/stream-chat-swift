@@ -95,14 +95,11 @@ extension NSManagedObjectContext {
 
     @discardableResult
     func saveReaction(
-        payload: MessageReactionPayload
+        payload: MessageReactionPayload,
+        for message: MessageDTO
     ) throws -> MessageReactionDTO {
-        guard let messageDTO = message(id: payload.messageId) else {
-            throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
-        }
-        
         let dto = MessageReactionDTO.loadOrCreate(
-            message: messageDTO,
+            message: message,
             type: payload.type,
             user: try saveUser(payload: payload.user),
             context: self
@@ -116,6 +113,17 @@ extension NSManagedObjectContext {
         dto.version = nil
         
         return dto
+    }
+
+    @discardableResult
+    func saveReaction(
+        payload: MessageReactionPayload
+    ) throws -> MessageReactionDTO {
+        guard let message = message(id: payload.messageId) else {
+            throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
+        }
+
+        return try saveReaction(payload: payload, for: message)
     }
 
     func delete(reaction: MessageReactionDTO) {

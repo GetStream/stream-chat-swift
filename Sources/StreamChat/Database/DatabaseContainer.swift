@@ -45,6 +45,11 @@ class DatabaseContainer: NSPersistentContainer {
             context.localCachingSettings = localCachingSettings
             context.deletedMessagesVisibility = deletedMessageVisibility
             context.shouldShowShadowedMessages = shouldShowShadowedMessages
+            // TODO: figure out is this is beneficial and if we rely on undo
+            // Setting the undo manager to nil means that:
+            // - You don’t waste effort recording undo actions for changes (such as insertions) that will not be undone;
+            // - The undo manager doesn’t maintain strong references to changed objects and so prevent them from being deallocated
+            context.undoManager = nil
         }
         return context
     }()
@@ -181,6 +186,7 @@ class DatabaseContainer: NSPersistentContainer {
         writableContext.perform {
             log.debug("Starting a database session.", subsystems: .database)
             do {
+                self.writableContext.flushCache()
                 try actions(self.writableContext)
                 // If you touch ManagedObject and update one of it properties to same value
                 // Object will be marked as `updated` even it hasn't changed.

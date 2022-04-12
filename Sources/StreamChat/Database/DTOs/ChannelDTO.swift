@@ -97,8 +97,17 @@ class ChannelDTO: NSManagedObject {
     }
     
     static func load(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO? {
+        if let dto = context.getCache().get(channelCID: cid.rawValue) {
+            return dto
+        }
+
         let request = fetchRequest(for: cid)
-        return load(by: request, context: context).first
+        let dto = load(by: request, context: context).first
+        if let channel = dto {
+            context.getCache().set(channel: channel)
+        }
+
+        return dto
     }
     
     static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
@@ -108,6 +117,10 @@ class ChannelDTO: NSManagedObject {
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelDTO
         new.cid = cid.rawValue
+        
+        defer {
+            context.getCache().set(channel: new)
+        }
         return new
     }
 }
@@ -184,9 +197,10 @@ extension NSManagedObjectContext {
             dto.createdBy = creatorDTO
         }
 
-        try payload.members?.forEach { memberPayload in
-            let member = try saveMember(payload: memberPayload, channelId: payload.cid)
-            dto.members.insert(member)
+        if let members = payload.members {
+            try upsertMany(payload: members, channelId: payload.cid).forEach {
+                dto.members.insert($0)
+            }
         }
 
         if let query = query {
@@ -203,7 +217,7 @@ extension NSManagedObjectContext {
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
 
-        try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true) }
+        _ = try upsertMany(payload: payload.messages, channelDTO: dto)
 
         dto.updateOldestMessageAt(payload: payload)
 
@@ -211,12 +225,11 @@ extension NSManagedObjectContext {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true)
         }
         
-        try payload.channelReads.forEach { _ = try saveChannelRead(payload: $0, for: payload.channel.cid) }
-        
+        _ = try upsertMany(payload: payload.channelReads, for: payload.channel.cid)
+
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
-        try payload.members.forEach {
-            let member = try saveMember(payload: $0, channelId: payload.channel.cid)
-            dto.members.insert(member)
+        try upsertMany(payload: payload.members, channelId: payload.channel.cid).forEach {
+            dto.members.insert($0)
         }
 
         if let membership = payload.membership {

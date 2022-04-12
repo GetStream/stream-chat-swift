@@ -81,6 +81,10 @@ extension UserDTO {
     ///   - context: The context used to fetch/create `UserDTO`
     ///
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> UserDTO {
+        if let dto = context.getCache().get(userID: id) {
+            return dto
+        }
+
         if let existing = Self.load(id: id, context: context) {
             return existing
         }
@@ -88,6 +92,10 @@ extension UserDTO {
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! UserDTO
         new.id = id
         new.teams = []
+        
+        defer {
+            context.getCache().set(user: new)
+        }
         return new
     }
     
@@ -139,6 +147,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         if let query = query, let queryDTO = try saveQuery(query: query) {
             queryDTO.users.insert(dto)
         }
+
         return dto
     }
 }

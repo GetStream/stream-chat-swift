@@ -174,6 +174,12 @@ extension DatabaseSessionMock {
         return try underlyingSession.saveReaction(payload: payload)
     }
     
+    @discardableResult
+    func saveReaction(payload: MessageReactionPayload, for message: MessageDTO) throws -> MessageReactionDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveReaction(payload: payload, for: message)
+    }
+
     func delete(reaction: MessageReactionDTO) {
         underlyingSession.delete(reaction: reaction)
     }
@@ -242,6 +248,11 @@ extension DatabaseSessionMock {
         return try underlyingSession.saveMember(payload: payload, channelId: channelId, query: query)
     }
     
+    func upsertMany(payload: [MemberPayload], channelId: ChannelId) throws -> [MemberDTO] {
+        try throwErrorIfNeeded()
+        return try underlyingSession.upsertMany(payload: payload, channelId: channelId)
+    }
+
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
         underlyingSession.member(userId: userId, cid: cid)
     }

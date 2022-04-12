@@ -263,6 +263,14 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
+    /// Returns a fetch request for the dto by IDs.
+    static func messages(withIDs messageId: [MessageId]) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
+        request.predicate = NSPredicate(format: "id IN %@", messageId)
+        return request
+    }
+
     /// Returns a fetch request for the dto with a specific `messageId`.
     static func message(withID messageId: MessageId) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
@@ -411,9 +419,57 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return message
     }
 
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO {
+    func upsertMany(payload: [MessagePayload], channelDTO: ChannelDTO) throws -> [MessageDTO] {
+        // the IDs that we want to have sorted as comes from payload
+        let messageIDs = payload.map(\.id)
+        var messagesByID = [String: MessageDTO]()
+        let currentUserID = currentUser?.user.id
+
+        // fetch all messages based on their IDs
+        let existingMessages = try fetch(MessageDTO.messages(withIDs: messageIDs))
+        existingMessages.forEach {
+            messagesByID[$0.id] = $0
+        }
+
+        // create missing messages
+        let messagesToCreate = payload.filter {
+            messagesByID[$0.id] == nil
+        }
+        
+        let insertedMessages = try messagesToCreate.map { payload -> MessageDTO in
+            let new = NSEntityDescription.insertNewObject(forEntityName: MessageDTO.entityName, into: self) as! MessageDTO
+            new.id = payload.id
+            try populateMessage(dto: new, with: payload, for: channelDTO, syncOwnReactions: true, currentUserID: currentUserID)
+            return new
+        }
+        insertedMessages.forEach {
+            messagesByID[$0.id] = $0
+        }
+
+        // update messages if needed
+        let messagesToUpdate = payload.filter {
+            guard let m = messagesByID[$0.id] else {
+                return false
+            }
+            // TODO: check that this condition is correct (not sure about deletes)
+            return $0.updatedAt > m.updatedAt
+        }
+        try messagesToUpdate.forEach {
+            _ = try self.saveMessage(payload: $0, channelDTO: channelDTO, syncOwnReactions: true)
+        }
+
+        // return the full list in the same order (inserted, updated and untouched)
+        return messageIDs.map { messagesByID[$0] }.compactMap { $0 }
+    }
+
+    func populateMessage(
+        dto: MessageDTO,
+        with payload: MessagePayload,
+        for channelDTO: ChannelDTO,
+        syncOwnReactions: Bool,
+        currentUserID: String?
+    ) throws {
         let cid = try ChannelId(cid: channelDTO.cid)
-        let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
 
         dto.text = payload.text
         dto.createdAt = payload.createdAt
@@ -425,7 +481,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.parentMessageId = payload.parentId
         dto.showReplyInChannel = payload.showReplyInChannel
         dto.replyCount = Int32(payload.replyCount)
-
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         } catch {
@@ -435,7 +490,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             )
             dto.extraData = Data()
         }
-        
         dto.isSilent = payload.isSilent
         dto.isShadowed = payload.isShadowed
         // Due to backend not working as advertised
@@ -443,17 +497,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         // we have to implement this workaround to get the advertised behavior
         // info on slack: https://getstream.slack.com/archives/CE5N802GP/p1635785568060500
         // TODO: Remove the workaround once backend bug is fixed
-        if currentUser?.user.id == payload.user.id {
+        if currentUserID == payload.user.id {
             dto.isShadowed = false
         }
         
         dto.pinned = payload.pinned
         dto.pinExpires = payload.pinExpires
         dto.pinnedAt = payload.pinnedAt
+        
         if let pinnedByUser = payload.pinnedBy {
             dto.pinnedBy = try saveUser(payload: pinnedByUser)
         }
-
+        
         if let quotedMessage = payload.quotedMessage {
             dto.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channelDTO, syncOwnReactions: false)
         } else if let quotedMessageId = payload.quotedMessageId {
@@ -463,26 +518,24 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         } else {
             dto.quotedMessage = nil
         }
-
+        
         let user = try saveUser(payload: payload.user)
         dto.user = user
 
         dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
         dto.reactionCounts = payload.reactionScores.mapKeys { $0.rawValue }
-
+        
         // If user edited their message to remove mentioned users, we need to get rid of it
         // as backend does
         dto.mentionedUsers = try Set(payload.mentionedUsers.map {
             let user = try saveUser(payload: $0)
             return user
         })
-
+        
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
         dto.threadParticipants = try NSOrderedSet(
             array: payload.threadParticipants.map { try saveUser(payload: $0) }
         )
-
-        channelDTO.lastMessageAt = max(channelDTO.lastMessageAt ?? payload.createdAt, payload.createdAt)
         
         if dto.pinned {
             channelDTO.pinnedMessages.insert(dto)
@@ -494,15 +547,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.latestReactions = payload
             .latestReactions
-            .compactMap { try? saveReaction(payload: $0) }
+            .compactMap { try? saveReaction(payload: $0, for: dto) }
             .map(\.id)
-
-        if syncOwnReactions {
-            dto.ownReactions = payload
-                .ownReactions
-                .compactMap { try? saveReaction(payload: $0) }
-                .map(\.id)
-        }
 
         let attachments: Set<AttachmentDTO> = try Set(
             payload.attachments.enumerated().map { index, attachment in
@@ -527,6 +573,26 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
         
+        if syncOwnReactions {
+            dto.ownReactions = payload
+                .ownReactions
+                .compactMap { try? saveReaction(payload: $0, for: dto) }
+                .map(\.id)
+        }
+    }
+
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO {
+        let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
+        let currentUserID = currentUser?.user.id
+
+        try populateMessage(
+            dto: dto,
+            with: payload,
+            for: channelDTO,
+            syncOwnReactions: syncOwnReactions,
+            currentUserID: currentUserID
+        )
+        channelDTO.lastMessageAt = max(channelDTO.lastMessageAt ?? payload.createdAt, payload.createdAt)
         return dto
     }
 

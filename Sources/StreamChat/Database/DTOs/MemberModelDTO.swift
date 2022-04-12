@@ -28,7 +28,7 @@ class MemberDTO: NSManagedObject {
     @NSManaged var user: UserDTO
     @NSManaged var queries: Set<ChannelMemberListQueryDTO>
     
-    private static func createId(userId: String, channeldId: ChannelId) -> String {
+    static func createId(userId: String, channeldId: ChannelId) -> String {
         channeldId.rawValue + userId
     }
 }
@@ -51,14 +51,33 @@ extension MemberDTO {
         request.sortDescriptors = query.sortDescriptors
         return request
     }
+    
+    /// Returns a fetch request for all membership for N users in 1 channel
+    static func members(_ userIDs: [UserId], in cid: ChannelId) -> NSFetchRequest<MemberDTO> {
+        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
+        let ids = userIDs.map {
+            Self.createId(userId: $0, channeldId: cid)
+        }
+        request.predicate = NSPredicate(format: "id IN %@", ids)
+        return request
+    }
 }
 
 extension MemberDTO {
     static func load(id: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
         let memberId = MemberDTO.createId(userId: id, channeldId: channelId)
+
+        if let dto = context.getCache().get(memberID: memberId) {
+            return dto
+        }
+
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@", memberId)
-        return try? context.fetch(request).first
+        let dto = try? context.fetch(request).first
+        if let member = dto {
+            context.getCache().set(member: member, channelId: channelId)
+        }
+        return dto
     }
     
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise create a new
@@ -91,17 +110,51 @@ extension MemberDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveMember(
-        payload: MemberPayload,
-        channelId: ChannelId,
-        query: ChannelMemberListQuery?
-    ) throws -> MemberDTO {
-        let dto = MemberDTO.loadOrCreate(id: payload.user.id, channelId: channelId, context: self)
+    func upsertMany(payload: [MemberPayload], channelId: ChannelId) throws -> [MemberDTO] {
+        // the IDs that we want to have sorted as comes from payload
+        let userIDs = payload.map(\.user.id)
+
+        var membersByUserID = [String: MemberDTO]()
+
+        // fetch all members based on their IDs
+        let existingMembers = try fetch(MemberDTO.members(userIDs, in: channelId))
+        existingMembers.forEach {
+            membersByUserID[$0.id] = $0
+        }
+
+        // create missing members
+        let membersToCreate = payload.filter {
+            membersByUserID[$0.user.id] == nil
+        }
         
-        // Save user-part of member first
+        let insertedMembers = try membersToCreate.map { payload -> MemberDTO in
+            let new = NSEntityDescription.insertNewObject(forEntityName: MemberDTO.entityName, into: self) as! MemberDTO
+            new.id = MemberDTO.createId(userId: payload.user.id, channeldId: channelId)
+            try self.populateMember(dto: new, payload: payload, query: nil)
+            return new
+        }
+        insertedMembers.forEach {
+            membersByUserID[$0.id] = $0
+        }
+
+        // update members if needed
+        let membersToUpdate = payload.filter {
+            guard let m = membersByUserID[$0.user.id] else {
+                return false
+            }
+            return $0.updatedAt > m.memberUpdatedAt
+        }
+        try membersToUpdate.forEach {
+            try self.saveMember(payload: $0, channelId: channelId)
+        }
+
+        // return the full list in the same order (inserted, updated and untouched)
+        return userIDs.map { membersByUserID[$0] }.compactMap { $0 }
+    }
+
+    func populateMember(dto: MemberDTO, payload: MemberPayload, query: ChannelMemberListQuery?) throws {
         dto.user = try saveUser(payload: payload.user)
         
-        // Save member specific data
         if let role = payload.role {
             dto.channelRoleRaw = role.rawValue
         }
@@ -119,11 +172,20 @@ extension NSManagedObjectContext {
             let queryDTO = try saveQuery(query)
             queryDTO.members.insert(dto)
         }
-        
+    }
+
+    func saveMember(
+        payload: MemberPayload,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?
+    ) throws -> MemberDTO {
+        let dto = MemberDTO.loadOrCreate(id: payload.user.id, channelId: channelId, context: self)
+
         if let channelDTO = channel(cid: channelId) {
             channelDTO.members.insert(dto)
         }
         
+        try populateMember(dto: dto, payload: payload, query: nil)
         return dto
     }
     

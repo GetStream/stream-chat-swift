@@ -139,6 +139,9 @@ protocol MessageDatabaseSession {
     @discardableResult
     func saveReaction(payload: MessageReactionPayload) throws -> MessageReactionDTO
     
+    @discardableResult
+    func saveReaction(payload: MessageReactionPayload, for message: MessageDTO) throws -> MessageReactionDTO
+
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
     func delete(reaction: MessageReactionDTO)
@@ -272,6 +275,9 @@ protocol MemberDatabaseSession {
         query: ChannelMemberListQuery?
     ) throws -> MemberDTO
     
+    @discardableResult
+    func upsertMany(payload: [MemberPayload], channelId: ChannelId) throws -> [MemberDTO]
+
     /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
 }
@@ -310,6 +316,12 @@ protocol QueuedRequestDatabaseSession {
     func deleteQueuedRequest(id: String)
 }
 
+protocol EntityCacheProvider {
+    func initCache()
+    func flushCache()
+    func getCache() -> EntityCache
+}
+
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
@@ -320,7 +332,18 @@ protocol DatabaseSession: UserDatabaseSession,
     MemberListQueryDatabaseSession,
     AttachmentDatabaseSession,
     ChannelMuteDatabaseSession,
-    QueuedRequestDatabaseSession {}
+    QueuedRequestDatabaseSession,
+    EntityCacheProvider {}
+
+extension DatabaseSession {
+    func initCache() {}
+
+    func flushCache() {}
+
+    func getCache() -> EntityCache {
+        InMemCache.shared
+    }
+}
 
 extension DatabaseSession {
     @discardableResult

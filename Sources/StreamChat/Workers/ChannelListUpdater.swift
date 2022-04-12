@@ -75,7 +75,7 @@ class ChannelListUpdater: Worker {
         }
     }
 
-    private func writeChannelListPayload(
+    func writeChannelListPayload(
         payload: ChannelListPayload,
         query: ChannelListQuery,
         initialActions: ((DatabaseSession) -> Void)? = nil,
