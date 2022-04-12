@@ -48,6 +48,7 @@ class EmojiPickerViewController: UIViewController {
         StickerApiClient.mySticker { [weak self] result in
             guard let `self` = self else { return }
             self.packages = result.body?.packageList ?? []
+            self.packages.removeAll(where: { StickerMenu.getDefaultStickerIds().contains($0.packageID ?? 0 )})
             self.tblPicker.reloadData()
         }
     }
