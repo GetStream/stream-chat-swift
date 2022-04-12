@@ -50,6 +50,15 @@ final class ChatClient_Mock: ChatClient {
         }
     }
 
+    public var currentUserId_mock: UserId? {
+        get {
+            super.currentUserId
+        }
+        set {
+            super.currentUserId = newValue
+        }
+    }
+    
     override func fetchCurrentUserIdFromDatabase() -> UserId? {
         fetchCurrentUserIdFromDatabase_called = true
 
@@ -135,7 +144,7 @@ extension ChatClient {
 }
 
 extension ChatClient {
-    static var mock: ChatClient {
+    static var mock: ChatClient_Mock {
         ChatClient_Mock(
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
