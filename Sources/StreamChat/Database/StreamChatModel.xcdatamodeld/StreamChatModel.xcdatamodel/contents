@@ -30,7 +30,7 @@
         <attribute name="uploadsEnabled" attributeType="Boolean" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="urlEnrichmentEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="config" inverseEntity="ChannelDTO"/>
-        <relationship name="commands" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CommandDTO" inverseName="channelConfig" inverseEntity="CommandDTO"/>
+        <relationship name="commands" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CommandDTO" inverseName="channelConfig" inverseEntity="CommandDTO"/>
     </entity>
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
         <attribute name="cid" attributeType="String"/>
@@ -51,7 +51,7 @@
         <attribute name="typeRawValue" attributeType="String" defaultValueString=""/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="watcherCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="config" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelConfigDTO" inverseName="channel" inverseEntity="ChannelConfigDTO"/>
+        <relationship name="config" maxCount="1" deletionRule="Cascade" destinationEntity="ChannelConfigDTO" inverseName="channel" inverseEntity="ChannelConfigDTO"/>
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdChannels" inverseEntity="UserDTO"/>
         <relationship name="currentlyTypingUsers" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="typingIn" inverseEntity="UserDTO"/>
         <relationship name="memberListQueries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMemberListQueryDTO" inverseName="channel" inverseEntity="ChannelMemberListQueryDTO"/>
