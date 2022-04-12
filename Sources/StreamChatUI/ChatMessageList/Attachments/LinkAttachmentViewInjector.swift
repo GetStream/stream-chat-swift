@@ -37,8 +37,7 @@ open class LinkAttachmentViewInjector: AttachmentViewInjector {
     }
     
     /// Triggered when `attachment` is tapped.
-    @objc
-    open func handleTapOnAttachment() {
+    @objc open func handleTapOnAttachment() {
         guard
             let attachment = linkPreviewView.content
         else { return }
