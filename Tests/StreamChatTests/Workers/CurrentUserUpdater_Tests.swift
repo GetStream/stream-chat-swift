@@ -555,4 +555,60 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             Assert.willBeTrue(callbackCalled)
         }
     }
+    
+    // MARK: - Mark all read
+    
+    func test_markAllRead_makesCorrectAPICall() {
+        GIVEN("the requested endpoint initially is nil") {
+            XCTAssertNil(apiClient.request_endpoint)
+        }
+        
+        WHEN("all channels are marked as read") {
+            currentUserUpdater.markAllRead()
+        }
+        
+        THEN("the requested endpoint matches the expected endpoint") {
+            let referenceEndpoint = Endpoint<EmptyResponse>.markAllRead()
+            XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        }
+    }
+    
+    func test_markAllRead_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        
+        GIVEN("the completion has not been called yet") {
+            XCTAssertFalse(completionCalled)
+        }
+        
+        WHEN("all channels are marked as read with no errors") {
+            currentUserUpdater.markAllRead { error in
+                XCTAssertNil(error)
+                completionCalled = true
+            }
+            
+            apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        }
+        
+        THEN("the completion propagates a successful response with no errors") {
+            AssertAsync.willBeTrue(completionCalled)
+        }
+    }
+    
+    func test_markAllRead_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        let error = TestError()
+        
+        GIVEN("the completion called error initially is nil") {
+            XCTAssertNil(completionCalledError)
+        }
+        
+        WHEN("all channels are marked as read, but an error occurs") {
+            currentUserUpdater.markAllRead { completionCalledError = $0 }
+            apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        }
+        
+        THEN("the completion propagates the expected error") {
+            AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+        }
+    }
 }

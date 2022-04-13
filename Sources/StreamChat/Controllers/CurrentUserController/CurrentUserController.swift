@@ -233,6 +233,18 @@ public extension CurrentChatUserController {
             }
         }
     }
+    
+    /// Marks all channels for a user as read.
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func markAllRead(completion: ((Error?) -> Void)? = nil) {
+        currentUserUpdater.markAllRead { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
