@@ -215,113 +215,143 @@ final class ChatClientUpdater_Tests: XCTestCase {
             }
         }
     }
+    
+    func test_reloadUserIfNeeded_sameUser() throws {
+        // Create current user id.
+        let currentUserId: UserId = .unique
+        let initialToken: Token = .unique(userId: currentUserId)
+        let updatedToken: Token = .unique(userId: currentUserId)
 
-    func test_reloadUserIfNeeded_happyPaths() throws {
-        struct Options {
-            let initialToken: Token
-            let updatedToken: Token
+        // Create an active client with user session.
+        let client = mockClientWithUserSession(token: initialToken)
+        
+        // Create an updater.
+        let updater = ChatClientUpdater(client: client)
+        
+        // Save current background worker ids.
+        let oldWorkerIDs = client.testBackgroundWorkerId
+        
+        // Simulate `reloadUserIfNeeded` call.
+        var reloadUserIfNeededCompletionCalled = false
+        var reloadUserIfNeededCompletionError: Error?
+        updater.reloadUserIfNeeded(
+            userConnectionProvider: .static(updatedToken)
+        ) {
+            reloadUserIfNeededCompletionCalled = true
+            reloadUserIfNeededCompletionError = $0
         }
-
+        
+        // Assert current user id is valid.
+        XCTAssertEqual(client.currentUserId, updatedToken.userId)
+        // Assert token is valid.
+        XCTAssertEqual(client.currentToken, updatedToken)
+        // Assert web-socket is not disconnected
+        XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 0)
+        // Assert web-socket endpoint is valid.
+        XCTAssertEqual(
+            client.webSocketClient?.connectEndpoint.map(AnyEndpoint.init),
+            AnyEndpoint(.webSocketConnect(userInfo: UserInfo(id: updatedToken.userId)))
+        )
+        // Assert `completeTokenWaiters` was called.
+        XCTAssertTrue(client.completeTokenWaiters_called)
+        // Assert `completeTokenWaiters` was called with updated token.
+        XCTAssertEqual(client.completeTokenWaiters_token, updatedToken)
+        // Assert background workers stay the same.
+        XCTAssertEqual(client.testBackgroundWorkerId, oldWorkerIDs)
+        // Assert database is not flushed.
+        XCTAssertFalse(client.mockDatabaseContainer.removeAllData_called)
+        
+        // Assert web-socket `connect` is called.
+        XCTAssertEqual(client.mockWebSocketClient.connect_calledCounter, 0)
+        
+        // Simulate established connection and provide `connectionId` to waiters.
+        let connectionId: String = .unique
+        client.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: connectionId))
+        
+        AssertAsync {
+            // Assert completion is called.
+            Assert.willBeTrue(reloadUserIfNeededCompletionCalled)
+            // Assert completion is called without any error.
+            Assert.staysTrue(reloadUserIfNeededCompletionError == nil)
+            // Assert connection id is set.
+            Assert.willBeEqual(client.connectionId, connectionId)
+            // Assert connection status is updated.
+            Assert.willBeEqual(client.connectionStatus, .connected)
+        }
+    }
+    
+    func test_reloadUserIfNeeded_anotherUser() throws {
         // Create current user id.
         let currentUserId: UserId = .unique
         // Create new user id.
         let newUserId: UserId = .unique
-
-        // Create test cases.
-        let testCases: [Options] = [
-            // Updated token for current user with automatic connect.
-            .init(
-                initialToken: .unique(userId: currentUserId),
-                updatedToken: .unique(userId: currentUserId)
-            ),
-            // Token for new user with automatic connect.
-            .init(
-                initialToken: .unique(userId: currentUserId),
-                updatedToken: .unique(userId: newUserId)
-            )
-        ]
-
-        for options in testCases {
-            // Create an active client with user session.
-            let client = mockClientWithUserSession(token: options.initialToken)
-
-            // Create an updater.
-            let updater = ChatClientUpdater(client: client)
-
-            // Save current background worker ids.
-            let oldWorkerIDs = client.testBackgroundWorkerId
-
-            // Simulate `reloadUserIfNeeded` call.
-            var reloadUserIfNeededCompletionCalled = false
-            var reloadUserIfNeededCompletionError: Error?
-            updater.reloadUserIfNeeded(
-                userConnectionProvider: .static(options.updatedToken)
-            ) {
-                reloadUserIfNeededCompletionCalled = true
-                reloadUserIfNeededCompletionError = $0
-            }
-
-            // Assert current user id is valid.
-            XCTAssertEqual(client.currentUserId, options.updatedToken.userId)
-            // Assert token is valid.
-            XCTAssertEqual(client.currentToken, options.updatedToken)
-            // Assert web-socket is disconnected if the user id changed
-            XCTAssertEqual(
-                client.mockWebSocketClient.disconnect_calledCounter,
-                options.initialToken.userId == options.updatedToken.userId ? 0 : 1
-            )
-            // Assert web-socket endpoint is valid.
-            XCTAssertEqual(
-                client.webSocketClient?.connectEndpoint.map(AnyEndpoint.init),
-                AnyEndpoint(
-                    .webSocketConnect(
-                        userInfo: UserInfo(id: options.updatedToken.userId)
-                    )
+        
+        let initialToken: Token = .unique(userId: currentUserId)
+        let updatedToken: Token = .unique(userId: newUserId)
+        
+        // Create an active client with user session.
+        let client = mockClientWithUserSession(token: initialToken)
+        
+        // Create an updater.
+        let updater = ChatClientUpdater(client: client)
+        
+        // Save current background worker ids.
+        let oldWorkerIDs = client.testBackgroundWorkerId
+        
+        // Simulate `reloadUserIfNeeded` call.
+        var reloadUserIfNeededCompletionCalled = false
+        var reloadUserIfNeededCompletionError: Error?
+        updater.reloadUserIfNeeded(
+            userConnectionProvider: .static(updatedToken)
+        ) {
+            reloadUserIfNeededCompletionCalled = true
+            reloadUserIfNeededCompletionError = $0
+        }
+        
+        // Assert current user id is valid.
+        XCTAssertEqual(client.currentUserId, updatedToken.userId)
+        // Assert token is valid.
+        XCTAssertEqual(client.currentToken, updatedToken)
+        // Assert web-socket is disconnected
+        XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 1)
+        // Assert web-socket endpoint is valid.
+        XCTAssertEqual(
+            client.webSocketClient?.connectEndpoint.map(AnyEndpoint.init),
+            AnyEndpoint(
+                .webSocketConnect(
+                    userInfo: UserInfo(id: updatedToken.userId)
                 )
             )
-            // Assert `completeTokenWaiters` was called.
-            XCTAssertTrue(client.completeTokenWaiters_called)
-
-            // If it's just the updated token for the current user.
-            if options.initialToken.userId == options.updatedToken.userId {
-                // Assert `completeTokenWaiters` was called with updated token.
-                XCTAssertEqual(client.completeTokenWaiters_token, options.updatedToken)
-                // Assert background workers stay the same.
-                XCTAssertEqual(client.testBackgroundWorkerId, oldWorkerIDs)
-                // Assert database is not flushed.
-                XCTAssertFalse(client.mockDatabaseContainer.removeAllData_called)
-            } else {
-                // Assert `completeTokenWaiters` was called with `nil` token which means all
-                // pending requests were cancelled.
-                XCTAssertNil(client.completeTokenWaiters_token)
-                // Assert background workers are recreated since the user has changed.
-                XCTAssertNotEqual(client.testBackgroundWorkerId, oldWorkerIDs)
-                // Assert database was flushed.
-                XCTAssertTrue(client.mockDatabaseContainer.removeAllData_called)
-                // Assert completion hasn't been called yet.
-                XCTAssertFalse(reloadUserIfNeededCompletionCalled)
-            }
-            
-            // Assert web-socket `connect` is called.
-            XCTAssertEqual(
-                client.mockWebSocketClient.connect_calledCounter,
-                options.initialToken.userId == options.updatedToken.userId ? 0 : 1
-            )
-
-            // Simulate established connection and provide `connectionId` to waiters.
-            let connectionId: String = .unique
-            client.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: connectionId))
-            
-            AssertAsync {
-                // Assert completion is called.
-                Assert.willBeTrue(reloadUserIfNeededCompletionCalled)
-                // Assert completion is called without any error.
-                Assert.staysTrue(reloadUserIfNeededCompletionError == nil)
-                // Assert connection id is set.
-                Assert.willBeEqual(client.connectionId, connectionId)
-                // Assert connection status is updated.
-                Assert.willBeEqual(client.connectionStatus, .connected)
-            }
+        )
+        // Assert `completeTokenWaiters` was called.
+        XCTAssertTrue(client.completeTokenWaiters_called)
+        
+        // Assert `completeTokenWaiters` was called with `nil` token which means all
+        // pending requests were cancelled.
+        XCTAssertNil(client.completeTokenWaiters_token)
+        // Assert background workers are recreated since the user has changed.
+        XCTAssertNotEqual(client.testBackgroundWorkerId, oldWorkerIDs)
+        // Assert database was flushed.
+        XCTAssertTrue(client.mockDatabaseContainer.removeAllData_called)
+        // Assert completion hasn't been called yet.
+        XCTAssertFalse(reloadUserIfNeededCompletionCalled)
+        
+        // Assert web-socket `connect` is called.
+        XCTAssertEqual(client.mockWebSocketClient.connect_calledCounter, 1)
+        
+        // Simulate established connection and provide `connectionId` to waiters.
+        let connectionId: String = .unique
+        client.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: connectionId))
+        
+        AssertAsync {
+            // Assert completion is called.
+            Assert.willBeTrue(reloadUserIfNeededCompletionCalled)
+            // Assert completion is called without any error.
+            Assert.staysTrue(reloadUserIfNeededCompletionError == nil)
+            // Assert connection id is set.
+            Assert.willBeEqual(client.connectionId, connectionId)
+            // Assert connection status is updated.
+            Assert.willBeEqual(client.connectionStatus, .connected)
         }
     }
 
