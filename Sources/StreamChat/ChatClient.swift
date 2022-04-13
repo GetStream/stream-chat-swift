@@ -66,25 +66,29 @@ public class ChatClient {
 
     // MARK: Repositories
 
-    private(set) lazy var messageRepository = MessageRepository(database: databaseContainer, apiClient: apiClient)
-    private(set) lazy var offlineRequestsRepository = OfflineRequestsRepository(
-        messageRepository: messageRepository,
-        database: databaseContainer,
-        apiClient: apiClient
+    private(set) lazy var messageRepository = environment.messageRepositoryBuilder(
+        databaseContainer,
+        apiClient
+    )
+    
+    private(set) lazy var offlineRequestsRepository = environment.offlineRequestsRepositoryBuilder(
+        messageRepository,
+        databaseContainer,
+        apiClient
     )
 
     /// A repository that handles all the executions needed to keep the Database in sync with remote.
     private(set) lazy var syncRepository: SyncRepository = {
         let channelRepository = ChannelListUpdater(database: databaseContainer, apiClient: apiClient)
-        return SyncRepository(
-            config: config,
-            activeChannelControllers: activeChannelControllers,
-            activeChannelListControllers: activeChannelListControllers,
-            channelRepository: channelRepository,
-            offlineRequestsRepository: offlineRequestsRepository,
-            eventNotificationCenter: eventNotificationCenter,
-            database: databaseContainer,
-            apiClient: apiClient
+        return environment.syncRepositoryBuilder(
+            config,
+            activeChannelControllers,
+            activeChannelListControllers,
+            channelRepository,
+            offlineRequestsRepository,
+            eventNotificationCenter,
+            databaseContainer,
+            apiClient
         )
     }()
     
@@ -515,6 +519,47 @@ extension ChatClient {
                 reconnectionStrategy: DefaultRetryStrategy(),
                 reconnectionTimerType: DefaultTimer.self,
                 keepConnectionAliveInBackground: $5
+            )
+        }
+        
+        var syncRepositoryBuilder: (
+            _ config: ChatClientConfig,
+            _ activeChannelControllers: NSHashTable<ChatChannelController>,
+            _ activeChannelListControllers: NSHashTable<ChatChannelListController>,
+            _ channelRepository: ChannelListUpdater,
+            _ offlineRequestsRepository: OfflineRequestsRepository,
+            _ eventNotificationCenter: EventNotificationCenter,
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> SyncRepository = {
+            SyncRepository(
+                config: $0,
+                activeChannelControllers: $1,
+                activeChannelListControllers: $2,
+                channelRepository: $3,
+                offlineRequestsRepository: $4,
+                eventNotificationCenter: $5,
+                database: $6,
+                apiClient: $7
+            )
+        }
+        
+        var messageRepositoryBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> MessageRepository = {
+            MessageRepository(database: $0, apiClient: $1)
+        }
+        
+        var offlineRequestsRepositoryBuilder: (
+            _ messageRepository: MessageRepository,
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> OfflineRequestsRepository = {
+            OfflineRequestsRepository(
+                messageRepository: $0,
+                database: $1,
+                apiClient: $2
             )
         }
     }

@@ -17,7 +17,7 @@ final class SyncOperations_Tests: XCTestCase {
         client = ChatClient_Mock(config: ChatClientConfig(apiKeyString: .unique))
         channelRepository = ChannelListUpdater_Spy(database: client.databaseContainer, apiClient: client.apiClient)
         database = client.mockDatabaseContainer
-        syncRepository = SyncRepository_Spy(client: client)
+        syncRepository = client.mockSyncRepository
     }
 
     override func tearDown() {
