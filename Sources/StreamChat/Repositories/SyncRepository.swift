@@ -184,6 +184,7 @@ class SyncRepository {
     
     func cancelRecoveryFlow() {
         operationQueue.cancelAllOperations()
+        apiClient.exitRecoveryMode()
     }
 
     private func getChannelIds(completion: @escaping ([ChannelId]) -> Void) {

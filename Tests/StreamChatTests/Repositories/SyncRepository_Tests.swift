@@ -85,7 +85,6 @@ final class SyncRepository_Tests: XCTestCase {
         let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
         XCTAssertTrue(Calendar.current.isDateInToday(lastSyncAt))
         XCTAssertNotCall("enterRecoveryMode()", on: apiClient)
-        XCTAssertNotCall("exitRecoveryMode()", on: apiClient)
     }
     
     func test_syncLocalState_localStorageDisabled_firstSession() throws {
@@ -118,7 +117,6 @@ final class SyncRepository_Tests: XCTestCase {
         let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
         XCTAssertTrue(Calendar.current.isDateInToday(lastSyncAt))
         XCTAssertNotCall("enterRecoveryMode()", on: apiClient)
-        XCTAssertNotCall("exitRecoveryMode()", on: apiClient)
     }
 
     // MARK: - Sync local state
@@ -528,6 +526,17 @@ final class SyncRepository_Tests: XCTestCase {
     
     // MARL: - cancelRecoveryFlow
     
+    func test_cancelRecoveryFlow_existsRecoveryMode() throws {
+        // GIVEN
+        XCTAssertNotCall("exitRecoveryMode()", on: apiClient)
+        
+        // WHEN
+        repository.cancelRecoveryFlow()
+        
+        // THEN
+        XCTAssertCall("exitRecoveryMode()", on: apiClient, times: 1)
+    }
+    
     func test_syncLocalState_cancelsRecoveryFlow() throws {
         // GIVEN
         let mock = CancelRecoveryFlowTracker(
@@ -624,7 +633,6 @@ final class SyncRepository_Tests: XCTestCase {
         // Assert left operations are not executed
         AssertAsync {
             Assert.staysTrue(self.channelRepository.recordedFunctions.isEmpty)
-            Assert.staysTrue("exitRecoveryMode()".wasNotCalled(on: self.apiClient))
             Assert.staysFalse(completionCalled)
         }
     }
@@ -688,7 +696,7 @@ extension SyncRepository_Tests {
         }
 
         waitForExpectations(timeout: 0.1, handler: nil)
-        XCTAssertCall("exitRecoveryMode()", on: apiClient, times: 1)
+        XCTAssertCall("exitRecoveryMode()", on: apiClient)
     }
     
     private class CancelRecoveryFlowTracker: SyncRepository {
