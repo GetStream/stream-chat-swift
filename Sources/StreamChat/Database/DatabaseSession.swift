@@ -317,7 +317,6 @@ protocol QueuedRequestDatabaseSession {
 }
 
 protocol EntityCacheProvider {
-    func initCache()
     func flushCache()
     func getCache() -> EntityCache
 }
@@ -336,9 +335,9 @@ protocol DatabaseSession: UserDatabaseSession,
     EntityCacheProvider {}
 
 extension DatabaseSession {
-    func initCache() {}
-
-    func flushCache() {}
+    func flushCache() {
+        InMemCache.shared.flush()
+    }
 
     func getCache() -> EntityCache {
         InMemCache.shared

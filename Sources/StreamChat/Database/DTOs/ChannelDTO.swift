@@ -217,13 +217,14 @@ extension NSManagedObjectContext {
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
 
+//        try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true) }
         _ = try upsertMany(payload: payload.messages, channelDTO: dto)
 
+        // TODO: write tests for these two methods
         dto.updateOldestMessageAt(payload: payload)
+        dto.updateLastMessageAt(payload: payload)
 
-        try payload.pinnedMessages.forEach {
-            _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true)
-        }
+        _ = try upsertMany(payload: payload.pinnedMessages, channelDTO: dto)
         
         _ = try upsertMany(payload: payload.channelReads, for: payload.channel.cid)
 
@@ -443,6 +444,14 @@ private extension ChannelDTO {
             let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt ?? Date.distantFuture)
             if isOlderThanCurrentOldestMessage {
                 oldestMessageAt = payloadOldestMessageAt
+            }
+        }
+    }
+
+    func updateLastMessageAt(payload: ChannelPayload) {
+        if let payloadLastMessageAt = payload.messages.map(\.createdAt).max() {
+            if payloadLastMessageAt > (oldestMessageAt ?? payloadLastMessageAt) {
+                lastMessageAt = payloadLastMessageAt
             }
         }
     }

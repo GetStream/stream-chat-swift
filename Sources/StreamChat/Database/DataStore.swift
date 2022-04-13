@@ -21,8 +21,8 @@ protocol EntityCache {
 }
 
 class InMemCache: EntityCache {
-    // bit weird to have a shared instance since this is already using thread local
     static var shared = InMemCache()
+
     static let channels = "channels"
     static let members = "members"
     static let messages = "messages"

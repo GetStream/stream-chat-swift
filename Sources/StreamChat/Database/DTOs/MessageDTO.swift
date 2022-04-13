@@ -298,16 +298,20 @@ class MessageDTO: NSManagedObject {
         return load(by: request, context: context).first
     }
     
-    static func loadOrCreate(id: String, context: NSManagedObjectContext) -> MessageDTO {
-        if let existing = load(id: id, context: context) {
-            return existing
-        }
-        
+    static func create(id: String, context: NSManagedObjectContext) -> MessageDTO {
         let new = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! Self
         new.id = id
         new.latestReactions = []
         new.ownReactions = []
         return new
+    }
+
+    static func loadOrCreate(id: String, context: NSManagedObjectContext) -> MessageDTO {
+        if let existing = load(id: id, context: context) {
+            return existing
+        }
+        
+        return create(id: id, context: context)
     }
     
     /// Load replies for the specified `parentMessageId`.
@@ -420,14 +424,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     }
 
     func upsertMany(payload: [MessagePayload], channelDTO: ChannelDTO) throws -> [MessageDTO] {
-        // the IDs that we want to have sorted as comes from payload
+        // the IDs that we want to upsert, sorted as comes from payload
         let messageIDs = payload.map(\.id)
         var messagesByID = [String: MessageDTO]()
         let currentUserID = currentUser?.user.id
 
         // fetch all messages based on their IDs
         let existingMessages = try fetch(MessageDTO.messages(withIDs: messageIDs))
-        existingMessages.forEach {
+        try existingMessages.forEach {
             messagesByID[$0.id] = $0
         }
 
@@ -437,8 +441,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         let insertedMessages = try messagesToCreate.map { payload -> MessageDTO in
-            let new = NSEntityDescription.insertNewObject(forEntityName: MessageDTO.entityName, into: self) as! MessageDTO
-            new.id = payload.id
+            let new = MessageDTO.create(id: payload.id, context: self)
             try populateMessage(dto: new, with: payload, for: channelDTO, syncOwnReactions: true, currentUserID: currentUserID)
             return new
         }
@@ -446,7 +449,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             messagesByID[$0.id] = $0
         }
 
-        // update messages if needed
+        // update messages
         let messagesToUpdate = payload.filter {
             guard let m = messagesByID[$0.id] else {
                 return false
@@ -458,7 +461,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             _ = try self.saveMessage(payload: $0, channelDTO: channelDTO, syncOwnReactions: true)
         }
 
-        // return the full list in the same order (inserted, updated and untouched)
         return messageIDs.map { messagesByID[$0] }.compactMap { $0 }
     }
 
