@@ -39,6 +39,7 @@ extension ChatMessageGalleryView {
         
         public private(set) lazy var bottomContainer = ContainerStackView()
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "bottomContainer")
 
         // MARK: - Overrides
 
