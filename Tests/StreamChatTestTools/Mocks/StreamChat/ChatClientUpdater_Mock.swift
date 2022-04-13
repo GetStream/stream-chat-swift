@@ -30,7 +30,8 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
 
     override func prepareEnvironment(
         userInfo: UserInfo?,
-        newToken: Token
+        newToken: Token,
+        completion: ((Error?) -> Void)? = nil
     ) throws {
         prepareEnvironment_newToken = newToken
     }
