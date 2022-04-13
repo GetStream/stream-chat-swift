@@ -39,9 +39,9 @@ class UserCredentialsCell: UITableViewCell {
 
 class LoginViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
-    var didRequestChatPresentation: ((UserCredentials) -> Void)!
+    var didRequestChatPresentation: ((DemoUserType) -> Void)!
     
-    let builtInUsers = UserCredentials.builtInUsers
+    let users: [DemoUserType] = UserCredentials.builtInUsers.map { DemoUserType.credentials($0) } + [.guest("guest"), .anonymous]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,38 +75,49 @@ class LoginViewController: UIViewController {
 
 extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        builtInUsers.count + 1 // +1 for the last static cell
+        users.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserCredentialsCell
         
-        if indexPath.row == builtInUsers.count {
-            // Last cell
-            cell.nameLabel.text = "Advanced Options"
-            cell.descriptionLabel.text = "Custom settings"
-            cell.avatarView.image = UIImage(named: "advanced_settings")
-            cell.avatarView.backgroundColor = .systemGray
-            
-        } else {
-            // Normal cell
-            let user = builtInUsers[indexPath.row]
-            Nuke.loadImage(with: user.avatarURL, into: cell.avatarView)
+        let user = users[indexPath.row]
+        
+        switch user {
+        case let .credentials(userCredentials):
+            Nuke.loadImage(with: userCredentials.avatarURL, into: cell.avatarView)
             cell.avatarView.backgroundColor = .clear
-            cell.nameLabel.text = user.name
+            cell.nameLabel.text = userCredentials.name
             cell.descriptionLabel.text = "Stream test user"
+        case .guest:
+            cell.nameLabel.text = "Guest user"
+            cell.descriptionLabel.text = "user id: guest"
+            cell.avatarView.image = UIImage(systemName: "person.fill")
+            cell.avatarView.backgroundColor = .clear
+        case .anonymous:
+            cell.nameLabel.text = "Anonymous user"
+            cell.descriptionLabel.text = ""
+            cell.avatarView.image = UIImage(systemName: "person")
+            cell.avatarView.backgroundColor = .clear
         }
                 
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.row != builtInUsers.count else {
-            // Advanced options
-            performSegue(withIdentifier: "show_advanced_options", sender: self)
-            return
-        }
+        let user = users[indexPath.row]
         
-        didRequestChatPresentation(builtInUsers[indexPath.row])
+        switch user {
+        case .credentials, .anonymous:
+            didRequestChatPresentation(user)
+        case .guest:
+            presentAlert(title: "Input a user id", message: nil, textFieldPlaceholder: "guest") { [weak self] userId in
+                if let userId = userId, !userId.isEmpty {
+                    self?.didRequestChatPresentation(.guest(userId))
+                } else {
+                    self?.didRequestChatPresentation(.guest("guest"))
+                }
+            }
+        }
     }
 }

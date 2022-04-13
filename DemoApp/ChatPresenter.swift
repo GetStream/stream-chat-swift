@@ -29,19 +29,25 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
     
     override func showCurrentUserProfile() {
         rootViewController.presentAlert(title: nil, actions: [
+            .init(title: "Switch User", style: .default, handler: { [unowned self] _ in
+                let actions = UserCredentials.builtInUsers.map { user in
+                    UIAlertAction(title: user.name, style: .default) { _ in
+                        ChatClient.shared.connectUser(
+                            userInfo: user.userInfo,
+                            token: Token(stringLiteral: user.token)
+                        )
+                    }
+                }
+                self.rootViewController.presentAlert(
+                    title: "Select a user",
+                    message: "Channel list won't be correct until you logout and login again.",
+                    actions: actions,
+                    cancelHandler: nil
+                )
+            }),
             .init(title: "Logout", style: .destructive, handler: { _ in
                 let window = self.rootViewController.view.window!
-                guard let navigationController = UIStoryboard(name: "Main", bundle: Bundle.main)
-                    .instantiateInitialViewController() as? UINavigationController else {
-                    return
-                }
-                guard let sceneDelegate = window.windowScene?.delegate as? SceneDelegate else {
-                    return
-                }
-                sceneDelegate.coordinator = DemoAppCoordinator(navigationController: navigationController)
-                UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft, animations: {
-                    window.rootViewController = navigationController
-                })
+                DemoAppCoordinator.logout(window: window)
             })
         ])
     }
@@ -77,6 +83,25 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
     override func didTapMoreButton(for cid: ChannelId) {
         let channelController = rootViewController.controller.client.channelController(for: cid)
         rootViewController.presentAlert(title: "Select an action", actions: [
+            .init(title: "Switch User", style: .default, handler: { [unowned self] _ in
+                let channelUsers = UserCredentials.builtInUsers.filter { user in
+                    channelController.channel?.lastActiveMembers.contains(where: { $0.id == user.id }) ?? false
+                }
+                let actions = channelUsers.map { user in
+                    UIAlertAction(title: user.name, style: .default) { _ in
+                        ChatClient.shared.connectUser(
+                            userInfo: user.userInfo,
+                            token: Token(stringLiteral: user.token)
+                        )
+                    }
+                }
+                self.rootViewController.presentAlert(
+                    title: "Select a user",
+                    message: "Channel list won't be correct until you logout and login again.",
+                    actions: actions,
+                    cancelHandler: nil
+                )
+            }),
             .init(title: "Change nav bar translucency", style: .default, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(
                     title: "Change nav bar translucency",
