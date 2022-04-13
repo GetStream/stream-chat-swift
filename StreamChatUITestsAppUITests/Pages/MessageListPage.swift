@@ -36,7 +36,6 @@ class MessageListPage {
         static var inputField: XCUIElement { app.otherElements["InputChatMessageView"] }
     }
     
-    
     enum Reactions {
         static var lol: XCUIElement { reaction(label: "reaction lol big") }
         static var like: XCUIElement { reaction(label: "reaction thumbsup big") }
@@ -56,20 +55,17 @@ class MessageListPage {
     
     enum ContextMenu {
         static var reactionsView: XCUIElement { app.otherElements["ChatReactionPickerReactionsView"] }
-        static var reply: XCUIElement { action(label: "Reply") }
-        static var threadReply: XCUIElement { action(label: "Thread Reply") }
-        static var copy: XCUIElement { action(label: "Copy Message") }
-        static var flag: XCUIElement { action(label: "Flag Message") }
-        static var muteUser: XCUIElement { action(label: "Mute User") }
-        static var edit: XCUIElement { action(label: "Edit Message") }
-        static var delete: XCUIElement { action(label: "Delete Message") }
-        
-        private static var id = "ChatMessageActionControl"
-        
-        private static func action(label: String) -> XCUIElement {
-            let predicate = NSPredicate(format: "label LIKE '\(label)'")
-            return app.otherElements[id].staticTexts.matching(predicate).firstMatch
-        }
+        static var reply: XCUIElement { app.otherElements["InlineReplyActionItem"] }
+        static var threadReply: XCUIElement { app.otherElements["ThreadReplyActionItem"] }
+        static var copy: XCUIElement { app.otherElements["CopyActionItem"] }
+        static var flag: XCUIElement { app.otherElements["FlagActionItem"] }
+        static var mute: XCUIElement { app.otherElements["MuteUserActionItem"] }
+        static var unmute: XCUIElement { app.otherElements["UnmuteUserActionItem"] }
+        static var edit: XCUIElement { app.otherElements["EditActionItem"] }
+        static var delete: XCUIElement { app.otherElements["DeleteActionItem"] }
+        static var resend: XCUIElement { app.otherElements["ResendActionItem"] }
+        static var block: XCUIElement { app.otherElements["BlockUserActionItem"] }
+        static var unblock: XCUIElement { app.otherElements["UnblockUserActionItem"] }
     }
     
     enum Attributes {

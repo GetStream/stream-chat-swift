@@ -59,24 +59,29 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// The container view that holds the `authorAvatarView` and the `contentContainerView`.
     open private(set) lazy var containerView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "containerView")
 
     /// The avatar view of the author's quoted message.
     open private(set) lazy var authorAvatarView: ChatAvatarView = components
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "authorAvatarView")
 
     /// The container view that holds the `textView` and the `attachmentPreview`.
     open private(set) lazy var contentContainerView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "contentContainerView")
 
     /// The `UITextView` that contains quoted message content.
     open private(set) lazy var textView: UITextView = UITextView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "textView")
 
     /// The attachments preview view if the quoted message has attachments.
     /// The default logic is that the first attachment is displayed on the preview view.
     open private(set) lazy var attachmentPreviewView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "attachmentPreviewView")
 
     /// The size of the avatar view that belongs to the author of the quoted message.
     open var authorAvatarSize: CGSize { .init(width: 24, height: 24) }

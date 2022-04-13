@@ -33,7 +33,9 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
     }
 
     /// The container stack that composes the author avatar view and the author name label.
-    open lazy var containerStack = ContainerStackView().withoutAutoresizingMaskConstraints
+    open lazy var containerStack = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "containerStack")
 
     /// The author's avatar view.
     open lazy var authorAvatarView: ChatAvatarView = components

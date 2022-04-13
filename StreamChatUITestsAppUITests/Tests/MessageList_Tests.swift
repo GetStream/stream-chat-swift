@@ -4,7 +4,7 @@
 
 import XCTest
 
-final class Messaging_Tests: StreamTestCase {
+final class MessageList_Tests: StreamTestCase {
     
     func test_sendsMessage() throws {
         let message = "test message"

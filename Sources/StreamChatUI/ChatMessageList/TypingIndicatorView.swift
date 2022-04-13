@@ -24,10 +24,12 @@ open class TypingIndicatorView: _View, ThemeProvider {
     /// `User is typing`
     /// `User and 1 more is typing`
     /// `User and 3 more are typing`
-    open private(set) lazy var informationLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    open private(set) lazy var informationLabel = UILabel().withoutAutoresizingMaskConstraints
 
     /// StackView holding `typingIndicatorView` and `informationLabel`
-    open private(set) lazy var componentContainerView: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var componentContainerView = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "componentContainerView")
 
     override open func setUp() {
         super.setUp()

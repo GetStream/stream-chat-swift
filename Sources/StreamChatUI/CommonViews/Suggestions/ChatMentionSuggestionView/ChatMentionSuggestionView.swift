@@ -39,6 +39,7 @@ open class ChatMentionSuggestionView: _View, ThemeProvider {
     /// ContainerStackView which holds username and userTag labels in vertical axis by default.
     open private(set) lazy var textContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "textContainer")
 
     override open func setUpAppearance() {
         super.setUpAppearance()
