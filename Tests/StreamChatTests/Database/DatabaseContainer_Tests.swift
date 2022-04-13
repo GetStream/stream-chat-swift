@@ -18,7 +18,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: dbURL.path))
     }
     
-    func test_databaseContainer_propagatesError_wnenInitializedWithIncorrectURL() {
+    func test_databaseContainer_propagatesError_whenInitializedWithIncorrectURL() {
         let dbURL = URL(fileURLWithPath: "/") // This URL is not writable
         XCTAssertThrowsError(try DatabaseContainer(kind: .onDisk(databaseFileURL: dbURL)))
     }

@@ -71,24 +71,25 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         }
     }
     
-    override func removeAllData(force: Bool = true) throws {
+    override func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
         removeAllData_called = true
 
         if let error = removeAllData_errorResponse {
-            throw error
+            completion?(error)
+            return
         }
 
-        try super.removeAllData(force: force)
+        super.removeAllData(force: force, completion: completion)
     }
     
-    override func recreatePersistentStore() throws {
+    override func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) throws {
         recreatePersistentStore_called = true
         
         if let error = recreatePersistentStore_errorResponse {
             throw error
         }
         
-        try super.recreatePersistentStore()
+        try super.recreatePersistentStore(completion: completion)
     }
     
     override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {

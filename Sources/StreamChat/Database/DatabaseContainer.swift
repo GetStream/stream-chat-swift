@@ -128,11 +128,21 @@ class DatabaseContainer: NSPersistentContainer {
         }
         
         persistentStoreDescriptions = [description]
+        
+        let persistentStoreCreatedCompletion: (Error?) -> Void = { [weak self] error in
+            if let error = error {
+                log.error("Error when initializing DatabaseContainer: \(error)")
+                // There's no recovery option from this error
+            }
+            if shouldResetEphemeralValuesOnStart {
+                self?.resetEphemeralValues()
+            }
+        }
                 
         if shouldFlushOnStart {
-            try recreatePersistentStore()
+            try recreatePersistentStore(completion: persistentStoreCreatedCompletion)
         } else {
-            try setupPersistentStore()
+            setupPersistentStore(completion: persistentStoreCreatedCompletion)
         }
         
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -150,10 +160,6 @@ class DatabaseContainer: NSPersistentContainer {
         }
         
         setupLoggerForDatabaseChanges()
-        
-        if shouldResetEphemeralValuesOnStart {
-            resetEphemeralValues()
-        }
     }
     
     deinit {
@@ -219,17 +225,24 @@ class DatabaseContainer: NSPersistentContainer {
     /// messages pedning sent. You can use this option to warn a user about potential data loss.
     ///   - completion: Called when the operation is completed. If the error is present, the operation failed.
     ///
-    func removeAllData(force: Bool = true) throws {
+    func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
         if !force {
             fatalError("Non-force flush is not implemented yet.")
         }
         
-        sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
-
-        // If the current persistent store is a SQLite store, this method will reset and recreate it.
-        try recreatePersistentStore()
-
-        sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
+        writableContext.perform {
+            do {
+                self.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
+                
+                // If the current persistent store is a SQLite store, this method will reset and recreate it.
+                try self.recreatePersistentStore { error in
+                    self.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
+                    completion?(error)
+                }
+            } catch {
+                completion?(error)
+            }
+        }
     }
     
     private func sendNotificationForAllContexts(name: Notification.Name) {
@@ -255,22 +268,21 @@ class DatabaseContainer: NSPersistentContainer {
     /// Tries to load a persistent store.
     ///
     /// If it fails, for example because of non-matching models, it removes the store, recreates is, and tries to load it again.
-    /// If the second loading fails, too, it throws an error.
     ///
-    private func setupPersistentStore() throws {
-        var storeLoadingError: Error?
-        
+    private func setupPersistentStore(completion: ((Error?) -> Void)? = nil) {
         loadPersistentStores { _, error in
-            storeLoadingError = error
-        }
-        
-        if storeLoadingError != nil {
-            try recreatePersistentStore()
+            if error != nil {
+                do {
+                    try self.recreatePersistentStore(completion: completion)
+                } catch {
+                    fatalError("Failed to initialize the storage with error: \(error). This is a non-recoverable error.")
+                }
+            }
         }
     }
     
     /// Removes the loaded persistent store and tries to recreate it.
-    func recreatePersistentStore() throws {
+    func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) throws {
         log.assert(
             persistentStoreDescriptions.count == 1,
             "DatabaseContainer always assumes 1 persistent store description. Existing descriptions: \(persistentStoreDescriptions)",
@@ -278,30 +290,34 @@ class DatabaseContainer: NSPersistentContainer {
         )
         
         guard let storeDescription = persistentStoreDescriptions.first else {
-            throw ClientError("No persisten store descriptions available.")
+            throw ClientError("No persistent store descriptions available.")
         }
+        
+        log.debug("Removing DB persistent store", subsystems: .database)
 
         // Remove all loaded persistent stores first
         try persistentStoreCoordinator.persistentStores.forEach { store in
             try persistentStoreCoordinator.remove(store)
         }
         
+        log.debug("Removing DB file", subsystems: .database)
+        
         // If the store was SQLite store, remove the actual DB file
         if storeDescription.type == NSSQLiteStoreType,
            let storeURL = storeDescription.url,
            storeURL.absoluteString.hasSuffix("/dev/null") == false {
             try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: NSSQLiteStoreType, options: nil)
-            try FileManager.default.removeItem(at: storeURL)
         }
-    
-        var storeLoadingError: Error?
+        
+        log.debug("Reloading persistent store", subsystems: .database)
         
         loadPersistentStores { _, error in
-            storeLoadingError = error
-        }
-        
-        if let error = storeLoadingError {
-            throw error
+            if let error = error {
+                log.error("Persistent store reload error: \(error)")
+            } else {
+                log.debug("Persistent store reloaded")
+            }
+            completion?(error)
         }
     }
     
