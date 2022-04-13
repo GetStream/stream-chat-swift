@@ -100,6 +100,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     /// A container for playback button and time labels.
     open private(set) lazy var rootContainer: ContainerStackView = ContainerStackView(axis: .vertical)
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "rootContainer")
 
     /// A formatter to convert video duration to textual representation.
     open lazy var videoDurationFormatter: VideoDurationFormatter = appearance.formatters.videoDuration

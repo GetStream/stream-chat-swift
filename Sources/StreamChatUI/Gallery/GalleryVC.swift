@@ -179,6 +179,7 @@ open class GalleryVC:
         
         let topBarContainerStackView = ContainerStackView()
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "topBarContainerStackView")
         topBarView.embed(topBarContainerStackView)
         topBarContainerStackView.preservesSuperviewLayoutMargins = true
         topBarContainerStackView.isLayoutMarginsRelativeArrangement = true
@@ -186,6 +187,7 @@ open class GalleryVC:
         topBarContainerStackView.addArrangedSubview(closeButton)
         
         let infoContainerStackView = ContainerStackView()
+            .withAccessibilityIdentifier(identifier: "infoContainerStackView")
         infoContainerStackView.axis = .vertical
         infoContainerStackView.alignment = .center
         infoContainerStackView.spacing = 4
