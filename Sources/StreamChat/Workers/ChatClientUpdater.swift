@@ -54,7 +54,11 @@ class ChatClientUpdater {
 
             // Re-create backgroundWorker's since they are related to the previous user.
             client.createBackgroundWorkers()
-
+            
+            // Stop tracking active components
+            client.activeChannelControllers.removeAllObjects()
+            client.activeChannelListControllers.removeAllObjects()
+            
             // Reset all existing local data.
             return try client.databaseContainer.removeAllData(force: true)
         }

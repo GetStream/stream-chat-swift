@@ -240,6 +240,21 @@ final class ChatClientUpdater_Tests: XCTestCase {
         // Create an active client with user session.
         let client = mockClientWithUserSession(token: initialToken)
         
+        // Create and track channel controller
+        let channelController = ChatChannelController(
+            channelQuery: .init(cid: .unique),
+            channelListQuery: nil,
+            client: client
+        )
+        client.trackChannelController(channelController)
+        
+        // Create and track channel list controller
+        let channelListController = ChatChannelListController(
+            query: .init(filter: .exists(.cid)),
+            client: client
+        )
+        client.trackChannelListController(channelListController)
+        
         // Create an updater.
         let updater = ChatClientUpdater(client: client)
         
@@ -275,6 +290,9 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertEqual(client.testBackgroundWorkerId, oldWorkerIDs)
         // Assert database is not flushed.
         XCTAssertFalse(client.mockDatabaseContainer.removeAllData_called)
+        // Assert active components are preserved
+        XCTAssertTrue(client.activeChannelControllers.contains(channelController))
+        XCTAssertTrue(client.activeChannelListControllers.contains(channelListController))
         
         // Assert web-socket `connect` is called.
         XCTAssertEqual(client.mockWebSocketClient.connect_calledCounter, 0)
@@ -306,6 +324,21 @@ final class ChatClientUpdater_Tests: XCTestCase {
         
         // Create an active client with user session.
         let client = mockClientWithUserSession(token: initialToken)
+        
+        // Create and track channel controller
+        let channelController = ChatChannelController(
+            channelQuery: .init(cid: .unique),
+            channelListQuery: nil,
+            client: client
+        )
+        client.trackChannelController(channelController)
+        
+        // Create and track channel list controller
+        let channelListController = ChatChannelListController(
+            query: .init(filter: .exists(.cid)),
+            client: client
+        )
+        client.trackChannelListController(channelListController)
         
         // Create an updater.
         let updater = ChatClientUpdater(client: client)
@@ -348,6 +381,10 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertNotEqual(client.testBackgroundWorkerId, oldWorkerIDs)
         // Assert database was flushed.
         XCTAssertTrue(client.mockDatabaseContainer.removeAllData_called)
+        // Assert active components from previous user are no longer tracked.
+        XCTAssertTrue(client.activeChannelControllers.allObjects.isEmpty)
+        XCTAssertTrue(client.activeChannelListControllers.allObjects.isEmpty)
+        
         // Assert completion hasn't been called yet.
         XCTAssertFalse(reloadUserIfNeededCompletionCalled)
         
