@@ -24,6 +24,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
         
         // Assert `flushRequestsQueue` is called on API client.
         XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
+        // Assert recovery flow is cancelled.
+        XCTAssertCall("cancelRecoveryFlow()", on: client.mockSyncRepository, times: 1)
     }
 
     func test_disconnect_closesTheConnection_ifClientIsActive() {
@@ -45,6 +47,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertNil(client.completeConnectionIdWaiters_connectionId)
         // Assert `flushRequestsQueue` is called on API client.
         XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
+        // Assert recovery flow is cancelled.
+        XCTAssertCall("cancelRecoveryFlow()", on: client.mockSyncRepository, times: 1)
     }
 
     func test_disconnect_whenWebSocketIsNotConnected() throws {
@@ -57,11 +61,10 @@ final class ChatClientUpdater_Tests: XCTestCase {
         // Simulate `disconnect` call.
         updater.disconnect()
 
-        // Reset disconnect counter.
+        // Reset state.
         client.mockWebSocketClient.disconnect_calledCounter = 0
-        
-        // Reset API client
         client.mockAPIClient.recordedFunctions.removeAll()
+        client.mockSyncRepository.recordedFunctions.removeAll()
 
         // Simulate `disconnect` one more time.
         updater.disconnect()
@@ -70,6 +73,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 0)
         // Assert `flushRequestsQueue` is called on API client.
         XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
+        // Assert recovery flow is cancelled.
+        XCTAssertCall("cancelRecoveryFlow()", on: client.mockSyncRepository, times: 1)
     }
 
     // MARK: Connect

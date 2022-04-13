@@ -162,6 +162,7 @@ class ChatClientUpdater {
     /// are received.
     func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         client.apiClient.flushRequestsQueue()
+        client.syncRepository.cancelRecoveryFlow()
         
         // Disconnecting is not possible in connectionless mode (duh)
         guard client.config.isClientInActiveMode else {
