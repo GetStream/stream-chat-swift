@@ -270,6 +270,48 @@ public extension Appearance {
             }
         }()
 
+        public var menuKeyboard: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "keyboard")?.withRenderingMode(.alwaysTemplate)
+            } else {
+                return nil
+            }
+        }()
+
+        public var addIcon: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "plus")?.withRenderingMode(.alwaysTemplate)
+            } else {
+                return nil
+            }
+        }()
+
+        public var downloadSticker: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "arrow.down.circle")
+            } else {
+                return nil
+            }
+        }()
+
+        public var downloadStickerFill: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "arrow.down.circle.fill")
+            } else {
+                return nil
+            }
+        }()
+
+        public var clock: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "clock")?
+                    .withRenderingMode(.alwaysTemplate)
+                    .tinted(with: UIColor.white.withAlphaComponent(0.6))
+            } else {
+                return nil
+            }
+        }()
+
         // MARK: - Reactions
 
         public var reactionLoveSmall: UIImage = loadImageSafely(with: "reaction_love_small")
@@ -499,5 +541,6 @@ public extension Appearance {
 
         // MARK: QR Code Option
         public var shareImageIcon: UIImage = loadImageSafely(with: "share_image_icon")
+        public var gif: UIImage = loadImageSafely(with: "gif")
     }
 }

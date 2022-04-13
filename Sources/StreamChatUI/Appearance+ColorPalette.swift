@@ -83,6 +83,8 @@ public extension Appearance {
         public var groupDetailBackground: UIColor = .groupDetailBackground
         public var groupDetailContainerBG: UIColor = .groupDetailContainerBG
         public var showMoreButtonBg: UIColor = .init(rgb: 0x38383A)
+        public var stickerBg: UIColor = .init(rgb: 0x1E1F1F)
+        public var emojiBg: UIColor = .init(rgb: 0x737373)
     }
 }
 

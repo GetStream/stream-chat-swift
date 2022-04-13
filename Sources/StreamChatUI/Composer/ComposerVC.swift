@@ -6,6 +6,7 @@ import Foundation
 import StreamChat
 import UIKit
 import SwiftUI
+import GiphyUISDK
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
@@ -16,6 +17,7 @@ extension Notification.Name {
     public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
     public static let disburseFundAction = Notification.Name("kStreamChatDisburseFundTapAction")
     public static let showActivityAction = Notification.Name("kStreamChatshowActivityAction")
+    public static let sendSticker = Notification.Name("kStreamChatSendSticker")
 }
 
 /// The possible errors that can occur in attachment validation
@@ -271,7 +273,19 @@ open class ComposerVC: _ViewController,
 
     private var walletInputView: WalletQuickInputViewController?
     private var menuController: ChatMenuViewController?
+    private var emoji: UIViewController?
+    private var emojiPickerView: UIViewController?
     private var isMenuShowing = false
+    private var forceKeyboardClose = false {
+        didSet {
+            if forceKeyboardClose {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    guard let `self` = self else { return }
+                    self.forceKeyboardClose = false
+                }
+            }
+        }
+    }
     private var keyboardHeight: CGFloat {
         return KeyboardService.shared.measuredSize
     }
@@ -288,10 +302,27 @@ open class ComposerVC: _ViewController,
         }
     }
 
+    @objc func didTapView() {
+        hideInputView()
+        composerView.inputMessageView.emojiButton.isSelected = false
+        composerView.inputMessageView.textView.becomeFirstResponder()
+        isMenuShowing = true
+        animateMenuButton()
+    }
+
+    @objc fileprivate func keyboardWillHide(notification: Notification) {
+        guard !forceKeyboardClose else { return }
+        composerView.inputMessageView.emojiButton.isSelected = false
+        isMenuShowing = true
+        animateMenuButton()
+    }
+
     override open func setUp() {
         super.setUp()
         KeyboardService.shared.observeKeyboard(self.view)
         composerView.inputMessageView.textView.delegate = self
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+        composerView.inputMessageView.textView.addGestureRecognizer(tapGesture)
         // Set the delegate for handling the pasting of UIImages in the text view
         composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
         self.composerView.toolKitView.isHidden = true
@@ -303,7 +334,9 @@ open class ComposerVC: _ViewController,
         }
 
         composerView.inputMessageView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
+        composerView.inputMessageView.emojiButton.addTarget(self, action: #selector(showEmojiMenu), for: .touchUpInside)
         composerView.confirmButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
+        composerView.inputMessageView.emojiButton
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         //composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
         composerView.dismissButton.addTarget(self, action: #selector(clearContent(sender:)), for: .touchUpInside)
@@ -355,12 +388,15 @@ open class ComposerVC: _ViewController,
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+        GPHCache.shared.cache.diskCapacity = 300 * 1000 * 1000
+        GPHCache.shared.cache.memoryCapacity = 300 * 1000 * 1000
         NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.addObserver(self, selector: #selector(btnSendSticker(_:)), name: .sendSticker, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        NotificationCenter.default.removeObserver(self)
         dismissSuggestions()
     }
 
@@ -545,7 +581,6 @@ open class ComposerVC: _ViewController,
                 break
             }
         }
-
     }
 
     // MARK: - Actions
@@ -569,6 +604,37 @@ open class ComposerVC: _ViewController,
         }
         content.clear()
         self.composerView.leadingContainer.isHidden = false
+    }
+
+    @objc open func showEmojiMenu(_ sender: UIButton) {
+        // EMOJI integration
+        sender.isSelected.toggle()
+        isMenuShowing = true
+        animateMenuButton()
+        if sender.isSelected {
+            if #available(iOS 13.0, *) {
+                emoji = EmojiMenuViewController.instantiateController(storyboard: .wallet)
+                if let emoji = emoji as? EmojiMenuViewController {
+                    emoji.didSelectMarketPlace = { [weak self] downloadedSticker in
+                        guard let `self` = self else { return }
+                        self.emojiPickerView = EmojiPickerViewController.instantiateController(storyboard: .wallet)
+                        if let emojiPickerView = self.emojiPickerView as? EmojiPickerViewController {
+                            emojiPickerView.downloadedPackage = downloadedSticker
+                        }
+                        self.forceKeyboardClose = true
+                        guard let emojiPickerView = self.emojiPickerView else {
+                            return
+                        }
+                        UIApplication.shared.keyWindow?.rootViewController?.present(emojiPickerView, animated: true, completion: nil)
+                    }
+                }
+                showInputViewController(emoji)
+            } else {
+                // Fallback on earlier versions
+            }
+        } else {
+            hideInputView()
+        }
     }
     
     /// Shows a photo/media picker.
@@ -677,8 +743,10 @@ open class ComposerVC: _ViewController,
     }
 
     private func hideInputView() {
-        self.composerView.inputMessageView.textView.inputView = nil
-        self.composerView.inputMessageView.textView.reloadInputViews()
+        composerView.inputMessageView.textView.inputView = nil
+        composerView.inputMessageView.textView.reloadInputViews()
+        composerView.inputMessageView.textView.tintColor = .white
+        emoji = nil
     }
 
     private func showInputViewController(_ uiViewController: UIViewController?) {
@@ -690,9 +758,11 @@ open class ComposerVC: _ViewController,
             menu.heightAnchor.constraint(equalToConstant: keyboardHeight).isActive = true
         }
         walletView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: keyboardHeight)
-        self.composerView.inputMessageView.textView.inputView = walletView
-        self.composerView.inputMessageView.textView.reloadInputViews()
-        self.composerView.inputMessageView.textView.becomeFirstResponder()
+        composerView.inputMessageView.textView.inputView = walletView
+        composerView.inputMessageView.textView.reloadInputViews()
+        composerView.inputMessageView.textView.becomeFirstResponder()
+        composerView.inputMessageView.textView.tintColor = .clear
+        composerView.inputMessageView.textView.text = nil
     }
 
     private func addWalletAttachment(
@@ -727,6 +797,32 @@ open class ComposerVC: _ViewController,
         var userInfo = [String: Any]()
         userInfo["channelId"] = channelId
         NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
+    }
+
+    @objc func btnSendSticker(_ notification: Notification) {
+        if let giphyImage = notification.userInfo?["giphyUrl"] as? String {
+            var stickerData = [String: RawJSON]()
+            stickerData["giphyUrl"] = .string(giphyImage)
+            channelController?
+                .createNewMessage(
+                    text: "GIF",
+                    extraData: stickerData,
+                    completion: nil
+                )
+            return
+        }
+        guard let sticker = notification.userInfo?["sticker"] as? Sticker,
+              let stickerImg = sticker.stickerImg else {
+            return 
+        }
+        var stickerData = [String: RawJSON]()
+        stickerData["stickerUrl"] = .string(stickerImg)
+        channelController?
+            .createNewMessage(
+                text: "Sticker",
+                extraData: stickerData,
+                completion: nil
+            )
     }
 
     @objc open func disburseFundAction() {

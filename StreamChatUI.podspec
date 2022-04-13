@@ -25,4 +25,6 @@ Pod::Spec.new do |spec|
     spec.dependency "EFQRCode", "~> 6.2.0"
     spec.dependency "swiftScan"
     spec.dependency "SkeletonView", "1.29.2"
+    spec.dependency "Stipop", "0.3.1"
+    spec.dependency "Giphy", "2.1.21"
   end

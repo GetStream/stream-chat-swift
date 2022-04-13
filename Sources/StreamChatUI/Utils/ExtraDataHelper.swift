@@ -365,3 +365,22 @@ public extension Dictionary where Key == String, Value == RawJSON {
         }
     }
 }
+
+// MARK: Sticker
+public extension Dictionary where Key == String, Value == RawJSON {
+    var stickerUrl: String? {
+        if let stickerUrl = self["stickerUrl"] {
+            return fetchRawData(raw: stickerUrl) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var giphyUrl: String? {
+        if let stickerUrl = self["giphyUrl"] {
+            return fetchRawData(raw: stickerUrl) as? String
+        } else {
+            return nil
+        }
+    }
+}

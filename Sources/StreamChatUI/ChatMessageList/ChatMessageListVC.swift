@@ -82,6 +82,7 @@ open class ChatMessageListVC:
         listView.register(RedPacketSentBubble.self, forCellReuseIdentifier: "RedPacketSentBubble")
         listView.register(WalletRequestPayBubble.self, forCellReuseIdentifier: "RequestBubble")
         listView.register(RedPacketBubble.self, forCellReuseIdentifier: "RedPacketBubble")
+        listView.register(ChatMessageStickerBubble.self, forCellReuseIdentifier: "ChatMessageStickerBubble")
         listView.register(.init(nibName: "AdminMessageTVCell", bundle: nil), forCellReuseIdentifier: "AdminMessageTVCell")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
         listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
@@ -462,6 +463,19 @@ open class ChatMessageListVC:
                 cell.configCell(messageCount: messagesCont)
                 cell.transform = .mirrorY
                 return cell
+            } else if isStickerCell(message) {
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: "ChatMessageStickerBubble",
+                    for: indexPath) as? ChatMessageStickerBubble else {
+                        return UITableViewCell()
+                    }
+                let messagesCont = dataSource?.numberOfMessages(in: self) ?? 0
+                cell.content = message
+                cell.chatChannel = dataSource?.channel(for: self) 
+                cell.layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
+                cell.configureCell(isSender: isMessageFromCurrentUser)
+                cell.transform = .mirrorY
+                return cell
             } else {
                 let cell: ChatMessageCell = listView.dequeueReusableCell(
                     contentViewClass: cellContentClassForMessage(at: indexPath),
@@ -510,6 +524,10 @@ open class ChatMessageListVC:
 
     private func isRedPacketCell(_ message: ChatMessage?) -> Bool {
         message?.extraData.keys.contains("redPacketPickup") ?? false
+    }
+
+    private func isStickerCell(_ message: ChatMessage?) -> Bool {
+        return (message?.extraData.keys.contains("stickerUrl") ?? false) || (message?.extraData.keys.contains("giphyUrl") ?? false)
     }
 
     private func isRedPacketExpiredCell(_ message: ChatMessage?) -> Bool {

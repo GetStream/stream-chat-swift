@@ -21,6 +21,12 @@ public struct GiphyAttachmentPayload: AttachmentPayload {
     public var previewURL: URL
     /// Actions when gif is not sent yet. (e.g. `Shuffle`)
     public var actions: [AttachmentAction]
+
+    public init(title: String, previewURL: URL, actions: [AttachmentAction]) {
+        self.title = title
+        self.previewURL = previewURL
+        self.actions = actions
+    }
 }
 
 extension GiphyAttachmentPayload: Hashable {}
