@@ -5,7 +5,6 @@
 import Foundation
 
 enum SyncError: Error {
-    case localStorageDisabled
     case noNeedToSync
     case tooManyEvents(Error)
     case syncEndpointFailed(Error)
@@ -14,7 +13,7 @@ enum SyncError: Error {
 
     var shouldRetry: Bool {
         switch self {
-        case .localStorageDisabled, .noNeedToSync, .tooManyEvents, .couldNotUpdateUserValue:
+        case .noNeedToSync, .tooManyEvents, .couldNotUpdateUserValue:
             return false
         case .syncEndpointFailed, .failedFetchingChannels:
             return true
