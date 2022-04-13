@@ -27,12 +27,16 @@ extension StreamMockServer {
     @discardableResult
     func websocketEvent(
         _ eventType: EventType,
-        user: [String : Any]
+        user: [String : Any],
+        channelId: String
     ) -> Self {
         var json = TestData.getMockResponse(fromFile: .wsChatEvent).json
         json[EventPayload.CodingKeys.user.rawValue] = user
         json[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
         json[EventPayload.CodingKeys.eventType.rawValue] = eventType.rawValue
+        json[EventPayload.CodingKeys.channelId.rawValue] = channelId
+        json[EventPayload.CodingKeys.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
+        
         writeText(json.jsonToString())
         return self
     }
@@ -49,6 +53,7 @@ extension StreamMockServer {
     @discardableResult
     func websocketMessage(
         _ text: String = "",
+        channelId: String,
         messageId: String,
         timestamp: String = TestData.currentDate,
         eventType: EventType,
@@ -63,26 +68,29 @@ extension StreamMockServer {
             let message = json[TopLevelKey.message] as! [String: Any]
             mockedMessage = mockMessage(
                 message,
+                channelId: channelId,
                 messageId: messageId,
                 text: text,
+                user: user,
                 createdAt: timestamp,
                 updatedAt: timestamp
             )
-            mockedMessage[MessagePayloadsCodingKeys.user.rawValue] = user
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
             saveMessage(mockedMessage)
         case .messageDeleted:
             let message = findMessageById(messageId)
-            mockedMessage = mockDeletedMessage(message)
             let id = message[MessagePayloadsCodingKeys.id.rawValue] as! String
+            mockedMessage = mockDeletedMessage(message, user: user)
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
             removeMessage(id: id)
         case .messageUpdated:
             let message = findMessageById(messageId)
             mockedMessage = mockMessage(
                 message,
+                channelId: channelId,
                 messageId: message[MessagePayloadsCodingKeys.id.rawValue] as! String?,
                 text: text,
+                user: user,
                 createdAt: message[MessagePayloadsCodingKeys.createdAt.rawValue] as! String?,
                 updatedAt: timestamp
             )
@@ -92,10 +100,13 @@ extension StreamMockServer {
             mockedMessage = [:]
         }
         
+        json[TopLevelKey.channelId] = channelId
+        json[TopLevelKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
         json[TopLevelKey.user] = user
         json[TopLevelKey.message] = mockedMessage
         json[MessagePayloadsCodingKeys.createdAt.rawValue] = TestData.currentDate
         json[MessagePayloadsCodingKeys.type.rawValue] = eventType.rawValue
+        
         writeText(json.jsonToString())
         return self
     }
@@ -117,7 +128,9 @@ extension StreamMockServer {
         var json = TestData.getMockResponse(fromFile: .wsReaction).json
         var reaction = json[TopLevelKey.reaction] as! [String: Any]
         var message = json[TopLevelKey.message] as! [String: Any]
-        let messageId = messageDetails[MessagePayloadsCodingKeys.id.rawValue] as! String?
+        let messageId = messageDetails[MessagePayloadsCodingKeys.id.rawValue] as! String
+        let cid = messageDetails[MessagePayloadsCodingKeys.cid.rawValue] as! String
+        let channelId = cid.split(separator: ":").last
         let timestamp = TestData.currentDate
         
         message = mockMessageWithReaction(
@@ -136,6 +149,8 @@ extension StreamMockServer {
             timestamp: timestamp
         )
         
+        json[TopLevelKey.channelId] = channelId
+        json[TopLevelKey.cid] = cid
         json[TopLevelKey.message] = message
         json[TopLevelKey.reaction] = reaction
         json[MessageReactionPayload.CodingKeys.user.rawValue] = user

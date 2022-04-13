@@ -10,7 +10,7 @@ extension StreamMockServer {
     
     func configureReactionEndpoints() {
         server[MockEndpoint.reaction] = { [weak self] request in
-            let messageId = try! XCTUnwrap(request.params[":message_id"])
+            let messageId = try! XCTUnwrap(request.params[EndpointQuery.messageId])
             let requestJson = TestData.toJson(request.body)
             let requestReaction = requestJson[TopLevelKey.reaction] as! [String: Any]
             let reactionType = requestReaction[MessageReactionPayload.CodingKeys.type.rawValue] as! String
@@ -21,8 +21,8 @@ extension StreamMockServer {
             ) ?? .badRequest(nil)
         }
         server[MockEndpoint.reactionUpdate] = { [weak self] request in
-            let messageId = try! XCTUnwrap(request.params[":message_id"])
-            let reactionType = try! XCTUnwrap(request.params[":reaction_type"])
+            let messageId = try! XCTUnwrap(request.params[EndpointQuery.messageId])
+            let reactionType = try! XCTUnwrap(request.params[EndpointQuery.reactionType])
             return self?.reactionResponse(
                 messageId: messageId,
                 reactionType: reactionType,
@@ -112,7 +112,7 @@ extension StreamMockServer {
         let reaction = json[TopLevelKey.reaction] as! [String: Any]
         let message = findMessageById(messageId)
         let timestamp = TestData.currentDate
-        let user = setUpUser(event: message, details: UserDetails.lukeSkywalker)
+        let user = setUpUser(source: message, details: UserDetails.lukeSkywalker)
         
         json[TopLevelKey.message] = mockMessageWithReaction(
             message,

@@ -38,6 +38,12 @@ extension StreamMockServer {
         }
     }
     
+    func findMessagesByChannelId(_ channelId: String) -> [[String: Any]] {
+        return messageList.filter {
+            ($0[MessagePayloadsCodingKeys.cid.rawValue] as! String).contains(":\(channelId)")
+        }
+    }
+    
     func removeMessage(id: String) {
         let deletedMessage = try! XCTUnwrap(waitForMessageWithId(id))
         let idKey = MessagePayloadsCodingKeys.id.rawValue
