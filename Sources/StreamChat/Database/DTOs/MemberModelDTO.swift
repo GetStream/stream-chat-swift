@@ -114,12 +114,22 @@ extension NSManagedObjectContext {
         // the IDs that we want to have sorted as comes from payload
         let userIDs = payload.map(\.user.id)
 
+        var payloadById = [String: MemberPayload]()
+        payload.forEach {
+            payloadById[$0.user.id] = $0
+        }
+
         var membersByUserID = [String: MemberDTO]()
 
         // fetch all members based on their IDs
         let existingMembers = try fetch(MemberDTO.members(userIDs, in: channelId))
-        existingMembers.forEach {
-            membersByUserID[$0.id] = $0
+        try existingMembers.forEach {
+            // tell core data that we do not want to merge any changes for these objects (sigh)
+            refresh($0, mergeChanges: false)
+            if let payload = payloadById[$0.id] {
+                try self.populateMember(dto: $0, payload: payload, query: nil)
+            }
+            membersByUserID[$0.user.id] = $0
         }
 
         // create missing members
@@ -134,7 +144,7 @@ extension NSManagedObjectContext {
             return new
         }
         insertedMembers.forEach {
-            membersByUserID[$0.id] = $0
+            membersByUserID[$0.user.id] = $0
         }
 
         // update members if needed
@@ -148,7 +158,6 @@ extension NSManagedObjectContext {
             try self.saveMember(payload: $0, channelId: channelId)
         }
 
-        // return the full list in the same order (inserted, updated and untouched)
         return userIDs.map { membersByUserID[$0] }.compactMap { $0 }
     }
 

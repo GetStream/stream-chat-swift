@@ -431,8 +431,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         // fetch all messages based on their IDs
         let existingMessages = try fetch(MessageDTO.messages(withIDs: messageIDs))
-        try existingMessages.forEach {
+        existingMessages.forEach {
             messagesByID[$0.id] = $0
+            // tell core data that we do not want to merge any changes for these objects (sigh)
+            refresh($0, mergeChanges: false)
         }
 
         // create missing messages

@@ -43,6 +43,8 @@ extension JSONEncoder {
     static let stream: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .stream
+        // we need this to avoid {"a": 1, "b": 2} to encode to different Data/bytes ({a,b} != {b,a})
+        encoder.outputFormatting = .sortedKeys
         return encoder
     }()
     

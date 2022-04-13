@@ -159,6 +159,11 @@ struct ChannelDetailPayload: Decodable {
         
         if var payload = try? [String: RawJSON](from: decoder) {
             payload.removeValues(forKeys: ChannelCodingKeys.allCases.map(\.rawValue))
+            // The `own_capabilities` field is not decoded, this line is here just to  be sure that we dont wrongly add it to extra data
+            payload.removeValue(forKey: "own_capabilities")
+            
+            // The `disabled` field is not decoded, this line is here just to  be sure that we dont wrongly add it to extra data
+            payload.removeValue(forKey: "disabled")
             extraData = payload
         } else {
             extraData = [:]

@@ -161,16 +161,20 @@ extension NSManagedObjectContext {
 
         dto.name = payload.name
         dto.imageURL = payload.imageURL
+
+        var encodedData: Data
+
         do {
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+            encodedData = try JSONEncoder.default.encode(payload.extraData)
         } catch {
             log.error(
                 "Failed to decode extra payload for Channel with cid: <\(dto.cid)>, using default value instead. "
                     + "Error: \(error)"
             )
-            dto.extraData = Data()
+            encodedData = Data()
         }
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+
+        dto.extraData = encodedData
         dto.typeRawValue = payload.typeRawValue
         dto.config = try JSONEncoder().encode(payload.config)
         dto.createdAt = payload.createdAt
@@ -217,7 +221,6 @@ extension NSManagedObjectContext {
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
 
-//        try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true) }
         _ = try upsertMany(payload: payload.messages, channelDTO: dto)
 
         // TODO: write tests for these two methods

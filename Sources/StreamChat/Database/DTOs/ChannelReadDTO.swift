@@ -82,6 +82,8 @@ extension NSManagedObjectContext {
         // 0 - fetch all existing reads
         let existingReads = try fetch(ChannelReadDTO.fetchRequest(for: cid, userIDs: userIDs))
         existingReads.forEach {
+            // tell core data that we do not want to merge any changes for these objects (sigh)
+            refresh($0, mergeChanges: false)
             readsByUserID[$0.user.id] = $0
         }
 
