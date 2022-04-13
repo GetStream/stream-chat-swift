@@ -161,6 +161,8 @@ class ChatClientUpdater {
     /// Disconnects the chat client the controller represents from the chat servers. No further updates from the servers
     /// are received.
     func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
+        client.apiClient.flushRequestsQueue()
+        
         // Disconnecting is not possible in connectionless mode (duh)
         guard client.config.isClientInActiveMode else {
             log.error(ClientError.ClientIsNotInActiveMode().localizedDescription)

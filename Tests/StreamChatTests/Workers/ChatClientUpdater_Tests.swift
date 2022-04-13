@@ -9,7 +9,7 @@ import XCTest
 final class ChatClientUpdater_Tests: XCTestCase {
     // MARK: Disconnect
 
-    func test_disconnect_doesNothing_ifClientIsPassive() {
+    func test_disconnect_whenClientIsPassive() {
         // Create a passive client with user session.
         let client = mockClientWithUserSession(isActive: false)
 
@@ -21,6 +21,9 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         // Assert `disconnect` was not called on `webSocketClient`.
         XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 0)
+        
+        // Assert `flushRequestsQueue` is called on API client.
+        XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
     }
 
     func test_disconnect_closesTheConnection_ifClientIsActive() {
@@ -40,9 +43,11 @@ final class ChatClientUpdater_Tests: XCTestCase {
         // Assert all requests waiting for the connection-id were canceled.
         XCTAssertTrue(client.completeConnectionIdWaiters_called)
         XCTAssertNil(client.completeConnectionIdWaiters_connectionId)
+        // Assert `flushRequestsQueue` is called on API client.
+        XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
     }
 
-    func test_disconnect_doesNothing_ifThereIsNoConnection() throws {
+    func test_disconnect_whenWebSocketIsNotConnected() throws {
         // Create an active client with user session.
         let client = mockClientWithUserSession()
 
@@ -54,12 +59,17 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         // Reset disconnect counter.
         client.mockWebSocketClient.disconnect_calledCounter = 0
+        
+        // Reset API client
+        client.mockAPIClient.recordedFunctions.removeAll()
 
         // Simulate `disconnect` one more time.
         updater.disconnect()
 
         // Assert `connect` was not called on `webSocketClient`.
         XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 0)
+        // Assert `flushRequestsQueue` is called on API client.
+        XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
     }
 
     // MARK: Connect

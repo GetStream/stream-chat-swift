@@ -352,7 +352,6 @@ public class ChatClient {
     public func disconnect() {
         clientUpdater.disconnect()
         userConnectionProvider = nil
-        apiClient.flushRequestsQueue()
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
