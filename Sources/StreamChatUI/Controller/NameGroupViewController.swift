@@ -229,10 +229,6 @@ extension NameGroupViewController: UITableViewDataSource {
 class ViewWithRadius: UIView {}
 // MARK: - UITextField extension
 extension UITextField {
-    open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return true
-    }
-    
     public func setAttributedPlaceHolder(placeHolder: String) {
         let attributeString = [
             NSAttributedString.Key.foregroundColor: Appearance.default.colorPalette.searchPlaceHolder,
