@@ -34,11 +34,11 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
 
     /// Container that holds `reactionsController` that displays reactions
     open private(set) lazy var reactionsContainerView = ContainerStackView()
-                                                            .withAccessibilityIdentifier(identifier: "reactionsContainerView")
+        .withAccessibilityIdentifier(identifier: "reactionsContainerView")
 
     /// Container that holds actions
     open private(set) var actionsContainerStackView: ContainerStackView = ContainerStackView()
-                                                            .withAccessibilityIdentifier(identifier: "actionsContainerStackView")
+        .withAccessibilityIdentifier(identifier: "actionsContainerStackView")
 
     /// Insets for `messageContentView`'s bubble view.
     public var messageBubbleViewInsets: UIEdgeInsets = .zero
