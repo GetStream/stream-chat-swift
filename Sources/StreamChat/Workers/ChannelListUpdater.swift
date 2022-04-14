@@ -89,22 +89,33 @@ class ChannelListUpdater: Worker {
         }
     }
 
-    private func writeChannelListPayload(
-        payload: ChannelListPayload,
-        query: ChannelListQuery,
-        initialActions: ((DatabaseSession) -> Void)? = nil,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
-    ) {
-        var channels: [ChatChannel] = []
-        database.write { session in
-            initialActions?(session)
-            channels = try session.saveChannelList(payload: payload, query: query).map { $0.asModel() }
-        } completion: { error in
-            if let error = error {
-                log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
-                completion?(.failure(error))
-            } else {
-                completion?(.success(channels))
+    /// Starts watching the channels with the given ids and updates the channels in the local storage.
+    ///
+    /// - Parameters:
+    ///   - ids: The channel ids.
+    ///   - completion: The callback once the request is complete.
+    func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)? = nil) {
+        var query = ChannelListQuery(filter: .in(.cid, values: ids))
+        query.options = .all
+
+        fetch(channelListQuery: query) { [weak self] in
+            switch $0 {
+            case let .success(payload):
+                self?.database.write { session in
+                    for channel in payload.channels {
+                        do {
+                            try session.saveChannel(payload: channel)
+                        } catch {
+                            log.warning(
+                                "Failed to save watched channel \(channel.channel.cid): \(error.localizedDescription)"
+                            )
+                        }
+                    }
+                } completion: { _ in
+                    completion?(nil)
+                }
+            case let .failure(error):
+                completion?(error)
             }
         }
     }
@@ -129,6 +140,28 @@ class ChannelListUpdater: Worker {
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .markAllRead()) {
             completion?($0.error)
+        }
+    }
+}
+
+private extension ChannelListUpdater {
+    func writeChannelListPayload(
+        payload: ChannelListPayload,
+        query: ChannelListQuery,
+        initialActions: ((DatabaseSession) -> Void)? = nil,
+        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+    ) {
+        var channels: [ChatChannel] = []
+        database.write { session in
+            initialActions?(session)
+            channels = try session.saveChannelList(payload: payload, query: query).map { $0.asModel() }
+        } completion: { error in
+            if let error = error {
+                log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
+                completion?(.failure(error))
+            } else {
+                completion?(.success(channels))
+            }
         }
     }
 }
