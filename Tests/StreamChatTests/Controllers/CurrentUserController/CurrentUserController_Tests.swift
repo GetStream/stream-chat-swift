@@ -638,6 +638,25 @@ final class CurrentUserController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
     
+    func test_markAllRead_keepsControllerAlive() {
+        
+        // GIVEN
+        
+        weak var weakController = controller
+        
+        XCTAssertNotNil(weakController)
+        
+        // WHEN
+        
+        controller.markAllRead { _ in }
+        
+        controller = nil
+        
+        // THEN
+        
+        AssertAsync.staysTrue(weakController != nil)
+    }
+    
     func test_markAllRead_propagatesErrorFromUpdater() {
         
         // GIVEN
