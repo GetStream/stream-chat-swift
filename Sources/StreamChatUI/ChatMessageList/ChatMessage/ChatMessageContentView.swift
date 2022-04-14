@@ -184,6 +184,8 @@ open class ChatMessageContentView: _View, ThemeProvider {
         attachmentViewInjector = attachmentViewInjectorType?.init(self)
         layoutOptions = options
     }
+    
+    // swiftlint:disable function_body_length
 
     /// Instantiates the subviews and laid them out based on the received options.
     /// - Parameter options: The options describing the layout of the content view.
@@ -415,6 +417,8 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
         NSLayoutConstraint.activate(constraintsToActivate)
     }
+    
+    // swiftlint:enable function_body_length
 
     // When the content is updated, we want to make sure there
     // are no unwanted animations caused by the ContainerStackView.
@@ -832,7 +836,7 @@ private extension ChatMessageLayoutOptions {
     ]
     
     var hasMetadata: Bool {
-        !intersection(.metadata).isEmpty
+        !isDisjoint(with: .metadata)
     }
 }
 

@@ -87,7 +87,7 @@ class ChannelUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .deleteChannel(cid: cid)) { [weak self] result in
-            switch (result) {
+            switch result {
             case .success:
                 self?.database.write {
                     if let channel = $0.channel(cid: cid) {

@@ -18,7 +18,7 @@ public struct UserCredentials {
 
 public extension UserCredentials {
     static func builtInUsersByID(id: String) -> UserCredentials? {
-        builtInUsers.filter { $0.id == id }.first
+        builtInUsers.first(where: { $0.id == id })
     }
 
     static let builtInUsers: [UserCredentials] = [

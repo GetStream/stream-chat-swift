@@ -63,7 +63,7 @@ extension StreamMockServer {
             var reaction_counts = mockedMessage[reactionsCountsKey] as! [String: Any]
             var reaction_scores = mockedMessage[reactionsScoresKey] as! [String: Any]
             
-            for (index, _) in latest_reactions.enumerated() {
+            for (index, _) in latest_reactions.indices() {
                 latest_reactions[index][MessageReactionPayload.CodingKeys.type.rawValue] = reactionType
                 latest_reactions[index][MessageReactionPayload.CodingKeys.messageId.rawValue] = messageId
                 latest_reactions[index][MessageReactionPayload.CodingKeys.createdAt.rawValue] = createdAt

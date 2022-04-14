@@ -22,7 +22,7 @@ class CustomMessageContentView: ChatMessageContentView {
             }
         }
         
-        guard let authorNameLabel = authorNameLabel, authorNameLabel.text != "" else {
+        guard let authorNameLabel = authorNameLabel, let authorText = authorNameLabel.text, authorText.isEmpty else {
             return
         }
         

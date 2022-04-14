@@ -5,7 +5,7 @@
 import Foundation
 import XCTest
 
-class MessageListPage {
+enum MessageListPage {
     
     static var cells: XCUIElementQuery {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMessageCell'"))

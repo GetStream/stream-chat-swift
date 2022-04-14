@@ -932,7 +932,7 @@ func searchUsers(_ users: [ChatUser], by searchInput: String, excludingId: Strin
     let searchInput = normalize(searchInput)
 
     let matchingUsers = users.filter { $0.id != excludingId }
-        .filter { searchInput == "" || $0.id.contains(searchInput) || (normalize($0.name ?? "").contains(searchInput)) }
+        .filter { searchInput.isEmpty || $0.id.contains(searchInput) || (normalize($0.name ?? "").contains(searchInput)) }
 
     let distance: (ChatUser) -> Int = {
         min($0.id.levenshtein(searchInput), $0.name?.levenshtein(searchInput) ?? 1000)

@@ -6,6 +6,8 @@ import Foundation
 import StreamChat
 import UIKit
 
+// swiftlint:disable colon
+
 /// A viewcontroller to showcase and slide through multiple attachments
 /// (images and videos by default).
 open class GalleryVC:
@@ -31,6 +33,8 @@ open class GalleryVC:
             self.currentPage = currentPage
         }
     }
+    
+    // swiftlint:enable colon
     
     /// Content to display.
     open var content: Content! {
@@ -242,7 +246,7 @@ open class GalleryVC:
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        super.viewWillDisappear(animated)
         
         videoPlaybackBar.player?.pause()
     }
