@@ -7,8 +7,6 @@ import Foundation
 
 @objc(ChannelReadDTO)
 class ChannelReadDTO: NSManagedObject {
-    @NSManaged var channelCid: String
-    @NSManaged var userId: String
     @NSManaged var lastReadAt: Date?
     @NSManaged var unreadMessageCount: Int32
     
@@ -59,11 +57,8 @@ class ChannelReadDTO: NSManagedObject {
         }
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelReadDTO
-        // TODO: remove these relationships
         new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context)
         new.user = UserDTO.loadOrCreate(id: userId, context: context)
-        new.channelCid = cid.rawValue
-        new.userId = userId
         return new
     }
     
@@ -79,33 +74,30 @@ extension NSManagedObjectContext {
         let userIDs = payload.map(\.user.id)
         var readsByUserID = [String: ChannelReadDTO]()
 
-        print("debugging needs \(userIDs.count)")
         // 0 - fetch all existing reads
         let existingReads = try fetch(ChannelReadDTO.fetchRequest(for: cid, userIDs: userIDs))
         existingReads.forEach {
-            print("debugging found ...")
             // tell core data that we do not want to merge any changes for these objects (sigh)
             refresh($0, mergeChanges: false)
-            readsByUserID[$0.userId] = $0
+            readsByUserID[$0.user.id] = $0
         }
 
-        print("debugging found \(existingReads.count)")
         // 1 - create a list of members that need to be inserted
         let readsToCreate = payload.filter {
             readsByUserID[$0.user.id] == nil
         }
-        
+
         let insertedReads = readsToCreate.map { payload -> ChannelReadDTO in
             let new = NSEntityDescription.insertNewObject(forEntityName: ChannelReadDTO.entityName, into: self) as! ChannelReadDTO
-            new.channelCid = cid.rawValue
-            new.userId = payload.user.id
+            new.channel = ChannelDTO.loadOrCreate(cid: cid, context: self)
+            new.user = UserDTO.loadOrCreate(id: payload.user.id, context: self)
             new.lastReadAt = payload.lastReadAt
             new.unreadMessageCount = Int32(payload.unreadMessagesCount)
             return new
         }
 
         insertedReads.forEach {
-            readsByUserID[$0.userId] = $0
+            readsByUserID[$0.user.id] = $0
         }
         print("debugging inserted \(insertedReads.count)")
 
@@ -123,15 +115,9 @@ extension NSManagedObjectContext {
         unreadMessageCount: Int
     ) -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
-        
-        // TODO: remove this relationship
         dto.user = UserDTO.loadOrCreate(id: userId, context: self)
-        
-        dto.userId = userId
-        dto.channelCid = cid.rawValue
         dto.lastReadAt = lastReadAt
         dto.unreadMessageCount = Int32(unreadMessageCount)
-        
         return dto
     }
     
@@ -140,11 +126,7 @@ extension NSManagedObjectContext {
         for cid: ChannelId
     ) throws -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self)
-        
-        // TODO: remove these relationships
         dto.user = try saveUser(payload: payload.user)
-        dto.channelCid = cid.rawValue
-        dto.userId = payload.user.id
         dto.lastReadAt = payload.lastReadAt
         dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
         return dto

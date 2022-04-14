@@ -437,7 +437,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         existingMessages.forEach {
             messagesByID[$0.id] = $0
             // tell core data that we do not want to merge any changes for these objects (sigh)
-            refresh($0, mergeChanges: false)
+            if $0.changedValues()["updatedAt"] == nil {
+                refresh($0, mergeChanges: false)
+            }
         }
 
         // create missing messages
