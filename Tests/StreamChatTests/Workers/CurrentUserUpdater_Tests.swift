@@ -559,56 +559,57 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     // MARK: - Mark all read
     
     func test_markAllRead_makesCorrectAPICall() {
-        GIVEN("the requested endpoint initially is nil") {
-            XCTAssertNil(apiClient.request_endpoint)
-        }
         
-        WHEN("all channels are marked as read") {
-            currentUserUpdater.markAllRead()
-        }
+        // GIVEN
         
-        THEN("the requested endpoint matches the expected endpoint") {
-            let referenceEndpoint = Endpoint<EmptyResponse>.markAllRead()
-            XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
-        }
+        XCTAssertNil(apiClient.request_endpoint)
+        
+        // WHEN
+        
+        currentUserUpdater.markAllRead()
+        
+        // THEN
+        
+        let referenceEndpoint = Endpoint<EmptyResponse>.markAllRead()
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
     func test_markAllRead_successfulResponse_isPropagatedToCompletion() {
+        
+        // GIVEN
+        
         var completionCalled = false
+        XCTAssertFalse(completionCalled)
         
-        GIVEN("the completion has not been called yet") {
-            XCTAssertFalse(completionCalled)
+        // WHEN
+        
+        currentUserUpdater.markAllRead { error in
+            XCTAssertNil(error)
+            completionCalled = true
         }
         
-        WHEN("all channels are marked as read with no errors") {
-            currentUserUpdater.markAllRead { error in
-                XCTAssertNil(error)
-                completionCalled = true
-            }
-            
-            apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
-        }
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
         
-        THEN("the completion propagates a successful response with no errors") {
-            AssertAsync.willBeTrue(completionCalled)
-        }
+        // THEN
+        
+        AssertAsync.willBeTrue(completionCalled)
     }
     
     func test_markAllRead_errorResponse_isPropagatedToCompletion() {
+
+        // GIVEN
+        
         var completionCalledError: Error?
         let error = TestError()
+        XCTAssertNil(completionCalledError)
         
-        GIVEN("the completion called error initially is nil") {
-            XCTAssertNil(completionCalledError)
-        }
+        // WHEN
         
-        WHEN("all channels are marked as read, but an error occurs") {
-            currentUserUpdater.markAllRead { completionCalledError = $0 }
-            apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
-        }
+        currentUserUpdater.markAllRead { completionCalledError = $0 }
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         
-        THEN("the completion propagates the expected error") {
-            AssertAsync.willBeEqual(completionCalledError as? TestError, error)
-        }
+        // THEN
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 }

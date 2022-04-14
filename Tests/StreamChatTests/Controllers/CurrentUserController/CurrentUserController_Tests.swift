@@ -608,58 +608,56 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_markAllRead_callsChannelListUpdater() {
         
+        // GIVEN
+        
         var completionCalled = false
         weak var weakController = controller
         
-        GIVEN("the completion has not been called yet") {
-            XCTAssertFalse(completionCalled)
-        }
+        XCTAssertFalse(completionCalled)
         
-        WHEN("all channels are marked as read succesfully and all potential references to the controller are gone") {
-            controller.markAllRead { [callbackQueueID] error in
-                AssertTestQueue(withId: callbackQueueID)
-                XCTAssertNil(error)
-                completionCalled = true
-            }
-                                    
-            controller = nil
-            
-            XCTAssertFalse(completionCalled)
-            
-            env.currentUserUpdater!.markAllRead_completion?(nil)
-            
-            env.currentUserUpdater!.markAllRead_completion = nil
-        }
+        // WHEN
         
-        THEN("the completion is indeed called") {
-            AssertAsync.willBeTrue(completionCalled)
+        controller.markAllRead { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
         }
+                                
+        controller = nil
         
-        AND("the reference to the controller is actually deallocated") {
-            AssertAsync.canBeReleased(&weakController)
-        }
+        XCTAssertFalse(completionCalled)
+        
+        env.currentUserUpdater!.markAllRead_completion?(nil)
+        
+        env.currentUserUpdater!.markAllRead_completion = nil
+        
+        // THEN
+        
+        AssertAsync.willBeTrue(completionCalled)
+        
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_markAllRead_propagatesErrorFromUpdater() {
+        
+        // GIVEN
+        
         var completionCalledError: Error?
         let testError = TestError()
+        XCTAssertNil(completionCalledError)
         
-        GIVEN("the completion has not propagated an error yet") {
-            XCTAssertNil(completionCalledError)
+        // WHEN
+        
+        controller.markAllRead { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
         }
         
-        WHEN("all channels are marked as read but an error occurs") {
-            controller.markAllRead { [callbackQueueID] in
-                AssertTestQueue(withId: callbackQueueID)
-                completionCalledError = $0
-            }
-            
-            env.currentUserUpdater!.markAllRead_completion?(testError)
-        }
+        env.currentUserUpdater!.markAllRead_completion?(testError)
         
-        THEN("the completion propagates the error that occured") {
-            AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
-        }
+        // THEN
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 }
 
