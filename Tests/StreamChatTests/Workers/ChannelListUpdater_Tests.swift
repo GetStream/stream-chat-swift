@@ -287,14 +287,16 @@ class ChannelListUpdater_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: channelJSON)
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
 
-//        measure {
-        let expectation = expectation(description: "writeChannelListPayload")
-        listUpdater.writeChannelListPayload(payload: payload, query: query, completion: { result in
-            expectation.fulfill()
-            XCTAssertFalse(result.isError)
-        })
-        wait(for: [expectation], timeout: 20.0)
-//        }
+        measure {
+            let expectation = expectation(description: "writeChannelListPayload")
+            listUpdater.writeChannelListPayload(payload: payload, query: query, completion: { result in
+                expectation.fulfill()
+                XCTAssertFalse(result.isError)
+            })
+            wait(for: [expectation], timeout: 20.0)
+            // make sure we flush cache in between runs
+            client.databaseContainer.writableContext.flushCache()
+        }
     }
 
     // MARK: - Fetch

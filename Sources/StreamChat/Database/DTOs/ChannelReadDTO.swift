@@ -79,14 +79,17 @@ extension NSManagedObjectContext {
         let userIDs = payload.map(\.user.id)
         var readsByUserID = [String: ChannelReadDTO]()
 
+        print("debugging needs \(userIDs.count)")
         // 0 - fetch all existing reads
         let existingReads = try fetch(ChannelReadDTO.fetchRequest(for: cid, userIDs: userIDs))
         existingReads.forEach {
+            print("debugging found ...")
             // tell core data that we do not want to merge any changes for these objects (sigh)
             refresh($0, mergeChanges: false)
-            readsByUserID[$0.user.id] = $0
+            readsByUserID[$0.userId] = $0
         }
 
+        print("debugging found \(existingReads.count)")
         // 1 - create a list of members that need to be inserted
         let readsToCreate = payload.filter {
             readsByUserID[$0.user.id] == nil
@@ -102,8 +105,9 @@ extension NSManagedObjectContext {
         }
 
         insertedReads.forEach {
-            readsByUserID[$0.user.id] = $0
+            readsByUserID[$0.userId] = $0
         }
+        print("debugging inserted \(insertedReads.count)")
 
         // 2 - create a list of members that need to updated (this is done by comparing the updated_at field)
 //        let membersToUpdate = 1

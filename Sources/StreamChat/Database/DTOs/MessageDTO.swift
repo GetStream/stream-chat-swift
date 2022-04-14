@@ -38,6 +38,8 @@ class MessageDTO: NSManagedObject {
     @NSManaged var channel: ChannelDTO?
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
+
+    @NSManaged var attachmentCount: Int
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
@@ -395,6 +397,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 return try createNewAttachment(attachment: attachment, id: id)
             }
         )
+        message.attachmentCount = message.attachments.count
         
         // If a user is able to mention someone,
         // most probably we have that user already saved in DB.
@@ -562,6 +565,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         dto.attachments = attachments
+        dto.attachmentCount = dto.attachments.count
 
         if let parentMessageId = payload.parentId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
@@ -886,11 +890,16 @@ private extension ChatMessage {
         
         $_mentionedUsers = ({ Set(dto.mentionedUsers.map { $0.asModel() }) }, dto.managedObjectContext)
         $_author = ({ dto.user.asModel() }, dto.managedObjectContext)
-        $_attachments = ({
-            dto.attachments
-                .map { $0.asAnyModel() }
-                .sorted { $0.id.index < $1.id.index }
-        }, dto.managedObjectContext)
+        
+        if dto.attachmentCount > 0 {
+            $_attachments = ({
+                dto.attachments
+                    .map { $0.asAnyModel() }
+                    .sorted { $0.id.index < $1.id.index }
+            }, dto.managedObjectContext)
+        } else {
+            $_attachments = ({ [] }, nil)
+        }
         
         if dto.replies.isEmpty {
             $_latestReplies = ({ [] }, nil)

@@ -62,6 +62,10 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
+            argument = "-com.apple.CoreData.SQLDebug 1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-UIViewLayoutFeedbackLoopDebuggingThreshold 100"
             isEnabled = "YES">
          </CommandLineArgument>

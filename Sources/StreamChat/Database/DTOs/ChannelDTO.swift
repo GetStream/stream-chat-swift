@@ -153,6 +153,9 @@ extension NSManagedObjectContext {
         }
     }
     
+    // API RESPONSE -> ChannelDetailPayload -> ChannelDTO -> Channel (model)
+    //                       Decode               Encode        Decode
+    
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?
