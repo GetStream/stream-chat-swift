@@ -163,6 +163,18 @@ extension ChatClient {
     var mockDatabaseContainer: DatabaseContainer_Spy {
         databaseContainer as! DatabaseContainer_Spy
     }
+    
+    var mockSyncRepository: SyncRepository_Spy {
+        syncRepository as! SyncRepository_Spy
+    }
+    
+    var mockMessageRepository: MessageRepository_Spy {
+        messageRepository as! MessageRepository_Spy
+    }
+    
+    var mockOfflineRequestsRepository: OfflineRequestsRepository_Spy {
+        offlineRequestsRepository as! OfflineRequestsRepository_Spy
+    }
 
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
         guard let connectionId = connectionId else {
@@ -207,7 +219,10 @@ extension ChatClient.Environment {
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,
             notificationCenterBuilder: EventNotificationCenter.init,
-            clientUpdaterBuilder: ChatClientUpdater_Mock.init
+            clientUpdaterBuilder: ChatClientUpdater_Mock.init,
+            syncRepositoryBuilder: SyncRepository_Spy.init,
+            messageRepositoryBuilder: MessageRepository_Spy.init,
+            offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Spy.init
         )
     }
 

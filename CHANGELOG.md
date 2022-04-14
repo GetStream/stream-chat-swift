@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix support for multiple active channel lists at the same time [#1879](https://github.com/GetStream/stream-chat-swift/pull/1879)
 - Fix channels linked to the channel list not being watched [#1924](https://github.com/GetStream/stream-chat-swift/pull/1924)
+- Fix connection recovery flow being triggered after the first connection [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
+- Fix connection recovery flow not being cancelled on disconnect [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
+- Fix cooldown being applied to /sync endpoint in connection recovery flow [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
+- Fix active components not being reset when another user is connected [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
 
 ## StreamChatUI
 ### 💥 Removed
