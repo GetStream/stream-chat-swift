@@ -192,8 +192,10 @@ class APIClient {
 
             log.debug(
                 "Making URL request: \(endpoint.method.rawValue.uppercased()) \(endpoint.path)\n"
+                    + "Headers:\n\(String(describing: urlRequest.allHTTPHeaderFields))\n"
                     + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
-                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)", subsystems: .httpRequests
+                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)",
+                subsystems: .httpRequests
             )
 
             guard let self = self else {
@@ -309,7 +311,7 @@ class APIClient {
     }
 }
 
-private extension URLRequest {
+extension URLRequest {
     var queryItems: [URLQueryItem] {
         if let url = url,
            let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false),
@@ -320,7 +322,7 @@ private extension URLRequest {
     }
 }
 
-private extension Array where Element == URLQueryItem {
+extension Array where Element == URLQueryItem {
     var prettyPrinted: String {
         var message = ""
         
