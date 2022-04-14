@@ -32,6 +32,14 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "messageContentContainerView")
 
+    /// Container that holds `reactionsController` that displays reactions
+    open private(set) lazy var reactionsContainerView = ContainerStackView()
+                                                            .withAccessibilityIdentifier(identifier: "reactionsContainerView")
+
+    /// Container that holds actions
+    open private(set) var actionsContainerStackView: ContainerStackView = ContainerStackView()
+                                                            .withAccessibilityIdentifier(identifier: "actionsContainerStackView")
+
     /// Insets for `messageContentView`'s bubble view.
     public var messageBubbleViewInsets: UIEdgeInsets = .zero
 
@@ -99,7 +107,6 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         ]
 
         if let reactionsController = reactionsController {
-            let reactionsContainerView = ContainerStackView().withAccessibilityIdentifier(identifier: "reactionsContainerView")
             messageContainerStackView.addArrangedSubview(reactionsContainerView)
             reactionsContainerView.addArrangedSubview(.spacer(axis: .horizontal))
             
@@ -134,8 +141,6 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
                 actionsController.view.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: actionsViewWidthMultiplier)
             )
 
-            let actionsContainerStackView = ContainerStackView()
-                .withAccessibilityIdentifier(identifier: "actionsContainerStackView")
             actionsContainerStackView.addArrangedSubview(.spacer(axis: .horizontal))
             messageContainerStackView.addArrangedSubview(actionsContainerStackView)
 
