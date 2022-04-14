@@ -607,66 +607,41 @@ final class CurrentUserController_Tests: XCTestCase {
     // MARK: - Mark all read
     
     func test_markAllRead_callsChannelListUpdater() {
-        
         // GIVEN
-        
         var completionCalled = false
-        weak var weakController = controller
-        
-        XCTAssertFalse(completionCalled)
         
         // WHEN
-        
         controller.markAllRead { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
         }
-                                
-        controller = nil
-        
-        XCTAssertFalse(completionCalled)
-        
+                                        
         env.currentUserUpdater!.markAllRead_completion?(nil)
         
-        env.currentUserUpdater!.markAllRead_completion = nil
-        
         // THEN
-        
         AssertAsync.willBeTrue(completionCalled)
-        
-        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_markAllRead_keepsControllerAlive() {
-        
         // GIVEN
-        
         weak var weakController = controller
         
-        XCTAssertNotNil(weakController)
-        
         // WHEN
-        
         controller.markAllRead { _ in }
         
         controller = nil
         
         // THEN
-        
         AssertAsync.staysTrue(weakController != nil)
     }
     
     func test_markAllRead_propagatesErrorFromUpdater() {
-        
         // GIVEN
-        
         var completionCalledError: Error?
         let testError = TestError()
-        XCTAssertNil(completionCalledError)
         
         // WHEN
-        
         controller.markAllRead { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -675,7 +650,6 @@ final class CurrentUserController_Tests: XCTestCase {
         env.currentUserUpdater!.markAllRead_completion?(testError)
         
         // THEN
-        
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 }
