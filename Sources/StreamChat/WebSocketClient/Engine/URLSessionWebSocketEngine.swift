@@ -45,7 +45,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
             "Making Websocket upgrade request: \(String(describing: request.url?.absoluteString))\n"
                 + "Headers:\n\(String(describing: request.allHTTPHeaderFields))\n"
                 + "Query items:\n\(request.queryItems.prettyPrinted)",
-                subsystems: .httpRequests
+            subsystems: .httpRequests
         )
 
         task = session?.webSocketTask(with: request)

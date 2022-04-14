@@ -195,7 +195,7 @@ class APIClient {
                     + "Headers:\n\(String(describing: urlRequest.allHTTPHeaderFields))\n"
                     + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
                     + "Query items:\n\(urlRequest.queryItems.prettyPrinted)",
-                    subsystems: .httpRequests
+                subsystems: .httpRequests
             )
 
             guard let self = self else {
