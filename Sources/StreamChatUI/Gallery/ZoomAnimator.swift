@@ -60,9 +60,11 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         let duration = transitionDuration(using: transitionContext)
         
         UIView.animateKeyframes(withDuration: duration, delay: 0, animations: {
-            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 1.0, animations: {
-                self.transitionImageView?.frame = self.calculateZoomInImageFrame(image: fromImageView.image!, forView: toVC.view)
-                backgroundColorView.alpha = 1
+            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 1.0, animations: { [weak self] in
+                if let image = fromImageView.image {
+                    self?.transitionImageView?.frame = self?.calculateZoomInImageFrame(image: image, forView: toVC.view) ?? .zero
+                    backgroundColorView.alpha = 1
+                }
             })
             
             UIView.addKeyframe(withRelativeStartTime: 0.95, relativeDuration: 0.05, animations: {
