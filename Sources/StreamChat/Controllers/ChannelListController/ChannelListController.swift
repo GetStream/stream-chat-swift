@@ -321,10 +321,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    /// Marks all channels for a user as read.
-    ///
-    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    ///
+    @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
     public func markAllRead(completion: ((Error?) -> Void)? = nil) {
         worker.markAllRead { error in
             self.callback {

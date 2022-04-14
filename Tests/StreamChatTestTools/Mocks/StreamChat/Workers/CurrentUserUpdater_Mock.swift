@@ -25,6 +25,8 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
     @Atomic var fetchDevices_currentUserId: UserId?
     @Atomic var fetchDevices_completion: ((Error?) -> Void)?
     
+    @Atomic var markAllRead_completion: ((Error?) -> Void)?
+    
     override func updateUserData(
         currentUserId: UserId,
         name: String? = nil,
@@ -84,5 +86,11 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         
         fetchDevices_currentUserId = nil
         fetchDevices_completion = nil
+        
+        markAllRead_completion = nil
+    }
+    
+    override func markAllRead(completion: ((Error?) -> Void)? = nil) {
+        markAllRead_completion = completion
     }
 }

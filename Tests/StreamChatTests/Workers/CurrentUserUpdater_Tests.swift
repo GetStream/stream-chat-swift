@@ -555,4 +555,46 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             Assert.willBeTrue(callbackCalled)
         }
     }
+    
+    // MARK: - Mark all read
+    
+    func test_markAllRead_makesCorrectAPICall() {
+        // GIVEN
+        let referenceEndpoint = Endpoint<EmptyResponse>.markAllRead()
+        
+        // WHEN
+        currentUserUpdater.markAllRead()
+        
+        // THEN
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_markAllRead_successfulResponse_isPropagatedToCompletion() {
+        // GIVEN
+        var completionCalled = false
+        
+        // WHEN
+        currentUserUpdater.markAllRead { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        
+        // THEN
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_markAllRead_errorResponse_isPropagatedToCompletion() {
+        // GIVEN
+        var completionCalledError: Error?
+        let error = TestError()
+        
+        // WHEN
+        currentUserUpdater.markAllRead { completionCalledError = $0 }
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
+        // THEN
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
 }
