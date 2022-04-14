@@ -45,7 +45,7 @@ class ChatClientUpdater {
             client.currentToken = newToken
 
             // Disconnect from web-socket.
-            disconnect(source: .systemInitiated)
+            disconnect(source: .userInitiated)
             
             // Update web-socket endpoint.
             client.webSocketClient?.connectEndpoint = .webSocketConnect(

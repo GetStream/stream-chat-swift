@@ -362,6 +362,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertEqual(client.currentToken, updatedToken)
         // Assert web-socket is disconnected
         XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 1)
+        XCTAssertEqual(client.mockWebSocketClient.disconnect_source, .userInitiated)
         // Assert web-socket endpoint is valid.
         XCTAssertEqual(
             client.webSocketClient?.connectEndpoint.map(AnyEndpoint.init),
