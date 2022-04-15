@@ -8,32 +8,6 @@ import Foundation
 final class SyncRepository_Spy: SyncRepository, Spy {
     var recordedFunctions: [String] = []
     var syncMissingEventsResult: Result<[ChannelId], SyncError>?
-    var _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
-    var _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
-
-    init(client: ChatClient) {
-        let _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
-        let _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
-        let channelRepository = ChannelListUpdater(database: client.databaseContainer, apiClient: client.apiClient)
-        let messageRepository = MessageRepository(database: client.databaseContainer, apiClient: client.apiClient)
-        let offlineRepository = OfflineRequestsRepository_Spy(
-            messageRepository: messageRepository,
-            database: client.databaseContainer,
-            apiClient: client.apiClient
-        )
-        super.init(
-            config: client.config,
-            activeChannelControllers: _activeChannelControllers,
-            activeChannelListControllers: _activeChannelListControllers,
-            channelRepository: channelRepository,
-            offlineRequestsRepository: offlineRepository,
-            eventNotificationCenter: client.eventNotificationCenter,
-            database: client.databaseContainer,
-            apiClient: client.apiClient
-        )
-        self._activeChannelControllers = _activeChannelControllers
-        self._activeChannelListControllers = _activeChannelListControllers
-    }
 
     override func syncLocalState(completion: @escaping () -> Void) {
         record()
@@ -42,9 +16,14 @@ final class SyncRepository_Spy: SyncRepository, Spy {
     override func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
         record()
     }
+    
+    override func cancelRecoveryFlow() {
+        record()
+    }
 
     override func syncChannelsEvents(
         channelIds: [ChannelId],
+        lastSyncAt: Date,
         isRecovery: Bool,
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {

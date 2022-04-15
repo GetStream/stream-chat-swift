@@ -33,6 +33,7 @@ open class ChatCommandSuggestionView: _View, AppearanceProvider {
     /// A view container that holds the name and subtitle labels.
     open private(set) lazy var textContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "textContainer")
 
     override open func setUpAppearance() {
         super.setUpAppearance()

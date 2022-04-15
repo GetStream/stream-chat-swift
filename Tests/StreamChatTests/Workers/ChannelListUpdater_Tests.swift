@@ -277,12 +277,6 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertEqual(allChannels.first { $0.cid == syncedId1.rawValue }?.messages.count, 1)
         XCTAssertEqual(allChannels.first { $0.cid == watchedAndSynchedId.rawValue }?.messages.count, 1)
     }
-
-    private func channels(for query: ChannelListQuery, database: DatabaseContainer) -> Set<ChannelDTO> {
-        let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", query.filter.filterHash)
-        return (try? database.viewContext.fetch(request).first)?.channels ?? Set()
-    }
     
     // MARK: - Fetch
     
@@ -367,5 +361,57 @@ final class ChannelListUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    // MARK: - Start Watching Channels
+
+    func test_startWatchingChannels_whenFetchCallSuccess_thenSavePayload_thenCallCompletionWithoutError() {
+        // When
+        var actualError: Error?
+        let exp = expectation(description: "fetch call completes with success")
+        let cids: [ChannelId] = [.unique, .unique, .unique]
+        listUpdater.startWatchingChannels(withIds: cids) { error in
+            actualError = error
+            exp.fulfill()
+        }
+        let payload = ChannelListPayload(channels: cids.map { dummyPayload(with: $0) })
+        apiClient.test_simulateResponse(.success(payload))
+
+        // Then
+        wait(for: [exp], timeout: 0.5)
+        let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
+        let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
+        XCTAssertEqual(
+            Set(cids.compactMap { database.viewContext.channel(cid: $0)?.asModel().cid }),
+            Set(cids)
+        )
+        XCTAssertNil(actualError)
+    }
+
+    func test_startWatchingChannels_whenFetchCallFail_thenCallCompletionWithError() {
+        // When
+        var actualError: Error?
+        let exp = expectation(description: "fetch call completes with success")
+        let cids: [ChannelId] = [.unique, .unique, .unique]
+        listUpdater.startWatchingChannels(withIds: cids) { error in
+            actualError = error
+            exp.fulfill()
+        }
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<ChannelListPayload, Error>.failure(error))
+
+        // Then
+        wait(for: [exp], timeout: 0.5)
+        let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
+        let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
+        XCTAssertNotNil(actualError)
+    }
+
+    private func channels(for query: ChannelListQuery, database: DatabaseContainer) -> Set<ChannelDTO> {
+        let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
+        request.predicate = NSPredicate(format: "filterHash == %@", query.filter.filterHash)
+        return (try? database.viewContext.fetch(request).first)?.channels ?? Set()
     }
 }

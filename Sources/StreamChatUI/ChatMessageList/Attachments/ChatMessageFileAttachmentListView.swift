@@ -16,7 +16,9 @@ open class ChatMessageFileAttachmentListView: _View, ComponentsProvider {
     open var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
     
     /// Container which holds one or multiple attachment views in self.
-    open private(set) lazy var containerStackView: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var containerStackView: ContainerStackView = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "containerStackView")
 
     override open func setUpLayout() {
         directionalLayoutMargins = .init(top: 4, leading: 4, bottom: 4, trailing: 4)

@@ -10,11 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Assertions are no longer thrown by default. Check `StreamRuntimeCheck` to enable them [#1885](https://github.com/GetStream/stream-chat-swift/pull/1885)
 - Local Storage is enabled by default. You can read more [here](https://getstream.io/chat/docs/sdk/ios/guides/offline-support) [#1890](https://github.com/GetStream/stream-chat-swift/pull/1890)
+- Mark all read has been relocated to `CurrentUserController` to have parity with other platforms [#1927](https://github.com/GetStream/stream-chat-swift/pull/1927)
 ### 🐞 Fixed
 - Channel not being marked as read by the current user when it's only thread replies or silent messages sent after the last read [#1904](https://github.com/GetStream/stream-chat-swift/issues/1904)
 
 ### 🐞 Fixed
-- Fixed support for multiple active channel lists at the same time [#1879](https://github.com/GetStream/stream-chat-swift/pull/1879)
+- Fix support for multiple active channel lists at the same time [#1879](https://github.com/GetStream/stream-chat-swift/pull/1879)
+- Fix channels linked to the channel list not being watched [#1924](https://github.com/GetStream/stream-chat-swift/pull/1924)
+- Fix connection recovery flow being triggered after the first connection [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
+- Fix connection recovery flow not being cancelled on disconnect [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
+- Fix cooldown being applied to /sync endpoint in connection recovery flow [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
+- Fix active components not being reset when another user is connected [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
 
 ## StreamChatUI
 ### 💥 Removed

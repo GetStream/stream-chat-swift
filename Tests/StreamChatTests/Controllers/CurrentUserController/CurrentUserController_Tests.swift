@@ -603,6 +603,55 @@ final class CurrentUserController_Tests: XCTestCase {
             XCTAssertEqual(reloadUserIfNeededCompletionError as? TestError, error)
         }
     }
+    
+    // MARK: - Mark all read
+    
+    func test_markAllRead_callsChannelListUpdater() {
+        // GIVEN
+        var completionCalled = false
+        
+        // WHEN
+        controller.markAllRead { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+                                        
+        env.currentUserUpdater!.markAllRead_completion?(nil)
+        
+        // THEN
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_markAllRead_keepsControllerAlive() {
+        // GIVEN
+        weak var weakController = controller
+        
+        // WHEN
+        controller.markAllRead { _ in }
+        
+        controller = nil
+        
+        // THEN
+        AssertAsync.staysTrue(weakController != nil)
+    }
+    
+    func test_markAllRead_propagatesErrorFromUpdater() {
+        // GIVEN
+        var completionCalledError: Error?
+        let testError = TestError()
+        
+        // WHEN
+        controller.markAllRead { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        env.currentUserUpdater!.markAllRead_completion?(testError)
+        
+        // THEN
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
 }
 
 private class TestEnvironment {

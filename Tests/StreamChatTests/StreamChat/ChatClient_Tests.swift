@@ -575,9 +575,10 @@ final class ChatClient_Tests: XCTestCase {
         // Disconnect chat client
         client.disconnect()
         
-        // Assert `flushRequestsQueue` is triggered, client is not recreated
+        // Assert client is not recreated
         XCTAssertTrue(testEnv.apiClient! === client.apiClient)
-        XCTAssertCall("flushRequestsQueue()", on: testEnv.apiClient!, times: 1)
+        // Assert `disconnect` on updater is triggered
+        XCTAssertTrue(testEnv.clientUpdater!.disconnect_called)
     }
     
     // MARK: - Background workers tests

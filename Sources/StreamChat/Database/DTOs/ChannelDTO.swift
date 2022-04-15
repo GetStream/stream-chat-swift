@@ -12,7 +12,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var imageURL: URL?
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
-    @NSManaged var config: Data
+    @NSManaged var config: ChannelConfigDTO
     
     @NSManaged var createdAt: Date
     @NSManaged var deletedAt: Date?
@@ -165,7 +165,7 @@ extension NSManagedObjectContext {
         }
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
-        dto.config = try JSONEncoder().encode(payload.config)
+        dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         dto.createdAt = payload.createdAt
         dto.deletedAt = payload.deletedAt
         dto.updatedAt = payload.updatedAt
@@ -415,7 +415,7 @@ extension ChatChannel {
             truncatedAt: dto.truncatedAt,
             isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
-            config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
+            config: dto.config.asModel(),
             isFrozen: dto.isFrozen,
             lastActiveMembers: { fetchMembers() },
             membership: dto.membership.map { $0.asModel() },

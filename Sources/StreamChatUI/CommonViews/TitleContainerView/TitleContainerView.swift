@@ -27,6 +27,7 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// A view that acts as the main container for the subviews
     open private(set) lazy var containerView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "containerView")
     
     override open func setUpAppearance() {
         super.setUpAppearance()

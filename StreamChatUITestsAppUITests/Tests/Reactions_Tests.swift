@@ -4,7 +4,7 @@
 
 import XCTest
 
-final class ReactionsTests: StreamTestCase {
+final class Reactions_Tests: StreamTestCase {
     
     func test_addsReaction() throws {
         let message = "test message"

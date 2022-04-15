@@ -259,6 +259,15 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 }
                 queryDTO.channels.insert(channelDTO)
             }
+        } completion: { [weak self] _ in
+            let cids = channels.map(\.cid)
+            self?.worker.startWatchingChannels(withIds: cids) {
+                guard let error = $0 else { return }
+                
+                log.warning(
+                    "Failed to start watching linked channels: \(cids), error: \(error.localizedDescription)"
+                )
+            }
         }
     }
     
@@ -312,10 +321,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    /// Marks all channels for a user as read.
-    ///
-    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    ///
+    @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
     public func markAllRead(completion: ((Error?) -> Void)? = nil) {
         worker.markAllRead { error in
             self.callback {

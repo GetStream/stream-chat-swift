@@ -45,7 +45,9 @@ open class FileAttachmentView: _View, AppearanceProvider {
         stack.axis = .vertical
         stack.alignment = .leading
         stack.spacing = 3
-        return stack.withoutAutoresizingMaskConstraints
+        return stack
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "fileNameAndSizeStack")
     }()
 
     /// The image view that displays the file icon of the attachment.

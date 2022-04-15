@@ -21,12 +21,15 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
     /// `ContainerStackView` that encapsulates `titleLabel` and `imageView`.
     public lazy var containerStackView: ContainerStackView = ContainerStackView(alignment: .center)
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "containerStackView")
 
     /// `UILabel` to show `title`.
     public lazy var titleLabel: UILabel = UILabel()
+        .withAccessibilityIdentifier(identifier: "titleLabel")
 
     /// `UIImageView` to show `image`.
     public lazy var imageView: UIImageView = UIImageView()
+        .withAccessibilityIdentifier(identifier: "imageView")
 
     override open func setUpAppearance() {
         super.setUpAppearance()

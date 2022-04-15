@@ -7,6 +7,7 @@ import XCTest
 
 extension XCTestCase {
     static let channelCreatedDate = Date.unique
+    static let channelUpdateDate = Date.unique
 
     // MARK: - Dummy data with extra data
     

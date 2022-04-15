@@ -54,6 +54,8 @@ final class APIClient_Tests: XCTestCase {
     }
     
     override func tearDown() {
+        RequestRecorderURLProtocol_Mock.reset()
+        URLProtocol_Mock.reset()
         AssertAsync.canBeReleased(&apiClient)
 
         apiClient = nil
@@ -65,9 +67,6 @@ final class APIClient_Tests: XCTestCase {
         cdnClient = nil
         tokenRefresher = nil
         queueOfflineRequest = nil
-        
-        RequestRecorderURLProtocol_Mock.reset()
-        URLProtocol_Mock.reset()
         
         super.tearDown()
     }
@@ -247,8 +246,7 @@ final class APIClient_Tests: XCTestCase {
         })
 
         AssertAsync.willBeEqual(decoder.numberOfCalls(on: "decodeRequestResponse(data:response:error:)"), 2)
-        // Both are executed even though none of them have completed
-        XCTEnsureRequestsWereExecuted(times: 2)
+        AssertAsync.willBeEqual(encoder.numberOfCalls(on: "encodeRequest(for:completion:)"), 2)
     }
 
     // MARK: - Request retries

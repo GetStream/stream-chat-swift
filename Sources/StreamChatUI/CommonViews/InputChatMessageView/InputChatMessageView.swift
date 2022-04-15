@@ -25,35 +25,42 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
     /// The main container stack view that layouts all the message input content views.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "container")
 
     /// A view that displays the quoted message that the new message is replying.
     public private(set) lazy var quotedMessageView = components
         .quotedMessageView.init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "quotedMessageView")
 
     /// A view that displays the attachments of the new message.
     /// This is view from separate AttachmentsVC and will be injected by the ComposerVC.
     public private(set) lazy var attachmentsViewContainer = UIView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "attachmentsViewContainer")
 
     /// The container stack view that layouts the command label, text view and the clean button.
     public private(set) lazy var inputTextContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "inputTextContainer")
 
     /// The input text view to type a new message or command.
     public private(set) lazy var textView: InputTextView = components
         .inputTextView.init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "textView")
 
     /// The command label that display the command info if a new command is being typed.
     public private(set) lazy var commandLabelView: CommandLabelView = components
         .commandLabelView.init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "commandLabelView")
 
     /// A button to clear the current typing information.
     public private(set) lazy var clearButton: UIButton = components
         .closeButton.init()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "clearButton")
 
     override open func setUpAppearance() {
         super.setUpAppearance()
