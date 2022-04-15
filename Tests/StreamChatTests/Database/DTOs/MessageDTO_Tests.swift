@@ -888,19 +888,16 @@ final class MessageDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let currentUserId: UserId = .unique
         
-        _ = try waitFor { completion in
-            database.write({ (session) in
-                let currentUserPayload: CurrentUserPayload = .dummy(
-                    userId: currentUserId,
-                    role: .admin,
-                    extraData: [:]
-                )
+        try database.writeSynchronously { session in
+            let currentUserPayload: CurrentUserPayload = .dummy(
+                userId: currentUserId,
+                role: .admin,
+                extraData: [:]
+            )
 
-                try session.saveCurrentUser(payload: currentUserPayload)
-                
-                try session.saveChannel(payload: self.dummyPayload(with: cid))
-                
-            }, completion: completion)
+            try session.saveCurrentUser(payload: currentUserPayload)
+            
+            try session.saveChannel(payload: self.dummyPayload(with: cid))
         }
         
         // Create a new message
@@ -918,30 +915,30 @@ final class MessageDTO_Tests: XCTestCase {
         let newMessagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
         let newMentionedUserIds: [UserId] = [.unique]
                 
-        _ = try waitFor { completion in
-            database.write({
-                let messageDTO = try $0.createNewMessage(
-                    in: cid,
-                    text: newMessageText,
-                    pinning: newMessagePinning,
-                    command: newMessageCommand,
-                    arguments: newMessageArguments,
-                    parentMessageId: newMessageParentMessageId,
-                    attachments: newMessageAttachments,
-                    mentionedUserIds: newMentionedUserIds,
-                    showReplyInChannel: true,
-                    isSilent: false,
-                    quotedMessageId: nil,
-                    createdAt: nil,
-                    extraData: [:]
-                )
-                newMessageId = messageDTO.id
-            }, completion: completion)
+        try database.writeSynchronously { session in
+            let messageDTO = try session.createNewMessage(
+                in: cid,
+                text: newMessageText,
+                pinning: newMessagePinning,
+                command: newMessageCommand,
+                arguments: newMessageArguments,
+                parentMessageId: newMessageParentMessageId,
+                attachments: newMessageAttachments,
+                mentionedUserIds: newMentionedUserIds,
+                showReplyInChannel: true,
+                isSilent: false,
+                quotedMessageId: nil,
+                createdAt: nil,
+                extraData: [:]
+            )
+            newMessageId = messageDTO.id
         }
         
-        let loadedMessage: ChatMessage = try unwrapAsync(
-            database.viewContext.message(id: newMessageId)?
-                .asModel()
+        let loadedChannel: ChatChannel = try XCTUnwrap(
+            database.viewContext.channel(cid: cid)?.asModel()
+        )
+        let loadedMessage: ChatMessage = try XCTUnwrap(
+            database.viewContext.message(id: newMessageId)?.asModel()
         )
         
         XCTAssertEqual(loadedMessage.text, newMessageText)
@@ -960,6 +957,7 @@ final class MessageDTO_Tests: XCTestCase {
             loadedMessage._attachments.map { $0.uploadingState?.localFileURL },
             newMessageAttachments.map(\.localFileURL)
         )
+        XCTAssertEqual(loadedChannel.previewMessage?.id, loadedMessage.id)
     }
     
     func test_creatingNewMessage_withoutExistingCurrentUser_throwsError() throws {

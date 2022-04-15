@@ -455,6 +455,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             parentMessageDTO.replyCount += 1
         }
         
+        // When the current user submits the new message for sending - make it a channel preview.
+        channelDTO.previewMessage = message
+        
         return message
     }
 
