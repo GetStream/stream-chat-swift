@@ -806,4 +806,97 @@ final class ChannelDTO_Tests: XCTestCase {
         let previewMessage = try XCTUnwrap(channel.previewMessage)
         XCTAssertEqual(previewMessage.text, previewMessagePayload.text)
     }
+    
+    func test_asModel_populatesLatestMessage() throws {
+        // GIVEN
+        database = try DatabaseContainer_Spy(
+            kind: .inMemory,
+            localCachingSettings: .init(
+                chatChannel: .init(
+                    lastActiveWatchersLimit: 0,
+                    lastActiveMembersLimit: 0,
+                    latestMessagesLimit: 3
+                )
+            ),
+            deletedMessagesVisibility: .visibleForCurrentUser,
+            shouldShowShadowedMessages: true
+        )
+        
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .admin)
+        let anotherUser: UserPayload = .dummy(userId: .unique)
+
+        let cid: ChannelId = .unique
+       
+        let message1: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            text: "message1",
+            createdAt: .init(),
+            cid: cid
+        )
+        
+        let deletedMessageFromCurrentUser: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            text: "deletedMessageFromCurrentUser",
+            createdAt: message1.createdAt.addingTimeInterval(-1),
+            deletedAt: .init(),
+            cid: cid
+        )
+        
+        let deletedMessageFromAnotherUser: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            text: "deletedMessageFromAnotherUser",
+            createdAt: deletedMessageFromCurrentUser.createdAt.addingTimeInterval(-1),
+            deletedAt: .init(),
+            cid: cid
+        )
+        
+        let shadowedMessageFromAnotherUser: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            text: "shadowedMessageFromAnotherUser",
+            createdAt: deletedMessageFromAnotherUser.createdAt.addingTimeInterval(-1),
+            cid: cid,
+            isShadowed: true
+        )
+        
+        let message2: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            text: "message2",
+            createdAt: shadowedMessageFromAnotherUser.createdAt.addingTimeInterval(-1),
+            cid: cid
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                message1,
+                deletedMessageFromCurrentUser,
+                deletedMessageFromAnotherUser,
+                shadowedMessageFromAnotherUser,
+                message2
+            ]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // WHEN
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: cid)?.asModel()
+        )
+        
+        // THEN
+        XCTAssertEqual(
+            Set(channel.latestMessages.map(\.id)),
+            Set([message1.id, deletedMessageFromCurrentUser.id, shadowedMessageFromAnotherUser.id])
+        )
+    }
 }

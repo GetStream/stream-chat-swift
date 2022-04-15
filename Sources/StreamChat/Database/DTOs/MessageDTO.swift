@@ -282,12 +282,19 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
-    static func load(for cid: String, limit: Int, offset: Int = 0, context: NSManagedObjectContext) -> [MessageDTO] {
+    static func load(
+        for cid: String,
+        limit: Int,
+        offset: Int = 0,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool,
+        context: NSManagedObjectContext
+    ) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = channelMessagesPredicate(
             for: cid,
-            deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
-            shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
+            deletedMessagesVisibility: deletedMessagesVisibility,
+            shouldShowShadowedMessages: shouldShowShadowedMessages
         )
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit

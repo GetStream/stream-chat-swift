@@ -376,6 +376,8 @@ extension ChatChannel {
                 .load(
                     for: dto.cid,
                     limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
+                    deletedMessagesVisibility: dto.managedObjectContext?.deletedMessagesVisibility ?? .visibleForCurrentUser,
+                    shouldShowShadowedMessages: dto.managedObjectContext?.shouldShowShadowedMessages ?? false,
                     context: context
                 )
                 .map { $0.asModel() }
