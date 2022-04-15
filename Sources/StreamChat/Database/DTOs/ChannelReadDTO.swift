@@ -27,19 +27,19 @@ class ChannelReadDTO: NSManagedObject {
     
     static func fetchRequest(userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
-        request.predicate = NSPredicate(format: "userId == %@", userId)
+        request.predicate = NSPredicate(format: "user.id == %@", userId)
         return request
     }
     
     static func fetchRequest(for cid: ChannelId, userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
-        request.predicate = NSPredicate(format: "channelCid == %@ && userId == %@", cid.rawValue, userId)
+        request.predicate = NSPredicate(format: "channel.cid == %@ && user.id == %@", cid.rawValue, userId)
         return request
     }
     
     static func fetchRequest(for cid: ChannelId, userIDs: [String]) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
-        request.predicate = NSPredicate(format: "channelCid == %@ && userId IN %@", cid.rawValue, userIDs)
+        request.predicate = NSPredicate(format: "channel.cid == %@ && user.id IN %@", cid.rawValue, userIDs)
         return request
     }
     
@@ -74,38 +74,63 @@ extension NSManagedObjectContext {
         let userIDs = payload.map(\.user.id)
         var readsByUserID = [String: ChannelReadDTO]()
 
-        // 0 - fetch all existing reads
+        // fetch all existing reads
         let existingReads = try fetch(ChannelReadDTO.fetchRequest(for: cid, userIDs: userIDs))
         existingReads.forEach {
             // tell core data that we do not want to merge any changes for these objects (sigh)
-            refresh($0, mergeChanges: false)
+            if $0.changedValues()["lastReadAt"] == nil {
+                refresh($0, mergeChanges: false)
+            }
             readsByUserID[$0.user.id] = $0
         }
 
-        // 1 - create a list of members that need to be inserted
+        // create a list of dtos that need to be inserted
         let readsToCreate = payload.filter {
             readsByUserID[$0.user.id] == nil
         }
 
+        let channel = ChannelDTO.loadOrCreate(cid: cid, context: self)
+
         let insertedReads = readsToCreate.map { payload -> ChannelReadDTO in
-            let new = NSEntityDescription.insertNewObject(forEntityName: ChannelReadDTO.entityName, into: self) as! ChannelReadDTO
-            new.channel = ChannelDTO.loadOrCreate(cid: cid, context: self)
-            new.user = UserDTO.loadOrCreate(id: payload.user.id, context: self)
-            new.lastReadAt = payload.lastReadAt
-            new.unreadMessageCount = Int32(payload.unreadMessagesCount)
-            return new
+            let dto = NSEntityDescription.insertNewObject(forEntityName: ChannelReadDTO.entityName, into: self) as! ChannelReadDTO
+            dto.channel = channel
+            populate(
+                dto: dto,
+                userId: payload.user.id,
+                lastReadAt: payload.lastReadAt,
+                unreadMessageCount: payload.unreadMessagesCount
+            )
+            return dto
         }
 
         insertedReads.forEach {
             readsByUserID[$0.user.id] = $0
         }
-        print("debugging inserted \(insertedReads.count)")
 
-        // 2 - create a list of members that need to updated (this is done by comparing the updated_at field)
-//        let membersToUpdate = 1
+        // create a list of dtos that need to be updated
+        let readsToUpdate = payload.filter {
+            guard let m = readsByUserID[$0.user.id] else {
+                return false
+            }
+            return $0.lastReadAt != m.lastReadAt
+        }
 
-        // 3 - return the full list in the same order (inserted, updated and untouched)
+        readsToUpdate.forEach {
+            readsByUserID[$0.user.id] = saveChannelRead(
+                cid: cid,
+                userId: $0.user.id,
+                lastReadAt: $0.lastReadAt,
+                unreadMessageCount: $0.unreadMessagesCount
+            )
+        }
+
         return userIDs.map { readsByUserID[$0] }.compactMap { $0 }
+    }
+
+    func populate(dto: ChannelReadDTO, userId: UserId, lastReadAt: Date, unreadMessageCount: Int) {
+        dto.user = UserDTO.loadOrCreate(id: userId, context: self)
+        dto.lastReadAt = lastReadAt
+        dto.unreadMessageCount = Int32(unreadMessageCount)
     }
 
     func saveChannelRead(
@@ -115,9 +140,7 @@ extension NSManagedObjectContext {
         unreadMessageCount: Int
     ) -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
-        dto.user = UserDTO.loadOrCreate(id: userId, context: self)
-        dto.lastReadAt = lastReadAt
-        dto.unreadMessageCount = Int32(unreadMessageCount)
+        populate(dto: dto, userId: userId, lastReadAt: lastReadAt, unreadMessageCount: unreadMessageCount)
         return dto
     }
     
@@ -126,9 +149,7 @@ extension NSManagedObjectContext {
         for cid: ChannelId
     ) throws -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self)
-        dto.user = try saveUser(payload: payload.user)
-        dto.lastReadAt = payload.lastReadAt
-        dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
+        populate(dto: dto, userId: userId, lastReadAt: lastReadAt, unreadMessageCount: unreadMessageCount)
         return dto
     }
     

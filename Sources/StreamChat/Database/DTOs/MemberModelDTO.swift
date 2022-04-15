@@ -123,11 +123,10 @@ extension NSManagedObjectContext {
 
         // fetch all members based on their IDs
         let existingMembers = try fetch(MemberDTO.members(userIDs, in: channelId))
-        try existingMembers.forEach {
+        existingMembers.forEach {
             // tell core data that we do not want to merge any changes for these objects (sigh)
-            refresh($0, mergeChanges: false)
-            if let payload = payloadById[$0.id] {
-                try self.populateMember(dto: $0, payload: payload, query: nil)
+            if $0.changedValues()["updatedAt"] == nil {
+                refresh($0, mergeChanges: false)
             }
             membersByUserID[$0.user.id] = $0
         }
@@ -140,7 +139,7 @@ extension NSManagedObjectContext {
         let insertedMembers = try membersToCreate.map { payload -> MemberDTO in
             let new = NSEntityDescription.insertNewObject(forEntityName: MemberDTO.entityName, into: self) as! MemberDTO
             new.id = MemberDTO.createId(userId: payload.user.id, channeldId: channelId)
-            try self.populateMember(dto: new, payload: payload, query: nil)
+            try self.populate(dto: new, payload: payload, query: nil)
             return new
         }
         insertedMembers.forEach {
@@ -154,14 +153,15 @@ extension NSManagedObjectContext {
             }
             return $0.updatedAt > m.memberUpdatedAt
         }
+        
         try membersToUpdate.forEach {
-            try self.saveMember(payload: $0, channelId: channelId)
+            try membersByUserID[$0.user.id] = self.saveMember(payload: $0, channelId: channelId)
         }
 
         return userIDs.map { membersByUserID[$0] }.compactMap { $0 }
     }
 
-    func populateMember(dto: MemberDTO, payload: MemberPayload, query: ChannelMemberListQuery?) throws {
+    func populate(dto: MemberDTO, payload: MemberPayload, query: ChannelMemberListQuery?) throws {
         dto.user = try saveUser(payload: payload.user)
         
         if let role = payload.role {
@@ -194,7 +194,7 @@ extension NSManagedObjectContext {
             channelDTO.members.insert(dto)
         }
         
-        try populateMember(dto: dto, payload: payload, query: nil)
+        try populate(dto: dto, payload: payload, query: nil)
         return dto
     }
     

@@ -449,7 +449,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         let insertedMessages = try messagesToCreate.map { payload -> MessageDTO in
             let new = MessageDTO.create(id: payload.id, context: self)
-            try populateMessage(dto: new, with: payload, for: channelDTO, syncOwnReactions: true, currentUserID: currentUserID)
+            try populate(dto: new, with: payload, for: channelDTO, syncOwnReactions: true, currentUserID: currentUserID)
             return new
         }
         insertedMessages.forEach {
@@ -461,8 +461,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             guard let m = messagesByID[$0.id] else {
                 return false
             }
-            // TODO: check that this condition is correct (not sure about deletes)
-            return $0.updatedAt > m.updatedAt
+            return $0.updatedAt != m.updatedAt || $0.deletedAt != m.deletedAt
         }
         try messagesToUpdate.forEach {
             _ = try self.saveMessage(payload: $0, channelDTO: channelDTO, syncOwnReactions: true)
@@ -471,7 +470,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return messageIDs.map { messagesByID[$0] }.compactMap { $0 }
     }
 
-    func populateMessage(
+    func populate(
         dto: MessageDTO,
         with payload: MessagePayload,
         for channelDTO: ChannelDTO,
@@ -595,7 +594,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
         let currentUserID = currentUser?.user.id
 
-        try populateMessage(
+        try populate(
             dto: dto,
             with: payload,
             for: channelDTO,

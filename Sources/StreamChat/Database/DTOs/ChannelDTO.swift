@@ -153,9 +153,6 @@ extension NSManagedObjectContext {
         }
     }
     
-    // API RESPONSE -> ChannelDetailPayload -> ChannelDTO -> Channel (model)
-    //                       Decode               Encode        Decode
-    
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?
@@ -226,18 +223,17 @@ extension NSManagedObjectContext {
 
         _ = try upsertMany(payload: payload.messages, channelDTO: dto)
 
-        // TODO: write tests for these two methods
         dto.updateOldestMessageAt(payload: payload)
         dto.updateLastMessageAt(payload: payload)
 
         _ = try upsertMany(payload: payload.pinnedMessages, channelDTO: dto)
         
-        _ = try upsertMany(payload: payload.channelReads, for: payload.channel.cid)
-
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
         try upsertMany(payload: payload.members, channelId: payload.channel.cid).forEach {
             dto.members.insert($0)
         }
+
+        _ = try upsertMany(payload: payload.channelReads, for: payload.channel.cid)
 
         if let membership = payload.membership {
             let membership = try saveMember(payload: membership, channelId: payload.channel.cid)
@@ -318,6 +314,24 @@ extension ChannelDTO {
 }
 
 extension ChannelDTO {
+    func messagesArePopulated() -> Bool {
+        if lastMessageAt == nil {
+            return true
+        }
+
+        if oldestMessageAt == nil {
+            return true
+        }
+
+        let newestMessage = messages.max { a, b in
+            a.createdAt < b.createdAt
+        }
+
+        return newestMessage?.createdAt == lastMessageAt
+    }
+}
+
+extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
     func asModel() -> ChatChannel { .create(fromDTO: self) }
 }
@@ -374,21 +388,28 @@ extension ChatChannel {
         }
         
         let fetchMessages: () -> [ChatMessage] = {
-            MessageDTO
+            let limit = dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25
+            if dto.messagesArePopulated() {
+                // TODO: better if we return up to limit messages instead of all of them
+                return dto.messages.map { $0.asModel() }
+            }
+            return MessageDTO
                 .load(
                     for: dto.cid,
-                    limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
+                    limit: limit,
                     context: context
                 )
                 .map { $0.asModel() }
         }
         
+        // TODO: this makes no sense, we should not store watchers on the database at all
         let fetchWatchers: () -> [ChatUser] = {
             UserDTO
                 .loadLastActiveWatchers(cid: cid, context: context)
                 .map { $0.asModel() }
         }
         
+        // TODO: really often the DTO is populated with all messages, we should skip this query in that case
         let fetchMembers: () -> [ChatChannelMember] = {
             MemberDTO
                 .loadLastActiveMembers(cid: cid, context: context)
