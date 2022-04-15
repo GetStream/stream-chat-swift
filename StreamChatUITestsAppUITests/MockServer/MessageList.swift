@@ -7,28 +7,30 @@ import XCTest
 
 extension StreamMockServer {
     
-    func saveMessage(_ message: [String: Any]) {
-        messageList.append(message)
+    func saveMessage(_ message: [String: Any]?) {
+        if let message = message {
+            messageList.append(message)
+        }
     }
     
-    var firstMessage: [String: Any] {
-        try! XCTUnwrap(waitForMessageList().first)
+    var firstMessage: [String: Any]? {
+        try? XCTUnwrap(waitForMessageList().first)
     }
     
-    var lastMessage: [String: Any] {
-        try! XCTUnwrap(waitForMessageList().last)
+    var lastMessage: [String: Any]? {
+        try? XCTUnwrap(waitForMessageList().last)
     }
     
-    func findMessageByIndex(_ index: Int) -> [String: Any] {
-        try! XCTUnwrap(waitForMessageList()[index])
+    func findMessageByIndex(_ index: Int) -> [String: Any]? {
+        try? XCTUnwrap(waitForMessageList()[index])
     }
     
-    func findMessageById(_ id: String) -> [String: Any] {
-        try! XCTUnwrap(waitForMessageWithId(id))
+    func findMessageById(_ id: String) -> [String: Any]? {
+        try? XCTUnwrap(waitForMessageWithId(id))
     }
     
-    func findMessageByUserId(_ userId: String) -> [String: Any] {
-        try! XCTUnwrap(waitForMessageWithUserId(userId))
+    func findMessageByUserId(_ userId: String) -> [String: Any]? {
+        try? XCTUnwrap(waitForMessageWithUserId(userId))
     }
     
     func findMessagesByParrentId(_ parentId: String) -> [[String: Any]] {
@@ -40,17 +42,18 @@ extension StreamMockServer {
     
     func findMessagesByChannelId(_ channelId: String) -> [[String: Any]] {
         return messageList.filter {
-            ($0[MessagePayloadsCodingKeys.cid.rawValue] as! String).contains(":\(channelId)")
+            String(describing: $0[MessagePayloadsCodingKeys.cid.rawValue]).contains(":\(channelId)")
         }
     }
     
     func removeMessage(id: String) {
-        let deletedMessage = try! XCTUnwrap(waitForMessageWithId(id))
+        let deletedMessage = try? XCTUnwrap(waitForMessageWithId(id))
         let idKey = MessagePayloadsCodingKeys.id.rawValue
-        let deletedIndex = messageList.firstIndex(where: { (message) -> Bool in
-            (message[idKey] as? String) == (deletedMessage[idKey] as? String)
-        })
-        messageList.remove(at: try! XCTUnwrap(deletedIndex))
+        if let deletedIndex = messageList.firstIndex(where: { (message) -> Bool in
+            (message[idKey] as? String) == (deletedMessage?[idKey] as? String)
+        }) {
+            messageList.remove(at: deletedIndex)
+        }
     }
     
     private func waitForMessageList() -> [[String : Any]] {
@@ -75,8 +78,8 @@ extension StreamMockServer {
         var newMessageList: [[String: Any]] = []
         while newMessageList.isEmpty && endTime > TestData.currentTimeInterval {
             newMessageList = messageList.filter {
-                let user = $0[MessagePayloadsCodingKeys.user.rawValue] as! [String: Any]
-                return (user[UserPayloadsCodingKeys.id.rawValue] as? String) == userId
+                let user = $0[MessagePayloadsCodingKeys.user.rawValue] as? [String: Any]
+                return (user?[UserPayloadsCodingKeys.id.rawValue] as? String) == userId
             }
         }
         return newMessageList.first

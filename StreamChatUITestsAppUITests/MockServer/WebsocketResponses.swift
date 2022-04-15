@@ -27,7 +27,7 @@ extension StreamMockServer {
     @discardableResult
     func websocketEvent(
         _ eventType: EventType,
-        user: [String : Any],
+        user: [String : Any]?,
         channelId: String
     ) -> Self {
         var json = TestData.getMockResponse(fromFile: .wsChatEvent).json
@@ -52,20 +52,22 @@ extension StreamMockServer {
     /// - Returns: Self
     @discardableResult
     func websocketMessage(
-        _ text: String = "",
-        channelId: String,
-        messageId: String,
-        timestamp: String = TestData.currentDate,
+        _ text: String? = "",
+        channelId: String?,
+        messageId: String?,
+        timestamp: String? = TestData.currentDate,
         eventType: EventType,
-        user: [String : Any],
-        intercept: ((inout [String: Any]) -> [String: Any])? = nil
+        user: [String : Any]?,
+        intercept: ((inout [String: Any]?) -> [String: Any]?)? = nil
     ) -> Self {
+        guard let messageId = messageId else { return self }
+        
         var json = TestData.getMockResponse(fromFile: .wsMessage).json
-        var mockedMessage: [String: Any]
+        var mockedMessage: [String: Any]?
         
         switch eventType {
         case .messageNew:
-            let message = json[TopLevelKey.message] as! [String: Any]
+            let message = json[TopLevelKey.message] as? [String: Any]
             mockedMessage = mockMessage(
                 message,
                 channelId: channelId,
@@ -79,7 +81,7 @@ extension StreamMockServer {
             saveMessage(mockedMessage)
         case .messageDeleted:
             let message = findMessageById(messageId)
-            let id = message[MessagePayloadsCodingKeys.id.rawValue] as! String
+            let id = message?[MessagePayloadsCodingKeys.id.rawValue] as! String
             mockedMessage = mockDeletedMessage(message, user: user)
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
             removeMessage(id: id)
@@ -88,10 +90,10 @@ extension StreamMockServer {
             mockedMessage = mockMessage(
                 message,
                 channelId: channelId,
-                messageId: message[MessagePayloadsCodingKeys.id.rawValue] as! String?,
+                messageId: message?[MessagePayloadsCodingKeys.id.rawValue] as? String,
                 text: text,
                 user: user,
-                createdAt: message[MessagePayloadsCodingKeys.createdAt.rawValue] as! String?,
+                createdAt: message?[MessagePayloadsCodingKeys.createdAt.rawValue] as? String,
                 updatedAt: timestamp
             )
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
@@ -100,8 +102,11 @@ extension StreamMockServer {
             mockedMessage = [:]
         }
         
-        json[TopLevelKey.channelId] = channelId
-        json[TopLevelKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
+        if let channelId = channelId {
+            json[TopLevelKey.channelId] = channelId
+            json[TopLevelKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
+        }
+        
         json[TopLevelKey.user] = user
         json[TopLevelKey.message] = mockedMessage
         json[MessagePayloadsCodingKeys.createdAt.rawValue] = TestData.currentDate
@@ -120,23 +125,23 @@ extension StreamMockServer {
     /// - Returns: Self
     @discardableResult
     func websocketReaction(
-        type: TestData.Reactions,
+        type: TestData.Reactions?,
         eventType: EventType,
-        user: [String : Any]
+        user: [String : Any]?
     ) -> Self {
         let messageDetails = lastMessage
         var json = TestData.getMockResponse(fromFile: .wsReaction).json
-        var reaction = json[TopLevelKey.reaction] as! [String: Any]
-        var message = json[TopLevelKey.message] as! [String: Any]
-        let messageId = messageDetails[MessagePayloadsCodingKeys.id.rawValue] as! String
-        let cid = messageDetails[MessagePayloadsCodingKeys.cid.rawValue] as! String
-        let channelId = cid.split(separator: ":").last
+        var reaction = json[TopLevelKey.reaction] as? [String: Any]
+        var message = json[TopLevelKey.message] as? [String: Any]
+        let messageId = messageDetails?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let cid = messageDetails?[MessagePayloadsCodingKeys.cid.rawValue] as? String
+        let channelId = cid?.split(separator: ":").last
         let timestamp = TestData.currentDate
         
         message = mockMessageWithReaction(
             messageDetails,
             fromUser: user,
-            reactionType: type.rawValue,
+            reactionType: type?.rawValue,
             timestamp: timestamp,
             deleted: eventType == .reactionDeleted
         )
@@ -145,7 +150,7 @@ extension StreamMockServer {
             reaction,
             fromUser: user,
             messageId: messageId,
-            reactionType: type.rawValue,
+            reactionType: type?.rawValue,
             timestamp: timestamp
         )
         

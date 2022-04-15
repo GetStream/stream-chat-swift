@@ -9,30 +9,34 @@ import XCTest
 extension StreamMockServer {
     
     func configureEventEndpoints() {
-        server[MockEndpoint.event] = { [weak self] request in
-            let channelId = try! XCTUnwrap(request.params[EndpointQuery.channelId])
+        server.register(MockEndpoint.event) { [weak self] request in
+            let channelId = try XCTUnwrap(request.params[EndpointQuery.channelId])
             let json = TestData.toJson(request.body)
-            let event = json[TopLevelKey.event] as! [String: Any]
-            let eventType = event[EventPayload.CodingKeys.eventType.rawValue] as! String
-            self?.websocketEvent(EventType(rawValue: eventType), user: UserDetails.lukeSkywalker, channelId: channelId)
-            return self?.sendEvent(eventType, channelId: channelId) ?? .badRequest(nil)
+            let event = json[TopLevelKey.event] as? [String: Any]
+            let eventType = event?[EventPayload.CodingKeys.eventType.rawValue] as? String
+            self?.websocketEvent(
+                EventType(rawValue: String(describing: eventType)),
+                user: UserDetails.lukeSkywalker,
+                channelId: channelId
+            )
+            return self?.sendEvent(eventType, channelId: channelId)
         }
-        server[MockEndpoint.messageRead] = { [weak self] request in
-            let channelId = try! XCTUnwrap(request.params[EndpointQuery.channelId])
+        server.register(MockEndpoint.messageRead) { [weak self] request in
+            let channelId = try XCTUnwrap(request.params[EndpointQuery.channelId])
             self?.websocketEvent(.messageRead, user: UserDetails.lukeSkywalker, channelId: channelId)
-            return self?.sendEvent(.messageRead, channelId: channelId) ?? .badRequest(nil)
+            return self?.sendEvent(.messageRead, channelId: channelId)
         }
     }
 
-    private func sendEvent(_ eventType: String, channelId: String) -> HttpResponse {
+    private func sendEvent(_ eventType: String?, channelId: String) -> HttpResponse {
         var json = TestData.toJson(.httpChatEvent)
-        var event = json[TopLevelKey.event] as! [String: Any]
+        var event = json[TopLevelKey.event] as? [String: Any]
         let user = setUpUser(source: event, details: UserDetails.lukeSkywalker)
-        event[EventPayload.CodingKeys.user.rawValue] = user
-        event[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
-        event[EventPayload.CodingKeys.eventType.rawValue] = eventType
-        event[EventPayload.CodingKeys.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
-        event[EventPayload.CodingKeys.channelId.rawValue] = channelId
+        event?[EventPayload.CodingKeys.user.rawValue] = user
+        event?[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
+        event?[EventPayload.CodingKeys.eventType.rawValue] = eventType
+        event?[EventPayload.CodingKeys.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
+        event?[EventPayload.CodingKeys.channelId.rawValue] = channelId
         json[TopLevelKey.event] = event
         return .ok(.json(json))
     }

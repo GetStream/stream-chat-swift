@@ -429,6 +429,7 @@
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
 		80D880432546553500908B7B /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D880422546553500908B7B /* ChatScrollView.swift */; };
 		8210AA2827FC916B005F0B32 /* ChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8210AA2727FC916B005F0B32 /* ChannelList.swift */; };
+		8224FD86280EC09800B32D43 /* HttpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8224FD85280EC09800B32D43 /* HttpServer.swift */; };
 		822F265227D8F74700E454FB /* StreamTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82AD02BC27D8E44B000611B7 /* StreamTestCase.swift */; };
 		822F265527D8F75600E454FB /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82AD02A327D76A63000611B7 /* String.swift */; };
 		822F265727D8F75D00E454FB /* UserRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8298C8E827D22C3E004082D3 /* UserRobot.swift */; };
@@ -2643,6 +2644,7 @@
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
 		80D880422546553500908B7B /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
 		8210AA2727FC916B005F0B32 /* ChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList.swift; sourceTree = "<group>"; };
+		8224FD85280EC09800B32D43 /* HttpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpServer.swift; sourceTree = "<group>"; };
 		822F267C27DA1E3900E454FB /* http_message.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_message.json; sourceTree = "<group>"; };
 		822F267F27DA3F7700E454FB /* http_events.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_events.json; sourceTree = "<group>"; };
 		822F268B27DA447F00E454FB /* ws_message.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ws_message.json; sourceTree = "<group>"; };
@@ -4948,6 +4950,7 @@
 				825A32AB27DA5462000402A9 /* Dictionary.swift */,
 				82AD02A327D76A63000611B7 /* String.swift */,
 				A3BEB6AE27F3235600D6D80D /* Bundle+Target.swift */,
+				8224FD85280EC09800B32D43 /* HttpServer.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -9507,6 +9510,7 @@
 				82B350FB27EA298800FEB6A0 /* ReactionResponses.swift in Sources */,
 				822F268E27DA460800E454FB /* ParticipantRobot.swift in Sources */,
 				825A32CB27DBB463000402A9 /* MessageListPage.swift in Sources */,
+				8224FD86280EC09800B32D43 /* HttpServer.swift in Sources */,
 				82E4CBE027F322EA0013B02D /* User.swift in Sources */,
 				822F265B27D8F76800E454FB /* LaunchArgument.swift in Sources */,
 				824445AB27EA364300DB2FD8 /* ChannelResponses.swift in Sources */,
