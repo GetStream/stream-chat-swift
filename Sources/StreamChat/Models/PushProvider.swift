@@ -4,18 +4,29 @@
 
 import Foundation
 
+/// A unique identifier of a push provider.
+public typealias PushProviderId = String
+
 /// A type that represents the supported push providers.
-public struct PushProvider: RawRepresentable, Hashable, ExpressibleByStringLiteral {
-    public static let firebase: Self = "firebase"
-    public static let apn: Self = "apn"
-
-    public let rawValue: String
-
-    public init(rawValue: String) {
-        self.rawValue = rawValue
+public enum PushProvider {
+    case firebase(token: String)
+    case apn(token: Data)
+    
+    var pushProviderId: PushProviderId {
+        switch self {
+        case .firebase:
+            return "firebase"
+        case .apn:
+            return "apn"
+        }
     }
-
-    public init(stringLiteral value: String) {
-        self.init(rawValue: value)
+    
+    var deviceToken: DeviceId {
+        switch self {
+        case .firebase(let token):
+            return token
+        case .apn(let token):
+            return token.deviceToken
+        }
     }
 }

@@ -198,14 +198,13 @@ public extension CurrentChatUserController {
     ///   - token: Device token, obtained via `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
     ///   - pushProvider: The push provider for this device. By default, it is APN.
     ///   - completion: Called when device is successfully registered, or with error.
-    func addDevice(token: Data, pushProvider: PushProvider = .apn, completion: ((Error?) -> Void)? = nil) {
+    func addDevice(pushProvider: PushProvider, completion: ((Error?) -> Void)? = nil) {
         guard let currentUserId = currentUser?.id else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
 
         currentUserUpdater.addDevice(
-            token: token,
             currentUserId: currentUserId,
             pushProvider: pushProvider
         ) { error in

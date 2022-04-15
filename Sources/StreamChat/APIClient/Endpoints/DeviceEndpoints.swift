@@ -16,7 +16,7 @@ extension Endpoint {
     static func addDevice(
         userId: UserId,
         deviceId: DeviceId,
-        pushProvider: PushProvider
+        pushProviderId: PushProviderId
     ) -> Endpoint<EmptyResponse> {
         .init(
             path: .devices,
@@ -26,7 +26,7 @@ extension Endpoint {
             body: [
                 "user_id": userId,
                 "id": deviceId,
-                "push_provider": pushProvider.rawValue
+                "push_provider": pushProviderId
             ]
         )
     }

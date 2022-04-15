@@ -59,12 +59,11 @@ class CurrentUserUpdater: Worker {
     ///   - pushProvider: The push provider for this device.
     ///   - completion: Called when device is successfully registered, or with error.
     func addDevice(
-        token: Data,
         currentUserId: UserId,
         pushProvider: PushProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let deviceId = token.deviceToken
+        let deviceId = pushProvider.deviceToken
         
         func saveCurrentDevice(deviceId: String, completion: ((Error?) -> Void)?) {
             database.write({ (session) in
@@ -83,7 +82,7 @@ class CurrentUserUpdater: Worker {
                 endpoint: .addDevice(
                     userId: currentUserId,
                     deviceId: deviceId,
-                    pushProvider: pushProvider
+                    pushProviderId: pushProvider.pushProviderId
                 ),
                 completion: { result in
                     if let error = result.error {
