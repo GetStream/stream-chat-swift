@@ -11,7 +11,10 @@ public typealias PushProviderId = String
 public enum PushProvider {
     case firebase(token: String)
     case apn(token: Data)
-    
+}
+
+extension PushProvider {
+    /// Push provider id, needed for device endpoind
     var pushProviderId: PushProviderId {
         switch self {
         case .firebase:
@@ -20,7 +23,7 @@ public enum PushProvider {
             return "apn"
         }
     }
-    
+    /// Device token id 
     var deviceToken: DeviceId {
         switch self {
         case .firebase(let token):
