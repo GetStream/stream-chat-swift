@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Timestamp not being shown for the message when the next message is error [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
 - Another user's avatar not being shown for deleted message last in a group [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
 - Fix audio files not rendering previews [#1907](https://github.com/GetStream/stream-chat-swift/issues/1907)
+- Fix message sender name is not shown in channel with > 2 members if member identifiers were passed on channel creation [#1931](https://github.com/GetStream/stream-chat-swift/issues/1931)
 
 # [4.13.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.1)
 _April 04, 2022_

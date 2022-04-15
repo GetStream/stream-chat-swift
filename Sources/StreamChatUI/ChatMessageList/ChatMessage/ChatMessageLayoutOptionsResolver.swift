@@ -77,7 +77,7 @@ open class ChatMessageLayoutOptionsResolver {
         if isLastInSequence && !message.isSentByCurrentUser {
             options.insert(.avatar)
         }
-        if isLastInSequence && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
+        if isLastInSequence && !message.isSentByCurrentUser && channel.memberCount > 2 {
             options.insert(.authorName)
         }
         
