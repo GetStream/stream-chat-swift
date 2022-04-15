@@ -172,6 +172,10 @@ extension DatabaseSession_Mock {
         underlyingSession.delete(message: message)
     }
     
+    func preview(for cid: ChannelId) -> MessageDTO? {
+        underlyingSession.preview(for: cid)
+    }
+    
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO? {
         underlyingSession.reaction(messageId: messageId, userId: userId, type: type)
     }

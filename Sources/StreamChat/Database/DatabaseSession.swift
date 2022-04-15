@@ -126,6 +126,9 @@ protocol MessageDatabaseSession {
     /// Fetches `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
     func message(id: MessageId) -> MessageDTO?
     
+    /// Fetches preview message for channel  from the database.
+    func preview(for cid: ChannelId) -> MessageDTO?
+    
     /// Deletes the provided dto from a database
     /// - Parameter message: The DTO to be deleted
     func delete(message: MessageDTO)

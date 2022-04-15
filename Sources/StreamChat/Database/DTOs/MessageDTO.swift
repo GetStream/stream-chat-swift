@@ -742,6 +742,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.reactionScores[type.rawValue] = reactionScore
         return reaction
     }
+    
+    func preview(for cid: ChannelId) -> MessageDTO? {
+        MessageDTO.load(
+            for: cid.rawValue,
+            limit: 1,
+            offset: 0,
+            deletedMessagesVisibility: .alwaysHidden,
+            shouldShowShadowedMessages: shouldShowShadowedMessages ?? false,
+            context: self
+        )
+        .first
+    }
 }
 
 extension MessageDTO {

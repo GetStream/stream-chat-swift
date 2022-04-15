@@ -2311,6 +2311,80 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(Set(results), [deletedMessageFromCurrentUserDTO])
     }
     
+    // MARK: - preview(for cid:)
+    
+    func test_preview() throws {
+        // GIVEN
+        database = try DatabaseContainer_Spy(
+            kind: .inMemory,
+            deletedMessagesVisibility: .alwaysVisible,
+            shouldShowShadowedMessages: false
+        )
+        
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .admin)
+        let anotherUser: UserPayload = .dummy(userId: .unique)
+
+        let cid: ChannelId = .unique
+        
+        let deletedMessageFromCurrentUser: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            text: .unique,
+            createdAt: .init(),
+            deletedAt: .init(),
+            cid: cid
+        )
+        
+        let deletedMessageFromAnotherUser: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            text: .unique,
+            createdAt: deletedMessageFromCurrentUser.createdAt.addingTimeInterval(-1),
+            deletedAt: .init(),
+            cid: cid
+        )
+        
+        let shadowedMessageFromAnotherUser: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            text: .unique,
+            createdAt: deletedMessageFromAnotherUser.createdAt.addingTimeInterval(-1),
+            cid: cid,
+            isShadowed: true
+        )
+        
+        let validPreviewMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            text: .unique,
+            createdAt: shadowedMessageFromAnotherUser.createdAt.addingTimeInterval(-1),
+            cid: cid
+        )
+        
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                deletedMessageFromCurrentUser,
+                deletedMessageFromAnotherUser,
+                shadowedMessageFromAnotherUser,
+                validPreviewMessage
+            ]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        let previewMessageDTO = try XCTUnwrap(database.viewContext.preview(for: cid))
+        
+        // THEN
+        XCTAssertEqual(previewMessageDTO.id, validPreviewMessage.id)
+    }
+    
     // MARK: Helpers:
 
     private func checkChannelMessagesPredicateCount(
