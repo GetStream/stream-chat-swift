@@ -308,10 +308,6 @@ public struct Components {
     /// The view that shows a number of unread messages in channel.
     public var channelUnreadCountView: ChatChannelUnreadCountView.Type = ChatChannelUnreadCountView.self
 
-    /// The view that shows a read/unread status of the last message in channel.
-    public var channelReadStatusView: ChatChannelReadStatusCheckmarkView.Type =
-        ChatChannelReadStatusCheckmarkView.self
-
     // MARK: - Composer components
 
     /// The view controller used to compose a message.
