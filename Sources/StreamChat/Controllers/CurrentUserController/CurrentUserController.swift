@@ -71,7 +71,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     private lazy var chatClientUpdater = environment.chatClientUpdaterBuilder(client)
     
     /// The worker used to update the current user.
-    private lazy var currentUserUpdater = environment.currentUserUpdaterBuilder(
+    internal lazy var currentUserUpdater = environment.currentUserUpdaterBuilder(
         client.databaseContainer,
         client.apiClient
     )
