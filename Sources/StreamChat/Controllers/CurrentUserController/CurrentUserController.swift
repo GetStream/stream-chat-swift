@@ -221,7 +221,7 @@ public extension CurrentChatUserController {
     ///   - id: Device id to be removed. You can obtain registered devices via `currentUser.devices`.
     ///   If `currentUser.devices` is not up-to-date, please make an `synchronize` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
-    func removeDevice(id: String, completion: ((Error?) -> Void)? = nil) {
+    func removeDevice(id: DeviceId, completion: ((Error?) -> Void)? = nil) {
         guard let currentUserId = currentUser?.id else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
