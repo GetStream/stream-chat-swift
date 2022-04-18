@@ -149,7 +149,7 @@ extension NSManagedObjectContext {
         for cid: ChannelId
     ) throws -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self)
-        populate(dto: dto, userId: userId, lastReadAt: lastReadAt, unreadMessageCount: unreadMessageCount)
+        populate(dto: dto, userId: payload.user.id, lastReadAt: payload.lastReadAt, unreadMessageCount: payload.unreadMessagesCount)
         return dto
     }
     
