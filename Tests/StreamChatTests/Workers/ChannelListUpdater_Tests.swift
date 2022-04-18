@@ -16,10 +16,9 @@ final class ChannelListUpdater_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        database = DatabaseContainerMock()
+        webSocketClient = WebSocketClient_Mock()
+        apiClient = APIClient_Spy()
+        database = DatabaseContainer_Spy()
         client = ChatClient.mock
         listUpdater = ChannelListUpdater(database: database, apiClient: apiClient)
     }
