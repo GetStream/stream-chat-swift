@@ -12,3 +12,4 @@ ignore:
   - "Sources/StreamChatUI/StreamSwiftyGif"
   - "StreamChatUITestsApp"
   - "StreamChatUITestsAppUITests"
+  - "**/*Deprecations.swift"
