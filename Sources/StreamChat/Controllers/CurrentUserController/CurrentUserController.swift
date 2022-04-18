@@ -191,23 +191,21 @@ public extension CurrentChatUserController {
             self.callback { completion?(error) }
         }
     }
-    
-    /// Registers a device to the current user.
-    /// `connectUser` must be called before calling this.
+
+    /// Registers the current user's device for push notifications.
     /// - Parameters:
-    ///   - token: Device token, obtained via `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
-    ///   - pushProvider: The push provider for this device. By default, it is APN.
-    ///   - completion: Called when device is successfully registered, or with error.
-    func addDevice(token: Data, pushProvider: PushProvider = .apn, completion: ((Error?) -> Void)? = nil) {
+    ///   - pushDevice: The device information required for the desired push provider.
+    ///   - completion: Callback when device is successfully registered, or failed with error.
+    func addDevice(_ pushDevice: PushDevice, completion: ((Error?) -> Void)? = nil) {
         guard let currentUserId = currentUser?.id else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
 
         currentUserUpdater.addDevice(
-            token: token,
-            currentUserId: currentUserId,
-            pushProvider: pushProvider
+            deviceId: pushDevice.deviceId,
+            pushProvider: pushDevice.provider,
+            currentUserId: currentUserId
         ) { error in
             self.callback {
                 completion?(error)
