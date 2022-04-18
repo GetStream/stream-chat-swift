@@ -24,7 +24,7 @@ func application(
         return
     }
 
-    ChatClient.shared.currentUserController().addDevice(token: deviceToken) { error in
+    ChatClient.shared.currentUserController().addDevice(.apn(token: deviceToken)) { error in
         if let error = error {
             log.warning("adding a device failed with an error \(error)")
         }
