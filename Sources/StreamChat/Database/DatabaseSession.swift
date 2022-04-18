@@ -398,6 +398,8 @@ extension DatabaseSession {
                 log.warning("Failed to update message reaction in the database, error: \(error)")
             }
         }
+        
+        updateChannelPreview(from: payload)
     }
     
     func saveMessageIfNeeded(from payload: EventPayload) throws {
@@ -436,6 +438,30 @@ extension DatabaseSession {
             savedMessage.quotedBy.forEach { message in
                 message.updatedAt = savedMessage.updatedAt
             }
+        }
+    }
+    
+    func updateChannelPreview(from payload: EventPayload) {
+        guard let cid = payload.cid, let channelDTO = channel(cid: cid) else { return }
+        
+        switch payload.eventType {
+        case .messageNew, .notificationMessageNew:
+            channelDTO.previewMessage = preview(for: cid)
+            
+        case .messageDeleted where channelDTO.previewMessage?.id == payload.message?.id:
+            channelDTO.previewMessage = preview(for: cid)
+            
+        case .channelTruncated:
+            // We're not using `preview(for: cid)` here because the channel
+            // with updated `truncatedAt` is not saved to persistent store yet.
+            //
+            // It leads to the fetch request taking the old value of `channel.truncatedAt`
+            // and returning the preview message which has been truncated and therefore can't longer
+            // be used as a preview.
+            channelDTO.previewMessage = payload.message.flatMap { message(id: $0.id) }
+            
+        default:
+            break
         }
     }
 }
