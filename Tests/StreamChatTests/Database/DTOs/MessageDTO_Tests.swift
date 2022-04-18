@@ -2385,6 +2385,48 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(previewMessageDTO.id, validPreviewMessage.id)
     }
     
+    func test_previewMessage_whenUpdated_triggersChannelUpdate() throws {
+        // GIVEN
+        let messagePayload: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            messages: [messagePayload]
+        )
+        
+        let channelObserver = TestChannelObserver(
+            cid: channelPayload.channel.cid,
+            database: database
+        )
+        
+        var channelUpdatesCount: Int {
+            channelObserver
+                .observedChanges
+                .filter {
+                    guard case .update = $0 else { return false }
+                    return true
+                }
+                .count
+        }
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        XCTAssertEqual(channelUpdatesCount, 0)
+                
+        // WHEN
+        try database.writeSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messagePayload.id))
+            messageDTO.text = "new text"
+        }
+        
+        // THEN
+        XCTAssertEqual(channelUpdatesCount, 1)
+    }
+    
     // MARK: Helpers:
 
     private func checkChannelMessagesPredicateCount(

@@ -69,6 +69,13 @@ class MessageDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
         
+        // Manually mark the channel as dirty to trigger the entity update and give the UI a chance
+        // to reload the channel cell to reflect the updated preview.
+        if let channel = previewOfChannel, !channel.hasChanges, isUpdated {
+            let cid = channel.cid
+            channel.cid = cid
+        }
+        
         prepareDefaultSortKeyIfNeeded()
     }
 
