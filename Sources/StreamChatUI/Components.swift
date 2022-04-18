@@ -229,6 +229,10 @@ public struct Components {
     /// The view that shows messages delivery status.
     public var messageDeliveryStatusView: ChatMessageDeliveryStatusView.Type =
         ChatMessageDeliveryStatusView.self
+    
+    /// The view that shows messages delivery status checkmark in channel preview and in message view.
+    public var messageDeliveryStatusCheckmarkView: ChatMessageDeliveryStatusCheckmarkView.Type =
+        ChatMessageDeliveryStatusCheckmarkView.self
 
     // MARK: - Reaction Picker components
     
