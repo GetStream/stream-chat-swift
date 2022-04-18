@@ -20,6 +20,117 @@ final class ChannelDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
+    func test_saveChannel_whenThereIsNoPreview_updatesPreview() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let emptyChannelPayload: ChannelPayload = .dummy(channel: .dummy(cid: cid))
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: emptyChannelPayload)
+        }
+        
+        var channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertNil(channelDTO.previewMessage)
+        
+        // WHEN
+        let previewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: emptyChannelPayload.channel,
+            messages: [previewMessage]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        // THEN
+        channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channelDTO.previewMessage?.id, previewMessage.id)
+    }
+
+    func test_saveChannel_whenPayloadHasMessagesNewerThePreview_updatesPreview() throws {
+        // GIVEN
+        let previewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            messages: [previewMessage]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+                
+        // WHEN
+        let newPreviewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: previewMessage.createdAt.addingTimeInterval(10)
+        )
+        
+        let channelPayloadWithNewPreview: ChannelPayload = .dummy(
+            channel: channelPayload.channel,
+            messages: [newPreviewMessage]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayloadWithNewPreview)
+        }
+        
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channelPayload.channel.cid))
+        XCTAssertEqual(channelDTO.previewMessage?.id, newPreviewMessage.id)
+    }
+    
+    func test_saveChannel_whenPayloadDoesNotHaveMessagesNewerThePreview_doesNotUpdatePreview() throws {
+        // GIVEN
+        let previewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            messages: [previewMessage]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+                
+        // WHEN
+        let message: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: previewMessage.createdAt.addingTimeInterval(-10)
+        )
+        
+        let channelPayloadWithoutNewPreview: ChannelPayload = .dummy(
+            channel: channelPayload.channel,
+            messages: [message]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayloadWithoutNewPreview)
+        }
+        
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channelPayload.channel.cid))
+        XCTAssertEqual(channelDTO.previewMessage?.id, previewMessage.id)
+    }
+    
     func test_saveChannel_channelReadsAreSavedBeforeMessages() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)

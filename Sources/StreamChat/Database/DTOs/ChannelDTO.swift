@@ -213,6 +213,10 @@ extension NSManagedObjectContext {
         try payload.channelReads.forEach { _ = try saveChannelRead(payload: $0, for: payload.channel.cid) }
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true) }
+        
+        if dto.needsPreviewUpdate(payload) {
+            dto.previewMessage = preview(for: payload.channel.cid)
+        }
 
         dto.updateOldestMessageAt(payload: payload)
 
@@ -453,5 +457,18 @@ private extension ChannelDTO {
                 oldestMessageAt = payloadOldestMessageAt
             }
         }
+    }
+    
+    /// Returns `true` if the payload holds messages sent after the current channel preview.
+    func needsPreviewUpdate(_ payload: ChannelPayload) -> Bool {
+        guard let preview = previewMessage else {
+            return true
+        }
+        
+        guard let newestMessage = payload.newestMessage else {
+            return false
+        }
+        
+        return newestMessage.createdAt > preview.createdAt
     }
 }
