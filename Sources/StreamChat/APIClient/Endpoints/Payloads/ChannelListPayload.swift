@@ -128,15 +128,6 @@ struct ChannelDetailPayload: Decodable {
     /// Cooldown duration for the channel, if it's in slow mode.
     /// This value will be 0 if the channel is not in slow mode.
     let cooldownDuration: Int
-    
-    // channel
-    // members
-    // user
-    // owner
-    // messages
-    // user
-    // reaction
-    // user
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ChannelCodingKeys.self)
