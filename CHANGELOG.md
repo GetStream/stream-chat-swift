@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Local Storage is enabled by default. You can read more [here](https://getstream.io/chat/docs/sdk/ios/guides/offline-support) [#1890](https://github.com/GetStream/stream-chat-swift/pull/1890)
 - Mark all read has been relocated to `CurrentUserController` to have parity with other platforms [#1927](https://github.com/GetStream/stream-chat-swift/pull/1927)
 - New `CurrentUserController.addDevice(_pushDevice:)` replaces `CurrentUserController.addDevice(token:pushProvider:)` [#1934](https://github.com/GetStream/stream-chat-swift/pull/1934)
+   - How to use the new addDevice API: `currentUserController.addDevice(.apn(token: apnDeviceToken))`
 
 ### 🐞 Fixed
 - Fix support for multiple active channel lists at the same time [#1879](https://github.com/GetStream/stream-chat-swift/pull/1879)
