@@ -221,19 +221,6 @@ public extension CurrentChatUserController {
         message: "use addDevice(_pushDevice:) instead. This deprecated function doesn't correctly support multiple push providers."
     )
     func addDevice(token: Data, pushProvider: PushProvider = .apn, completion: ((Error?) -> Void)? = nil) {
-        guard let currentUserId = currentUser?.id else {
-            completion?(ClientError.CurrentUserDoesNotExist())
-            return
-        }
-
-        currentUserUpdater.addDevice(
-            deviceId: token.deviceId,
-            pushProvider: pushProvider,
-            currentUserId: currentUserId
-        ) { error in
-            self.callback {
-                completion?(error)
-            }
-        }
+        addDevice(.apn(token: token), completion: completion)
     }
 }
