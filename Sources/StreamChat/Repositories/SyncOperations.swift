@@ -6,9 +6,15 @@ import Foundation
 
 /// A final class that holds the context for the ongoing operations during the sync process
 final class SyncContext {
+    let lastSyncAt: Date
     var localChannelIds: [ChannelId] = []
     var synchedChannelIds: Set<ChannelId> = Set()
-    var watchedChannelIds: Set<ChannelId> = Set()
+    var watchedAndSynchedChannelIds: Set<ChannelId> = Set()
+    var unwantedChannelIds: Set<ChannelId> = Set()
+    
+    init(lastSyncAt: Date) {
+        self.lastSyncAt = lastSyncAt
+    }
 }
 
 private let syncOperationsMaximumRetries = 2
@@ -42,6 +48,7 @@ final class SyncEventsOperation: AsyncOperation {
 
             syncRepository?.syncChannelsEvents(
                 channelIds: context.localChannelIds,
+                lastSyncAt: context.lastSyncAt,
                 isRecovery: true
             ) { result in
                 switch result {
@@ -76,7 +83,7 @@ final class WatchChannelOperation: AsyncOperation {
             controller.recoverWatchedChannel { error in
                 if let cid = controller.cid, error == nil {
                     log.info("Successfully watched active channel \(cidString)", subsystems: .offlineSupport)
-                    context.watchedChannelIds.insert(cid)
+                    context.watchedAndSynchedChannelIds.insert(cid)
                     done(.continue)
                 } else {
                     let errorMessage = error?.localizedDescription ?? "missing cid"
@@ -95,25 +102,61 @@ final class RefetchChannelListQueryOperation: AsyncOperation {
                 done(.continue)
                 return
             }
+            
+            let query = controller.query
 
             log.info("3 & 4. Refetching channel lists queries & Cleaning up local message history", subsystems: .offlineSupport)
             channelRepository.resetChannelsQuery(
-                for: controller.query,
-                watchedChannelIds: context.watchedChannelIds,
+                for: query,
+                watchedChannelIds: context.watchedAndSynchedChannelIds,
                 synchedChannelIds: context.synchedChannelIds
             ) { result in
                 switch result {
-                case let .success(channels):
-                    log.info("Successfully refetched query for \(controller.query.debugDescription)", subsystems: .offlineSupport)
-                    let queryChannelIds = channels.map(\.cid)
-                    context.synchedChannelIds = context.synchedChannelIds.union(queryChannelIds)
+                case let .success((watchedChannels, unwantedCids)):
+                    log.info("Successfully refetched query for \(query.debugDescription)", subsystems: .offlineSupport)
+                    let queryChannelIds = watchedChannels.map(\.cid)
+                    context.watchedAndSynchedChannelIds = context.watchedAndSynchedChannelIds.union(queryChannelIds)
+                    context.unwantedChannelIds = context.unwantedChannelIds.union(unwantedCids)
                     done(.continue)
                 case let .failure(error):
                     log.error(
-                        "Failed refetching query for \(controller.query.debugDescription): \(error)",
+                        "Failed refetching query for \(query.debugDescription): \(error)",
                         subsystems: .offlineSupport
                     )
                     done(.retry)
+                }
+            }
+        }
+    }
+}
+
+final class CleanUnwantedChannelsOperation: AsyncOperation {
+    init(database: DatabaseContainer, context: SyncContext) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
+            log.info("4. Clean up unwanted channels", subsystems: .offlineSupport)
+
+            guard let database = database, !context.unwantedChannelIds.isEmpty else {
+                done(.continue)
+                return
+            }
+
+            // We are going to clean those channels that are not present in remote queries, and that have not
+            // been watched.
+            database.write { session in
+                // We remove watchedAndSynched from unwantedChannels because it might happen that a channel marked
+                // as unwanted in one query, might still be needed in another query (scenario where multiple queries
+                // are active at the same time).
+                let idsToRemove = context.unwantedChannelIds.subtracting(context.watchedAndSynchedChannelIds)
+                session.cleanChannels(cids: idsToRemove)
+            } completion: { error in
+                if let error = error {
+                    log.error(
+                        "Failed removing unwanted channels: \(error)",
+                        subsystems: .offlineSupport
+                    )
+                    done(.retry)
+                } else {
+                    done(.continue)
                 }
             }
         }

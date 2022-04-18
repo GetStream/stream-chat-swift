@@ -170,7 +170,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_delegate_isAssignedCorrectly() {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly
@@ -179,7 +179,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_delegate_isReferencedWeakly() {
         // Create the delegate
-        var delegate: TestDelegate? = .init(expectedQueueId: callbackQueueID)
+        var delegate: UserController_Delegate? = .init(expectedQueueId: callbackQueueID)
         
         // Set the delegate
         controller.delegate = delegate
@@ -203,7 +203,7 @@ final class CurrentUserController_Tests: XCTestCase {
         )
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -230,7 +230,7 @@ final class CurrentUserController_Tests: XCTestCase {
         )
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -265,7 +265,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let unreadCount = UnreadCount(channels: 10, messages: 15)
         
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -603,39 +603,64 @@ final class CurrentUserController_Tests: XCTestCase {
             XCTAssertEqual(reloadUserIfNeededCompletionError as? TestError, error)
         }
     }
-}
-
-private class TestDelegate: QueueAwareDelegate, CurrentChatUserControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
-    @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
     
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-
-    func currentUserController(
-        _ controller: CurrentChatUserController,
-        didChangeCurrentUser change: EntityChange<CurrentChatUser>
-    ) {
-        didChangeCurrentUser_change = change
-        validateQueue()
+    // MARK: - Mark all read
+    
+    func test_markAllRead_callsChannelListUpdater() {
+        // GIVEN
+        var completionCalled = false
+        
+        // WHEN
+        controller.markAllRead { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+                                        
+        env.currentUserUpdater!.markAllRead_completion?(nil)
+        
+        // THEN
+        AssertAsync.willBeTrue(completionCalled)
     }
     
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
-        didChangeCurrentUserUnreadCount_count = count
-        validateQueue()
+    func test_markAllRead_keepsControllerAlive() {
+        // GIVEN
+        weak var weakController = controller
+        
+        // WHEN
+        controller.markAllRead { _ in }
+        
+        controller = nil
+        
+        // THEN
+        AssertAsync.staysTrue(weakController != nil)
+    }
+    
+    func test_markAllRead_propagatesErrorFromUpdater() {
+        // GIVEN
+        var completionCalledError: Error?
+        let testError = TestError()
+        
+        // WHEN
+        controller.markAllRead { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        env.currentUserUpdater!.markAllRead_completion?(testError)
+        
+        // THEN
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 }
 
 private class TestEnvironment {
-    var currentUserObserver: EntityDatabaseObserverMock<CurrentChatUser, CurrentUserDTO>!
+    var currentUserObserver: EntityDatabaseObserver_Mock<CurrentChatUser, CurrentUserDTO>!
     var currentUserObserverItem: CurrentChatUser?
     var currentUserObserverStartUpdatingError: Error?
 
-    var chatClientUpdater: ChatClientUpdaterMock!
-    var currentUserUpdater: CurrentUserUpdaterMock!
+    var chatClientUpdater: ChatClientUpdater_Mock!
+    var currentUserUpdater: CurrentUserUpdater_Mock!
 
     lazy var currentUserControllerEnvironment: CurrentChatUserController
         .Environment = .init(currentUserObserverBuilder: { [unowned self] in
@@ -644,10 +669,10 @@ private class TestEnvironment {
             self.currentUserObserver.item_mock = self.currentUserObserverItem
             return self.currentUserObserver!
         }, currentUserUpdaterBuilder: { [unowned self] db, client in
-            self.currentUserUpdater = CurrentUserUpdaterMock(database: db, apiClient: client)
+            self.currentUserUpdater = CurrentUserUpdater_Mock(database: db, apiClient: client)
             return self.currentUserUpdater!
         }, chatClientUpdaterBuilder: { [unowned self] in
-            self.chatClientUpdater = ChatClientUpdaterMock(client: $0)
+            self.chatClientUpdater = ChatClientUpdater_Mock(client: $0)
             return self.chatClientUpdater!
         })
 }

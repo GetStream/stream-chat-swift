@@ -34,11 +34,12 @@ class ChannelListUpdater: Worker {
         for query: ChannelListQuery,
         watchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<[ChatChannel], Error>) -> Void
+        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: .channelsPageSize, offset: 0)
-        
+
+        var unwantedCids = Set<ChannelId>()
         // Fetches the channels matching the query, and stores them in the database.
         apiClient.recoveryRequest(endpoint: .channels(query: query)) { [weak self] result in
             switch result {
@@ -51,23 +52,36 @@ class ChannelListUpdater: Worker {
                         
                         let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
                         let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
-                        let queryAlreadySynched = remoteQueryCIDs.intersection(synchedChannelIds)
-                        
-                        // We are going to unlink & clear those channels that are not present in the remote query,
-                        // and that have not been synched nor watched. Those are outdated.
-                        let cidsToRemove = localQueryCIDs
-                            .subtracting(queryAlreadySynched)
-                            .subtracting(watchedChannelIds)
-                        
-                        for cid in cidsToRemove {
+
+                        let updatedChannels = synchedChannelIds.union(watchedChannelIds)
+                        let localNotInRemote = localQueryCIDs.subtracting(remoteQueryCIDs)
+                        let localInRemote = localQueryCIDs.intersection(remoteQueryCIDs)
+
+                        // We unlink those local channels that are no longer in remote
+                        for cid in localNotInRemote {
                             guard let channelDTO = session.channel(cid: cid) else { continue }
-                            
-                            channelDTO.resetEphemeralValues()
-                            channelDTO.messages.removeAll()
                             queryDTO.channels.remove(channelDTO)
                         }
+
+                        // We are going to clean those channels that are present in the both the local and remote query,
+                        // and that have not been synched nor watched. Those are outdated, can contain gaps.
+                        let cidsToClean = localInRemote.subtracting(updatedChannels)
+                        session.cleanChannels(cids: cidsToClean)
+
+                        // We are also going to keep track of the unwanted channels
+                        // Those are the ones that exist locally but we are not interested in anymore in this context.
+                        // In this case, it is going to query local ones not appearing in remote, subtracting the ones
+                        // that are already being watched.
+                        unwantedCids = localNotInRemote.subtracting(watchedChannelIds)
                     },
-                    completion: completion
+                    completion: { result in
+                        switch result {
+                        case let .success(synchedAndWatchedChannels):
+                            completion(.success((synchedAndWatchedChannels, unwantedCids)))
+                        case let .failure(error):
+                            completion(.failure(error))
+                        }
+                    }
                 )
             case let .failure(error):
                 completion(.failure(error))
@@ -75,22 +89,33 @@ class ChannelListUpdater: Worker {
         }
     }
 
-    func writeChannelListPayload(
-        payload: ChannelListPayload,
-        query: ChannelListQuery,
-        initialActions: ((DatabaseSession) -> Void)? = nil,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
-    ) {
-        var channels: [ChatChannel] = []
-        database.write { session in
-            initialActions?(session)
-            channels = try session.saveChannelList(payload: payload, query: query).map { $0.asModel() }
-        } completion: { error in
-            if let error = error {
-                log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
-                completion?(.failure(error))
-            } else {
-                completion?(.success(channels))
+    /// Starts watching the channels with the given ids and updates the channels in the local storage.
+    ///
+    /// - Parameters:
+    ///   - ids: The channel ids.
+    ///   - completion: The callback once the request is complete.
+    func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)? = nil) {
+        var query = ChannelListQuery(filter: .in(.cid, values: ids))
+        query.options = .all
+
+        fetch(channelListQuery: query) { [weak self] in
+            switch $0 {
+            case let .success(payload):
+                self?.database.write { session in
+                    for channel in payload.channels {
+                        do {
+                            try session.saveChannel(payload: channel)
+                        } catch {
+                            log.warning(
+                                "Failed to save watched channel \(channel.channel.cid): \(error.localizedDescription)"
+                            )
+                        }
+                    }
+                } completion: { _ in
+                    completion?(nil)
+                }
+            case let .failure(error):
+                completion?(error)
             }
         }
     }
@@ -115,6 +140,28 @@ class ChannelListUpdater: Worker {
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .markAllRead()) {
             completion?($0.error)
+        }
+    }
+}
+
+extension ChannelListUpdater {
+    func writeChannelListPayload(
+        payload: ChannelListPayload,
+        query: ChannelListQuery,
+        initialActions: ((DatabaseSession) -> Void)? = nil,
+        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+    ) {
+        var channels: [ChatChannel] = []
+        database.write { session in
+            initialActions?(session)
+            channels = try session.saveChannelList(payload: payload, query: query).map { $0.asModel() }
+        } completion: { error in
+            if let error = error {
+                log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
+                completion?(.failure(error))
+            } else {
+                completion?(.success(channels))
+            }
         }
     }
 }

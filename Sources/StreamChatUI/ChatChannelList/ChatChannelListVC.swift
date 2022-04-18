@@ -249,21 +249,25 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open func swipeableViewActionViews(for indexPath: IndexPath) -> [UIView] {
-        let deleteView = CellActionView().withoutAutoresizingMaskConstraints
+        let deleteView = CellActionView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "deleteView")
         deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
 
         deleteView.actionButton.backgroundColor = appearance.colorPalette.alert
         deleteView.actionButton.tintColor = .white
 
-        deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
+        deleteView.action = { [weak self] in self?.deleteButtonPressedForCell(at: indexPath) }
 
-        let moreView = CellActionView().withoutAutoresizingMaskConstraints
+        let moreView = CellActionView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "moreView")
         moreView.actionButton.setImage(appearance.images.more, for: .normal)
 
         moreView.actionButton.backgroundColor = appearance.colorPalette.background1
         moreView.actionButton.tintColor = appearance.colorPalette.text
 
-        moreView.action = { self.moreButtonPressedForCell(at: indexPath) }
+        moreView.action = { [weak self] in self?.moreButtonPressedForCell(at: indexPath) }
 
         return [moreView, deleteView]
     }
@@ -319,15 +323,17 @@ open class ChatChannelListVC: _ViewController,
             }
         )
     }
-    
+
+    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
     open func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
         channel.membership != nil
     }
-    
+
+    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
     open func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
         channel.membership != nil
     }
-    
+
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {

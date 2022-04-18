@@ -1,0 +1,44 @@
+{
+  "created_at" : "2021-04-23T06:05:31.659292606Z",
+  "me" : {
+    "id" : "luke_skywalker",
+    "banned" : false,
+    "roles" : [],
+    "unread_channels" : 0,
+    "mutes" : [],
+    "last_active" : "2021-04-23T06:05:31.656574549Z",
+    "created_at" : "2020-12-07T11:36:47.059906Z",
+    "devices" : [
+      {
+        "disabled" : true,
+        "id" : "e72f903a3ef67e279bea2da9565ede048e63a75223d3b592ee80612aa8a2e249",
+        "push_provider" : "apn",
+        "disabled_reason" : "BadDeviceToken",
+        "user_id" : "luke_skywalker",
+        "created_at" : "2020-12-17T11:33:46.940946Z"
+      },
+      {
+        "disabled" : true,
+        "id" : "60729e8d570b72beb7a1d2072530b9f7ab4a7292f2ea145e0671186111410bab",
+        "push_provider" : "apn",
+        "disabled_reason" : "BadDeviceToken",
+        "user_id" : "luke_skywalker",
+        "created_at" : "2020-12-17T11:10:00.204968Z"
+      }
+    ],
+    "invisible" : false,
+    "unread_count" : 0,
+    "channel_mutes" : [],
+    "image" : ".\/static\/media\/photo-1541271696563-3be2f555fc4e.4e84f363.jpeg",
+    "updated_at" : "2021-04-22T18:57:47.14206Z",
+    "language" : "",
+    "role" : "admin",
+    "total_unread_count" : 0,
+    "online" : true,
+    "name" : "luke_skywalker"
+  },
+  "type" : "health.check",
+  "connection_id" : "60782eca-0a05-154b-0000-000000a85747",
+  "cid" : "*"
+}
+

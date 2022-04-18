@@ -7,7 +7,7 @@
 import XCTest
 
 final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     var middleware: ChannelVisibilityEventMiddleware!
 
     // MARK: - Set up
@@ -15,20 +15,19 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = .init()
     }
 
     override func tearDown() {
-        middleware = nil
         AssertAsync.canBeReleased(&database)
-
+        database = nil
         super.tearDown()
     }
 
     // MARK: - Tests
 
-    func tests_middleware_forwardsOtherEvents() throws {
+    func test_middleware_forwardsOtherEvents() throws {
         let event = TestEvent()
 
         // Handle non-reaction event
@@ -38,7 +37,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
     }
 
-    func tests_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
         // Set error to be thrown on write.
         let error = TestError()
         database.write_errorResponse = error
@@ -208,8 +207,4 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         // Assert the `isHidden` value is reset
         XCTAssertFalse(channelDTO.isHidden)
     }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
 }

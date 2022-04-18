@@ -3,10 +3,11 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class FilterEncoding_Tests: XCTestCase {
-    func testFilterEncodingNotDoubles() {
+final class FilterEncoding_Tests: XCTestCase {
+    func test_filterEncodes_whenNotDoubles() {
         // Given
         let testCases = FilterCodingTestPair.allCases
         for pair in testCases {

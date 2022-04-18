@@ -3,13 +3,14 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class RequestEncoder_Tests: XCTestCase {
+final class RequestEncoder_Tests: XCTestCase {
     var encoder: RequestEncoder!
     var baseURL: URL!
     var apiKey: APIKey!
-    fileprivate var connectionDetailsProvider: TestConnectionDetailsProviderDelegate!
+    fileprivate var connectionDetailsProvider: ConnectionDetailsProviderDelegate_Spy!
     
     override func setUp() {
         super.setUp()
@@ -18,11 +19,20 @@ class RequestEncoder_Tests: XCTestCase {
         baseURL = .unique()
         encoder = DefaultRequestEncoder(baseURL: baseURL, apiKey: apiKey)
         
-        connectionDetailsProvider = TestConnectionDetailsProviderDelegate()
+        connectionDetailsProvider = ConnectionDetailsProviderDelegate_Spy()
         encoder.connectionDetailsProviderDelegate = connectionDetailsProvider
 
-        let time = VirtualTime()
-        VirtualTimeTimer.time = time
+        VirtualTimeTimer.time = VirtualTime()
+    }
+
+    override func tearDown() {
+        encoder = nil
+        baseURL = nil
+        apiKey = nil
+        connectionDetailsProvider = nil
+        VirtualTimeTimer.invalidate()
+
+        super.tearDown()
     }
     
     func test_requiredQueryItems() throws {
@@ -541,67 +551,5 @@ class RequestEncoder_Tests: XCTestCase {
         let userString = try XCTUnwrap(urlComponents.queryItems?["user"])
         let userJSON = try JSONDecoder.default.decode(TestUser.self, from: userString.data(using: .utf8)!)
         XCTAssertEqual(userJSON, TestUser(name: "Luke", age: 22))
-    }
-}
-
-private class TestConnectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate {
-    @Atomic var token: Token?
-    @Atomic var tokenWaiters: [String: (Token?) -> Void] = [:]
-
-    @Atomic var connectionId: ConnectionId?
-    @Atomic var connectionWaiters: [String: (ConnectionId?) -> Void] = [:]
-    
-    func provideConnectionId(completion: @escaping (ConnectionId?) -> Void) -> WaiterToken {
-        let waiterToken = String.newUniqueId
-        _connectionWaiters.mutate {
-            $0[waiterToken] = completion
-        }
-
-        if let connectionId = connectionId {
-            completion(connectionId)
-        }
-        return waiterToken
-    }
-
-    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken {
-        let waiterToken = String.newUniqueId
-        _tokenWaiters.mutate {
-            $0[waiterToken] = completion
-        }
-
-        if let token = token {
-            completion(token)
-        }
-        return waiterToken
-    }
-
-    func invalidateTokenWaiter(_ waiter: WaiterToken) {}
-
-    func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {}
-
-    func completeConnectionIdWaiters(passing connectionId: String?) {
-        _connectionWaiters.mutate { waiters in
-            waiters.forEach { $0.value(connectionId) }
-            waiters.removeAll()
-        }
-    }
-
-    func completeTokenWaiters(passing token: Token?) {
-        _tokenWaiters.mutate { waiters in
-            waiters.forEach { $0.value(token) }
-            waiters.removeAll()
-        }
-    }
-}
-
-private struct TestUser: Codable, Equatable {
-    let name: String
-    let age: Int
-}
-
-extension Array where Element == URLQueryItem {
-    /// Returns the value of the URLQueryItem with the given name. Returns `nil` if the query item doesn't exist.
-    subscript(_ name: String) -> String? {
-        first(where: { $0.name == name }).flatMap(\.value)
     }
 }

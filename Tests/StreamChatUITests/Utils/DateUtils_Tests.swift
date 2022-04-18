@@ -6,7 +6,7 @@
 @testable import StreamChatUI
 import XCTest
 
-class DateUtils_Tests: XCTestCase {
+final class DateUtils_Tests: XCTestCase {
     func test_timeAgoNow() throws {
         XCTAssertEqual(DateUtils.timeAgo(relativeTo: Date()), "last seen just one second ago")
     }

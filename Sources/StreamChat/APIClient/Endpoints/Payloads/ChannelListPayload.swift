@@ -28,7 +28,7 @@ struct ChannelPayload: Decodable {
     
     let isHidden: Bool?
 
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case channel
         case messages
         case pinnedMessages = "pinned_messages"
@@ -237,6 +237,7 @@ public class ChannelConfig: Codable {
         case connectEventsEnabled = "connect_events"
         case uploadsEnabled = "uploads"
         case repliesEnabled = "replies"
+        case quotesEnabled = "quotes"
         case searchEnabled = "search"
         case mutesEnabled = "mutes"
         case urlEnrichmentEnabled = "url_enrichment"
@@ -259,6 +260,8 @@ public class ChannelConfig: Codable {
     public let uploadsEnabled: Bool
     /// Enables message thread replies. Enabled by default.
     public let repliesEnabled: Bool
+    /// Enables quoting of messages. Enabled by default.
+    public let quotesEnabled: Bool
     /// Controls if messages should be searchable (this is a premium feature). Disabled by default.
     public let searchEnabled: Bool
     /// Determines if users are able to mute other users. Enabled by default.
@@ -284,6 +287,7 @@ public class ChannelConfig: Codable {
         connectEventsEnabled = try container.decode(Bool.self, forKey: .connectEventsEnabled)
         uploadsEnabled = try container.decodeIfPresent(Bool.self, forKey: .uploadsEnabled) ?? false
         repliesEnabled = try container.decode(Bool.self, forKey: .repliesEnabled)
+        quotesEnabled = try container.decode(Bool.self, forKey: .quotesEnabled)
         searchEnabled = try container.decode(Bool.self, forKey: .searchEnabled)
         mutesEnabled = try container.decode(Bool.self, forKey: .mutesEnabled)
         urlEnrichmentEnabled = try container.decode(Bool.self, forKey: .urlEnrichmentEnabled)
@@ -306,6 +310,7 @@ public class ChannelConfig: Codable {
         connectEventsEnabled: Bool = false,
         uploadsEnabled: Bool = false,
         repliesEnabled: Bool = false,
+        quotesEnabled: Bool = false,
         searchEnabled: Bool = false,
         mutesEnabled: Bool = false,
         urlEnrichmentEnabled: Bool = false,
@@ -321,6 +326,7 @@ public class ChannelConfig: Codable {
         self.connectEventsEnabled = connectEventsEnabled
         self.uploadsEnabled = uploadsEnabled
         self.repliesEnabled = repliesEnabled
+        self.quotesEnabled = quotesEnabled
         self.searchEnabled = searchEnabled
         self.mutesEnabled = mutesEnabled
         self.urlEnrichmentEnabled = urlEnrichmentEnabled

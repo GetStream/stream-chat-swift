@@ -38,6 +38,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     /// `ContainerView` for showing message's actions.
     open private(set) lazy var messageActionsContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "messageActionsContainerStackView")
     
     /// Class used for buttons in `messageActionsContainerView`.
     open var actionButtonClass: ChatMessageActionControl.Type { ChatMessageActionControl.self }
@@ -68,6 +69,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             actionView.containerStackView.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
             actionView.content = $0
             messageActionsContainerStackView.addArrangedSubview(actionView)
+            actionView.accessibilityIdentifier = "\(type(of: $0))"
         }
     }
 
@@ -81,9 +83,11 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
         switch message.localState {
         case nil:
-            var actions: [ChatMessageActionItem] = [
-                inlineReplyActionItem()
-            ]
+            var actions: [ChatMessageActionItem] = []
+            
+            if channelConfig.quotesEnabled {
+                actions.append(inlineReplyActionItem())
+            }
 
             if channelConfig.repliesEnabled && !message.isPartOfThread {
                 actions.append(threadReplyActionItem())

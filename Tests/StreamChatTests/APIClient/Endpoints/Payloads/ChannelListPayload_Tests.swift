@@ -3,29 +3,31 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class ChannelListPayload_Tests: XCTestCase {
-    let channelJSON: Data = {
-        let url = Bundle(for: ChannelListPayload_Tests.self).url(forResource: "ChannelsQuery", withExtension: "json")!
-        return try! Data(contentsOf: url)
-    }()
-    
+final class ChannelListPayload_Tests: XCTestCase {
     func test_channelQueryJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: channelJSON)
+        // GIVEN
+        let url = XCTestCase.mockData(fromFile: "ChannelsQuery")
+
+        // WHEN
+        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
+
+        // THEN
         XCTAssertEqual(payload.channels.count, 20)
     }
 }
 
-class ChannelPayload_Tests: XCTestCase {
-    let channelJSON: Data = {
-        let url = Bundle(for: ChannelListPayload_Tests.self).url(forResource: "Channel", withExtension: "json")!
-        return try! Data(contentsOf: url)
-    }()
-    
+final class ChannelPayload_Tests: XCTestCase {
     func test_channelJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(ChannelPayload.self, from: channelJSON)
-        
+        // GIVEN
+        let url = XCTestCase.mockData(fromFile: "Channel")
+
+        // WHEN
+        let payload = try JSONDecoder.default.decode(ChannelPayload.self, from: url)
+
+        // THEN
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.watchers?.count, 3)
         XCTAssertEqual(payload.members.count, 4)
@@ -81,6 +83,7 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.connectEventsEnabled, true)
         XCTAssertEqual(config.uploadsEnabled, true)
         XCTAssertEqual(config.repliesEnabled, true)
+        XCTAssertEqual(config.quotesEnabled, true)
         XCTAssertEqual(config.searchEnabled, true)
         XCTAssertEqual(config.mutesEnabled, true)
         XCTAssertEqual(config.urlEnrichmentEnabled, true)

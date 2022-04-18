@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
@@ -12,7 +13,7 @@ final class Localization_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        testBundle = Bundle(for: ThisBundle.self)
+        testBundle = Bundle(for: Self.self)
         // Set to default Appearance localizationProvider.
         Appearance.default.localizationProvider = { key, _ in
             self.testBundle.localizedString(forKey: key, value: nil, table: "TestLocalizable")

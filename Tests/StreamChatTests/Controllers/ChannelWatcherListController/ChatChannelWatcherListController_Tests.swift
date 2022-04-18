@@ -28,17 +28,16 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
     }
 
     override func tearDown() {
+        query = nil
         client.mockAPIClient.cleanUp()
         env.watcherListUpdater?.cleanUp()
-
-        query = nil
-        controllerCallbackQueueID = nil
-
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
             Assert.canBeReleased(&env)
         }
+
+        controllerCallbackQueueID = nil
 
         super.tearDown()
     }
@@ -194,7 +193,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Set the delegate
-        controller.delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = ChannelWatcherListController_Delegate(expectedQueueId: callbackQueueID)
 
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -214,7 +213,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Set the delegate
-        controller.delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = ChannelWatcherListController_Delegate(expectedQueueId: callbackQueueID)
 
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -245,7 +244,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
     // MARK: - Delegate
 
     func test_delegate_isAssignedCorrectly() {
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = ChannelWatcherListController_Delegate(expectedQueueId: callbackQueueID)
 
         // Set the delegate
         controller.delegate = delegate
@@ -256,7 +255,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = ChannelWatcherListController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Synchronize
@@ -277,7 +276,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         let watcher2ID: UserId = .unique
 
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = ChannelWatcherListController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Create channel in the database.
@@ -495,8 +494,8 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var watcherListUpdater: ChannelUpdaterMock?
-    @Atomic var watcherListObserver: ListDatabaseObserverMock<ChatUser, UserDTO>?
+    @Atomic var watcherListUpdater: ChannelUpdater_Mock?
+    @Atomic var watcherListObserver: ListDatabaseObserver_Mock<ChatUser, UserDTO>?
     @Atomic var watcherListObserverSynchronizeError: Error?
 
     lazy var environment: ChatChannelWatcherListController.Environment = .init(
@@ -518,23 +517,4 @@ private class TestEnvironment {
             return self.watcherListObserver!
         }
     )
-}
-
-// A concrete `ChatChannelWatcherListControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChatChannelWatcherListControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateWatchers_changes: [ListChange<ChatUser>]?
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        validateQueue()
-        self.state = state
-    }
-
-    func channelWatcherListController(
-        _ controller: ChatChannelWatcherListController,
-        didChangeWatchers changes: [ListChange<ChatUser>]
-    ) {
-        validateQueue()
-        didUpdateWatchers_changes = changes
-    }
 }

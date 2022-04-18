@@ -4,9 +4,10 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class CurrentUserPayload_Tests: XCTestCase {
+final class CurrentUserPayload_Tests: XCTestCase {
     let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser")
     
     func test_currentUserJSON_customRoleIsDecodedCorrectly() throws {

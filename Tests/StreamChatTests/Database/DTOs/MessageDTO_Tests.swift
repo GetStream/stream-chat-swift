@@ -7,16 +7,17 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class MessageDTO_Tests: XCTestCase {
+final class MessageDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
     
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
     
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
     
@@ -98,6 +99,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.config.connectEventsEnabled, loadedChannel?.config.connectEventsEnabled)
         XCTAssertEqual(channelPayload.config.uploadsEnabled, loadedChannel?.config.uploadsEnabled)
         XCTAssertEqual(channelPayload.config.repliesEnabled, loadedChannel?.config.repliesEnabled)
+        XCTAssertEqual(channelPayload.config.quotesEnabled, loadedChannel?.config.quotesEnabled)
         XCTAssertEqual(channelPayload.config.searchEnabled, loadedChannel?.config.searchEnabled)
         XCTAssertEqual(channelPayload.config.mutesEnabled, loadedChannel?.config.mutesEnabled)
         XCTAssertEqual(channelPayload.config.urlEnrichmentEnabled, loadedChannel?.config.urlEnrichmentEnabled)

@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class GuestUserTokenRequestPayload_Tests: XCTestCase {
@@ -31,9 +32,11 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
             isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!, "company": company]
         )
     }
-    
+}
+
+extension GuestUserTokenRequestPayload_Tests {
     // MARK: - Private
-    
+
     private func verify(
         _ payload: GuestUserTokenRequestPayload,
         isEncodedAs expected: [String: Any]
@@ -41,7 +44,7 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
         // Encode the user
         let data = try JSONEncoder.default.encode(payload)
         let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-        
+
         // Assert encoding is correct
         AssertJSONEqual(json, expected)
     }

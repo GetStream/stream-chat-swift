@@ -524,6 +524,9 @@ public extension ChatChannelController {
     /// `true` if the channel has replies enabled. Defaults to `false` if the channel doesn't exist yet.
     var areRepliesEnabled: Bool { channel?.config.repliesEnabled == true }
     
+    /// `true` if the channel has quotes enabled. Defaults to `false` if the channel doesn't exist yet.
+    var areQuotesEnabled: Bool { channel?.config.quotesEnabled == true }
+    
     /// `true` if the channel has read events enabled. Defaults to `false` if the channel doesn't exist yet.
     var areReadEventsEnabled: Bool { channel?.config.readEventsEnabled == true }
     

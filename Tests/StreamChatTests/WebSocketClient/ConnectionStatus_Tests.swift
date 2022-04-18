@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class ChatClientConnectionStatus_Tests: XCTestCase {
+final class ChatClientConnectionStatus_Tests: XCTestCase {
     func test_wsConnectionState_isTranslatedCorrectly() {
         let testError = ClientError(with: TestError())
         

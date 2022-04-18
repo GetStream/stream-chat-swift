@@ -7,7 +7,7 @@
 import XCTest
 
 final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     var middleware: ChannelTruncatedEventMiddleware!
 
     // MARK: - Set up
@@ -15,20 +15,19 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = .init()
     }
 
     override func tearDown() {
-        middleware = nil
         AssertAsync.canBeReleased(&database)
-
+        database = nil
         super.tearDown()
     }
 
     // MARK: - Tests
 
-    func tests_middleware_forwardsOtherEvents() throws {
+    func test_middleware_forwardsOtherEvents() throws {
         let event = TestEvent()
 
         // Handle non-reaction event
@@ -38,7 +37,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
     }
 
-    func tests_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
         let eventPayload: EventPayload = .init(
             eventType: .channelTruncated,
             cid: .unique,
@@ -59,7 +58,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is ChannelTruncatedEventDTO)
     }
 
-    func tests_middleware_handlesChannelTruncatedEventCorrectly() throws {
+    func test_middleware_handlesChannelTruncatedEventCorrectly() throws {
         let cid: ChannelId = .unique
         let date = Date()
         // Create channel truncate event
@@ -85,8 +84,4 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.channel(cid: cid)?.truncatedAt, date)
         XCTAssert(forwardedEvent is ChannelTruncatedEventDTO)
     }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
 }

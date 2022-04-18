@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class MemberPayload_Tests: XCTestCase {
+final class MemberPayload_Tests: XCTestCase {
     let memberJSON = XCTestCase.mockData(fromFile: "Member")
     
     func test_memberJSON_isSerialized() throws {

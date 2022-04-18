@@ -7,19 +7,19 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class EventMiddleware_Tests: XCTestCase {
+final class EventMiddleware_Tests: XCTestCase {
     /// A test event holding an `Int` value.
     struct IntBasedEvent: Event, Equatable {
         let value: Int
     }
     
     func test_middlewareEvaluation() throws {
-        var database: DatabaseContainer! = DatabaseContainerMock()
+        var database: DatabaseContainer! = DatabaseContainer_Spy()
         let usedSession = database.viewContext
         
         let chain: [EventMiddleware] = [
             // Adds `1` to the event synchronously
-            EventMiddlewareMock { event, session in
+            EventMiddleware_Mock { event, session in
                 // Assert the correct session is used
                 XCTAssertEqual(session as! NSManagedObjectContext, usedSession)
                 
@@ -28,7 +28,7 @@ class EventMiddleware_Tests: XCTestCase {
             },
             
             // Adds `2` to the event synchronously
-            EventMiddlewareMock { event, session in
+            EventMiddleware_Mock { event, session in
                 // Assert the correct session is used
                 XCTAssertEqual(session as! NSManagedObjectContext, usedSession)
                 

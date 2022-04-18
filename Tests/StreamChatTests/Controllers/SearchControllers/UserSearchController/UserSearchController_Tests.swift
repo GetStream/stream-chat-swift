@@ -7,7 +7,7 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-class UserSearchController_Tests: XCTestCase {
+final class UserSearchController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
     
     var client: ChatClient!
@@ -37,16 +37,16 @@ class UserSearchController_Tests: XCTestCase {
     }
     
     override func tearDown() {
+        query = nil
         controllerCallbackQueueID = nil
         
         env.userListUpdater?.cleanUp()
-        
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
             Assert.canBeReleased(&env)
         }
-        
+
         super.tearDown()
     }
     
@@ -644,11 +644,11 @@ class UserSearchController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userListUpdater: UserListUpdaterMock?
+    @Atomic var userListUpdater: UserListUpdater_Mock?
     
     lazy var environment: ChatUserSearchController.Environment =
         .init(userQueryUpdaterBuilder: { [unowned self] in
-            self.userListUpdater = UserListUpdaterMock(
+            self.userListUpdater = UserListUpdater_Mock(
                 database: $0,
                 apiClient: $1
             )

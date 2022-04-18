@@ -52,6 +52,7 @@
         "swiftui/swiftui-overview",
         "swiftui/getting-started",
         "swiftui/localization",
+        "swiftui/dependency-injection",
         "swiftui/view-customizations",
         {
           "Components" : [
@@ -60,9 +61,10 @@
             "swiftui/components/query-filters",
             "swiftui/components/helper-views",
             "swiftui/components/list-tap-events",
-            "swiftui/components/custom-avatar",
+            "swiftui/components/chat-channel",
             "swiftui/components/channel-header",
             "swiftui/components/message-list",
+            "swiftui/components/custom-avatar",
             "swiftui/components/attachments",
             "swiftui/components/message-composer",
             "swiftui/components/message-reactions",
@@ -84,12 +86,18 @@
           "combine/messages",
           "combine/events"
         ]
-      },
+    },
+    {
+      "Advanced": [
+        "advanced/assertions"
+      ]
+    },
     {
       "Guides": [
         "guides/importance-of-synchronize",
         "guides/customize-message-actions",
         "guides/push-notifications",
+        "guides/offline-support",
         "guides/working-with-attachments",
         "guides/customize-message-composer",
         "guides/message-composer-custom-attachments",

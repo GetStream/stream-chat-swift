@@ -24,6 +24,19 @@ let appearance = Appearance(images: images)
 streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
 ```
 
+You can also change the tint color of the reactions, by changing `reactionCurrentUserColor` for the current user's reactions, or `reactionOtherUserColor` for other users' reactions. Additionally, you can set a background for a selected reaction, with `selectedReactionBackgroundColor`. These colors are optional, so if you don't want to tint the reactions, but want to use the original icon color, you can just pass `nil` as a value. Here's an example how to change these values:
+
+```swift
+var colors = ColorPalette()
+colors.reactionCurrentUserColor = UIColor.blue
+colors.reactionOtherUserColor = UIColor.red
+colors.selectedReactionBackgroundColor = UIColor.gray
+        
+let appearance = Appearance(colors: colors)
+        
+streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
+```
+
 ## Changing the Message Reactions View
 
 Alternatively, you can completely swap the `ReactionsContainer` view with your own implementation. In order to do that, you need to implement the `makeMessageReactionView` method from the `ViewFactory`, which is called with the message as a parameter. 

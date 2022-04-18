@@ -5,10 +5,11 @@
 import Combine
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
-class UserListController_Combine_Tests: iOS13TestCase {
+final class UserListController_Combine_Tests: iOS13TestCase {
     var userListController: UserListControllerMock!
     var cancellables: Set<AnyCancellable>!
 
@@ -22,6 +23,7 @@ class UserListController_Combine_Tests: iOS13TestCase {
         // Release existing subscriptions and make sure the controller gets released, too
         cancellables = nil
         AssertAsync.canBeReleased(&userListController)
+        userListController = nil
         super.tearDown()
     }
     

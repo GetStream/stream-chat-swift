@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class Pagination_Tests: XCTestCase {
+final class Pagination_Tests: XCTestCase {
     func test_invalidMessagesPaginationInit_returnsNil() {
         let pagination = MessagesPagination(pageSize: nil, parameter: nil)
         
