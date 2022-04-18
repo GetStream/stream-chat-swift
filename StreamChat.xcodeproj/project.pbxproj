@@ -1029,6 +1029,8 @@
 		AD52A21C2804851600D0157E /* CommandDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD52A21B2804851600D0157E /* CommandDTO.swift */; };
 		AD52A21D2804851600D0157E /* CommandDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD52A21B2804851600D0157E /* CommandDTO.swift */; };
 		AD540AE2260CECA10082D802 /* QuotedChatMessageView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD540AE1260CECA10082D802 /* QuotedChatMessageView_Tests.swift */; };
+		AD6A248A280DA890003BA1E4 /* PushDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6A2489280DA88F003BA1E4 /* PushDevice.swift */; };
+		AD6A248B280DA890003BA1E4 /* PushDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6A2489280DA88F003BA1E4 /* PushDevice.swift */; };
 		AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFEF2786070800E184B4 /* SwitchButton.swift */; };
 		AD6BEFF227862F9300E184B4 /* AppConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */; };
 		AD6F531927175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */; };
@@ -3141,6 +3143,7 @@
 		AD52A21B2804851600D0157E /* CommandDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandDTO.swift; sourceTree = "<group>"; };
 		AD53DCDE27271D850019290C /* MessageReactionsPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessageReactionsPayload.json; sourceTree = "<group>"; };
 		AD540AE1260CECA10082D802 /* QuotedChatMessageView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedChatMessageView_Tests.swift; sourceTree = "<group>"; };
+		AD6A2489280DA88F003BA1E4 /* PushDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushDevice.swift; sourceTree = "<group>"; };
 		AD6BEFEF2786070800E184B4 /* SwitchButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchButton.swift; sourceTree = "<group>"; };
 		AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigViewController.swift; sourceTree = "<group>"; };
 		AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageGiphyView+GiphyBadge.swift"; sourceTree = "<group>"; };
@@ -4285,6 +4288,7 @@
 				799C9431247D2FB9001F1104 /* ChatMessage.swift */,
 				79877A052498E4BC00015F8B /* CurrentUser.swift */,
 				79877A022498E4BB00015F8B /* Device.swift */,
+				AD6A2489280DA88F003BA1E4 /* PushDevice.swift */,
 				AD17CDF827E4DB2700E0D092 /* PushProvider.swift */,
 				79877A032498E4BB00015F8B /* Member.swift */,
 				AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */,
@@ -8964,6 +8968,7 @@
 				88DA57E02631E80D00FA8C53 /* MutedChannelPayload.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
+				AD6A248A280DA890003BA1E4 /* PushDevice.swift in Sources */,
 				799C944C247D5766001F1104 /* ChannelController.swift in Sources */,
 				842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */,
 				79C5CBF125F66E9700D98001 /* ChannelWatcherListQuery.swift in Sources */,
@@ -9563,6 +9568,7 @@
 				C121E81B274544AD00023E4C /* UserEvents.swift in Sources */,
 				C121E81C274544AD00023E4C /* TypingEvent.swift in Sources */,
 				C121E81D274544AD00023E4C /* ChannelEvents.swift in Sources */,
+				AD6A248B280DA890003BA1E4 /* PushDevice.swift in Sources */,
 				C121E81E274544AD00023E4C /* MessageEvents.swift in Sources */,
 				C121E81F274544AD00023E4C /* MemberEvents.swift in Sources */,
 				C121E820274544AD00023E4C /* ReactionEvents.swift in Sources */,
