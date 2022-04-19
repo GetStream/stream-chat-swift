@@ -275,6 +275,186 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             "12:00 AM"
         )
     }
+    
+    // MARK: - Delivery status
+    
+    func test_previewMessageDeliveryStatus_whenPreviewMessageIsNil() {
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: nil,
+                    readEventsEnabled: true
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertNil(itemView.previewMessageDeliveryStatus)
+    }
+    
+    func test_previewMessageDeliveryStatus_whenPreviewMessageIsFromAnotherUser() {
+        let messageFromAnotherUser: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: nil,
+            isSentByCurrentUser: false
+        )
+        
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: messageFromAnotherUser,
+                    readEventsEnabled: true
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertNil(itemView.previewMessageDeliveryStatus)
+    }
+    
+    func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsFailed() {
+        let messageFromAnotherUser: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: .sendingFailed,
+            isSentByCurrentUser: true
+        )
+        
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: messageFromAnotherUser,
+                    readEventsEnabled: false
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertEqual(itemView.previewMessageDeliveryStatus, .failed)
+    }
+    
+    func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsPending() {
+        let ownMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: .pendingSend,
+            isSentByCurrentUser: true
+        )
+        
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: ownMessage,
+                    readEventsEnabled: false
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertEqual(itemView.previewMessageDeliveryStatus, .pending)
+    }
+    
+    func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsSentAndEnabledReads() {
+        let ownSentMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+        
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: ownSentMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertEqual(itemView.previewMessageDeliveryStatus, .sent)
+    }
+    
+    func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsSentAndDisabledReads() {
+        let ownSentMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+        
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: ownSentMessage,
+                    readEventsEnabled: false
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertNil(itemView.previewMessageDeliveryStatus)
+    }
+    
+    func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsReadAndEnabledReads() {
+        let ownReadMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: [.mock(id: .unique)]
+        )
+        
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: ownReadMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertEqual(itemView.previewMessageDeliveryStatus, .read)
+    }
+    
+    func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsReadAndDisabledReads() {
+        let ownReadMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: [.mock(id: .unique)]
+        )
+        
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: ownReadMessage,
+                    readEventsEnabled: false
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertNil(itemView.previewMessageDeliveryStatus)
+    }
 }
 
 private extension ChatChannelListItemView {
