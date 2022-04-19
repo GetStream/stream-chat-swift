@@ -8,9 +8,8 @@ import XCTest
 extension StreamMockServer {
     
     func saveMessage(_ message: [String: Any]?) {
-        if let message = message {
-            messageList.append(message)
-        }
+        guard let message = message else { return }
+        messageList.append(message)
     }
     
     var firstMessage: [String: Any]? {

@@ -49,19 +49,18 @@ extension StreamMockServer {
     
     private func updateChannelList(_ request: HttpRequest) -> HttpResponse {
         var json = channelList
+        guard let id = request.params[EndpointQuery.channelId] else { return .ok(.json(json)) }
         
-        if let id = request.params[EndpointQuery.channelId] {
-            var channels = json[TopLevelKey.channels] as? [[String: Any]]
-            if let index = channels?.firstIndex(where: {
-                let channel = $0[ChannelPayload.CodingKeys.channel.rawValue] as? [String: Any]
-                return (channel?[ChannelCodingKeys.id.rawValue] as? String) == id
-            }) {
-                let messageList = findMessagesByChannelId(id)
-                channels?[index][ChannelQuery.CodingKeys.messages.rawValue] = messageList
-                json[TopLevelKey.channels] = channels
-                currentChannelId = id
-                channelList = json
-            }
+        var channels = json[TopLevelKey.channels] as? [[String: Any]]
+        if let index = channels?.firstIndex(where: {
+            let channel = $0[ChannelPayload.CodingKeys.channel.rawValue] as? [String: Any]
+            return (channel?[ChannelCodingKeys.id.rawValue] as? String) == id
+        }) {
+            let messageList = findMessagesByChannelId(id)
+            channels?[index][ChannelQuery.CodingKeys.messages.rawValue] = messageList
+            json[TopLevelKey.channels] = channels
+            currentChannelId = id
+            channelList = json
         }
         
         return .ok(.json(json))
@@ -73,12 +72,13 @@ extension StreamMockServer {
         memberDetails: [[String: String]]
     ) -> [[String: Any]] {
         var members: [[String: Any]] = []
-        if var sampleMember = (sampleChannel[ChannelPayload.CodingKeys.members.rawValue] as? [[String: Any]])?.first {
-            for member in memberDetails {
-                sampleMember[TopLevelKey.user] = setUpUser(source: userSources, details: member)
-                sampleMember[TopLevelKey.userId] = member[UserPayloadsCodingKeys.id.rawValue]
-                members.append(sampleMember)
-            }
+        let channelMembers = sampleChannel[ChannelPayload.CodingKeys.members.rawValue] as? [[String: Any]]
+        guard var sampleMember = channelMembers?.first else { return members }
+        
+        for member in memberDetails {
+            sampleMember[TopLevelKey.user] = setUpUser(source: userSources, details: member)
+            sampleMember[TopLevelKey.userId] = member[UserPayloadsCodingKeys.id.rawValue]
+            members.append(sampleMember)
         }
         return members
     }
@@ -90,22 +90,21 @@ extension StreamMockServer {
         sampleChannel: [String: Any]
     ) -> [[String: Any]] {
         var channels: [[String: Any]] = []
+        guard count > 0 else { return channels }
         
-        if count > 0 {
-            var membership = sampleChannel[ChannelPayload.CodingKeys.membership.rawValue] as? [String: Any]
-            membership?[TopLevelKey.user] = author
-            
-            for _ in 1...count {
-                var newChannel = sampleChannel
-                newChannel[ChannelPayload.CodingKeys.members.rawValue] = members
-                newChannel[ChannelPayload.CodingKeys.membership.rawValue] = membership
-                newChannel[ChannelPayload.CodingKeys.channel.rawValue] = mockChannelDetails(
-                    channel: newChannel,
-                    author: author,
-                    memberCount: members.count
-                )
-                channels.append(newChannel)
-            }
+        var membership = sampleChannel[ChannelPayload.CodingKeys.membership.rawValue] as? [String: Any]
+        membership?[TopLevelKey.user] = author
+        
+        for _ in 1...count {
+            var newChannel = sampleChannel
+            newChannel[ChannelPayload.CodingKeys.members.rawValue] = members
+            newChannel[ChannelPayload.CodingKeys.membership.rawValue] = membership
+            newChannel[ChannelPayload.CodingKeys.channel.rawValue] = mockChannelDetails(
+                channel: newChannel,
+                author: author,
+                memberCount: members.count
+            )
+            channels.append(newChannel)
         }
         
         return channels
