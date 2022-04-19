@@ -41,12 +41,12 @@
 		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
 		43016E1426B7189D0054E805 /* CustomMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1326B7189D0054E805 /* CustomMessageContentView.swift */; };
 		43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
+		4311B59F280EC2FC000E3D54 /* LargeQueryChannelsPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 43842B0F280E075100E55874 /* LargeQueryChannelsPayload.json */; };
 		437FCA0726D67BE40000223C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA0626D67BE40000223C /* NotificationService.swift */; };
 		437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 437FCA0426D67BE40000223C /* DemoAppPush.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		437FCA1626D79A910000223C /* ChatRemoteNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */; };
 		437FCA1926D906B20000223C /* ChatPushNotificationContent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */; };
-		43842B10280E075100E55874 /* LargeQueryChannelsPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 43842B0F280E075100E55874 /* LargeQueryChannelsPayload.json */; };
 		43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */; };
 		43C68D9126DD37B700622533 /* DemoUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933064825712C8B00FBB586 /* DemoUsers.swift */; };
 		43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EB3AE12671718200954323 /* AttachmentViewCatalog.swift */; };
@@ -8166,6 +8166,7 @@
 				A311B3FF27E8B9A800CFCF6D /* MessageRead.json in Resources */,
 				A311B40427E8B9AD00CFCF6D /* NotificationInviteRejected.json in Resources */,
 				A311B3F127E8B99800CFCF6D /* ChannelUpdated_ServerSide.json in Resources */,
+				4311B59F280EC2FC000E3D54 /* LargeQueryChannelsPayload.json in Resources */,
 				A311B3DE27E8B98C00CFCF6D /* ChannelMembersQuery.json in Resources */,
 				A311B3E827E8B99200CFCF6D /* AttachmentPayloadCustom.json in Resources */,
 				A3D9D68527EDE3B900725066 /* vader.jpg in Resources */,
@@ -8205,7 +8206,6 @@
 			files = (
 				7908824A25432CC600896F03 /* StreamChatStressTestPlan.xctestplan in Resources */,
 				7908824B25432CC600896F03 /* StreamChatTestPlan.xctestplan in Resources */,
-				43842B10280E075100E55874 /* LargeQueryChannelsPayload.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

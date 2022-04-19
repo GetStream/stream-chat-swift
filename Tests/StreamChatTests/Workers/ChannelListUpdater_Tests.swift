@@ -278,24 +278,21 @@ final class ChannelListUpdater_Tests: XCTestCase {
     }
     
     func test_writeChannelListPayload() throws {
-        let channelJSON: Data = {
-            let url = Bundle(for: ChannelListUpdater_Tests.self)
-                .url(forResource: "LargeQueryChannelsPayload", withExtension: "json")!
-            return try! Data(contentsOf: url)
-        }()
-        
+        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        let channelJSON = XCTestCase.mockData(fromFile: "LargeQueryChannelsPayload")
         let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
 
         let setupUserExpectation = expectation(description: "setupUserExpectation")
+        
         client.databaseContainer.write({ session in
             try session.saveCurrentUser(payload: dummyUserPayload)
         }, completion: { _ in
             setupUserExpectation.fulfill()
         })
-        wait(for: [setupUserExpectation], timeout: 1.0)
+
+        wait(for: [setupUserExpectation], timeout: 2.0)
 
         let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: channelJSON)
-        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
 
         measure {
             let expectation = expectation(description: "writeChannelListPayload")
@@ -303,9 +300,9 @@ final class ChannelListUpdater_Tests: XCTestCase {
                 expectation.fulfill()
                 XCTAssertFalse(result.isError)
             })
-            wait(for: [expectation], timeout: 20.0)
             // make sure we flush cache in between runs
             client.databaseContainer.writableContext.flushCache()
+            wait(for: [expectation], timeout: 20.0)
         }
     }
 

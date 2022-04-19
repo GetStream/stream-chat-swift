@@ -29,7 +29,6 @@ class InMemCache: EntityCache {
     static let users = "users"
 
     func flush() {
-        // ["EntityCache"]["users"] -> UserDTO
         Thread.current.threadDictionary.removeObject(forKey: "EntityCache")
     }
 
@@ -38,7 +37,6 @@ class InMemCache: EntityCache {
     }
 
     func get<T>(entityType: String, key: String) -> T? {
-        return nil
         if let dict = Thread.current.threadDictionary["EntityCache"] as? NSMutableDictionary {
             return dict[makeKey(entityType: entityType, key: key)] as? T
         }
