@@ -407,8 +407,9 @@ extension ChatChannel {
         let fetchMessages: () -> [ChatMessage] = {
             let limit = dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25
             if dto.messagesArePopulated() {
-                // TODO: better if we return up to limit messages instead of all of them
-                return dto.messages.map { $0.asModel() }
+                return dto.messages.map { $0.asModel() }.sorted { a, b in
+                    a.createdAt > b.createdAt
+                }
             }
             return MessageDTO
                 .load(
@@ -419,14 +420,14 @@ extension ChatChannel {
                 .map { $0.asModel() }
         }
         
-        // TODO: this makes no sense, we should not store watchers on the database at all
+        // TODO: this makes no sense, we should not store watchers on the database
         let fetchWatchers: () -> [ChatUser] = {
             UserDTO
                 .loadLastActiveWatchers(cid: cid, context: context)
                 .map { $0.asModel() }
         }
         
-        // TODO: really often the DTO is populated with all messages, we should skip this query in that case
+        // TODO: really often the DTO is populated with all members, we should skip this query in that case
         let fetchMembers: () -> [ChatChannelMember] = {
             MemberDTO
                 .loadLastActiveMembers(cid: cid, context: context)
