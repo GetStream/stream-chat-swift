@@ -314,6 +314,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
             }
 
             metadataContainer = ContainerStackView(
+                spacing: 4,
                 arrangedSubviews: options.contains(.flipped) ? metadataSubviews.reversed() : metadataSubviews
             ).withAccessibilityIdentifier(identifier: "metadataContainer")
             bubbleThreadMetaContainer.addArrangedSubview(metadataContainer!)
