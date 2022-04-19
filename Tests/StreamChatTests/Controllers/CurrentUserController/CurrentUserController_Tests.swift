@@ -414,16 +414,16 @@ final class CurrentUserController_Tests: XCTestCase {
     
     // MARK: addDevice
     
-    func test_addDevice_callsCurrentUserUpdaterWithCorrectValues() {
+    func test_addDevice_whenPushProviderIsAPN_callsCurrentUserUpdaterWithCorrectValues() {
         // Simulate current user
         env.currentUserObserverItem = .mock(id: .unique)
         
-        let expectedToken = "test".data(using: .utf8)!
+        let expectedDeviceToken = "test".data(using: .utf8)!
         
-        controller.addDevice(token: expectedToken)
+        controller.addDevice(.apn(token: expectedDeviceToken))
         
         // Assert updater is called with correct data
-        XCTAssertEqual(env.currentUserUpdater.addDevice_token, expectedToken)
+        XCTAssertEqual(env.currentUserUpdater.addDevice_id, expectedDeviceToken.deviceId)
         XCTAssertEqual(env.currentUserUpdater.addDevice_pushProvider, PushProvider.apn)
         XCTAssertNotNil(env.currentUserUpdater.addDevice_completion)
     }
@@ -432,12 +432,12 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate current user
         env.currentUserObserverItem = .mock(id: .unique)
 
-        let expectedToken = "test".data(using: .utf8)!
+        let expectedDeviceId = "test"
 
-        controller.addDevice(token: expectedToken, pushProvider: .firebase)
+        controller.addDevice(.firebase(token: expectedDeviceId))
 
         // Assert updater is called with correct data
-        XCTAssertEqual(env.currentUserUpdater.addDevice_token, expectedToken)
+        XCTAssertEqual(env.currentUserUpdater.addDevice_id, expectedDeviceId)
         XCTAssertEqual(env.currentUserUpdater.addDevice_pushProvider, PushProvider.firebase)
         XCTAssertNotNil(env.currentUserUpdater.addDevice_completion)
     }
@@ -447,7 +447,7 @@ final class CurrentUserController_Tests: XCTestCase {
         env.currentUserObserverItem = .mock(id: .unique)
         
         var completionError: Error?
-        controller.addDevice(token: "test".data(using: .utf8)!) { [callbackQueueID] in
+        controller.addDevice(.firebase(token: "test")) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
         }
@@ -465,7 +465,7 @@ final class CurrentUserController_Tests: XCTestCase {
         env.currentUserObserverItem = .mock(id: .unique)
         
         var completionIsCalled = false
-        controller.addDevice(token: "test".data(using: .utf8)!) { [callbackQueueID] error in
+        controller.addDevice(.firebase(token: "test")) { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
             // Assert there is no error.
@@ -493,7 +493,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_addDevice_whenCurrentUserDoesNotExist_shouldError() throws {
         let error = try waitFor {
-            controller.addDevice(token: "test".data(using: .utf8)!, completion: $0)
+            controller.addDevice(.firebase(token: "test"), completion: $0)
         }
         
         XCTAssert(error is ClientError.CurrentUserDoesNotExist)

@@ -13,7 +13,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
     @Atomic var updateUserData_userExtraData: [String: RawJSON]? = nil
     @Atomic var updateUserData_completion: ((Error?) -> Void)?
     
-    @Atomic var addDevice_token: Data?
+    @Atomic var addDevice_id: DeviceId?
     @Atomic var addDevice_currentUserId: UserId?
     @Atomic var addDevice_pushProvider: PushProvider?
     @Atomic var addDevice_completion: ((Error?) -> Void)?
@@ -42,12 +42,12 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
     }
     
     override func addDevice(
-        token: Data,
-        currentUserId: UserId,
+        deviceId: DeviceId,
         pushProvider: PushProvider,
+        currentUserId: UserId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        addDevice_token = token
+        addDevice_id = deviceId
         addDevice_currentUserId = currentUserId
         addDevice_pushProvider = pushProvider
         addDevice_completion = completion
@@ -76,7 +76,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         updateUserData_userExtraData = nil
         updateUserData_completion = nil
         
-        addDevice_token = nil
+        addDevice_id = nil
         addDevice_currentUserId = nil
         addDevice_completion = nil
         
