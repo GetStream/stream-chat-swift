@@ -259,7 +259,7 @@ open class GalleryVC:
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        super.viewWillDisappear(animated)
         
         videoPlaybackBar.player?.pause()
     }
