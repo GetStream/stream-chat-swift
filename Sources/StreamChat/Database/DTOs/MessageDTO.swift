@@ -39,7 +39,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
 
-    @NSManaged var attachmentCount: Int
+    @NSManaged var attachmentCount: Int32
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
@@ -397,7 +397,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 return try createNewAttachment(attachment: attachment, id: id)
             }
         )
-        message.attachmentCount = message.attachments.count
+        message.attachmentCount = Int32(message.attachments.count)
         
         // If a user is able to mention someone,
         // most probably we have that user already saved in DB.
@@ -566,7 +566,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         dto.attachments = attachments
-        dto.attachmentCount = dto.attachments.count
+        dto.attachmentCount = Int32(dto.attachments.count)
 
         if let parentMessageId = payload.parentId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
