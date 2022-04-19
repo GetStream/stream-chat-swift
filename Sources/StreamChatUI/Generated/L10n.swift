@@ -10,6 +10,8 @@ internal enum L10n {
   internal static func currentSelection(_ p1: Int, _ p2: Int) -> String {
     return L10n.tr("Localizable", "current-selection", p1, p2)
   }
+  /// You
+  internal static var you: String { L10n.tr("Localizable", "you") }
 
   internal enum Alert {
     internal enum Actions {
@@ -217,10 +219,6 @@ internal enum L10n {
       /// Plural format key: "%#@reactions@"
       internal static func numberOfReactions(_ p1: Int) -> String {
         return L10n.tr("Localizable", "reaction.authors.number-of-reactions", p1)
-      }
-      internal enum Cell {
-        /// You
-        internal static var you: String { L10n.tr("Localizable", "reaction.authors.cell.you") }
       }
     }
   }

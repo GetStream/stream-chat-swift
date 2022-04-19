@@ -102,8 +102,18 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         guard let content = content else { return nil }
         if let typingUsersInfo = typingUserString {
             return typingUsersInfo
-        } else if let latestMessage = content.channel.latestMessages.first {
-            return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.textContent ?? latestMessage.text)"
+        } else if let previewMessage = content.channel.previewMessage {
+            guard previewMessage.type != .system else {
+                return previewMessage.text
+            }
+            
+            let authorName = previewMessage.isSentByCurrentUser
+                ? L10n.you
+                : previewMessage.author.name ?? previewMessage.author.id
+            
+            let text = previewMessage.textContent ?? previewMessage.text
+            
+            return "\(authorName): \(text)"
         } else {
             return L10n.Channel.Item.emptyMessages
         }

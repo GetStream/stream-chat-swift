@@ -188,20 +188,23 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
     }
     
-    func test_subtitleText_whenLatestMessageExists() {
+    func test_subtitleText_whenPreviewMessageIsSentByAnotherUserWithName() {
+        let authorName = "Author name"
+        
+        let previewMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Message text",
+            author: .mock(
+                id: .unique,
+                name: authorName
+            ),
+            isSentByCurrentUser: false
+        )
+                
         let channel: ChatChannel = .mock(
             cid: .unique,
-            latestMessages: [
-                .mock(
-                    id: .unique,
-                    cid: .unique,
-                    text: "Message text",
-                    author: .mock(
-                        id: .unique,
-                        name: "Author name"
-                    )
-                )
-            ]
+            previewMessage: previewMessage
         )
         
         let itemView = ChatChannelListItemView()
@@ -209,24 +212,25 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         
         XCTAssertEqual(
             itemView.subtitleText,
-            "Author name: Message text"
+            "\(authorName): \(previewMessage.text)"
         )
     }
     
-    func test_subtitleText_whenLatestMessageExistsAndAuthorNameDoesNotExist() {
+    func test_subtitleText_whenPreviewMessageIsSentByAnotherUserWithoutName() {
+        let previewMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Message text",
+            author: .mock(
+                id: "user-id",
+                name: nil
+            ),
+            isSentByCurrentUser: false
+        )
+                
         let channel: ChatChannel = .mock(
             cid: .unique,
-            latestMessages: [
-                .mock(
-                    id: .unique,
-                    cid: .unique,
-                    text: "Message text",
-                    author: .mock(
-                        id: "author-id",
-                        name: nil
-                    )
-                )
-            ]
+            previewMessage: previewMessage
         )
         
         let itemView = ChatChannelListItemView()
@@ -234,11 +238,55 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         
         XCTAssertEqual(
             itemView.subtitleText,
-            "author-id: Message text"
+            "\(previewMessage.author.id): \(previewMessage.text)"
         )
     }
     
-    func test_subtitleText_whenNoLatestMessages() {
+    func test_subtitleText_whenPreviewMessageIsSentByCurrentUser() {
+        let ownMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hey there",
+            author: .mock(id: .unique),
+            isSentByCurrentUser: true
+        )
+        
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: ownMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertEqual(itemView.subtitleText, "\(L10n.you): \(ownMessage.text)")
+    }
+    
+    func test_subtitleText_whenPreviewMessageIsSystem() {
+        let systemMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Channel is truncated",
+            type: .system,
+            author: .mock(id: .unique)
+        )
+        
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: systemMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: .unique
+            )
+        )
+        
+        XCTAssertEqual(itemView.subtitleText, systemMessage.text)
+    }
+    
+    func test_subtitleText_whenNoPreviewMessage() {
         let channel: ChatChannel = .mock(cid: .unique)
         
         let itemView = ChatChannelListItemView()
