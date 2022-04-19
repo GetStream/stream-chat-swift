@@ -8,37 +8,271 @@ import StreamChat
 import XCTest
 
 final class ChatChannelListItemView_Tests: XCTestCase {
-    var content: ChatChannelListItemView.Content!
+    let currentUser: ChatUser = .mock(
+        id: "yoda",
+        name: "Yoda"
+    )
     
-    override func setUp() {
-        super.setUp()
-        content = .init(
-            channel: ChatChannel.mock(
-                cid: .unique,
-                name: "Channel 1",
-                imageURL: TestImages.yoda.url,
-                lastMessageAt: .init(timeIntervalSince1970: 1_611_951_526_000)
-            ),
-            currentUserId: .unique
-        )
-    }
+    // MARK: - Appearance
     
     func test_emptyState() {
-        let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
         // Make sure the view is empty if there was content before.
-        view.content = content
+        let view = channelItemView(content: .init(channel: .mock(cid: .unique), currentUserId: .unique))
         view.content = nil
-        view.addSizeConstraints()
-        view.components = .mock
         AssertSnapshot(view)
     }
     
-    func test_defaultAppearance() {
-        let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
-        view.addSizeConstraints()
-        view.content = content
-        view.components = .mock
-        AssertSnapshot(view)
+    func test_appearance_pendingPreviewMessageFromCurrentUser_readsEnabled() {
+        let pendingSendMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Pending send message from current user",
+            author: currentUser,
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: .pendingSend,
+            isSentByCurrentUser: true
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: pendingSendMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_pendingPreviewMessageFromCurrentUser_readsDisabled() {
+        let pendingSendMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Pending send message from current user",
+            author: currentUser,
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: .pendingSend,
+            isSentByCurrentUser: true
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: pendingSendMessage,
+                    readEventsEnabled: false
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_sentPreviewMessageFromCurrentUser_readsEnabled() {
+        let sentMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Sent message from current user",
+            author: currentUser,
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: sentMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_sentPreviewMessageFromCurrentUser_readsDisabled() {
+        let sentMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Sent message from current user",
+            author: currentUser,
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: sentMessage,
+                    readEventsEnabled: false
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_readPreviewMessageFromCurrentUser_readsEnabled() {
+        let readMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Read message from current user",
+            author: currentUser,
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: [
+                .mock(id: .unique),
+                .mock(id: .unique)
+            ]
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: readMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_readPreviewMessageFromCurrentUser_readsDisabled() {
+        let readMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Read message from current user",
+            author: currentUser,
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: [
+                .mock(id: .unique),
+                .mock(id: .unique)
+            ]
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: readMessage,
+                    readEventsEnabled: false
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_failedPreviewMessageFromCurrentUser_readsEnabled() {
+        let readMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Failed message from current user",
+            author: currentUser,
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: .sendingFailed,
+            isSentByCurrentUser: true
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: readMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_failedPreviewMessageFromCurrentUser_readsDisabled() {
+        let readMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Failed message from current user",
+            author: currentUser,
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: .sendingFailed,
+            isSentByCurrentUser: true
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: readMessage,
+                    readEventsEnabled: false
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_readPreviewMessageFromAnotherUser_readEnabled() {
+        let readMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Read message from another user",
+            author: .mock(id: "another-user", name: "Another user"),
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: nil,
+            isSentByCurrentUser: false,
+            readBy: [
+                .mock(id: .unique),
+                .mock(id: .unique)
+            ]
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: readMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_systemPreviewMessage() {
+        let systemMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Channel truncated",
+            type: .system,
+            author: .mock(id: "another-user", name: "Another user"),
+            createdAt: Date(timeIntervalSince1970: 100),
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+        
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: systemMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
     
     func test_appearanceCustomization_usingAppearance() {
@@ -46,11 +280,13 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.subtitleText = .cyan
         
-        let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
-        
-        view.appearance = appearance
-        view.addSizeConstraints()
-        view.components = .mock
+        let view = channelItemView(
+            content: .init(
+                channel: channel(readEventsEnabled: true),
+                currentUserId: currentUser.id
+            ),
+            appearance: appearance
+        )
         
         AssertSnapshot(view)
     }
@@ -91,7 +327,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 unreadCountView.content = .mock(messages: 3)
                 footnoteLabel.text = appearance.formatters
                     .messageTimestamp
-                    .format(content!.channel.lastMessageAt!)
+                    .format(content!.channel.createdAt)
             }
         }
         
@@ -100,19 +336,36 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         view.addSizeConstraints()
         view.components = .mock
         
-        view.content = content
+        view.content = .init(
+            channel: channel(
+                previewMessage: .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "Hey there",
+                    author: currentUser,
+                    isSentByCurrentUser: true
+                ),
+                readEventsEnabled: true
+            ),
+            currentUserId: currentUser.id
+        )
         AssertSnapshot(view)
     }
 
     func test_textProperties_arePropagated() {
         let itemView = ChatChannelListItemView()
-        itemView.content = content
+        itemView.content = .init(
+            channel: .mock(cid: .unique),
+            currentUserId: .unique
+        )
         itemView.updateContent()
 
         XCTAssertEqual(itemView.titleText, itemView.titleLabel.text)
         XCTAssertEqual(itemView.subtitleText, itemView.subtitleLabel.text)
         XCTAssertEqual(itemView.timestampText, itemView.timestampLabel.text)
     }
+    
+    // MARK: - Title
     
     func test_titleText_isNil_whenChannelIsNil() {
         let itemView = ChatChannelListItemView()
@@ -136,6 +389,8 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         
         XCTAssertEqual(itemView.titleText, channel.name)
     }
+    
+    // MARK: - Subtitle
     
     func test_subtitleText_isNil_whenChannelIsNil() {
         let itemView = ChatChannelListItemView()
@@ -298,10 +553,12 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
     }
     
-    func test_timestampText_isNil_whenLastMessageAtIsNil() {
+    // MARK: - Timestamp
+    
+    func test_timestampText_isNil_whenPreviewMessageIsNil() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            lastMessageAt: nil
+            previewMessage: nil
         )
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
@@ -309,10 +566,16 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         XCTAssertNil(itemView.timestampText)
     }
     
-    func test_timestampText_whenLastMessageAtExists() {
+    func test_timestampText_whenPreviewMessageExists() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            lastMessageAt: Date(timeIntervalSince1970: 1)
+            previewMessage: .mock(
+                id: .unique,
+                cid: .unique,
+                text: .unique,
+                author: .mock(id: .unique),
+                createdAt: Date(timeIntervalSince1970: 1)
+            )
         )
 
         let itemView = ChatChannelListItemView()
@@ -502,6 +765,35 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
         
         XCTAssertNil(itemView.previewMessageDeliveryStatus)
+    }
+    
+    // MARK: - Helpers
+    
+    private func channelItemView(
+        content: ChatChannelListItemView.Content?,
+        components: Components = .mock,
+        appearance: Appearance = .default
+    ) -> ChatChannelListItemView {
+        let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
+        view.components = components
+        view.appearance = appearance
+        view.content = content
+        view.addSizeConstraints()
+        return view
+    }
+    
+    private func channel(
+        previewMessage: ChatMessage? = nil,
+        readEventsEnabled: Bool
+    ) -> ChatChannel {
+        .mock(
+            cid: previewMessage?.cid ?? .unique,
+            name: "Channel 1",
+            imageURL: TestImages.yoda.url,
+            createdAt: Date(timeIntervalSince1970: 1),
+            config: .mock(readEventsEnabled: readEventsEnabled),
+            previewMessage: previewMessage
+        )
     }
 }
 

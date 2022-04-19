@@ -13,7 +13,16 @@ extension Array where Element == ChatChannel {
             cid: .unique,
             name: "Channel 1",
             imageURL: XCTestCase.TestImages.yoda.url,
-            lastMessageAt: .init(timeIntervalSince1970: 1_611_951_526_000)
+            previewMessage: .mock(
+                id: .unique,
+                cid: .unique,
+                text: "Hey there",
+                author: .mock(id: "user-id", name: "Me"),
+                createdAt: .init(timeIntervalSince1970: 1_611_951_526_000),
+                localState: nil,
+                isSentByCurrentUser: true,
+                readBy: [.mock(id: .unique)]
+            )
         )
         let channelWithOnlineIndicator = ChatChannel.mockDMChannel(
             lastMessageAt: .init(timeIntervalSince1970: 1_611_951_527_000),
@@ -23,23 +32,28 @@ extension Array where Element == ChatChannel {
             cid: .init(type: .messaging, id: "test_channel3"),
             name: "This is a channel with a big name. Really big.",
             imageURL: XCTestCase.TestImages.yoda.url,
-            lastMessageAt: .init(timeIntervalSince1970: 1_611_951_528_000),
             unreadCount: .mock(messages: 4),
-            latestMessages: [
-                ChatMessage.mock(
-                    id: "1", cid: .unique, text: "This is a long message. How the UI will adjust?", author: .mock(id: "Vader2")
-                )
-            ]
+            previewMessage: .mock(
+                id: "1",
+                cid: .unique,
+                text: "This is a long message. How the UI will adjust?",
+                author: .mock(id: "Vader2"),
+                createdAt: .init(timeIntervalSince1970: 1_611_951_528_000)
+            )
         )
+        
         let channelWithMultipleMessages = ChatChannel.mock(
             cid: .init(type: .messaging, id: "test_channel4"),
             name: "Channel 4",
             imageURL: XCTestCase.TestImages.vader.url,
             lastMessageAt: .init(timeIntervalSince1970: 1_611_951_529_000),
-            latestMessages: [
-                ChatMessage.mock(id: "2", cid: .unique, text: "Hello", author: .mock(id: "Vader")),
-                ChatMessage.mock(id: "1", cid: .unique, text: "Hello2", author: .mock(id: "Vader2"))
-            ]
+            previewMessage: .mock(
+                id: "1",
+                cid: .unique,
+                text: "Cool",
+                author: .mock(id: "Vader2"),
+                createdAt: .init(timeIntervalSince1970: 1_611_951_528_000)
+            )
         )
 
         return [
