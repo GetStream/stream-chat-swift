@@ -213,14 +213,3 @@ public typealias NotificationInviteAccepted = NotificationInviteAcceptedEvent
 
 @available(*, deprecated, renamed: "UnknownChannelEvent")
 public typealias UnknownEvent = UnknownChannelEvent
-
-public extension CurrentChatUserController {
-    @available(
-        *,
-        deprecated,
-        message: "use addDevice(_pushDevice:) instead. This deprecated function doesn't correctly support multiple push providers."
-    )
-    func addDevice(token: Data, pushProvider: PushProvider = .apn, completion: ((Error?) -> Void)? = nil) {
-        addDevice(.apn(token: token), completion: completion)
-    }
-}

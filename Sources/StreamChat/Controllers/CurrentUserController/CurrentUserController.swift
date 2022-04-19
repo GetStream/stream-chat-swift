@@ -312,3 +312,16 @@ public extension CurrentChatUserController {
         set { multicastDelegate.set(mainDelegate: newValue) }
     }
 }
+
+// MARK: - Deprecations
+
+public extension CurrentChatUserController {
+    @available(
+        *,
+        deprecated,
+        message: "use addDevice(_pushDevice:) instead. This deprecated function doesn't correctly support multiple push providers."
+    )
+    func addDevice(token: Data, pushProvider: PushProvider = .apn, completion: ((Error?) -> Void)? = nil) {
+        addDevice(.apn(token: token), completion: completion)
+    }
+}
