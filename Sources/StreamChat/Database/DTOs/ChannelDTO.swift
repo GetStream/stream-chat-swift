@@ -235,9 +235,8 @@ extension NSManagedObjectContext {
         _ = try upsertMany(payload: payload.pinnedMessages, channelDTO: dto)
         
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
-        try upsertMany(payload: payload.members, channelId: payload.channel.cid).forEach {
-            dto.members.insert($0)
-        }
+        let members = try upsertMany(payload: payload.members, channelId: payload.channel.cid)
+        dto.members = Set<MemberDTO>(members)
 
         _ = try upsertMany(payload: payload.channelReads, for: payload.channel.cid)
 
