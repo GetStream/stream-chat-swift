@@ -249,6 +249,11 @@ public struct Components {
     /// A view cell that displays an individual reaction author of a message.
     public var reactionAuthorCell: ChatMessageReactionAuthorViewCell.Type = ChatMessageReactionAuthorViewCell.self
 
+    /// The sorting order of how the reactions data will be displayed.
+    public var reactionsSorting: ((ChatMessageReactionData, ChatMessageReactionData) -> Bool) = {
+        $0.type.rawValue < $1.type.rawValue
+    }
+
     // MARK: - Thread components
 
     /// The view controller used to display the detail of a message thread.

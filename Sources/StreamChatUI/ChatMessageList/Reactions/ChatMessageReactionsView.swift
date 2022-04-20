@@ -16,8 +16,8 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
     }
 
     /// The sorting order of how the reactions data will be displayed.
-    public var reactionsSorting: ((ChatMessageReactionData, ChatMessageReactionData) -> Bool) = { lhs, rhs in
-        lhs.type.rawValue < rhs.type.rawValue
+    open var reactionsSorting: ((ChatMessageReactionData, ChatMessageReactionData) -> Bool) {
+        components.reactionsSorting
     }
 
     // MARK: - Subviews
@@ -45,10 +45,7 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
 
         content.reactions.sorted(by: reactionsSorting).forEach { reaction in
             if appearance.images.availableReactions[reaction.type] == nil {
-                log
-                    .warning(
-                        "reaction with type \(reaction.type) is not registered in appearance.images.availableReactions, skipping"
-                    )
+                logWarning(unavailableReaction: reaction)
                 return
             }
             let itemView = reactionItemView.init()
@@ -59,6 +56,12 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
             )
             stackView.addArrangedSubview(itemView)
         }
+    }
+
+    private func logWarning(unavailableReaction reaction: ChatMessageReactionData) {
+        log.warning(
+            "reaction with type \(reaction.type) is not registered in appearance.images.availableReactions, skipping"
+        )
     }
 }
 

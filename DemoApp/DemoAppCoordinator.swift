@@ -109,8 +109,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.messageListDateOverlayEnabled = true
         Components.default._messageListDiffingEnabled = isStreamInternalConfiguration
         Components.default.messageActionsVC = CustomChatMessageActionsVC.self
-        Components.default.messageReactionsView = CustomChatMessageReactionsView.self
-        Components.default.reactionPickerReactionsView = CustomChatMessageReactionsView.self
+        Components.default.reactionsSorting = { $0.type.position < $01.type.position }
 
         StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
 
@@ -416,16 +415,6 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
         ) {
             self.action = action
             icon = UIImage(systemName: "flag.fill")!
-        }
-    }
-}
-
-class CustomChatMessageReactionsView: ChatMessageReactionsView {
-    override func setUp() {
-        super.setUp()
-
-        reactionsSorting = { lhs, rhs in
-            lhs.type.position < rhs.type.position
         }
     }
 }
