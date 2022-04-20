@@ -129,7 +129,7 @@ extension ChatClient {
                     )
                 },
                 databaseContainerBuilder: {
-                    try DatabaseContainer_Spy(
+                    DatabaseContainer_Spy(
                         kind: $0,
                         shouldFlushOnStart: $1,
                         shouldResetEphemeralValuesOnStart: $2,
@@ -201,19 +201,14 @@ extension ChatClient.Environment {
                 )
             },
             databaseContainerBuilder: {
-                do {
-                    return try DatabaseContainer_Spy(
-                        kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
-                        shouldFlushOnStart: $1,
-                        shouldResetEphemeralValuesOnStart: $2,
-                        localCachingSettings: $3,
-                        deletedMessagesVisibility: $4,
-                        shouldShowShadowedMessages: $5
-                    )
-                } catch {
-                    XCTFail("Unable to initialize DatabaseContainer_Spy \(error)")
-                    fatalError("Unable to initialize DatabaseContainer_Spy \(error)")
-                }
+                DatabaseContainer_Spy(
+                    kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
+                    shouldFlushOnStart: $1,
+                    shouldResetEphemeralValuesOnStart: $2,
+                    localCachingSettings: $3,
+                    deletedMessagesVisibility: $4,
+                    shouldShowShadowedMessages: $5
+                )
             },
             requestEncoderBuilder: DefaultRequestEncoder.init,
             requestDecoderBuilder: DefaultRequestDecoder.init,

@@ -13,7 +13,7 @@ final class EventDTOConverterMiddleware_Tests: XCTestCase {
 
     override func setUp() {
         middleware = .init()
-        database = try! DatabaseContainer_Spy(kind: .inMemory)
+        database = DatabaseContainer_Spy(kind: .inMemory)
         super.setUp()
     }
     

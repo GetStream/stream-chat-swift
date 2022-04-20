@@ -137,6 +137,9 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             cacheName: nil
         )
         
+        // We want item to report nil until `startObserving` is called
+        _item.computeValue = { nil }
+        
         listenForRemoveAllDataNotifications()
     }
     
@@ -149,11 +152,8 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     ///
     /// - Throws: An error if the provided fetch request fails.
     func startObserving() throws {
-        try frc.performFetch()
-        
         _item.computeValue = { [weak self] in
-            guard let self = self else { return nil }
-            guard let fetchedObjects = self.frc.fetchedObjects else { return nil }
+            guard let self = self, let fetchedObjects = self.frc.fetchedObjects else { return nil }
             log.assert(
                 fetchedObjects.count <= 1,
                 "EntityDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(fetchedObjects)"
@@ -169,6 +169,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
         }
         _item.reset()
         
+        try frc.performFetch()
         frc.delegate = changeAggregator
     }
     
@@ -225,7 +226,11 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             guard let self = self else { return }
             
             // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
-            try! self.startObserving()
+            do {
+                try self.startObserving()
+            } catch {
+                log.error("Error when starting observing: \(error)")
+            }
         }
         
         releaseNotificationObservers = { [weak notificationCenter] in

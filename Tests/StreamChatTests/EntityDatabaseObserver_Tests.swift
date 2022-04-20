@@ -17,7 +17,7 @@ final class EntityDatabaseObserver_Tests: XCTestCase {
         
         fetchRequest = NSFetchRequest(entityName: "TestManagedObject")
         fetchRequest.sortDescriptors = [.init(keyPath: \TestManagedObject.testId, ascending: true)]
-        database = try! DatabaseContainer_Spy(
+        database = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "TestDataModel",
             bundle: .testTools
@@ -228,7 +228,14 @@ final class EntityDatabaseObserver_Tests: XCTestCase {
         try observer.startObserving()
 
         // Call `removeAllData` on the database container
-        try database.removeAllData()
+        let expectation = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 0.1)
         
         XCTAssertEqual(listener, [.remove(testItem)])
     }

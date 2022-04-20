@@ -32,7 +32,7 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
         userInfo: UserInfo?,
         newToken: Token,
         completion: ((Error?) -> Void)? = nil
-    ) throws {
+    ) {
         prepareEnvironment_newToken = newToken
     }
 

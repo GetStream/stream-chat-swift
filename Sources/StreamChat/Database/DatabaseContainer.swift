@@ -98,7 +98,7 @@ class DatabaseContainer: NSPersistentContainer {
         localCachingSettings: ChatClientConfig.LocalCaching? = nil,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
         shouldShowShadowedMessages: Bool? = nil
-    ) throws {
+    ) {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
         let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
@@ -110,29 +110,23 @@ class DatabaseContainer: NSPersistentContainer {
 
         super.init(name: modelName, managedObjectModel: model)
         
-        let description = NSPersistentStoreDescription()
-        
-        switch kind {
-        case .inMemory:
-            // So, it seems that on iOS 13, we have to use SQLite store with /dev/null URL, but on iOS 11 & 12
-            // we have to use `NSInMemoryStoreType`. This is not, of course, documented anywhere because no one in
-            // Apple is obviously that crazy, to write tests with CoreData stack.
-            if #available(iOS 13, *) {
-                description.url = URL(fileURLWithPath: "/dev/null")
-            } else {
-                description.type = NSInMemoryStoreType
-            }
-            
-        case let .onDisk(databaseFileURL: databaseFileURL):
-            description.url = databaseFileURL
-        }
-        
-        persistentStoreDescriptions = [description]
+        setUpPersistentStoreDescription(with: kind)
         
         let persistentStoreCreatedCompletion: (Error?) -> Void = { [weak self] error in
             if let error = error {
-                log.error("Error when initializing DatabaseContainer: \(error)")
-                // There's no recovery option from this error
+                log.error("Failed to initialize the local storage with error: \(error). Falling back to the in-memory option.")
+                self?.setUpPersistentStoreDescription(with: .inMemory)
+                self?.recreatePersistentStore { error in
+                    if let error = error {
+                        fatalError(
+                            "Failed to initialize the in-memory storage with error: \(error). This is a non-recoverable error."
+                        )
+                    }
+                    if shouldResetEphemeralValuesOnStart {
+                        self?.resetEphemeralValues()
+                    }
+                }
+                return
             }
             if shouldResetEphemeralValuesOnStart {
                 self?.resetEphemeralValues()
@@ -140,7 +134,7 @@ class DatabaseContainer: NSPersistentContainer {
         }
                 
         if shouldFlushOnStart {
-            try recreatePersistentStore(completion: persistentStoreCreatedCompletion)
+            recreatePersistentStore(completion: persistentStoreCreatedCompletion)
         } else {
             setupPersistentStore(completion: persistentStoreCreatedCompletion)
         }
@@ -166,6 +160,27 @@ class DatabaseContainer: NSPersistentContainer {
         if let observer = loggerNotificationObserver {
             NotificationCenter.default.removeObserver(observer)
         }
+    }
+    
+    private func setUpPersistentStoreDescription(with kind: Kind) {
+        let description = NSPersistentStoreDescription()
+        
+        switch kind {
+        case .inMemory:
+            // So, it seems that on iOS 13, we have to use SQLite store with /dev/null URL, but on iOS 11 & 12
+            // we have to use `NSInMemoryStoreType`. This is not, of course, documented anywhere because no one in
+            // Apple is obviously that crazy, to write tests with CoreData stack.
+            if #available(iOS 13, *) {
+                description.url = URL(fileURLWithPath: "/dev/null")
+            } else {
+                description.type = NSInMemoryStoreType
+            }
+            
+        case let .onDisk(databaseFileURL: databaseFileURL):
+            description.url = databaseFileURL
+        }
+        
+        persistentStoreDescriptions = [description]
     }
     
     /// Use this method to safely mutate the content of the database. This method is asynchronous.
@@ -231,15 +246,11 @@ class DatabaseContainer: NSPersistentContainer {
         }
         
         writableContext.perform {
-            do {
-                self.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
-                
-                // If the current persistent store is a SQLite store, this method will reset and recreate it.
-                try self.recreatePersistentStore { error in
-                    self.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
-                    completion?(error)
-                }
-            } catch {
+            self.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
+            
+            // If the current persistent store is a SQLite store, this method will reset and recreate it.
+            self.recreatePersistentStore { error in
+                self.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
                 completion?(error)
             }
         }
@@ -271,18 +282,17 @@ class DatabaseContainer: NSPersistentContainer {
     ///
     private func setupPersistentStore(completion: ((Error?) -> Void)? = nil) {
         loadPersistentStores { _, error in
-            if error != nil {
-                do {
-                    try self.recreatePersistentStore(completion: completion)
-                } catch {
-                    fatalError("Failed to initialize the storage with error: \(error). This is a non-recoverable error.")
-                }
+            if let error = error {
+                log.debug("Persistent store setup failed with \(error). Trying to recreate persistent store")
+                self.recreatePersistentStore(completion: completion)
+            } else {
+                completion?(nil)
             }
         }
     }
     
     /// Removes the loaded persistent store and tries to recreate it.
-    func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) throws {
+    func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) {
         log.assert(
             persistentStoreDescriptions.count == 1,
             "DatabaseContainer always assumes 1 persistent store description. Existing descriptions: \(persistentStoreDescriptions)",
@@ -290,14 +300,20 @@ class DatabaseContainer: NSPersistentContainer {
         )
         
         guard let storeDescription = persistentStoreDescriptions.first else {
-            throw ClientError("No persistent store descriptions available.")
+            completion?(ClientError("No persistent store descriptions available."))
+            return
         }
         
         log.debug("Removing DB persistent store", subsystems: .database)
 
         // Remove all loaded persistent stores first
-        try persistentStoreCoordinator.persistentStores.forEach { store in
-            try persistentStoreCoordinator.remove(store)
+        do {
+            try persistentStoreCoordinator.persistentStores.forEach { store in
+                try persistentStoreCoordinator.remove(store)
+            }
+        } catch {
+            completion?(error)
+            return
         }
         
         log.debug("Removing DB file", subsystems: .database)
@@ -306,7 +322,12 @@ class DatabaseContainer: NSPersistentContainer {
         if storeDescription.type == NSSQLiteStoreType,
            let storeURL = storeDescription.url,
            storeURL.absoluteString.hasSuffix("/dev/null") == false {
-            try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: NSSQLiteStoreType, options: nil)
+            do {
+                try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: NSSQLiteStoreType, options: nil)
+            } catch {
+                completion?(error)
+                return
+            }
         }
         
         log.debug("Reloading persistent store", subsystems: .database)

@@ -140,7 +140,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
     func test_reactionNewEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
@@ -182,7 +182,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
     func test_reactionUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
@@ -224,7 +224,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
     func test_reactionDeletedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
