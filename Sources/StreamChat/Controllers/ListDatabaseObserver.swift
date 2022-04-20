@@ -164,22 +164,25 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     /// - Throws: An error if the provided fetch request fails.
     func startObserving() throws {
         _items.computeValue = { [weak self] in
-            guard let self = self else { return [] }
+            guard let frc = self?.frc,
+                  let itemCreator = self?.itemCreator,
+                  let context = self?.context else { return [] }
             var result = LazyCachedMapCollection<Item>()
-            result = (self.frc.fetchedObjects ?? []).lazyCachedMap { dto in
-                // `itemCreator` returns non-optional value, so we can use implicitly uwrapped optional
+            result = (frc.fetchedObjects ?? []).lazyCachedMap { dto in
+                // `itemCreator` returns non-optional value, so we can use implicitly unwrapped optional
                 var result: Item!
-                self.context.performAndWait {
-                    result = self.itemCreator(dto)
+                context.performAndWait {
+                    result = itemCreator(dto)
                 }
                 return result
             }
             return result
         }
-        _items.reset()
         
         try frc.performFetch()
         frc.delegate = changeAggregator
+        
+        _items.reset()
         
         // This is a workaround for the situation when someone wants to observe only the `items` array without
         // listening to changes. We just need to make sure the `didSet` callback of `onDidChange` is executed at least once.

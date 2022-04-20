@@ -153,7 +153,8 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     /// - Throws: An error if the provided fetch request fails.
     func startObserving() throws {
         _item.computeValue = { [weak self] in
-            guard let self = self, let fetchedObjects = self.frc.fetchedObjects else { return nil }
+            guard let fetchedObjects = self?.frc.fetchedObjects, let context = self?.context,
+                  let itemCreator = self?.itemCreator else { return nil }
             log.assert(
                 fetchedObjects.count <= 1,
                 "EntityDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(fetchedObjects)"
@@ -161,16 +162,17 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             
             return fetchedObjects.first.flatMap { dto in
                 var result: Item?
-                self.context.performAndWait {
-                    result = self.itemCreator(dto)
+                context.performAndWait {
+                    result = itemCreator(dto)
                 }
                 return result
             }
         }
-        _item.reset()
         
         try frc.performFetch()
         frc.delegate = changeAggregator
+        
+        _item.reset()
     }
     
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
