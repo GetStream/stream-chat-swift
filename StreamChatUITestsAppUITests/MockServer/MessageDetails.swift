@@ -22,7 +22,7 @@ extension StreamMockServer {
     }
     
     func getMessageDetails(messageId: String) -> [MessageDetail: String] {
-        waitForMessageDetails().first(where: { $0[.messageId] == messageId })
+        waitForMessageDetails().first { $0[.messageId] == messageId }
     }
     
     func getMessageDetails() -> [MessageDetail: String] {
