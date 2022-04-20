@@ -4,7 +4,7 @@
 
 import Foundation
 
-class DateUtils {
+enum DateUtils {
     /// timeAgo formats a date into a string like "15 minutes ago"
     static func timeAgo(relativeTo date: Date) -> String? {
         let now = Date()

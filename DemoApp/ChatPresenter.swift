@@ -74,6 +74,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
         }
     }
     
+    // swiftlint:disable function_body_length
     override func didTapMoreButton(for cid: ChannelId) {
         let channelController = rootViewController.controller.client.channelController(for: cid)
         rootViewController.presentAlert(title: "Select an action", actions: [
@@ -298,6 +299,8 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
             })
         ])
     }
+
+    // swiftlint:enable function_body_length
     
     override func didTapDeleteButton(for cid: ChannelId) {
         rootViewController.controller.client.channelController(for: cid).deleteChannel { error in

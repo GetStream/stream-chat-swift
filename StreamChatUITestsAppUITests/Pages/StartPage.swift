@@ -5,6 +5,6 @@
 import Foundation
 import XCTest
 
-class StartPage {
+enum StartPage {
     static var startButton: XCUIElement { app.buttons["TestApp.Start"] }
 }

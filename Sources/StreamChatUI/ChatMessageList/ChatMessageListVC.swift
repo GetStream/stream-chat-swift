@@ -5,6 +5,8 @@
 import StreamChat
 import UIKit
 
+// swiftlint:disable colon
+
 /// Controller that shows list of messages and composer together in the selected channel.
 @available(iOSApplicationExtension, unavailable)
 open class ChatMessageListVC:
@@ -26,6 +28,8 @@ open class ChatMessageListVC:
             updateContent()
         }
     }
+    
+    // swiftlint:enable colon
 
     /// The object that acts as the delegate of the message list.
     public weak var delegate: ChatMessageListVCDelegate?
