@@ -46,4 +46,5 @@ jobs:
         env:
           GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: bundle exec fastlane publish_release version:${{ env.RELEASE_VERSION }}
