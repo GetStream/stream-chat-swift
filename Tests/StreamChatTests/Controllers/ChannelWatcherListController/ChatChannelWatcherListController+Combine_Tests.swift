@@ -5,6 +5,7 @@
 import Combine
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -24,7 +25,7 @@ final class ChatChannelWatcherListController_Combine_Tests: iOS13TestCase {
     override func tearDown() {
         cancellables = nil
         AssertAsync.canBeReleased(&watcherListController)
-        
+        watcherListController = nil
         super.tearDown()
     }
     

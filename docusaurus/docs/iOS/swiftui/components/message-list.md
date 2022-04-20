@@ -10,7 +10,7 @@ If you are developing an app with this use-case, you can customize the [message 
 
 ## Message List Configuration
 
-Additionally, you can control the display of the helper views around the message (date indicators, avatars) and paddings, via the `MessageListConfig`'s properties `MessageDisplayOptions` and `MessagePaddings`. The `MessageListConfig` is part of the `Utils` class in `StreamChat`. Here's an example on how to hide the date indicators and avatars, while also increasing the horizontal padding.
+You can control the display of the helper views around the message (date indicators, avatars) and paddings, via the `MessageListConfig`'s properties `MessageDisplayOptions` and `MessagePaddings`. The `MessageListConfig` is part of the `Utils` class in `StreamChat`. Here's an example on how to hide the date indicators and avatars, while also increasing the horizontal padding.
 
 ```swift
 let messageDisplayOptions = MessageDisplayOptions(showAvatars: false, showMessageDate: false)
@@ -24,6 +24,29 @@ let messageListConfig = MessageListConfig(
 )
 let utils = Utils(messageListConfig: messageListConfig)
 streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+Other config options you can enable or disable via the `MessageListConfig` are:
+- `messagePopoverEnabled` - the default value is true. If set to false, it will disable the message popover.
+- `doubleTapOverlayEnabled` - the default value is false. If set to true, you can show the message popover also with double tap.
+- `becomesFirstResponderOnOpen` - the default value is false. If set to true, the channel will open the keyboard on view appearance.
+
+With the `MessageDisplayOptions`, you can also customize the transitions applied to the message views. The default message view transition in the SDK is `identity`. You can use the other default ones, such as `scale`, `opacity` and `slide`, or you can create your own custom transitions. Here's an example how to do this:
+
+```swift
+var customTransition: AnyTransition {
+    .scale.combined(with:
+        AnyTransition.asymmetric(
+            insertion: .move(edge: .trailing),
+            removal: .move(edge: .leading)
+        )
+    )
+}
+
+let messageDisplayOptions = MessageDisplayOptions(
+    currentUserMessageTransition: customTransition,
+    otherUserMessageTransition: customTransition
+)
 ```
 
 You can also modify the background of the message list to any SwiftUI `View` (`Color`, `LinearGradient`, `Image` etc.). In order to do this, you would need to implement the `makeMessageListBackground` method in the `ViewFactory`.
@@ -54,6 +77,46 @@ let appearance = Appearance(colors: colors)
         
 streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
 ```
+
+## Applying Custom Modifier
+
+You can customize the message list further, by applying your own custom view modifier. In order to do this, you need to implement the method `makeMessageListModifier`, which by default doesn't apply anything additional to the view. Here's an example how to add vertical padding to the message list:
+
+```swift
+func makeMessageListModifier() -> some ViewModifier {
+    VerticalPaddingViewModifier()
+}
+
+struct VerticalPaddingViewModifier: ViewModifier {
+    
+    public func body(content: Content) -> some View {
+        content
+            .padding(.vertical, 8)
+    }
+    
+}
+```
+
+You can also apply a custom modifier to the message view. This comes in handy if you want to change the bubbles UI, such as the corner radius, the direction of the bubbles, paddings or even remove the bubble altogether. In order to do this, you will need to implement the `makeMessageViewModifier` in the `ViewFactory`. The default implementation returns the bubble that is used throughout our demo app. The following snippet shows how to create your own message view modifier:
+
+```swift
+func makeMessageViewModifier(for messageModifierInfo: MessageModifierInfo) -> some ViewModifier {
+    CustomMessageBubbleModifier(
+        message: messageModifierInfo.message,
+        isFirst: messageModifierInfo.isFirst,
+        injectedBackgroundColor: messageModifierInfo.injectedBackgroundColor,
+        cornerRadius: messageModifierInfo.cornerRadius,
+        forceLeftToRight: messageModifierInfo.forceLeftToRight
+    )
+}
+```
+
+In this method, the `MessageModifierInfo` is provided. This struct contains information that is needed to the modifier to apply the needed styling. It contains the following properties:
+- `message`: The message that will be displayed.
+- `isFirst`: Whether the message is first in the group. Ignore this value if you want to avoid message grouping.
+- `injectedBackgroundColor`: Possibility to inject custom background color, based on the different types of message cells. You can provide your own color logic here as well.
+- `cornerRadius`: The corner radius for rounding the cells. 
+- `forceLeftToRight`: Use this value if you want to force the direction of the bubble to be left to right.   
 
 ## Custom Message Container View
 

@@ -6,7 +6,7 @@ import Foundation
 import XCTest
 
 /// Simulates device behavior
-public final class DeviceRobot {
+final class DeviceRobot {
 
     enum Orientation {
         case portrait, landscape

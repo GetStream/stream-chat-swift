@@ -99,7 +99,7 @@ protocol InternetConnectionDelegate: AnyObject {
 }
 
 /// A protocol for Internet connection monitors.
-protocol InternetConnectionMonitor {
+protocol InternetConnectionMonitor: AnyObject {
     /// A delegate for receiving Internet connection events.
     var delegate: InternetConnectionDelegate? { get set }
     

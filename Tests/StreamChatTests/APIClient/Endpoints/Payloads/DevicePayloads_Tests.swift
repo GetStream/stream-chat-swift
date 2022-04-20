@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class DevicePayloads_Tests: XCTestCase {

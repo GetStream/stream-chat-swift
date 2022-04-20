@@ -3,12 +3,12 @@
 //
 
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ComposerVC_Tests: XCTestCase {
-    func testSearchByIDOrName() throws {
+final class ComposerVC_Tests: XCTestCase {
+    func test_userFound_whenSearchedByIDOrName() throws {
         let user1 = ChatUser.mock(id: "searchingThis")
         let user2 = ChatUser.mock(id: "x", name: "searchingThis")
 
@@ -16,7 +16,7 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers([user2], by: "sear"), [user2])
     }
 
-    func testMatchConsistentTieBreaker() throws {
+    func test_usersFound_whenSearchedWithTieBreaker() throws {
         let tommaso = ChatUser.mock(id: "tommaso", name: "Tommaso")
         let thierry = ChatUser.mock(id: "thierry", name: "Thierry")
         let users = [tommaso, thierry]
@@ -30,7 +30,7 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers(users, by: ""), [thierry, tommaso])
     }
 
-    func testMatchHappy() throws {
+    func test_userFound_whenTypingTheBeginningOfIDOrName() throws {
         let tommaso = ChatUser.mock(id: "tommaso", name: "Tommaso")
         let thierry = ChatUser.mock(id: "thierry", name: "Thierry")
         let users = [tommaso, thierry]
@@ -39,7 +39,7 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers(users, by: "thier"), [thierry])
     }
 
-    func testMatchHappyLowercased() throws {
+    func test_userFound_whenStartOfTheNameMatchesCase() throws {
         let tommaso = ChatUser.mock(id: "tommaso", name: "Tommaso")
         let thierry = ChatUser.mock(id: "thierry", name: "Thierry")
         let users = [tommaso, thierry]
@@ -48,7 +48,7 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers(users, by: "Thier"), [thierry])
     }
 
-    func testMatchHappyTranslitterated() throws {
+    func test_userFound_whenNameIsTranslitterated() throws {
         let tommaso = ChatUser.mock(id: "tommaso", name: "Tommaso")
         let thierry = ChatUser.mock(id: "thierry", name: "Thierry")
         let users = [tommaso, thierry]
@@ -57,7 +57,7 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers(users, by: "thíer"), [thierry])
     }
 
-    func testMatchHappySortedByDistance() throws {
+    func test_usersFoundAndSroted_whenSearchedByBeginningOfNameOrID() throws {
         let tommaso = ChatUser.mock(id: "tommaso", name: "tommaso")
         let tomas = ChatUser.mock(id: "tomas", name: "tomas")
         let users = [tommaso, tomas]
@@ -65,7 +65,7 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers(users, by: "tom"), [tomas, tommaso])
     }
 
-    func testMatchHappySortedByDistancePrefix() throws {
+    func test_userFound_whenHappySortedByDistancePrefix() throws {
         let tommaso = ChatUser.mock(id: "tommaso", name: "tommaso")
         let tommasi = ChatUser.mock(id: "tommasi", name: "tommasi")
         let users = [tommaso, tommasi]
@@ -79,7 +79,7 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers(users, by: "tommaso"), [tommaso])
     }
 
-    func testMatchHappySortedByDistancePrefix2() throws {
+    func test_userFound_whenHappySortedByDistancePrefix2() throws {
         let tommaso = ChatUser.mock(id: "tommaso", name: "tommaso")
         let tommasi = ChatUser.mock(id: "tommasi", name: "tommasi")
         let users = [tommasi, tommaso]
@@ -93,7 +93,7 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers(users, by: "tommaso"), [tommaso])
     }
 
-    func testMatchHappyCyrillic() throws {
+    func test_userFound_whenHappyCyrillic() throws {
         let petyo = ChatUser.mock(id: "42", name: "Петьо")
         let anastasia = ChatUser.mock(id: "13", name: "Анастасiя")
         let dmitriy = ChatUser.mock(id: "99", name: "Дмитрий")
@@ -106,7 +106,7 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers(users, by: "Дмитри"), [dmitriy])
     }
 
-    func testMatchHappyFrench() throws {
+    func test_userFound_whenHappyFrench() throws {
         let user = ChatUser.mock(id: "fra", name: "françois")
 
         XCTAssertEqual(searchUsers([user], by: "françois"), [user])
@@ -167,6 +167,16 @@ class ComposerVC_Tests: XCTestCase {
         composerVC.content.attachments = [.mockFile, .mockFile, .mockImage, .mockVideo]
 
         AssertSnapshot(composerVC)
+    }
+
+    func test_attachmentsPreview_withLongFileNames() {
+        let composerVC = ComposerVC()
+        composerVC.appearance = Appearance.default
+
+        composerVC.content = .initial()
+        composerVC.content.attachments = [.mockFileWithLongName]
+
+        AssertSnapshot(composerVC, variants: [.defaultLight])
     }
     
     func test_commandWithNonEmptyArgs_hasSendButtonDisabled() {

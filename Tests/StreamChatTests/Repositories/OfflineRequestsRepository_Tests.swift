@@ -7,17 +7,27 @@
 import XCTest
 
 final class OfflineRequestsRepository_Tests: XCTestCase {
-    var messageRepository: MessageRepositoryMock!
+    var messageRepository: MessageRepository_Spy!
     var repository: OfflineRequestsRepository!
-    var database: DatabaseContainerMock!
-    var apiClient: APIClientMock!
+    var database: DatabaseContainer_Spy!
+    var apiClient: APIClient_Spy!
 
     override func setUp() {
         let client = ChatClient.mock
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
-        messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        messageRepository = MessageRepository_Spy(database: database, apiClient: apiClient)
         repository = OfflineRequestsRepository(messageRepository: messageRepository, database: database, apiClient: apiClient)
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        messageRepository.clear()
+        messageRepository = nil
+        repository = nil
+        database = nil
+        apiClient.cleanUp()
+        apiClient = nil
     }
 
     // MARK: - Run queued requests

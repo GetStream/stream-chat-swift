@@ -3,10 +3,11 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class WebSocketConnectPayload_Tests: XCTestCase {
-    func testEncodeWebSocketConnectPayload() throws {
+final class WebSocketConnectPayload_Tests: XCTestCase {
+    func test_encodesWebSocket_whenCorrectConnectPayloadIsPassed() throws {
         let custom: [String: RawJSON] = [
             "color": .string("blue")
         ]
@@ -36,7 +37,7 @@ class WebSocketConnectPayload_Tests: XCTestCase {
         AssertJSONEqual(serialized, expected)
     }
     
-    func testEncodeWebSocketConnectPayloadNoImage() throws {
+    func test_EncodesWebSocket_whenConnectPayloadHasNoImage() throws {
         let custom: [String: RawJSON] = [
             "color": .string("blue")
         ]

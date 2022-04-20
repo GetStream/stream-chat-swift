@@ -1,0 +1,330 @@
+{
+  "type": "channel.deleted",
+  "cid": "messaging:default-channel-1",
+  "channel_id": "default-channel-1",
+  "channel_type": "messaging",
+  "channel": {
+    "id": "default-channel-1",
+    "type": "messaging",
+    "cid": "messaging:default-channel-1",
+    "created_at": "2021-04-15T11:23:42.167781Z",
+    "updated_at": "2021-04-15T11:23:42.167781Z",
+    "deleted_at": "2021-04-23T09:38:47.125555Z",
+    "created_by": null,
+    "frozen": false,
+    "members": [
+      {
+        "user_id": "luke_skywalker",
+        "user": {
+          "id": "luke_skywalker",
+          "role": "admin",
+          "created_at": "2020-12-07T11:36:47.059906Z",
+          "updated_at": "2021-04-22T18:57:47.14206Z",
+          "last_active": "2021-04-23T09:34:12.698518637Z",
+          "banned": false,
+          "online": false,
+          "name": "luke_skywalker",
+          "image": "./static/media/photo-1541271696563-3be2f555fc4e.4e84f363.jpeg"
+        },
+        "role": "owner",
+        "created_at": "2021-04-15T11:23:42.170933Z",
+        "updated_at": "2021-04-15T11:23:42.170933Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "han_solo",
+        "user": {
+          "id": "han_solo",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:34.230369Z",
+          "updated_at": "2021-04-15T11:58:11.078864Z",
+          "last_active": "2021-04-23T03:18:43.941092581Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+          "name": "Han Solo"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170934Z",
+        "updated_at": "2021-04-15T11:23:42.170934Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "lando_calrissian",
+        "user": {
+          "id": "lando_calrissian",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:34.684838Z",
+          "updated_at": "2021-04-15T12:04:53.870967Z",
+          "last_active": "2021-04-23T00:01:37.331476715Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/8/8f/Lando_ROTJ.png",
+          "name": "Lando Calrissian"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170934Z",
+        "updated_at": "2021-04-15T11:23:42.170934Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "leia_organa",
+        "user": {
+          "id": "leia_organa",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:33.78879Z",
+          "updated_at": "2021-04-15T11:50:48.4157Z",
+          "last_active": "2021-04-23T09:38:30.012937345Z",
+          "banned": false,
+          "online": true,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+          "name": "Leia Organa"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170934Z",
+        "updated_at": "2021-04-15T11:23:42.170934Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "anakin_skywalker",
+        "user": {
+          "id": "anakin_skywalker",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:36.43453Z",
+          "updated_at": "2021-04-15T12:25:51.702406Z",
+          "last_active": "2021-04-19T11:00:18.816669Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/6/6f/Anakin_Skywalker_RotS.png",
+          "name": "Anakin Skywalker"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170935Z",
+        "updated_at": "2021-04-15T11:23:42.170935Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "c-3po",
+        "user": {
+          "id": "c-3po",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:35.550588Z",
+          "updated_at": "2021-04-15T12:16:26.99681Z",
+          "last_active": "2021-04-22T04:50:56.973457Z",
+          "banned": false,
+          "online": false,
+          "name": "C-3PO",
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170935Z",
+        "updated_at": "2021-04-15T11:23:42.170935Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "r2-d2",
+        "user": {
+          "id": "r2-d2",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:35.98087Z",
+          "updated_at": "2021-04-15T12:21:26.713041Z",
+          "last_active": "2021-04-23T05:59:55.497672433Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+          "name": "R2-D2"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170935Z",
+        "updated_at": "2021-04-15T11:23:42.170935Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "mace_windu",
+        "user": {
+          "id": "mace_windu",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:38.179372Z",
+          "updated_at": "2021-04-15T12:38:02.869966Z",
+          "last_active": "2021-04-19T11:42:58.252388Z",
+          "banned": false,
+          "online": false,
+          "name": "Mace Windu",
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/5/58/Mace_ROTS.png"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170936Z",
+        "updated_at": "2021-04-15T11:23:42.170936Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "obi-wan_kenobi",
+        "user": {
+          "id": "obi-wan_kenobi",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:36.857282Z",
+          "updated_at": "2021-04-15T12:29:42.499282Z",
+          "last_active": "2021-04-22T13:08:46.201728609Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg",
+          "name": "Obi-Wan Kenobi"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170936Z",
+        "updated_at": "2021-04-15T11:23:42.170936Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "qui-gon_jinn",
+        "user": {
+          "id": "qui-gon_jinn",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:37.755463Z",
+          "updated_at": "2021-04-15T12:35:47.719542Z",
+          "last_active": "2021-04-15T11:02:40.284944Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/f/f6/Qui-Gon_Jinn_Headshot_TPM.jpg",
+          "name": "Qui-Gon Jinn"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170936Z",
+        "updated_at": "2021-04-15T11:23:42.170936Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "count_dooku",
+        "user": {
+          "id": "count_dooku",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:39.487938Z",
+          "updated_at": "2021-04-15T12:41:22.065746Z",
+          "last_active": "2021-04-15T11:02:42.641941Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
+          "name": "Count Dooku"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170937Z",
+        "updated_at": "2021-04-15T11:23:42.170937Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "darth_maul",
+        "user": {
+          "id": "darth_maul",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:39.060945Z",
+          "updated_at": "2021-04-15T12:40:49.017911Z",
+          "last_active": "2021-04-15T11:02:42.040611Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/5/50/Darth_Maul_profile.png",
+          "name": "Darth Maul"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170937Z",
+        "updated_at": "2021-04-15T11:23:42.170937Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "general_grievous",
+        "user": {
+          "id": "general_grievous",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:39.918436Z",
+          "updated_at": "2021-04-15T12:41:21.895316Z",
+          "last_active": "2021-04-23T07:14:43.049776548Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/d/de/Grievoushead.jpg",
+          "name": "General Grievous"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170937Z",
+        "updated_at": "2021-04-15T11:23:42.170937Z",
+        "banned": false,
+        "shadow_banned": false
+      },
+      {
+        "user_id": "jar_jar_binks",
+        "user": {
+          "id": "jar_jar_binks",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:38.619196Z",
+          "updated_at": "2021-04-15T12:39:39.395107Z",
+          "last_active": "2021-04-17T18:20:07.78624Z",
+          "banned": false,
+          "online": false,
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/d/d2/Jar_Jar_aotc.jpg",
+          "name": "Jar Jar Binks"
+        },
+        "role": "member",
+        "created_at": "2021-04-15T11:23:42.170937Z",
+        "updated_at": "2021-04-15T11:23:42.170937Z",
+        "banned": false,
+        "shadow_banned": false
+      }
+    ],
+    "config": {
+      "created_at": "2021-03-01T19:26:18.406502Z",
+      "updated_at": "2021-03-01T19:26:18.406502Z",
+      "name": "messaging",
+      "typing_events": true,
+      "read_events": true,
+      "connect_events": true,
+      "search": true,
+      "reactions": true,
+      "replies": true,
+      "quotes": true,
+      "mutes": true,
+      "uploads": true,
+      "url_enrichment": true,
+      "custom_events": true,
+      "push_notifications": true,
+      "message_retention": "infinite",
+      "max_message_length": 5000,
+      "automod": "AI",
+      "automod_behavior": "flag",
+      "blocklist_behavior": "flag",
+      "automod_thresholds": {
+        "explicit": {
+          "flag": 0.85,
+          "block": 0.9
+        },
+        "spam": {
+          "flag": 0.85,
+          "block": 0.9
+        },
+        "toxic": {
+          "flag": 0.85,
+          "block": 0.9
+        }
+      },
+      "commands": [
+        {
+          "name": "giphy",
+          "description": "Post a random gif to the channel",
+          "args": "[text]",
+          "set": "fun_set"
+        }
+      ]
+    }
+  },
+  "created_at": "2021-04-23T09:38:47.13361Z",
+  "received_at": "2021-04-23T09:38:47.106Z"
+}

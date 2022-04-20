@@ -6,16 +6,17 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelDTO_Tests: XCTestCase {
+final class ChannelDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
 
     override func setUp() {
         super.setUp()
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
     }
     
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
+        database = nil
         super.tearDown()
     }
     
@@ -66,6 +67,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.config.connectEventsEnabled, loadedChannel.config.connectEventsEnabled)
             Assert.willBeEqual(payload.channel.config.uploadsEnabled, loadedChannel.config.uploadsEnabled)
             Assert.willBeEqual(payload.channel.config.repliesEnabled, loadedChannel.config.repliesEnabled)
+            Assert.willBeEqual(payload.channel.config.quotesEnabled, loadedChannel.config.quotesEnabled)
             Assert.willBeEqual(payload.channel.config.searchEnabled, loadedChannel.config.searchEnabled)
             Assert.willBeEqual(payload.channel.config.mutesEnabled, loadedChannel.config.mutesEnabled)
             Assert.willBeEqual(payload.channel.config.urlEnrichmentEnabled, loadedChannel.config.urlEnrichmentEnabled)
@@ -362,7 +364,7 @@ class ChannelDTO_Tests: XCTestCase {
 
         let cid: ChannelId = .unique
         
-        database = DatabaseContainerMock(localCachingSettings: caching)
+        database = DatabaseContainer_Spy(localCachingSettings: caching)
         
         // Create more entities than the limits
         let allMembers: [MemberPayload] = (0..<memberLimit * 2).map { _ in .dummy() }
@@ -674,5 +676,24 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeTrue(channel.lastActiveWatchers.isEmpty)
             Assert.willBeEqual(channel.watcherCount, 0)
         }
+    }
+
+    func test_channelConfigCommands_whenConvertedToDTO_thenPreserveOrder() {
+        // Given
+        let config = ChannelConfig.mock(
+            commands: [
+                .init(name: "giphy", description: "", set: "", args: ""),
+                .init(name: "workout", description: "", set: "", args: ""),
+                .init(name: "location", description: "", set: "", args: "")
+            ]
+        )
+
+        // When
+        let dto = config.asDTO(context: database.viewContext, cid: "test")
+
+        // Then
+        let actual = dto.commands.compactMap { $0 as? CommandDTO }.map(\.name)
+        let expected = ["giphy", "workout", "location"]
+        XCTAssertEqual(actual, expected)
     }
 }

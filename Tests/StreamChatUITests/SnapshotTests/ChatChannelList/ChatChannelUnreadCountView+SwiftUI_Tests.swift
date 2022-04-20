@@ -8,7 +8,7 @@ import SwiftUI
 import XCTest
 
 @available(iOS 13.0, *)
-class ChatChannelUnreadCountView_SwiftUI_Tests: XCTestCase {
+final class ChatChannelUnreadCountView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomUnreadCountView: ChatChannelUnreadCountView.SwiftUIView {
             @ObservedObject var dataSource: ChatChannelUnreadCountView.ObservedObject<Self>

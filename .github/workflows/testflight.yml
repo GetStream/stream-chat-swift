@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  HOMEBREW_NO_INSTALL_CLEANUP=1: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
 
 jobs:
   deploy:

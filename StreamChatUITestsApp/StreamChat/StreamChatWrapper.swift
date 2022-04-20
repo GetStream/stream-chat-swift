@@ -14,7 +14,8 @@ final class StreamChatWrapper {
     func setupChatClient(with userCredentials: UserCredentials) {
         self.userCredentials = userCredentials
 
-        let config = ChatClientConfig(apiKey: .init(apiKey))
+        var config = ChatClientConfig(apiKey: .init(apiKey))
+        config.isLocalStorageEnabled = false
 
         /// create an instance of ChatClient and share it using the singleton
         ChatClient.shared = ChatClient(config: config)
@@ -34,7 +35,7 @@ final class StreamChatWrapper {
         // UI
         let query = ChannelListQuery(filter: .containMembers(userIds: [userCredentials?.id ?? ""]))
         let controller = ChatClient.shared.channelListController(query: query)
-        let channelList = ChatChannelListVC.make(with: controller)
+        let channelList = ChannelList.make(with: controller)
         return channelList
     }
 

@@ -7,13 +7,26 @@ import Foundation
 
 extension ChatClient {
     /// Creates a new `ChannelListController` with the provided channel query.
-    ///
-    /// - Parameter query: The query specify the filter and sorting of the channels the controller should fetch.
-    ///
-    /// - Returns: A new instance of `ChannelController`.
-    ///
+    /// - Parameter query: The query specify the filter and sorting of the channels the controller should fetch.    ///
+    /// - Returns: A new instance of `ChatChannelListController`.
     public func channelListController(query: ChannelListQuery) -> ChatChannelListController {
         .init(query: query, client: self)
+    }
+
+    /// Creates a new `ChannelListController` with the provided channel query and filter block.
+    ///
+    /// When passing `filter`, make sure the runtime logic matches the one expected by the filter passed in the query object.
+    /// If they don't match, there can be jumps when loading the list.
+    ///
+    /// - Parameters:
+    ///   - query: The query specify the filter and sorting of the channels the controller should fetch.
+    ///   - filter: A block that determines whether the channels belongs to this controller.
+    /// - Returns: A new instance of `ChatChannelListController`
+    public func channelListController(
+        query: ChannelListQuery,
+        filter: ((ChatChannel) -> Bool)? = nil
+    ) -> ChatChannelListController {
+        .init(query: query, client: self, filter: filter)
     }
 }
 
@@ -103,13 +116,14 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         
         return observer
     }()
-    
+
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
+    private let filter: ((ChatChannel) -> Bool)?
     private let environment: Environment
     
     /// Creates a new `ChannelListController`.
@@ -117,9 +131,16 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// - Parameters:
     ///   - query: The query used for filtering the channels.
     ///   - client: The `Client` instance this controller belongs to.
-    init(query: ChannelListQuery, client: ChatClient, environment: Environment = .init()) {
+    ///   - filter: A block that determines whether the channels belongs to this controller.
+    init(
+        query: ChannelListQuery,
+        client: ChatClient,
+        filter: ((ChatChannel) -> Bool)? = nil,
+        environment: Environment = .init()
+    ) {
         self.client = client
         self.query = query
+        self.filter = filter
         self.environment = environment
         super.init()
         client.trackChannelListController(self)
@@ -164,19 +185,47 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
     }
+
+    private func channelBelongsToController(_ channel: ChatChannel, change: ListChange<ChatChannel>) -> Bool {
+        if let filter = filter {
+            return filter(channel)
+        }
+
+        // Given that at the moment some delegate methods are not yet removed, but some integrators are still using
+        // those, we need to keep using them for now.
+        // This block should be removed once `shouldAddNewChannelToList` and `shouldListUpdatedChannel` methods are
+        // fully removed.
+        let deprecatedFallback: () -> Bool? = {
+            switch change {
+            case .insert:
+                return self.delegate?.controller(self, shouldAddNewChannelToList: channel)
+            case .update:
+                return self.delegate?.controller(self, shouldListUpdatedChannel: channel)
+            default:
+                return nil
+            }
+        }
+
+        do {
+            return try deprecatedFallback() ?? channel.meets(query.filter)
+        } catch {
+            log.error("Unable to resolve complex filter. Please pass a `filter` block when intializing ChatChannelListController")
+        }
+        return true
+    }
     
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
         guard state == .remoteDataFetched else {
             log.debug("Ignoring inserted/updated unlinked channels due to query \(query) not being synced.")
             return
         }
-        
+
         let channels = changes.compactMap { change -> ChatChannel? in
             switch change {
             case let .insert(channel, _):
-                return (delegate?.controller(self, shouldAddNewChannelToList: channel) ?? true) ? channel : nil
+                return channelBelongsToController(channel, change: change) ? channel : nil
             case let .update(channel, _):
-                return (delegate?.controller(self, shouldListUpdatedChannel: channel) ?? true) ? channel : nil
+                return channelBelongsToController(channel, change: change) ? channel : nil
             default: return nil
             }
         }
@@ -187,8 +236,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let channels = changes.compactMap { change -> ChatChannel? in
             switch change {
             case let .update(channel, _):
-                // We unlink the channels where `shouldListUpdatedChannel` returns `false`
-                return (delegate?.controller(self, shouldListUpdatedChannel: channel) ?? true) ? nil : channel
+                // We unlink the channels that do not belong to this controller
+                return channelBelongsToController(channel, change: change) ? nil : channel
             default: return nil
             }
         }
@@ -209,6 +258,15 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                     continue
                 }
                 queryDTO.channels.insert(channelDTO)
+            }
+        } completion: { [weak self] _ in
+            let cids = channels.map(\.cid)
+            self?.worker.startWatchingChannels(withIds: cids) {
+                guard let error = $0 else { return }
+                
+                log.warning(
+                    "Failed to start watching linked channels: \(cids), error: \(error.localizedDescription)"
+                )
             }
         }
     }
@@ -263,10 +321,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    /// Marks all channels for a user as read.
-    ///
-    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    ///
+    @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
     public func markAllRead(completion: ((Error?) -> Void)? = nil) {
         worker.markAllRead { error in
             self.callback {
@@ -321,6 +376,10 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
         didChangeChannels changes: [ListChange<ChatChannel>]
     )
     
+    /// **⚠️ This method is deprecated:** Please use `filter` when initializing a `ChatChannelListController`
+    ///
+    /// (We are not using @available annotations because they do not get emitted in protocol conformances)
+    ///
     /// The controller asks the delegate if the newly inserted `ChatChannel` should be linked to this Controller's query.
     /// Defaults to `true`
     /// - Parameters:
@@ -332,7 +391,11 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
         _ controller: ChatChannelListController,
         shouldAddNewChannelToList channel: ChatChannel
     ) -> Bool
-    
+
+    /// **⚠️ This method is deprecated:** Please use `filter` when initializing a `ChatChannelListController`
+    ///
+    /// (We are not using @available annotations because they do not get emitted in protocol conformances)
+    ///
     /// The controller asks the delegate if the newly updated `ChatChannel` should be linked to this Controller's query.
     /// Defaults to `true`
     /// - Parameters:
@@ -353,6 +416,16 @@ public extension ChatChannelListControllerDelegate {
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {}
+
+    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
+    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        channel.membership != nil
+    }
+
+    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
+    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        channel.membership != nil
+    }
 }
 
 extension ClientError {

@@ -41,6 +41,13 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
             delegateQueue: delegateOperationQueue
         )
 
+        log.debug(
+            "Making Websocket upgrade request: \(String(describing: request.url?.absoluteString))\n"
+                + "Headers:\n\(String(describing: request.allHTTPHeaderFields))\n"
+                + "Query items:\n\(request.queryItems.prettyPrinted)",
+            subsystems: .httpRequests
+        )
+
         task = session?.webSocketTask(with: request)
         doRead()
         task?.resume()

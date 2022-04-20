@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class Filter_Tests: XCTestCase {
+final class Filter_Tests: XCTestCase {
     func test_helperOperators() {
         var filter: Filter<FilterTestScope> = .equal(.testKey, to: "equal value")
         XCTAssertEqual(filter.key, FilterKey<FilterTestScope, String>.testKey.rawValue)
@@ -101,7 +102,7 @@ class Filter_Tests: XCTestCase {
         XCTAssertEqual(jsonString.deserializeFilter(), filter)
     }
 
-    func testEncodingAndDecodingOnAllCases() {
+    func test_encodesAndDecodes_forAllFilterCases() {
         // Given
         let testCases = FilterCodingTestPair.allCases
 

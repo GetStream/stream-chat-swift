@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class SwipeableView_Tests: XCTestCase {
+final class SwipeableView_Tests: XCTestCase {
     func test_defaultAppearance() {
         // Create SwipeableView
         let view = SwipeableView().withoutAutoresizingMaskConstraints

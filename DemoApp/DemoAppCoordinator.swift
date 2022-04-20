@@ -11,6 +11,10 @@ extension ChatClient {
     static var shared: ChatClient!
 }
 
+private var isStreamInternalConfiguration: Bool {
+    ProcessInfo.processInfo.environment["STREAM_DEV"] != nil
+}
+
 final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     var connectionController: ChatConnectionController?
     let navigationController: UINavigationController
@@ -103,11 +107,13 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.messageContentView = CustomMessageContentView.self
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
-        Components.default._messageListDiffingEnabled = true
+        Components.default._messageListDiffingEnabled = isStreamInternalConfiguration
         Components.default.messageActionsVC = CustomChatMessageActionsVC.self
         Components.default.messageReactionsView = CustomChatMessageReactionsView.self
         Components.default.reactionPickerReactionsView = CustomChatMessageReactionsView.self
-        
+
+        StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
+
         let localizationProvider = Appearance.default.localizationProvider
         Appearance.default.localizationProvider = { key, table in
             let localizedString = localizationProvider(key, table)
@@ -199,7 +205,7 @@ class CustomChannelVC: ChatChannelVC {
     }
 }
 
-class DemoChannelListVC: ChatChannelListVC {
+class DemoChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     /// The `UIButton` instance used for navigating to new channel screen creation.
     lazy var createChannelButton: UIButton = {
         let button = UIButton()
@@ -213,8 +219,12 @@ class DemoChannelListVC: ChatChannelListVC {
         return button
     }()
 
+    let eventsController = ChatClient.shared.eventsController()
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        eventsController.delegate = self
 
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(customView: hiddenChannelsButton),
@@ -291,6 +301,14 @@ class DemoChannelListVC: ChatChannelListVC {
             animated: false,
             scrollPosition: .centeredHorizontally
         )
+    }
+
+    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        if let newMessageEvent = event as? MessageNewEvent {
+            // This is a DemoApp integration test to make sure there are no deadlocks when
+            // accessing CoreDataLazy properties from the EventsController.delegate
+            _ = newMessageEvent.message.author
+        }
     }
 }
 

@@ -3,14 +3,20 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class RequestDecoder_Tests: XCTestCase {
+final class RequestDecoder_Tests: XCTestCase {
     var decoder: RequestDecoder!
     
     override func setUp() {
         super.setUp()
         decoder = DefaultRequestDecoder()
+    }
+
+    override func tearDown() {
+        decoder = nil
+        super.tearDown()
     }
     
     func test_decodingSuccessfullResponse() throws {
@@ -75,10 +81,6 @@ class RequestDecoder_Tests: XCTestCase {
     }
 
     func test_decodingDateThreadSafe() throws {
-        struct TestModel: Decodable {
-            let date: Date
-        }
-
         let json = "{\"date\": \"2021-05-13T22:10:31.960878Z\"}"
 
         DispatchQueue.concurrentPerform(iterations: 1000) { _ in
@@ -93,7 +95,6 @@ class RequestDecoder_Tests: XCTestCase {
     }
 }
 
-private struct TestUser: Codable, Equatable {
-    let name: String
-    let age: Int
+private struct TestModel: Decodable {
+    let date: Date
 }

@@ -1,0 +1,1517 @@
+{
+  "messages" : [
+    {
+      "id" : "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T08:10:40.800912Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "sadfadf",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T08:10:40.800912Z",
+      "reply_count" : 0,
+      "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "unread_channels" : 0,
+        "extraData" : {
+          "name" : "Tester"
+        },
+        "totalUnreadCount" : 0,
+        "last_active" : "2020-06-10T13:24:00.501797Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-06-10T14:11:29.946106Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>sadfadf<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T08:12:25.453305Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T08:12:25.453306Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "jolly-base-0",
+        "role" : "user",
+        "created_at" : "2020-06-09T08:11:50.449578Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+        "updated_at" : "2020-06-09T08:11:50.464738Z",
+        "last_active" : "2020-06-09T08:11:50.456971Z",
+        "name" : "Jolly base"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T08:13:33.541583Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "hi",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T08:13:33.541584Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "jolly-base-0",
+        "role" : "user",
+        "created_at" : "2020-06-09T08:11:50.449578Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+        "updated_at" : "2020-06-09T08:11:50.464738Z",
+        "last_active" : "2020-06-09T08:11:50.456971Z",
+        "name" : "Jolly base"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>hi<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "jolly-base-0-9543fe87-8bb9-4145-8781-029661669844",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T08:14:26.7032Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "hello",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T08:14:26.7032Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "jolly-base-0",
+        "role" : "user",
+        "created_at" : "2020-06-09T08:11:50.449578Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+        "updated_at" : "2020-06-09T08:11:50.464738Z",
+        "last_active" : "2020-06-09T08:11:50.456971Z",
+        "name" : "Jolly base"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>hello<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "jolly-base-0-c6321eed-2d81-46c8-9c65-72f49ef0e9f2",
+      "reaction_counts" : {
+        
+      },
+      "mentioned_users" : [
+        
+      ],
+      "silent" : false,
+      "command_info" : {
+        "name" : "Giphy"
+      },
+      "created_at" : "2020-06-09T08:15:52.155657Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "args" : "wow",
+      "text" : "",
+      "attachments" : [
+        {
+          "title" : "wow",
+          "title_link" : "https:\/\/giphy.com\/gifs\/nicki-minaj-1Zt3z4uEBPZQY",
+          "type" : "giphy",
+          "thumb_url" : "https:\/\/media3.giphy.com\/media\/1Zt3z4uEBPZQY\/giphy.gif"
+        }
+      ],
+      "command" : "giphy",
+      "own_reactions" : [
+        
+      ],
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "jolly-base-0",
+        "role" : "user",
+        "created_at" : "2020-06-09T08:11:50.449578Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+        "updated_at" : "2020-06-09T08:11:50.464738Z",
+        "last_active" : "2020-06-09T08:11:50.456971Z",
+        "name" : "Jolly base"
+      },
+      "updated_at" : "2020-06-09T08:16:06.295414Z",
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "example-user-699e467b-580e-4c97-a8ad-117080ffdf14",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T08:48:31.740934Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "golf",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T08:48:31.740934Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "example-user",
+        "role" : "user",
+        "created_at" : "2020-05-22T18:13:04.550304Z",
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=frosty-dew-4&name=Frosty+dew",
+        "updated_at" : "2020-06-10T10:07:34.639668Z",
+        "last_active" : "2020-06-10T10:07:34.635668Z",
+        "name" : "Frosty dew"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>golf<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "hidden-lake-6-abf534d4-08f3-4d47-886b-a7d8739f60c6",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T15:33:32.337316Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "",
+      "attachments" : [
+        {
+          "type" : "image",
+          "fallback" : "maria.jpg",
+          "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/8dcd6243-03a0-4aec-8080-0a2e4b6cd5c7.maria.jpg?ro=0&s=a10d6725ce17c84d3127329c514939c2"
+        }
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T15:33:32.337316Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "hidden-lake-6",
+        "role" : "user",
+        "created_at" : "2020-06-09T15:32:39.024226Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Hidden+lake",
+        "updated_at" : "2020-06-09T15:32:39.035257Z",
+        "last_active" : "2020-06-09T15:32:39.028596Z",
+        "name" : "Hidden lake"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "a7e192f1-0c4f-4c0d-91ad-5451403487ec",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T15:44:59.393442Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "Kk",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T15:44:59.393442Z",
+      "reply_count" : 0,
+      "user" : {
+        "id" : "steep-moon-9",
+        "banned" : false,
+        "unread_channels" : 3,
+        "totalUnreadCount" : 0,
+        "last_active" : "2020-06-10T13:14:31.20324Z",
+        "created_at" : "2019-12-12T15:34:00.762372Z",
+        "unreadChannels" : 0,
+        "unread_count" : 21,
+        "image" : "https:\/\/i.imgur.com\/EgEPqWZ.jpg",
+        "updated_at" : "2020-06-10T13:14:31.20883Z",
+        "role" : "user",
+        "total_unread_count" : 21,
+        "online" : true,
+        "name" : "steep-moon-9"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>Kk<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "ff3dc0c3-217b-45c3-b318-ec9631737810",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T15:45:50.566301Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "Rr",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T15:45:50.566301Z",
+      "reply_count" : 0,
+      "user" : {
+        "id" : "steep-moon-9",
+        "banned" : false,
+        "unread_channels" : 3,
+        "totalUnreadCount" : 0,
+        "last_active" : "2020-06-10T13:14:31.20324Z",
+        "created_at" : "2019-12-12T15:34:00.762372Z",
+        "unreadChannels" : 0,
+        "unread_count" : 21,
+        "image" : "https:\/\/i.imgur.com\/EgEPqWZ.jpg",
+        "updated_at" : "2020-06-10T13:14:31.20883Z",
+        "role" : "user",
+        "total_unread_count" : 21,
+        "online" : true,
+        "name" : "steep-moon-9"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>Rr<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "711b1eac-24ec-4482-ba2a-38f8eb91d041",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T18:26:18.095045Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "deleted",
+      "latest_reactions" : [
+        
+      ],
+      "deleted_at" : "2020-06-09T18:27:56.106936Z",
+      "text" : "This message was deleted.",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T18:26:18.095045Z",
+      "reply_count" : 0,
+      "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "unread_channels" : 0,
+        "totalUnreadCount" : 0,
+        "extraData" : {
+          "name" : "Tester"
+        },
+        "last_active" : "2020-06-10T13:24:00.501797Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-06-10T14:11:29.946106Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>This message was deleted.<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "25580938-597f-42db-b5fa-a3551fce93df",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T18:28:16.332143Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "",
+      "attachments" : [
+        {
+          "type" : "image",
+          "fallback" : "IMG_0007.JPG",
+          "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/2ed6f367-7400-497b-89fb-7163518be86a.IMG_0007.JPG?ro=0&s=2fe0397ea94fcf2f1b024cf93add3887"
+        }
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T18:28:16.332143Z",
+      "reply_count" : 0,
+      "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "unread_channels" : 0,
+        "totalUnreadCount" : 0,
+        "extraData" : {
+          "name" : "Tester"
+        },
+        "last_active" : "2020-06-10T13:24:00.501797Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-06-10T14:11:29.946106Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "79eb1a37-4367-4729-bf2e-72becb16abf5",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T18:28:43.040341Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "",
+      "attachments" : [
+        {
+          "type" : "image",
+          "fallback" : "IMG_0007.JPG",
+          "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/459a6431-45ee-4cae-b24e-7fd934dfef0f.IMG_0007.JPG?ro=0&s=60e8d7d236f84fd5e42cd184dcd867f2"
+        }
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T18:28:43.040341Z",
+      "reply_count" : 0,
+      "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "unread_channels" : 0,
+        "totalUnreadCount" : 0,
+        "extraData" : {
+          "name" : "Tester"
+        },
+        "last_active" : "2020-06-10T13:24:00.501797Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-06-10T14:11:29.946106Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "2adae507-1051-435f-a4c7-232b75d5b242",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T18:29:22.393858Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "",
+      "attachments" : [
+        {
+          "type" : "image",
+          "fallback" : "IMG_0004.JPG",
+          "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/929adc2b-3adb-44e8-a05d-44db6cc7202b.IMG_0004.JPG?ro=0&s=c7e60f2a93816470e142a6f8dee6bec5"
+        },
+        {
+          "type" : "image",
+          "fallback" : "IMG_0007.JPG",
+          "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/5c9f3e98-f779-456e-9bd6-8678c2e81fa0.IMG_0007.JPG?ro=0&s=62c3c370051b4c2d6175c6f342d1efc1"
+        }
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T18:29:22.393858Z",
+      "reply_count" : 0,
+      "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "unread_channels" : 0,
+        "extraData" : {
+          "name" : "Tester"
+        },
+        "totalUnreadCount" : 0,
+        "last_active" : "2020-06-10T13:24:00.501797Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-06-10T14:11:29.946106Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "bitter-cloud-0-184d7818-6282-4047-977c-43102352866c",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T18:35:11.649151Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "fdfdfd",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T18:35:11.649151Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "bitter-cloud-0",
+        "role" : "user",
+        "created_at" : "2020-06-09T18:33:04.070518Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Bitter+cloud",
+        "updated_at" : "2020-06-09T18:33:04.078929Z",
+        "last_active" : "2020-06-09T18:33:04.075114Z",
+        "name" : "Bitter cloud"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>fdfdfd<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "bitter-cloud-0-6f6edd0e-06dd-406f-ac58-a4cfc63a357e",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T18:35:32.476398Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "",
+      "attachments" : [
+        {
+          "type" : "image",
+          "fallback" : "hd-wallpaper-4.jpg",
+          "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/561615f6-4d0f-4768-b41f-ae3c7a057633.hd-wallpaper-4.jpg?ro=0&s=3f89f4e177ee3e1713c126f3905e5c56"
+        }
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T18:35:32.476399Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "bitter-cloud-0",
+        "role" : "user",
+        "created_at" : "2020-06-09T18:33:04.070518Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Bitter+cloud",
+        "updated_at" : "2020-06-09T18:33:04.078929Z",
+        "last_active" : "2020-06-09T18:33:04.075114Z",
+        "name" : "Bitter cloud"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "139c8acf-e405-44a8-a8a6-7e3922a7ea7f",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T18:37:17.923259Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "deleted",
+      "latest_reactions" : [
+        
+      ],
+      "deleted_at" : "2020-06-09T18:41:11.04202Z",
+      "text" : "This message was deleted.",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T18:37:17.923259Z",
+      "reply_count" : 0,
+      "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "extraData" : {
+          "name" : "Tester"
+        },
+        "totalUnreadCount" : 0,
+        "unread_channels" : 0,
+        "last_active" : "2020-06-10T13:24:00.501797Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-06-10T14:11:29.946106Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>This message was deleted.<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "0e5083af-e7d1-4278-a10c-8e9990976234",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T18:37:40.550024Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "http:\/\/getstream.io",
+      "attachments" : [
+        {
+          "title" : "Build Scalable Feeds & Chat apps with powerful APIs and front end components",
+          "text" : "Scalable & Fast API for building social networks, activity feeds,activity streams and chat apps.",
+          "og_scrape_url" : "http:\/\/getstream.io"
+        }
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T18:37:40.550024Z",
+      "reply_count" : 0,
+      "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "extraData" : {
+          "name" : "Tester"
+        },
+        "totalUnreadCount" : 0,
+        "unread_channels" : 0,
+        "last_active" : "2020-06-10T13:24:00.501797Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-06-10T14:11:29.946106Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p><a href=\"http:\/\/getstream.io\" rel=\"nofollow\">http:\/\/getstream.io<\/a><\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "wispy-bird-9-59ad6b82-a45e-4f83-849b-01d79f3248a0",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T20:44:29.065852Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "o",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T20:44:29.065852Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "wispy-bird-9",
+        "role" : "user",
+        "created_at" : "2020-06-09T20:43:42.367047Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Wispy+bird",
+        "updated_at" : "2020-06-09T20:43:42.376502Z",
+        "last_active" : "2020-06-09T20:43:42.372121Z",
+        "name" : "Wispy bird"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>o<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "wispy-bird-9-5252269d-4d51-4c32-acb0-985be29cf17a",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T20:44:33.223951Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "whos",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T20:44:33.223951Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "wispy-bird-9",
+        "role" : "user",
+        "created_at" : "2020-06-09T20:43:42.367047Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Wispy+bird",
+        "updated_at" : "2020-06-09T20:43:42.376502Z",
+        "last_active" : "2020-06-09T20:43:42.372121Z",
+        "name" : "Wispy bird"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>whos<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "wispy-bird-9-cbb34e46-6f22-4c1d-8105-f4df78d5914a",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T20:44:36.681316Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "🤔🤔",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T20:44:36.681316Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "wispy-bird-9",
+        "role" : "user",
+        "created_at" : "2020-06-09T20:43:42.367047Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Wispy+bird",
+        "updated_at" : "2020-06-09T20:43:42.376502Z",
+        "last_active" : "2020-06-09T20:43:42.372121Z",
+        "name" : "Wispy bird"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>🤔🤔<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "throbbing-salad-6-8187e80d-88ff-468a-8670-7c60a4f11e20",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T22:29:15.591082Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "hey",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T22:29:15.591082Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "throbbing-salad-6",
+        "role" : "user",
+        "created_at" : "2020-06-09T22:28:36.384776Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Throbbing+salad",
+        "updated_at" : "2020-06-09T22:28:36.392629Z",
+        "last_active" : "2020-06-09T22:28:36.389057Z",
+        "name" : "Throbbing salad"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>hey<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "throbbing-salad-6-9ea5ca14-fe37-4144-87ef-345de2c72cf1",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T22:29:47.078324Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "🤐🤐🤐",
+      "attachments" : [
+        {
+          "type" : "image",
+          "fallback" : "2 Existing user_Pre.jpg",
+          "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/102ba84d-82de-4bd3-98d0-841581f34f40.2%20Existing%20user_Pre.jpg?ro=0&s=70840c93f8e733b33c8c5b162288cdba"
+        }
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T22:29:47.078324Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "throbbing-salad-6",
+        "role" : "user",
+        "created_at" : "2020-06-09T22:28:36.384776Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Throbbing+salad",
+        "updated_at" : "2020-06-09T22:28:36.392629Z",
+        "last_active" : "2020-06-09T22:28:36.389057Z",
+        "name" : "Throbbing salad"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>🤐🤐🤐<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "aged-moon-3-423c9b17-78a3-41ff-8aa7-47e6afb9157e",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-09T23:02:00.304629Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "ytf\\",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-09T23:02:00.304629Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "aged-moon-3",
+        "role" : "user",
+        "created_at" : "2020-06-09T23:01:32.106356Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Aged+moon",
+        "updated_at" : "2020-06-09T23:01:32.113984Z",
+        "last_active" : "2020-06-09T23:01:32.110521Z",
+        "name" : "Aged moon"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>ytf<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "bitter-cloud-4-988809fa-b534-4f6a-8e22-0f547fe46129",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-10T00:27:03.27432Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "it's a great day in the neighborhood!",
+      "attachments" : [
+        {
+          "type" : "image",
+          "fallback" : "20200606_224446.jpg",
+          "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/14cbb3ad-bffa-4bbb-898a-e260b1424162.20200606_224446.jpg?ro=0&s=34035399b918c6a8f6e843efa7477f78"
+        }
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-10T00:27:03.27432Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "bitter-cloud-4",
+        "role" : "user",
+        "created_at" : "2020-06-10T00:26:00.247437Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=Bitter+cloud",
+        "updated_at" : "2020-06-10T00:26:00.259529Z",
+        "last_active" : "2020-06-10T00:26:00.255531Z",
+        "name" : "Bitter cloud"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p>it’s a great day in the neighborhood!<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    },
+    {
+      "id" : "white-boat-1-c9d54585-f046-4785-9d81-72fd930bf2a3",
+      "reaction_counts" : {
+        
+      },
+      "silent" : false,
+      "created_at" : "2020-06-10T05:59:48.054692Z",
+      "reaction_scores" : {
+        
+      },
+      "type" : "regular",
+      "latest_reactions" : [
+        
+      ],
+      "text" : "https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA",
+      "attachments" : [
+        
+      ],
+      "own_reactions" : [
+        
+      ],
+      "updated_at" : "2020-06-10T05:59:48.054692Z",
+      "reply_count" : 0,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "white-boat-1",
+        "role" : "user",
+        "created_at" : "2020-06-10T05:58:07.867626Z",
+        "image" : "https:\/\/getstream.io\/random_png\/?name=White+boat",
+        "updated_at" : "2020-06-10T13:11:28.955545Z",
+        "last_active" : "2020-06-10T13:11:28.9457Z",
+        "name" : "White boat"
+      },
+      "mentioned_users" : [
+        
+      ],
+      "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA<\/a><\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
+    }
+  ],
+  "pinned_messages": [
+      {
+        "id" : "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",
+        "reaction_counts" : {
+
+        },
+        "silent" : false,
+        "created_at" : "2020-06-09T08:10:40.800912Z",
+        "reaction_scores" : {
+
+        },
+        "type" : "regular",
+        "latest_reactions" : [
+
+        ],
+        "text" : "sadfadf",
+        "attachments" : [
+
+        ],
+        "own_reactions" : [
+
+        ],
+        "updated_at" : "2020-06-09T08:10:40.800912Z",
+        "reply_count" : 0,
+        "user" : {
+          "id" : "broken-waterfall-5",
+          "banned" : false,
+          "unread_channels" : 0,
+          "totalUnreadCount" : 0,
+          "last_active" : "2020-06-10T13:24:00.501797Z",
+          "created_at" : "2019-12-12T15:33:46.488935Z",
+          "unreadChannels" : 0,
+          "unread_count" : 0,
+          "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+          "updated_at" : "2020-06-10T14:11:29.946106Z",
+          "role" : "user",
+          "total_unread_count" : 0,
+          "online" : true,
+          "name" : "broken-waterfall-5"
+        },
+        "mentioned_users" : [
+
+        ],
+        "html" : "<p>sadfadf<\/p>\n",
+        "pinned": false,
+        "pinned_at": null,
+        "pin_expires": null,
+        "pinned_by": null
+      },
+  ],
+  "watcher_count" : 7,
+  "hidden": true,
+  "channel" : {
+    "id" : "general",
+    "created_at" : "2019-05-10T14:03:49.505006Z",
+    "created_by" : {
+      "banned" : false,
+      "online" : false,
+      "id" : "abcusenameinsteadplz",
+      "role" : "admin",
+      "created_at" : "2019-05-10T14:03:48.853034Z",
+      "image" : "",
+      "updated_at" : "2019-07-03T15:10:37.793155Z",
+      "last_active" : "2019-07-03T15:10:37.767306Z",
+      "name" : "abc"
+    },
+    "type" : "messaging",
+    "cid" : "messaging:general",
+    "frozen" : true,
+    "cooldown" : 10,
+    "member_count" : 4,
+    "updated_at" : "2019-05-10T14:03:49.505006Z",
+    "config" : {
+      "automod_behavior" : "flag",
+      "reactions" : true,
+      "typing_events" : true,
+      "mutes" : true,
+      "max_message_length" : 5000,
+      "created_at" : "2019-03-21T15:49:15.40182Z",
+      "automod" : "AI",
+      "read_events" : true,
+      "commands" : [
+        {
+          "set" : "fun_set",
+          "args" : "[text]",
+          "name" : "giphy",
+          "description" : "Post a random gif to the channel"
+        },
+        {
+            "set" : "moderation_set",
+            "args" : "[@username]",
+            "name" : "flag",
+            "description" : "Flag a user"
+        }
+      ],
+      "connect_events" : true,
+      "replies" : true,
+      "quotes" : true,
+      "updated_at" : "2020-03-17T18:54:09.460881Z",
+      "url_enrichment" : true,
+      "search" : true,
+      "message_retention" : "infinite",
+      "uploads" : true,
+      "name" : "messaging"
+    },
+    "image" : "https:\/\/images.unsplash.com\/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80",
+    "example" : 1,
+    "name" : "The water cooler",
+    "last_message_at" : "2020-06-10T05:59:48.054692Z",
+    "team" : "GREEN"
+  },
+  "read" : [
+    {
+      "unread_messages" : 0,
+      "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "extraData" : {
+          "name" : "Tester"
+        },
+        "totalUnreadCount" : 0,
+        "unread_channels" : 0,
+        "last_active" : "2020-06-10T13:24:00.501797Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-06-10T14:11:29.946106Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+      },
+      "last_read" : "2020-06-10T07:43:11.812841984Z"
+    },
+    {
+      "unread_messages" : 123,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "test-user-1",
+        "role" : "user",
+        "created_at" : "2020-06-04T13:25:39.123446Z",
+        "updated_at" : "2020-06-08T17:43:08.607406Z",
+        "last_active" : "2020-06-08T17:43:08.603506Z",
+        "name" : "test-user-1"
+      },
+      "last_read" : "2020-06-04T13:37:34.695750656Z"
+    },
+    {
+      "unread_messages" : 122,
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "test-user-2",
+        "role" : "user",
+        "created_at" : "2020-06-04T13:25:46.731547Z",
+        "updated_at" : "2020-06-04T13:25:46.740591Z",
+        "last_active" : "2020-06-04T13:25:46.735697Z",
+        "name" : "test-user-2"
+      },
+      "last_read" : "2020-06-04T14:13:09.15306112Z"
+    },
+    {
+      "unread_messages" : 16,
+      "user" : {
+        "id" : "steep-moon-9",
+        "banned" : false,
+        "unread_channels" : 3,
+        "totalUnreadCount" : 0,
+        "last_active" : "2020-06-10T13:14:31.20324Z",
+        "created_at" : "2019-12-12T15:34:00.762372Z",
+        "unreadChannels" : 0,
+        "unread_count" : 21,
+        "image" : "https:\/\/i.imgur.com\/EgEPqWZ.jpg",
+        "updated_at" : "2020-06-10T13:14:31.20883Z",
+        "role" : "user",
+        "total_unread_count" : 21,
+        "online" : true,
+        "name" : "steep-moon-9"
+      },
+      "last_read" : "2020-06-09T15:44:56.754804224Z"
+    }
+  ],
+  "members" : [
+    {
+      "created_at" : "2020-01-20T19:15:03.911517Z",
+      "updated_at" : "2020-01-20T19:15:03.911517Z",
+      "role" : "member",
+      "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "unread_channels" : 0,
+        "totalUnreadCount" : 0,
+        "extraData" : {
+          "name" : "Tester"
+        },
+        "last_active" : "2020-06-10T13:24:00.501797Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-06-10T14:11:29.946106Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+      }
+    },
+    {
+      "created_at" : "2020-06-04T13:36:37.96589Z",
+      "updated_at" : "2020-06-04T13:36:37.96589Z",
+      "role" : "member",
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "test-user-1",
+        "role" : "user",
+        "created_at" : "2020-06-04T13:25:39.123446Z",
+        "updated_at" : "2020-06-08T17:43:08.607406Z",
+        "last_active" : "2020-06-08T17:43:08.603506Z",
+        "name" : "test-user-1"
+      }
+    },
+    {
+      "created_at" : "2020-06-04T13:36:44.793348Z",
+      "updated_at" : "2020-06-04T13:36:44.793348Z",
+      "role" : "member",
+      "user" : {
+        "banned" : false,
+        "online" : false,
+        "id" : "test-user-2",
+        "role" : "user",
+        "created_at" : "2020-06-04T13:25:46.731547Z",
+        "updated_at" : "2020-06-04T13:25:46.740591Z",
+        "last_active" : "2020-06-04T13:25:46.735697Z",
+        "name" : "test-user-2"
+      }
+    },
+    {
+      "created_at" : "2020-06-05T12:55:48.581959Z",
+      "updated_at" : "2020-06-05T12:55:48.581959Z",
+      "role" : "member",
+      "user" : {
+        "id" : "steep-moon-9",
+        "banned" : false,
+        "unread_channels" : 3,
+        "totalUnreadCount" : 0,
+        "last_active" : "2020-06-10T13:14:31.20324Z",
+        "created_at" : "2019-12-12T15:34:00.762372Z",
+        "unreadChannels" : 0,
+        "unread_count" : 21,
+        "image" : "https:\/\/i.imgur.com\/EgEPqWZ.jpg",
+        "updated_at" : "2020-06-10T13:14:31.20883Z",
+        "role" : "user",
+        "total_unread_count" : 21,
+        "online" : true,
+        "name" : "steep-moon-9"
+      }
+    }
+  ],
+  "membership" : {
+    "created_at" : "2020-01-20T19:15:03.911517Z",
+    "updated_at" : "2020-01-20T19:15:03.911517Z",
+    "role" : "channel_member",
+    "user" : {
+      "id" : "broken-waterfall-5",
+      "banned" : false,
+      "unread_channels" : 0,
+      "extraData" : {
+        "name" : "Tester"
+      },
+      "totalUnreadCount" : 0,
+      "last_active" : "2020-06-10T13:24:00.501797Z",
+      "created_at" : "2019-12-12T15:33:46.488935Z",
+      "unreadChannels" : 0,
+      "unread_count" : 0,
+      "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+      "updated_at" : "2020-06-10T14:11:29.946106Z",
+      "role" : "user",
+      "total_unread_count" : 0,
+      "online" : true,
+      "name" : "broken-waterfall-5"
+    }
+  },
+  "watchers" : [
+      {
+          "banned" : false,
+          "online" : true,
+          "id" : "cilvia",
+          "role" : "user",
+          "created_at" : "2019-10-24T08:34:11.155375Z",
+          "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U01173D1D5J-0dead6eea6ea-512",
+          "value" : "cilvia",
+          "updated_at" : "2021-03-04T15:36:15.179644Z",
+          "last_active" : "2021-03-04T15:21:48.667941Z",
+          "name" : "Neil Hannah"
+      },
+      {
+          "banned" : false,
+          "online" : true,
+          "id" : "josh",
+          "role" : "user",
+          "created_at" : "2020-04-15T06:43:08.776911Z",
+          "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512",
+          "value" : "josh",
+          "updated_at" : "2021-03-04T15:32:29.26725Z",
+          "last_active" : "2021-03-04T15:25:40.183096Z",
+          "name" : "Joshua"
+      },
+      {
+          "banned" : false,
+          "online" : true,
+          "id" : "vishal",
+          "role" : "user",
+          "created_at" : "2019-10-24T08:34:26.298325Z",
+          "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-UHGDQJ8A0-31658896398c-512",
+          "value" : "vishal",
+          "updated_at" : "2021-03-04T15:32:36.509639Z",
+          "last_active" : "2021-03-04T15:32:36.509639Z",
+          "name" : "Vishal"
+      }
+  ]
+  }

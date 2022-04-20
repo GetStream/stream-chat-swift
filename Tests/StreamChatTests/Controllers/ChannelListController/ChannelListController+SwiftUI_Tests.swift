@@ -3,19 +3,21 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
-class ChannelListController_SwiftUI_Tests: iOS13TestCase {
-    var channelListController: ChannelListControllerMock!
+final class ChannelListController_SwiftUI_Tests: iOS13TestCase {
+    var channelListController: ChannelListController_Mock!
     
     override func setUp() {
         super.setUp()
-        channelListController = ChannelListControllerMock()
+        channelListController = ChannelListController_Mock()
     }
     
     override func tearDown() {
         AssertAsync.canBeReleased(&channelListController)
+        channelListController = nil
         super.tearDown()
     }
     
@@ -60,28 +62,5 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
         }
         
         AssertAsync.willBeEqual(observableObject.state, newState)
-    }
-}
-
-class ChannelListControllerMock: ChatChannelListController {
-    @Atomic var synchronize_called = false
-    
-    var channels_simulated: [ChatChannel]?
-    override var channels: LazyCachedMapCollection<ChatChannel> {
-        channels_simulated.map { $0.lazyCachedMap { $0 } } ?? super.channels
-    }
-
-    var state_simulated: DataController.State?
-    override var state: DataController.State {
-        get { state_simulated ?? super.state }
-        set { super.state = newValue }
-    }
-    
-    init() {
-        super.init(query: .init(filter: .notEqual("cid", to: "")), client: .mock)
-    }
-
-    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
-        synchronize_called = true
     }
 }

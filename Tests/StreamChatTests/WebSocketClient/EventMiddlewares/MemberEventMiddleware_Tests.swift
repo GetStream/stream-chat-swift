@@ -7,7 +7,7 @@
 import XCTest
 
 final class MemberEventMiddleware_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     var middleware: MemberEventMiddleware!
     
     // MARK: - Set up
@@ -15,20 +15,19 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = .init()
     }
     
     override func tearDown() {
-        middleware = nil
         AssertAsync.canBeReleased(&database)
-        
+        database = nil
         super.tearDown()
     }
     
     // MARK: - Tests
     
-    func tests_middleware_forwardsNonMemberEvents() throws {
+    func test_middleware_forwardsNonMemberEvents() throws {
         let event = TestEvent()
         
         // Handle non-member event
@@ -40,7 +39,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     // MARK: - MemberAddedEvent
     
-    func tests_middleware_forwardsMemberAddedEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsMemberAddedEvent_ifDatabaseWriteGeneratesError() throws {
         // Create MemberAddedEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .memberAdded,
@@ -62,7 +61,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
     }
     
-    func tests_middleware_handlesMemberAddedEventCorrectly() throws {
+    func test_middleware_handlesMemberAddedEventCorrectly() throws {
         let cid = ChannelId.unique
         let memberId = UserId.unique
         let userId = UserId.unique
@@ -149,7 +148,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     // MARK: - MemberRemovedEvent
     
-    func tests_middleware_forwardsMemberRemovedEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsMemberRemovedEvent_ifDatabaseWriteGeneratesError() throws {
         // Create MemberAddedEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
@@ -159,7 +158,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         )
         
         // Set error to be thrown on write.
-        let session = DatabaseSessionMock(underlyingSession: database.viewContext)
+        let session = DatabaseSession_Mock(underlyingSession: database.viewContext)
         let error = TestError()
         session.errorToReturn = error
         
@@ -171,7 +170,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
     }
     
-    func tests_middleware_handlesMemberRemovedEventCorrectly() throws {
+    func test_middleware_handlesMemberRemovedEventCorrectly() throws {
         let cid = ChannelId.unique
         
         // Create channel in the database.
@@ -254,7 +253,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     // MARK: - MemberUpdatedEvent
     
-    func tests_middleware_forwardsMemberUpdatedEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsMemberUpdatedEvent_ifDatabaseWriteGeneratesError() throws {
         // Create MemberAddedEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .memberUpdated,
@@ -276,7 +275,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is MemberUpdatedEventDTO)
     }
     
-    func tests_middleware_handlesMemberUpdatedEventCorrectly() throws {
+    func test_middleware_handlesMemberUpdatedEventCorrectly() throws {
         let cid = ChannelId.unique
         
         // Create channel in the database.
@@ -425,7 +424,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     // MARK: - NotificationRemovedFromChannelEvent
     
-    func tests_middleware_handlesNotificationRemovedFromChannelEventCorrectly() throws {
+    func test_middleware_handlesNotificationRemovedFromChannelEventCorrectly() throws {
         let cid = ChannelId.unique
         
         // Create channel in the database.
@@ -657,29 +656,5 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channelListObserver.observedChanges,
             [.update(cid, index: .init(item: 0, section: 0))]
         )
-    }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
-}
-
-private class TestChannelListObserver {
-    let databaseObserver: ListDatabaseObserver<ChannelId, ChannelDTO>
-    
-    var observedChanges: [ListChange<ChannelId>] = []
-    
-    init(database: DatabaseContainerMock) {
-        databaseObserver = ListDatabaseObserver<ChannelId, ChannelDTO>(
-            context: database.viewContext,
-            fetchRequest: ChannelDTO.allChannelsFetchRequest,
-            itemCreator: { try! ChannelId(cid: $0.cid) }
-        )
-        
-        databaseObserver.onChange = { [weak self] in
-            self?.observedChanges.append(contentsOf: $0)
-        }
-        
-        try! databaseObserver.startObserving()
     }
 }

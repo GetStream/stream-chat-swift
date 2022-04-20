@@ -3,10 +3,21 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class EventDecoder_Tests: XCTestCase {
-    let eventDecoder = EventDecoder()
+    var eventDecoder: EventDecoder!
+
+    override func setUp() {
+        super.setUp()
+        eventDecoder = EventDecoder()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        eventDecoder = nil
+    }
     
     // MARK: System events
     

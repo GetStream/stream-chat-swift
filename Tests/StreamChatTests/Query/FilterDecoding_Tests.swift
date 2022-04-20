@@ -3,41 +3,42 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class FilterDecoding_Tests: XCTestCase {
+final class FilterDecoding_Tests: XCTestCase {
     // MARK: - Exception thrown tests
 
-    func testFilterDecodingThrowExceptionOnEmpty() {
+    func test_throwsException_whenFilterDecodesEmptyJSON() {
         checkDecodingFilterThrowException(json: "")
     }
 
-    func testFilterDecodingThrowExceptionOnInvalidJSON() {
+    func test_throwsException_whenFilterDecodesInvalidJSON() {
         checkDecodingFilterThrowException(json: "12345")
     }
 
-    func testFilterDecodingThrowExceptionOnInvalidKeylessJSON() {
+    func test_throwsException_whenFilterDecodesInvalidKeylessJSON() {
         checkDecodingFilterThrowException(json: #"{"value"}"#)
     }
 
-    func testFilterRightSideDecodingThrowExceptionWithMoreThanOneKey() {
+    func test_throwsException_whenFilterRightSideDecodesJSONWithMoreThanOneKey() {
         let filterJson = #"{"test_key":{"$eq":"test_value_1","$ne":"test_value_2"}}"#
         checkDecodingFilterThrowException(json: filterJson)
     }
 
-    func testFilterRightSideDecodingThrowExceptionWithoutOperationKey() {
+    func test_throwsException_whenFilterRightSideDecodesWithoutOperationKey() {
         let filterJson = #"{"test_key":{"eq":"test_value_1"}}"#
         checkDecodingFilterThrowException(json: filterJson)
     }
 
-    func testFilterRightSideDecodingThrowExceptionOnNonExistingOperation() {
+    func test_throwsException_whenFilterRightSideDecodesNonExistingOperation() {
         let filterJson = #"{"test_key":{"$myspecialOperation":"test_value_1"}}"#
         checkDecodingFilterThrowException(json: filterJson)
     }
 
     // MARK: - Correct decoded tests
 
-    func testFilterDecoding() {
+    func test_decodesFilter_whenCorrectJSONIsPassed() {
         // Given
         let testCases = FilterCodingTestPair.allCases
         for pair in testCases {
@@ -47,9 +48,11 @@ class FilterDecoding_Tests: XCTestCase {
             XCTAssertEqual(decoded, pair.filter)
         }
     }
+}
 
-    // MARK: - Private methods
+// MARK: Test Helpers
 
+extension FilterDecoding_Tests {
     private func checkDecodingFilterThrowException(json: String) {
         do {
             // When

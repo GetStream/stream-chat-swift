@@ -7,7 +7,7 @@
 import XCTest
 
 final class UserWatchingEventMiddleware_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     var middleware: UserWatchingEventMiddleware!
     
     // MARK: - Set up
@@ -15,20 +15,19 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        database = DatabaseContainerMock()
+        database = DatabaseContainer_Spy()
         middleware = .init()
     }
     
     override func tearDown() {
-        middleware = nil
         AssertAsync.canBeReleased(&database)
-        
+        database = nil
         super.tearDown()
     }
     
     // MARK: - Tests
     
-    func tests_middleware_forwardsOtherEvents() throws {
+    func test_middleware_forwardsOtherEvents() throws {
         let event = TestEvent()
         
         // Handle non-reaction event
@@ -38,7 +37,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
     }
     
-    func tests_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
         let eventPayload: EventPayload = .init(
             eventType: .userStartWatching,
             cid: .unique,
@@ -48,7 +47,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         )
         
         // Set error to be thrown on write.
-        let session = DatabaseSessionMock(underlyingSession: database.viewContext)
+        let session = DatabaseSession_Mock(underlyingSession: database.viewContext)
         let error = TestError()
         session.errorToReturn = error
         
@@ -60,7 +59,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is UserWatchingEventDTO)
     }
     
-    func tests_middleware_handlesUserStartWatchingEventCorrectly() throws {
+    func test_middleware_handlesUserStartWatchingEventCorrectly() throws {
         let cid: ChannelId = .unique
         let userId = UserId.unique
         let watcherCount = Int.random(in: 100...200)
@@ -92,7 +91,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         XCTAssert(forwardedEvent is UserWatchingEventDTO)
     }
     
-    func tests_middleware_handlesUserStopWatchingEventCorrectly() throws {
+    func test_middleware_handlesUserStopWatchingEventCorrectly() throws {
         let cid: ChannelId = .unique
         
         // Channel and user must exist for the middleware to work
@@ -125,8 +124,4 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel?.watcherCount, Int64(watcherCount))
         XCTAssert(forwardedEvent is UserWatchingEventDTO)
     }
-}
-
-private struct TestEvent: Event, Equatable {
-    let id = UUID()
 }

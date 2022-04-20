@@ -23,7 +23,7 @@ final class SlackMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
             let previousMessage = messages[messages.index(after: messageIndex)]
             guard previousMessage.author == message.author else { return true }
             let delay = previousMessage.createdAt.timeIntervalSince(message.createdAt)
-            return delay > minTimeIntervalBetweenMessagesInGroup
+            return delay > maxTimeIntervalBetweenMessagesInGroup
         }()
 
         if isFirstInGroup {

@@ -45,7 +45,9 @@ open class FileAttachmentView: _View, AppearanceProvider {
         stack.axis = .vertical
         stack.alignment = .leading
         stack.spacing = 3
-        return stack.withoutAutoresizingMaskConstraints
+        return stack
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "fileNameAndSizeStack")
     }()
 
     /// The image view that displays the file icon of the attachment.
@@ -68,6 +70,7 @@ open class FileAttachmentView: _View, AppearanceProvider {
 
         fileNameLabel.textColor = appearance.colorPalette.text
         fileNameLabel.font = appearance.fonts.bodyBold
+        fileNameLabel.lineBreakMode = .byTruncatingMiddle
     }
 
     override open func setUpLayout() {
@@ -89,7 +92,9 @@ open class FileAttachmentView: _View, AppearanceProvider {
             ),
             fileNameAndSizeStack.centerYAnchor.pin(equalTo: centerYAnchor),
             fileNameAndSizeStack.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
-            fileNameAndSizeStack.bottomAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor)
+            fileNameAndSizeStack.bottomAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor),
+            // This is to avoid the file name to go under the "X" Close button, which doesn't belong to this view.
+            fileNameAndSizeStack.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor, constant: -30)
         ])
     }
     

@@ -45,7 +45,7 @@ class ChatClientUpdater {
             client.currentToken = newToken
 
             // Disconnect from web-socket.
-            disconnect(source: .systemInitiated)
+            disconnect(source: .userInitiated)
             
             // Update web-socket endpoint.
             client.webSocketClient?.connectEndpoint = .webSocketConnect(
@@ -54,7 +54,11 @@ class ChatClientUpdater {
 
             // Re-create backgroundWorker's since they are related to the previous user.
             client.createBackgroundWorkers()
-
+            
+            // Stop tracking active components
+            client.activeChannelControllers.removeAllObjects()
+            client.activeChannelListControllers.removeAllObjects()
+            
             // Reset all existing local data.
             return try client.databaseContainer.removeAllData(force: true)
         }
@@ -161,6 +165,9 @@ class ChatClientUpdater {
     /// Disconnects the chat client the controller represents from the chat servers. No further updates from the servers
     /// are received.
     func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
+        client.apiClient.flushRequestsQueue()
+        client.syncRepository.cancelRecoveryFlow()
+        
         // Disconnecting is not possible in connectionless mode (duh)
         guard client.config.isClientInActiveMode else {
             log.error(ClientError.ClientIsNotInActiveMode().localizedDescription)

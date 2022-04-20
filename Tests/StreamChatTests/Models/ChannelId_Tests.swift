@@ -3,9 +3,10 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class ChannelId_Tests: XCTestCase {
+final class ChannelId_Tests: XCTestCase {
     func test_channelId() {
         let channelId = try! ChannelId(cid: "messaging:123")
         XCTAssertEqual(channelId.rawValue, "messaging:123")

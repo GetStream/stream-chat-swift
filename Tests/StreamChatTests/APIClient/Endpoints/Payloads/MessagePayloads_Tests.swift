@@ -3,11 +3,15 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
-class MessagePayload_Tests: XCTestCase {
+final class MessagePayload_Tests: XCTestCase {
     let messageJSON = XCTestCase.mockData(fromFile: "Message")
-    let messageJSONWithCorruptedAttachments = XCTestCase.mockData(fromFile: "MessageWithBrokenAttachments")
+    let messageJSONWithCorruptedAttachments = XCTestCase.mockData(
+        fromFile: "MessageWithBrokenAttachments",
+        bundle: .testTools
+    )
     let messageCustomData: [String: RawJSON] = ["secret_note": .string("Anakin is Vader!")]
 
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
@@ -119,7 +123,7 @@ class MessagePayload_Tests: XCTestCase {
     }
 }
 
-class MessageRequestBody_Tests: XCTestCase {
+final class MessageRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
         let payload: MessageRequestBody = .init(
             id: .unique,
@@ -194,7 +198,7 @@ class MessageRequestBody_Tests: XCTestCase {
     }
 }
 
-class MessageRepliesPayload_Tests: XCTestCase {
+final class MessageRepliesPayload_Tests: XCTestCase {
     func test_isSerialized() throws {
         let mockJSON = XCTestCase.mockData(fromFile: "Messages")
         let payload = try JSONDecoder.default.decode(MessageRepliesPayload.self, from: mockJSON)
@@ -204,7 +208,7 @@ class MessageRepliesPayload_Tests: XCTestCase {
     }
 }
 
-class MessageReactionsPayload_Tests: XCTestCase {
+final class MessageReactionsPayload_Tests: XCTestCase {
     func test_isSerialized() throws {
         let mockJSON = XCTestCase.mockData(fromFile: "MessageReactionsPayload")
         let payload = try JSONDecoder.default.decode(MessageReactionsPayload.self, from: mockJSON)

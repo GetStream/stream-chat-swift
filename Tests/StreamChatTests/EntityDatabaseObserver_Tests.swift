@@ -7,70 +7,30 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class EntityChange_Tests: XCTestCase {
-    func test_item() {
-        let createdItem: String = .unique
-        let updatedItem: String = .unique
-        let removedItem: String = .unique
-
-        XCTAssertEqual(EntityChange.create(createdItem).item, createdItem)
-        XCTAssertEqual(EntityChange.update(updatedItem).item, updatedItem)
-        XCTAssertEqual(EntityChange.remove(removedItem).item, removedItem)
-    }
-    
-    func test_fieldChange() {
-        let createdItem = TestItem.unique
-        let updatedItem = TestItem.unique
-        let removedItem = TestItem.unique
-        
-        let path = \TestItem.value
-
-        XCTAssertEqual(EntityChange.create(createdItem).fieldChange(path), .create(createdItem.value))
-        XCTAssertEqual(EntityChange.update(updatedItem).fieldChange(path), .update(updatedItem.value))
-        XCTAssertEqual(EntityChange.remove(removedItem).fieldChange(path), .remove(removedItem.value))
-    }
-    
-    func test_description() {
-        let createdItem: String = .unique
-        let updatedItem: String = .unique
-        let removedItem: String = .unique
-        
-        let pairs: [(EntityChange<String>, String)] = [
-            (.create(createdItem), "Create: \(createdItem)"),
-            (.update(updatedItem), "Update: \(updatedItem)"),
-            (.remove(removedItem), "Remove: \(removedItem)")
-        ]
-        
-        for (change, description) in pairs {
-            XCTAssertEqual(change.description, description)
-        }
-    }
-}
-
-class EntityDatabaseObserver_Tests: XCTestCase {
+final class EntityDatabaseObserver_Tests: XCTestCase {
     private var observer: EntityDatabaseObserver<TestItem, TestManagedObject>!
     var fetchRequest: NSFetchRequest<TestManagedObject>!
-    var database: DatabaseContainerMock!
+    var database: DatabaseContainer_Spy!
     
     override func setUp() {
         super.setUp()
         
         fetchRequest = NSFetchRequest(entityName: "TestManagedObject")
         fetchRequest.sortDescriptors = [.init(keyPath: \TestManagedObject.testId, ascending: true)]
-        database = try! DatabaseContainerMock(
+        database = try! DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "TestDataModel",
-            bundle: Bundle(for: EntityDatabaseObserver_Tests.self)
+            bundle: .testTools
         )
         
         observer = .init(context: database.viewContext, fetchRequest: fetchRequest, itemCreator: { $0.model })
     }
     
     override func tearDown() {
-        AssertAsync {
-            Assert.canBeReleased(&observer)
-            Assert.canBeReleased(&database)
-        }
+        database = nil
+        fetchRequest = nil
+        observer = nil
+
         super.tearDown()
     }
     
@@ -271,18 +231,5 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         try database.removeAllData()
         
         XCTAssertEqual(listener, [.remove(testItem)])
-    }
-}
-
-private struct TestItem: Equatable {
-    static var unique: Self { .init(id: .unique, value: .unique) }
-    
-    var id: String
-    var value: String?
-}
-
-private extension TestManagedObject {
-    var model: TestItem {
-        .init(id: testId, value: testValue)
     }
 }

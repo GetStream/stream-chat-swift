@@ -7,7 +7,7 @@ import StreamChat
 @testable import StreamChatUI
 import XCTest
 
-class ImageCDN_Tests: XCTestCase {
+final class ImageCDN_Tests: XCTestCase {
     func test_cache_validStreamURL_filtered() {
         let provider = StreamImageCDN()
         

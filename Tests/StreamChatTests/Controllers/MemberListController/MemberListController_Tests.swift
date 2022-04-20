@@ -39,6 +39,10 @@ final class MemberListController_Tests: XCTestCase {
             Assert.canBeReleased(&client)
             Assert.canBeReleased(&env)
         }
+
+        controller = nil
+        client = nil
+        env = nil
         
         super.tearDown()
     }
@@ -457,8 +461,8 @@ final class MemberListController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var memberListUpdater: ChannelMemberListUpdaterMock?
-    @Atomic var memberListObserver: ListDatabaseObserverMock<ChatChannelMember, MemberDTO>?
+    @Atomic var memberListUpdater: ChannelMemberListUpdater_Mock?
+    @Atomic var memberListObserver: ListDatabaseObserver_Mock<ChatChannelMember, MemberDTO>?
     @Atomic var memberListObserverSynchronizeError: Error?
     
     lazy var environment: ChatChannelMemberListController.Environment = .init(

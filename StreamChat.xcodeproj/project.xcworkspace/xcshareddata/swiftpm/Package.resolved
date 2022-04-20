@@ -6,8 +6,17 @@
         "repositoryURL": "https://github.com/ProxymanApp/atlantis",
         "state": {
           "branch": null,
-          "revision": "5e848072d45e3969bd1d69fab3b6c2151f826c41",
-          "version": "1.15.0"
+          "revision": "b60ef22babc5cc8997841b378bb2993229fac9eb",
+          "version": "1.16.0"
+        }
+      },
+      {
+        "package": "Difference",
+        "repositoryURL": "https://github.com/krzysztofzablocki/Difference.git",
+        "state": {
+          "branch": null,
+          "revision": "02fe1111edc8318c4f8a0da96336fcbcc201f38b",
+          "version": "1.0.1"
         }
       },
       {
@@ -17,6 +26,15 @@
           "branch": null,
           "revision": "c0b32b0d7154afceb3fc08b199492f125ff4267e",
           "version": "10.3.3"
+        }
+      },
+      {
+        "package": "StreamChatTestHelpers",
+        "repositoryURL": "https://github.com/GetStream/stream-chat-swift-test-helpers.git",
+        "state": {
+          "branch": "develop",
+          "revision": "81c9e470ebf07b624bcec84b336f9494c77a1717",
+          "version": null
         }
       },
       {
@@ -30,11 +48,11 @@
       },
       {
         "package": "Swifter",
-        "repositoryURL": "https://github.com/httpswift/swifter",
+        "repositoryURL": "https://github.com/httpswift/swifter.git",
         "state": {
-          "branch": null,
-          "revision": "9483a5d459b45c3ffd059f7b55f9638e268632fd",
-          "version": "1.5.0"
+          "branch": "stable",
+          "revision": "1e4f51c92d7ca486242d8bf0722b99de2c3531aa",
+          "version": null
         }
       }
     ]

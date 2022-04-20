@@ -45,3 +45,13 @@ var body: some Scene {
 ```
 
 And that's everything we need to do to provide our own version of some of the views used in the SDK.
+
+### Build Time Improvements
+
+If you are customizing many view slots (over 15) from the SDK, and you have many generics in your codebase, it's good idea to explicitly specify the types of your custom views with `typealias`. This will improve the build time of your project.
+
+```swift
+typealias MoreActionsView = MoreChannelActionsView
+```
+
+You can find all the associated types we use in the `ViewFactory` [here](https://github.com/GetStream/stream-chat-swiftui/blob/main/Sources/StreamChatSwiftUI/ViewFactory.swift).

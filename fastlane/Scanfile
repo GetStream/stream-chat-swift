@@ -6,7 +6,7 @@
 
 devices(["iPhone 11"])
 
-# Needed for codecov
+# Needed for Sonar
 code_coverage(true)
 
 # Our integration tests need to run in parallel
