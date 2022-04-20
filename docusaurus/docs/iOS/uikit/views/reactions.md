@@ -34,6 +34,35 @@ let customReactions: [MessageReactionType: ChatMessageReactionAppearanceType] = 
 Appearance.default.images.availableReactions = customReactions
 ```
 
+### Custom Reactions Sorting
+
+By default, the reactions are sorted alphabetically. You can change the order of the reactions by providing a custom `reactionsSorting` function in the `Components` config. 
+
+Here is an example of how you can sort the reactions by their score:
+
+```swift
+Components.default.reactionsSorting = { $0.score < $1.score }
+```
+
+You can also provide a custom static order based on the `MessageReactionType`:
+
+```swift
+extension MessageReactionType {
+    var position: Int {
+        switch rawValue {
+        case "love": return 0
+        case "haha": return 1
+        case "like": return 2
+        case "sad": return 3
+        case "wow": return 4
+        default: return 5
+        }
+    }
+}
+
+Components.default.reactionsSorting = { $0.type.position < $1.type.position }
+```
+
 ## Message Reactions
 
 By default, the message reactions are displayed inline as a bubble view on top of the messages.

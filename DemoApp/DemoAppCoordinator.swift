@@ -109,7 +109,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.messageListDateOverlayEnabled = true
         Components.default._messageListDiffingEnabled = isStreamInternalConfiguration
         Components.default.messageActionsVC = CustomChatMessageActionsVC.self
-        Components.default.reactionsSorting = { $0.type.position < $01.type.position }
+        Components.default.reactionsSorting = { $0.type.position < $1.type.position }
 
         StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
 
