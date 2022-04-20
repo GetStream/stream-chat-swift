@@ -111,7 +111,7 @@ If we do all the customizations described above to the message reactions view, t
 
 ## Reactions Picker
 
-In order to add a new reaction to a message you need to long-press a message or tap the message reactions bubble view, and the SDK will show a popup view with a reactions picker at the top. The reactions picker which is represented by the `ChatMessageReactionsVC` is basically a bigger message reaction view that is interactable to allow the user to select a reaction.
+In order to add a new reaction to a message you need to long-press a message or tap the message reactions bubble view, and the SDK will show a popup view with a reactions picker at the top. The reactions picker which is represented by the `ChatMessageReactionsPickerVC` is basically a bigger message reaction view that is interactable to allow the user to select a reaction.
 
 When the user long-presses the message, the popup view will display the reactions picker at the top, the message content at the centre, and the message actions at the bottom. On the other hand, if the user taps the reactions bubble view, instead of having the message actions at the bottom, it will show a view with all the reactions that belong to the message.
 

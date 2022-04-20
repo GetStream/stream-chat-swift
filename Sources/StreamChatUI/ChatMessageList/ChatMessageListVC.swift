@@ -301,7 +301,7 @@ open class ChatMessageListVC:
         actionsController.channelConfig = dataSource?.channel(for: self)?.config
         actionsController.delegate = self
 
-        let reactionsController: ChatMessageReactionsVC? = {
+        let reactionsController: ChatMessageReactionsPickerVC? = {
             guard message.localState == nil else { return nil }
             guard dataSource?.channel(for: self)?.config.reactionsEnabled == true else {
                 return nil
