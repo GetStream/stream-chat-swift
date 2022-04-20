@@ -30,7 +30,7 @@ extension StreamMockServer {
     }
     
     func removeMessageDetails(messageId: String) {
-        let deletedMessage = messageDetails.first(where: { $0[.messageId] == messageId })
+        let deletedMessage = messageDetails.first { $0[.messageId] == messageId }
         let deletedIndex = messageDetails.firstIndex(of: deletedMessage)!
         messageDetails.remove(at: deletedIndex)
     }
