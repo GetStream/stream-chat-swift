@@ -148,6 +148,9 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             cacheName: nil
         )
         
+        // We want items to report empty until `startObserving` is called
+        _items.computeValue = { [] }
+        
         listenForRemoveAllDataNotifications()
     }
     
@@ -160,9 +163,6 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     ///
     /// - Throws: An error if the provided fetch request fails.
     func startObserving() throws {
-        try frc.performFetch()
-        frc.delegate = changeAggregator
-        
         _items.computeValue = { [weak self] in
             guard let self = self else { return [] }
             var result = LazyCachedMapCollection<Item>()
@@ -177,6 +177,9 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             return result
         }
         _items.reset()
+        
+        try frc.performFetch()
+        frc.delegate = changeAggregator
         
         // This is a workaround for the situation when someone wants to observe only the `items` array without
         // listening to changes. We just need to make sure the `didSet` callback of `onDidChange` is executed at least once.
@@ -238,7 +241,11 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             guard let self = self else { return }
 
             // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
-            try! self.startObserving()
+            do {
+                try self.startObserving()
+            } catch {
+                log.error("Error when starting observing: \(error)")
+            }
         }
         
         releaseNotificationObservers = { [weak notificationCenter] in

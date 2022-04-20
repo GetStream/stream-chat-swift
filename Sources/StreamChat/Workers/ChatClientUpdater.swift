@@ -15,7 +15,7 @@ class ChatClientUpdater {
         userInfo: UserInfo?,
         newToken: Token,
         completion: @escaping (Error?) -> Void
-    ) throws {
+    ) {
         guard let currentUserId = client.currentUserId else {
             // Set the current user id
             client.currentUserId = newToken.userId
@@ -37,7 +37,8 @@ class ChatClientUpdater {
 
             // Setting a new user is not possible in connectionless mode.
             guard client.config.isClientInActiveMode else {
-                throw ClientError.ClientIsNotInActiveMode()
+                completion(ClientError.ClientIsNotInActiveMode())
+                return
             }
 
             // Update the current user id to the new one.
@@ -103,36 +104,32 @@ class ChatClientUpdater {
         userConnectionProvider.getToken(client) {
             switch $0 {
             case let .success(newToken):
-                do {
-                    try self.prepareEnvironment(
-                        userInfo: userInfo,
-                        newToken: newToken
-                    ) { [weak self] error in
-                        // Errors thrown during `prepareEnvironment` cannot be recovered
-                        if let error = error {
-                            completion?(error)
-                            return
-                        }
-                        
-                        guard let self = self else {
-                            completion?(nil)
-                            return
-                        }
-                        
-                        // We manually change the `connectionStatus` for passive client
-                        // to `disconnected` when environment was prepared correctly
-                        // (e.g. current user session is successfully restored).
-                        if !self.client.config.isClientInActiveMode {
-                            self.client.connectionStatus = .disconnected(error: nil)
-                        }
-                        
-                        self.connect(
-                            userInfo: userInfo,
-                            completion: completion
-                        )
+                self.prepareEnvironment(
+                    userInfo: userInfo,
+                    newToken: newToken
+                ) { [weak self] error in
+                    // Errors thrown during `prepareEnvironment` cannot be recovered
+                    if let error = error {
+                        completion?(error)
+                        return
                     }
-                } catch {
-                    completion?(error)
+                    
+                    guard let self = self else {
+                        completion?(nil)
+                        return
+                    }
+                    
+                    // We manually change the `connectionStatus` for passive client
+                    // to `disconnected` when environment was prepared correctly
+                    // (e.g. current user session is successfully restored).
+                    if !self.client.config.isClientInActiveMode {
+                        self.client.connectionStatus = .disconnected(error: nil)
+                    }
+                    
+                    self.connect(
+                        userInfo: userInfo,
+                        completion: completion
+                    )
                 }
             case let .failure(error):
                 completion?(error)

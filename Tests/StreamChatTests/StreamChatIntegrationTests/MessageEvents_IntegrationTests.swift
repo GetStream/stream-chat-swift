@@ -130,7 +130,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_messageNewEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
         let cid: ChannelId = .unique
@@ -169,7 +169,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_messageUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
         let cid: ChannelId = .unique
@@ -204,7 +204,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_messageDeletedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
         let cid: ChannelId = .unique
@@ -239,7 +239,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_messageReadEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
         let eventPayload = EventPayload(

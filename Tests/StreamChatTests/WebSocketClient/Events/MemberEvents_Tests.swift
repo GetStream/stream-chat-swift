@@ -44,7 +44,7 @@ final class MemberEvents_Tests: XCTestCase {
     
     func test_memberAddedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -80,7 +80,7 @@ final class MemberEvents_Tests: XCTestCase {
     
     func test_memberUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -116,7 +116,7 @@ final class MemberEvents_Tests: XCTestCase {
     
     func test_memberRemovedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(

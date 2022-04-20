@@ -29,7 +29,7 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     var shouldCleanUpTempDBFiles = false
     
     convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
-        try! self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
+        self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
         shouldCleanUpTempDBFiles = true
     }
     
@@ -42,9 +42,9 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         localCachingSettings: ChatClientConfig.LocalCaching? = nil,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
         shouldShowShadowedMessages: Bool? = nil
-    ) throws {
+    ) {
         init_kind = kind
-        try super.init(
+        super.init(
             kind: kind,
             shouldFlushOnStart: shouldFlushOnStart,
             shouldResetEphemeralValuesOnStart: shouldResetEphemeralValuesOnStart,
@@ -82,14 +82,15 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         super.removeAllData(force: force, completion: completion)
     }
     
-    override func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) throws {
+    override func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) {
         recreatePersistentStore_called = true
         
         if let error = recreatePersistentStore_errorResponse {
-            throw error
+            completion?(error)
+            return
         }
         
-        try super.recreatePersistentStore(completion: completion)
+        super.recreatePersistentStore(completion: completion)
     }
     
     override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
