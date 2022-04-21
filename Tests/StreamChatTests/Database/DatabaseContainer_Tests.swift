@@ -9,22 +9,28 @@ import XCTest
 
 final class DatabaseContainer_Tests: XCTestCase {
     func test_databaseContainer_isInitialized_withInMemoryPreset() {
-        XCTAssertNoThrow(try DatabaseContainer(kind: .inMemory))
+        _ = DatabaseContainer(kind: .inMemory)
     }
     
     func test_databaseContainer_isInitialized_withOnDiskPreset() {
         let dbURL = URL.newTemporaryFileURL()
-        XCTAssertNoThrow(try DatabaseContainer(kind: .onDisk(databaseFileURL: dbURL)))
+        _ = DatabaseContainer(kind: .onDisk(databaseFileURL: dbURL))
         XCTAssertTrue(FileManager.default.fileExists(atPath: dbURL.path))
     }
     
-    func test_databaseContainer_propagatesError_wnenInitializedWithIncorrectURL() {
+    func test_databaseContainer_switchesToInMemory_whenInitializedWithIncorrectURL() {
         let dbURL = URL(fileURLWithPath: "/") // This URL is not writable
-        XCTAssertThrowsError(try DatabaseContainer(kind: .onDisk(databaseFileURL: dbURL)))
+        let db = DatabaseContainer(kind: .onDisk(databaseFileURL: dbURL))
+        // Assert that we've switched to in-memory type
+        if #available(iOS 13, *) {
+            XCTAssertEqual(db.persistentStoreDescriptions.first?.url, URL(fileURLWithPath: "/dev/null"))
+        } else {
+            XCTAssertEqual(db.persistentStoreDescriptions.first?.type, NSInMemoryStoreType)
+        }
     }
     
     func test_writeCompletionBlockIsCalled() throws {
-        let container = try DatabaseContainer(kind: .inMemory)
+        let container = DatabaseContainer(kind: .inMemory)
         let goldenPathExpectation = expectation(description: "gold")
 
         // Write a valid entity to DB and wait for the completion block to be called
@@ -67,7 +73,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         
         try containerTypes.forEach { containerType in
             
-            let container = try DatabaseContainer(kind: containerType)
+            let container = DatabaseContainer(kind: containerType)
             
             // Add some random objects and for completion block
             try container.writeSynchronously { session in
@@ -77,7 +83,15 @@ final class DatabaseContainer_Tests: XCTestCase {
             }
             
             // Delete the data
-            try container.removeAllData()
+            let expectation = expectation(description: "removeAllData completion")
+            container.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                expectation.fulfill()
+            }
+            
+            wait(for: [expectation], timeout: 0.1)
             
             // Assert the DB is empty by trying to fetch all possible entities
             try container.managedObjectModel.entities.forEach { entityDescription in
@@ -89,7 +103,7 @@ final class DatabaseContainer_Tests: XCTestCase {
     }
 
     func test_removingAllData_generatesRemoveAllDataNotifications() throws {
-        let container = try DatabaseContainer(kind: .inMemory)
+        let container = DatabaseContainer(kind: .inMemory)
         
         // Set up notification expectations for all contexts
         let contexts = [container.viewContext, container.backgroundReadOnlyContext, container.writableContext]
@@ -99,7 +113,15 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
 
         // Delete the data
-        try container.removeAllData(force: true)
+        let exp = expectation(description: "removeAllData completion")
+        container.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 0.1)
         
         // All expectations should be fulfilled by now
         waitForExpectations(timeout: 0)
@@ -108,7 +130,7 @@ final class DatabaseContainer_Tests: XCTestCase {
     func test_databaseContainer_callsResetEphemeralValues_onAllEphemeralValuesContainerEntities() throws {
         // Create a new on-disc database with the test data model
         let dbURL = URL.newTemporaryFileURL()
-        var database: DatabaseContainer_Spy? = try DatabaseContainer_Spy(
+        var database: DatabaseContainer_Spy? = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: dbURL),
             modelName: "TestDataModel",
             bundle: .testTools
@@ -127,7 +149,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         AssertAsync.canBeReleased(&database)
         
         // Create a new database with the same underlying SQLite store
-        var newDatabase: DatabaseContainer! = try DatabaseContainer_Spy(
+        var newDatabase: DatabaseContainer! = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: dbURL),
             modelName: "TestDataModel",
             bundle: .testTools
@@ -140,16 +162,16 @@ final class DatabaseContainer_Tests: XCTestCase {
             .fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject"))
             .first
         
-        AssertAsync.willBeEqual(testObject2?.resetEphemeralValuesCalled, true)
+        AssertAsync.willBeTrue(testObject2?.resetEphemeralValuesCalled)
         
         // Wait for the new DB instance to be released
         AssertAsync.canBeReleased(&newDatabase)
     }
     
-    func test_databaseContainer_doesntCallsResetEphemeralValues_whenFlagIsSetToFalse() throws {
+    func test_databaseContainer_doesntCallsResetEphemeralValues_whenFlagIsSetToFalse() {
         // Create a new on-disc database with the test data model
         let dbURL = URL.newTemporaryFileURL()
-        let database = try DatabaseContainer_Spy(
+        let database = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: dbURL),
             shouldResetEphemeralValuesOnStart: false,
             modelName: "TestDataModel",
@@ -163,7 +185,7 @@ final class DatabaseContainer_Tests: XCTestCase {
     func test_databaseContainer_removesAllData_whenShouldFlushOnStartIsTrue() throws {
         // Create a new on-disc database with the test data model
         let dbURL = URL.newTemporaryFileURL()
-        var database: DatabaseContainer_Spy? = try DatabaseContainer_Spy(
+        var database: DatabaseContainer_Spy? = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: dbURL),
             modelName: "TestDataModel",
             bundle: .testTools
@@ -179,7 +201,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         XCTAssertNotNil(testObject)
                 
         // Create a new database with the same underlying SQLite store and shouldFlushOnStart config
-        database = try DatabaseContainer_Spy(
+        database = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: dbURL),
             shouldFlushOnStart: true,
             modelName: "TestDataModel",
@@ -193,7 +215,7 @@ final class DatabaseContainer_Tests: XCTestCase {
     func test_databaseContainer_createsNewDatabase_whenPersistentStoreFailsToLoad() throws {
         // Create a new on-disc database with the test data model
         let dbURL = URL.newTemporaryFileURL()
-        _ = try DatabaseContainer_Spy(
+        _ = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: dbURL),
             modelName: "TestDataModel",
             bundle: .testTools
@@ -201,33 +223,29 @@ final class DatabaseContainer_Tests: XCTestCase {
                 
         // Create a new database with the same url but totally different models
         // Should re-create the database
-        XCTAssertNoThrow(
-            try DatabaseContainer_Spy(
-                kind: .onDisk(databaseFileURL: dbURL),
-                modelName: "TestDataModel2",
-                bundle: .testTools
-            )
+        _ = DatabaseContainer_Spy(
+            kind: .onDisk(databaseFileURL: dbURL),
+            modelName: "TestDataModel2",
+            bundle: .testTools
         )
     }
     
     func test_databaseContainer_hasDefinedBehaviorForInMemoryStore_whenShouldFlushOnStartIsTrue() throws {
         // Create a new in-memory database that should flush on start and assert no error is thrown
-        XCTAssertNoThrow(
-            try DatabaseContainer_Spy(
-                kind: .inMemory,
-                shouldFlushOnStart: true,
-                modelName: "TestDataModel",
-                bundle: .testTools
-            )
+        _ = DatabaseContainer_Spy(
+            kind: .inMemory,
+            shouldFlushOnStart: true,
+            modelName: "TestDataModel",
+            bundle: .testTools
         )
     }
     
-    func test_channelConfig_isStoredInAllContexts() throws {
+    func test_channelConfig_isStoredInAllContexts() {
         var cachingSettings = ChatClientConfig.LocalCaching()
         cachingSettings.chatChannel.lastActiveMembersLimit = .unique
         cachingSettings.chatChannel.lastActiveWatchersLimit = .unique
         
-        let database = try DatabaseContainer_Spy(kind: .inMemory, localCachingSettings: cachingSettings)
+        let database = DatabaseContainer_Spy(kind: .inMemory, localCachingSettings: cachingSettings)
         
         XCTAssertEqual(database.viewContext.localCachingSettings, cachingSettings)
         
@@ -240,10 +258,10 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
     }
 
-    func test_deletedMessagesVisibility_isStoredInAllContexts() throws {
+    func test_deletedMessagesVisibility_isStoredInAllContexts() {
         let visibility = ChatClientConfig.DeletedMessageVisibility.alwaysVisible
 
-        let database = try DatabaseContainer_Spy(kind: .inMemory, deletedMessagesVisibility: visibility)
+        let database = DatabaseContainer_Spy(kind: .inMemory, deletedMessagesVisibility: visibility)
 
         XCTAssertEqual(database.viewContext.deletedMessagesVisibility, visibility)
 
@@ -256,10 +274,10 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
     }
     
-    func test_shouldShowShadowedMessages_isStoredInAllContexts() throws {
+    func test_shouldShowShadowedMessages_isStoredInAllContexts() {
         let shouldShowShadowedMessages = Bool.random()
         
-        let database = try DatabaseContainer_Spy(kind: .inMemory, shouldShowShadowedMessages: shouldShowShadowedMessages)
+        let database = DatabaseContainer_Spy(kind: .inMemory, shouldShowShadowedMessages: shouldShowShadowedMessages)
         
         XCTAssertEqual(database.viewContext.shouldShowShadowedMessages, shouldShowShadowedMessages)
         

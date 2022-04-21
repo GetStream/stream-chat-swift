@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix cooldown being applied to /sync endpoint in connection recovery flow [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
 - Fix active components not being reset when another user is connected [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
 - Fix unusable firebase push provider [#1934](https://github.com/GetStream/stream-chat-swift/pull/1934)
+- Fix DB errors happening when logging in after a logout / user switch [#1926](https://github.com/GetStream/stream-chat-swift/issues/1926)
 
 ## StreamChatUI
 ### 💥 Removed
@@ -35,6 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Another user's avatar not being shown for deleted message last in a group [#1893](https://github.com/GetStream/stream-chat-swift/issues/1893)
 - Fix audio files not rendering previews [#1907](https://github.com/GetStream/stream-chat-swift/issues/1907)
 - Fix message sender name is not shown in channel with > 2 members if member identifiers were passed on channel creation [#1931](https://github.com/GetStream/stream-chat-swift/issues/1931)
+- Fix incorrectly called viewWillAppear inside viewWillDissapear [#1938](https://github.com/GetStream/stream-chat-swift/pull/1938)
 
 # [4.13.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.13.1)
 _April 04, 2022_

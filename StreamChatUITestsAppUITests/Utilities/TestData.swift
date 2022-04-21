@@ -11,7 +11,11 @@ enum TestData {
     static var uniqueId: String { UUID().uuidString }
     
     static var currentDate: String {
-        try! XCTUnwrap(DateFormatter.Stream.rfc3339DateString(from: Date()))
+        stringTimestamp(Date())
+    }
+    
+    static func stringTimestamp(_ date: Date) -> String {
+        try! XCTUnwrap(DateFormatter.Stream.rfc3339DateString(from: date))
     }
     
     static var currentTimeInterval: TimeInterval {

@@ -16,19 +16,24 @@ final class UserRobot: Robot {
     }
     
     @discardableResult
-    func openChannel() -> Self {
-        let channelCell = ChannelListPage.cells.firstMatch
+    func openChannel(channelCellIndex: Int = 0) -> Self {
+        let minExpectedCount = channelCellIndex + 1
+        let cells = ChannelListPage.cells.waitCount(minExpectedCount)
         
         // TODO: CIS-1737
-        if !channelCell.wait().exists {
+        if !cells.firstMatch.wait().exists {
             app.terminate()
             app.launch()
             login()
-            channelCell.wait().tap()
-        } else {
-            channelCell.tap()
         }
         
+        XCTAssertGreaterThanOrEqual(
+            cells.count,
+            minExpectedCount,
+            "Channel cell is not found at index #\(channelCellIndex)"
+        )
+        
+        cells.allElementsBoundByIndex[channelCellIndex].tap()
         return self
     }
     

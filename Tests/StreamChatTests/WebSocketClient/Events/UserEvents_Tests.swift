@@ -63,7 +63,7 @@ final class UserEvents_Tests: XCTestCase {
     
     func test_userPresenceChangedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -89,7 +89,7 @@ final class UserEvents_Tests: XCTestCase {
     
     func test_userUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -115,7 +115,7 @@ final class UserEvents_Tests: XCTestCase {
     
     func test_userStartWatchingEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -146,7 +146,7 @@ final class UserEvents_Tests: XCTestCase {
     
     func test_userStopWatchingEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -176,7 +176,7 @@ final class UserEvents_Tests: XCTestCase {
     
     func test_userBannedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -210,7 +210,7 @@ final class UserEvents_Tests: XCTestCase {
     
     func test_userUnbannedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -238,7 +238,7 @@ final class UserEvents_Tests: XCTestCase {
     
     func test_userGloballyBannedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
@@ -264,7 +264,7 @@ final class UserEvents_Tests: XCTestCase {
     
     func test_userGloballyUnbannedEventDTO_toDomainEvent() throws {
         // Create database session
-        let session = try DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Create event payload
         let eventPayload = EventPayload(
