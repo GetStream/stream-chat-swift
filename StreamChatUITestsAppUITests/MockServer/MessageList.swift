@@ -47,13 +47,13 @@ extension StreamMockServer {
         messageList.remove(at: try! XCTUnwrap(deletedIndex))
     }
     
-    private func waitForMessageList() -> [[String : Any]] {
+    private func waitForMessageList() -> [[String: Any]] {
         let endTime = TestData.waitingEndTime
         while messageList.isEmpty && endTime > TestData.currentTimeInterval {}
         return messageList
     }
     
-    private func waitForMessageWithId(_ id: String) -> [String : Any]? {
+    private func waitForMessageWithId(_ id: String) -> [String: Any]? {
         let endTime = TestData.waitingEndTime
         var newMessageList: [[String: Any]] = []
         while newMessageList.isEmpty && endTime > TestData.currentTimeInterval {
@@ -64,7 +64,7 @@ extension StreamMockServer {
         return newMessageList.first
     }
     
-    private func waitForMessageWithUserId(_ userId: String) -> [String : Any]? {
+    private func waitForMessageWithUserId(_ userId: String) -> [String: Any]? {
         let endTime = TestData.waitingEndTime
         var newMessageList: [[String: Any]] = []
         while newMessageList.isEmpty && endTime > TestData.currentTimeInterval {

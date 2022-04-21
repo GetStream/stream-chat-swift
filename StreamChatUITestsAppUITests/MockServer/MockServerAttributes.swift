@@ -37,7 +37,7 @@ enum MessageType: String {
     case deleted
 }
 
-struct TopLevelKey {
+enum TopLevelKey {
     static let messages = "messages"
     static let message = "message"
     static let reaction = "reaction"

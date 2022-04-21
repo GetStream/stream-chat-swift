@@ -10,7 +10,7 @@ import XCTest
 final class ParticipantRobot: Robot {
 
     private var server: StreamMockServer
-    private var _threadParentId: String? = nil
+    private var _threadParentId: String?
     
     init(_ server: StreamMockServer) {
         self.server = server
