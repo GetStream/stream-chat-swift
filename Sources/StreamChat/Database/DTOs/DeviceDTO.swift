@@ -46,6 +46,6 @@ extension DeviceDTO {
 
 extension DeviceDTO {
     func asModel() -> Device {
-        Device(id, createdAt: createdAt)
+        Device(id: id, createdAt: createdAt)
     }
 }

@@ -6,7 +6,7 @@ import Foundation
 
 /// A channel query.
 public struct ChannelQuery: Encodable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case data
         case messages
         case members

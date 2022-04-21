@@ -15,9 +15,12 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     @Atomic var fetch_queries: [ChannelListQuery] = []
     @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
 
-    var resetChannelsQueryResult: Result<[ChatChannel], Error>?
+    var resetChannelsQueryResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
     
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
+
+    @Atomic var startWatchingChannels_cids: [ChannelId] = []
+    @Atomic var startWatchingChannels_completion: ((Error?) -> Void)?
     
     func cleanUp() {
         update_queries.removeAll()
@@ -27,6 +30,9 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         fetch_completion = nil
         
         markAllRead_completion = nil
+        
+        startWatchingChannels_cids.removeAll()
+        startWatchingChannels_completion = nil
     }
     
     override func update(
@@ -53,9 +59,14 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         for query: ChannelListQuery,
         watchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<[ChatChannel], Error>) -> Void
+        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {
         record()
         resetChannelsQueryResult.map(completion)
+    }
+
+    override func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)?) {
+        startWatchingChannels_cids = ids
+        startWatchingChannels_completion = completion
     }
 }

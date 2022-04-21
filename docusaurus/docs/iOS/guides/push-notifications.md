@@ -5,7 +5,7 @@ title: Push Notifications
 Push notifications can be configured to receive updates when the application is closed or on the background. Stream Chat sends push notification to channel members that are not online and have at least one registered device. Stream supports both **Certificate-based provider connection trust (.p12 certificate)** and **Token-based provider connection trust (JWT)**. Token-based authentication is the preferred way to configure push notifications. 
 
 :::note
-You can find more on setting up push [here](https://getstream.io/chat/docs/php/push_ios/?language=swift). Make sure you've taken care of authentication before proceeding to the next steps.
+You can find more on setting up push [here](https://getstream.io/chat/docs/ios-swift/push_introduction/?language=swift). Make sure you've taken care of authentication before proceeding to the next steps.
 :::
 
 ### Setup
@@ -24,7 +24,7 @@ func application(
         return
     }
 
-    ChatClient.shared.currentUserController().addDevice(token: deviceToken) { error in
+    ChatClient.shared.currentUserController().addDevice(.apn(token: deviceToken)) { error in
         if let error = error {
             log.warning("adding a device failed with an error \(error)")
         }

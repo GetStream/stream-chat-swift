@@ -4,9 +4,9 @@
 
 import XCTest
 
-final class MessagingTests: StreamTestCase {
+final class MessageList_Tests: StreamTestCase {
     
-    func testSendMessage() throws {
+    func test_sendsMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -20,7 +20,7 @@ final class MessagingTests: StreamTestCase {
         }
     }
 
-    func testEditMessage() throws {
+    func test_editsMessage() throws {
         let message = "test message"
         let editedMessage = "hello"
         
@@ -38,7 +38,7 @@ final class MessagingTests: StreamTestCase {
         }
     }
     
-    func testDeleteMessage() throws {
+    func test_deletesMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -55,7 +55,7 @@ final class MessagingTests: StreamTestCase {
         }
     }
     
-    func testReceiveMessage() throws {
+    func test_receivesMessage() throws {
         let message = "test message"
         let author = "Han Solo"
         
@@ -70,12 +70,12 @@ final class MessagingTests: StreamTestCase {
         }
         THEN("the message is delivered") {
             userRobot
-                .waitForParticipantsMessage()
+                .waitForNewMessage(withText: message)
                 .assertMessageAuthor(author)
         }
     }
     
-    func testParticipantDeleteMessage() throws {
+    func test_messageDeleted_whenParticipantDeletesMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -88,14 +88,16 @@ final class MessagingTests: StreamTestCase {
                 .sendMessage(message)
         }
         AND("participant deletes the message: '\(message)'") {
-            participantRobot.deleteMessage()
+            participantRobot
+                .waitForNewMessage(withText: message)
+                .deleteMessage()
         }
         THEN("the message is deleted") {
             userRobot.assertDeletedMessage()
         }
     }
     
-    func testParticipantEditMessage() throws {
+    func test_messageIsEdited_whenParticipantEditsMessage() throws {
         let message = "test message"
         let editedMessage = "hello"
         
@@ -109,7 +111,9 @@ final class MessagingTests: StreamTestCase {
                 .sendMessage(message)
         }
         AND("participant edits the message: '\(editedMessage)'") {
-            participantRobot.editMessage(editedMessage)
+            participantRobot
+                .waitForNewMessage(withText: message)
+                .editMessage(editedMessage)
         }
         THEN("the message is edited") {
             participantRobot.assertMessage(editedMessage)

@@ -10,6 +10,26 @@ import UIKit
 
 /// - NOTE: Deprecations of the next major release.
 
+public extension ChatMessageLayoutOptionsResolver {
+    @available(
+        *,
+        deprecated,
+        message: "this propery should have been called `maxTimeIntervalBetweenMessagesInGroup` as it describes the maximum time interval between 2 consecutive messages when they can still be groped. Please use `maxTimeIntervalBetweenMessagesInGroup` instead."
+    )
+    var minTimeIntervalBetweenMessagesInGroup: TimeInterval {
+        maxTimeIntervalBetweenMessagesInGroup
+    }
+    
+    @available(
+        *,
+        deprecated,
+        message: "this init should have been called `init(maxTimeIntervalBetweenMessagesInGroup:)` as it requires the maximum time interval between 2 consecutive messages can still can be groped. Please use `init(maxTimeIntervalBetweenMessagesInGroup:)` instead."
+    )
+    convenience init(minTimeIntervalBetweenMessagesInGroup: TimeInterval) {
+        self.init(maxTimeIntervalBetweenMessagesInGroup: minTimeIntervalBetweenMessagesInGroup)
+    }
+}
+
 @available(*, deprecated, renamed: "ChatMessageActionsTransitionController")
 public typealias MessageActionsTransitionController = ChatMessageActionsTransitionController
 

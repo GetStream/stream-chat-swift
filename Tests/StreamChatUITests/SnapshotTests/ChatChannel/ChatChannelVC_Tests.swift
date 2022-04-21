@@ -165,11 +165,6 @@ final class ChatChannelVC_Tests: XCTestCase {
     }
 
     func test_onlyEmojiMessageAppearance() {
-        let imageAttachment = ChatMessageImageAttachment.mock(
-            id: .unique,
-            imageURL: TestImages.yoda.url
-        ).asAnyAttachment
-        
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),
             messages: [
@@ -181,7 +176,6 @@ final class ChatChannelVC_Tests: XCTestCase {
                     cid: .unique,
                     text: "🚀",
                     author: .mock(id: .unique),
-                    attachments: [imageAttachment],
                     isSentByCurrentUser: false
                 )
             ],
@@ -232,6 +226,151 @@ final class ChatChannelVC_Tests: XCTestCase {
             vc,
             variants: [.defaultLight]
         )
+    }
+    
+    // MARK: - Message grouping
+    
+    private var maxTimeInterval: TimeInterval { 60 }
+    
+    func test_whenTimeIntervalBetween2MessagesFromTheCurrentUserIs1minOrLess_messagesAreGrouped() {
+        let channel: ChatChannel = .mock(cid: .unique)
+        let user: ChatUser = .mock(id: .unique)
+        
+        let closingGroupMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Closes the group",
+            author: user,
+            isSentByCurrentUser: true
+        )
+        let groupMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Included into the group",
+            author: user,
+            createdAt: closingGroupMessage.createdAt.addingTimeInterval(-maxTimeInterval / 2),
+            isSentByCurrentUser: true
+        )
+        let openingGroupMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Opens the group",
+            author: user,
+            createdAt: groupMessage.createdAt.addingTimeInterval(-maxTimeInterval),
+            isSentByCurrentUser: true
+        )
+        
+        channelControllerMock.simulateInitial(
+            channel: channel,
+            messages: [
+                closingGroupMessage,
+                groupMessage,
+                openingGroupMessage
+            ],
+            state: .localDataFetched
+        )
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+    
+    func test_whenTimeIntervalBetween2MessagesFromTheCurrentUserIsMoreThan1min_messagesAreNotGrouped() {
+        let channel: ChatChannel = .mock(cid: .unique)
+        let user: ChatUser = .mock(id: .unique)
+        
+        let message1: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Separate message 1",
+            author: user,
+            isSentByCurrentUser: true
+        )
+        let message2: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Separate message 2",
+            author: user,
+            createdAt: message1.createdAt.addingTimeInterval(-2 * maxTimeInterval),
+            isSentByCurrentUser: true
+        )
+        
+        channelControllerMock.simulateInitial(
+            channel: channel,
+            messages: [
+                message1,
+                message2
+            ],
+            state: .localDataFetched
+        )
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+    
+    func test_whenTimeIntervalBetween2MessagesFromAnotherUserIs1minOrLess_messagesAreGrouped() {
+        let channel: ChatChannel = .mock(cid: .unique)
+        let user: ChatUser = .mock(id: .unique)
+        
+        let closingGroupMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Closes the group",
+            author: user
+        )
+        let groupMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Included into the group",
+            author: user,
+            createdAt: closingGroupMessage.createdAt.addingTimeInterval(-maxTimeInterval / 2)
+        )
+        let openingGroupMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Opens the group",
+            author: user,
+            createdAt: groupMessage.createdAt.addingTimeInterval(-maxTimeInterval)
+        )
+        
+        channelControllerMock.simulateInitial(
+            channel: channel,
+            messages: [
+                closingGroupMessage,
+                groupMessage,
+                openingGroupMessage
+            ],
+            state: .localDataFetched
+        )
+        
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+    
+    func test_whenTimeIntervalBetween2MessagesFromAnotherUserIsMoreThan1min_messagesAreNotGrouped() {
+        let channel: ChatChannel = .mock(cid: .unique)
+        let user: ChatUser = .mock(id: .unique)
+        
+        let message1: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Separate message 1",
+            author: user
+        )
+        let message2: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Separate message 2",
+            author: user,
+            createdAt: message1.createdAt.addingTimeInterval(-2 * maxTimeInterval)
+        )
+        
+        channelControllerMock.simulateInitial(
+            channel: channel,
+            messages: [
+                message1,
+                message2
+            ],
+            state: .localDataFetched
+        )
+
+        AssertSnapshot(vc, variants: [.defaultLight])
     }
 }
 

@@ -50,7 +50,7 @@ extension ChannelDetailPayload {
                     )
                 ],
                 createdAt: XCTestCase.channelCreatedDate,
-                updatedAt: .unique
+                updatedAt: XCTestCase.channelUpdateDate
             ),
             isFrozen: true,
             memberCount: 100,

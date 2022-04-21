@@ -34,6 +34,7 @@ final class MessageUpdater_Tests: XCTestCase {
     override func tearDown() {
         super.tearDown()
         apiClient.cleanUp()
+        messageRepository.clear()
 
         AssertAsync {
             Assert.canBeReleased(&messageRepository)

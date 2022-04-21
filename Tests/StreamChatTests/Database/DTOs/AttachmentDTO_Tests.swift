@@ -41,7 +41,6 @@ final class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, .unknown)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
 
         let imagePayload = attachment.decodedImagePayload
         let imageAttachmentModel = try XCTUnwrap(
@@ -76,7 +75,6 @@ final class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, .unknown)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
 
         let giphyPayload = attachment.decodedGiphyPayload
         let giphyAttachmentWithActionsPayload = try XCTUnwrap(
@@ -114,7 +112,6 @@ final class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, .unknown)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
 
         let giphyPayload = attachment.decodedGiphyPayload
         let giphyAttachmentWithoutActionsPayload = try XCTUnwrap(
@@ -150,7 +147,6 @@ final class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, .pendingUpload)
         XCTAssertEqual(loadedAttachment.attachmentType, attachmentEnvelope.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
 
         let fileAttachment = try XCTUnwrap(
             loadedAttachment
@@ -189,7 +185,6 @@ final class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, .uploaded)
         XCTAssertEqual(loadedAttachment.attachmentType, attachmentEnvelope.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
 
         let attachmentModel = try XCTUnwrap(
             loadedAttachment
@@ -203,25 +198,6 @@ final class AttachmentDTO_Tests: XCTestCase {
         XCTAssertNil(attachmentModel.uploadingState)
     }
 
-    func test_saveAttachment_throws_whenChannelDoesNotExist() throws {
-        // Create message in DB
-        let messageId: MessageId = .unique
-        try database.createMessage(id: messageId)
-        
-        let payload: MessageAttachmentPayload = .dummy()
-        
-        // Try to save an attachment and catch an error
-        let error = try waitFor {
-            database.write({ session in
-                let id = AttachmentId(cid: .unique, messageId: messageId, index: 0)
-                try session.saveAttachment(payload: payload, id: id)
-            }, completion: $0)
-        }
-        
-        // Assert correct error is thrown
-        XCTAssertTrue(error is ClientError.ChannelDoesNotExist)
-    }
-    
     func test_saveAttachment_throws_whenMessageDoesNotExist() throws {
         // Create channel in DB
         let cid: ChannelId = .unique

@@ -857,7 +857,12 @@ open class ComposerVC: _ViewController,
     
     open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         for fileURL in urls {
-            let attachmentType = AttachmentType(fileExtension: fileURL.pathExtension)
+            var attachmentType = AttachmentType(fileExtension: fileURL.pathExtension)
+            // Remove this condition when doing: https://stream-io.atlassian.net/browse/CIS-1740
+            // This is a fallback right now to treat audios as files until we actually support audios
+            if attachmentType == .audio {
+                attachmentType = .file
+            }
             do {
                 try addAttachmentToContent(from: fileURL, type: attachmentType)
             } catch {

@@ -8,29 +8,31 @@ import Swifter
 extension StreamMockServer {
     
     func configureEventEndpoints() {
-        server[MockEndpoint.event] = { request in
-            self.event(request: request)
+        server[MockEndpoint.event] = { [weak self] request in
+            self?.event(request: request) ?? .badRequest(nil)
         }
-        server[MockEndpoint.messageRead] = { request in
-            self.sendEvent(.messageRead, request: request)
+        server[MockEndpoint.messageRead] = { [weak self] request in
+            let response = self?.sendEvent(.messageRead, request: request) ?? .badRequest(nil)
+            self?.websocketEvent(.messageRead, user: UserDetails.lukeSkywalker)
+            return response
         }
     }
     
     private func event(request: HttpRequest) -> HttpResponse {
         let json = TestData.toJson(request.body)
-        let eventKey = TopLevelKey.event.rawValue
-        let event = json[eventKey] as! [String: Any]
+        let event = json[TopLevelKey.event] as! [String: Any]
         let eventType = event[EventPayload.CodingKeys.eventType.rawValue]
         return sendEvent(eventType as! String, request: request)
     }
 
     private func sendEvent(_ eventType: String, request: HttpRequest) -> HttpResponse {
         var json = TestData.toJson(.httpChatEvent)
-        let eventKey = TopLevelKey.event.rawValue
-        var event = json[eventKey] as! [String: Any]
+        var event = json[TopLevelKey.event] as! [String: Any]
+        let user = setUpUser(event: event, details: UserDetails.lukeSkywalker)
+        event[EventPayload.CodingKeys.user.rawValue] = user
         event[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
         event[EventPayload.CodingKeys.eventType.rawValue] = eventType
-        json[eventKey] = event
+        json[TopLevelKey.event] = event
         return .ok(.json(json))
     }
     

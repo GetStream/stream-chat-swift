@@ -128,7 +128,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
 
         let expectation = self.expectation(description: "resetChannelsQuery completion")
-        var receivedResult: Result<[ChatChannel], Error>!
+        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
         listUpdater.resetChannelsQuery(
             for: query,
             watchedChannelIds: Set<ChannelId>(),
@@ -163,7 +163,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
 
         let expectation = self.expectation(description: "resetChannelsQuery completion")
-        var receivedResult: Result<[ChatChannel], Error>!
+        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
         listUpdater.resetChannelsQuery(
             for: query,
             watchedChannelIds: Set<ChannelId>(),
@@ -202,26 +202,27 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         let syncedId1 = ChannelId(type: .messaging, id: "syncedId1")
         let syncedId2 = ChannelId(type: .messaging, id: "syncedId2")
+        let localId = ChannelId(type: .messaging, id: "localId")
         let outdatedId = ChannelId(type: .messaging, id: "outdatedId")
-        let watchedId = ChannelId(type: .messaging, id: "watchedId")
+        let watchedAndSynchedId = ChannelId(type: .messaging, id: "watchedAndSynchedId")
         let syncedAndWatchedId = ChannelId(type: .messaging, id: "syncedAndWatchedId")
         let newRemoteChannel = ChannelId(type: .messaging, id: "newRemoteChannel")
-        let watchedChannelIds = Set<ChannelId>([syncedAndWatchedId, watchedId])
+        let watchedChannelIds = Set<ChannelId>([syncedAndWatchedId, watchedAndSynchedId])
         let synchedChannelIds = Set<ChannelId>([syncedId1, syncedId2, syncedAndWatchedId])
 
         try database.writeSynchronously { session in
             try session.saveUser(payload: .dummy(userId: userId))
-            try [syncedId1, syncedId2, outdatedId, watchedId, syncedAndWatchedId].forEach {
+            try [syncedId1, syncedId2, outdatedId, watchedAndSynchedId, syncedAndWatchedId, localId].forEach {
                 let payload = self.dummyPayload(with: $0, members: [.dummy(user: .dummy(userId: userId))])
                 try session.saveChannel(payload: payload, query: query)
             }
         }
 
-        XCTAssertEqual(channels(for: query, database: database).count, 5)
+        XCTAssertEqual(channels(for: query, database: database).count, 6)
 
         // Reset Channels Query
         let expectation = self.expectation(description: "resetChannelsQuery completion")
-        var receivedResult: Result<[ChatChannel], Error>!
+        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
         listUpdater.resetChannelsQuery(
             for: query,
             watchedChannelIds: watchedChannelIds,
@@ -232,41 +233,49 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with channel data
-        let payload = ChannelListPayload(channels: [syncedAndWatchedId, syncedId2, newRemoteChannel].map {
-            self.dummyPayload(with: $0, members: [.dummy(user: .dummy(userId: userId))])
+        let payload = ChannelListPayload(channels: [syncedAndWatchedId, syncedId2, newRemoteChannel, localId].map {
+            self.dummyPayload(with: $0, numberOfMessages: 0, members: [.dummy(user: .dummy(userId: userId))])
         })
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
         waitForExpectations(timeout: 0.2, handler: nil)
 
         // EXPECTED RESULTS:
-        // syncedId1 -> Not present in remote query nor watched:    Removed     -
-        // syncedId2 -> Present in remote query:                    Kept        1
-        // outdatedId -> Not present in remote query nor watched:   Removed     -
-        // watchedId -> Not present in remote query but watched:    Kept        2
-        // syncedAndWatchedId -> Present in remote query:           Kept        3
-        // newRemoteChannel -> Present in remote query:             Added       4
+        // syncedId1 -> Not present in remote query, but synched:               Unwanted    -
+        // syncedId2 -> Present in local and remote query, synched:             Kept        1
+        // outdatedId -> Not present in remote query, not synched:              Unwanted    -
+        // localId -> Present in local and remote query, not synched:           Cleaned     2
+        // watchedAndSynchedId -> Not present in remote query, but watched:     Unlinked    -
+        // syncedAndWatchedId -> Present in local and remote query, watched:    Kept        3
+        // newRemoteChannel -> Present in remote query only:                    Added       4
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
         XCTAssertFalse(receivedResult.isError)
-        let channels = self.channels(for: query, database: database)
-        XCTAssertEqual(channels.count, 4)
-        XCTAssertTrue(channels.contains { $0.cid == syncedId2.rawValue })
-        XCTAssertTrue(channels.contains { $0.cid == watchedId.rawValue })
-        XCTAssertTrue(channels.contains { $0.cid == syncedAndWatchedId.rawValue })
-        XCTAssertTrue(channels.contains { $0.cid == newRemoteChannel.rawValue })
 
-        // Unlinked channels should have been cleared
-        let notInQuery = ChannelListQuery(filter: .notIn(.members, values: [userId]))
-        let unlinkedChannels = self.channels(for: notInQuery, database: database)
-        XCTAssertEqual(unlinkedChannels.count, 0)
-    }
+        // Two channels were marked as unwanted
+        XCTAssertEqual(receivedResult.value?.unwanted.count, 2)
+        XCTAssertTrue(receivedResult.value?.unwanted.contains { $0 == outdatedId } == true)
+        XCTAssertTrue(receivedResult.value?.unwanted.contains { $0 == syncedId1 } == true)
 
-    private func channels(for query: ChannelListQuery, database: DatabaseContainer) -> Set<ChannelDTO> {
-        let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", query.filter.filterHash)
-        return (try? database.viewContext.fetch(request).first)?.channels ?? Set()
+        // Four channels were synched and watched, and are now part of the query
+        XCTAssertEqual(receivedResult.value?.synchedAndWatched.count, 4)
+        let queryChannels = channels(for: query, database: database)
+        XCTAssertEqual(queryChannels.count, 4)
+        [syncedId2, localId, syncedAndWatchedId, newRemoteChannel].forEach { cid in
+            XCTAssertTrue(queryChannels.contains { $0.cid == cid.rawValue })
+        }
+
+        // No channel should have been removed yet here
+        let allChannels = (try? database.viewContext.fetch(ChannelDTO.allChannelsFetchRequest)) ?? []
+        XCTAssertEqual(allChannels.count, 7)
+
+        // Cleaned channel should not have messages
+        XCTAssertEqual(queryChannels.first { $0.cid == localId.rawValue }?.messages.count, 0)
+
+        // Unlinked channels should not have been cleared
+        XCTAssertEqual(allChannels.first { $0.cid == syncedId1.rawValue }?.messages.count, 1)
+        XCTAssertEqual(allChannels.first { $0.cid == watchedAndSynchedId.rawValue }?.messages.count, 1)
     }
     
     // MARK: - Fetch
@@ -352,5 +361,57 @@ final class ChannelListUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    // MARK: - Start Watching Channels
+
+    func test_startWatchingChannels_whenFetchCallSuccess_thenSavePayload_thenCallCompletionWithoutError() {
+        // When
+        var actualError: Error?
+        let exp = expectation(description: "fetch call completes with success")
+        let cids: [ChannelId] = [.unique, .unique, .unique]
+        listUpdater.startWatchingChannels(withIds: cids) { error in
+            actualError = error
+            exp.fulfill()
+        }
+        let payload = ChannelListPayload(channels: cids.map { dummyPayload(with: $0) })
+        apiClient.test_simulateResponse(.success(payload))
+
+        // Then
+        wait(for: [exp], timeout: 0.5)
+        let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
+        let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
+        XCTAssertEqual(
+            Set(cids.compactMap { database.viewContext.channel(cid: $0)?.asModel().cid }),
+            Set(cids)
+        )
+        XCTAssertNil(actualError)
+    }
+
+    func test_startWatchingChannels_whenFetchCallFail_thenCallCompletionWithError() {
+        // When
+        var actualError: Error?
+        let exp = expectation(description: "fetch call completes with success")
+        let cids: [ChannelId] = [.unique, .unique, .unique]
+        listUpdater.startWatchingChannels(withIds: cids) { error in
+            actualError = error
+            exp.fulfill()
+        }
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<ChannelListPayload, Error>.failure(error))
+
+        // Then
+        wait(for: [exp], timeout: 0.5)
+        let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
+        let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
+        XCTAssertNotNil(actualError)
+    }
+
+    private func channels(for query: ChannelListQuery, database: DatabaseContainer) -> Set<ChannelDTO> {
+        let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
+        request.predicate = NSPredicate(format: "filterHash == %@", query.filter.filterHash)
+        return (try? database.viewContext.fetch(request).first)?.channels ?? Set()
     }
 }

@@ -33,6 +33,7 @@ final class MessageSender_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
+        messageRepository.clear()
 
         AssertAsync {
             Assert.canBeReleased(&sender)

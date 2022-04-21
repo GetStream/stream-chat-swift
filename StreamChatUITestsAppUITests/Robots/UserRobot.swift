@@ -4,6 +4,7 @@
 
 import Foundation
 import XCTest
+import StreamChat
 
 /// Simulates user behavior
 final class UserRobot: Robot {
@@ -16,8 +17,37 @@ final class UserRobot: Robot {
     
     @discardableResult
     func openChannel() -> Self {
-        ChannelListPage.cells.firstMatch.tap()
+        let channelCell = ChannelListPage.cells.firstMatch
+        
+        // TODO: CIS-1737
+        if !channelCell.wait().exists {
+            app.terminate()
+            app.launch()
+            login()
+            channelCell.wait().tap()
+        } else {
+            channelCell.tap()
+        }
+        
         return self
+    }
+    
+    private func openContextMenu(messageCellIndex: Int = 0) {
+        let minExpectedCount = messageCellIndex + 1
+        let cells = MessageListPage.cells.waitCount(minExpectedCount)
+        XCTAssertGreaterThanOrEqual(
+            cells.count,
+            minExpectedCount,
+            "Message cell is not found at index #\(messageCellIndex)"
+        )
+        cells.allElementsBoundByIndex[messageCellIndex].press(forDuration: 0.5)
+        
+        // TODO: CIS-1735
+        if !MessageListPage.ContextMenu.reactionsView.wait().exists {
+            sleep(3)
+            cells.allElementsBoundByIndex[messageCellIndex].press(forDuration: 0.5)
+            MessageListPage.ContextMenu.reactionsView.wait()
+        }
     }
     
     @discardableResult
@@ -28,18 +58,17 @@ final class UserRobot: Robot {
     }
     
     @discardableResult
-    func deleteMessage() -> Self {
-        let messageCell = MessageListPage.cells.firstMatch
-        messageCell.press(forDuration: 1)
-        MessageListPage.ContextMenu.delete.tap()
-        MessageListPage.PopUpButtons.delete.tap()
+    func deleteMessage(messageCellIndex: Int = 0) -> Self {
+        openContextMenu(messageCellIndex: messageCellIndex)
+        MessageListPage.ContextMenu.delete.wait().tap()
+        MessageListPage.PopUpButtons.delete.wait().tap()
         return self
     }
     
     @discardableResult
-    func editMessage(_ newText: String) -> Self {
-        MessageListPage.cells.firstMatch.press(forDuration: 1)
-        MessageListPage.ContextMenu.edit.tap()
+    func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
+        openContextMenu(messageCellIndex: messageCellIndex)
+        MessageListPage.ContextMenu.edit.wait().tap()
         let inputField = MessageListPage.Composer.inputField
         inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
         inputField.typeText(newText)
@@ -48,10 +77,15 @@ final class UserRobot: Robot {
     }
     
     @discardableResult
-    func addReaction(type: TestData.Reactions) -> Self {
-        MessageListPage.cells.firstMatch.press(forDuration: 1)
+    private func reactionAction(
+        reactionType: TestData.Reactions,
+        eventType: EventType,
+        messageCellIndex: Int
+    ) -> Self {
+        openContextMenu(messageCellIndex: messageCellIndex)
+        
         var reaction: XCUIElement {
-            switch type {
+            switch reactionType {
             case .love:
                 return MessageListPage.Reactions.love
             case .lol:
@@ -64,38 +98,60 @@ final class UserRobot: Robot {
                 return MessageListPage.Reactions.like
             }
         }
-        reaction.tap()
+        reaction.wait().tap()
+        
         return self
     }
     
     @discardableResult
-    func deleteReaction(type: TestData.Reactions) -> Self {
-        return addReaction(type: type)
+    func addReaction(type: TestData.Reactions, messageCellIndex: Int = 0) -> Self {
+        reactionAction(
+            reactionType: type,
+            eventType: .reactionNew,
+            messageCellIndex: messageCellIndex
+        )
     }
     
     @discardableResult
-    func waitForParticipantsMessage() -> Self {
-        let lastMessageCell = MessageListPage.cells.firstMatch
-        MessageListPage.Attributes.author(messageCell: lastMessageCell).wait()
+    func deleteReaction(type: TestData.Reactions, messageCellIndex: Int = 0) -> Self {
+        reactionAction(
+            reactionType: type,
+            eventType: .reactionDeleted,
+            messageCellIndex: messageCellIndex
+        )
+    }
+    
+    @discardableResult
+    func replyToMessage(_ text: String, messageCellIndex: Int = 0) -> Self {
+        openContextMenu(messageCellIndex: messageCellIndex)
+        MessageListPage.ContextMenu.reply.wait().tap()
+        MessageListPage.Composer.inputField.obtainKeyboardFocus().typeText(text)
+        MessageListPage.Composer.sendButton.tap()
         return self
     }
     
     @discardableResult
-    func waitForParticipantsReaction() -> Self {
-        let lastMessageCell = MessageListPage.cells.firstMatch
-        MessageListPage.Attributes.reactionButton(messageCell: lastMessageCell).wait()
+    func replyToMessageInThread(
+        _ text: String,
+        alsoSendInChannel: Bool = false,
+        messageCellIndex: Int = 0
+    ) -> Self {
+        let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
+        if !threadCheckbox.exists {
+            openContextMenu(messageCellIndex: messageCellIndex)
+            MessageListPage.ContextMenu.threadReply.wait().tap()
+        }
+        if alsoSendInChannel {
+            threadCheckbox.wait().tap()
+        }
+        ThreadPage.Composer.inputField.obtainKeyboardFocus().typeText(text)
+        ThreadPage.Composer.sendButton.tap()
         return self
     }
     
-    // TODO:
     @discardableResult
-    func replyToMessage(_ text: String) -> Self {
-        return self
-    }
-    
-    // TODO:
-    @discardableResult
-    func replyToMessageInThread(_ text: String, alsoSendInChannel: Bool = false) -> Self {
+    func tapOnBackButton() -> Self {
+        app.back()
         return self
     }
 

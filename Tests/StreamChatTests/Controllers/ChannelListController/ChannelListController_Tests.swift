@@ -563,6 +563,131 @@ final class ChannelListController_Tests: XCTestCase {
         // Assert tracked channels are hidden
         XCTAssertEqual(controller.channels.first?.isHidden, true)
     }
+
+    // MARK: - Change propagation tests with filter block
+
+    func test_addingANewChannelThatMatchesFilter_shouldLinkItToQuery_shouldWatchIt() throws {
+        let userId = UserId.unique
+        var filterCalls = 0
+        prepareControllerWithOwnerFilter(userId: userId, onFilterCall: { filterCalls += 1 })
+
+        // Simulate `synchronize` call
+        let expectation = self.expectation(description: "Synchronize completion")
+        controller.synchronize { _ in expectation.fulfill() }
+        let originalCid: ChannelId = .unique
+        try addOrUpdateChannel(cid: originalCid, ownerId: userId, query: query)
+
+        // Simulate successful response from backend
+        env.channelListUpdater?.update_completion?(.success([]))
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertEqual(controller.channels.count, 1)
+        XCTAssertEqual(filterCalls, 0)
+
+        let ownedCid: ChannelId = .unique
+        let unownedCid: ChannelId = .unique
+        try [ownedCid, unownedCid].forEach { cid in
+            try addOrUpdateChannel(cid: cid, ownerId: cid == ownedCid ? userId : "other", query: nil)
+        }
+
+        // The original channel + the owned that was just added
+        AssertAsync.willBeEqual(controller.channels.count, 2)
+        XCTAssertTrue(controller.channels.contains { $0.cid == originalCid })
+        XCTAssertTrue(controller.channels.contains { $0.cid == ownedCid })
+        XCTAssertFalse(controller.channels.contains { $0.cid == unownedCid })
+
+        // Two channels were added to the DB, both were evaluated, only one was added to the list
+        XCTAssertEqual(filterCalls, 2)
+        // Watches channel that was added to the list
+        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_cids, [ownedCid])
+    }
+
+    func test_updatingAChannelThatIsLinkedToTheQuery_shouldUnlinkIt() throws {
+        let userId = UserId.unique
+        var filterCalls = 0
+        prepareControllerWithOwnerFilter(userId: userId, onFilterCall: { filterCalls += 1 })
+
+        // Simulate `synchronize` call
+        let expectation = self.expectation(description: "Synchronize completion")
+        controller.synchronize { _ in expectation.fulfill() }
+        let originalCid: ChannelId = .unique
+        try addOrUpdateChannel(cid: originalCid, ownerId: userId, query: query)
+
+        // Simulate successful response from backend
+        env.channelListUpdater?.update_completion?(.success([]))
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertEqual(controller.channels.count, 1)
+        XCTAssertEqual(filterCalls, 0)
+
+        // Simulate update of the channel linked to query
+        try addOrUpdateChannel(cid: originalCid, ownerId: "something else", query: nil)
+
+        // The original channel + the owned that was just added
+        AssertAsync.willBeEqual(controller.channels.count, 0)
+        XCTAssertFalse(controller.channels.contains { $0.cid == originalCid })
+
+        // The updated channel was evaluated once to be unlinked, and then by the unlinked query listener
+        XCTAssertEqual(filterCalls, 2)
+    }
+
+    func test_updatingAChannelThatIsNotLinkedToTheQuery_shouldLinkIt() throws {
+        let userId = UserId.unique
+        var filterCalls = 0
+        prepareControllerWithOwnerFilter(userId: userId, onFilterCall: { filterCalls += 1 })
+
+        // Simulate `synchronize` call
+        let expectation = self.expectation(description: "Synchronize completion")
+        controller.synchronize { _ in expectation.fulfill() }
+        let originalCid: ChannelId = .unique
+        try addOrUpdateChannel(cid: originalCid, ownerId: userId, query: query)
+
+        // Simulate successful response from backend
+        env.channelListUpdater?.update_completion?(.success([]))
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertEqual(controller.channels.count, 1)
+        XCTAssertEqual(filterCalls, 0)
+
+        let originallyUnownedCid: ChannelId = .unique
+        try addOrUpdateChannel(cid: originallyUnownedCid, ownerId: "other", query: nil)
+
+        // The added channel should be evaluated, but not added
+        AssertAsync.willBeEqual(filterCalls, 1)
+        XCTAssertTrue(controller.channels.contains { $0.cid == originalCid })
+        XCTAssertFalse(controller.channels.contains { $0.cid == originallyUnownedCid })
+
+        // Simulate update on the channel not matching the query, to make it match it
+        try addOrUpdateChannel(cid: originallyUnownedCid, ownerId: userId, query: nil)
+
+        // The updated channel should be evaluated, and added
+        AssertAsync.willBeEqual(controller.channels.count, 2)
+        XCTAssertEqual(filterCalls, 2)
+        XCTAssertTrue(controller.channels.contains { $0.cid == originalCid })
+        XCTAssertTrue(controller.channels.contains { $0.cid == originallyUnownedCid })
+    }
+
+    private func addOrUpdateChannel(cid: ChannelId, ownerId: String, query: ChannelListQuery?) throws {
+        try database.writeSynchronously { session in
+            let payload = self.dummyPayload(with: cid, channelExtraData: ["owner_id": .string(ownerId)])
+            try session.saveChannel(payload: payload, query: query)
+        }
+    }
+
+    private func prepareControllerWithOwnerFilter(userId: UserId, onFilterCall: @escaping () -> Void) {
+        let filter: (ChatChannel) -> Bool = { channel in
+            onFilterCall()
+            guard case let .string(owner) = channel.extraData["owner_id"] else { return false }
+            return owner == userId
+        }
+
+        // Prepare controller
+        client.currentUserId = userId
+        query = .init(filter: .and(
+            [
+                .containMembers(userIds: [userId]),
+                .notEqual(.init(rawValue: "owner_id"), to: userId)
+            ]
+        ))
+        controller = ChatChannelListController(query: query, client: client, filter: filter, environment: env.environment)
+    }
     
     // MARK: - Delegate tests
     

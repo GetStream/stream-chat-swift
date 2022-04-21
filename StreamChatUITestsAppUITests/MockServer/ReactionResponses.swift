@@ -4,142 +4,139 @@
 
 @testable import StreamChat
 import Swifter
+import XCTest
 
 extension StreamMockServer {
     
     func configureReactionEndpoints() {
-        server[MockEndpoint.reaction] = { request in
-            self.reactionCreation(request: request)
+        server[MockEndpoint.reaction] = { [weak self] request in
+            let messageId = try! XCTUnwrap(request.params[":message_id"])
+            let requestJson = TestData.toJson(request.body)
+            let requestReaction = requestJson[TopLevelKey.reaction] as! [String: Any]
+            let reactionType = requestReaction[MessageReactionPayload.CodingKeys.type.rawValue] as! String
+            return self?.reactionResponse(
+                messageId: messageId,
+                reactionType: reactionType,
+                eventType: .reactionNew
+            ) ?? .badRequest(nil)
         }
-        server[MockEndpoint.reactionUpdate] = { request in
-            self.reactionDeletion(request: request)
+        server[MockEndpoint.reactionUpdate] = { [weak self] request in
+            let messageId = try! XCTUnwrap(request.params[":message_id"])
+            let reactionType = try! XCTUnwrap(request.params[":reaction_type"])
+            return self?.reactionResponse(
+                messageId: messageId,
+                reactionType: reactionType,
+                eventType: .reactionDeleted
+            ) ?? .badRequest(nil)
         }
     }
-    
+
     func mockReaction(
         _ reaction: [String: Any],
+        fromUser user: [String: Any],
         messageId: Any?,
         reactionType: Any?,
         timestamp: Any?
     ) -> [String: Any] {
-        let codingKeys = MessageReactionPayload.CodingKeys.self
         var mockedReaction = reaction
-        mockedReaction[codingKeys.messageId.rawValue] = messageId
-        mockedReaction[codingKeys.type.rawValue] = reactionType
-        mockedReaction[codingKeys.createdAt.rawValue] = timestamp
-        mockedReaction[codingKeys.updatedAt.rawValue] = timestamp
+        mockedReaction[MessageReactionPayload.CodingKeys.messageId.rawValue] = messageId
+        mockedReaction[MessageReactionPayload.CodingKeys.type.rawValue] = reactionType
+        mockedReaction[MessageReactionPayload.CodingKeys.createdAt.rawValue] = timestamp
+        mockedReaction[MessageReactionPayload.CodingKeys.updatedAt.rawValue] = timestamp
+        mockedReaction[MessageReactionPayload.CodingKeys.user.rawValue] = user
+        mockedReaction[MessageReactionPayload.CodingKeys.userId.rawValue] =
+            user[UserPayloadsCodingKeys.id.rawValue]
         return mockedReaction
     }
-    
+
     func mockMessageWithReaction(
         _ message: [String: Any],
-        messageId: String?,
-        text: String?,
-        createdAt: String?,
-        updatedAt: String?,
+        fromUser user: [String: Any],
         reactionType: String?,
-        deleted: Bool = false,
-        ownReaction: Bool = false
+        timestamp: String,
+        deleted: Bool = false
     ) -> [String: Any] {
-        let latestReactionsKey = MessagePayloadsCodingKeys.latestReactions.rawValue
-        let ownReactionsKey = MessagePayloadsCodingKeys.ownReactions.rawValue
-        let reactionsCountsKey = MessagePayloadsCodingKeys.reactionCounts.rawValue
-        let reactionsScoresKey = MessagePayloadsCodingKeys.reactionScores.rawValue
+        var mockedMessage = message
+        let messageId = mockedMessage[MessagePayloadsCodingKeys.id.rawValue]
         
-        var mockedMessage = mockMessage(
-            message,
-            messageId: messageId,
-            text: text,
-            createdAt: createdAt,
-            updatedAt: updatedAt
-        )
         if deleted {
-            mockedMessage[latestReactionsKey] = []
-            mockedMessage[ownReactionsKey] = []
-            mockedMessage[reactionsCountsKey] = [:]
-            mockedMessage[reactionsScoresKey] = [:]
+            mockedMessage[MessagePayloadsCodingKeys.latestReactions.rawValue] = []
+            mockedMessage[MessagePayloadsCodingKeys.ownReactions.rawValue] = []
+            mockedMessage[MessagePayloadsCodingKeys.reactionCounts.rawValue] = [:]
+            mockedMessage[MessagePayloadsCodingKeys.reactionScores.rawValue] = [:]
         } else {
-            var latest_reactions = mockedMessage[latestReactionsKey] as! [[String: Any]]
-            var reaction_counts = mockedMessage[reactionsCountsKey] as! [String: Any]
-            var reaction_scores = mockedMessage[reactionsScoresKey] as! [String: Any]
+            var latest_reactions =
+                mockedMessage[MessagePayloadsCodingKeys.latestReactions.rawValue] as! [[String: Any]]
+            var reaction_counts =
+                mockedMessage[MessagePayloadsCodingKeys.reactionCounts.rawValue] as! [String: Any]
+            var reaction_scores =
+                mockedMessage[MessagePayloadsCodingKeys.reactionScores.rawValue] as! [String: Any]
             
-            for (index, _) in latest_reactions.indices() {
-                latest_reactions[index][MessageReactionPayload.CodingKeys.type.rawValue] = reactionType
-                latest_reactions[index][MessageReactionPayload.CodingKeys.messageId.rawValue] = messageId
-                latest_reactions[index][MessageReactionPayload.CodingKeys.createdAt.rawValue] = createdAt
-            }
+            let userId = user[UserPayloadsCodingKeys.id.rawValue]
+            var newReaction: [String: Any] = [:]
+            newReaction[MessageReactionPayload.CodingKeys.messageId.rawValue] = messageId
+            newReaction[MessageReactionPayload.CodingKeys.type.rawValue] = reactionType
+            newReaction[MessageReactionPayload.CodingKeys.score.rawValue] = 1
+            newReaction[MessageReactionPayload.CodingKeys.createdAt.rawValue] = timestamp
+            newReaction[MessageReactionPayload.CodingKeys.updatedAt.rawValue] = timestamp
+            newReaction[MessageReactionPayload.CodingKeys.user.rawValue] = user
+            newReaction[MessageReactionPayload.CodingKeys.userId.rawValue] = userId
+            newReaction[MessageReactionRequestPayload.CodingKeys.enforceUnique.rawValue] = false
+            latest_reactions.append(newReaction)
+            
             reaction_counts[reactionType!] = 1
             reaction_scores[reactionType!] = 1
             
-            mockedMessage[latestReactionsKey] = latest_reactions
-            mockedMessage[ownReactionsKey] = ownReaction ? latest_reactions : []
-            mockedMessage[reactionsCountsKey] = reaction_counts
-            mockedMessage[reactionsScoresKey] = reaction_scores
+            let idKey = UserPayloadsCodingKeys.id.rawValue
+            let ownReaction = user[idKey] as! String == UserDetails.lukeSkywalker[idKey]!
+            if ownReaction {
+                mockedMessage[MessagePayloadsCodingKeys.ownReactions.rawValue] = latest_reactions
+            } else {
+                mockedMessage[MessagePayloadsCodingKeys.ownReactions.rawValue] = []
+            }
+            
+            mockedMessage[MessagePayloadsCodingKeys.latestReactions.rawValue] = latest_reactions
+            mockedMessage[MessagePayloadsCodingKeys.reactionCounts.rawValue] = reaction_counts
+            mockedMessage[MessagePayloadsCodingKeys.reactionScores.rawValue] = reaction_scores
         }
         
         return mockedMessage
     }
     
-    private func reactionCreation(request: HttpRequest) -> HttpResponse {
-        let messageId = request.params[":message_id"]
-        let requestJson = TestData.toJson(request.body)
-        let messageKey = TopLevelKey.message.rawValue
-        let reactionKey = TopLevelKey.reaction.rawValue
-        let requestReaction = requestJson[reactionKey] as! [String: Any]
-        let reactionType = requestReaction[MessageReactionPayload.CodingKeys.type.rawValue]
-        var responseJson = TestData.toJson(.httpReaction)
-        let responseMessage = responseJson[messageKey] as! [String: Any]
-        let responseReaction = responseJson[reactionKey] as! [String: Any]
-        let messageDetails = getMessageDetails(messageId: messageId!)
-        
-        responseJson[messageKey] = mockMessageWithReaction(
-            responseMessage,
-            messageId: messageId,
-            text: messageDetails[.text],
-            createdAt: messageDetails[.createdAt],
-            updatedAt: messageDetails[.updatedAt],
-            reactionType: reactionType as? String,
-            ownReaction: true
-        )
-        
-        responseJson[reactionKey] = mockReaction(
-            responseReaction,
-            messageId: messageId,
-            reactionType: reactionType as? String,
-            timestamp: TestData.currentDate
-        )
-        
-        return .ok(.json(responseJson))
-    }
-    
-    private func reactionDeletion(request: HttpRequest) -> HttpResponse {
-        let messageId = request.params[":message_id"]
-        let reactionType = request.params[":reaction_type"]
+    private func reactionResponse(
+        messageId: String,
+        reactionType: String,
+        eventType: EventType
+    ) -> HttpResponse {
         var json = TestData.toJson(.httpReaction)
-        let messageKey = TopLevelKey.message.rawValue
-        let reactionKey = TopLevelKey.reaction.rawValue
-        let message = json[messageKey] as! [String: Any]
-        let reaction = json[reactionKey] as! [String: Any]
-        let messageDetails = getMessageDetails(messageId: messageId!)
-        let timestamp: String = TestData.currentDate
+        let reaction = json[TopLevelKey.reaction] as! [String: Any]
+        let message = findMessageById(messageId)
+        let timestamp = TestData.currentDate
+        let user = setUpUser(event: message, details: UserDetails.lukeSkywalker)
         
-        json[messageKey] = mockMessageWithReaction(
+        json[TopLevelKey.message] = mockMessageWithReaction(
             message,
-            messageId: messageId,
-            text: messageDetails[.text],
-            createdAt: messageDetails[.createdAt],
-            updatedAt: messageDetails[.updatedAt],
+            fromUser: user,
             reactionType: reactionType,
-            deleted: true
+            timestamp: timestamp,
+            deleted: eventType == .reactionDeleted
         )
         
-        json[reactionKey] = mockReaction(
+        json[TopLevelKey.reaction] = mockReaction(
             reaction,
+            fromUser: user,
             messageId: messageId,
             reactionType: reactionType,
             timestamp: timestamp
         )
         
+        websocketDelay {
+            self.websocketReaction(
+                type: TestData.Reactions(rawValue: reactionType)!,
+                eventType: eventType,
+                user: user
+            )
+        }
         return .ok(.json(json))
     }
 }
