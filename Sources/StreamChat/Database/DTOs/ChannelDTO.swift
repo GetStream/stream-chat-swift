@@ -331,11 +331,7 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     func messagesArePopulated() -> Bool {
-        if lastMessageAt == nil {
-            return true
-        }
-
-        if oldestMessageAt == nil {
+        if lastMessageAt == nil || oldestMessageAt == nil {
             return true
         }
 
