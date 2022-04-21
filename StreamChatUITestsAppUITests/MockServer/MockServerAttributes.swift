@@ -14,22 +14,27 @@ enum MockFile: String {
     case wsReaction = "ws_reaction"
     case wsHealthCheck = "ws_health_check"
     case httpChannels = "http_channels"
-    case httpChannelQuery = "http_channel_query"
 }
 
 enum MockEndpoint {
     static let connect = "/connect"
     
-    static let messageUpdate = "/messages/:message_id"
-    static let replies = "/messages/:message_id/replies"
-    static let reaction = "/messages/:message_id/reaction"
-    static let reactionUpdate = "/messages/:message_id/reaction/:reaction_type"
+    static let messageUpdate = "/messages/\(EndpointQuery.messageId)"
+    static let replies = "/messages/\(EndpointQuery.messageId)/replies"
+    static let reaction = "/messages/\(EndpointQuery.messageId)/reaction"
+    static let reactionUpdate = "/messages/\(EndpointQuery.messageId)/reaction/\(EndpointQuery.reactionType)"
     
     static let channels = "/channels"
-    static let event = "/channels/messaging/:channel_id/event"
-    static let query = "/channels/messaging/:channel_id/query"
-    static let messageRead = "/channels/messaging/:channel_id/read"
-    static let message = "/channels/messaging/:channel_id/message"
+    static let event = "/channels/messaging/\(EndpointQuery.channelId)/event"
+    static let query = "/channels/messaging/\(EndpointQuery.channelId)/query"
+    static let messageRead = "/channels/messaging/\(EndpointQuery.channelId)/read"
+    static let message = "/channels/messaging/\(EndpointQuery.channelId)/message"
+}
+
+enum EndpointQuery {
+    static let messageId = ":message_id"
+    static let channelId = ":channel_id"
+    static let reactionType = ":reaction_type"
 }
 
 enum MessageType: String {
@@ -44,6 +49,9 @@ struct TopLevelKey {
     static let event = "event"
     static let channels = "channels"
     static let user = "user"
+    static let userId = "user_id"
+    static let cid = "cid"
+    static let channelId = "channel_id"
 }
 
 enum UserDetails {
@@ -57,5 +65,11 @@ enum UserDetails {
         UserPayloadsCodingKeys.id.rawValue: "luke_skywalker",
         UserPayloadsCodingKeys.name.rawValue: "Luke Skywalker",
         UserPayloadsCodingKeys.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+    ]
+    
+    static let countDooku = [
+        UserPayloadsCodingKeys.id.rawValue: "count_dooku",
+        UserPayloadsCodingKeys.name.rawValue: "Count Dooku",
+        UserPayloadsCodingKeys.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg"
     ]
 }
