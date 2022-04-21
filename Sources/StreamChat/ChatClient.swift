@@ -164,7 +164,7 @@ public class ChatClient {
                 )
                 
                 let dbFileURL = storeURL.appendingPathComponent(config.apiKey.apiKeyString)
-                return try environment.databaseContainerBuilder(
+                return environment.databaseContainerBuilder(
                     .onDisk(databaseFileURL: dbFileURL),
                     config.shouldFlushLocalStorageOnStart,
                     config.isClientInActiveMode, // Only reset Ephemeral values in active mode
@@ -178,21 +178,17 @@ public class ChatClient {
             log.assertionFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
             
         } catch {
-            log.error("Failed to initalized the local storage with error: \(error). Falling back to the in-memory option.")
+            log.error("Failed to initialize the local storage with error: \(error). Falling back to the in-memory option.")
         }
         
-        do {
-            return try environment.databaseContainerBuilder(
-                .inMemory,
-                config.shouldFlushLocalStorageOnStart,
-                config.isClientInActiveMode, // Only reset Ephemeral values in active mode
-                config.localCaching,
-                config.deletedMessagesVisibility,
-                config.shouldShowShadowedMessages
-            )
-        } catch {
-            fatalError("Failed to initialize the in-memory storage with error: \(error). This is a non-recoverable error.")
-        }
+        return environment.databaseContainerBuilder(
+            .inMemory,
+            config.shouldFlushLocalStorageOnStart,
+            config.isClientInActiveMode, // Only reset Ephemeral values in active mode
+            config.localCaching,
+            config.deletedMessagesVisibility,
+            config.shouldShowShadowedMessages
+        )
     }()
     
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
@@ -459,8 +455,8 @@ extension ChatClient {
             _ localCachingSettings: ChatClientConfig.LocalCaching?,
             _ deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?,
             _ shouldShowShadowedMessages: Bool?
-        ) throws -> DatabaseContainer = {
-            try DatabaseContainer(
+        ) -> DatabaseContainer = {
+            DatabaseContainer(
                 kind: $0,
                 shouldFlushOnStart: $1,
                 shouldResetEphemeralValuesOnStart: $2,

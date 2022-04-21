@@ -390,7 +390,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertFalse(reloadUserIfNeededCompletionCalled)
         
         // Assert web-socket `connect` is called.
-        XCTAssertEqual(client.mockWebSocketClient.connect_calledCounter, 1)
+        AssertAsync.willBeEqual(client.mockWebSocketClient.connect_calledCounter, 1)
         
         // Simulate established connection and provide `connectionId` to waiters.
         let connectionId: String = .unique

@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix cooldown being applied to /sync endpoint in connection recovery flow [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
 - Fix active components not being reset when another user is connected [#1925](https://github.com/GetStream/stream-chat-swift/pull/1925)
 - Fix unusable firebase push provider [#1934](https://github.com/GetStream/stream-chat-swift/pull/1934)
+- Fix DB errors happening when logging in after a logout / user switch [#1926](https://github.com/GetStream/stream-chat-swift/issues/1926)
 
 ## StreamChatUI
 ### 💥 Removed
