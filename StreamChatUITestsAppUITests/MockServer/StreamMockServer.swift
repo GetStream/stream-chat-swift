@@ -11,6 +11,8 @@ final class StreamMockServer {
     private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
     private var _messageList: [[String: Any]] = []
+    private var _channelList = TestData.toJson(.httpChannels)
+    private var _currentChannelId: String = ""
     
     public var messageList: [[String: Any]] {
         get {
@@ -18,6 +20,24 @@ final class StreamMockServer {
         }
         set {
             self._messageList = newValue
+        }
+    }
+    
+    public var channelList: [String: Any] {
+        get {
+            return self._channelList
+        }
+        set {
+            self._channelList = newValue
+        }
+    }
+    
+    public var currentChannelId: String {
+        get {
+            return self._currentChannelId
+        }
+        set {
+            self._currentChannelId = newValue
         }
     }
     

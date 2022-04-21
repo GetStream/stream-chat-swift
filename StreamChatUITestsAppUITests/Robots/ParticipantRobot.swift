@@ -11,9 +11,19 @@ final class ParticipantRobot: Robot {
 
     private var server: StreamMockServer
     private var _threadParentId: String? = nil
+    private var _user: [String: String] = UserDetails.hanSolo
     
     init(_ server: StreamMockServer) {
         self.server = server
+    }
+    
+    var user: [String: String] {
+        get {
+            return self._user
+        }
+        set {
+            self._user = newValue
+        }
     }
     
     private var threadParentId: String? {
@@ -27,19 +37,31 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func startTyping() -> Self {
-        server.websocketEvent(.userStartTyping, user: participant())
+        server.websocketEvent(
+            .userStartTyping,
+            user: participant(),
+            channelId: server.currentChannelId
+        )
         return self
     }
     
     @discardableResult
     func stopTyping() -> Self {
-        server.websocketEvent(.userStopTyping, user: participant())
+        server.websocketEvent(
+            .userStopTyping,
+            user: participant(),
+            channelId: server.currentChannelId
+        )
         return self
     }
     
     @discardableResult
     func readMessage() -> Self {
-        server.websocketEvent(.messageRead, user: participant())
+        server.websocketEvent(
+            .messageRead,
+            user: participant(),
+            channelId: server.currentChannelId
+        )
         return self
     }
     
@@ -47,6 +69,7 @@ final class ParticipantRobot: Robot {
     func sendMessage(_ text: String) -> Self {
         server.websocketMessage(
             text,
+            channelId: server.currentChannelId,
             messageId: TestData.uniqueId,
             eventType: .messageNew,
             user: participant()
@@ -56,9 +79,10 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func editMessage(_ text: String) -> Self {
-        let messageId = server.lastMessage[MessagePayloadsCodingKeys.id.rawValue] as! String
+        let messageId = server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as! String
         server.websocketMessage(
             text,
+            channelId: server.currentChannelId,
             messageId: messageId,
             eventType: .messageUpdated,
             user: participant()
@@ -68,8 +92,9 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func deleteMessage() -> Self {
-        let messageId = server.lastMessage[MessagePayloadsCodingKeys.id.rawValue] as! String
+        let messageId = server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as! String
         server.websocketMessage(
+            channelId: server.currentChannelId,
             messageId: messageId,
             eventType: .messageDeleted,
             user: participant()
@@ -105,15 +130,16 @@ final class ParticipantRobot: Robot {
     @discardableResult
     func replyToMessage(_ text: String) -> Self {
         let quotedMessage = server.lastMessage
-        let quotedMessageId = quotedMessage[MessagePayloadsCodingKeys.id.rawValue] as! String
+        let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as! String
         server.websocketMessage(
             text,
+            channelId: server.currentChannelId,
             messageId: TestData.uniqueId,
             eventType: .messageNew,
             user: participant()
         ) { message in
-            message[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
-            message[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
+            message?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
+            message?[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
             return message
         }
         return self
@@ -121,24 +147,25 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func replyToMessageInThread(_ text: String, alsoSendInChannel: Bool = false) -> Self {
-        let parentId = threadParentId ?? (server.lastMessage[MessagePayloadsCodingKeys.id.rawValue] as! String)
+        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as! String)
         server.websocketMessage(
             text,
+            channelId: server.currentChannelId,
             messageId: TestData.uniqueId,
             eventType: .messageNew,
             user: participant()
         ) { message in
-            message[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
-            message[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = alsoSendInChannel
+            message?[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
+            message?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = alsoSendInChannel
             return message
         }
         return self
     }
     
-    private func participant() -> [String: Any] {
+    private func participant() -> [String: Any]? {
         let json = TestData.toJson(.wsMessage)
         let message = json[TopLevelKey.message] as! [String: Any]
-        let user = server.setUpUser(event: message, details: UserDetails.hanSolo)
+        let user = server.setUpUser(source: message, details: user)
         return user
     }
 }
