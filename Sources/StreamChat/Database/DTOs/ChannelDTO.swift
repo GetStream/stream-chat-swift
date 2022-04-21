@@ -330,7 +330,7 @@ extension ChannelDTO {
 }
 
 extension ChannelDTO {
-    func messagesArePopulated() -> Bool {
+    fileprivate var areMessagesPopulated: Bool {
         if lastMessageAt == nil || oldestMessageAt == nil {
             return true
         }
