@@ -6,6 +6,8 @@ import Foundation
 import StreamChat
 import UIKit
 
+// swiftlint:disable all
+
 /// - NOTE: Deprecations of the next major release.
 
 @available(*, deprecated, renamed: "ChatMessageActionsTransitionController")
