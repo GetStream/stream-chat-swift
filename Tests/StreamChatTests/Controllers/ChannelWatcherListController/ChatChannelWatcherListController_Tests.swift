@@ -394,7 +394,14 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         }
 
         // Simulate database flush
-        try client.databaseContainer.removeAllData()
+        let exp = expectation(description: "removeAllData called")
+        client.databaseContainer.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 0.1)
 
         // Assert `remove` entity changes are received by the delegate.
         AssertAsync {

@@ -10,9 +10,8 @@ stress_tests_cycles = 50
 before_all do
   if is_ci
     setup_ci()
+    xcversion(version: "~> #{xcode_version}")
   end
-
-  xcversion(version: "~> #{xcode_version}")
 end
 
 desc "Build .xcframeworks"

@@ -205,8 +205,15 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         
         XCTAssertNotNil(database.viewContext.currentUser)
         
-        try database.removeAllData()
+        let expectation = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            expectation.fulfill()
+        }
         
+        wait(for: [expectation], timeout: 0.1)
         XCTAssertNil(database.viewContext.currentUser)
     }
     
@@ -233,7 +240,15 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             XCTAssertNotNil(context.currentUser)
         }
         
-        try database.removeAllData()
+        let expectation = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 0.1)
         
         context.performAndWait {
             XCTAssertNil(context.currentUser)

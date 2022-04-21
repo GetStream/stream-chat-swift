@@ -92,7 +92,14 @@ final class MessageUpdater_Tests: XCTestCase {
             let updatedText: String = .unique
 
             // Flush the database
-            try database.removeAllData()
+            let exp = expectation(description: "removeAllData completion")
+            database.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 0.1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -143,7 +150,14 @@ final class MessageUpdater_Tests: XCTestCase {
             let updatedText: String = .unique
             
             // Flush the database
-            try database.removeAllData()
+            let exp = expectation(description: "removeAllData completion")
+            database.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 0.1)
             
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -346,7 +360,14 @@ final class MessageUpdater_Tests: XCTestCase {
             let messageId: MessageId = .unique
 
             // Flush the database
-            try database.removeAllData()
+            let exp = expectation(description: "removeAllData completion")
+            database.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 0.1)
             
             // Create current user in the database
             try database.createCurrentUser(id: currentUserId)
@@ -378,7 +399,14 @@ final class MessageUpdater_Tests: XCTestCase {
             let messageId: MessageId = .unique
 
             // Flush the database
-            try database.removeAllData()
+            let exp = expectation(description: "removeAllData completion")
+            database.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 0.1)
             messageRepository.clear()
 
             // Create current user in the database
@@ -422,7 +450,14 @@ final class MessageUpdater_Tests: XCTestCase {
             messageRepository.clear()
 
             // Flush the database
-            try database.removeAllData()
+            let exp = expectation(description: "removeAllData completion")
+            database.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 0.1)
             
             // Create current user in the database
             try database.createCurrentUser(id: currentUserId)
@@ -456,7 +491,14 @@ final class MessageUpdater_Tests: XCTestCase {
         let messageId: MessageId = .unique
 
         // Flush the database
-        try database.removeAllData()
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 0.1)
 
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
@@ -491,7 +533,14 @@ final class MessageUpdater_Tests: XCTestCase {
         let messageId: MessageId = .unique
 
         // Flush the database
-        try database.removeAllData()
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 0.1)
 
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
@@ -1541,7 +1590,14 @@ final class MessageUpdater_Tests: XCTestCase {
             let pin = MessagePinning(expirationDate: .unique)
 
             // Flush the database
-            try database.removeAllData()
+            let exp = expectation(description: "removeAllData completion")
+            database.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 0.1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -1578,7 +1634,14 @@ final class MessageUpdater_Tests: XCTestCase {
             let initialText: String = .unique
 
             // Flush the database
-            try database.removeAllData()
+            let exp = expectation(description: "removeAllData completion")
+            database.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 0.1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -1625,7 +1688,14 @@ final class MessageUpdater_Tests: XCTestCase {
             let messageId: MessageId = .unique
 
             // Flush the database
-            try database.removeAllData()
+            let exp = expectation(description: "removeAllData completion")
+            database.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 0.1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -1669,7 +1739,14 @@ final class MessageUpdater_Tests: XCTestCase {
             let messageId: MessageId = .unique
 
             // Flush the database
-            try database.removeAllData()
+            let exp = expectation(description: "removeAllData completion")
+            database.removeAllData { error in
+                if let error = error {
+                    XCTFail("removeAllData failed with \(error)")
+                }
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 0.1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
