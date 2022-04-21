@@ -20,7 +20,7 @@ concurrency:
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
   XCODE_VERSION: 13.3.1
-  IOS_SIMULATOR_DEVICE: "iPhone 12"
+  IOS_SIMULATOR_DEVICE: "iPhone 12 Pro"
 
 jobs:
   automated-code-review:
@@ -124,11 +124,11 @@ jobs:
     - name: Prepare iPhone 12 with iOS 15.0
       uses: ./.github/actions/prepare-ios-simulator
       with:
-        device: "iPhone 12"
-        ios: "15.0"
-        xcode: "13.0"
+        device: "iPhone 12 Pro"
+        ios: "15.4"
+        xcode: "13.3.1"
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"iPhone 12 (15.0)"
+      run: bundle exec fastlane test_ui device:"iPhone 12 Pro (15.4)"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
