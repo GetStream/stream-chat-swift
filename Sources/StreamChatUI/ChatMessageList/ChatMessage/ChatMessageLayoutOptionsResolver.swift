@@ -9,7 +9,11 @@ import StreamChat
 open class ChatMessageLayoutOptionsResolver {
     /// The maximum time interval between 2 consecutive messages sent by the same user to treat them as a single message group.
     public let maxTimeIntervalBetweenMessagesInGroup: TimeInterval
-
+    
+    // TODO: Propagate via `init` in v5, make it non-optional.
+    /// The config of the `ChatClient` used.
+    public internal(set) var config: ChatClientConfig?
+    
     /// Creates new `ChatMessageLayoutOptionsResolver`.
     ///
     /// - Parameter maxTimeIntervalBetweenMessagesInGroup: The maximum time interval between 2 consecutive messages sent by the same user to treat them as a single message group (`60 sec` by default).
@@ -68,7 +72,7 @@ open class ChatMessageLayoutOptionsResolver {
         if isLastInSequence {
             options.insert(.timestamp)
         }
-        if message.isOnlyVisibleForCurrentUser {
+        if showOnlyVisibleForYouIndicator(for: message) {
             options.insert(.onlyVisibleForYouIndicator)
         }
         if message.textContent?.isEmpty == false {
@@ -173,5 +177,28 @@ open class ChatMessageLayoutOptionsResolver {
         // If the message next to the current one is sent with delay > maxTimeIntervalBetweenMessagesInGroup,
         // the current message ends the sequence.
         return delay > maxTimeIntervalBetweenMessagesInGroup
+    }
+    
+    /// Determines whether to populate `onlyVisibleForYouIndicator` for the given message.
+    /// - Parameter message: The message.
+    /// - Returns: `true` if `onlyVisibleForYouIndicator` layout option should be included for the given message.
+    open func showOnlyVisibleForYouIndicator(for message: ChatMessage) -> Bool {
+        guard message.isSentByCurrentUser else {
+            return false
+        }
+        
+        switch message.type {
+        case .ephemeral:
+            return true
+        case .deleted:
+            guard let config = config else {
+                log.assertionFailure("The `config` property must be assiged at this point.")
+                return false
+            }
+            
+            return config.deletedMessagesVisibility == .visibleForCurrentUser
+        default:
+            return false
+        }
     }
 }
