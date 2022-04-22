@@ -500,7 +500,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         }
 
         // Metadata
-        onlyVisibleForYouContainer?.isVisible = content?.isOnlyVisibleForCurrentUser == true
+        onlyVisibleForYouContainer?.isVisible = layoutOptions?.contains(.onlyVisibleForYouIndicator) == true
 
         authorNameLabel?.isVisible = layoutOptions?.contains(.authorName) == true
         authorNameLabel?.text = content?.author.name

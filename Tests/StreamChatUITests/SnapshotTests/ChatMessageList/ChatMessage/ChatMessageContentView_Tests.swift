@@ -410,7 +410,7 @@ extension ChatMessage {
         if isLastInGroup {
             options.insert(.timestamp)
         }
-        if isLastInGroup && isOnlyVisibleForCurrentUser {
+        if isLastInGroup, isSentByCurrentUser, type == .deleted || type == .ephemeral {
             options.insert(.onlyVisibleForYouIndicator)
         }
         if textContent?.isEmpty == false {
