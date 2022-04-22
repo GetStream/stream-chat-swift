@@ -305,8 +305,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
             if attachmentViewInjector?.fillAllAvailableWidth == true {
                 footnoteSubviews.append(.spacer(axis: .horizontal))
             }
-
+            
             footnoteContainer = ContainerStackView(
+                spacing: 4,
                 arrangedSubviews: options.contains(.flipped) ? footnoteSubviews.reversed() : footnoteSubviews
             ).withAccessibilityIdentifier(identifier: "footnoteContainer")
             bubbleThreadFootnoteContainer.addArrangedSubview(footnoteContainer!)

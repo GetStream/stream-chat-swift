@@ -20,6 +20,117 @@ final class ChannelDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
+    func test_saveChannel_whenThereIsNoPreview_updatesPreview() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let emptyChannelPayload: ChannelPayload = .dummy(channel: .dummy(cid: cid))
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: emptyChannelPayload)
+        }
+        
+        var channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertNil(channelDTO.previewMessage)
+        
+        // WHEN
+        let previewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: emptyChannelPayload.channel,
+            messages: [previewMessage]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        // THEN
+        channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channelDTO.previewMessage?.id, previewMessage.id)
+    }
+
+    func test_saveChannel_whenPayloadHasMessagesNewerThePreview_updatesPreview() throws {
+        // GIVEN
+        let previewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            messages: [previewMessage]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+                
+        // WHEN
+        let newPreviewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: previewMessage.createdAt.addingTimeInterval(10)
+        )
+        
+        let channelPayloadWithNewPreview: ChannelPayload = .dummy(
+            channel: channelPayload.channel,
+            messages: [newPreviewMessage]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayloadWithNewPreview)
+        }
+        
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channelPayload.channel.cid))
+        XCTAssertEqual(channelDTO.previewMessage?.id, newPreviewMessage.id)
+    }
+    
+    func test_saveChannel_whenPayloadDoesNotHaveMessagesNewerThePreview_doesNotUpdatePreview() throws {
+        // GIVEN
+        let previewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            messages: [previewMessage]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+                
+        // WHEN
+        let message: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: previewMessage.createdAt.addingTimeInterval(-10)
+        )
+        
+        let channelPayloadWithoutNewPreview: ChannelPayload = .dummy(
+            channel: channelPayload.channel,
+            messages: [message]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayloadWithoutNewPreview)
+        }
+        
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channelPayload.channel.cid))
+        XCTAssertEqual(channelDTO.previewMessage?.id, previewMessage.id)
+    }
+    
     func test_saveChannel_channelReadsAreSavedBeforeMessages() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
@@ -832,5 +943,128 @@ final class ChannelDTO_Tests: XCTestCase {
         let actual = dto.commands.compactMap { $0 as? CommandDTO }.map(\.name)
         let expected = ["giphy", "workout", "location"]
         XCTAssertEqual(actual, expected)
+    }
+    
+    func test_asModel_populatesPreviewMessage() throws {
+        // GIVEN
+        let channelPayload: ChannelPayload = .dummy()
+        
+        let previewMessagePayload: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            text: .unique
+        )
+        
+        try database.writeSynchronously { session in
+            let chanenlDTO = try session.saveChannel(payload: channelPayload)
+            
+            chanenlDTO.previewMessage = try session.saveMessage(
+                payload: previewMessagePayload,
+                channelDTO: chanenlDTO,
+                syncOwnReactions: false
+            )
+        }
+
+        // WHEN
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: channelPayload.channel.cid)?.asModel()
+        )
+        
+        // THEN
+        let previewMessage = try XCTUnwrap(channel.previewMessage)
+        XCTAssertEqual(previewMessage.text, previewMessagePayload.text)
+    }
+    
+    func test_asModel_populatesLatestMessage() throws {
+        // GIVEN
+        database = DatabaseContainer_Spy(
+            kind: .inMemory,
+            localCachingSettings: .init(
+                chatChannel: .init(
+                    lastActiveWatchersLimit: 0,
+                    lastActiveMembersLimit: 0,
+                    latestMessagesLimit: 3
+                )
+            ),
+            deletedMessagesVisibility: .visibleForCurrentUser,
+            shouldShowShadowedMessages: true
+        )
+        
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .admin)
+        let anotherUser: UserPayload = .dummy(userId: .unique)
+
+        let cid: ChannelId = .unique
+       
+        let message1: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            text: "message1",
+            createdAt: .init(),
+            cid: cid
+        )
+        
+        let deletedMessageFromCurrentUser: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            text: "deletedMessageFromCurrentUser",
+            createdAt: message1.createdAt.addingTimeInterval(-1),
+            deletedAt: .init(),
+            cid: cid
+        )
+        
+        let deletedMessageFromAnotherUser: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            text: "deletedMessageFromAnotherUser",
+            createdAt: deletedMessageFromCurrentUser.createdAt.addingTimeInterval(-1),
+            deletedAt: .init(),
+            cid: cid
+        )
+        
+        let shadowedMessageFromAnotherUser: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            text: "shadowedMessageFromAnotherUser",
+            createdAt: deletedMessageFromAnotherUser.createdAt.addingTimeInterval(-1),
+            cid: cid,
+            isShadowed: true
+        )
+        
+        let message2: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: anotherUser.id,
+            text: "message2",
+            createdAt: shadowedMessageFromAnotherUser.createdAt.addingTimeInterval(-1),
+            cid: cid
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                message1,
+                deletedMessageFromCurrentUser,
+                deletedMessageFromAnotherUser,
+                shadowedMessageFromAnotherUser,
+                message2
+            ]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // WHEN
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: cid)?.asModel()
+        )
+        
+        // THEN
+        XCTAssertEqual(
+            Set(channel.latestMessages.map(\.id)),
+            Set([message1.id, deletedMessageFromCurrentUser.id, shadowedMessageFromAnotherUser.id])
+        )
     }
 }

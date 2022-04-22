@@ -72,6 +72,7 @@ public extension Appearance {
         public var messageDeliveryStatusSending: UIImage = loadImageSafely(with: "message_receipt_sending")
         public var messageDeliveryStatusSent: UIImage = loadImageSafely(with: "message_receipt_sent")
         public var messageDeliveryStatusRead: UIImage = loadImageSafely(with: "message_receipt_read")
+        public var messageDeliveryStatusFailed: UIImage = loadImageSafely(with: "message_receipt_failed")
         
         // MARK: - Reactions
 

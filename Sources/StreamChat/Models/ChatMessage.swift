@@ -314,6 +314,30 @@ public extension ChatMessage {
     func attachment(with id: AttachmentId) -> AnyChatMessageAttachment? {
         _attachments.first { $0.id == id }
     }
+    
+    /// The message delivery status.
+    /// Always returns `nil` when the message is authored by another user.
+    /// Always returns `nil` when the message is `system/error/ephemeral/deleted`.
+    var deliveryStatus: MessageDeliveryStatus? {
+        guard isSentByCurrentUser else {
+            // Delivery status exists only for messages sent by the current user.
+            return nil
+        }
+        
+        guard type == .regular || type == .reply else {
+            // Delivery status only makes sense for regular messages and thread replies.
+            return nil
+        }
+        
+        switch localState {
+        case .pendingSend, .sending, .pendingSync, .syncing, .deleting:
+            return .pending
+        case .sendingFailed, .syncingFailed, .deletingFailed:
+            return .failed
+        case nil:
+            return readByCount > 0 ? .read : .sent
+        }
+    }
 }
 
 extension ChatMessage: Hashable {
@@ -405,4 +429,25 @@ public enum LocalReactionState: String {
     
     /// Deleting of the reaction failed and cannot be fulfilled
     case deletingFailed
+}
+
+/// The type describing message delivery status.
+public struct MessageDeliveryStatus: RawRepresentable, Hashable {
+    public let rawValue: String
+    
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+    
+    /// The message delivery state for message that is being sent/edited/deleted.
+    public static let pending = Self(rawValue: "pending")
+    
+    /// The message delivery state for message that is successfully sent.
+    public static let sent = Self(rawValue: "sent")
+    
+    /// The message delivery state for message that is successfully sent and read by at least one channel member.
+    public static let read = Self(rawValue: "read")
+    
+    /// The message delivery state for message failed to be sent/edited/deleted.
+    public static let failed = Self(rawValue: "failed")
 }

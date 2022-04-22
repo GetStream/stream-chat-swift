@@ -42,7 +42,8 @@ class MessageDTO: NSManagedObject {
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
-    
+    @NSManaged var previewOfChannel: ChannelDTO?
+
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
     /// where `read.lastRead >= self.createdAt`.
@@ -67,6 +68,13 @@ class MessageDTO: NSManagedObject {
     
     override func willSave() {
         super.willSave()
+        
+        // Manually mark the channel as dirty to trigger the entity update and give the UI a chance
+        // to reload the channel cell to reflect the updated preview.
+        if let channel = previewOfChannel, !channel.hasChanges, isUpdated {
+            let cid = channel.cid
+            channel.cid = cid
+        }
         
         prepareDefaultSortKeyIfNeeded()
     }
@@ -281,12 +289,19 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
-    static func load(for cid: String, limit: Int, offset: Int = 0, context: NSManagedObjectContext) -> [MessageDTO] {
+    static func load(
+        for cid: String,
+        limit: Int,
+        offset: Int = 0,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool,
+        context: NSManagedObjectContext
+    ) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = channelMessagesPredicate(
             for: cid,
-            deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
-            shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
+            deletedMessagesVisibility: deletedMessagesVisibility,
+            shouldShowShadowedMessages: shouldShowShadowedMessages
         )
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
@@ -446,6 +461,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             parentMessageDTO.replies.insert(message)
             parentMessageDTO.replyCount += 1
         }
+        
+        // When the current user submits the new message for sending - make it a channel preview.
+        channelDTO.previewMessage = message
         
         return message
     }
@@ -730,6 +748,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.reactionScores[type.rawValue] = max(reactionScore - Int(reaction.score), 0)
         message.reactionScores[type.rawValue] = reactionScore
         return reaction
+    }
+    
+    func preview(for cid: ChannelId) -> MessageDTO? {
+        MessageDTO.load(
+            for: cid.rawValue,
+            limit: 1,
+            offset: 0,
+            deletedMessagesVisibility: .alwaysHidden,
+            shouldShowShadowedMessages: shouldShowShadowedMessages ?? false,
+            context: self
+        )
+        .first
     }
 }
 

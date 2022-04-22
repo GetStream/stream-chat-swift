@@ -98,4 +98,56 @@ final class ChannelPayload_Tests: XCTestCase {
 
         XCTAssertEqual(payload.membership?.user.id, "broken-waterfall-5")
     }
+    
+    func test_newestMessage_whenMessagesAreSortedDesc() throws {
+        // GIVEN
+        let earlierMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: .init()
+        )
+        
+        let laterMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: earlierMessage.createdAt.addingTimeInterval(10)
+        )
+        
+        // WHEN
+        let payload: ChannelPayload = .dummy(
+            messages: [
+                laterMessage,
+                earlierMessage
+            ]
+        )
+        
+        // THEN
+        XCTAssertEqual(payload.newestMessage?.id, laterMessage.id)
+    }
+    
+    func test_newestMessage_whenMessagesAreSortedAsc() throws {
+        // GIVEN
+        let earlierMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: .init()
+        )
+        
+        let laterMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: earlierMessage.createdAt.addingTimeInterval(10)
+        )
+        
+        // WHEN
+        let payload: ChannelPayload = .dummy(
+            messages: [
+                earlierMessage,
+                laterMessage
+            ]
+        )
+        
+        // THEN
+        XCTAssertEqual(payload.newestMessage?.id, laterMessage.id)
+    }
 }

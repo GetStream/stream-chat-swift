@@ -29,6 +29,15 @@ struct ChannelPayload {
     let isHidden: Bool?
 }
 
+extension ChannelPayload {
+    /// Returns the newest message from `messages` in O(1) assuming messages are sorted by `createdAt`.
+    var newestMessage: MessagePayload? {
+        guard let first = messages.first, let last = messages.last else { return nil }
+        
+        return first.createdAt > last.createdAt ? first : last
+    }
+}
+
 extension ChannelPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case channel

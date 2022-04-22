@@ -30,8 +30,8 @@ open class ChatMessageDeliveryStatusView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
     
     /// The image view showing read state of the message.
-    open private(set) lazy var messageDeliveryReceiptImageView = UIImageView()
-        .withAccessibilityIdentifier(identifier: "messageDeliveryReceiptImageView")
+    open private(set) lazy var messageDeliveryChekmarkView: ChatMessageDeliveryStatusCheckmarkView = components
+        .messageDeliveryStatusCheckmarkView.init()
         .withoutAutoresizingMaskConstraints
     
     /// The container embedding `messageReadСountsLabel` and `messageDeliveryReceiptImageView`.
@@ -42,7 +42,6 @@ open class ChatMessageDeliveryStatusView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         
-        messageDeliveryReceiptImageView.contentMode = .center
         messageReadСountsLabel.textColor = appearance.colorPalette.accentPrimary
         messageReadСountsLabel.font = appearance.fonts.footnoteBold
     }
@@ -55,28 +54,16 @@ open class ChatMessageDeliveryStatusView: _View, ThemeProvider {
         stackView.distribution = .fill
         stackView.alignment = .fill
         stackView.addArrangedSubview(messageReadСountsLabel)
-        stackView.addArrangedSubview(messageDeliveryReceiptImageView)
+        stackView.addArrangedSubview(messageDeliveryChekmarkView)
         embed(stackView)
     }
     
     override open func updateContent() {
         super.updateContent()
         
-        messageDeliveryReceiptImageView.image = content.flatMap {
-            switch $0.message.localState {
-            case .pendingSend, .sending, .pendingSync, .syncing, .deleting:
-                return appearance.images.messageDeliveryStatusSending
-            case .sendingFailed, .syncingFailed, .deletingFailed:
-                return nil
-            case nil:
-                return $0.message.readByCount > 0
-                    ? appearance.images.messageDeliveryStatusRead
-                    : appearance.images.messageDeliveryStatusSent
-            }
+        messageDeliveryChekmarkView.content = content?.message.deliveryStatus.map {
+            .init(deliveryStatus: $0)
         }
-        messageDeliveryReceiptImageView.tintColor = (content?.message.readByCount ?? 0) > 0
-            ? appearance.colorPalette.accentPrimary
-            : appearance.colorPalette.textLowEmphasis
         
         messageReadСountsLabel.text = content.flatMap {
             guard

@@ -57,6 +57,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var reads: Set<ChannelReadDTO>
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
+    @NSManaged var previewMessage: MessageDTO?
     
     /// If the current channel is muted by the current user, `mute` contains details.
     @NSManaged var mute: ChannelMuteDTO?
@@ -221,6 +222,10 @@ extension NSManagedObjectContext {
         dto.reads = reads
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true) }
+        
+        if dto.needsPreviewUpdate(payload) {
+            dto.previewMessage = preview(for: payload.channel.cid)
+        }
 
         dto.updateOldestMessageAt(payload: payload)
 
@@ -384,6 +389,8 @@ extension ChatChannel {
                 .load(
                     for: dto.cid,
                     limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
+                    deletedMessagesVisibility: dto.managedObjectContext?.deletedMessagesVisibility ?? .visibleForCurrentUser,
+                    shouldShowShadowedMessages: dto.managedObjectContext?.shouldShowShadowedMessages ?? false,
                     context: context
                 )
                 .map { $0.asModel() }
@@ -438,6 +445,7 @@ extension ChatChannel {
             latestMessages: { fetchMessages() },
             pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },
             muteDetails: fetchMuteDetails,
+            previewMessage: { dto.previewMessage?.asModel() },
             underlyingContext: dto.managedObjectContext
         )
     }
@@ -455,5 +463,18 @@ private extension ChannelDTO {
                 oldestMessageAt = payloadOldestMessageAt
             }
         }
+    }
+    
+    /// Returns `true` if the payload holds messages sent after the current channel preview.
+    func needsPreviewUpdate(_ payload: ChannelPayload) -> Bool {
+        guard let preview = previewMessage else {
+            return true
+        }
+        
+        guard let newestMessage = payload.newestMessage else {
+            return false
+        }
+        
+        return newestMessage.createdAt > preview.createdAt
     }
 }
