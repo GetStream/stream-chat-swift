@@ -53,7 +53,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         
         if let userId = UserDefaults(suiteName: applicationGroupIdentifier)?.string(forKey: currentUserIdRegisteredForPush),
            let userCredentials = UserCredentials.builtInUsersByID(id: userId) {
-            presentChat(userCredentials: userCredentials, channelID: cid)
+            presentChat(userType: .credentials(userCredentials), channelID: cid)
         }
     }
 
@@ -68,13 +68,8 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
                 }
             }
     }
-
-    func presentChat(userCredentials: UserCredentials, channelID: ChannelId? = nil) {
-        // Create a token
-        guard let token = try? Token(rawValue: userCredentials.token) else {
-            fatalError("There has been a problem getting the token, please check Stream API status")
-        }
-        
+    
+    func setUpChat() {
         // Set the log level
         LogConfig.level = .warning
         LogConfig.formatters = [
@@ -87,19 +82,9 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         } else {
             Atlantis.stop()
         }
-
-        // Connect the User
+        
+        // Create Client
         ChatClient.shared = ChatClient(config: AppConfig.shared.chatClientConfig)
-        ChatClient.shared.connectUser(
-            userInfo: .init(id: userCredentials.id, name: userCredentials.name, imageURL: userCredentials.avatarURL),
-            token: token
-        ) { [weak self] error in
-            if let error = error {
-                log.error("connecting the user failed \(error)")
-                return
-            }
-            self?.setupRemoteNotifications()
-        }
         
         // Config
         Components.default.channelListRouter = DemoChatChannelListRouter.self
@@ -120,14 +105,66 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
                 ? Bundle.main.localizedString(forKey: key, value: nil, table: table)
                 : localizedString
         }
-
-        // Channels with the current user
-        let controller = ChatClient.shared
-            .channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
-        let chatList = DemoChannelListVC.make(with: controller)
         
+        // Setup connection observer
         connectionController = ChatClient.shared.connectionController()
         connectionController?.delegate = connectionDelegate
+    }
+
+    func presentChat(userType: DemoUserType, channelID: ChannelId? = nil) {
+        if ChatClient.shared == nil {
+            setUpChat()
+        }
+        
+        let controller: ChatChannelListController
+        
+        let connectCompletion: (Error?) -> Void = { [weak self] error in
+            if let error = error {
+                log.error("connecting the user failed \(error)")
+                if let self = self {
+                    DispatchQueue.main.async {
+                        self.navigationController.presentAlert(
+                            title: "Connecting failed",
+                            message: "Error: \(error)",
+                            okHandler: {
+                                DemoAppCoordinator.logout(window: self.navigationController.view.window!)
+                            }
+                        )
+                    }
+                }
+                return
+            }
+            self?.setupRemoteNotifications()
+        }
+        
+        switch userType {
+        case let .credentials(userCredentials):
+            // Create a token
+            guard let token = try? Token(rawValue: userCredentials.token) else {
+                fatalError("There has been a problem getting the token, please check Stream API status")
+            }
+            
+            // Connect the User
+            ChatClient.shared.connectUser(
+                userInfo: userCredentials.userInfo,
+                token: token,
+                completion: connectCompletion
+            )
+            
+            // Channels with the current user
+            controller = ChatClient.shared
+                .channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
+        case .anonymous:
+            ChatClient.shared.connectAnonymousUser(completion: connectCompletion)
+            controller = ChatClient.shared
+                .channelListController(query: .init(filter: .equal(.type, to: .messaging)))
+        case let .guest(userId):
+            ChatClient.shared.connectGuestUser(userInfo: .init(id: userId), completion: connectCompletion)
+            controller = ChatClient.shared
+                .channelListController(query: .init(filter: .equal(.type, to: .messaging)))
+        }
+        
+        let chatList = DemoChannelListVC.make(with: controller)
 
         navigationController.viewControllers = [chatList]
         navigationController.isNavigationBarHidden = false
@@ -153,7 +190,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     private func injectActions() {
         if let loginViewController = navigationController.topViewController as? LoginViewController {
             loginViewController.didRequestChatPresentation = { [weak self] in
-                self?.presentChat(userCredentials: $0)
+                self?.presentChat(userType: $0)
             }
         }
     }
@@ -178,6 +215,21 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         }
 
         return splitController
+    }
+    
+    static func logout(window: UIWindow) {
+        ChatClient.shared.disconnect()
+        guard let navigationController = UIStoryboard(name: "Main", bundle: Bundle.main)
+            .instantiateInitialViewController() as? UINavigationController else {
+            return
+        }
+        guard let sceneDelegate = window.windowScene?.delegate as? SceneDelegate else {
+            return
+        }
+        sceneDelegate.coordinator = DemoAppCoordinator(navigationController: navigationController)
+        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft, animations: {
+            window.rootViewController = navigationController
+        })
     }
 }
 

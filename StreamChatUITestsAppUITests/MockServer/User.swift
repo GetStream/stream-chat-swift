@@ -8,18 +8,14 @@ import Swifter
 extension StreamMockServer {
     
     func setUpUser(
-        _ user: [String: Any],
-        userDetails: [String: String]
-    ) -> [String: Any] {
-        var updatedUser = user
-        updatedUser[UserPayloadsCodingKeys.id.rawValue] =
-            userDetails[UserPayloadsCodingKeys.id.rawValue]
-        updatedUser[UserPayloadsCodingKeys.name.rawValue] =
-            userDetails[UserPayloadsCodingKeys.name.rawValue]
-        updatedUser[UserPayloadsCodingKeys.imageURL.rawValue] =
-            userDetails[UserPayloadsCodingKeys.imageURL.rawValue]
-        updatedUser["image_url"] =
-            userDetails[UserPayloadsCodingKeys.imageURL.rawValue]
-        return updatedUser
+        source: [String: Any]?,
+        details: [String: String]
+    ) -> [String: Any]? {
+        var user = source?[TopLevelKey.user] as? [String: Any]
+        user?[UserPayloadsCodingKeys.id.rawValue] = details[UserPayloadsCodingKeys.id.rawValue]
+        user?[UserPayloadsCodingKeys.name.rawValue] = details[UserPayloadsCodingKeys.name.rawValue]
+        user?[UserPayloadsCodingKeys.imageURL.rawValue] = details[UserPayloadsCodingKeys.imageURL.rawValue]
+        user?["image_url"] = details[UserPayloadsCodingKeys.imageURL.rawValue]
+        return user
     }
 }

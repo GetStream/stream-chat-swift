@@ -17,16 +17,19 @@ open class CommandLabelView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// The container stack view that layouts the label and the icon view.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "container")
 
     /// An `UILabel` that displays the command name.
     public private(set) lazy var nameLabel = UILabel()
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "nameLabel")
 
     /// An `UIImageView` that displays the icon of the command.
     public private(set) lazy var iconView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "iconView")
     
     override open var intrinsicContentSize: CGSize {
         container.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)

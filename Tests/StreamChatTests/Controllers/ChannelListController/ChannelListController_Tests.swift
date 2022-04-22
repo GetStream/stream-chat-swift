@@ -566,7 +566,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     // MARK: - Change propagation tests with filter block
 
-    func test_addingANewChannelThatMatchesFilter_shouldLinkItToQuery() throws {
+    func test_addingANewChannelThatMatchesFilter_shouldLinkItToQuery_shouldWatchIt() throws {
         let userId = UserId.unique
         var filterCalls = 0
         prepareControllerWithOwnerFilter(userId: userId, onFilterCall: { filterCalls += 1 })
@@ -597,6 +597,8 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Two channels were added to the DB, both were evaluated, only one was added to the list
         XCTAssertEqual(filterCalls, 2)
+        // Watches channel that was added to the list
+        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_cids, [ownedCid])
     }
 
     func test_updatingAChannelThatIsLinkedToTheQuery_shouldUnlinkIt() throws {

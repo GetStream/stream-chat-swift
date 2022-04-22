@@ -51,7 +51,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         XCTAssertEqual(outputEvent?.asEquatable, testEvent.asEquatable)
     }
     
-    func tests_middleware_handlesReactionDeletedEvent() throws {
+    func test_middleware_handlesReactionDeletedEvent() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
 
@@ -100,7 +100,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         XCTAssertTrue(message.latestReactions.isEmpty)
     }
 
-    func tests_middleware_handlesReactionUpdated() throws {
+    func test_middleware_handlesReactionUpdated() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)
@@ -152,7 +152,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         XCTAssertEqual(message.asModel().latestReactions, [reaction])
     }
 
-    func tests_middleware_handlesReactionNewEvent() throws {
+    func test_middleware_handlesReactionNewEvent() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)

@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
 
-        ChatClient.shared.currentUserController().addDevice(token: deviceToken) { error in
+        ChatClient.shared.currentUserController().addDevice(.apn(token: deviceToken)) { error in
             if let error = error {
                 log.error("adding a device failed with an error \(error)")
                 return

@@ -142,29 +142,18 @@ final class ChatClient_Tests: XCTestCase {
     /// When the initialization of a local DB fails for some reason (i.e. incorrect URL),
     /// use a DB in the in-memory configuration
     func test_clientDatabaseStackInitialization_useInMemoryWhenOnDiskFails() {
-        // Prepare a config with the local storage
-        let storeFolderURL = URL.newTemporaryDirectoryURL()
+        // Prepare a config with nil local storage
         var config = ChatClientConfig()
         config.isLocalStorageEnabled = true
-        config.localStorageFolderURL = storeFolderURL
+        config.localStorageFolderURL = nil
         
         var usedDatabaseKinds: [DatabaseContainer.Kind] = []
-        
-        // Prepare a queue with errors the db builder should return. We want to return an error only the first time
-        // when we expect the DB is created with the local DB option and we want it to fail.
-        var errorsToReturn = Queue<Error>()
-        errorsToReturn.push(TestError())
 
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdater_Mock.init
         env.databaseContainerBuilder = { kind, _, _, _, _, _ in
             usedDatabaseKinds.append(kind)
-            // Return error for the first time
-            if let error = errorsToReturn.pop() {
-                throw error
-            }
-            // Return a new container the second time
             return DatabaseContainer_Spy()
         }
         
@@ -177,7 +166,7 @@ final class ChatClient_Tests: XCTestCase {
         
         XCTAssertEqual(
             usedDatabaseKinds,
-            [.onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString)), .inMemory]
+            [.inMemory]
         )
     }
     
@@ -575,9 +564,10 @@ final class ChatClient_Tests: XCTestCase {
         // Disconnect chat client
         client.disconnect()
         
-        // Assert `flushRequestsQueue` is triggered, client is not recreated
+        // Assert client is not recreated
         XCTAssertTrue(testEnv.apiClient! === client.apiClient)
-        XCTAssertCall("flushRequestsQueue()", on: testEnv.apiClient!, times: 1)
+        // Assert `disconnect` on updater is triggered
+        XCTAssertTrue(testEnv.clientUpdater!.disconnect_called)
     }
     
     // MARK: - Background workers tests
@@ -888,7 +878,7 @@ private class TestEnvironment {
                 return self.webSocketClient!
             },
             databaseContainerBuilder: {
-                self.databaseContainer = try! DatabaseContainer_Spy(
+                self.databaseContainer = DatabaseContainer_Spy(
                     kind: $0,
                     shouldFlushOnStart: $1,
                     shouldResetEphemeralValuesOnStart: $2,

@@ -249,21 +249,25 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open func swipeableViewActionViews(for indexPath: IndexPath) -> [UIView] {
-        let deleteView = CellActionView().withoutAutoresizingMaskConstraints
+        let deleteView = CellActionView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "deleteView")
         deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
 
         deleteView.actionButton.backgroundColor = appearance.colorPalette.alert
         deleteView.actionButton.tintColor = .white
 
-        deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
+        deleteView.action = { [weak self] in self?.deleteButtonPressedForCell(at: indexPath) }
 
-        let moreView = CellActionView().withoutAutoresizingMaskConstraints
+        let moreView = CellActionView()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "moreView")
         moreView.actionButton.setImage(appearance.images.more, for: .normal)
 
         moreView.actionButton.backgroundColor = appearance.colorPalette.background1
         moreView.actionButton.tintColor = appearance.colorPalette.text
 
-        moreView.action = { self.moreButtonPressedForCell(at: indexPath) }
+        moreView.action = { [weak self] in self?.moreButtonPressedForCell(at: indexPath) }
 
         return [moreView, deleteView]
     }
@@ -315,7 +319,10 @@ open class ChatChannelListVC: _ViewController,
             completion: { _ in
                 // Move changes from NSFetchController also can mean an update of the content.
                 // Since a `moveItem` in collections do not update the content of the cell, we need to reload those cells.
-                self.collectionView.reloadItems(at: Array(indices.move.map(\.toIndex)))
+                let moveIndexes = Array(indices.move.map(\.toIndex))
+                if !moveIndexes.isEmpty {
+                    self.collectionView.reloadItems(at: moveIndexes)
+                }
             }
         )
     }

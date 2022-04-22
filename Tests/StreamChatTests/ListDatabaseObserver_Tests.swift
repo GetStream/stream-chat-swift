@@ -19,7 +19,7 @@ final class ListDatabaseObserver_Tests: XCTestCase {
         
         fetchRequest = NSFetchRequest(entityName: "TestManagedObject")
         fetchRequest.sortDescriptors = [.init(key: "testId", ascending: true)]
-        database = try! DatabaseContainer_Spy(
+        database = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "TestDataModel",
             bundle: .testTools
@@ -36,6 +36,7 @@ final class ListDatabaseObserver_Tests: XCTestCase {
     override func tearDown() {
         observer.releaseNotificationObservers?()
         fetchRequest = nil
+        observer = nil
 
         AssertAsync {
             Assert.canBeReleased(&observer)

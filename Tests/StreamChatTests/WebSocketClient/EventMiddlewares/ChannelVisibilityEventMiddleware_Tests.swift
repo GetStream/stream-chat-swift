@@ -27,7 +27,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
 
     // MARK: - Tests
 
-    func tests_middleware_forwardsOtherEvents() throws {
+    func test_middleware_forwardsOtherEvents() throws {
         let event = TestEvent()
 
         // Handle non-reaction event
@@ -37,7 +37,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
     }
 
-    func tests_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
+    func test_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
         // Set error to be thrown on write.
         let error = TestError()
         database.write_errorResponse = error

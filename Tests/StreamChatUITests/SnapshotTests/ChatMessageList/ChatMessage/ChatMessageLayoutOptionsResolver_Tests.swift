@@ -619,7 +619,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         // Create a channel where > 2 members can be
         let notDMChannel: ChatChannel = .mock(
-            cid: .init(type: .livestream, id: .unique)
+            cid: .init(type: .livestream, id: .unique),
+            memberCount: 5
         )
 
         // Calculate layout options for the message
@@ -646,7 +647,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         // Create a channel where > 2 members can be
         let notDMChannel: ChatChannel = .mock(
-            cid: .init(type: .livestream, id: .unique)
+            cid: .init(type: .livestream, id: .unique),
+            memberCount: 5
         )
 
         // Calculate layout options for the message
@@ -689,7 +691,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         // Create a channel where > 2 members can be
         let notDMChannel: ChatChannel = .mock(
-            cid: .init(type: .livestream, id: .unique)
+            cid: .init(type: .livestream, id: .unique),
+            memberCount: 5
         )
 
         // Calculate layout options for the second message
@@ -715,7 +718,9 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Create a DM channel
-        let directMessagesChannel: ChatChannel = .mockDMChannel()
+        let directMessagesChannel: ChatChannel = .mockDMChannel(
+            memberCount: 2
+        )
 
         // Calculate layout options for the message
         let layoutOptions = optionsResolver.optionsForMessage(
@@ -741,7 +746,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         // Create a channel where > 2 members can be
         let notDMChannel: ChatChannel = .mock(
-            cid: .init(type: .livestream, id: .unique)
+            cid: .init(type: .livestream, id: .unique),
+            memberCount: 5
         )
 
         // Calculate layout options for the message

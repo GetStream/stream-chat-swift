@@ -16,19 +16,24 @@ final class UserRobot: Robot {
     }
     
     @discardableResult
-    func openChannel() -> Self {
-        let channelCell = ChannelListPage.cells.firstMatch
+    func openChannel(channelCellIndex: Int = 0) -> Self {
+        let minExpectedCount = channelCellIndex + 1
+        let cells = ChannelListPage.cells.waitCount(minExpectedCount)
         
         // TODO: CIS-1737
-        if !channelCell.wait().exists {
+        if !cells.firstMatch.wait().exists {
             app.terminate()
             app.launch()
             login()
-            channelCell.wait().tap()
-        } else {
-            channelCell.tap()
         }
         
+        XCTAssertGreaterThanOrEqual(
+            cells.count,
+            minExpectedCount,
+            "Channel cell is not found at index #\(channelCellIndex)"
+        )
+        
+        cells.allElementsBoundByIndex[channelCellIndex].tap()
         return self
     }
     
@@ -121,15 +126,37 @@ final class UserRobot: Robot {
         )
     }
     
-    // TODO:
     @discardableResult
-    func replyToMessage(_ text: String) -> Self {
+    func replyToMessage(_ text: String, messageCellIndex: Int = 0) -> Self {
+        openContextMenu(messageCellIndex: messageCellIndex)
+        MessageListPage.ContextMenu.reply.wait().tap()
+        MessageListPage.Composer.inputField.obtainKeyboardFocus().typeText(text)
+        MessageListPage.Composer.sendButton.tap()
         return self
     }
     
-    // TODO:
     @discardableResult
-    func replyToMessageInThread(_ text: String, alsoSendInChannel: Bool = false) -> Self {
+    func replyToMessageInThread(
+        _ text: String,
+        alsoSendInChannel: Bool = false,
+        messageCellIndex: Int = 0
+    ) -> Self {
+        let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
+        if !threadCheckbox.exists {
+            openContextMenu(messageCellIndex: messageCellIndex)
+            MessageListPage.ContextMenu.threadReply.wait().tap()
+        }
+        if alsoSendInChannel {
+            threadCheckbox.wait().tap()
+        }
+        ThreadPage.Composer.inputField.obtainKeyboardFocus().typeText(text)
+        ThreadPage.Composer.sendButton.tap()
+        return self
+    }
+    
+    @discardableResult
+    func tapOnBackButton() -> Self {
+        app.back()
         return self
     }
 

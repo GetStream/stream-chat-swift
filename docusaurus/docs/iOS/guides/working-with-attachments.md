@@ -93,11 +93,12 @@ Components.default.filesAttachmentInjector = MyCustomAttachmentViewInjector.self
 Stream chat allows you to create your own types of attachments as well. The steps to follow to add support for a custom attachment type are the following:
 
 1. Extend `AttachmentType` to include the custom type
-1. Create a new AttachmentPayload struct to handle your custom attachment data
-1. Create a new AttachmentViewInjector 
+1. Create a new `AttachmentPayload` struct to handle your custom attachment data
+1. Create a typealias for `ChatMessageAttachment<AttachmentPayload>` which will be used for the content of the view
+1. Create a new `AttachmentViewInjector`
 1. Configure the SDK to use your view injector class to render custom attachments
 
-Let's assume we want to attach a workout session to a message, the payload of the attachment will looks like this:
+Let's assume we want to attach a workout session to a message, the payload of the attachment will look like this:
 
 
 ```json
@@ -111,12 +112,14 @@ Let's assume we want to attach a workout session to a message, the payload of th
 }
 ```
 
-Here's how we get around the first two steps:
+Here's how we get around the first three steps:
 
 ```swift
 public extension AttachmentType {
     static let workout = Self(rawValue: "workout")
 }
+
+public typealias ChatMessageWorkoutAttachment = ChatMessageAttachment<WorkoutAttachmentPayload>
 
 public struct WorkoutAttachmentPayload: AttachmentPayload {
     public static var type: AttachmentType = .workout

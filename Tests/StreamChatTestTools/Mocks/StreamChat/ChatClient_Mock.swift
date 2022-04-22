@@ -50,6 +50,15 @@ final class ChatClient_Mock: ChatClient {
         }
     }
 
+    public var currentUserId_mock: UserId? {
+        get {
+            super.currentUserId
+        }
+        set {
+            super.currentUserId = newValue
+        }
+    }
+    
     override func fetchCurrentUserIdFromDatabase() -> UserId? {
         fetchCurrentUserIdFromDatabase_called = true
 
@@ -120,7 +129,7 @@ extension ChatClient {
                     )
                 },
                 databaseContainerBuilder: {
-                    try DatabaseContainer_Spy(
+                    DatabaseContainer_Spy(
                         kind: $0,
                         shouldFlushOnStart: $1,
                         shouldResetEphemeralValuesOnStart: $2,
@@ -135,7 +144,7 @@ extension ChatClient {
 }
 
 extension ChatClient {
-    static var mock: ChatClient {
+    static var mock: ChatClient_Mock {
         ChatClient_Mock(
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
@@ -153,6 +162,18 @@ extension ChatClient {
     
     var mockDatabaseContainer: DatabaseContainer_Spy {
         databaseContainer as! DatabaseContainer_Spy
+    }
+    
+    var mockSyncRepository: SyncRepository_Spy {
+        syncRepository as! SyncRepository_Spy
+    }
+    
+    var mockMessageRepository: MessageRepository_Spy {
+        messageRepository as! MessageRepository_Spy
+    }
+    
+    var mockOfflineRequestsRepository: OfflineRequestsRepository_Spy {
+        offlineRequestsRepository as! OfflineRequestsRepository_Spy
     }
 
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
@@ -180,25 +201,23 @@ extension ChatClient.Environment {
                 )
             },
             databaseContainerBuilder: {
-                do {
-                    return try DatabaseContainer_Spy(
-                        kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
-                        shouldFlushOnStart: $1,
-                        shouldResetEphemeralValuesOnStart: $2,
-                        localCachingSettings: $3,
-                        deletedMessagesVisibility: $4,
-                        shouldShowShadowedMessages: $5
-                    )
-                } catch {
-                    XCTFail("Unable to initialize DatabaseContainer_Spy \(error)")
-                    fatalError("Unable to initialize DatabaseContainer_Spy \(error)")
-                }
+                DatabaseContainer_Spy(
+                    kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
+                    shouldFlushOnStart: $1,
+                    shouldResetEphemeralValuesOnStart: $2,
+                    localCachingSettings: $3,
+                    deletedMessagesVisibility: $4,
+                    shouldShowShadowedMessages: $5
+                )
             },
             requestEncoderBuilder: DefaultRequestEncoder.init,
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,
             notificationCenterBuilder: EventNotificationCenter.init,
-            clientUpdaterBuilder: ChatClientUpdater_Mock.init
+            clientUpdaterBuilder: ChatClientUpdater_Mock.init,
+            syncRepositoryBuilder: SyncRepository_Spy.init,
+            messageRepositoryBuilder: MessageRepository_Spy.init,
+            offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Spy.init
         )
     }
 

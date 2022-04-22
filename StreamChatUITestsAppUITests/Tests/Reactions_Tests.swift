@@ -4,9 +4,9 @@
 
 import XCTest
 
-final class ReactionsTests: StreamTestCase {
+final class Reactions_Tests: StreamTestCase {
     
-    func testAddReaction() throws {
+    func test_addsReaction() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -23,7 +23,7 @@ final class ReactionsTests: StreamTestCase {
         }
     }
     
-    func testDeleteReaction() throws {
+    func test_deletesReaction() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -45,7 +45,7 @@ final class ReactionsTests: StreamTestCase {
         }
     }
     
-    func testAddReactionToParticipantsMessage() throws {
+    func test_reactionIsAdded_whenReactingToParticipantsMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -68,7 +68,7 @@ final class ReactionsTests: StreamTestCase {
         }
     }
     
-    func testDeleteReactionToParticipantsMessage() throws {
+    func test_removesReaction_whenUnReactingToParticipantsMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -94,7 +94,7 @@ final class ReactionsTests: StreamTestCase {
         }
     }
     
-    func testParticipantAddsReaction() throws {
+    func test_reactionIsAddedByParticipant_whenReactingToUsersMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -106,6 +106,7 @@ final class ReactionsTests: StreamTestCase {
         AND("participant adds the reaction") {
             participantRobot
                 .waitForNewMessage(withText: message)
+                .readMessage()
                 .addReaction(type: .like)
         }
         THEN("the reaction is added") {
@@ -113,7 +114,7 @@ final class ReactionsTests: StreamTestCase {
         }
     }
 
-    func testParticipantDeletesReaction() throws {
+    func test_reactionIsRemovedByParticipant_whenUnReactingToUsersMessage() throws {
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -124,6 +125,7 @@ final class ReactionsTests: StreamTestCase {
         }
         AND("participant adds the reaction") {
             participantRobot
+                .readMessage()
                 .addReaction(type: .lol)
                 .waitForNewReaction()
         }

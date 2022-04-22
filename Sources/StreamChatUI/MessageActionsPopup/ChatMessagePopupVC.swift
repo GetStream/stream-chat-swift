@@ -12,6 +12,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// `ContainerStackView` encapsulating underlying views `reactionsController`, `actionsController` and `messageContentView`.
     open private(set) lazy var messageContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "messageContainerStackView")
 
     /// `UIView` with `UIBlurEffect` that is shown as a background.
     open private(set) lazy var blurView: UIView = {
@@ -23,11 +24,21 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         }
         return UIVisualEffectView(effect: blur)
             .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "blurView")
     }()
     
     /// Container view that holds `messageContentView`.
     open private(set) lazy var messageContentContainerView = UIView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "messageContentContainerView")
+
+    /// Container that holds `reactionsController` that displays reactions
+    open private(set) lazy var reactionsContainerView = ContainerStackView()
+        .withAccessibilityIdentifier(identifier: "reactionsContainerView")
+
+    /// Container that holds actions
+    open private(set) var actionsContainerStackView: ContainerStackView = ContainerStackView()
+        .withAccessibilityIdentifier(identifier: "actionsContainerStackView")
 
     /// Insets for `messageContentView`'s bubble view.
     public var messageBubbleViewInsets: UIEdgeInsets = .zero
@@ -96,7 +107,6 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         ]
 
         if let reactionsController = reactionsController {
-            let reactionsContainerView = ContainerStackView()
             messageContainerStackView.addArrangedSubview(reactionsContainerView)
             reactionsContainerView.addArrangedSubview(.spacer(axis: .horizontal))
             
@@ -131,7 +141,6 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
                 actionsController.view.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: actionsViewWidthMultiplier)
             )
 
-            let actionsContainerStackView = ContainerStackView()
             actionsContainerStackView.addArrangedSubview(.spacer(axis: .horizontal))
             messageContainerStackView.addArrangedSubview(actionsContainerStackView)
 

@@ -22,19 +22,19 @@ final class JSONDecoderTests: XCTestCase {
         super.tearDown()
     }
 
-    func testDecodingDateFromEmptyStringThrowException() {
+    func test_throwsException_whenDecodingDateFromEmptyString() {
         checkDecodingDateThrowException(dateString: "")
     }
 
-    func testDecodingDateFromInvalidStringThrowException() {
+    func test_throwsException_whenDecodingDateFromInvalidString() {
         checkDecodingDateThrowException(dateString: "123456")
     }
 
-    func testDecodingDateFromNonRFC3339DateThrowException() {
+    func test_throwsException_whenDecodingDateFromNonRFC3339Date() {
         checkDecodingDateThrowException(dateString: "2020-09-30T19:51:17")
     }
 
-    func testDecodingDateFromRFC3339DateWithMilliseconds() {
+    func test_decodes_whenDecodingDateFromRFC3339DateWithMilliseconds() {
         checkDateIsDecodingToComponents(
             dateString: "2020-08-24T17:28:04.123Z",
             year: 2020,
@@ -47,7 +47,7 @@ final class JSONDecoderTests: XCTestCase {
         )
     }
 
-    func testDecodingDateFromRFC3339DateWithEmptyMilliseconds() {
+    func test_decodes_whenDecodingDateFromRFC3339DateWithEmptyMilliseconds() {
         checkDateIsDecodingToComponents(
             dateString: "2002-12-02T15:11:12Z",
             year: 2002,
@@ -59,7 +59,7 @@ final class JSONDecoderTests: XCTestCase {
         )
     }
 
-    func testDecodingDateFromRFC3339DateWithMinusTimezone() {
+    func test_decodes_whenDecodingDateFromRFC3339DateWithMinusTimezone() {
         checkDateIsDecodingToComponents(
             dateString: "2002-10-02T07:12:13-03:00",
             year: 2002,
@@ -71,7 +71,7 @@ final class JSONDecoderTests: XCTestCase {
         )
     }
 
-    func testDecodingDateFromRFC3339DateWithPlusTimezone() {
+    func test_decodes_whenDecodingDateFromRFC3339DateWithPlusTimezone() {
         checkDateIsDecodingToComponents(
             dateString: "2002-10-02T10:12:13+02:00",
             year: 2002,
@@ -83,7 +83,7 @@ final class JSONDecoderTests: XCTestCase {
         )
     }
 
-    func testDecodingDateFromRFC3339DateWithPlusZeroTimezone() {
+    func test_decodes_whenDecodingDateFromRFC3339DateWithPlusZeroTimezone() {
         checkDateIsDecodingToComponents(
             dateString: "2002-10-02T10:12:13+00:00",
             year: 2002,
@@ -95,7 +95,7 @@ final class JSONDecoderTests: XCTestCase {
         )
     }
 
-    func testDecodingDateFromRFC3339DateWithMinusZeroTimezone() {
+    func test_decodes_whenDecodingDateFromRFC3339DateWithMinusZeroTimezone() {
         checkDateIsDecodingToComponents(
             dateString: "2002-10-02T10:12:13-00:00",
             year: 2002,
@@ -107,7 +107,7 @@ final class JSONDecoderTests: XCTestCase {
         )
     }
 
-    func testDecodingDateBefore1970() {
+    func test_decodes_whenDecodingDateBefore1970() {
         checkDateIsDecodingToComponents(
             dateString: "1936-10-02T10:12:13Z",
             year: 1936,

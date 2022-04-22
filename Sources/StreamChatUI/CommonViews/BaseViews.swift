@@ -6,6 +6,12 @@ import Foundation
 import StreamChat
 import UIKit
 
+extension NSObject {
+    var classIdentifier: String {
+        "\(type(of: self))"
+    }
+}
+
 // Protocol that provides accessibility features
 protocol AccessibilityView {
     // Identifier for view
@@ -17,7 +23,7 @@ protocol AccessibilityView {
 
 extension AccessibilityView where Self: UIView {
     var accessibilityViewIdentifier: String {
-        "\(type(of: self))"
+        classIdentifier
     }
 
     func setAccessibilityIdentifier() {
