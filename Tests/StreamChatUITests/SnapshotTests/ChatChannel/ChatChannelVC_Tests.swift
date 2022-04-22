@@ -405,6 +405,7 @@ private extension ChatChannelVC_Tests {
             id: .unique,
             cid: .unique,
             text: text,
+            type: .deleted,
             author: .mock(id: .unique),
             deletedAt: Date(),
             isSentByCurrentUser: isSentByCurrentUser
