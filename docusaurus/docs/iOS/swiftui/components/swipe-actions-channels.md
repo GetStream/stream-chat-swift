@@ -81,21 +81,22 @@ If the user interface or logic don't match your app's requirements, you can easi
 ```swift
 func makeMoreChannelActionsView(
     for channel: ChatChannel,
+    swipedChannelId: Binding<String?>,
     onDismiss: @escaping () -> Void,
-    onError: @escaping (Error) -> Void) -> some View {
-        VStack {
-            Text("This is our custom view")
-            Spacer()
-            HStack {
-                Button {
-                    onDismiss()
-                } label: {
-                    Text("Action")
-                }
-
+    onError: @escaping (Error) -> Void
+) -> some View {
+    VStack {
+        Text("This is our custom view")
+        Spacer()
+        HStack {
+            Button {
+                onDismiss()
+            } label: {
+                Text("Action")
             }
-            .padding()
         }
+        .padding()
+    }
 }
 ```
 
