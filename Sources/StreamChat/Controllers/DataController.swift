@@ -49,9 +49,12 @@ public class DataController: Controller {
     /// - Parameter completion: Called when the controller has finished fetching remote data. If the data fetching fails,
     /// the `error` variable contains more details about the problem.
     ///
+    // swiftlint:disable unavailable_function
     public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         fatalError("`synchronize` method must be overriden by the subclass.")
     }
+
+    // swiftlint:enable unavailable_function
 
     /// The queue which is used to perform callback calls. The default value is `.main`.
     public var callbackQueue: DispatchQueue = .main
