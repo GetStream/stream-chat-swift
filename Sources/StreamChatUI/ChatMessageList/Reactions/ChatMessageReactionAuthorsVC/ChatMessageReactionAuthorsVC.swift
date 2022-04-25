@@ -5,18 +5,13 @@
 import StreamChat
 import UIKit
 
-// swiftlint:disable colon
-
 /// A view controller that renders all the reactions of a message.
-open class ChatMessageReactionAuthorsVC:
-    _ViewController,
+open class ChatMessageReactionAuthorsVC: _ViewController,
     ThemeProvider,
     ChatMessageControllerDelegate,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UICollectionViewDelegateFlowLayout {
-    // swiftlint:enable colon
-    
     /// The message controller of message that the reactions belong.
     open var messageController: ChatMessageController!
 

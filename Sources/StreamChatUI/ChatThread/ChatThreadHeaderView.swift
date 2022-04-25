@@ -5,15 +5,10 @@
 import StreamChat
 import UIKit
 
-// swiftlint:disable colon
-
 /// The view that displays channel information on the thread header
-open class ChatThreadHeaderView:
-    _View,
+open class ChatThreadHeaderView: _View,
     ThemeProvider,
     ChatChannelControllerDelegate {
-    // swiftlint:enable colon
-    
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController?
 
