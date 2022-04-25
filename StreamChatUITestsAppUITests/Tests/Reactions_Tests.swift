@@ -106,6 +106,7 @@ final class Reactions_Tests: StreamTestCase {
         AND("participant adds the reaction") {
             participantRobot
                 .waitForNewMessage(withText: message)
+                .readMessage()
                 .addReaction(type: .like)
         }
         THEN("the reaction is added") {
@@ -124,6 +125,7 @@ final class Reactions_Tests: StreamTestCase {
         }
         AND("participant adds the reaction") {
             participantRobot
+                .readMessage()
                 .addReaction(type: .lol)
                 .waitForNewReaction()
         }
