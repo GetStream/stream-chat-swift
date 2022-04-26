@@ -25,7 +25,7 @@ final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
             .authorName,
             .threadInfo,
             .reactions,
-            .onlyVisibleForYouIndicator,
+            .onlyVisibleToYouIndicator,
             .errorIndicator
         ])
         

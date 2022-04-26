@@ -10,7 +10,7 @@ on:
 jobs:
   release:
     name: Publish new release
-    runs-on: macos-11
+    runs-on: macos-12
     if: github.event.pull_request.merged == true # only merged pull requests must trigger this job
     steps:
       - name: Install Bot SSH Key
@@ -46,4 +46,5 @@ jobs:
         env:
           GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: bundle exec fastlane publish_release version:${{ env.RELEASE_VERSION }}
