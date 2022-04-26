@@ -1684,6 +1684,8 @@
 		C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7504273936D900F93B34 /* WSCompression.swift */; };
 		C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */; };
 		C1FFD9FA27ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */; };
+		CF33B3AC28171BE500C84CDB /* CountdownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF33B3AB28171BE500C84CDB /* CountdownButton.swift */; };
+		CF33B3AD28171BE500C84CDB /* CountdownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF33B3AB28171BE500C84CDB /* CountdownButton.swift */; };
 		CF8268B92800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8268B82800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift */; };
 		CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
 		CFA41B6827DA952300427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
@@ -3310,6 +3312,7 @@
 		C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint_Tests.swift; sourceTree = "<group>"; };
 		C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO.swift; sourceTree = "<group>"; };
 		C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Filter+ChatChannel.swift"; sourceTree = "<group>"; };
+		CF33B3AB28171BE500C84CDB /* CountdownButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownButton.swift; sourceTree = "<group>"; };
 		CF8268B82800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelHeaderView_Tests.swift; sourceTree = "<group>"; };
 		CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemEnvironment+XStreamClient.swift"; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extensions.swift"; sourceTree = "<group>"; };
@@ -6751,6 +6754,7 @@
 			isa = PBXGroup;
 			children = (
 				22753598257C442300D1FDB6 /* SendButton.swift */,
+				CF33B3AB28171BE500C84CDB /* CountdownButton.swift */,
 			);
 			path = SendButton;
 			sourceTree = "<group>";
@@ -8531,6 +8535,7 @@
 				AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */,
 				C1FC2F6C27416E150062530F /* LinkedList.swift in Sources */,
 				C1FC2F7A27416E150062530F /* ImageTask.swift in Sources */,
+				CF33B3AC28171BE500C84CDB /* CountdownButton.swift in Sources */,
 				883998212576397900294DB9 /* ChatMessageGalleryView.swift in Sources */,
 				F64DFA8C26282F8B00F7F6F9 /* CGPoint+Extensions.swift in Sources */,
 				ADBBDA28279F0E9B00E47B1C /* ChannelNameFormatter.swift in Sources */,
@@ -9907,6 +9912,7 @@
 				C121EBAC2746A1E800023E4C /* InputChatMessageView.swift in Sources */,
 				C121EBAD2746A1E800023E4C /* InputTextView.swift in Sources */,
 				C121EBAE2746A1E800023E4C /* CommandLabelView.swift in Sources */,
+				CF33B3AD28171BE500C84CDB /* CountdownButton.swift in Sources */,
 				C121EBAF2746A1E800023E4C /* ListCollectionViewLayout.swift in Sources */,
 				C121EBB02746A1E900023E4C /* CellSeparatorView.swift in Sources */,
 				C121EBB12746A1E900023E4C /* ContainerStackView.swift in Sources */,

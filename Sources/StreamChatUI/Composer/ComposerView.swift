@@ -59,6 +59,11 @@ open class ComposerView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "sendButton")
 
+    /// A button for showing a countdown when Slow Mode is active.
+    public private(set) lazy var countdownButton: UIButton = components
+        .countdownButton.init()
+        .withoutAutoresizingMaskConstraints
+    
     /// A button to confirm when editing a message.
     public private(set) lazy var confirmButton: UIButton = components
         .confirmButton.init()
@@ -102,6 +107,11 @@ open class ComposerView: _View, ThemeProvider {
         .checkmarkControl.init()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "checkboxControl")
+    
+    /// Constraint for updating the width of the countdown button depending on the number of digits being shown.
+    public private(set) lazy var countdownButtonWidthConstraint: NSLayoutConstraint = {
+        countdownButton.widthAnchor.constraint(equalToConstant: 32)
+    }()
 
     override open func setUpAppearance() {
         super.setUpAppearance()
@@ -149,7 +159,9 @@ open class ComposerView: _View, ThemeProvider {
         trailingContainer.distribution = .equal
         trailingContainer.directionalLayoutMargins = .zero
         trailingContainer.addArrangedSubview(sendButton)
+        trailingContainer.addArrangedSubview(countdownButton)
         trailingContainer.addArrangedSubview(confirmButton)
+        countdownButton.isHidden = true
         confirmButton.isHidden = true
 
         leadingContainer.axis = .horizontal
@@ -179,5 +191,8 @@ open class ComposerView: _View, ThemeProvider {
                 button.pin(anchors: [.width], to: 28)
                 button.pin(anchors: [.height], to: 40)
             }
+        
+        countdownButtonWidthConstraint.isActive = true
+        countdownButton.pin(anchors: [.height], to: 32)
     }
 }

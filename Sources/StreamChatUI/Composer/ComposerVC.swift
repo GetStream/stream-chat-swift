@@ -37,7 +37,8 @@ open class ComposerVC: _ViewController,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate,
-    InputTextViewClipboardAttachmentDelegate {
+    InputTextViewClipboardAttachmentDelegate,
+    ChatChannelControllerDelegate {
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -58,6 +59,8 @@ open class ComposerVC: _ViewController,
         public let command: Command?
         /// The extra data assigned to message.
         public var extraData: [String: RawJSON]
+        /// The Slow mode countdown duration for the channel
+        public var countdownDuration: Int
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
@@ -83,7 +86,8 @@ open class ComposerVC: _ViewController,
             attachments: [AnyAttachmentPayload],
             mentionedUsers: Set<ChatUser>,
             command: Command?,
-            extraData: [String: RawJSON] = [:]
+            extraData: [String: RawJSON] = [:],
+            countdownDuration: Int = 0
         ) {
             self.text = text
             self.state = state
@@ -94,6 +98,7 @@ open class ComposerVC: _ViewController,
             self.mentionedUsers = mentionedUsers
             self.command = command
             self.extraData = extraData
+            self.countdownDuration = countdownDuration
         }
 
         /// Creates a new content struct with all empty data.
@@ -107,7 +112,8 @@ open class ComposerVC: _ViewController,
                 attachments: [],
                 mentionedUsers: [],
                 command: nil,
-                extraData: [:]
+                extraData: [:],
+                countdownDuration: 0
             )
         }
 
@@ -122,7 +128,8 @@ open class ComposerVC: _ViewController,
                 attachments: [],
                 mentionedUsers: [],
                 command: nil,
-                extraData: [:]
+                extraData: [:],
+                countdownDuration: countdownDuration
             )
         }
 
@@ -139,7 +146,8 @@ open class ComposerVC: _ViewController,
                 attachments: attachments,
                 mentionedUsers: message.mentionedUsers,
                 command: command,
-                extraData: message.extraData
+                extraData: message.extraData,
+                countdownDuration: countdownDuration
             )
         }
 
@@ -156,7 +164,8 @@ open class ComposerVC: _ViewController,
                 attachments: attachments,
                 mentionedUsers: mentionedUsers,
                 command: command,
-                extraData: extraData
+                extraData: extraData,
+                countdownDuration: countdownDuration
             )
         }
 
@@ -170,7 +179,8 @@ open class ComposerVC: _ViewController,
                 attachments: [],
                 mentionedUsers: mentionedUsers,
                 command: command,
-                extraData: extraData
+                extraData: extraData,
+                countdownDuration: countdownDuration
             )
         }
     }
@@ -276,7 +286,15 @@ open class ComposerVC: _ViewController,
 
     override open func setUp() {
         super.setUp()
-
+        
+        if let cooldownDuration = channelController?.channel?.cooldownDuration,
+           cooldownDuration > 0 {
+            content.countdownDuration = cooldownDuration
+        }
+        
+        checkChannelCountdown()
+        
+        channelController?.delegate = self
         composerView.inputMessageView.textView.delegate = self
         
         // Set the delegate for handling the pasting of UIImages in the text view
@@ -434,6 +452,7 @@ open class ComposerVC: _ViewController,
         }
 
         content.clear()
+        checkChannelCountdown()
     }
     
     /// Shows a photo/media picker.
@@ -796,6 +815,43 @@ open class ComposerVC: _ViewController,
             log.assertionFailure(error.localizedDescription)
         }
     }
+    
+    open func checkChannelCountdown() {
+        if content.countdownDuration > 0 {
+            var duration = content.countdownDuration
+            
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+                guard let self = self else { return }
+                if duration == 0 {
+                    timer.invalidate()
+                    
+                    self.composerView.countdownButton.isHidden = true
+                    
+                    if self.content.state == .edit {
+                        self.composerView.confirmButton.isHidden = false
+                    } else {
+                        self.composerView.sendButton.isHidden = false
+                    }
+                    
+                    self.composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.message
+                    self.composerView.isUserInteractionEnabled = true
+                } else {
+                    self.composerView.sendButton.isHidden = true
+                    self.composerView.countdownButton.isHidden = false
+                    self.composerView.confirmButton.isHidden = true
+                    
+                    self.composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.slowMode
+                    self.composerView.isUserInteractionEnabled = false
+                    
+                    self.composerView.countdownButtonWidthConstraint.constant = duration >= 10 ? 40 : 32
+                    
+                    self.composerView.countdownButton.setTitle("\(duration)", for: .disabled)
+                    
+                    duration -= 1
+                }
+            }
+        }
+    }
 
     // MARK: - UITextViewDelegate
 
@@ -904,6 +960,18 @@ open class ComposerVC: _ViewController,
                 error: error
             )
         }
+    }
+    
+    // MARK: - ChannelControllerDelegate
+    
+    public func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
+        guard let cooldownDuration = channelController.channel?.cooldownDuration,
+              cooldownDuration != content.countdownDuration else {
+            return
+        }
+
+        content.countdownDuration = cooldownDuration
+        checkChannelCountdown()
     }
     
     // MARK: - Private
