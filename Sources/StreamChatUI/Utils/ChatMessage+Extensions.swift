@@ -47,15 +47,6 @@ public extension ChatMessage {
         return isDeleted ? L10n.Message.deletedMessagePlaceholder : text
     }
 
-    /// A boolean value that checks if the message is visible for current user only.
-    var isOnlyVisibleForCurrentUser: Bool {
-        guard isSentByCurrentUser else {
-            return false
-        }
-
-        return isDeleted || type == .ephemeral
-    }
-
     /// Returns last active thread participant.
     var lastActiveThreadParticipant: ChatUser? {
         func sortingCriteriaDate(_ user: ChatUser) -> Date {
@@ -80,5 +71,21 @@ public extension ChatMessage {
     var shouldRenderAsJumbomoji: Bool {
         guard attachmentCounts.isEmpty, let textContent = textContent, !textContent.isEmpty else { return false }
         return textContent.count <= 3 && textContent.containsOnlyEmoji
+    }
+}
+
+public extension ChatMessage {
+    /// A boolean value that checks if the message is visible for current user only.
+    @available(
+        *,
+        deprecated,
+        message: "This property is deprecated because it does not take `deletedMessagesVisability` setting into account."
+    )
+    var isOnlyVisibleForCurrentUser: Bool {
+        guard isSentByCurrentUser else {
+            return false
+        }
+
+        return isDeleted || type == .ephemeral
     }
 }

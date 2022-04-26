@@ -346,7 +346,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     // MARK: - Only visible for current user
 
-    func test_optionsForMessage_whenMessageIsNotSentByCurrentUser_doesNotIncludeOnlyVisibleForYouIndicator() {
+    func test_optionsForMessage_whenMessageIsNotSentByCurrentUser_doesNotIncludeOnlyVisibleToYouIndicator() {
         // Create ephemeral message sent by another user
         let messageSentByAnotherUser: ChatMessage = .mock(
             id: .unique,
@@ -364,11 +364,11 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             appearance: appearance
         )
 
-        // Assert `.onlyVisibleForYouIndicator` is included
-        XCTAssertFalse(layoutOptions.contains(.onlyVisibleForYouIndicator))
+        // Assert `.onlyVisibleToYouIndicator` is included
+        XCTAssertFalse(layoutOptions.contains(.onlyVisibleToYouIndicator))
     }
 
-    func test_optionsForMessage_whenMessageSentByCurrentUserIsEphemeral_includesOnlyVisibleForYouIndicator() {
+    func test_optionsForMessage_whenMessageSentByCurrentUserIsEphemeral_includesOnlyVisibleToYouIndicator() {
         // Create ephemeral message sent by current user
         let ephemeralMessageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -387,20 +387,26 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             appearance: appearance
         )
 
-        // Assert `.onlyVisibleForYouIndicator` is included
-        XCTAssertTrue(layoutOptions.contains(.onlyVisibleForYouIndicator))
+        // Assert `.onlyVisibleToYouIndicator` is included
+        XCTAssertTrue(layoutOptions.contains(.onlyVisibleToYouIndicator))
     }
-
-    func test_optionsForMessage_whenMessageSentByCurrentUserIsDeleted_includesOnlyVisibleForYouIndicator() {
+    
+    func test_optionsForMessage_whenMessageSentByTheCurrentUserIsDeleted_includesOnlyVisibleToYouIndicator() {
         // Create ephemeral message sent by current user
         let deletedMessageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
             text: .unique,
+            type: .deleted,
             author: .mock(id: .unique),
             deletedAt: .unique,
             isSentByCurrentUser: true
         )
+        
+        // Set the config with `deletedMessagesVisibility == .visibleForCurrentUser`
+        var config = ChatClientConfig(apiKey: .init(.unique))
+        config.deletedMessagesVisibility = .visibleForCurrentUser
+        optionsResolver.config = config
 
         // Calculate layout options for the message
         let layoutOptions = optionsResolver.optionsForMessage(
@@ -410,8 +416,39 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             appearance: appearance
         )
 
-        // Assert `.onlyVisibleForYouIndicator` is included
-        XCTAssertTrue(layoutOptions.contains(.onlyVisibleForYouIndicator))
+        // Assert `.onlyVisibleToYouIndicator` is included
+        XCTAssertTrue(layoutOptions.contains(.onlyVisibleToYouIndicator))
+    }
+    
+    func test_optionsForMessage_whenMessageSentByTheCurrentUserIsDeleted_doesNotIncludeOnlyVisibleToYouIndicator() {
+        // Create ephemeral message sent by current user
+        let deletedMessageSentByCurrentUser: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            type: .deleted,
+            author: .mock(id: .unique),
+            deletedAt: .unique,
+            isSentByCurrentUser: true
+        )
+
+        for deletedMessagesVisibility in [ChatClientConfig.DeletedMessageVisibility.alwaysVisible, .alwaysHidden] {
+            // Set the config with the given `deletedMessagesVisibility`
+            var config = ChatClientConfig(apiKey: .init(.unique))
+            config.deletedMessagesVisibility = deletedMessagesVisibility
+            optionsResolver.config = config
+            
+            // Calculate layout options for the message
+            let layoutOptions = optionsResolver.optionsForMessage(
+                at: .init(item: 0, section: 0),
+                in: .mock(cid: .unique),
+                with: .init([deletedMessageSentByCurrentUser]),
+                appearance: appearance
+            )
+
+            // Assert `.onlyVisibleToYouIndicator` is not included
+            XCTAssertFalse(layoutOptions.contains(.onlyVisibleToYouIndicator))
+        }
     }
 
     // MARK: - Text
@@ -1271,6 +1308,92 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 messages: .init([deletedMessage, messageFollowedByErrorMessage])
             )
         )
+    }
+    
+    // MARK: - showOnlyVisibleToYouIndicator
+    
+    func test_showOnlyVisibleToYouIndicator_whenMessageIsSentByAnotherUser_returnsFalse() {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            type: .deleted,
+            author: .mock(id: .unique),
+            deletedAt: .unique,
+            isSentByCurrentUser: false
+        )
+
+        XCTAssertFalse(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+    }
+
+    func test_showOnlyVisibleToYouIndicator_whenMessageIsEphemeralAndSentByCurrentUser_returnsTrue() {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            type: .ephemeral,
+            author: .mock(id: .unique),
+            isSentByCurrentUser: true
+        )
+
+        XCTAssertTrue(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+    }
+
+    func test_showOnlyVisibleToYouIndicator_whenMessageIsDeletedAndSentByCurrentUser_returnsTrue() {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            type: .deleted,
+            author: .mock(id: .unique),
+            deletedAt: .unique,
+            isSentByCurrentUser: true
+        )
+        
+        var config = ChatClientConfig(apiKey: .init(.unique))
+        config.deletedMessagesVisibility = .visibleForCurrentUser
+        optionsResolver.config = config
+
+        XCTAssertTrue(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+    }
+    
+    func test_showOnlyVisibleToYouIndicator_whenMessageIsDeletedAndSentByCurrentUser_returnsFalse() {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            deletedAt: .unique,
+            isSentByCurrentUser: true
+        )
+        
+        for deletedMessagesVisibility in [ChatClientConfig.DeletedMessageVisibility.alwaysVisible, .alwaysHidden] {
+            var config = ChatClientConfig(apiKey: .init(.unique))
+            config.deletedMessagesVisibility = deletedMessagesVisibility
+            optionsResolver.config = config
+            
+            XCTAssertFalse(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+        }
+    }
+    
+    func test_showOnlyVisibleToYouIndicator_whenMessageNotDeletedAndSentByCurrentUser_returnsFalse() {
+        var config = ChatClientConfig(apiKey: .init(.unique))
+        config.deletedMessagesVisibility = .visibleForCurrentUser
+        optionsResolver.config = config
+        
+        for type in [MessageType.regular, .reply, .system, .error] {
+            let message: ChatMessage = .mock(
+                id: .unique,
+                cid: .unique,
+                text: .unique,
+                type: type,
+                author: .mock(id: .unique),
+                deletedAt: .unique,
+                isSentByCurrentUser: true
+            )
+                        
+            XCTAssertFalse(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+        }
     }
 }
 
