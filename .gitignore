@@ -4,6 +4,8 @@
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+Package.resolved
+StreamChat.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 ## Build generated
 build/

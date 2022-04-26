@@ -7922,8 +7922,8 @@
 		8AD5EC8622E9A3E8005CFAC9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1320;
-				LastUpgradeCheck = 1320;
+				LastSwiftUpdateCheck = 1330;
+				LastUpgradeCheck = 1330;
 				ORGANIZATIONNAME = "Stream.io Inc";
 				TargetAttributes = {
 					437FCA0326D67BE40000223C = {
@@ -12256,32 +12256,32 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/httpswift/swifter.git";
 			requirement = {
-				branch = stable;
-				kind = branch;
+				kind = revision;
+				revision = 1e4f51c92d7ca486242d8bf0722b99de2c3531aa;
 			};
 		};
 		A3D15D8C27E9D839006B34D7 /* XCRemoteSwiftPackageReference "stream-chat-swift-test-helpers" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-chat-swift-test-helpers.git";
 			requirement = {
-				branch = develop;
-				kind = branch;
+				kind = revision;
+				revision = 81c9e470ebf07b624bcec84b336f9494c77a1717;
 			};
 		};
 		AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.8.2;
+				kind = exactVersion;
+				version = 1.8.2;
 			};
 		};
 		ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ProxymanApp/atlantis";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				kind = exactVersion;
+				version = 1.16.0;
 			};
 		};
 		C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */ = {
