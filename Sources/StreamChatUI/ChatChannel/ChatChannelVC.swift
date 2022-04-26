@@ -239,6 +239,14 @@ open class ChatChannelVC:
             channelController.markRead()
         }
         messageListVC.updateMessages(with: changes)
+        
+        guard let cooldownDuration = channelController.channel?.cooldownDuration,
+              cooldownDuration != messageComposerVC.content.countdownDuration else {
+            return
+        }
+
+        messageComposerVC.content.countdownDuration = cooldownDuration
+        messageComposerVC.checkChannelCountdown()
     }
 
     open func channelController(

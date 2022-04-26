@@ -37,8 +37,7 @@ open class ComposerVC: _ViewController,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate,
-    InputTextViewClipboardAttachmentDelegate,
-    ChatChannelControllerDelegate {
+    InputTextViewClipboardAttachmentDelegate {
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -294,7 +293,6 @@ open class ComposerVC: _ViewController,
         
         checkChannelCountdown()
         
-        channelController?.delegate = self
         composerView.inputMessageView.textView.delegate = self
         
         // Set the delegate for handling the pasting of UIImages in the text view
@@ -819,37 +817,41 @@ open class ComposerVC: _ViewController,
     open func checkChannelCountdown() {
         if content.countdownDuration > 0 {
             var duration = content.countdownDuration
-            
-            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            let timer = Timer.scheduledTimer(
+                withTimeInterval: 1,
+                repeats: true
+            ) { [weak self] timer in
                 guard let self = self else { return }
                 if duration == 0 {
                     timer.invalidate()
-                    
+                        
                     self.composerView.countdownButton.isHidden = true
-                    
+                        
                     if self.content.state == .edit {
                         self.composerView.confirmButton.isHidden = false
                     } else {
                         self.composerView.sendButton.isHidden = false
                     }
-                    
+                        
                     self.composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.message
                     self.composerView.isUserInteractionEnabled = true
                 } else {
                     self.composerView.sendButton.isHidden = true
                     self.composerView.countdownButton.isHidden = false
                     self.composerView.confirmButton.isHidden = true
-                    
+                        
                     self.composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.slowMode
                     self.composerView.isUserInteractionEnabled = false
-                    
+                        
                     self.composerView.countdownButtonWidthConstraint.constant = duration >= 10 ? 40 : 32
-                    
+                        
                     self.composerView.countdownButton.setTitle("\(duration)", for: .disabled)
-                    
+                        
                     duration -= 1
                 }
             }
+            
+            RunLoop.current.add(timer, forMode: .common)
         }
     }
 
@@ -960,18 +962,6 @@ open class ComposerVC: _ViewController,
                 error: error
             )
         }
-    }
-    
-    // MARK: - ChannelControllerDelegate
-    
-    public func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
-        guard let cooldownDuration = channelController.channel?.cooldownDuration,
-              cooldownDuration != content.countdownDuration else {
-            return
-        }
-
-        content.countdownDuration = cooldownDuration
-        checkChannelCountdown()
     }
     
     // MARK: - Private
