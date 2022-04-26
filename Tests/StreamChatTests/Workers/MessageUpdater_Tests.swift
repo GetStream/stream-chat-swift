@@ -99,7 +99,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)
+            wait(for: [exp], timeout: 1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -157,7 +157,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)
+            wait(for: [exp], timeout: 1)
             
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -367,7 +367,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)
+            wait(for: [exp], timeout: 1)
             
             // Create current user in the database
             try database.createCurrentUser(id: currentUserId)
@@ -406,7 +406,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)
+            wait(for: [exp], timeout: 1)
             messageRepository.clear()
 
             // Create current user in the database
@@ -457,7 +457,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)
+            wait(for: [exp], timeout: 1)
             
             // Create current user in the database
             try database.createCurrentUser(id: currentUserId)
@@ -498,7 +498,7 @@ final class MessageUpdater_Tests: XCTestCase {
             }
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 1)
 
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
@@ -540,7 +540,7 @@ final class MessageUpdater_Tests: XCTestCase {
             }
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 1)
 
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
@@ -1597,7 +1597,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)
+            wait(for: [exp], timeout: 1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -1641,7 +1641,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)
+            wait(for: [exp], timeout: 1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -1695,7 +1695,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)
+            wait(for: [exp], timeout: 1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -1746,7 +1746,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 0.1)
+            wait(for: [exp], timeout: 1)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)

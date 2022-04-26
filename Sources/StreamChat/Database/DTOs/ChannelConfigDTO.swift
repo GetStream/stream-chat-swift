@@ -37,9 +37,11 @@ final class ChannelConfigDTO: NSManagedObject {
             urlEnrichmentEnabled: urlEnrichmentEnabled,
             messageRetention: messageRetention,
             maxMessageLength: Int(maxMessageLength),
-            commands: commands
-                .compactMap { $0 as? CommandDTO }
-                .map { $0.asModel() },
+            commands: Array(Set(
+                commands
+                    .compactMap { $0 as? CommandDTO }
+                    .map { $0.asModel() }
+            )),
             createdAt: createdAt,
             updatedAt: updatedAt
         )

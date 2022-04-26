@@ -213,7 +213,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             expectation.fulfill()
         }
         
-        wait(for: [expectation], timeout: 0.1)
+        wait(for: [expectation], timeout: 1)
         XCTAssertNil(database.viewContext.currentUser)
     }
     
@@ -248,7 +248,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             expectation.fulfill()
         }
         
-        wait(for: [expectation], timeout: 0.1)
+        wait(for: [expectation], timeout: 1)
         
         context.performAndWait {
             XCTAssertNil(context.currentUser)
