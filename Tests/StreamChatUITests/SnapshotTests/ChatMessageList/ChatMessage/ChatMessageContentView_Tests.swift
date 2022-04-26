@@ -411,7 +411,7 @@ extension ChatMessage {
             options.insert(.timestamp)
         }
         if isLastInGroup, isSentByCurrentUser, type == .deleted || type == .ephemeral {
-            options.insert(.onlyVisibleForYouIndicator)
+            options.insert(.onlyVisibleToYouIndicator)
         }
         if textContent?.isEmpty == false {
             options.insert(.text)

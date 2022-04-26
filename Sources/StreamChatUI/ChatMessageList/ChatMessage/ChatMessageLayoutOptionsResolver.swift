@@ -72,8 +72,8 @@ open class ChatMessageLayoutOptionsResolver {
         if isLastInSequence {
             options.insert(.timestamp)
         }
-        if showOnlyVisibleForYouIndicator(for: message) {
-            options.insert(.onlyVisibleForYouIndicator)
+        if showOnlyVisibleToYouIndicator(for: message) {
+            options.insert(.onlyVisibleToYouIndicator)
         }
         if message.textContent?.isEmpty == false {
             options.insert(.text)
@@ -179,10 +179,10 @@ open class ChatMessageLayoutOptionsResolver {
         return delay > maxTimeIntervalBetweenMessagesInGroup
     }
     
-    /// Determines whether to populate `onlyVisibleForYouIndicator` for the given message.
+    /// Determines whether to populate `onlyVisibleToYouIndicator` for the given message.
     /// - Parameter message: The message.
-    /// - Returns: `true` if `onlyVisibleForYouIndicator` layout option should be included for the given message.
-    open func showOnlyVisibleForYouIndicator(for message: ChatMessage) -> Bool {
+    /// - Returns: `true` if `onlyVisibleToYouIndicator` layout option should be included for the given message.
+    open func showOnlyVisibleToYouIndicator(for message: ChatMessage) -> Bool {
         guard message.isSentByCurrentUser else {
             return false
         }
