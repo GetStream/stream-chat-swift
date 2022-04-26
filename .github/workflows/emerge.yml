@@ -22,7 +22,7 @@ env:
 jobs:
   upload--build:
     name: Upload Build to Emerge
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - name: Install Bot SSH Key
         uses: webfactory/ssh-agent@v0.4.1
