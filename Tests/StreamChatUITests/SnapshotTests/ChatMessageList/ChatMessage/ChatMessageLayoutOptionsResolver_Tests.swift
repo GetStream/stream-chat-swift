@@ -1314,9 +1314,9 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Assert only `.text` AND `.centered` is included in the options
         XCTAssertTrue(layoutOptions == [.text, .centered])
     }
-
-    // MARK: - Is message
-
+    
+    // MARK: - isMessageLastInSequence
+    
     func test_isMessageLastInSequence() {
         let sut = createOptionsResolver()
 
@@ -1367,6 +1367,66 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             sut.isMessageLastInSequence(
                 messageIndexPath: .init(item: 1, section: 0),
                 messages: .init([deletedMessage, messageFollowedByErrorMessage])
+            )
+        )
+    }
+    
+    func test_isMessageLastInSequence_whenNextMessageFromSameUserIsEphemeral_returnsTrue() {
+        let sut = createOptionsResolver()
+
+        let cid: ChannelId = .unique
+        let author: ChatUser = .mock(id: .unique)
+        
+        let messageFollowedByEphemeralMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            author: author
+        )
+        
+        let ephemeralMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            type: .ephemeral,
+            author: author,
+            createdAt: messageFollowedByEphemeralMessage.createdAt.addingTimeInterval(1)
+        )
+        
+        XCTAssertTrue(
+            sut.isMessageLastInSequence(
+                messageIndexPath: .init(item: 1, section: 0),
+                messages: .init([ephemeralMessage, messageFollowedByEphemeralMessage])
+            )
+        )
+    }
+    
+    func test_isMessageLastInSequence_whenNextMessageFromSameUserIsSystem_returnsTrue() {
+        let sut = createOptionsResolver()
+
+        let cid: ChannelId = .unique
+        let author: ChatUser = .mock(id: .unique)
+        
+        let messageFollowedBySystemMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            author: author
+        )
+        
+        let systemMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: "Luke was removed from the channel",
+            type: .system,
+            author: author,
+            createdAt: messageFollowedBySystemMessage.createdAt.addingTimeInterval(1)
+        )
+        
+        XCTAssertTrue(
+            sut.isMessageLastInSequence(
+                messageIndexPath: .init(item: 1, section: 0),
+                messages: .init([systemMessage, messageFollowedBySystemMessage])
             )
         )
     }

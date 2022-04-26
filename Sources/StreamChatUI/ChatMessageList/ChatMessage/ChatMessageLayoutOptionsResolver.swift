@@ -168,9 +168,15 @@ open class ChatMessageLayoutOptionsResolver {
         // is either a standalone or last in sequence.
         guard nextMessage.author == message.author else { return true }
 
-        // When the next message is of error type (e.g. contains invalid command/didn't pass moderation),
-        // the current message should end the group.
-        guard nextMessage.type != .error else { return true }
+        // The current message should end the group when the next message has type:
+        //  1. `error` (e.g. contains invalid command/didn't pass moderation)
+        //  2. `ephemeral`
+        //  3. `system`
+        guard
+            nextMessage.type != .error,
+            nextMessage.type != .ephemeral,
+            nextMessage.type != .system
+        else { return true }
         
         let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
 
