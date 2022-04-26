@@ -254,6 +254,14 @@ Build and upload DemoApp to Emerge
 
 Get code coverage report and run complexity analysis for Sonar
 
+### allure_upload
+
+```sh
+[bundle exec] fastlane allure_upload
+```
+
+Upload test results to Allure TestOps
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
