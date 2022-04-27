@@ -207,8 +207,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
     /// Before presenting the view controller, `settingsViewController.currentUserController` is set
     /// so that view controller can get information and take actions that affect the current user.
     ///
-    @objc
-    func handleSettingsButton(_ sender: Any) {
+    @objc func handleSettingsButton(_ sender: Any) {
         guard
             let navigationViewController = UIStoryboard.settings.instantiateInitialViewController(),
             let settingsViewController = navigationViewController.children.first as? SettingsViewController
@@ -226,8 +225,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
     /// The method below is called when the user taps the add channel button. It creates the channel
     /// by calling `chatClient.channelController(createChannelWithId: ...)`
     ///
-    @objc
-    func handleAddChannelButton(_ sender: Any) {
+    @objc func handleAddChannelButton(_ sender: Any) {
         let id = UUID().uuidString
         let defaultName = "Channel" + id.prefix(4)
         
@@ -298,8 +296,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
     /// so you will be able to update your UI.
     /// (e.g. show "mute" icon in `UITableViewCell`)
     ///
-    @objc
-    func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+    @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         guard
             let indexPath = tableView.indexPathForRow(at: gestureRecognizer.location(in: tableView)),
             gestureRecognizer.state == .began

@@ -27,7 +27,7 @@ extension StreamMockServer {
     @discardableResult
     func websocketEvent(
         _ eventType: EventType,
-        user: [String : Any]?,
+        user: [String: Any]?,
         channelId: String
     ) -> Self {
         var json = TestData.getMockResponse(fromFile: .wsChatEvent).json
@@ -57,7 +57,7 @@ extension StreamMockServer {
         messageId: String?,
         timestamp: String? = TestData.currentDate,
         eventType: EventType,
-        user: [String : Any]?,
+        user: [String: Any]?,
         intercept: ((inout [String: Any]?) -> [String: Any]?)? = nil
     ) -> Self {
         guard let messageId = messageId else { return self }
@@ -127,7 +127,7 @@ extension StreamMockServer {
     func websocketReaction(
         type: TestData.Reactions?,
         eventType: EventType,
-        user: [String : Any]?
+        user: [String: Any]?
     ) -> Self {
         let messageDetails = lastMessage
         var json = TestData.getMockResponse(fromFile: .wsReaction).json

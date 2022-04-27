@@ -10,7 +10,7 @@ import XCTest
 final class ParticipantRobot: Robot {
 
     private var server: StreamMockServer
-    private var _threadParentId: String? = nil
+    private var _threadParentId: String?
     private var _user: [String: String] = UserDetails.hanSolo
     
     init(_ server: StreamMockServer) {

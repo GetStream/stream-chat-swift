@@ -75,7 +75,7 @@ final class YTLiveVideoViewController: UIViewController {
             playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         }
         
-        isPlaying = !isPlaying
+        isPlaying.toggle()
     }
     
     // MARK: - Private Helpers

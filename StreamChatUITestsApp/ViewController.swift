@@ -38,6 +38,4 @@ final class ViewController: UIViewController {
         self.navigationController?.pushViewController(channelList, animated: false)
     }
 
-
 }
-

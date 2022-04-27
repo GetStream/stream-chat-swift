@@ -92,7 +92,8 @@ extension ImageProcessors {
                 unit: .points,
                 contentMode: .aspectFill,
                 upscale: false
-            ).process(image)
+            )
+            .process(image)
         }
 
         public var identifier: String {

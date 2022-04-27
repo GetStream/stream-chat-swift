@@ -141,7 +141,8 @@ struct DefaultRequestEncoder: RequestEncoder {
 
         log.assert(
             connectionDetailsProviderDelegate != nil,
-            "The endpoint requires `token` but `connectionDetailsProviderDelegate` is not set.", subsystems: .httpRequests
+            "The endpoint requires `token` but `connectionDetailsProviderDelegate` is not set.",
+            subsystems: .httpRequests
         )
 
         let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
@@ -186,7 +187,8 @@ struct DefaultRequestEncoder: RequestEncoder {
 
         log.assert(
             connectionDetailsProviderDelegate != nil,
-            "The endpoint requires `connectionId` but `connectionDetailsProviderDelegate` is not set.", subsystems: .httpRequests
+            "The endpoint requires `connectionId` but `connectionDetailsProviderDelegate` is not set.",
+            subsystems: .httpRequests
         )
 
         let missingConnectionIdError = ClientError.MissingConnectionId(

@@ -5,7 +5,7 @@
 import Foundation
 import XCTest
 
-struct MockServerConfiguration {
+enum MockServerConfiguration {
     static var port = Int.random(in: 61000..<62000)
     static var websocketHost = "ws://localhost"
     static var httpHost = "http://localhost"

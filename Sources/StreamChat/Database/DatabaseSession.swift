@@ -211,7 +211,8 @@ protocol ChannelDatabaseSession {
     /// - Returns: The array of channel list queries.
     func loadAllChannelListQueries() -> [ChannelListQueryDTO]
     
-    @discardableResult func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
+    @discardableResult
+    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
     
     /// Fetches `ChannelDTO` with the given `cid` from the database.
     func channel(cid: ChannelId) -> ChannelDTO?

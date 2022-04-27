@@ -34,7 +34,7 @@ public extension UserCredentials {
     }
     
     static func builtInUsersByID(id: String) -> UserCredentials? {
-        builtInUsers.filter { $0.id == id }.first
+        builtInUsers.first { $0.id == id }
     }
 
     static let builtInUsers: [UserCredentials] = [

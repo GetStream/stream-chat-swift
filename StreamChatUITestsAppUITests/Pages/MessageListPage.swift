@@ -5,6 +5,8 @@
 import Foundation
 import XCTest
 
+// swiftlint:disable convenience_type
+
 class MessageListPage {
     
     static var cells: XCUIElementQuery {

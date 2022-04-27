@@ -88,7 +88,7 @@ public struct Components {
     /// The view that shows a playing video.
     public var playerView: PlayerView.Type = PlayerView.self
 
-    //  MARK: -  Message List components
+    // MARK: - Message List components
 
     /// The view controller responsible for rendering a list of messages.
     /// Used in both the Channel and Thread view controllers.

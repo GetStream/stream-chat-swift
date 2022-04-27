@@ -33,6 +33,8 @@ class ComposerView: UIView {
         addObserver(self, forKeyPath: "safeAreaInsets", options: .new, context: nil)
     }
     
+    // swiftlint:disable block_based_kvo
+    
     override func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,
@@ -45,4 +47,6 @@ class ComposerView: UIView {
             invalidateIntrinsicContentSize()
         }
     }
+    
+    // swiftlint:enable block_based_kvo
 }

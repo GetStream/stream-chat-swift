@@ -125,7 +125,8 @@ extension Robot {
     ) -> Self {
         let keyboard = app.keyboards.firstMatch
         keyboard.wait(timeout: 1.5)
-        XCTAssertEqual(isVisible, keyboard.exists,
+        XCTAssertEqual(isVisible,
+                       keyboard.exists,
                        "Keyboard should be \(isVisible ? "visible" : "hidden")",
                        file: file,
                        line: line)

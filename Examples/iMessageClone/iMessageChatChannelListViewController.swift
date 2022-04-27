@@ -64,6 +64,5 @@ final class iMessageChatChannelListViewController: ChatChannelListVC {
     
     // MARK: - Helpers
     
-    @objc
-    private func editButtonTapped() {}
+    @objc private func editButtonTapped() {}
 }

@@ -8,8 +8,7 @@ import UIKit
 
 /// A viewcontroller to showcase and slide through multiple attachments
 /// (images and videos by default).
-open class GalleryVC:
-    _ViewController,
+open class GalleryVC: _ViewController,
     UIGestureRecognizerDelegate,
     AppearanceProvider,
     UICollectionViewDataSource,
@@ -292,8 +291,7 @@ open class GalleryVC:
     }
     
     /// Called whenever user pans with a given `gestureRecognizer`.
-    @objc
-    open func handlePan(with gestureRecognizer: UIPanGestureRecognizer) {
+    @objc open func handlePan(with gestureRecognizer: UIPanGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
             transitionController.isInteractive = true
@@ -309,14 +307,12 @@ open class GalleryVC:
     }
     
     /// Called when `closeButton` is tapped.
-    @objc
-    open func closeButtonTapped() {
+    @objc open func closeButtonTapped() {
         dismiss(animated: true, completion: nil)
     }
     
     /// Called when `shareButton` is tapped.
-    @objc
-    open func shareButtonTapped() {
+    @objc open func shareButtonTapped() {
         guard let shareItem = shareItem(at: currentItemIndexPath) else {
             log.assertionFailure("Share item is missing for item at \(currentItemIndexPath).")
             return
