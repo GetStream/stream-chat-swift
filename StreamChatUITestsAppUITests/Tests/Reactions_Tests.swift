@@ -8,7 +8,7 @@ final class Reactions_Tests: StreamTestCase {
     
     override func setUpWithError() throws {
         try super.setUpWithError()
-        addTags([.general])
+        addTags([.coreFeatures])
     }
     
     func test_addsReaction() throws {

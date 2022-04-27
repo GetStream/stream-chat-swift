@@ -42,7 +42,7 @@ class StreamTestCase: XCTestCase {
 extension StreamTestCase {
     
     enum Tags: String {
-        case general
+        case coreFeatures = "Core Features"
         case offlineSupport = "Offline Support"
         case messageReceipts = "Message Receipts"
     }
