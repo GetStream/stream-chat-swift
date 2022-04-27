@@ -96,11 +96,11 @@ class MessageListPage {
         }
         
         static func deletedIcon(messageCell: XCUIElement) -> XCUIElement {
-            messageCell.images["onlyVisibleForYouIconImageView"]
+            messageCell.images["onlyVisibleToYouImageView"]
         }
         
         static func deletedLabel(messageCell: XCUIElement) -> XCUIElement {
-            messageCell.staticTexts["onlyVisibleForYouLabel"]
+            messageCell.staticTexts["onlyVisibleToYouLabel"]
         }
         
     }

@@ -483,6 +483,7 @@
 		845CEE55270F1BDF002C7EBD /* SimpleChannelImageAttachmentsListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE54270F1BDF002C7EBD /* SimpleChannelImageAttachmentsListController.swift */; };
 		845CEE57270F1D9C002C7EBD /* ImageAttachmentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE56270F1D9C002C7EBD /* ImageAttachmentCell.swift */; };
 		845CEE5A270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */; };
+		8479C7A92812FCC000FC8CFD /* ChatMessageListVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8479C7A82812FCC000FC8CFD /* ChatMessageListVC_Tests.swift */; };
 		847D60292679EDD300FB701D /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847D60282679EDD300FB701D /* GalleryCollectionViewCell.swift */; };
 		847D602B2679EED400FB701D /* VideoAttachmentGalleryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847D602A2679EED400FB701D /* VideoAttachmentGalleryCell.swift */; };
 		847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847D602C2679EF8A00FB701D /* VideoPlaybackControlView.swift */; };
@@ -2698,6 +2699,7 @@
 		845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionsBubbleView_Tests.swift; sourceTree = "<group>"; };
 		84698637274FE79200B22258 /* ConnectionRecoveryHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRecoveryHandler_Mock.swift; sourceTree = "<group>"; };
 		846C633B26FC834800F7518B /* MessageDeleted+MissingUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MessageDeleted+MissingUser.json"; sourceTree = "<group>"; };
+		8479C7A82812FCC000FC8CFD /* ChatMessageListVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVC_Tests.swift; sourceTree = "<group>"; };
 		847D60282679EDD300FB701D /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		847D602A2679EED400FB701D /* VideoAttachmentGalleryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAttachmentGalleryCell.swift; sourceTree = "<group>"; };
 		847D602C2679EF8A00FB701D /* VideoPlaybackControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlaybackControlView.swift; sourceTree = "<group>"; };
@@ -6207,6 +6209,7 @@
 		A3960DED27DA2CF9003AB2B0 /* ChatMessageList */ = {
 			isa = PBXGroup;
 			children = (
+				8479C7A82812FCC000FC8CFD /* ChatMessageListVC_Tests.swift */,
 				E74DB0102655473300508D22 /* TypingIndicatorView_Tests.swift */,
 				A3960DEE27DA2D2F003AB2B0 /* Attachments */,
 				A3960DEF27DA2D4B003AB2B0 /* ChatMessage */,
@@ -7923,8 +7926,8 @@
 		8AD5EC8622E9A3E8005CFAC9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1320;
-				LastUpgradeCheck = 1320;
+				LastSwiftUpdateCheck = 1330;
+				LastUpgradeCheck = 1330;
 				ORGANIZATIONNAME = "Stream.io Inc";
 				TargetAttributes = {
 					437FCA0326D67BE40000223C = {
@@ -8587,6 +8590,7 @@
 				2208241625DEE8070033544B /* ChatChannelListCollectionViewCell_Tests.swift in Sources */,
 				A3C0D774261CA25700A8A1A2 /* ContainerStackView_Tests.swift in Sources */,
 				CF8268B92800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift in Sources */,
+				8479C7A92812FCC000FC8CFD /* ChatMessageListVC_Tests.swift in Sources */,
 				AD71130225F138BA00932AEE /* ChatChannelAvatarView_Tests.swift in Sources */,
 				BDDD1EA42632C66200BA007B /* Components+SwiftUI_Tests.swift in Sources */,
 				79567F2B266F5DB1007EADD3 /* TitleContainerView_Tests.swift in Sources */,
@@ -11658,6 +11662,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Examples/YouTubeClone/Info.plist;
@@ -11679,6 +11684,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Examples/YouTubeClone/Info.plist;
@@ -12275,32 +12281,32 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/httpswift/swifter.git";
 			requirement = {
-				branch = stable;
-				kind = branch;
+				kind = revision;
+				revision = 1e4f51c92d7ca486242d8bf0722b99de2c3531aa;
 			};
 		};
 		A3D15D8C27E9D839006B34D7 /* XCRemoteSwiftPackageReference "stream-chat-swift-test-helpers" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-chat-swift-test-helpers.git";
 			requirement = {
-				branch = develop;
-				kind = branch;
+				kind = revision;
+				revision = 81c9e470ebf07b624bcec84b336f9494c77a1717;
 			};
 		};
 		AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.8.2;
+				kind = exactVersion;
+				version = 1.8.2;
 			};
 		};
 		ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ProxymanApp/atlantis";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				kind = exactVersion;
+				version = 1.16.0;
 			};
 		};
 		C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */ = {

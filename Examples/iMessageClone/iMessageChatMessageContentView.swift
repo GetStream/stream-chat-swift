@@ -12,7 +12,7 @@ final class iMessageChatMessageContentView: ChatMessageContentView {
     override func layout(options: ChatMessageLayoutOptions) {
         super.layout(options: options)
 
-        metadataContainer?.alignment = .center
+        footnoteContainer?.alignment = .center
     }
 
     override func createTimestampLabel() -> UILabel {

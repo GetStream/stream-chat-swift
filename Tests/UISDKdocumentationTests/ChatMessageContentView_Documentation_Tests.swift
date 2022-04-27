@@ -69,9 +69,9 @@ class ChatMessageContentView_Documentation_Tests: XCTestCase {
                     .init(view: view.mainContainer, descriptionLabelPosition: .topLeft),
                     .init(view: view.authorAvatarView!, descriptionLabelPosition: .bottomLeft),
                     .init(view: view.reactionsBubbleView!, descriptionLabelPosition: .topRight),
-                    .init(view: view.bubbleThreadMetaContainer, descriptionLabelPosition: .bottomRight),
+                    .init(view: view.bubbleThreadFootnoteContainer, descriptionLabelPosition: .bottomRight),
                     .init(view: view.bubbleView!, lineColor: .systemTeal, descriptionLabelPosition: .top),
-                    .init(view: view.metadataContainer!, lineColor: .systemTeal, descriptionLabelPosition: .bottom),
+                    .init(view: view.footnoteContainer!, lineColor: .systemTeal, descriptionLabelPosition: .bottom),
                     .init(view: view.threadInfoContainer!, lineColor: .systemTeal, descriptionLabelPosition: .right)
                 ]
             },

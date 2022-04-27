@@ -22,7 +22,7 @@ open class ChatMessageListVC: _ViewController,
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
-            updateContent()
+            updateContentIfNeeded()
         }
     }
 
@@ -118,6 +118,8 @@ open class ChatMessageListVC: _ViewController,
     override open func setUp() {
         super.setUp()
         
+        components.messageLayoutOptionsResolver.config = client.config
+        
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
         listView.addGestureRecognizer(longPress)
@@ -195,19 +197,7 @@ open class ChatMessageListVC: _ViewController,
     /// By default there is one message with all possible layout and layout options
     /// determines which parts of the message are visible for the given message.
     open func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
-        guard let dataSource = self.dataSource else {
-            return ChatMessageLayoutOptions()
-        }
-
-        var options = dataSource.chatMessageListVC(self, messageLayoutOptionsAt: indexPath)
-
-        // Ideally this would be part of the `ChatMessageLayoutOptionsResolver`, but currently
-        // it is a bit odd to pass the `ChatClientConfig` to the resolver.
-        if client.config.deletedMessagesVisibility != .visibleForCurrentUser {
-            options.remove(.onlyVisibleForYouIndicator)
-        }
-
-        return options
+        dataSource?.chatMessageListVC(self, messageLayoutOptionsAt: indexPath) ?? .init()
     }
 
     /// Returns the content view class for the message at given `indexPath`

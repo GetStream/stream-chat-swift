@@ -38,28 +38,28 @@ final class YTChatMessageContentView: ChatMessageContentView {
         super.layout(options: options)
         
         // Set the container's axis to horizontal to match the look of YouTube comments(default is vertical)
-        bubbleThreadMetaContainer.axis = .horizontal
+        bubbleThreadFootnoteContainer.axis = .horizontal
         
-        // Reverse the order of the subviews of the `bubbleThreadMetaContainer`
+        // Reverse the order of the subviews of the `bubbleThreadFootnoteContainer`
         // By default, the order is
         // |--- message---|
-        // |--metadataContainer---|
+        // |--footnoteContainer---|
         
         // By changing the axis to `horizontal` and reversing the order, now the arrangement looks like:
-        // |--- metadataContainer ---message ---|
-        let subviews = bubbleThreadMetaContainer.subviews
-        bubbleThreadMetaContainer.removeAllArrangedSubviews()
-        bubbleThreadMetaContainer.addArrangedSubviews(subviews.reversed())
+        // |--- footnoteContainer ---message ---|
+        let subviews = bubbleThreadFootnoteContainer.subviews
+        bubbleThreadFootnoteContainer.removeAllArrangedSubviews()
+        bubbleThreadFootnoteContainer.addArrangedSubviews(subviews.reversed())
         
-        // Reverse the order of the subviews in the `metadataContainer`
+        // Reverse the order of the subviews in the `footnoteContainer`
         // By default, the order is
         // |--- author --- time ---|
         
         // By changing reversing it, the arrangement looks like:
         // |---time --- author---|
-        let metadataSubviews = metadataContainer?.subviews
-        metadataContainer?.removeAllArrangedSubviews()
-        metadataContainer?.addArrangedSubviews((metadataSubviews?.reversed())!)
+        let metadataSubviews = footnoteContainer?.subviews
+        footnoteContainer?.removeAllArrangedSubviews()
+        footnoteContainer?.addArrangedSubviews((metadataSubviews?.reversed())!)
         
         // By default, there are directionalLayoutMargins with system value because of the bubble border option.
         // We need to disable them to get cleaner

@@ -80,12 +80,17 @@ public extension ChatMessageLayoutOption {
     /// If set the reactions added to the message will be shown.
     static let reactions: Self = "reactions"
 
-    /// If set the indicator saying that the message is visible for current user only will be shown.
-    static let onlyVisibleForYouIndicator: Self = "onlyVisibleForYouIndicator"
+    /// If set, the indicator saying that the message is visible to the current user only will be shown.
+    static let onlyVisibleToYouIndicator: Self = "onlyVisibleToYouIndicator"
     
     /// If set all the content will have centered alignment. By default, the system messages are centered.
     ///
     /// `flipped` and `centered` are mutually exclusive. Only one of these two should be used at a time.
     /// If both are specified in the options, `centered` is prioritized
     static let centered: Self = "centered"
+}
+
+public extension ChatMessageLayoutOption {
+    @available(*, deprecated, renamed: "onlyVisibleToYouIndicator")
+    static let onlyVisibleForYouIndicator: Self = onlyVisibleToYouIndicator
 }
