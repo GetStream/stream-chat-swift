@@ -5,7 +5,9 @@
 import Foundation
 import XCTest
 
-enum MessageListPage {
+// swiftlint:disable convenience_type
+
+class MessageListPage {
     
     static var cells: XCUIElementQuery {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMessageCell'"))
