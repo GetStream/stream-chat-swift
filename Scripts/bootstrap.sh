@@ -54,6 +54,5 @@ if [[ ${INSTALL_SONAR-default} == true ]]; then
 fi
 
 # Copy internal Xcode scheme to the right folder for
-echo
-echo -e "👉 Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
+puts "Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
 cp Scripts/DemoApp-StreamDevelopers.xcscheme StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme
