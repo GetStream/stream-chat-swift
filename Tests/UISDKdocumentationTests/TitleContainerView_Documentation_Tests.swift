@@ -18,7 +18,7 @@ class TitleContainerView_Documentation_Tests: XCTestCase {
         
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 320),
-            view.heightAnchor.constraint(equalToConstant: 44),
+            view.heightAnchor.constraint(equalToConstant: 44)
         ])
         
         generateDocs(

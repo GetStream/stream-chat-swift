@@ -59,7 +59,7 @@ class ChatMessageContentView_Documentation_Tests: XCTestCase {
 
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 300),
-            view.heightAnchor.constraint(equalToConstant: 100),
+            view.heightAnchor.constraint(equalToConstant: 100)
         ])
 
         generateDocs(
