@@ -40,6 +40,16 @@ class StreamTestCase: XCTestCase {
 }
 
 extension StreamTestCase {
+    
+    enum Tags: String {
+        case coreFeatures = "Core Features"
+        case offlineSupport = "Offline Support"
+        case messageReceipts = "Message Receipts"
+    }
+    
+    func addTags(_ tags: [Tags]) {
+        addTagsToScenario(tags.map{ $0.rawValue })
+    }
 
     private func useMockServer() {
         // Leverage web socket server
