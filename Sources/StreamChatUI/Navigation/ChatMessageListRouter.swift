@@ -34,7 +34,7 @@ open class ChatMessageListRouter:
     open func showMessageActionsPopUp(
         messageContentView: ChatMessageContentView,
         messageActionsController: ChatMessageActionsVC,
-        messageReactionsController: ChatMessageReactionsVC?
+        messageReactionsController: ChatMessageReactionsPickerVC?
     ) {
         let popup = components.messagePopupVC.init()
         popup.messageContentView = messageContentView

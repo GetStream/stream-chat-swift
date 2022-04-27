@@ -12,7 +12,7 @@ extension ChatMessagePopupVC: AppearanceProvider {}
 final class ChatMessagePopupVC_Tests: XCTestCase {
     private var vc: ChatMessagePopupVC!
     private var message: ChatMessage!
-    private var reactionsController: ChatMessageReactionsVC!
+    private var reactionsController: ChatMessageReactionsPickerVC!
     private var actionsController: ChatMessageActionsVC!
     
     private class TestChatMessagePopupVC: ChatMessagePopupVC {
@@ -66,7 +66,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
             replies: [],
             state: .remoteDataFetched
         )
-        reactionsController = ChatMessageReactionsVC()
+        reactionsController = ChatMessageReactionsPickerVC()
         reactionsController.messageController = chatMessageController
         vc.reactionsController = reactionsController
         actionsController = ChatMessageActionsVC()
