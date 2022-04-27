@@ -34,6 +34,35 @@ let customReactions: [MessageReactionType: ChatMessageReactionAppearanceType] = 
 Appearance.default.images.availableReactions = customReactions
 ```
 
+### Custom Reactions Sorting
+
+By default, the reactions are sorted alphabetically. You can change the order of the reactions by providing a custom `reactionsSorting` function in the `Components` config. 
+
+Here is an example of how you can sort the reactions by their score:
+
+```swift
+Components.default.reactionsSorting = { $0.score < $1.score }
+```
+
+You can also provide a custom static order based on the `MessageReactionType`:
+
+```swift
+extension MessageReactionType {
+    var position: Int {
+        switch rawValue {
+        case "love": return 0
+        case "haha": return 1
+        case "like": return 2
+        case "sad": return 3
+        case "wow": return 4
+        default: return 5
+        }
+    }
+}
+
+Components.default.reactionsSorting = { $0.type.position < $1.type.position }
+```
+
 ## Message Reactions
 
 By default, the message reactions are displayed inline as a bubble view on top of the messages.
@@ -111,7 +140,7 @@ If we do all the customizations described above to the message reactions view, t
 
 ## Reactions Picker
 
-In order to add a new reaction to a message you need to long-press a message or tap the message reactions bubble view, and the SDK will show a popup view with a reactions picker at the top. The reactions picker which is represented by the `ChatMessageReactionsVC` is basically a bigger message reaction view that is interactable to allow the user to select a reaction.
+In order to add a new reaction to a message you need to long-press a message or tap the message reactions bubble view, and the SDK will show a popup view with a reactions picker at the top. The reactions picker which is represented by the `ChatMessageReactionsPickerVC` is basically a bigger message reaction view that is interactable to allow the user to select a reaction.
 
 When the user long-presses the message, the popup view will display the reactions picker at the top, the message content at the centre, and the message actions at the bottom. On the other hand, if the user taps the reactions bubble view, instead of having the message actions at the bottom, it will show a view with all the reactions that belong to the message.
 

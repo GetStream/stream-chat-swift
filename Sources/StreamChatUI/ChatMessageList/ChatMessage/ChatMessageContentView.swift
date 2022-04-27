@@ -543,7 +543,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         reactionsView?.content = content.map {
             .init(
                 useBigIcons: false,
-                reactions: $0.reactions,
+                reactions: $0.reactionsData,
                 didTapOnReaction: nil
             )
         }
@@ -819,11 +819,14 @@ open class ChatMessageContentView: _View, ThemeProvider {
 }
 
 private extension ChatMessage {
-    var reactions: [ChatMessageReactionData] {
+    var reactionsData: [ChatMessageReactionData] {
         let userReactionIDs = Set(currentUserReactions.map(\.type))
         return reactionScores
-            .sorted { $0.key.rawValue < $1.key.rawValue }
-            .map { .init(type: $0.key, score: $0.value, isChosenByCurrentUser: userReactionIDs.contains($0.key)) }
+            .map { ChatMessageReactionData(
+                type: $0.key,
+                score: $0.value,
+                isChosenByCurrentUser: userReactionIDs.contains($0.key)
+            ) }
     }
 }
 

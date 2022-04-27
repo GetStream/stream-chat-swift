@@ -15,19 +15,9 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
         components.messageReactionItemView
     }
 
-    // returns the selection of reactions that should be rendered by this view
-    open var reactions: [ChatMessageReactionData] {
-        guard let content = content else { return [] }
-        return content.reactions.filter { reaction in
-            guard appearance.images.availableReactions[reaction.type] != nil else {
-                log
-                    .warning(
-                        "reaction with type \(reaction.type) is not registered in appearance.images.availableReactions, skipping"
-                    )
-                return false
-            }
-            return true
-        }
+    /// The sorting order of how the reactions data will be displayed.
+    open var reactionsSorting: ((ChatMessageReactionData, ChatMessageReactionData) -> Bool) {
+        components.reactionsSorting
     }
 
     // MARK: - Subviews
@@ -53,12 +43,9 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
 
         guard let content = content else { return }
 
-        content.reactions.forEach { reaction in
+        content.reactions.sorted(by: reactionsSorting).forEach { reaction in
             if appearance.images.availableReactions[reaction.type] == nil {
-                log
-                    .warning(
-                        "reaction with type \(reaction.type) is not registered in appearance.images.availableReactions, skipping"
-                    )
+                logWarning(unavailableReaction: reaction)
                 return
             }
             let itemView = reactionItemView.init()
@@ -69,6 +56,12 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
             )
             stackView.addArrangedSubview(itemView)
         }
+    }
+
+    private func logWarning(unavailableReaction reaction: ChatMessageReactionData) {
+        log.warning(
+            "reaction with type \(reaction.type) is not registered in appearance.images.availableReactions, skipping"
+        )
     }
 }
 
