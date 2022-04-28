@@ -15,6 +15,11 @@ public extension Filter where Scope: AnyChannelListFilterScope {
     static func containMembers(userIds: [UserId]) -> Filter<Scope> {
         .in(.members, values: userIds)
     }
+    
+    /// Filter to match channels containing at least one message.
+    static var nonEmpty: Filter<Scope> {
+        .greater(.lastMessageAt, than: Date(timeIntervalSince1970: 0))
+    }
 }
 
 extension Filter where Scope: AnyChannelListFilterScope {
