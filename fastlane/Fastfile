@@ -2,6 +2,7 @@ default_platform :ios
 
 require 'json'
 require 'net/http'
+import 'Sonarfile'
 
 xcode_version = ENV['XCODE_VERSION'].nil? ? '13.3.1' : ENV['XCODE_VERSION']
 # The number of times the stress test suite is ran
@@ -134,41 +135,6 @@ lane :publish_release do |options|
   # TODO: Update stream-chat-swift-integration-apps
 
   UI.success("🎉🎉🎉🎉🎉 Github releases successfully created:\n 👉 stream-chat-swift: #{github_release["html_url"]}\n👉 stream-chat-swift-spm: #{spm_github_release_url}")
-
-  slack_sonarcloud_metrics(release_version: version)
-end
-
-desc "Creates a report in Slack about new release"
-private_lane :slack_sonarcloud_metrics do |options|
-  metrics = sonarcloud_metric_kit(project_key: 'GetStream_stream-chat-swift', quality_gate: true)
-  new_coverage = metrics[:new_coverage].to_f.round(2)
-  new_duplication_density = metrics[:new_duplicated_lines_density].to_f.round(2)
-  vulnerabilities = metrics[:security_hotspots].to_i + metrics[:vulnerabilities].to_i
-  new_vulnerabilities = metrics[:new_security_hotspots].to_i + metrics[:new_vulnerabilities].to_i
-
-  release_status = "From *#{metrics[:period_value]}* to *#{options[:release_version]}*\n _#{metrics[:new_lines_to_cover]}_ new lines of code 🚀"
-  coverage_status = "Total: _#{metrics[:coverage]}%_\nOn new code: _#{new_coverage}%_ #{new_coverage < 80 ? '⚠️' : '✅'}"
-  duplication_status = "Total: _#{metrics[:duplicated_lines_density]}%_\nOn new code: _#{new_duplication_density}%_ #{new_duplication_density < 3 ? '✅' : '⚠️'}"
-  code_smells_status = "Total: _#{metrics[:code_smells]}_\nNew: _#{metrics[:new_code_smells]}_ #{metrics[:new_code_smells].to_i.positive? ? '🙊' : '✅'}"
-  bugs_status = "Total: _#{metrics[:bugs]}_\nNew: _#{metrics[:new_bugs]}_ #{metrics[:new_bugs].to_i.positive? ? '⚠️' : '✅'}"
-  security_status = "Total: _#{vulnerabilities}_\nNew: _#{new_vulnerabilities}_ #{new_vulnerabilities.positive? ? '⚠️' : '✅'}"
-
-  slack(
-    message: '[SonarCloud Release Analysis](https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift)',
-    attachment_properties: {
-      thumb_url: 'https://pbs.twimg.com/profile_images/955394530806829056/LC7DAYM3_400x400.jpg',
-      fields: [
-        { title: 'Release', value: release_status, short: true },
-        { title: 'Code coverage', value: coverage_status, short: true },
-        { title: 'Duplicated lines density', value: duplication_status, short: true },
-        { title: 'Code smells', value: code_smells_status, short: true },
-        { title: 'Bugs', value: bugs_status, short: true },
-        { title: 'Vulnerabilities & Security hotspots', value: security_status, short: true }
-      ]
-    },
-    default_payloads: [],
-    slack_url: ENV['SLACK_WEBHOOK_URL']
-  )
 end
 
 desc "Read CHANGELOG"
@@ -782,39 +748,6 @@ lane :emerge_upload do
     pr_number: pr_num,
     sha: sha
   )
-end
-
-desc "Get code coverage report and run complexity analysis for Sonar"
-lane :sonar_upload do
-  version_number = get_version_number(
-    xcodeproj: 'StreamChat.xcodeproj',
-    target: 'StreamChat'
-  )[/\d+\.\d+\.\d/]
-
-  slather
-
-  lizard(
-    source_folder: './Sources/',
-    language: 'swift',
-    export_type: 'xml',
-    report_file: 'reports/lizard.xml'
-  )
-
-  if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
-    sonar(
-      sonar_login: ENV['SONAR_TOKEN'],
-      pull_request_branch: ENV['GITHUB_HEAD_REF'],
-      pull_request_base: ENV['GITHUB_BASE_REF'],
-      pull_request_key: ENV['PR_NUMBER'],
-      project_version: version_number
-    )
-  else
-    sonar(
-      sonar_login: ENV['SONAR_TOKEN'],
-      branch_name: git_branch,
-      project_version: version_number
-    )
-  end
 end
 
 desc 'Upload test results to Allure TestOps'
