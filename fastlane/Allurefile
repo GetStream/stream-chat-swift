@@ -1,0 +1,94 @@
+#!/usr/bin/env ruby
+
+allure_project_id = 1
+allure_endpoint = 'https://streamio.testops.cloud'
+allure_regression_testplan = 'Regression Testing'
+allure_results_path = 'allure-results'
+
+desc 'Upload test results to Allure TestOps'
+lane :allure_upload do
+  github_path = "/repos/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}"
+  github_run = JSON.parse(github_api(path: github_path)[:body])
+  github_branch = github_run['head_branch']
+  tags = []
+  launch_name =
+    if github_run['event'] == 'pull_request'
+      github_path = URI(github_run['pull_requests'][0]['url']).path
+      pull_request = JSON.parse(github_api(path: github_path)[:body])
+      tags = pull_request['labels'].map { |label| { name: label['name'] } }
+      pull_request['title']
+    elsif github_run['head_commit']
+      github_run['head_commit']['message']
+    else
+      github_run['name']
+    end
+  launch_id = allure_launch(name: launch_name, tags: tags)['id']
+  allure_args = "-e #{allure_endpoint} --project-id #{allure_project_id} --launch-id #{launch_id}"
+  sh("./xcresults export test_output/StreamChatUITestsApp.xcresult #{allure_results_path}")
+  sh("env BRANCH_NAME='#{github_branch}' ./allurectl upload #{allure_args} #{allure_results_path}")
+  UI.success("Check out test results in Allure TestOps: #{ENV['ALLURE_ENDPOINT']}/launch/#{launch_id} 🎉")
+end
+
+desc 'Create test-case in Allure TestOps and get its id'
+lane :allure_testcase do
+  body = { projectId: allure_project_id, name: 'Automatically created testcase', deleted: true }.to_json
+  testcase_id = allure_api(path: '/testcase', http_method: 'POST', body: body)['id']
+  UI.success("#{rocket}\nTestcase with id #{testcase_id} created successfully 🎉")
+end
+
+desc 'Sync and run regression test-plan on Allure TestOps'
+lane :allure_regression do |options|
+  UI.user_error!('Link to Jira has to be provided ⚠️') unless options[:jira] =~ URI::DEFAULT_PARSER.regexp[:ABS_URI]
+  UI.user_error!('Release version has to be provided ⚠️') if options[:release_version].nil?
+
+  response = allure_api(path: "/testplan/?projectId=#{allure_project_id}", http_method: 'GET')
+  testplan_id = response['content'].filter { |plan| plan['name'] == allure_regression_testplan }.first['id']
+
+  allure_api(path: "/testplan/#{testplan_id}/sync", http_method: 'POST')
+  UI.success("#{rocket}\nTestplan with id #{testplan_id} synced successfully 🎉")
+
+  body = {
+    launchName: "#{allure_regression_testplan} v#{options[:release_version]}",
+    links: [{ name: 'Jira', url: options[:jira] }]
+  }.to_json
+  allure_api(path: "/testplan/#{testplan_id}/run", http_method: 'POST', body: body)
+  UI.success("#{rocket}\nTestplan with id #{testplan_id} launched successfully 🎉")
+end
+
+desc 'Create launch on Allure TestOps'
+private_lane :allure_launch do |options|
+  body = {
+    projectId: allure_project_id,
+    name: options[:name],
+    tags: options[:tags],
+    autoclose: false,
+    closed: false
+  }.to_json
+  allure_api(path: '/launch', http_method: 'POST', body: body)
+end
+
+desc 'Make a request to Allure TestOps via Rest API'
+private_lane :allure_api do |options|
+  UI.user_error!('`ALLURE_TOKEN` env var has to be provided ⚠️') if ENV['ALLURE_TOKEN'].nil?
+
+  url = URI("#{allure_endpoint}/api/rs/#{options[:path]}")
+  request =
+    case options[:http_method].upcase
+    when 'GET'
+      Net::HTTP::Get.new(url)
+    when 'POST'
+      Net::HTTP::Post.new(url)
+    when 'PATCH'
+      Net::HTTP::Patch.new(url)
+    end
+  http = Net::HTTP.new(url.host, url.port)
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+  request['authorization'] = "Api-Token #{ENV['ALLURE_TOKEN']}"
+  request['content-type'] = 'application/json'
+  request.body = options[:body] if options[:body]
+
+  response_body = http.request(request).read_body
+  JSON.parse(response_body) unless response_body.empty?
+end
