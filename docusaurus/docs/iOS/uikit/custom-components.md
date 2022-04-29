@@ -73,14 +73,16 @@ In addition to this, view components expose their content with the `content` pro
 
 ## Example: Custom Avatar
 
-Let's say, we want to change the appearance of avatars from the rounded ones to the rectangular ones. In this case, since it is a pretty simple example, we only need to change the appearance of the component:
+Let's say, we want to change the appearance of avatars by adding a border. In this case, since it is a pretty simple example, we only need to change the appearance of the component:
 
 ```swift
-class RectAvatarView: ChatAvatarView {
+class BorderedAvatarView: ChatAvatarView {
+    
     override func setUpAppearance() {
         super.setUpAppearance()
 
-        imageView.layer.cornerRadius = 3
+        imageView.layer.borderWidth = 1.0
+        imageView.layer.borderColor = UIColor.green.cgColor
     }
 }
 ```
@@ -90,7 +92,7 @@ Then, we have to tell the SDK to use our custom subclass instead of the default 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         ...
-        Components.default.avatarView = RectAvatarView.self
+        Components.default.avatarView = BorderedAvatarView.self
         ...
     }
 }
@@ -98,9 +100,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 | Before  | After |
 | ------------- | ------------- |
-| ![Default Avatars](../assets/default-avatars.png)  | ![Rect Avatars](../assets/rect-avatars.png)  |
+| ![Default Avatars](../assets/default-avatars.png)  | ![Bordered Avatars](../assets/bordered-avatars.png)  |
 
-And that's it 🎉 as you can see all avatars across the UI are now rectangular.
+And that's it 🎉 as you can see all avatars across the UI are now with a border.
+
+#### Change Avatar only in one view
+
+In the previous example we saw that when we customized the avatar view, it changed every UI component that uses an avatar view. All the components in the `Components` config are shared components, but it is also possible to customize a shared component of a specific view only. Let's imagine that we want to apply the previous customization of a bordered avatar view, but only in the quoted reply view:
+
+```swift
+class CustomQuotedChatMessageView: QuotedChatMessageView {
+
+    lazy var borderedAvatarView = BorderedAvatarView()
+
+    override var authorAvatarView: ChatAvatarView {
+        borderedAvatarView
+    }
+}
+```
+Then, set the custom component:
+```swift
+Components.default.quotedMessageView = CustomQuotedChatMessageView.self
+```
+
+As you can see, we override the `authorAvatarView` property of the `QuotedChatMessageView` component and provide our custom bordered avatar view. It is important that the custom view is created lazily, to avoid creating multiple instances of the same view.
+
+| Before  | After |
+| ------------- | ------------- |
+| ![Default Avatars](../assets/default-avatars.png)  | ![Bordered Quote Avatar](../assets/bordered-quote-avatar.png)  |
 
 ## Example: Custom Unread Count Indicator
 
