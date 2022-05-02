@@ -40,8 +40,8 @@ public struct Components {
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
     
-    /// A button for showing a countdown when Slow Mode is active.
-    public var countdownButton: UIButton.Type = CountdownButton.self
+    /// A button for showing a cooldown when Slow Mode is active.
+    public var cooldownButton: UIButton.Type = CooldownButton.self
 
     /// A button for confirming actions.
     public var confirmButton: UIButton.Type = ConfirmButton.self

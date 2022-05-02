@@ -109,6 +109,12 @@ public struct ChatChannel {
     public var latestMessages: [ChatMessage] { _latestMessages }
     @CoreDataLazy private var _latestMessages: [ChatMessage]
     
+    /// Latest message present on the channel sent by current user even if sent on a thread.
+    ///
+    /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
+    public var lastMessageFromCurrentUser: ChatMessage? { _lastMessageFromCurrentUser }
+    @CoreDataLazy private var _lastMessageFromCurrentUser: ChatMessage?
+    
     /// Pinned messages present on the channel.
     ///
     /// This field contains only the pinned messages of the channel. You can get all existing messages in the channel by creating
@@ -178,6 +184,7 @@ public struct ChatChannel {
         cooldownDuration: Int = 0,
         extraData: [String: RawJSON],
         latestMessages: @escaping (() -> [ChatMessage]) = { [] },
+        lastMessageFromCurrentUser: @escaping (() -> ChatMessage?) = { nil },
         pinnedMessages: @escaping (() -> [ChatMessage]) = { [] },
         muteDetails: @escaping () -> MuteDetails?,
         underlyingContext: NSManagedObjectContext?
@@ -204,6 +211,7 @@ public struct ChatChannel {
         
         $_unreadCount = (unreadCount, underlyingContext)
         $_latestMessages = (latestMessages, underlyingContext)
+        $_lastMessageFromCurrentUser = (lastMessageFromCurrentUser, underlyingContext)
         $_lastActiveMembers = (lastActiveMembers, underlyingContext)
         $_currentlyTypingUsers = (currentlyTypingUsers, underlyingContext)
         $_lastActiveWatchers = (lastActiveWatchers, underlyingContext)

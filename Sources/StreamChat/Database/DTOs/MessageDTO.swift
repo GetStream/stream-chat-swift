@@ -316,6 +316,17 @@ class MessageDTO: NSManagedObject {
         request.fetchOffset = offset
         return load(by: request, context: context)
     }
+    
+    static func loadLastMessageFromUserId(_ userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            .init(format: "channel.cid == %@", cid),
+            .init(format: "user.id == %@", userId)
+        ])
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.fetchLimit = 1
+        return load(by: request, context: context).first
+    }
 }
 
 extension MessageDTO {

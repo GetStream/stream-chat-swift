@@ -28,6 +28,7 @@ public struct ComposerState: RawRepresentable, Equatable {
     public static var new = ComposerState(rawValue: "new")
     public static var edit = ComposerState(rawValue: "edit")
     public static var quote = ComposerState(rawValue: "quote")
+    public static var slowMode = ComposerState(rawValue: "slowMode")
 }
 
 /// A view controller that manages the composer view.
@@ -58,8 +59,8 @@ open class ComposerVC: _ViewController,
         public let command: Command?
         /// The extra data assigned to message.
         public var extraData: [String: RawJSON]
-        /// The Slow mode countdown duration for the channel
-        public var countdownDuration: Int
+        /// The current cooldown time for the Slow mode active on channel.
+        public var cooldownTime: Int
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
@@ -86,7 +87,7 @@ open class ComposerVC: _ViewController,
             mentionedUsers: Set<ChatUser>,
             command: Command?,
             extraData: [String: RawJSON] = [:],
-            countdownDuration: Int = 0
+            cooldownTime: Int = 0
         ) {
             self.text = text
             self.state = state
@@ -97,7 +98,7 @@ open class ComposerVC: _ViewController,
             self.mentionedUsers = mentionedUsers
             self.command = command
             self.extraData = extraData
-            self.countdownDuration = countdownDuration
+            self.cooldownTime = cooldownTime
         }
 
         /// Creates a new content struct with all empty data.
@@ -112,7 +113,7 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: [],
                 command: nil,
                 extraData: [:],
-                countdownDuration: 0
+                cooldownTime: 0
             )
         }
 
@@ -128,7 +129,7 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: [],
                 command: nil,
                 extraData: [:],
-                countdownDuration: countdownDuration
+                cooldownTime: cooldownTime
             )
         }
 
@@ -146,7 +147,7 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: message.mentionedUsers,
                 command: command,
                 extraData: message.extraData,
-                countdownDuration: countdownDuration
+                cooldownTime: cooldownTime
             )
         }
 
@@ -164,7 +165,7 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: mentionedUsers,
                 command: command,
                 extraData: extraData,
-                countdownDuration: countdownDuration
+                cooldownTime: cooldownTime
             )
         }
 
@@ -179,7 +180,22 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: mentionedUsers,
                 command: command,
                 extraData: extraData,
-                countdownDuration: countdownDuration
+                cooldownTime: cooldownTime
+            )
+        }
+        
+        public mutating func slowdownMode(cooldown: Int) {
+            self = .init(
+                text: "",
+                state: .slowMode,
+                editingMessage: nil,
+                quotingMessage: nil,
+                threadMessage: threadMessage,
+                attachments: [],
+                mentionedUsers: [],
+                command: nil,
+                extraData: [:],
+                cooldownTime: cooldown
             )
         }
     }
@@ -286,13 +302,6 @@ open class ComposerVC: _ViewController,
     override open func setUp() {
         super.setUp()
         
-        if let cooldownDuration = channelController?.channel?.cooldownDuration,
-           cooldownDuration > 0 {
-            content.countdownDuration = cooldownDuration
-        }
-        
-        checkChannelCountdown()
-        
         composerView.inputMessageView.textView.delegate = self
         
         // Set the delegate for handling the pasting of UIImages in the text view
@@ -319,6 +328,12 @@ open class ComposerVC: _ViewController,
         view.addSubview(composerView)
         composerView.pin(to: view)
     }
+    
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        checkChannelCooldown()
+    }
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -341,22 +356,35 @@ open class ComposerVC: _ViewController,
         switch content.state {
         case .new:
             composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.message
+            composerView.isUserInteractionEnabled = true
             Animate {
+                self.composerView.cooldownButton.isHidden = true
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = false
                 self.composerView.headerView.isHidden = true
             }
         case .quote:
             composerView.titleLabel.text = L10n.Composer.Title.reply
+            composerView.isUserInteractionEnabled = true
             Animate {
                 self.composerView.headerView.isHidden = false
             }
         case .edit:
             composerView.titleLabel.text = L10n.Composer.Title.edit
+            composerView.isUserInteractionEnabled = true
             Animate {
                 self.composerView.confirmButton.isHidden = false
+                self.composerView.cooldownButton.isHidden = true
                 self.composerView.sendButton.isHidden = true
                 self.composerView.headerView.isHidden = false
+            }
+        case .slowMode:
+            composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.slowMode
+            composerView.isUserInteractionEnabled = false
+            Animate {
+                self.composerView.sendButton.isHidden = true
+                self.composerView.confirmButton.isHidden = true
+                self.composerView.cooldownButton.isHidden = false
             }
         default:
             log.warning("The composer state \(content.state.description) was not handled.")
@@ -448,9 +476,12 @@ open class ComposerVC: _ViewController,
         } else {
             createNewMessage(text: text)
         }
-
+        
         content.clear()
-        checkChannelCountdown()
+        
+        if let cooldownDuration = channelController?.channel?.cooldownDuration {
+            handleCooldownTimer(with: cooldownDuration)
+        }
     }
     
     /// Shows a photo/media picker.
@@ -814,45 +845,30 @@ open class ComposerVC: _ViewController,
         }
     }
     
-    open func checkChannelCountdown() {
-        if content.countdownDuration > 0 {
-            var duration = content.countdownDuration
-            let timer = Timer.scheduledTimer(
-                withTimeInterval: 1,
-                repeats: true
-            ) { [weak self] timer in
-                guard let self = self else { return }
-                if duration == 0 {
-                    timer.invalidate()
-                        
-                    self.composerView.countdownButton.isHidden = true
-                        
-                    if self.content.state == .edit {
-                        self.composerView.confirmButton.isHidden = false
-                    } else {
-                        self.composerView.sendButton.isHidden = false
-                    }
-                        
-                    self.composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.message
-                    self.composerView.isUserInteractionEnabled = true
-                } else {
-                    self.composerView.sendButton.isHidden = true
-                    self.composerView.countdownButton.isHidden = false
-                    self.composerView.confirmButton.isHidden = true
-                        
-                    self.composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.slowMode
-                    self.composerView.isUserInteractionEnabled = false
-                        
-                    self.composerView.countdownButtonWidthConstraint.constant = duration >= 10 ? 40 : 32
-                        
-                    self.composerView.countdownButton.setTitle("\(duration)", for: .disabled)
-                        
-                    duration -= 1
-                }
-            }
-            
-            RunLoop.current.add(timer, forMode: .common)
+    open func checkChannelCooldown() {
+        if currentCooldownTime() > 0 {
+            handleCooldownTimer(with: currentCooldownTime())
         }
+    }
+    
+    open func currentCooldownTime() -> Int {
+        guard let currentUserLastMessage = channelController?.channel?.lastMessageFromCurrentUser,
+              let cooldownDuration = channelController?.channel?.cooldownDuration else {
+            return 0
+        }
+        
+        let currentTime = Date().timeIntervalSince(currentUserLastMessage.createdAt)
+        return cooldownDuration - Int(currentTime)
+    }
+    
+    open func handleCooldownTimer(with cooldown: Int) {
+        (composerView.cooldownButton as? CooldownButton)?.start(with: cooldown, onChange: { currentTime in
+            if currentTime == 0 {
+                self.content.clear()
+            } else {
+                self.content.slowdownMode(cooldown: currentTime)
+            }
+        })
     }
 
     // MARK: - UITextViewDelegate

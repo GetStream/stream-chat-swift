@@ -380,6 +380,17 @@ extension ChatChannel {
                 .map { $0.asModel() }
         }
         
+        let fetchLatestMessageFromUser: () -> ChatMessage? = {
+            guard let currentUser = context.currentUser else { return nil }
+            
+            return MessageDTO
+                .loadLastMessageFromUserId(
+                    currentUser.user.id,
+                    in: dto.cid,
+                    context: context
+                )?.asModel()
+        }
+        
         let fetchWatchers: () -> [ChatUser] = {
             UserDTO
                 .loadLastActiveWatchers(cid: cid, context: context)
@@ -430,6 +441,7 @@ extension ChatChannel {
             extraData: extraData,
             //            invitedMembers: [],
             latestMessages: { fetchMessages() },
+            lastMessageFromCurrentUser: { fetchLatestMessageFromUser() },
             pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },
             muteDetails: fetchMuteDetails,
             underlyingContext: dto.managedObjectContext
