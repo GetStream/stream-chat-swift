@@ -80,4 +80,10 @@ final class ChannelListFilterScope_Tests: XCTestCase {
 
         XCTAssertEqual(query.debugDescription, "Filter: members IN [\"theid\"] | Sort: [cid:-1]")
     }
+    
+    func test_teamId_nilValue() {
+        let query = ChannelListQuery(filter: .equal(.team, to: nil))
+        
+        XCTAssertEqual(query.debugDescription, "Filter: team == nil | Sort: []")
+    }
 }

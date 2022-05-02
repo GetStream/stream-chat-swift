@@ -67,7 +67,6 @@ public protocol FilterValue: Encodable {}
 
 // Built-in `FilterValue` conformances for supported types
 
-extension Optional: FilterValue where Wrapped == String {}
 extension String: FilterValue {}
 extension Int: FilterValue {}
 extension Double: FilterValue {}
@@ -83,6 +82,7 @@ extension ChannelId: FilterValue {}
 extension ChannelType: FilterValue {}
 extension UserRole: FilterValue {}
 extension AttachmentType: FilterValue {}
+extension Optional: FilterValue where Wrapped == TeamId {}
 
 /// Filter is used to specify the details about which elements should be returned from a specific query.
 ///
