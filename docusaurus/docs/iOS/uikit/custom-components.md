@@ -123,7 +123,7 @@ Then, set the custom component:
 Components.default.quotedMessageView = CustomQuotedChatMessageView.self
 ```
 
-As you can see, we override the `authorAvatarView` property of the `QuotedChatMessageView` component and provide our custom bordered avatar view. It is important that the custom view is created lazily, to avoid creating multiple instances of the same view.
+As you can see, we override the `authorAvatarView` property of the `QuotedChatMessageView` component and provide our custom bordered avatar view. It is important that the overridden `authorAvatarView` is backed by a custom view which is created lazily, to avoid creating multiple instances of the same view when `authorAvatarView` is called.
 
 | Before  | After |
 | ------------- | ------------- |
