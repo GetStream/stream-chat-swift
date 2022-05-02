@@ -5,6 +5,8 @@
 import Foundation
 import XCTest
 
+// swiftlint:disable convenience_type
+
 class MessageListPage {
     
     static var cells: XCUIElementQuery {
@@ -94,11 +96,11 @@ class MessageListPage {
         }
         
         static func deletedIcon(messageCell: XCUIElement) -> XCUIElement {
-            messageCell.images["onlyVisibleForYouIconImageView"]
+            messageCell.images["onlyVisibleToYouImageView"]
         }
         
         static func deletedLabel(messageCell: XCUIElement) -> XCUIElement {
-            messageCell.staticTexts["onlyVisibleForYouLabel"]
+            messageCell.staticTexts["onlyVisibleToYouLabel"]
         }
         
     }

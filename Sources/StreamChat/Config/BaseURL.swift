@@ -65,8 +65,6 @@ public struct BaseURL: CustomStringConvertible {
     }
 }
 
-// MARK:
-
 private extension BaseURL {
     #if DEBUG
     private static func mockServerUrls(with urlString: String) -> (restAPIBaseURL: URL, webSocketBaseURL: URL) {

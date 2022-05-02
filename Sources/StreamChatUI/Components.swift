@@ -91,7 +91,7 @@ public struct Components {
     /// The view that shows a playing video.
     public var playerView: PlayerView.Type = PlayerView.self
 
-    //  MARK: -  Message List components
+    // MARK: - Message List components
 
     /// The view controller responsible for rendering a list of messages.
     /// Used in both the Channel and Thread view controllers.
@@ -129,12 +129,6 @@ public struct Components {
 
     /// The view controller that is presented when long-pressing a message.
     public var messagePopupVC: ChatMessagePopupVC.Type = ChatMessagePopupVC.self
-
-    /// A view controller that renders the reaction and it's author avatar for all the reactions of a message.
-    public var reactionAuthorsVC: ChatMessageReactionAuthorsVC.Type = ChatMessageReactionAuthorsVC.self
-
-    /// A view cell that displays an individual reaction author of a message.
-    public var reactionAuthorCell: ChatMessageReactionAuthorViewCell.Type = ChatMessageReactionAuthorViewCell.self
 
     /// The view controller used for showing the detail of a file message attachment.
     public var filePreviewVC: ChatMessageAttachmentPreviewVC.Type = ChatMessageAttachmentPreviewVC.self
@@ -229,10 +223,10 @@ public struct Components {
     public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
         ChatMessageListUnreadCountView.self
 
-    // MARK: - Reaction Picker components
+    // MARK: - Reactions
     
     /// The Reaction picker VC.
-    public var reactionPickerVC: ChatMessageReactionsVC.Type = ChatMessageReactionsVC.self
+    public var reactionPickerVC: ChatMessageReactionsPickerVC.Type = ChatMessageReactionsPickerVC.self
 
     /// The view that shows reactions bubble.
     public var reactionPickerBubbleView: ChatReactionPickerBubbleView.Type = DefaultChatReactionPickerBubbleView.self
@@ -242,8 +236,6 @@ public struct Components {
 
     /// The view that renders a single reaction view button.
     public var reactionPickerReactionItemView: ChatMessageReactionItemView.Type = ChatMessageReactionItemView.self
-    
-    // MARK: - Message Reaction components
 
     /// The view that shows reactions of a message. This is used by the message component.
     public var messageReactionsBubbleView: ChatReactionBubbleBaseView.Type = ChatReactionsBubbleView.self
@@ -253,6 +245,17 @@ public struct Components {
 
     /// The view that renders a single reaction attached to the message.
     public var messageReactionItemView: ChatMessageReactionItemView.Type = ChatMessageReactionItemView.self
+
+    /// A view controller that renders the reaction and it's author avatar for all the reactions of a message.
+    public var reactionAuthorsVC: ChatMessageReactionAuthorsVC.Type = ChatMessageReactionAuthorsVC.self
+
+    /// A view cell that displays an individual reaction author of a message.
+    public var reactionAuthorCell: ChatMessageReactionAuthorViewCell.Type = ChatMessageReactionAuthorViewCell.self
+
+    /// The sorting order of how the reactions data will be displayed.
+    public var reactionsSorting: ((ChatMessageReactionData, ChatMessageReactionData) -> Bool) = {
+        $0.type.rawValue < $1.type.rawValue
+    }
 
     // MARK: - Thread components
 
@@ -270,21 +273,6 @@ public struct Components {
 
     /// The view that displays channel information on the channel header.
     public var channelHeaderView: ChatChannelHeaderView.Type = ChatChannelHeaderView.self
-
-    /// The logic to generate a name for the given channel.
-    @available(
-        *,
-        deprecated,
-        message: "Please use `Appearance.default.formatters.channelName` instead"
-    )
-    public var channelNamer: ChatChannelNamer {
-        get {
-            DefaultChannelNameFormatter.channelNamer
-        }
-        set {
-            DefaultChannelNameFormatter.channelNamer = newValue
-        }
-    }
 
     /// The collection view layout of the channel list.
     public var channelListLayout: UICollectionViewLayout.Type = ListCollectionViewLayout.self
@@ -403,4 +391,23 @@ public struct Components {
 
 public extension Components {
     static var `default` = Self()
+}
+
+// MARK: Deprecations
+
+public extension Components {
+    /// The logic to generate a name for the given channel.
+    @available(
+        *,
+        deprecated,
+        message: "Please use `Appearance.default.formatters.channelName` instead"
+    )
+    var channelNamer: ChatChannelNamer {
+        get {
+            DefaultChannelNameFormatter.channelNamer
+        }
+        set {
+            DefaultChannelNameFormatter.channelNamer = newValue
+        }
+    }
 }

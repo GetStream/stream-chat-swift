@@ -159,13 +159,11 @@ class AppConfigViewController: UITableViewController {
 
         switch option {
         case .isHardDeleteEnabled:
-            cell.accessoryView = makeSwitchButton(demoAppConfig.isHardDeleteEnabled) {
-                [weak self] newValue in
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isHardDeleteEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isHardDeleteEnabled = newValue
             }
         case .isAtlantisEnabled:
-            cell.accessoryView = makeSwitchButton(demoAppConfig.isAtlantisEnabled) {
-                [weak self] newValue in
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isAtlantisEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isAtlantisEnabled = newValue
             }
         }
@@ -197,18 +195,15 @@ class AppConfigViewController: UITableViewController {
 
         switch option {
         case .isLocalStorageEnabled:
-            cell.accessoryView = makeSwitchButton(chatClientConfig.isLocalStorageEnabled) {
-                [weak self] newValue in
+            cell.accessoryView = makeSwitchButton(chatClientConfig.isLocalStorageEnabled) { [weak self] newValue in
                 self?.chatClientConfig.isLocalStorageEnabled = newValue
             }
         case .staysConnectedInBackground:
-            cell.accessoryView = makeSwitchButton(chatClientConfig.staysConnectedInBackground) {
-                [weak self] newValue in
+            cell.accessoryView = makeSwitchButton(chatClientConfig.staysConnectedInBackground) { [weak self] newValue in
                 self?.chatClientConfig.staysConnectedInBackground = newValue
             }
         case .shouldShowShadowedMessages:
-            cell.accessoryView = makeSwitchButton(chatClientConfig.shouldShowShadowedMessages) {
-                [weak self] newValue in
+            cell.accessoryView = makeSwitchButton(chatClientConfig.shouldShowShadowedMessages) { [weak self] newValue in
                 self?.chatClientConfig.shouldShowShadowedMessages = newValue
             }
         case .deletedMessagesVisibility:

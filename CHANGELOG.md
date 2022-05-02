@@ -2,6 +2,19 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+
+## StreamChatUI
+### 🔄 Changed
+- Deprecate `ChatMessage.isOnlyVisibleForCurrentUser` as it does not account deleted messages visability setting [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
+- Rename components related to message footnote content in `ChatMessageContentView` [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
+### ✅ Added
+- Add support for custom reactions sorting [#1944](https://github.com/GetStream/stream-chat-swift/pull/1944)
+- Add `nonEmpty` filter for channel list query [#1960](https://github.com/GetStream/stream-chat-swift/pull/1960)
+### 🐞 Fixed
+- Fix `onlyVisibleForYouIndicator` not being shown for ephemeral messages [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
+
+# [4.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.14.0)
+_April 26, 2022_
 ## StreamChat
 ### ✅ Added
 - `quotesEnabled` property is added to the `ChannelConfig` [#1891](https://github.com/GetStream/stream-chat-swift/issues/1891)

@@ -87,23 +87,23 @@ public extension Appearance {
             get {
                 _availableReactions ??
                     [
-                        .init(rawValue: "love"): ChatMessageReactionAppearance(
+                        "love": ChatMessageReactionAppearance(
                             smallIcon: reactionLoveSmall,
                             largeIcon: reactionLoveBig
                         ),
-                        .init(rawValue: "haha"): ChatMessageReactionAppearance(
+                        "haha": ChatMessageReactionAppearance(
                             smallIcon: reactionLolSmall,
                             largeIcon: reactionLolBig
                         ),
-                        .init(rawValue: "like"): ChatMessageReactionAppearance(
+                        "like": ChatMessageReactionAppearance(
                             smallIcon: reactionThumgsUpSmall,
                             largeIcon: reactionThumgsUpBig
                         ),
-                        .init(rawValue: "sad"): ChatMessageReactionAppearance(
+                        "sad": ChatMessageReactionAppearance(
                             smallIcon: reactionThumgsDownSmall,
                             largeIcon: reactionThumgsDownBig
                         ),
-                        .init(rawValue: "wow"): ChatMessageReactionAppearance(
+                        "wow": ChatMessageReactionAppearance(
                             smallIcon: reactionWutSmall,
                             largeIcon: reactionWutBig
                         )

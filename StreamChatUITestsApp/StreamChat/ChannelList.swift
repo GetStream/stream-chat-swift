@@ -17,7 +17,6 @@ final class ChannelList: ChatChannelListVC, ChatConnectionControllerDelegate {
         updateTitle(with: connectionController.connectionStatus)
     }
     
-    
     override func setUpAppearance() {
         super.setUpAppearance()
         

@@ -9,6 +9,7 @@ import StreamChat
 /// If your application uses custom attachment types, you will need to create a subclass and override the attachmentViewInjectorClassFor
 /// method so that the correct AttachmentViewInjector is used.
 @available(iOSApplicationExtension, unavailable)
+// swiftlint:disable convenience_type
 open class AttachmentViewCatalog {
     open class func attachmentViewInjectorClassFor(
         message: ChatMessage,

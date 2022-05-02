@@ -56,7 +56,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     public var actionsController: ChatMessageActionsVC?
 
     /// `ChatMessageReactionsVC` instance for showing reactions.
-    public var reactionsController: ChatMessageReactionsVC?
+    public var reactionsController: ChatMessageReactionsPickerVC?
 
     /// `ChatMessageReactionAuthorsVC` instance for showing the authors of the reactions.
     public var reactionAuthorsController: ChatMessageReactionAuthorsVC?

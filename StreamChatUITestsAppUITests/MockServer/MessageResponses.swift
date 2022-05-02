@@ -323,15 +323,13 @@ extension StreamMockServer {
         let user = setUpUser(source: message, details: UserDetails.lukeSkywalker)
         let mockedMessage = mockDeletedMessage(message, user: user)
         
-        websocketDelay {
-            self.websocketMessage(
-                channelId: channelId,
-                messageId: messageId,
-                timestamp: timestamp,
-                eventType: .messageDeleted,
-                user: user
-            )
-        }
+        websocketMessage(
+            channelId: channelId,
+            messageId: messageId,
+            timestamp: timestamp,
+            eventType: .messageDeleted,
+            user: user
+        )
         
         json[TopLevelKey.message] = mockedMessage
         return .ok(.json(json))

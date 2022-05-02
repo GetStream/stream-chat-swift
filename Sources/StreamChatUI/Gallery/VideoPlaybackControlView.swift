@@ -259,7 +259,6 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
                 self?.content.videoDuration = item.duration.isNumeric ? item.duration.seconds : 0
             }
             
-            NotificationCenter.default.removeObserver(self)
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(self.handleItemDidPlayToEndTime),
@@ -270,6 +269,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     }
     
     deinit {
+        NotificationCenter.default.removeObserver(self)
         unsubscribeFromPlayerNotifications(player)
     }
 }

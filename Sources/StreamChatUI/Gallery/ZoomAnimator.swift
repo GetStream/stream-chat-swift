@@ -100,15 +100,17 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         toImageView.isHidden = true
         
         if transitionImageView == nil {
-            let transitionImageView = UIImageView(image: fromImageView.image)
-            transitionImageView.contentMode = .scaleAspectFill
-            transitionImageView.clipsToBounds = true
-            transitionImageView.frame = fromImageView.convert(
-                frame(for: fromImageView.image!, inImageViewAspectFit: fromImageView),
-                to: fromVC.view
-            )
-            self.transitionImageView = transitionImageView
-            containerView.addSubview(transitionImageView)
+            if let image = fromImageView.image {
+                let transitionImageView = UIImageView(image: image)
+                transitionImageView.contentMode = .scaleAspectFill
+                transitionImageView.clipsToBounds = true
+                transitionImageView.frame = fromImageView.convert(
+                    frame(for: image, inImageViewAspectFit: fromImageView),
+                    to: fromVC.view
+                )
+                self.transitionImageView = transitionImageView
+                containerView.addSubview(transitionImageView)
+            }
         }
         
         fromImageView.isHidden = true

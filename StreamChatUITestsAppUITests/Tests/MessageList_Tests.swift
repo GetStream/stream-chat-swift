@@ -6,13 +6,20 @@ import XCTest
 
 final class MessageList_Tests: StreamTestCase {
     
-    func test_sendsMessage() throws {
-        let message = "test message"
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        addTags([.coreFeatures])
+    }
+    
+    func test_sendsMessageWithOneEmoji() throws {
+        linkToScenario(withId: 63)
+        
+        let message = "🍏"
         
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
-        WHEN("user sends the message: '\(message)'") {
+        WHEN("user sends the emoji: '\(message)'") {
             userRobot.sendMessage(message)
         }
         THEN("the message is delivered") {
@@ -21,6 +28,8 @@ final class MessageList_Tests: StreamTestCase {
     }
 
     func test_editsMessage() throws {
+        linkToScenario(withId: 39)
+        
         let message = "test message"
         let editedMessage = "hello"
         
@@ -39,6 +48,8 @@ final class MessageList_Tests: StreamTestCase {
     }
     
     func test_deletesMessage() throws {
+        linkToScenario(withId: 37)
+        
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -56,13 +67,15 @@ final class MessageList_Tests: StreamTestCase {
     }
     
     func test_receivesMessage() throws {
-        let message = "test message"
+        linkToScenario(withId: 64)
+        
+        let message = "🚢"
         let author = "Han Solo"
         
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
-        WHEN("participant sends the message: '\(message)'") {
+        WHEN("participant sends the emoji: '\(message)'") {
             participantRobot
                 .startTyping()
                 .stopTyping()
@@ -76,6 +89,8 @@ final class MessageList_Tests: StreamTestCase {
     }
     
     func test_messageDeleted_whenParticipantDeletesMessage() throws {
+        linkToScenario(withId: 38)
+        
         let message = "test message"
         
         GIVEN("user opens the channel") {
@@ -98,6 +113,8 @@ final class MessageList_Tests: StreamTestCase {
     }
     
     func test_messageIsEdited_whenParticipantEditsMessage() throws {
+        linkToScenario(withId: 40)
+        
         let message = "test message"
         let editedMessage = "hello"
         

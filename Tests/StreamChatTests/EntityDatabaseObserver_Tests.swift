@@ -235,7 +235,7 @@ final class EntityDatabaseObserver_Tests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 0.1)
+        wait(for: [expectation], timeout: 1)
         
         XCTAssertEqual(listener, [.remove(testItem)])
     }

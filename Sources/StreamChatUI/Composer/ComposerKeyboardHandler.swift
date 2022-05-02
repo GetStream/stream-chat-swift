@@ -48,10 +48,14 @@ open class ComposerKeyboardHandler: KeyboardHandler {
             object: nil
         )
     }
+    
+    // swiftlint:disable notification_center_detachment
 
     open func stop() {
         NotificationCenter.default.removeObserver(self)
     }
+    
+    // swiftlint:enable notification_center_detachment
 
     @objc open func keyboardWillChangeFrame(_ notification: Notification) {
         guard composerParentVC?.presentedViewController == nil,

@@ -7,8 +7,7 @@ import UIKit
 
 /// Controller responsible for displaying the channel messages.
 @available(iOSApplicationExtension, unavailable)
-open class ChatChannelVC:
-    _ViewController,
+open class ChatChannelVC: _ViewController,
     ThemeProvider,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,

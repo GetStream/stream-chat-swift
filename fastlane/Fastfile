@@ -2,8 +2,9 @@ default_platform :ios
 
 require 'json'
 require 'net/http'
+import 'Sonarfile'
 
-xcode_version = ENV['XCODE_VERSION'].nil? ? '13.2.1' : ENV['XCODE_VERSION']
+xcode_version = ENV['XCODE_VERSION'].nil? ? '13.3.1' : ENV['XCODE_VERSION']
 # The number of times the stress test suite is ran
 stress_tests_cycles = 50
 
@@ -270,8 +271,7 @@ end
 
 lane :set_SDK_version do |options|
   pathToVersionFile = "../Sources/StreamChat/Generated/SystemEnvironment+Version.swift"
-  versionGeneratedFile = "
-//
+  versionGeneratedFile = "//
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 // ⚠️  Generated file, please use `fastlane :bump_SDK_version or fastlane release major|minor|patch` lanes
@@ -750,35 +750,32 @@ lane :emerge_upload do
   )
 end
 
-desc "Get code coverage report and run complexity analysis for Sonar"
-lane :sonar_upload do
-  version_number = get_version_number(
-    xcodeproj: 'StreamChat.xcodeproj',
-    target: 'StreamChat'
-  )[/\d+\.\d+\.\d/]
+desc 'Upload test results to Allure TestOps'
+lane :allure_upload do
+  xcresult = 'test_output/StreamChatUITestsApp.xcresult'
+  UI.user_error!('No .xcresult file found.') unless File.exist?(xcresult)
 
-  slather
-
-  lizard(
-    source_folder: './Sources/',
-    language: 'swift',
-    export_type: 'xml',
-    report_file: 'reports/lizard.xml'
-  )
-
-  if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
-    sonar(
-      sonar_login: ENV['SONAR_TOKEN'],
-      pull_request_branch: ENV['GITHUB_HEAD_REF'],
-      pull_request_base: ENV['GITHUB_BASE_REF'],
-      pull_request_key: ENV['PR_NUMBER'],
-      project_version: version_number
-    )
-  else
-    sonar(
-      sonar_login: ENV['SONAR_TOKEN'],
-      branch_name: git_branch,
-      project_version: version_number
-    )
-  end
+  params = {
+    server_url: 'https://api.github.com',
+    api_token: ENV['GITHUB_TOKEN'],
+    http_method: 'GET',
+    path: "/repos/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}"
+  }
+  github_run = JSON.parse(github_api(params)[:body])
+  tags = ''
+  launch_name =
+    if github_run['event'] == 'pull_request'
+      params[:path] = github_run['pull_requests'][0]['url'].split(params[:server_url]).last
+      pull_request = JSON.parse(github_api(params)[:body])
+      tags = pull_request['labels'].map { |label| label['name'] }.join(',')
+      pull_request['title']
+    elsif github_run['head_commit']
+      github_run['head_commit']['message']
+    else
+      github_run['name']
+    end
+  results_path = 'allure-results'
+  allure_args = "--launch-name '#{launch_name}' --launch-tags '#{tags}' #{results_path}"
+  sh("./xcresults export #{xcresult} #{results_path}")
+  sh("env BRANCH_NAME='#{github_run['head_branch']}' ./allurectl upload #{allure_args}")
 end

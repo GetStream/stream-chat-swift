@@ -7,8 +7,7 @@ import UIKit
 
 /// Controller responsible for displaying message thread.
 @available(iOSApplicationExtension, unavailable)
-open class ChatThreadVC:
-    _ViewController,
+open class ChatThreadVC: _ViewController,
     ThemeProvider,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
@@ -254,7 +253,7 @@ open class ChatThreadVC:
         messageComposerVC.dismissSuggestions()
     }
 
-    // MARK: -  ChatMessageControllerDelegate
+    // MARK: - ChatMessageControllerDelegate
 
     open func messageController(
         _ controller: ChatMessageController,

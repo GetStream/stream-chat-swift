@@ -94,6 +94,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.messageListDateOverlayEnabled = true
         Components.default._messageListDiffingEnabled = isStreamInternalConfiguration
         Components.default.messageActionsVC = CustomChatMessageActionsVC.self
+        Components.default.reactionsSorting = { $0.type.position < $1.type.position }
 
         StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
 
@@ -371,6 +372,34 @@ class HiddenChannelListVC: ChatChannelListVC {
     }
 }
 
+class CustomMessageContentView: ChatMessageContentView {
+    override open func updateContent() {
+        super.updateContent()
+
+        if content?.isShadowed == true {
+            textView?.textColor = appearance.colorPalette.textLowEmphasis
+            textView?.text = "This message is from a shadow banned user"
+        }
+
+        if let translations = content?.translations, let turkishTranslation = translations[.turkish] {
+            textView?.text = turkishTranslation
+            if let timestampLabelText = timestampLabel?.text {
+                timestampLabel?.text = "\(timestampLabelText) - Translated to Turkish"
+            }
+        }
+
+        guard let authorNameLabel = authorNameLabel, authorNameLabel.text != "" else {
+            return
+        }
+
+        guard let birthLand = content?.author.birthLand else {
+            return
+        }
+
+        authorNameLabel.text?.append(" \(birthLand)")
+    }
+}
+
 class CustomChatMessageActionsVC: ChatMessageActionsVC {
     // For the propose of the demo app, we add an extra hard delete message to test it.
     override var messageActions: [ChatMessageActionItem] {
@@ -438,6 +467,19 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
         ) {
             self.action = action
             icon = UIImage(systemName: "flag.fill")!
+        }
+    }
+}
+
+extension MessageReactionType {
+    var position: Int {
+        switch rawValue {
+        case "love": return 0
+        case "haha": return 1
+        case "like": return 2
+        case "sad": return 3
+        case "wow": return 4
+        default: return 5
         }
     }
 }

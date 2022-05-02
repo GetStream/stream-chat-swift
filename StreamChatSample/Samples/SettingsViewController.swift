@@ -73,13 +73,11 @@ extension SettingsViewController {
 // MARK: - Switches
 
 extension SettingsViewController {
-    @IBAction
-    func pushNotificationsSwitchValueChanged(_ sender: Any) {
+    @IBAction func pushNotificationsSwitchValueChanged(_ sender: Any) {
         // TODO: Enable/Disable push notifications
     }
     
-    @IBAction
-    func webSocketsConnectionSwitchValueChanged(_ sender: Any) {
+    @IBAction func webSocketsConnectionSwitchValueChanged(_ sender: Any) {
         if webSocketsConnectionSwitch.isOn {
             webSocketsConnectionSwitch.isEnabled = false
             connectionController.connect { [weak self] error in

@@ -9,7 +9,7 @@ import UIKit
 
 class NameGroupViewController: UIViewController {
     class UserCell: UITableViewCell {
-        static let reuseIdentifier = String(describing: self)
+        static let reuseIdentifier = String(describing: NameGroupViewController.UserCell.self)
         
         let avatarView = AvatarView()
         let nameLabel = UILabel()

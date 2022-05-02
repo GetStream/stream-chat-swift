@@ -656,7 +656,7 @@ extension ChatClient: ConnectionStateDelegate {
             ) { [clientUpdater] in
                 clientUpdater.reloadUserIfNeeded(
                     userConnectionProvider: .closure { _, completion in
-                        tokenProvider() { result in
+                        tokenProvider { result in
                             if case .success = result {
                                 self.tokenExpirationRetryStrategy.resetConsecutiveFailures()
                             }

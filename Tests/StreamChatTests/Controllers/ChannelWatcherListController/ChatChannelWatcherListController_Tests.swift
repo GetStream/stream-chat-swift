@@ -401,7 +401,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
             }
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 1)
 
         // Assert `remove` entity changes are received by the delegate.
         AssertAsync {

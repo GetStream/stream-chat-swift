@@ -17,10 +17,10 @@ final class StreamChatWrapper {
         var config = ChatClientConfig(apiKey: .init(apiKey))
         config.isLocalStorageEnabled = false
 
-        /// create an instance of ChatClient and share it using the singleton
+        // create an instance of ChatClient and share it using the singleton
         ChatClient.shared = ChatClient(config: config)
 
-        /// connect to chat
+        // connect to chat
         ChatClient.shared.connectUser(
             userInfo: UserInfo(
                 id: userCredentials.id,

@@ -1,4 +1,3 @@
-
 //
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
@@ -8,5 +7,5 @@ import Foundation
 
 extension SystemEnvironment {
   /// A Stream Chat version.
-  public static let version: String = "4.13.1"
+  public static let version: String = "4.14.0"
 }
