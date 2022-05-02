@@ -60,9 +60,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     }
 
     override open func updateContent() {
-        messageActionsContainerStackView.subviews.forEach {
-            messageActionsContainerStackView.removeArrangedSubview($0)
-        }
+        messageActionsContainerStackView.removeAllArrangedSubviews()
 
         messageActions.forEach {
             let actionView = actionButtonClass.init()
