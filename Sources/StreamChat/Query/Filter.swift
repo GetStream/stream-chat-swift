@@ -67,6 +67,7 @@ public protocol FilterValue: Encodable {}
 
 // Built-in `FilterValue` conformances for supported types
 
+extension Optional: FilterValue where Wrapped == String {}
 extension String: FilterValue {}
 extension Int: FilterValue {}
 extension Double: FilterValue {}
