@@ -17,6 +17,173 @@ final class ChannelListPayload_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(payload.channels.count, 20)
     }
+    
+    func test_hugeChannelListQuery_save() throws {
+        let decodedPayload = createHugeChannelList()
+        
+        let databaseContainer = DatabaseContainer_Spy()
+        measure {
+            let writeCompleted = expectation(description: "DB write complete")
+            databaseContainer.write({ session in
+                try session.saveChannelList(payload: decodedPayload, query: .init(filter: .containMembers(userIds: [.unique])))
+            }, completion: { error in
+                if let error = error {
+                    XCTFail("DB write error: \(error)")
+                }
+                writeCompleted.fulfill()
+            })
+            wait(for: [writeCompleted], timeout: 10)
+        }
+    }
+    
+    func createHugeChannelList() -> ChannelListPayload {
+        let userCount = 600
+        let channelCount = 20
+        let messageCount = 25
+        let channelReadCount = 20
+        
+        let users = (0..<max(userCount, 30)).map { _ in UserPayload.dummy(userId: .unique) }
+        let channels = (0..<channelCount).map { _ -> ChannelPayload in
+            let channelUsers = users.shuffled().prefix(30)
+            
+            let channelCreatedDate = Date.unique
+            let lastMessageDate = Date.unique(after: channelCreatedDate)
+            
+            let cid = ChannelId.unique
+            let channelOwner = channelUsers.randomElement()!
+            let channelDetail = ChannelDetailPayload(
+                cid: cid,
+                name: .unique,
+                imageURL: .unique(),
+                extraData: [:],
+                typeRawValue: cid.type.rawValue,
+                lastMessageAt: lastMessageDate,
+                createdAt: channelCreatedDate,
+                deletedAt: nil,
+                updatedAt: .unique(after: channelCreatedDate),
+                truncatedAt: nil,
+                createdBy: channelOwner,
+                config: .init(
+                    reactionsEnabled: true,
+                    typingEventsEnabled: true,
+                    readEventsEnabled: true,
+                    connectEventsEnabled: true,
+                    uploadsEnabled: true,
+                    repliesEnabled: true,
+                    searchEnabled: true,
+                    mutesEnabled: true,
+                    urlEnrichmentEnabled: true,
+                    messageRetention: "1000",
+                    maxMessageLength: 100,
+                    commands: [
+                        .init(
+                            name: "test",
+                            description: "test command",
+                            set: "test",
+                            args: "test"
+                        )
+                    ],
+                    createdAt: channelCreatedDate,
+                    updatedAt: .unique
+                ),
+                isFrozen: true,
+                memberCount: 100,
+                team: .unique,
+                members: channelUsers.map {
+                    MemberPayload.dummy(
+                        user: $0,
+                        createdAt: $0.createdAt,
+                        updatedAt: $0.updatedAt,
+                        role: .member,
+                        isMemberBanned: false
+                    )
+                },
+                cooldownDuration: .random(in: 0...120)
+            )
+            
+            let messages = (0..<messageCount).map { _ -> MessagePayload in
+                let messageId = MessageId.unique
+                let messageCreatedDate = Date.unique(after: channelCreatedDate)
+                let messageAuthor = channelUsers.randomElement()!
+                return MessagePayload(
+                    id: messageId,
+                    type: .regular,
+                    user: messageAuthor,
+                    createdAt: messageCreatedDate,
+                    updatedAt: .unique,
+                    deletedAt: nil,
+                    text: .unique,
+                    command: .unique,
+                    args: .unique,
+                    parentId: nil,
+                    showReplyInChannel: .random(),
+                    quotedMessageId: nil,
+                    quotedMessage: nil,
+                    mentionedUsers: Bool.random() ? [channelUsers.randomElement()!] : [],
+                    threadParticipants: [],
+                    replyCount: .random(in: 0...10),
+                    extraData: [:],
+                    latestReactions: Bool.random() ? (0..<3).map { _ in
+                        MessageReactionPayload(
+                            type: "like",
+                            score: 1,
+                            messageId: messageId,
+                            createdAt: .unique(after: messageCreatedDate),
+                            updatedAt: .unique(after: messageCreatedDate),
+                            user: channelUsers.randomElement()!,
+                            extraData: [:]
+                        )
+                    } : [],
+                    ownReactions: Bool.random() ? (0..<3).map { _ in
+                        MessageReactionPayload(
+                            type: "like",
+                            score: 1,
+                            messageId: messageId,
+                            createdAt: .unique(after: messageCreatedDate),
+                            updatedAt: .unique(after: messageCreatedDate),
+                            user: messageAuthor,
+                            extraData: [:]
+                        )
+                    } : [],
+                    reactionScores: [:],
+                    reactionCounts: [:],
+                    isSilent: false,
+                    isShadowed: false,
+                    attachments: Bool.random() ? [.dummy()] : [],
+                    channel: channelDetail,
+                    pinned: false,
+                    pinnedBy: nil,
+                    pinnedAt: nil,
+                    pinExpires: nil
+                )
+            }
+            
+            return ChannelPayload(
+                channel: channelDetail,
+                watcherCount: 0,
+                watchers: [],
+                members: channelDetail.members!,
+                membership: MemberPayload.dummy(
+                    user: channelOwner,
+                    createdAt: channelOwner.createdAt,
+                    updatedAt: channelOwner.updatedAt,
+                    role: .admin,
+                    isMemberBanned: false
+                ),
+                messages: messages,
+                pinnedMessages: [],
+                channelReads: (0..<channelReadCount).map { i in
+                    ChannelReadPayload(
+                        user: channelUsers[i],
+                        lastReadAt: .unique(after: channelCreatedDate),
+                        unreadMessagesCount: (0..<10).randomElement()!
+                    )
+                }
+            )
+        }
+        
+        return ChannelListPayload(channels: channels)
+    }
 }
 
 final class ChannelPayload_Tests: XCTestCase {
