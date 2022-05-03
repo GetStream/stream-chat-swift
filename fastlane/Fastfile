@@ -420,7 +420,7 @@ lane :testflight_build do
     app_identifier: "io.getstream.iOS.ChatDemoApp",
     app_platform: "ios",
     ipa: "archives/ChatSample.ipa",
-    groups: ['Public'],
+    groups: ['Public Link'],
     distribute_external: true,
     reject_build_waiting_for_review: true,
     changelog: changelog
