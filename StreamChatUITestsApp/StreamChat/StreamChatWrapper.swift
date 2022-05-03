@@ -3,11 +3,18 @@
 //
 
 import Foundation
+#if TESTS
+@testable import StreamChat
+import OHHTTPStubs
+#else
 import StreamChat
+#endif
 import StreamChatUI
 import UIKit
 
 final class StreamChatWrapper {
+
+    static let shared = StreamChatWrapper()
 
     var userCredentials: UserCredentials?
 
@@ -17,8 +24,13 @@ final class StreamChatWrapper {
         var config = ChatClientConfig(apiKey: .init(apiKey))
         config.isLocalStorageEnabled = false
 
+        // Customization
+        Components.default.channelListRouter = CustomChannelListRouter.self
+        Components.default.channelVC = ChannelVC.self
+
         // create an instance of ChatClient and share it using the singleton
-        ChatClient.shared = ChatClient(config: config)
+        let environment: ChatClient.Environment = ChatClient.Environment()
+        ChatClient.shared = ChatClient(config: config, environment: environment)
 
         // connect to chat
         ChatClient.shared.connectUser(
@@ -31,7 +43,7 @@ final class StreamChatWrapper {
         )
     }
 
-    func makeChannelListViewController() -> UIViewController {
+    func makeChannelListViewController() -> ChannelList {
         // UI
         let query = ChannelListQuery(filter: .containMembers(userIds: [userCredentials?.id ?? ""]))
         let controller = ChatClient.shared.channelListController(query: query)
@@ -39,4 +51,43 @@ final class StreamChatWrapper {
         return channelList
     }
 
+}
+
+extension StreamChatWrapper {
+
+    func mockConnection(isConnected: Bool) {
+        #if TESTS
+        let client = ChatClient.shared
+
+        if isConnected == false {
+            // Stub all HTTP requests with No internet connection error
+            HTTPStubs.stubRequests(passingTest: { (request) -> Bool in
+                let baseURL = ChatClient.shared.config.baseURL.restAPIBaseURL.absoluteString
+                return request.url?.absoluteString.contains(baseURL) ?? false
+            }, withStubResponse: { _ -> HTTPStubsResponse in
+                let error = NSError(domain: "NSURLErrorDomain",
+                                    code: -1009,
+                                    userInfo: nil)
+                return HTTPStubsResponse(error: error)
+            })
+
+            // Swap monitor with the mocked one
+            let monitor = InternetConnectionMonitor_Mock()
+            var environment = ChatClient.Environment()
+            environment.monitor = monitor
+            client?.setupConnectionRecoveryHandler(with: environment)
+
+            // Update monitor with mocked status
+            monitor.update(with: .unavailable)
+
+            // Disconnect from websockets
+            client?.webSocketClient?.disconnect(source: .systemInitiated)
+
+        } else {
+            HTTPStubs.removeAllStubs()
+            client?.setupConnectionRecoveryHandler(with: ChatClient.Environment())
+            client?.webSocketClient?.connect()
+        }
+        #endif
+    }
 }

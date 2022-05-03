@@ -136,5 +136,4 @@ final class MessageList_Tests: StreamTestCase {
             participantRobot.assertMessage(editedMessage)
         }
     }
-    
 }

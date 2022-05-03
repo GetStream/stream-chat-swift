@@ -854,6 +854,7 @@ private class TestEnvironment {
     @Atomic var backgroundTaskScheduler: BackgroundTaskScheduler_Mock?
     
     @Atomic var internetConnection: InternetConnection_Mock?
+    var monitor: InternetConnectionMonitor_Mock?
 
     lazy var environment: ChatClient.Environment = { [unowned self] in
         .init(
@@ -909,11 +910,12 @@ private class TestEnvironment {
             },
             internetConnection: {
                 self.internetConnection = InternetConnection_Mock(
-                    monitor: .init(),
+                    monitor: $1 as! InternetConnectionMonitor_Mock,
                     notificationCenter: $0
                 )
                 return self.internetConnection!
             },
+            monitor: InternetConnectionMonitor_Mock(),
             clientUpdaterBuilder: {
                 self.clientUpdater = ChatClientUpdater_Mock(client: $0)
                 return self.clientUpdater!

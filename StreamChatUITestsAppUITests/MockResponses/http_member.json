@@ -1,0 +1,22 @@
+{
+      "user_id": "leia_organa",
+      "user": {
+        "id": "leia_organa",
+        "role": "user",
+        "created_at": "2020-12-07T11:37:33.78879Z",
+        "updated_at": "2022-04-20T16:07:59.40095Z",
+        "last_active": "2022-05-02T15:03:25.076408116Z",
+        "banned": false,
+        "online": true,
+        "name": "Leia Organa",
+        "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+        "birthland": "Polis Massa",
+        "AdditionalProperties": {}
+      },
+      "created_at": "2022-05-02T15:16:22.459264Z",
+      "updated_at": "2022-05-02T15:16:22.459264Z",
+      "banned": false,
+      "shadow_banned": false,
+      "role": "member",
+      "channel_role": "channel_member"
+}
