@@ -310,13 +310,35 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
-        worker.update(channelListQuery: updatedQuery) { result in
+        worker.update(channelListQuery: updatedQuery) { [weak self] result in
             switch result {
             case let .success(channels):
-                self.hasLoadedAllPreviousChannels = channels.count < limit
-                self.callback { completion?(nil) }
+                self?.hasLoadedAllPreviousChannels = channels.count < limit
+                self?.callback { completion?(nil) }
             case let .failure(error):
-                self.callback { completion?(error) }
+                self?.callback { completion?(error) }
+            }
+        }
+    }
+
+    func resetQuery(
+        watchedAndSynchedChannelIds: Set<ChannelId>,
+        synchedChannelIds: Set<ChannelId>,
+        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
+    ) {
+        let pageSize = Int.channelsPageSize
+        worker.resetChannelsQuery(
+            for: query,
+            pageSize: pageSize,
+            watchedAndSynchedChannelIds: watchedAndSynchedChannelIds,
+            synchedChannelIds: synchedChannelIds
+        ) { [weak self] result in
+            switch result {
+            case let .success((newChannels, unwantedCids)):
+                self?.hasLoadedAllPreviousChannels = newChannels.count < pageSize
+                completion(.success((newChannels, unwantedCids)))
+            case let .failure(error):
+                completion(.failure(error))
             }
         }
     }

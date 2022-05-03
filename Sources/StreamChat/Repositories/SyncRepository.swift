@@ -33,7 +33,6 @@ class SyncRepository {
     private let apiClient: APIClient
     let activeChannelControllers: NSHashTable<ChatChannelController>
     let activeChannelListControllers: NSHashTable<ChatChannelListController>
-    let channelRepository: ChannelListUpdater
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
 
@@ -48,7 +47,6 @@ class SyncRepository {
         config: ChatClientConfig,
         activeChannelControllers: NSHashTable<ChatChannelController>,
         activeChannelListControllers: NSHashTable<ChatChannelListController>,
-        channelRepository: ChannelListUpdater,
         offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
@@ -57,7 +55,6 @@ class SyncRepository {
         self.config = config
         self.activeChannelControllers = activeChannelControllers
         self.activeChannelListControllers = activeChannelListControllers
-        self.channelRepository = channelRepository
         self.offlineRequestsRepository = offlineRequestsRepository
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
@@ -128,7 +125,6 @@ class SyncRepository {
             .map { controller in
                 RefetchChannelListQueryOperation(
                     controller: controller,
-                    channelRepository: channelRepository,
                     context: context
                 )
             }

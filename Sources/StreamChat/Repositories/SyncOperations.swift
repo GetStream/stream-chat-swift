@@ -96,7 +96,7 @@ final class WatchChannelOperation: AsyncOperation {
 }
 
 final class RefetchChannelListQueryOperation: AsyncOperation {
-    init(controller: ChatChannelListController, channelRepository: ChannelListUpdater, context: SyncContext) {
+    init(controller: ChatChannelListController, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak controller] _, done in
             guard let controller = controller, controller.canBeRecovered else {
                 done(.continue)
@@ -106,9 +106,8 @@ final class RefetchChannelListQueryOperation: AsyncOperation {
             let query = controller.query
 
             log.info("3 & 4. Refetching channel lists queries & Cleaning up local message history", subsystems: .offlineSupport)
-            channelRepository.resetChannelsQuery(
-                for: query,
-                watchedChannelIds: context.watchedAndSynchedChannelIds,
+            controller.resetQuery(
+                watchedAndSynchedChannelIds: context.watchedAndSynchedChannelIds,
                 synchedChannelIds: context.synchedChannelIds
             ) { result in
                 switch result {
@@ -140,14 +139,14 @@ final class CleanUnwantedChannelsOperation: AsyncOperation {
                 return
             }
 
-            // We are going to clean those channels that are not present in remote queries, and that have not
+            // We are going to remove those channels that are not present in remote queries, and that have not
             // been watched.
             database.write { session in
                 // We remove watchedAndSynched from unwantedChannels because it might happen that a channel marked
                 // as unwanted in one query, might still be needed in another query (scenario where multiple queries
                 // are active at the same time).
                 let idsToRemove = context.unwantedChannelIds.subtracting(context.watchedAndSynchedChannelIds)
-                session.cleanChannels(cids: idsToRemove)
+                session.removeChannels(cids: idsToRemove)
             } completion: { error in
                 if let error = error {
                     log.error(
