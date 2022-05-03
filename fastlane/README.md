@@ -13,6 +13,30 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### allure_upload
+
+```sh
+[bundle exec] fastlane allure_upload
+```
+
+Upload test results to Allure TestOps
+
+### allure_testcase
+
+```sh
+[bundle exec] fastlane allure_testcase
+```
+
+Create test-case in Allure TestOps and get its id
+
+### allure_regression
+
+```sh
+[bundle exec] fastlane allure_regression
+```
+
+Sync and run regression test-plan on Allure TestOps
+
 ### build_xcframeworks
 
 ```sh
@@ -253,14 +277,6 @@ Build and upload DemoApp to Emerge
 ```
 
 Get code coverage report and run complexity analysis for Sonar
-
-### allure_upload
-
-```sh
-[bundle exec] fastlane allure_upload
-```
-
-Upload test results to Allure TestOps
 
 ----
 
