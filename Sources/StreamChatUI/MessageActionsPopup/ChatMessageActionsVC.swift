@@ -45,11 +45,15 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
+        view.embed(messageActionsContainerStackView)
         messageActionsContainerStackView.axis = .vertical
         messageActionsContainerStackView.alignment = .fill
         messageActionsContainerStackView.spacing = 1
-        view.embed(messageActionsContainerStackView)
+
+        // Fix safe area layout issue when message actions go below scroll view
+        messageActionsContainerStackView.isLayoutMarginsRelativeArrangement = true
+        messageActionsContainerStackView.layoutMargins = .zero
     }
     
     override open func setUpAppearance() {
