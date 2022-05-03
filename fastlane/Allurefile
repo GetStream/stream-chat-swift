@@ -30,14 +30,14 @@ lane :allure_upload do
 end
 
 desc 'Create test-case in Allure TestOps and get its id'
-lane :allure_testcase do
+lane :allure_create_testcase do
   body = { projectId: allure_project_id, name: 'Automatically created testcase', deleted: true }.to_json
   testcase_id = allure_api(path: '/testcase', http_method: 'POST', body: body)['id']
   UI.success("#{rocket}\nTestcase with id #{testcase_id} created successfully 🎉")
 end
 
 desc 'Sync and run regression test-plan on Allure TestOps'
-lane :allure_regression do |options|
+lane :allure_start_regression do |options|
   UI.user_error!('Link to Jira has to be provided ⚠️') unless options[:jira] =~ URI::DEFAULT_PARSER.regexp[:ABS_URI]
   UI.user_error!('Release version has to be provided ⚠️') if options[:release_version].nil?
 
