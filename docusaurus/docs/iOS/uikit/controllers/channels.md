@@ -2,37 +2,107 @@
 title: Channel Controllers
 ---
 
+import SingletonNote from '../../common-content/chat-client.md'
+
 ## ChannelListController
 
-`ChatChannelListController` allows you to observe a list of chat channels based on the provided query and to paginate channels.
+`ChatChannelListController` is the component responsible for managing the list of channels matching the given query. The main responsibilities are:
+- exposing the list of channels matching the query
+- allowing to paginate the channel list (initially, only the 1st page of channels is fetched)
+- keeping the list of channels in sync with the remote by dynamically linking/unlinking channels that start/stop matching the query
 
-### ChannelList Delegate
-
-Classes that conform to the `ChatChannelListControllerDelegate` protocol will receive changes to the queried list of channels.
-
+Here is the code snippet showing how to instantiate `ChatChannelListController` showing the channels the current user is a member of:
 ```swift
-func controller(
-    _ controller: ChatChannelListController,
-    didChangeChannels changes: [ListChange<ChatChannel>]
-)
+// 1. Create a query matching channels where members contain the current user  
+let query = ChannelListQuery(filter: .containMembers(userIds: [currentUserId]))
+
+// 2. Create a controller
+let controller = ChatClient.shared.channelListController(query: query, filter: { channel in
+    return channel.membership != nil
+})
+
+// 3. Set the delegate
+controller.delegate = delegate
+
+// 4. Synchronize a controller
+controller.synchronize { error in /* handle error */ }
 ```
 
-### Having more than one ChannelListController active at the same time
+Let's go through step by step.
 
-When having 2 active controllers at the same time, you need to initialize them by passing a `filter` block. This will make sure events are routed to the right list.
+<SingletonNote />
 
+### 1. Create a query
+
+The channel list query is described by `ChannelListQuery` type. The main parts of the query are filter and sorting options.
+
+The `query.filter` determines a set of conditions the channel should satisfy to match the query. It can contains conditions for **built-in** channel fields:
+```swift
+let filter1: Filter<ChannelListFilterScope> = .equal(.type, to: .messaging)
 ```
-client.channelListController(query: query, filter: { channel in
-    // Your filtering logic
+as well as conditions for **custom** fields:
+```swift
+let filter2: Filter<ChannelListFilterScope> = .equal("state", to: "LA")
+```
+Primitive filters can be **combined** using `and/or/nor` operators which allow getting a filter of any complexity:
+```swift
+let compoundFilter: Filter<ChannelListFilterScope> = .and([
+    filter1,
+    filter2
+])
+```
+
+The `query.sort` is an array of sorting options. Sorting options are applied based on their order in the array so the first option has the highest impact while the others are used mainly as a tiebreakers. By default, the channel list is sorted by `updated_at`.
+
+### 2. Create a controller
+
+The controller can be created using `ChatClient`:
+```swift
+let controller = ChatClient.shared.channelListController(query: query, filter: { channel in
+    // the filtering logic goes here.
     return true
 })
 ```
 
-It is expected that the logic on the `filter` block matches the one in `query.filter`.
+The `filter` closure is needed to dynamically link/unlink channels to the list during the controller's lifecycle to keep the list in sync with the remote:
+
+When `filter` returns `true`, the new/updated channel is linked/stays linked to the channel list
+
+When `filter` returns `false`, the new/updated channel is not linked/is unlinked from the channel list.
 
 :::note
-Given the nature of `Filter`, having generic logic capable of using `query.filter` at runtime to determine if a ChatChannel meets the criteria is extremely expensive and complex. Instead, having a block that only checks for the particular needs of the use case is much cheaper.
+It is expected that the logic on the `filter` closure matches the one in `query.filter`.
 :::
+
+:::note
+Given the complex nature of `Filter`, having generic logic capable of using `query.filter` at runtime to determine if a channel meets the criteria is extremely expensive and complex. Instead, having a block that checks for the particular needs of the use case is much cheaper.
+:::
+
+### 3. Set the delegate
+
+An instance of the type conforming to `ChatChannelListControllerDelegate` protocol can be assigned as controller's delegate:
+```swift
+controller.delegate = delegate
+```
+
+:::note
+An integrator should make sure to keep a strong reference to the `delegate` passed to the controller. Otherwise, the delegate object will get deallocated since the controller references it **weakly**.
+:::
+
+### 4. Synchronize controller
+
+The `synchronize` should be called on the controller to:
+- fetch the first page of channels matching the query
+- subscribe to events for those channels
+- start observing data changes
+
+```swift
+controller.synchronize { error in 
+    /* handle error */
+}
+```
+
+Calling `synchronize` on the controller is the commonly used approach in `StreamChat` SDK (read more [here](../../guides/importance-of-synchronize.md)).
 
 ## ChannelController
 
