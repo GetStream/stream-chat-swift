@@ -269,6 +269,11 @@ extension NSManagedObjectContext {
             channelDTO.reads.removeAll()
         }
     }
+
+    func removeChannels(cids: Set<ChannelId>) {
+        let channels = ChannelDTO.load(cids: Array(cids), context: self)
+        channels.forEach(delete)
+    }
 }
 
 // To get the data from the DB

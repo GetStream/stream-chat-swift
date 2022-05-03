@@ -222,6 +222,9 @@ protocol ChannelDatabaseSession {
 
     /// Cleans a list of channels based on their id
     func cleanChannels(cids: Set<ChannelId>)
+
+    /// Removes a list of channels based on their id
+    func removeChannels(cids: Set<ChannelId>)
 }
 
 protocol ChannelReadDatabaseSession {
