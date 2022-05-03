@@ -46,11 +46,17 @@ class ChannelReadDTO: NSManagedObject {
     }
     
     static func loadOrCreate(cid: ChannelId, userId: String, context: NSManagedObjectContext) -> ChannelReadDTO {
-        if let existing = Self.load(cid: cid, userId: userId, context: context) {
+        let request = fetchRequest(for: cid, userId: userId)
+        if let existing = load(by: request, context: context).first {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelReadDTO
+        let new = NSEntityDescription.insertNewObject(
+            forEntityName: Self.entityName,
+            into: context,
+            forRequest: request,
+            cachingInto: FetchCache.shared
+        ) as! ChannelReadDTO
         new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context)
         new.user = UserDTO.loadOrCreate(id: userId, context: context)
         return new

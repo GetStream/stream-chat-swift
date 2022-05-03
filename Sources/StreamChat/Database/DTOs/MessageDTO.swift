@@ -341,17 +341,21 @@ class MessageDTO: NSManagedObject {
     }
     
     static func load(id: String, context: NSManagedObjectContext) -> MessageDTO? {
-        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return load(by: request, context: context).first
+        load(by: id, context: context).first
     }
     
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> MessageDTO {
-        if let existing = load(id: id, context: context) {
+        let request = fetchRequest(id: id)
+        if let existing = load(by: request, context: context).first {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! Self
+        let new = NSEntityDescription.insertNewObject(
+            forEntityName: entityName,
+            into: context,
+            forRequest: request,
+            cachingInto: FetchCache.shared
+        ) as! Self
         new.id = id
         new.latestReactions = []
         new.ownReactions = []

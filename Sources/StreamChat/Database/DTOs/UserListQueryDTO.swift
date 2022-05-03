@@ -28,9 +28,7 @@ class UserListQueryDTO: NSManagedObject {
     }
     
     static func load(filterHash: String, context: NSManagedObjectContext) -> UserListQueryDTO? {
-        let request = NSFetchRequest<UserListQueryDTO>(entityName: UserListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
-        return try? context.fetch(request).first
+        load(keyPath: "filterHash", equalTo: filterHash, context: context).first
     }
 }
 
@@ -45,12 +43,18 @@ extension NSManagedObjectContext {
             return nil
         }
         
-        if let existingDTO = UserListQueryDTO.load(filterHash: filterHash, context: self) {
+        let request = UserListQueryDTO.fetchRequest(keyPath: "filterHash", equalTo: filterHash)
+        if let existingDTO = UserListQueryDTO.load(by: request, context: self).first {
             return existingDTO
         }
         
         let newDTO = NSEntityDescription
-            .insertNewObject(forEntityName: UserListQueryDTO.entityName, into: self) as! UserListQueryDTO
+            .insertNewObject(
+                forEntityName: UserListQueryDTO.entityName,
+                into: self,
+                forRequest: request,
+                cachingInto: FetchCache.shared
+            ) as! UserListQueryDTO
         newDTO.filterHash = filterHash
         newDTO.shouldBeUpdatedInBackground = query.shouldBeUpdatedInBackground
         
