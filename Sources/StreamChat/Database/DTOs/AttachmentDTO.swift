@@ -54,17 +54,21 @@ class AttachmentDTO: NSManagedObject {
     }
     
     static func load(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO? {
-        let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id.rawValue)
-        return try? context.fetch(request).first
+        load(by: id.rawValue, context: context).first
     }
     
     static func loadOrCreate(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO {
-        if let existing = Self.load(id: id, context: context) {
+        let request = fetchRequest(id: id.rawValue)
+        if let existing = load(by: request, context: context).first {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! AttachmentDTO
+        let new = NSEntityDescription.insertNewObject(
+            forEntityName: Self.entityName,
+            into: context,
+            forRequest: request,
+            cachingInto: FetchCache.shared
+        ) as! AttachmentDTO
         new.attachmentID = id
         return new
     }

@@ -19,17 +19,21 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
     @NSManaged var members: Set<MemberDTO>
         
     static func load(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO? {
-        let request = NSFetchRequest<ChannelMemberListQueryDTO>(entityName: ChannelMemberListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "queryHash == %@", queryHash)
-        return try? context.fetch(request).first
+        load(keyPath: "queryHash", equalTo: queryHash, context: context).first
     }
     
     static func loadOrCreate(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO {
-        if let existing = Self.load(queryHash: queryHash, context: context) {
+        let request = fetchRequest(keyPath: "queryHash", equalTo: queryHash)
+        if let existing = load(by: request, context: context).first {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelMemberListQueryDTO
+        let new = NSEntityDescription.insertNewObject(
+            forEntityName: Self.entityName,
+            into: context,
+            forRequest: request,
+            cachingInto: FetchCache.shared
+        ) as! ChannelMemberListQueryDTO
         new.queryHash = queryHash
         return new
     }
