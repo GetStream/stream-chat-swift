@@ -10,6 +10,9 @@ excluded:
   - vendor
   - UISDKdocumentation
   - Tests
+  - Carthage
+  - Pods
+  - .build
 
 disabled_rules:
   - large_tuple
