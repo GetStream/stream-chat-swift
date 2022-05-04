@@ -1628,6 +1628,8 @@
 		C1B0B38427BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */; };
 		C1B0B38627BFE8AB00C8207D /* MessageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */; };
 		C1B0B38727BFE8AB00C8207D /* MessageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */; };
+		C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
+		C1B49B412822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1E8AD57278C8A6E0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
 		C1E8AD58278C8A6F0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
@@ -3295,6 +3297,7 @@
 		C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointPath_Tests.swift; sourceTree = "<group>"; };
 		C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EndpointPath+OfflineRequest.swift"; sourceTree = "<group>"; };
 		C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository.swift; sourceTree = "<group>"; };
+		C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Validation.swift"; sourceTree = "<group>"; };
 		C1BE72762732CB7B006EB51E /* ImageViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewExtensions.swift; sourceTree = "<group>"; };
 		C1BE72772732CB7B006EB51E /* FetchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchImage.swift; sourceTree = "<group>"; };
 		C1BE72792732CB7B006EB51E /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
@@ -3959,6 +3962,7 @@
 				799C942D247D2FB9001F1104 /* MessageDTO.swift */,
 				8899BC4C25430E40003CB98B /* MessageReactionDTO.swift */,
 				7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */,
+				C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */,
 				79877A222498E50D00015F8B /* UserDTO.swift */,
 				DA84070F25250720005A0F62 /* UserListQueryDTO.swift */,
 			);
@@ -9128,6 +9132,7 @@
 				88EA9AD825470F6A007EE76B /* Dictionary+Extensions.swift in Sources */,
 				8AE335A824FCF999002B6677 /* Reachability_Vendor.swift in Sources */,
 				79D6CE2725F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift in Sources */,
+				C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */,
 				79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */,
 				DABC6ABC2546FD0100A8FC78 /* MessageAttachmentPayload.swift in Sources */,
 				C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */,
@@ -9665,6 +9670,7 @@
 				C121E81D274544AD00023E4C /* ChannelEvents.swift in Sources */,
 				AD6A248B280DA890003BA1E4 /* PushDevice.swift in Sources */,
 				C121E81E274544AD00023E4C /* MessageEvents.swift in Sources */,
+				C1B49B412822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */,
 				C121E81F274544AD00023E4C /* MemberEvents.swift in Sources */,
 				C121E820274544AD00023E4C /* ReactionEvents.swift in Sources */,
 				C121E821274544AD00023E4C /* NotificationEvents.swift in Sources */,
