@@ -251,8 +251,8 @@ public struct ChannelUnreadCount: Decodable, Equatable {
     public static let noUnread = ChannelUnreadCount(messages: 0, mentionedMessages: 0)
     
     /// The total number of unread messages in the channel.
-    public internal(set) var messages: Int
+    public let messages: Int
     
     /// The number of unread messages that mention the current user.
-    public internal(set) var mentionedMessages: Int
+    public let mentionedMessages: Int
 }
