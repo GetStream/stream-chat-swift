@@ -625,7 +625,7 @@ final class ChannelDTO_Tests: XCTestCase {
         
         // THEN
         XCTAssertEqual(unreadCount.messages, unreadMessages)
-        XCTAssertEqual(unreadCount.mentionedMessages, 1)
+        XCTAssertEqual(unreadCount.mentions, 1)
     }
     
     func test_typingUsers_areCleared_onResetEphemeralValues() throws {
