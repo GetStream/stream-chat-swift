@@ -57,7 +57,10 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var reads: Set<ChannelReadDTO>
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
-
+    
+    /// If the current channel is muted by the current user, `mute` contains details.
+    @NSManaged var mute: ChannelMuteDTO?
+    
     override func willSave() {
         super.willSave()
 
@@ -393,11 +396,8 @@ extension ChatChannel {
         }
 
         let fetchMuteDetails: () -> MuteDetails? = {
-            guard
-                let currentUser = context.currentUser,
-                let mute = ChannelMuteDTO.load(cid: cid, userId: currentUser.user.id, context: context)
-            else { return nil }
-
+            guard let mute = dto.mute else { return nil }
+            
             return .init(
                 createdAt: mute.createdAt,
                 updatedAt: mute.updatedAt

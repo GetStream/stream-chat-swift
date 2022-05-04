@@ -24,7 +24,6 @@ class UserDTO: NSManagedObject {
     @NSManaged var members: Set<MemberDTO>?
     @NSManaged var currentUser: CurrentUserDTO?
     @NSManaged var teams: [TeamId]
-    @NSManaged var channelMutes: Set<ChannelMuteDTO>
 
     /// Returns a fetch request for the dto with the provided `userId`.
     static func user(withID userId: UserId) -> NSFetchRequest<UserDTO> {

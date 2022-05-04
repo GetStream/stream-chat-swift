@@ -10,7 +10,7 @@ final class ChannelMuteDTO: NSManagedObject {
     @NSManaged var createdAt: Date
     @NSManaged var updatedAt: Date
     @NSManaged var channel: ChannelDTO
-    @NSManaged var user: UserDTO
+    @NSManaged var currentUser: CurrentUserDTO
 
     static func fetchRequest(userId: String) -> NSFetchRequest<ChannelMuteDTO> {
         let request = NSFetchRequest<ChannelMuteDTO>(entityName: ChannelMuteDTO.entityName)

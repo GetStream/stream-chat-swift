@@ -20,6 +20,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var user: UserDTO
     @NSManaged var devices: Set<DeviceDTO>
     @NSManaged var currentDevice: DeviceDTO?
+    @NSManaged var channelMutes: Set<ChannelMuteDTO>
     
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
@@ -188,11 +189,7 @@ extension CurrentChatUser {
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
 
         let fetchMutedChannels: () -> Set<ChatChannel> = {
-            Set(
-                ChannelMuteDTO
-                    .load(userId: user.id, context: context)
-                    .map { $0.channel.asModel() }
-            )
+            Set(dto.channelMutes.map { $0.channel.asModel() })
         }
 
         return CurrentChatUser(
