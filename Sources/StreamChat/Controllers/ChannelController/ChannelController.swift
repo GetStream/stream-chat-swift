@@ -319,7 +319,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             let observer = EntityDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
-                itemCreator: { $0.asModel() as ChatChannel }
+                itemCreator: { try $0.asModel() as ChatChannel }
             ).onChange { [weak self] change in
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {
@@ -370,7 +370,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                     deletedMessagesVisibility: deletedMessageVisibility ?? .visibleForCurrentUser,
                     shouldShowShadowedMessages: shouldShowShadowedMessages ?? false
                 ),
-                itemCreator: { $0.asModel() as ChatMessage }
+                itemCreator: { try $0.asModel() as ChatMessage }
             )
             observer.onChange = { [weak self] changes in
                 self?.delegateCallback { [weak self] in

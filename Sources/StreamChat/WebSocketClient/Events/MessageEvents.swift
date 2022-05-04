@@ -54,7 +54,7 @@ class MessageNewEventDTO: EventDTO {
             let channelDTO = session.channel(cid: cid)
         else { return nil }
         
-        return MessageNewEvent(
+        return try? MessageNewEvent(
             user: userDTO.asModel(),
             message: messageDTO.asModel(),
             channel: channelDTO.asModel(),
@@ -105,7 +105,7 @@ class MessageUpdatedEventDTO: EventDTO {
             let channelDTO = session.channel(cid: cid)
         else { return nil }
         
-        return MessageUpdatedEvent(
+        return try? MessageUpdatedEvent(
             user: userDTO.asModel(),
             channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
@@ -155,13 +155,12 @@ class MessageDeletedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let messageDTO = session.message(id: message.id),
-            let channelDTO = session.channel(cid: cid)
+            let channelDTO = session.channel(cid: cid),
+            let userDTO = user.flatMap({ session.user(id: $0.id) })
         else { return nil }
-        
-        let userDTO = user.flatMap { session.user(id: $0.id) }
-        
-        return MessageDeletedEvent(
-            user: userDTO?.asModel(),
+
+        return try? MessageDeletedEvent(
+            user: userDTO.asModel(),
             channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
             createdAt: createdAt,
@@ -212,7 +211,7 @@ class MessageReadEventDTO: EventDTO {
             let channelDTO = session.channel(cid: cid)
         else { return nil }
         
-        return MessageReadEvent(
+        return try? MessageReadEvent(
             user: userDTO.asModel(),
             channel: channelDTO.asModel(),
             createdAt: createdAt,
