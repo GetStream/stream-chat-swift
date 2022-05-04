@@ -8,13 +8,6 @@ public var log: Logger {
     LogConfig.logger
 }
 
-public enum StreamRuntimeCheck {
-    /// Enables assertions thrown by the Stream SDK.
-    ///
-    /// When set to false, a message will be logged on console, but the assertion will not be thrown.
-    public static var assertionsEnabled = false
-}
-
 /// Entity for identifying which subsystem the log message comes from.
 public struct LogSubsystem: OptionSet {
     public let rawValue: Int
