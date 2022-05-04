@@ -121,7 +121,7 @@ jobs:
         key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
         restore-keys: ${{ runner.os }}-mint-
     - uses: ./.github/actions/bootstrap
-    - name: Prepare iPhone 12 with iOS 15.0
+    - name: Prepare iPhone 12 Pro with iOS 15.4
       uses: ./.github/actions/prepare-ios-simulator
       with:
         device: "iPhone 12 Pro"
