@@ -1628,6 +1628,8 @@
 		C1B0B38427BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */; };
 		C1B0B38627BFE8AB00C8207D /* MessageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */; };
 		C1B0B38727BFE8AB00C8207D /* MessageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */; };
+		C1B49B3D2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */; };
+		C1B49B3E2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */; };
 		C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
 		C1B49B412822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
@@ -3297,6 +3299,7 @@
 		C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointPath_Tests.swift; sourceTree = "<group>"; };
 		C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EndpointPath+OfflineRequest.swift"; sourceTree = "<group>"; };
 		C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository.swift; sourceTree = "<group>"; };
+		C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamRuntimeCheck.swift; sourceTree = "<group>"; };
 		C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Validation.swift"; sourceTree = "<group>"; };
 		C1BE72762732CB7B006EB51E /* ImageViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewExtensions.swift; sourceTree = "<group>"; };
 		C1BE72772732CB7B006EB51E /* FetchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchImage.swift; sourceTree = "<group>"; };
@@ -4096,6 +4099,7 @@
 				799C9428247D2FB9001F1104 /* ChatClientConfig.swift */,
 				79FC85E624ACCBC500A665ED /* Token.swift */,
 				8862922825AC720F00D9AE78 /* TokenProvider.swift */,
+				C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -8960,6 +8964,7 @@
 				882C5756252C791400E60C44 /* ChannelMemberListUpdater.swift in Sources */,
 				79896D5E25065ECD00BA8F1C /* ChannelRead.swift in Sources */,
 				C1FC2F972742579D0062530F /* Compression.swift in Sources */,
+				C1B49B3D2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
 				C1B0B38627BFE8AB00C8207D /* MessageRepository.swift in Sources */,
 				847E946E269C687300E31D0C /* EventsController.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
@@ -9651,6 +9656,7 @@
 				C121E809274544AC00023E4C /* ChatClientConfig.swift in Sources */,
 				C121E80A274544AC00023E4C /* EventMiddleware.swift in Sources */,
 				C121E80B274544AC00023E4C /* TypingStartCleanupMiddleware.swift in Sources */,
+				C1B49B3E2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
 				C121E80C274544AC00023E4C /* EventDataProcessorMiddleware.swift in Sources */,
 				C121E80D274544AC00023E4C /* ChannelReadUpdaterMiddleware.swift in Sources */,
 				C121E80E274544AC00023E4C /* UserTypingStateUpdaterMiddleware.swift in Sources */,
