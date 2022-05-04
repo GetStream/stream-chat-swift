@@ -227,8 +227,8 @@ extension ChatChannel {
     /// so backend creates a `cid` based on member's `id`s
     public var isDirectMessageChannel: Bool { cid.id.hasPrefix("!members") }
     
-    /// returns `true` if the channel has one or more unread messages for the current user.
-    public var isUnread: Bool { unreadCount.messages > 0 }
+    /// Returns `true` if the channel has one or more unread messages for the current user.
+    public var isUnread: Bool { unreadCount != .noUnread }
 }
 
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.
