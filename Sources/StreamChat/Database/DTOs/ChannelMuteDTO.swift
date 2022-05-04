@@ -8,7 +8,7 @@ import Foundation
 @objc(ChannelMuteDTO)
 final class ChannelMuteDTO: NSManagedObject {
     @NSManaged var createdAt: Date
-    @NSManaged var updatedAt: Date?
+    @NSManaged var updatedAt: Date
     @NSManaged var channel: ChannelDTO
     @NSManaged var user: UserDTO
 
