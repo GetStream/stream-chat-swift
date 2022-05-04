@@ -3,6 +3,7 @@ default_platform :ios
 require 'json'
 require 'net/http'
 import 'Sonarfile'
+import 'Allurefile'
 
 xcode_version = ENV['XCODE_VERSION'].nil? ? '13.3.1' : ENV['XCODE_VERSION']
 # The number of times the stress test suite is ran
@@ -420,7 +421,7 @@ lane :testflight_build do
     app_identifier: "io.getstream.iOS.ChatDemoApp",
     app_platform: "ios",
     ipa: "archives/ChatSample.ipa",
-    groups: ['Public'],
+    groups: ['Public Link'],
     distribute_external: true,
     reject_build_waiting_for_review: true,
     changelog: changelog
@@ -748,34 +749,4 @@ lane :emerge_upload do
     pr_number: pr_num,
     sha: sha
   )
-end
-
-desc 'Upload test results to Allure TestOps'
-lane :allure_upload do
-  xcresult = 'test_output/StreamChatUITestsApp.xcresult'
-  UI.user_error!('No .xcresult file found.') unless File.exist?(xcresult)
-
-  params = {
-    server_url: 'https://api.github.com',
-    api_token: ENV['GITHUB_TOKEN'],
-    http_method: 'GET',
-    path: "/repos/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}"
-  }
-  github_run = JSON.parse(github_api(params)[:body])
-  tags = ''
-  launch_name =
-    if github_run['event'] == 'pull_request'
-      params[:path] = github_run['pull_requests'][0]['url'].split(params[:server_url]).last
-      pull_request = JSON.parse(github_api(params)[:body])
-      tags = pull_request['labels'].map { |label| label['name'] }.join(',')
-      pull_request['title']
-    elsif github_run['head_commit']
-      github_run['head_commit']['message']
-    else
-      github_run['name']
-    end
-  results_path = 'allure-results'
-  allure_args = "--launch-name '#{launch_name}' --launch-tags '#{tags}' #{results_path}"
-  sh("./xcresults export #{xcresult} #{results_path}")
-  sh("env BRANCH_NAME='#{github_run['head_branch']}' ./allurectl upload #{allure_args}")
 end

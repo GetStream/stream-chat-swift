@@ -86,6 +86,7 @@ jobs:
     - name: Run Sonar analysis
       run: bundle exec fastlane sonar_upload
       env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         PR_NUMBER: ${{ github.event.number }}
     - uses: 8398a7/action-slack@v3
@@ -160,12 +161,10 @@ jobs:
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}"
     - name: Upload test results to Allure TestOps
-      if: always()
+      if: success() || failure()
       run: bundle exec fastlane allure_upload
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-        ALLURE_ENDPOINT: "https://streamio.testops.cloud"
-        ALLURE_PROJECT_ID: 1
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}

@@ -35,22 +35,28 @@ lane :sonar_upload do
 
     case branch.to_sym
     when :main
-      slack_sonarcloud_metrics(new_period: version_number)
+      slack_sonarcloud_metrics(new_period: version_number, branch: branch)
     when :develop
-      slack_sonarcloud_metrics(new_period: branch)
+      slack_sonarcloud_metrics(branch: branch)
     end
   end
 end
 
 desc 'Creates a report in Slack with SonarCloud analysis details'
 private_lane :slack_sonarcloud_metrics do |options|
-  metrics = sonarcloud_metric_kit(project_key: 'GetStream_stream-chat-swift', quality_gate: true)
+  project_key = 'GetStream_stream-chat-swift'
+  metrics = sonarcloud_metric_kit(
+    project_key: project_key,
+    quality_gate: true,
+    branch: options[:branch]
+  )
+  new_period = options[:new_period] || options[:branch]
   new_coverage = metrics[:new_coverage].to_f.round(2)
   new_duplication_density = metrics[:new_duplicated_lines_density].to_f.round(2)
   vulnerabilities = metrics[:security_hotspots].to_i + metrics[:vulnerabilities].to_i
   new_vulnerabilities = metrics[:new_security_hotspots].to_i + metrics[:new_vulnerabilities].to_i
 
-  release_status = "From *#{metrics[:period_value]}* to *#{options[:new_period]}*\n _#{metrics[:new_lines_to_cover]}_ new lines of code 🚀"
+  release_status = "From *#{metrics[:period_value]}* to *#{new_period}*\n _#{metrics[:new_lines_to_cover]}_ new lines of code 🚀"
   coverage_status = "Total: _#{metrics[:coverage]}%_\nOn new code: _#{new_coverage}%_ #{new_coverage < 80 ? '⚠️' : '✅'}"
   duplication_status = "Total: _#{metrics[:duplicated_lines_density]}%_\nOn new code: _#{new_duplication_density}%_ #{new_duplication_density < 3 ? '✅' : '⚠️'}"
   code_smells_status = "Total: _#{metrics[:code_smells]}_\nNew: _#{metrics[:new_code_smells]}_ #{metrics[:new_code_smells].to_i.positive? ? '🙊' : '✅'}"
@@ -58,7 +64,7 @@ private_lane :slack_sonarcloud_metrics do |options|
   security_status = "Total: _#{vulnerabilities}_\nNew: _#{new_vulnerabilities}_ #{new_vulnerabilities.positive? ? '⚠️' : '✅'}"
 
   slack(
-    message: '[SonarCloud Release Analysis](https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift)',
+    message: "[SonarCloud Report](https://sonarcloud.io/summary/new_code?id=#{project_key}&branch=#{options[:branch]})",
     attachment_properties: {
       thumb_url: 'https://pbs.twimg.com/profile_images/955394530806829056/LC7DAYM3_400x400.jpg',
       fields: [
