@@ -220,16 +220,17 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                     newIndexPath: nil
                 )
             }
-            
+
+            // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
+            // calling `controllerDidChangeContent` so it properly reflects the state
+            self._items.computeValue = { [] }
+            self._items.reset()
+
             // Publish the changes
             self.changeAggregator.controllerDidChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
             
             // Remove delegate so it doesn't get further removal updates
             self.frc.delegate = nil
-            
-            // Remove the cached items since they're now deleted, technically
-            self._items.computeValue = { [] }
-            self._items.reset()
         }
         
         // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but

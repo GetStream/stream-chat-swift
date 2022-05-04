@@ -32,10 +32,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
             .init(title: "Switch User", style: .default, handler: { [unowned self] _ in
                 let actions = UserCredentials.builtInUsers.map { user in
                     UIAlertAction(title: user.name, style: .default) { _ in
-                        ChatClient.shared.connectUser(
-                            userInfo: user.userInfo,
-                            token: Token(stringLiteral: user.token)
-                        )
+                        self.switchTo(user: user)
                     }
                 }
                 self.rootViewController.presentAlert(
@@ -90,10 +87,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
                 let actions = channelUsers.map { user in
                     UIAlertAction(title: user.name, style: .default) { _ in
-                        ChatClient.shared.connectUser(
-                            userInfo: user.userInfo,
-                            token: Token(stringLiteral: user.token)
-                        )
+                        self.switchTo(user: user)
                     }
                 }
                 self.rootViewController.presentAlert(
@@ -323,6 +317,17 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
             })
         ])
+    }
+
+    /// *Only for testing purposes*. Please do not replicate this. When changing users, you should recreate the controller and the view controller
+    private func switchTo(user: UserCredentials) {
+        ChatClient.shared.connectUser(userInfo: user.userInfo, token: Token(stringLiteral: user.token)) { error in
+            if let error = error {
+                print("Error switching user: ", error.localizedDescription)
+                return
+            }
+            self.rootViewController.controller.synchronize()
+        }
     }
 
     // swiftlint:enable function_body_length
