@@ -255,16 +255,6 @@ protocol ChannelMuteDatabaseSession {
     /// Creates a new `ChannelMuteDTO` object in the database. Throws an error if the `ChannelMuteDTO` fails to be created.
     @discardableResult
     func saveChannelMute(payload: MutedChannelPayload) throws -> ChannelMuteDTO
-
-    /// Fetches `ChannelMuteDTO` with the given `cid` and `userId` from the DB.
-    /// Returns `nil` if no `ChannelMuteDTO` matching the `cid` and `userId`  exists.
-    func loadChannelMute(cid: ChannelId, userId: String) -> ChannelMuteDTO?
-
-    /// Fetches `ChannelMuteDTO` entities for the given `userId` from the DB.
-    func loadChannelMutes(for userId: UserId) -> [ChannelMuteDTO]
-
-    /// Fetches `ChannelMuteDTO` entities for the given `cid` from the DB.
-    func loadChannelMutes(for cid: ChannelId) -> [ChannelMuteDTO]
 }
 
 protocol MemberDatabaseSession {

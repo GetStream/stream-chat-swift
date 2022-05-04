@@ -46,123 +46,87 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let currentUser: CurrentChatUser = try XCTUnwrap(database.viewContext.currentUser?.asModel())
         XCTAssertEqual(currentUser.mutedChannels, [channel])
     }
-
-    func test_loadForUser() throws {
-        // Create current user payload.
-        let userId: UserId = .unique
-
-        // Create channel mutes all for current user.
-        let mutePayloads: [MutedChannelPayload] = [
-            .init(
-                mutedChannel: .dummy(cid: .unique),
-                user: dummyUser(id: userId),
-                createdAt: .unique,
-                updatedAt: .unique
-            ),
-            .init(
-                mutedChannel: .dummy(cid: .unique),
-                user: dummyUser(id: userId),
-                createdAt: .unique,
-                updatedAt: .unique
-            )
-        ]
-
-        try database.writeSynchronously { session in
-            // Save channel mutes to database.
-            for payload in mutePayloads {
-                try session.saveChannelMute(payload: payload)
-            }
-        }
-
-        try database.writeSynchronously { session in
-            // Load channel mutes from the database.
-            let channelMutes = session.loadChannelMutes(for: userId)
-
-            // Assert the correct # of mutes is loaded.
-            XCTAssertEqual(channelMutes.count, mutePayloads.count)
-
-            // Assert mutes match payloads.
-            for mute in channelMutes {
-                let payload = try XCTUnwrap(mutePayloads.first(where: { $0.mutedChannel.cid.rawValue == mute.channel.cid }))
-                XCTAssertEqual(mute.user.id, payload.user.id)
-                XCTAssertEqual(mute.channel.cid, payload.mutedChannel.cid.rawValue)
-                XCTAssertEqual(mute.createdAt, payload.createdAt)
-                XCTAssertEqual(mute.updatedAt, payload.updatedAt)
-            }
-        }
-    }
-
-    func test_loadForChannel() throws {
-        // Create channel id.
-        let cid: ChannelId = .unique
-
-        // Create channel mutes all for the channel with `cid`.
-        let mutePayloads: [MutedChannelPayload] = [
-            .init(
-                mutedChannel: .dummy(cid: cid),
-                user: dummyUser(id: .unique),
-                createdAt: .unique,
-                updatedAt: .unique
-            ),
-            .init(
-                mutedChannel: .dummy(cid: cid),
-                user: dummyUser(id: .unique),
-                createdAt: .unique,
-                updatedAt: .unique
-            )
-        ]
-
-        try database.writeSynchronously { session in
-            // Save channel mutes to database.
-            for payload in mutePayloads {
-                try session.saveChannelMute(payload: payload)
-            }
-        }
-
-        try database.writeSynchronously { session in
-            // Load channel mutes from the database.
-            let channelMutes = session.loadChannelMutes(for: cid)
-
-            // Assert the correct # of mutes is loaded.
-            XCTAssertEqual(channelMutes.count, mutePayloads.count)
-
-            // Assert mutes match payloads.
-            for mute in channelMutes {
-                let payload = try XCTUnwrap(mutePayloads.first(where: { $0.user.id == mute.user.id }))
-                XCTAssertEqual(mute.user.id, payload.user.id)
-                XCTAssertEqual(mute.channel.cid, payload.mutedChannel.cid.rawValue)
-                XCTAssertEqual(mute.createdAt, payload.createdAt)
-                XCTAssertEqual(mute.updatedAt, payload.updatedAt)
-            }
-        }
-    }
-
-    func test_loadForUserAndChannel() throws {
-        let payload = MutedChannelPayload(
+    
+    func test_saveChannelMute_whenThereIsNoCurrentUser_throws() throws {
+        // GIVEN
+        let mute: MutedChannelPayload = .init(
             mutedChannel: .dummy(cid: .unique),
-            user: dummyUser(id: .unique),
+            user: .dummy(userId: .unique),
             createdAt: .unique,
             updatedAt: .unique
         )
-
-        try database.writeSynchronously { session in
-            // Save channel mute to database.
-            try session.saveChannelMute(payload: payload)
+        
+        // WHEN
+        XCTAssertThrowsError(try database.viewContext.saveChannelMute(payload: mute)) { error in
+            // THEN
+            XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
         }
-
-        try database.writeSynchronously { session in
-            // Load channel mute from the database.
-            let mute = try XCTUnwrap(
-                session.loadChannelMute(
-                    cid: payload.mutedChannel.cid,
-                    userId: payload.user.id
-                )
-            )
-            // Assert correct mute is loaded.
-            XCTAssertEqual(mute.user.id, payload.user.id)
-            XCTAssertEqual(mute.channel.cid, payload.mutedChannel.cid.rawValue)
-            XCTAssertEqual(mute.createdAt, payload.createdAt)
-            XCTAssertEqual(mute.updatedAt, payload.updatedAt)
+    }
+    
+    func test_saveChannelMute_whenMuteDoesNotExist_createsIt() throws {
+        // GIVEN
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channel: ChannelDetailPayload = .dummy(cid: .unique)
+        let mute: MutedChannelPayload = .init(
+            mutedChannel: channel,
+            user: currentUser,
+            createdAt: .unique,
+            updatedAt: .unique
+        )
+        
+        var loadedMuteDTO: ChannelMuteDTO? {
+            ChannelMuteDTO.load(cid: mute.mutedChannel.cid, context: database.viewContext)
         }
+        XCTAssertNil(loadedMuteDTO)
+        
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannelMute(payload: mute)
+        }
+        
+        // THEN
+        let muteDTO = try XCTUnwrap(loadedMuteDTO)
+        XCTAssertEqual(muteDTO.createdAt, mute.createdAt)
+        XCTAssertEqual(muteDTO.updatedAt, mute.updatedAt)
+        XCTAssertEqual(muteDTO.currentUser.user.id, currentUser.id)
+        XCTAssertEqual(muteDTO.channel.cid, channel.cid.rawValue)
+    }
+    
+    func test_saveChannelMute_whenMuteExists_updatesIt() throws {
+        // GIVEN
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channel: ChannelDetailPayload = .dummy(cid: .unique)
+        let initialMute: MutedChannelPayload = .init(
+            mutedChannel: channel,
+            user: currentUser,
+            createdAt: .unique,
+            updatedAt: .unique
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannelMute(payload: initialMute)
+        }
+        
+        // WHEN
+        let updatedMute: MutedChannelPayload = .init(
+            mutedChannel: channel,
+            user: currentUser,
+            createdAt: .unique,
+            updatedAt: .unique
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannelMute(payload: updatedMute)
+        }
+        
+        // THEN
+        let muteDTO = try XCTUnwrap(
+            ChannelMuteDTO.load(cid: initialMute.mutedChannel.cid, context: database.viewContext)
+        )
+        XCTAssertEqual(muteDTO.createdAt, updatedMute.createdAt)
+        XCTAssertEqual(muteDTO.updatedAt, updatedMute.updatedAt)
+        XCTAssertEqual(muteDTO.currentUser.user.id, currentUser.id)
+        XCTAssertEqual(muteDTO.channel.cid, channel.cid.rawValue)
     }
 }
