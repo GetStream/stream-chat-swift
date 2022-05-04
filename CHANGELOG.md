@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `nonEmpty` filter for channel list query [#1960](https://github.com/GetStream/stream-chat-swift/pull/1960)
 ### 🐞 Fixed
 - Fix `onlyVisibleForYouIndicator` not being shown for ephemeral messages [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
+- Fix message popup UI glitch for bigger messages and iPad/Landscape [#1975](https://github.com/GetStream/stream-chat-swift/pull/1975)
 
 # [4.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.14.0)
 _April 26, 2022_
