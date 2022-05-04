@@ -92,7 +92,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: lastQuery ?? query
                 ),
-                itemCreator: { $0.asModel() as ChatMessage }
+                itemCreator: { try $0.asModel() as ChatMessage }
             )
             observer.onChange = { [weak self] changes in
                 self?.delegateCallback { [weak self] in

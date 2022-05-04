@@ -167,8 +167,7 @@ private extension ChatUserSearchController {
         client.databaseContainer.write({ session in
             loadedUsers = page
                 .users
-                .compactMap { try? session.saveUser(payload: $0) }
-                .map { $0.asModel() }
+                .compactMap { try? session.saveUser(payload: $0).asModel() }
             
         }, completion: { _ in
             completion(loadedUsers)

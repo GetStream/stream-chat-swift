@@ -60,7 +60,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         let observer = self.environment.createUserListDabaseObserver(
             client.databaseContainer.viewContext,
             request,
-            { $0.asModel() }
+            { try $0.asModel() }
         )
         
         observer.onChange = { [weak self] changes in
@@ -155,7 +155,7 @@ extension ChatUserListController {
         var createUserListDabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) -> ChatUser
+            _ itemCreator: @escaping (UserDTO) throws -> ChatUser
         )
             -> ListDatabaseObserver<ChatUser, UserDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)

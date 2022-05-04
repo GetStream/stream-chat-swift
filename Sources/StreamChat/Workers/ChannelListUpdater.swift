@@ -155,7 +155,7 @@ private extension ChannelListUpdater {
         var channels: [ChatChannel] = []
         database.write { session in
             initialActions?(session)
-            channels = try session.saveChannelList(payload: payload, query: query).map { $0.asModel() }
+            channels = try session.saveChannelList(payload: payload, query: query).compactMap { try? $0.asModel() }
         } completion: { error in
             if let error = error {
                 log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")

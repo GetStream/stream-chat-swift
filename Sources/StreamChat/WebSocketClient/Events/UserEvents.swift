@@ -27,7 +27,7 @@ class UserPresenceChangedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return UserPresenceChangedEvent(
+        return try? UserPresenceChangedEvent(
             user: userDTO.asModel(),
             createdAt: createdAt
         )
@@ -57,7 +57,7 @@ class UserUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return UserUpdatedEvent(
+        return try? UserUpdatedEvent(
             user: userDTO.asModel(),
             createdAt: createdAt
         )
@@ -104,7 +104,7 @@ class UserWatchingEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return UserWatchingEvent(
+        return try? UserWatchingEvent(
             cid: cid,
             createdAt: createdAt,
             user: userDTO.asModel(),
@@ -139,7 +139,7 @@ struct UserGloballyBannedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return UserGloballyBannedEvent(
+        return try? UserGloballyBannedEvent(
             user: userDTO.asModel(),
             createdAt: createdAt
         )
@@ -189,7 +189,7 @@ class UserBannedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return UserBannedEvent(
+        return try? UserBannedEvent(
             cid: cid,
             user: userDTO.asModel(),
             ownerId: ownerId,
@@ -223,7 +223,7 @@ struct UserGloballyUnbannedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return UserGloballyUnbannedEvent(
+        return try? UserGloballyUnbannedEvent(
             user: userDTO.asModel(),
             createdAt: createdAt
         )
@@ -258,7 +258,7 @@ class UserUnbannedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return UserUnbannedEvent(
+        return try? UserUnbannedEvent(
             cid: cid,
             user: userDTO.asModel(),
             createdAt: createdAt

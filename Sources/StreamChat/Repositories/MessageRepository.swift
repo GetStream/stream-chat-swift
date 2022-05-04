@@ -97,7 +97,7 @@ class MessageRepository {
                 messageDTO.locallyCreatedAt = nil
                 messageDTO.localMessageState = nil
             }
-            messageModel = messageDTO.asModel()
+            messageModel = try? messageDTO.asModel()
         }, completion: {
             if let error = $0 {
                 log.error("Error saving sent message with id \(message.id): \(error)", subsystems: .offlineSupport)

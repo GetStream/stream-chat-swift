@@ -57,7 +57,7 @@ class ChannelReadDTO: NSManagedObject {
     }
     
     /// Snapshots the current state of `ChannelReadDTO` and returns an immutable model object from it.
-    func asModel() -> ChatChannelRead { .create(fromDTO: self) }
+    func asModel() throws -> ChatChannelRead { try .create(fromDTO: self) }
 }
 
 // MARK: Saving and loading the data
@@ -123,8 +123,9 @@ extension NSManagedObjectContext {
 }
 
 extension ChatChannelRead {
-    fileprivate static func create(fromDTO dto: ChannelReadDTO) -> ChatChannelRead {
-        .init(
+    fileprivate static func create(fromDTO dto: ChannelReadDTO) throws -> ChatChannelRead {
+        guard dto.isValid else { throw InvalidModel(dto) }
+        return try .init(
             lastReadAt: dto.lastReadAt ?? Date.distantPast,
             unreadMessagesCount: Int(dto.unreadMessageCount),
             user: dto.user.asModel()

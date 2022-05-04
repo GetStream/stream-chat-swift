@@ -252,7 +252,7 @@ extension CurrentChatUserController {
         var currentUserObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<CurrentUserDTO>,
-            _ itemCreator: @escaping (CurrentUserDTO) -> CurrentChatUser,
+            _ itemCreator: @escaping (CurrentUserDTO) throws -> CurrentChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
         ) -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = EntityDatabaseObserver.init
         
@@ -282,7 +282,7 @@ private extension CurrentChatUserController {
         environment.currentUserObserverBuilder(
             client.databaseContainer.viewContext,
             CurrentUserDTO.defaultFetchRequest,
-            { $0.asModel() },
+            { try $0.asModel() },
             NSFetchedResultsController<CurrentUserDTO>.self
         )
     }

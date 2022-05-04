@@ -110,7 +110,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
         environment.userObserverBuilder(
             client.databaseContainer.viewContext,
             UserDTO.user(withID: userId),
-            { $0.asModel() },
+            { try $0.asModel() },
             NSFetchedResultsController<UserDTO>.self
         )
     }
@@ -186,7 +186,7 @@ extension ChatUserController {
         var userObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) -> ChatUser,
+            _ itemCreator: @escaping (UserDTO) throws -> ChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<UserDTO>.Type
         ) -> EntityDatabaseObserver<ChatUser, UserDTO> = EntityDatabaseObserver.init
     }
