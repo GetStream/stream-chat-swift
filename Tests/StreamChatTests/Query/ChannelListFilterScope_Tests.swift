@@ -32,6 +32,13 @@ final class ChannelListFilterScope_Tests: XCTestCase {
             Filter<ChannelListFilterScope>.in(.members, values: ids)
         )
     }
+    
+    func test_noTeam_helper() {
+        XCTAssertEqual(
+            Filter<ChannelListFilterScope>.noTeam,
+            Filter<ChannelListFilterScope>.equal(.team, to: nil)
+        )
+    }
 
     func test_safeSorting_added() {
         // Sortings without safe option
@@ -79,11 +86,5 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         )
 
         XCTAssertEqual(query.debugDescription, "Filter: members IN [\"theid\"] | Sort: [cid:-1]")
-    }
-    
-    func test_teamId_nilValue() {
-        let query = ChannelListQuery(filter: .equal(.team, to: nil))
-        
-        XCTAssertEqual(query.debugDescription, "Filter: team == nil | Sort: []")
     }
 }

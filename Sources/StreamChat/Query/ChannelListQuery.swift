@@ -20,6 +20,11 @@ public extension Filter where Scope: AnyChannelListFilterScope {
     static var nonEmpty: Filter<Scope> {
         .greater(.lastMessageAt, than: Date(timeIntervalSince1970: 0))
     }
+    
+    /// Filter to match channels that are not related to any team.
+    static var noTeam: Filter<Scope> {
+        .equal(.team, to: nil)
+    }
 }
 
 extension Filter where Scope: AnyChannelListFilterScope {
