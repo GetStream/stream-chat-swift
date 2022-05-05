@@ -349,7 +349,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
             constraints += [
                 scrollView.topAnchor
                     .pin(equalTo: view.safeAreaLayoutGuide.topAnchor)
-                    .with(priority: .streamRequire),
+                    .with(priority: .streamAlmostRequire),
                 messageContentContainerView.topAnchor
                     .pin(equalTo: contentView.topAnchor, constant: messageViewFrame.minY)
                     .with(priority: .streamLow)
