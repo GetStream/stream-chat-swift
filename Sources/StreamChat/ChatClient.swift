@@ -276,23 +276,29 @@ public class ChatClient {
         self.tokenProvider = tokenProvider
         self.environment = environment
 
-        if let webSocketClient = webSocketClient {
-            connectionRecoveryHandler = environment.connectionRecoveryHandlerBuilder(
-                webSocketClient,
-                eventNotificationCenter,
-                syncRepository,
-                environment.backgroundTaskSchedulerBuilder(),
-                environment.internetConnection(eventNotificationCenter),
-                config.staysConnectedInBackground
-            )
-        }
-
+        setupConnectionRecoveryHandler(with: environment)
         currentUserId = fetchCurrentUserIdFromDatabase()
     }
     
     deinit {
         completeConnectionIdWaiters(connectionId: nil)
         completeTokenWaiters(token: nil)
+    }
+
+    func setupConnectionRecoveryHandler(with environment: Environment) {
+        guard let webSocketClient = webSocketClient else {
+            return
+        }
+
+        connectionRecoveryHandler = nil
+        connectionRecoveryHandler = environment.connectionRecoveryHandlerBuilder(
+            webSocketClient,
+            eventNotificationCenter,
+            syncRepository,
+            environment.backgroundTaskSchedulerBuilder(),
+            environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
+            config.staysConnectedInBackground
+        )
     }
     
     /// Connects authorized user
@@ -473,12 +479,24 @@ extension ChatClient {
         
         var notificationCenterBuilder = EventNotificationCenter.init
         
-        var internetConnection: (_ center: NotificationCenter) -> InternetConnection = {
-            InternetConnection(notificationCenter: $0)
+        var internetConnection: (_ center: NotificationCenter, _ monitor: InternetConnectionMonitor) -> InternetConnection = {
+            InternetConnection(notificationCenter: $0, monitor: $1)
         }
 
+        var internetMonitor: InternetConnectionMonitor {
+            if let monitor = monitor {
+                return monitor
+            } else if #available(iOS 12, *) {
+                return InternetConnection.Monitor()
+            } else {
+                return InternetConnection.LegacyMonitor()
+            }
+        }
+
+        var monitor: InternetConnectionMonitor?
+
         var clientUpdaterBuilder = ChatClientUpdater.init
-        
+
         var backgroundTaskSchedulerBuilder: () -> BackgroundTaskScheduler? = {
             if Bundle.main.isAppExtension {
                 // No background task scheduler exists for app extensions.

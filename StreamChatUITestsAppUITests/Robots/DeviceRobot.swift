@@ -6,7 +6,7 @@ import Foundation
 import XCTest
 
 /// Simulates device behavior
-final class DeviceRobot {
+final class DeviceRobot: Robot {
 
     enum Orientation {
         case portrait, landscape
@@ -14,6 +14,13 @@ final class DeviceRobot {
 
     enum ApplicationState {
         case foreground, background
+    }
+
+    enum Settings: String {
+        case showsConnectivity
+        case setConnectivity
+        case isConnected
+        var element: XCUIElement { app.switches[rawValue] }
     }
 
     @discardableResult
@@ -36,5 +43,24 @@ final class DeviceRobot {
             app.activate()
         }
         return self
+    }
+}
+
+// MARK: Connectivity
+
+extension DeviceRobot {
+
+    /// Toggles the visibility of the connectivity switch control. When set to `.on`, the switch control will be displayed in the navigation bar.
+    @discardableResult
+    func setConnectivitySwitchVisibility(to state: SwitchState) -> Self {
+        setSwitchState(Settings.showsConnectivity.element, state: state)
+    }
+
+    /// Mocks device connectivity, When set to `.off` state, the internet connectivity is mocked, HTTP request fails with "No Internet Connection" error.
+    ///
+    /// Note: Requires `setConnectivitySwitchVisibility` needs to be set `.on` on first screen.
+    @discardableResult
+    func setConnectivity(to state: SwitchState) -> Self {
+        setSwitchState(Settings.isConnected.element, state: state)
     }
 }

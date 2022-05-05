@@ -118,7 +118,7 @@ class APIClient {
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            self?.executeRequest(endpoint: endpoint) { result in
+            self?.executeRequest(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case .failure(_ as ClientError.RefreshingToken):
                     // Requeue request

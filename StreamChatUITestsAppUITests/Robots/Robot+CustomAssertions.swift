@@ -20,6 +20,17 @@ extension Robot {
         XCTAssertEqual(text, actualText, file: file, line: line)
         return self
     }
+
+    @discardableResult
+    func assertMessageFailedToBeSent(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = MessageListPage.cells.firstMatch
+        let checkmark = MessageListPage.Attributes.errorButton(messageCell: messageCell).wait()
+        XCTAssertTrue(checkmark.exists)
+        return self
+    }
     
     @discardableResult
     func assertThreadReply(

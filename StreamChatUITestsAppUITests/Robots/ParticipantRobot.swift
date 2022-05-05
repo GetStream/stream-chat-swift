@@ -164,7 +164,7 @@ final class ParticipantRobot: Robot {
     
     private func participant() -> [String: Any]? {
         let json = TestData.toJson(.wsMessage)
-        let message = json[TopLevelKey.message] as! [String: Any]
+        let message = json[JSONKey.message] as! [String: Any]
         let user = server.setUpUser(source: message, details: user)
         return user
     }
