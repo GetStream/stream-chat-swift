@@ -332,15 +332,24 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         let messageViewHeight = messageViewFrame.height
         let popupHeight = reactionsPickerHeight + bottomViewHeight + messageViewHeight
 
-        let shouldPinToTop = messageViewFrame.minY <= 0 || popupHeight >= view.frame.height
-        let margin: CGFloat = 20
+        let isBelowSafeArea = messageViewFrame.minY - reactionsPickerHeight <= view.safeAreaInsets.top
+        let isScrollingRequired = popupHeight >= view.frame.height
+        let shouldPinToTop = isBelowSafeArea || isScrollingRequired
 
         if shouldPinToTop {
             // When the message is below navigation bar or the popup view
             // requires scroll view, pin the message view to the top.
             let topView = reactionsController?.view ?? messageContentContainerView
+            if isScrollingRequired {
+                constraints += [
+                    topView.topAnchor.pin(equalTo: contentView.topAnchor)
+                ]
+            } else {
+                constraints += [
+                    topView.topAnchor.pin(equalTo: view.safeAreaLayoutGuide.topAnchor)
+                ]
+            }
             constraints += [
-                topView.topAnchor.pin(equalTo: contentView.topAnchor, constant: margin),
                 messageContainerStackView.topAnchor.pin(equalTo: contentView.topAnchor)
             ]
         } else {
