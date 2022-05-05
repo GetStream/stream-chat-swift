@@ -1054,13 +1054,6 @@ public extension ChatChannelController {
             channelFeatureDisabled(feature: "read events", completion: completion)
             return
         }
-        
-        guard channel?.isUnread == true else {
-            callback {
-                completion?(nil)
-            }
-            return
-        }
 
         guard let currentUserId = client.currentUserId else {
             callback {

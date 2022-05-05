@@ -578,28 +578,54 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertTrue(loadedChannels.contains { $0.cid == visibleCid2.rawValue })
     }
     
-    func test_channelUnreadCount_calculatedCorrectly() {
-        // Create and save a current user, to be used for channel unread calculations
-        try! database.createCurrentUser(id: "dummyCurrentUser")
-        
-        let channelId: ChannelId = .unique
-        
-        let payload = dummyPayload(with: channelId)
-        
-        // Asynchronously save the payload to the db
-        database.write { session in
-            try! session.saveChannel(payload: payload)
+    func test_channelUnreadCount_calculatedCorrectly() throws {
+        // GIVEN
+        let currentUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+
+        let currentUserChannelReadPayload: ChannelReadPayload = .init(
+            user: currentUserPayload,
+            lastReadAt: .init(),
+            unreadMessagesCount: 0
+        )
+
+        let messageMentioningCurrentUser: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: currentUserChannelReadPayload.lastReadAt.addingTimeInterval(5),
+            mentionedUsers: [currentUserPayload]
+        )
+
+        let channelPayload = ChannelPayload(
+            channel: .dummy(cid: .unique),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserPayload)],
+            membership: .dummy(user: currentUserPayload),
+            messages: [messageMentioningCurrentUser],
+            pinnedMessages: [],
+            channelReads: [currentUserChannelReadPayload]
+        )
+
+        let unreadMessages = 5
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveChannel(payload: channelPayload)
+
+            let read = try XCTUnwrap(
+                session.loadChannelRead(cid: channelPayload.channel.cid, userId: currentUserPayload.id)
+            )
+            read.unreadMessageCount = Int32(unreadMessages)
         }
+
+        // WHEN
+        let unreadCount = try XCTUnwrap(
+            database.viewContext.channel(cid: channelPayload.channel.cid)?.asModel().unreadCount
+        )
         
-        // Load the channel from the db and check the if fields are correct
-        var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
-        }
-        
-        AssertAsync {
-            Assert.willBeEqual(loadedChannel?.unreadCount.messages, self.dummyChannelRead.unreadMessagesCount)
-            Assert.willBeEqual(loadedChannel?.unreadCount.mentionedMessages, 1)
-        }
+        // THEN
+        XCTAssertEqual(unreadCount.messages, unreadMessages)
+        XCTAssertEqual(unreadCount.mentions, 1)
     }
     
     func test_typingUsers_areCleared_onResetEphemeralValues() throws {

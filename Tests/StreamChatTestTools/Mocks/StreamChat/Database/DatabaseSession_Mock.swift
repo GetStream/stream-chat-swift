@@ -279,18 +279,6 @@ extension DatabaseSession_Mock {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannelMute(payload: payload)
     }
-
-    func loadChannelMutes(for cid: ChannelId) -> [ChannelMuteDTO] {
-        underlyingSession.loadChannelMutes(for: cid)
-    }
-
-    func loadChannelMutes(for userId: UserId) -> [ChannelMuteDTO] {
-        underlyingSession.loadChannelMutes(for: userId)
-    }
-
-    func loadChannelMute(cid: ChannelId, userId: String) -> ChannelMuteDTO? {
-        underlyingSession.loadChannelMute(cid: cid, userId: userId)
-    }
     
     func delete(query: ChannelListQuery) {
         underlyingSession.delete(query: query)

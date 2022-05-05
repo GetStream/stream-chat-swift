@@ -20,6 +20,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var user: UserDTO
     @NSManaged var devices: Set<DeviceDTO>
     @NSManaged var currentDevice: DeviceDTO?
+    @NSManaged var channelMutes: Set<ChannelMuteDTO>
     
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
@@ -68,10 +69,11 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
         dto.mutedUsers = Set(mutedUsers)
 
-        dto.user.channelMutes.forEach { delete($0) }
-        dto.user.channelMutes = Set(
+        let channelMutes = Set(
             try payload.mutedChannels.map { try saveChannelMute(payload: $0) }
         )
+        dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
+        dto.channelMutes = channelMutes
         
         if let unreadCount = payload.unreadCount {
             try saveCurrentUserUnreadCount(count: unreadCount)
@@ -188,11 +190,7 @@ extension CurrentChatUser {
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
 
         let fetchMutedChannels: () -> Set<ChatChannel> = {
-            Set(
-                ChannelMuteDTO
-                    .load(userId: user.id, context: context)
-                    .map { $0.channel.asModel() }
-            )
+            Set(dto.channelMutes.map { $0.channel.asModel() })
         }
 
         return CurrentChatUser(

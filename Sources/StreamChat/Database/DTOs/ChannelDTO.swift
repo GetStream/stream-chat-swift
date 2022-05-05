@@ -57,7 +57,10 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var reads: Set<ChannelReadDTO>
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
-
+    
+    /// If the current channel is muted by the current user, `mute` contains details.
+    @NSManaged var mute: ChannelMuteDTO?
+    
     override func willSave() {
         super.willSave()
 
@@ -348,8 +351,8 @@ extension ChatChannel {
             
             // Fetch count of all mentioned messages after last read
             // (this is not 100% accurate but it's the best we have)
-            let mentionedUnreadMessagesRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-            mentionedUnreadMessagesRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            let unreadMentionsRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+            unreadMentionsRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 MessageDTO.channelMessagesPredicate(
                     for: dto.cid,
                     deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
@@ -362,7 +365,7 @@ extension ChatChannel {
             do {
                 return ChannelUnreadCount(
                     messages: allUnreadMessages,
-                    mentionedMessages: try context.count(for: mentionedUnreadMessagesRequest)
+                    mentions: try context.count(for: unreadMentionsRequest)
                 )
             } catch {
                 log.error("Failed to fetch unread counts for channel `\(cid)`. Error: \(error)")
@@ -393,11 +396,8 @@ extension ChatChannel {
         }
 
         let fetchMuteDetails: () -> MuteDetails? = {
-            guard
-                let currentUser = context.currentUser,
-                let mute = ChannelMuteDTO.load(cid: cid, userId: currentUser.user.id, context: context)
-            else { return nil }
-
+            guard let mute = dto.mute else { return nil }
+            
             return .init(
                 createdAt: mute.createdAt,
                 updatedAt: mute.updatedAt
