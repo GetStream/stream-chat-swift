@@ -15,7 +15,6 @@ extension UIViewController {
     /// Adds `child` as a child view controller to `self` and as an arranged subview of `ContainerView`.
     func addChildViewController(_ child: UIViewController, targetView superview: ContainerStackView) {
         addChild(child)
-        child.view.translatesAutoresizingMaskIntoConstraints = false
         superview.addArrangedSubview(child.view)
         child.didMove(toParent: self)
     }

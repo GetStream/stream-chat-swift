@@ -10,10 +10,14 @@ import UIKit
 /// and at the bottom the message actions sheet or the reaction authors list.
 open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// The scroll view which contains the content view of the popup.
-    open private(set) var scrollView = UIScrollView().withoutAutoresizingMaskConstraints
+    open private(set) var scrollView = UIScrollView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "scrollView")
 
     /// The view that contains all views and is responsible the make the popup view scrollable.
     open private(set) var contentView = UIView().withoutAutoresizingMaskConstraints
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "contentView")
 
     /// Container view responsible to layout the main popup views. By default, contains a top view (reactions view),
     /// center view (message view) and bottom view (message actions or reaction authors).
