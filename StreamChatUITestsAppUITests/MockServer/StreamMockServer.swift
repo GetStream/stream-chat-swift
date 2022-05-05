@@ -7,7 +7,13 @@ import Swifter
 import Foundation
 
 final class StreamMockServer {
-    
+
+    // Delays all HTTP responses by given time interval, 0 by default
+    static var httpResponseDelay: TimeInterval = 0.0
+
+    // This constant is used inside `websocketDelay` func that delays websocket requests and responses by given time interval, 1 by default
+    var websocketDelay: TimeInterval = 1.0
+
     private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
     private var _messageList: [[String: Any]] = []
@@ -55,6 +61,7 @@ final class StreamMockServer {
     }
 
     func configure() {
+        StreamMockServer.httpResponseDelay = 0.0
         configureWebsockets()
         configureEventEndpoints()
         configureChannelEndpoints()

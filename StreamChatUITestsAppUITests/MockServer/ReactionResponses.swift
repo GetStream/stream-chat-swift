@@ -12,7 +12,7 @@ extension StreamMockServer {
         server.register(MockEndpoint.reaction) { [weak self] request in
             let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
             let requestJson = TestData.toJson(request.body)
-            let requestReaction = requestJson[TopLevelKey.reaction] as? [String: Any]
+            let requestReaction = requestJson[JSONKey.reaction] as? [String: Any]
             let reactionType = requestReaction?[MessageReactionPayload.CodingKeys.type.rawValue] as? String
             return self?.reactionResponse(
                 messageId: messageId,
@@ -108,12 +108,12 @@ extension StreamMockServer {
         eventType: EventType
     ) -> HttpResponse {
         var json = TestData.toJson(.httpReaction)
-        let reaction = json[TopLevelKey.reaction] as? [String: Any]
+        let reaction = json[JSONKey.reaction] as? [String: Any]
         let message = findMessageById(messageId)
         let timestamp = TestData.currentDate
         let user = setUpUser(source: message, details: UserDetails.lukeSkywalker)
         
-        json[TopLevelKey.message] = mockMessageWithReaction(
+        json[JSONKey.message] = mockMessageWithReaction(
             message,
             fromUser: user,
             reactionType: reactionType,
@@ -121,7 +121,7 @@ extension StreamMockServer {
             deleted: eventType == .reactionDeleted
         )
         
-        json[TopLevelKey.reaction] = mockReaction(
+        json[JSONKey.reaction] = mockReaction(
             reaction,
             fromUser: user,
             messageId: messageId,

@@ -10,6 +10,7 @@ let app = XCUIApplication()
 class StreamTestCase: XCTestCase {
 
     let deviceRobot = DeviceRobot()
+    let backendRobot = BackendRobot()
     var userRobot = UserRobot()
     var participantRobot: ParticipantRobot!
     var server: StreamMockServer!

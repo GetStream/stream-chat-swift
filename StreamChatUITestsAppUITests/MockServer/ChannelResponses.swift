@@ -7,6 +7,44 @@ import Swifter
 import XCTest
 
 extension StreamMockServer {
+
+    private enum ChannelRequestType {
+        case addMembers([String])
+        case removeMembers([String])
+
+        static func type(from body: [UInt8]) -> ChannelRequestType? {
+            let json = TestData.toJson(body)
+
+            // Add members
+            if let ids = json[JSONKey.Channel.addMembers] as? [String] {
+                return .addMembers(ids)
+            }
+
+            // Remove members
+            if let ids = json[JSONKey.Channel.removeMembers] as? [String] {
+                return .removeMembers(ids)
+            }
+
+            return nil
+        }
+
+        var eventType: EventType {
+            switch self {
+            case .addMembers:
+                return .memberAdded
+            case .removeMembers:
+                return .memberRemoved
+            }
+        }
+
+        var ids: [String] {
+            switch self {
+            case .addMembers(let ids),
+                 .removeMembers(let ids):
+                return ids
+            }
+        }
+    }
     
     func configureChannelEndpoints() {
         server.register(MockEndpoint.query) { [weak self] request in
@@ -15,19 +53,24 @@ extension StreamMockServer {
         server.register(MockEndpoint.channels) { [weak self] request in
             self?.updateChannelList(request)
         }
+        server.register(MockEndpoint.channel) { [weak self] request in
+            self?.handleChannelRequest(request)
+        }
     }
-    
+
     func generateChannels(
         count: Int,
         authorDetails: [String: String] = UserDetails.lukeSkywalker,
         memberDetails: [[String: String]] = [
-            UserDetails.lukeSkywalker, UserDetails.hanSolo, UserDetails.countDooku
+            UserDetails.lukeSkywalker,
+            UserDetails.hanSolo,
+            UserDetails.countDooku
         ]
     ) {
         var json = channelList
-        guard let sampleChannel = (json[TopLevelKey.channels] as? [[String: Any]])?.first else { return }
+        guard let sampleChannel = (json[JSONKey.channels] as? [[String: Any]])?.first else { return }
         
-        let userSources = TestData.toJson(.httpChatEvent)[TopLevelKey.event] as? [String: Any]
+        let userSources = TestData.toJson(.httpChatEvent)[JSONKey.event] as? [String: Any]
         
         let members = mockMembers(
             userSources: userSources,
@@ -43,7 +86,7 @@ extension StreamMockServer {
             sampleChannel: sampleChannel
         )
         
-        json[TopLevelKey.channels] = channels
+        json[JSONKey.channels] = channels
         channelList = json
     }
     
@@ -51,21 +94,77 @@ extension StreamMockServer {
         var json = channelList
         guard let id = request.params[EndpointQuery.channelId] else { return .ok(.json(json)) }
         
-        var channels = json[TopLevelKey.channels] as? [[String: Any]]
+        var channels = json[JSONKey.channels] as? [[String: Any]]
         if let index = channels?.firstIndex(where: {
             let channel = $0[ChannelPayload.CodingKeys.channel.rawValue] as? [String: Any]
             return (channel?[ChannelCodingKeys.id.rawValue] as? String) == id
         }) {
             let messageList = findMessagesByChannelId(id)
-            channels?[index][ChannelQuery.CodingKeys.messages.rawValue] = messageList
-            json[TopLevelKey.channels] = channels
+            channels?[index][ChannelPayload.CodingKeys.messages.rawValue] = messageList
+            json[JSONKey.channels] = channels
             currentChannelId = id
             channelList = json
         }
         
         return .ok(.json(json))
     }
-    
+
+    // MARK: Channel Members
+    private func handleChannelRequest(_ request: HttpRequest) -> HttpResponse? {
+        guard let type = ChannelRequestType.type(from: request.body) else {
+            print("Unhandled request: \(request)")
+            return .badRequest(nil)
+        }
+
+        return updateChannelMembers(request, ids: type.ids, eventType: type.eventType)
+    }
+
+    private func updateChannelMembers(_ request: HttpRequest,
+                                      ids: [String],
+                                      eventType: EventType) -> HttpResponse {
+        var json = channelList
+        guard let id = request.params[EndpointQuery.channelId] else { return .ok(.json(json)) }
+
+        var channels = json[JSONKey.channels] as? [[String: Any]]
+        if let index = channels?.firstIndex(where: {
+            let channel = $0[ChannelPayload.CodingKeys.channel.rawValue] as? [String: Any]
+            return (channel?[ChannelCodingKeys.id.rawValue] as? String) == id
+        }) {
+            guard var channel = channels?[index],
+                  var members = channel[ChannelCodingKeys.members.rawValue] as? [[String: Any]] else {
+                return .badRequest(nil)
+            }
+
+            let membersWithIds = memberJSONs(for: ids)
+            switch eventType {
+            case .memberAdded:
+                members.append(contentsOf: membersWithIds)
+            case .memberRemoved:
+                members.removeAll(where: { ids.contains($0[JSONKey.userId] as! String) })
+            default:
+                return .badRequest(nil)
+            }
+            channel[ChannelCodingKeys.members.rawValue] = members
+            channel[ChannelCodingKeys.memberCount.rawValue] = members.count
+            channels?[index] = channel
+            json[JSONKey.channels] = channels
+
+            channelList = json
+
+            if let channelId = (channel[JSONKey.channel] as? [String: Any])?[JSONKey.id] as? String {
+                // Send web socket event with given event type
+                membersWithIds.forEach {
+                    websocketMember(with: $0, channelId: channelId, eventType: eventType)
+                }
+
+                // Send channel update web socket event
+                websocketChannelUpdated(with: members, channelId: channelId)
+            }
+        }
+
+        return .ok(.json(json))
+    }
+
     private func mockMembers(
         userSources: [String: Any]?,
         sampleChannel: [String: Any],
@@ -76,8 +175,8 @@ extension StreamMockServer {
         guard var sampleMember = channelMembers?.first else { return members }
         
         for member in memberDetails {
-            sampleMember[TopLevelKey.user] = setUpUser(source: userSources, details: member)
-            sampleMember[TopLevelKey.userId] = member[UserPayloadsCodingKeys.id.rawValue]
+            sampleMember[JSONKey.user] = setUpUser(source: userSources, details: member)
+            sampleMember[JSONKey.userId] = member[UserPayloadsCodingKeys.id.rawValue]
             members.append(sampleMember)
         }
         return members
@@ -93,7 +192,7 @@ extension StreamMockServer {
         guard count > 0 else { return channels }
         
         var membership = sampleChannel[ChannelPayload.CodingKeys.membership.rawValue] as? [String: Any]
-        membership?[TopLevelKey.user] = author
+        membership?[JSONKey.user] = author
         
         for _ in 1...count {
             var newChannel = sampleChannel

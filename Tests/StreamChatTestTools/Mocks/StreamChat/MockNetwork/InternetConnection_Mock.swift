@@ -29,10 +29,6 @@ final class InternetConnectionMonitor_Mock: InternetConnectionMonitor {
             delegate?.internetConnectionStatusDidChange(status: status)
         }
     }
-
-    deinit {
-        print("")
-    }
     
     var isStarted = false
     
