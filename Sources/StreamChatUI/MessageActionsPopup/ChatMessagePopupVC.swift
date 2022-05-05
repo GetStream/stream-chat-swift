@@ -358,7 +358,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
             // in that case the original coordinates are ignored.
             constraints += [
                 messageContainerStackView.bottomAnchor
-                    .pin(lessThanOrEqualTo: view.bottomAnchor, constant: -margin)
+                    .pin(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor)
                     .with(priority: .streamRequire)
             ]
         }
