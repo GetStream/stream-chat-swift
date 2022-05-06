@@ -33,13 +33,16 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
+
         titleLabel.font = appearance.fonts.body
         titleLabel.adjustsFontForContentSizeCategory = true
     }
 
     override open func setUp() {
         super.setUp()
+
         containerStackView.isUserInteractionEnabled = false
+        containerStackView.insetsLayoutMarginsFromSafeArea = false
         addTarget(self, action: #selector(touchUpInsideHandler(_:)), for: .touchUpInside)
     }
     

@@ -52,6 +52,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         messageActionsContainerStackView.spacing = 1
 
         // Fix safe area layout issue when message actions go below scroll view
+        messageActionsContainerStackView.insetsLayoutMarginsFromSafeArea = false
         messageActionsContainerStackView.isLayoutMarginsRelativeArrangement = true
         messageActionsContainerStackView.layoutMargins = .zero
     }
