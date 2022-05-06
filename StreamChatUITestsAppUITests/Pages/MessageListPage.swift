@@ -4,6 +4,7 @@
 
 import Foundation
 import XCTest
+import StreamChat
 
 // swiftlint:disable convenience_type
 
@@ -52,7 +53,6 @@ class MessageListPage {
             static var showMemberInfo: XCUIElement { alert.buttons["Show Members"] }
             static var dismissMemberInfo: XCUIElement { app.alerts["Members"].buttons["Cancel"] }
         }
-
     }
     
     enum Composer {
@@ -81,18 +81,59 @@ class MessageListPage {
     }
     
     enum ContextMenu {
-        static var reactionsView: XCUIElement { app.otherElements["ChatReactionPickerReactionsView"] }
-        static var reply: XCUIElement { app.otherElements["InlineReplyActionItem"] }
-        static var threadReply: XCUIElement { app.otherElements["ThreadReplyActionItem"] }
-        static var copy: XCUIElement { app.otherElements["CopyActionItem"] }
-        static var flag: XCUIElement { app.otherElements["FlagActionItem"] }
-        static var mute: XCUIElement { app.otherElements["MuteUserActionItem"] }
-        static var unmute: XCUIElement { app.otherElements["UnmuteUserActionItem"] }
-        static var edit: XCUIElement { app.otherElements["EditActionItem"] }
-        static var delete: XCUIElement { app.otherElements["DeleteActionItem"] }
-        static var resend: XCUIElement { app.otherElements["ResendActionItem"] }
-        static var block: XCUIElement { app.otherElements["BlockUserActionItem"] }
-        static var unblock: XCUIElement { app.otherElements["UnblockUserActionItem"] }
+        case reactions
+        case reply
+        case threadReply
+        case copy
+        case flag
+        case mute
+        case edit
+        case delete
+        case resend
+        case block
+        case unblock
+
+        var element: XCUIElement {
+            switch self {
+            case .reactions:
+                return Element.reactionsView
+            case .reply:
+                return Element.reply
+            case .threadReply:
+                return Element.threadReply
+            case .copy:
+                return Element.copy
+            case .flag:
+                return Element.flag
+            case .mute:
+                return Element.mute
+            case .edit:
+                return Element.edit
+            case .delete:
+                return Element.delete
+            case .resend:
+                return Element.resend
+            case .block:
+                return Element.block
+            case .unblock:
+                return Element.unblock
+            }
+        }
+
+        struct Element {
+            static var reactionsView: XCUIElement { app.otherElements["ChatReactionPickerReactionsView"] }
+            static var reply: XCUIElement { app.otherElements["InlineReplyActionItem"] }
+            static var threadReply: XCUIElement { app.otherElements["ThreadReplyActionItem"] }
+            static var copy: XCUIElement { app.otherElements["CopyActionItem"] }
+            static var flag: XCUIElement { app.otherElements["FlagActionItem"] }
+            static var mute: XCUIElement { app.otherElements["MuteUserActionItem"] }
+            static var unmute: XCUIElement { app.otherElements["UnmuteUserActionItem"] }
+            static var edit: XCUIElement { app.otherElements["EditActionItem"] }
+            static var delete: XCUIElement { app.otherElements["DeleteActionItem"] }
+            static var resend: XCUIElement { app.otherElements["ResendActionItem"] }
+            static var block: XCUIElement { app.otherElements["BlockUserActionItem"] }
+            static var unblock: XCUIElement { app.otherElements["UnblockUserActionItem"] }
+        }
     }
     
     enum Attributes {
@@ -132,6 +173,13 @@ class MessageListPage {
             messageCell.buttons["error indicator"]
         }
 
+        static func readCount(messageCell: XCUIElement) -> XCUIElement {
+            messageCell.staticTexts["messageReadСountsLabel"]
+        }
+
+        static func statusCheckmark(for status: MessageDeliveryStatus, with messageCell: XCUIElement) -> XCUIElement {
+            messageCell.images["imageView_\(status.rawValue)"]
+        }
     }
     
     enum PopUpButtons {

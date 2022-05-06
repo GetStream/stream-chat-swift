@@ -4,6 +4,7 @@
 
 import Foundation
 import XCTest
+import StreamChat
 
 enum ChannelListPage {
     
@@ -14,20 +15,28 @@ enum ChannelListPage {
     }
     
     enum Attributes {
-        static func name(channelCell: XCUIElement) -> XCUIElement {
-            channelCell.staticTexts["titleLabel"]
+        static func name(in cell: XCUIElement) -> XCUIElement {
+            cell.staticTexts["titleLabel"]
         }
         
-        static func lastMessageTime(channelCell: XCUIElement) -> XCUIElement {
-            channelCell.staticTexts["timestampLabel"]
+        static func lastMessageTime(in cell: XCUIElement) -> XCUIElement {
+            cell.staticTexts["timestampLabel"]
         }
         
-        static func lastMessage(channelCell: XCUIElement) -> XCUIElement {
-            channelCell.staticTexts["subtitleLabel"]
+        static func lastMessage(in cell: XCUIElement) -> XCUIElement {
+            cell.staticTexts["subtitleLabel"]
         }
         
-        static func avatar(channelCell: XCUIElement) -> XCUIElement {
-            channelCell.otherElements["ChatAvatarView"].images.firstMatch
+        static func avatar(in cell: XCUIElement) -> XCUIElement {
+            cell.otherElements["ChatAvatarView"].images.firstMatch
+        }
+
+        static func readCount(messageCell: XCUIElement) -> XCUIElement {
+            messageCell.staticTexts["unreadCountLabel"]
+        }
+
+        static func statusCheckmark(for status: MessageDeliveryStatus, with messageCell: XCUIElement) -> XCUIElement {
+            messageCell.images["imageView_\(status.rawValue)"]
         }
     }
 

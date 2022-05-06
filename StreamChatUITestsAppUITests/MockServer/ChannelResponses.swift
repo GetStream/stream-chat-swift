@@ -58,6 +58,31 @@ extension StreamMockServer {
         }
     }
 
+    func channelIndex(withId id: String) -> Int? {
+        guard
+            let channels = channelList[JSONKey.channels] as? [[String: Any]],
+            let index = channels.firstIndex(
+                where: {
+                    let channel = $0[ChannelPayload.CodingKeys.channel.rawValue] as? [String: Any]
+                    return (channel?[ChannelCodingKeys.id.rawValue] as? String) == id
+                })
+        else {
+            return nil
+        }
+
+        return index
+    }
+
+    func channel(withId id: String) -> [String: Any]? {
+        guard
+            let channels = channelList[JSONKey.channels] as? [[String: Any]],
+            let index = channelIndex(withId: id)
+        else {
+            return nil
+        }
+        return channels[index]
+    }
+
     func generateChannels(
         count: Int,
         authorDetails: [String: String] = UserDetails.lukeSkywalker,
@@ -122,44 +147,48 @@ extension StreamMockServer {
     private func updateChannelMembers(_ request: HttpRequest,
                                       ids: [String],
                                       eventType: EventType) -> HttpResponse {
+        guard
+            let id = request.params[EndpointQuery.channelId]
+        else {
+            return .ok(.json(channelList))
+        }
+
         var json = channelList
-        guard let id = request.params[EndpointQuery.channelId] else { return .ok(.json(json)) }
+        guard
+            var channels = json[JSONKey.channels] as? [[String: Any]],
+            let channelIndex = channelIndex(withId: id),
+            var channel = channel(withId: id),
+            var innerChannel = channel[JSONKey.channel] as? [String: Any],
+            var members = channel[ChannelCodingKeys.members.rawValue] as? [[String: Any]]
+        else {
+            return .badRequest(nil)
+        }
 
-        var channels = json[JSONKey.channels] as? [[String: Any]]
-        if let index = channels?.firstIndex(where: {
-            let channel = $0[ChannelPayload.CodingKeys.channel.rawValue] as? [String: Any]
-            return (channel?[ChannelCodingKeys.id.rawValue] as? String) == id
-        }) {
-            guard var channel = channels?[index],
-                  var members = channel[ChannelCodingKeys.members.rawValue] as? [[String: Any]] else {
-                return .badRequest(nil)
+        let membersWithIds = memberJSONs(for: ids)
+        switch eventType {
+        case .memberAdded:
+            members.append(contentsOf: membersWithIds)
+        case .memberRemoved:
+            members.removeAll(where: { ids.contains($0[JSONKey.userId] as! String) })
+        default:
+            return .badRequest(nil)
+        }
+        innerChannel[ChannelCodingKeys.members.rawValue] = members
+        innerChannel[ChannelCodingKeys.memberCount.rawValue] = members.count
+        channel[JSONKey.channel] = innerChannel
+        channels[channelIndex] = channel
+        json[JSONKey.channels] = channels
+
+        channelList = json
+
+        if let channelId = (channel[JSONKey.channel] as? [String: Any])?[JSONKey.id] as? String {
+            // Send web socket event with given event type
+            membersWithIds.forEach {
+                websocketMember(with: $0, channelId: channelId, eventType: eventType)
             }
 
-            let membersWithIds = memberJSONs(for: ids)
-            switch eventType {
-            case .memberAdded:
-                members.append(contentsOf: membersWithIds)
-            case .memberRemoved:
-                members.removeAll(where: { ids.contains($0[JSONKey.userId] as! String) })
-            default:
-                return .badRequest(nil)
-            }
-            channel[ChannelCodingKeys.members.rawValue] = members
-            channel[ChannelCodingKeys.memberCount.rawValue] = members.count
-            channels?[index] = channel
-            json[JSONKey.channels] = channels
-
-            channelList = json
-
-            if let channelId = (channel[JSONKey.channel] as? [String: Any])?[JSONKey.id] as? String {
-                // Send web socket event with given event type
-                membersWithIds.forEach {
-                    websocketMember(with: $0, channelId: channelId, eventType: eventType)
-                }
-
-                // Send channel update web socket event
-                websocketChannelUpdated(with: members, channelId: channelId)
-            }
+            // Send channel update web socket event
+            websocketChannelUpdated(with: members, channelId: channelId)
         }
 
         return .ok(.json(json))

@@ -34,7 +34,6 @@ public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
     
     override public func setUp() {
         super.setUp()
-        
         selectionStyle = .none
     }
     

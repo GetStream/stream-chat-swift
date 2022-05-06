@@ -59,7 +59,8 @@ final class DebugMenu {
                               handler: { [unowned self] _ in
                                   self.presentAlert(in: viewController,
                                                     title: "Members",
-                                                    message: channelController.channel?.lastActiveMembers.map(\.name).debugDescription, actions: []
+                                                    message: channelController.channel?.lastActiveMembers.map(\.name).debugDescription,
+                                                    actions: []
                                   )
                         })
                      ])

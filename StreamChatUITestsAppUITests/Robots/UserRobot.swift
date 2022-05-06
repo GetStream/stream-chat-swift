@@ -8,6 +8,11 @@ import StreamChat
 
 /// Simulates user behavior
 final class UserRobot: Robot {
+
+    let composer = MessageListPage.Composer.self
+    let threadComposer = ThreadPage.Composer.self
+    let contextMenu = MessageListPage.ContextMenu.self
+    let debugAlert = MessageListPage.Alert.Debug.self
     
     @discardableResult
     func login() -> Self {
@@ -36,8 +41,14 @@ final class UserRobot: Robot {
         cells.allElementsBoundByIndex[channelCellIndex].tap()
         return self
     }
-    
-    private func openContextMenu(messageCellIndex: Int = 0) {
+}
+
+// MARK: Message List
+
+extension UserRobot {
+
+    @discardableResult
+    func openContextMenu(messageCellIndex: Int = 0) -> Self {
         let minExpectedCount = messageCellIndex + 1
         let cells = MessageListPage.cells.waitCount(minExpectedCount)
         XCTAssertGreaterThanOrEqual(
@@ -48,24 +59,26 @@ final class UserRobot: Robot {
         cells.allElementsBoundByIndex[messageCellIndex].press(forDuration: 0.5)
         
         // TODO: CIS-1735
-        if !MessageListPage.ContextMenu.reactionsView.wait().exists {
+        let replyButton = contextMenu.reply.element
+        if !replyButton.wait().exists {
             sleep(3)
             cells.allElementsBoundByIndex[messageCellIndex].press(forDuration: 0.5)
-            MessageListPage.ContextMenu.reactionsView.wait()
+            replyButton.wait()
         }
+        return self
     }
     
     @discardableResult
     func sendMessage(_ text: String) -> Self {
-        MessageListPage.Composer.inputField.obtainKeyboardFocus().typeText(text)
-        MessageListPage.Composer.sendButton.tap()
+        composer.inputField.obtainKeyboardFocus().typeText(text)
+        composer.sendButton.tap()
         return self
     }
     
     @discardableResult
     func deleteMessage(messageCellIndex: Int = 0) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
-        MessageListPage.ContextMenu.delete.wait().tap()
+        contextMenu.delete.element.wait().tap()
         MessageListPage.PopUpButtons.delete.wait().tap()
         return self
     }
@@ -73,11 +86,11 @@ final class UserRobot: Robot {
     @discardableResult
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
-        MessageListPage.ContextMenu.edit.wait().tap()
-        let inputField = MessageListPage.Composer.inputField
+        contextMenu.edit.element.wait().tap()
+        let inputField = composer.inputField
         inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
         inputField.typeText(newText)
-        MessageListPage.Composer.confirmButton.tap()
+        composer.confirmButton.tap()
         return self
     }
     
@@ -125,14 +138,25 @@ final class UserRobot: Robot {
             messageCellIndex: messageCellIndex
         )
     }
+
+    @discardableResult
+    func selectOptionFromContextMenu(option: MessageListPage.ContextMenu, forMessageAtIndex index: Int = 0) -> Self {
+        openContextMenu(messageCellIndex: index)
+        option.element.wait().tap()
+        return self
+    }
     
     @discardableResult
     func replyToMessage(_ text: String, messageCellIndex: Int = 0) -> Self {
-        openContextMenu(messageCellIndex: messageCellIndex)
-        MessageListPage.ContextMenu.reply.wait().tap()
-        MessageListPage.Composer.inputField.obtainKeyboardFocus().typeText(text)
-        MessageListPage.Composer.sendButton.tap()
+        selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
+        composer.inputField.obtainKeyboardFocus().typeText(text)
+        composer.sendButton.tap()
         return self
+    }
+
+    @discardableResult
+    func showThread(forMessageAt index: Int = 0) -> Self {
+        selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: index)
     }
     
     @discardableResult
@@ -143,14 +167,13 @@ final class UserRobot: Robot {
     ) -> Self {
         let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
         if !threadCheckbox.exists {
-            openContextMenu(messageCellIndex: messageCellIndex)
-            MessageListPage.ContextMenu.threadReply.wait().tap()
+            showThread(forMessageAt: messageCellIndex)
         }
         if alsoSendInChannel {
             threadCheckbox.wait().tap()
         }
-        ThreadPage.Composer.inputField.obtainKeyboardFocus().typeText(text)
-        ThreadPage.Composer.sendButton.tap()
+        threadComposer.inputField.obtainKeyboardFocus().typeText(text)
+        threadComposer.sendButton.tap()
         return self
     }
     
@@ -173,34 +196,18 @@ extension UserRobot {
 
     @discardableResult
     func addParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
-        let debug = MessageListPage.Alert.Debug.self
-        debug.addMember.firstMatch.tap()
-        debug.addMemberTextField.firstMatch
+        debugAlert.addMember.firstMatch.tap()
+        debugAlert.addMemberTextField.firstMatch
             .obtainKeyboardFocus()
             .typeText(userId)
-        debug.addMemberOKButton.firstMatch.tap()
+        debugAlert.addMemberOKButton.firstMatch.tap()
         return self
     }
 
     @discardableResult
     func removeParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
-        let debug = MessageListPage.Alert.Debug.self
-        debug.removeMember.firstMatch.tap()
-        debug.selectMember(withUserId: userId).firstMatch.tap()
-        return self
-    }
-
-    @discardableResult
-    func showMemberInfo() -> Self {
-        MessageListPage.Alert
-            .Debug.showMemberInfo.firstMatch.tap()
-        return self
-    }
-
-    @discardableResult
-    func dismissMemberInfo() -> Self {
-        MessageListPage.Alert
-            .Debug.dismissMemberInfo.firstMatch.tap()
+        debugAlert.removeMember.firstMatch.tap()
+        debugAlert.selectMember(withUserId: userId).firstMatch.tap()
         return self
     }
 }
