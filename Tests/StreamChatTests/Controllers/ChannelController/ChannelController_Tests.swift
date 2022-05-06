@@ -2929,7 +2929,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: read events is disabled for this channel.")
     }
 
-    func test_markRead_failsForNewChannels() throws {
+    func test_markRead_whenChannelIsMissing_throws() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
@@ -2961,41 +2961,209 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(error)
     }
     
-    func test_markRead_callsChannelUpdater() throws {
-        // setup data for this test
-        let payload = dummyPayload(with: channelId, numberOfMessages: 0)
-        let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
+    func test_markRead_whenChannelIsEmpty_doesNothing() throws {
+        // GIVEN
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
 
-        // Save two channels to DB (only one matching the query) and wait for completion
+        let emptyChannel: ChannelPayload = .dummy(
+            channel: .dummy(
+                cid: channelId,
+                lastMessageAt: nil,
+                config: .mock(readEventsEnabled: true)
+            ),
+            messages: [],
+            channelReads: []
+        )
+                
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveCurrentUser(payload: dummyUserPayload)
-
-            // Channel with the id matching the query
-            try session.saveChannel(payload: payload)
+            try session.saveCurrentUser(payload: currentUser)
+            
+            try session.saveChannel(payload: emptyChannel)
         }
-
-        // This is needed to determine if the channel needs to be marked as read
-        client.currentUserId = dummyUserPayload.id
-
-        // Simulate `markRead` call and catch the completion
+        
+        client.currentUserId = currentUser.id
+        
+        // WHEN
         var completionCalled = false
-
         controller.markRead { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
         }
         
-        // Assert cid is passed to `channelUpdater`, completion is not called yet
+        // THEN
+        AssertAsync {
+            Assert.willBeTrue(completionCalled)
+            Assert.staysTrue(self.env.channelUpdater?.markRead_cid == nil)
+        }
+    }
+    
+    func test_markRead_whenCurrentUserIsMissing_doesNothing() throws {
+        // GIVEN
+        let lastMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            cid: channelId
+        )
+        
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(
+                cid: channelId,
+                lastMessageAt: lastMessage.createdAt,
+                config: .mock(readEventsEnabled: true)
+            ),
+            messages: [lastMessage]
+        )
+        
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        
+        // WHEN
+        var completionCalled = false
+        controller.markRead { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // THEN
+        AssertAsync {
+            Assert.willBeTrue(completionCalled)
+            Assert.staysTrue(self.env.channelUpdater?.markRead_cid == nil)
+        }
+    }
+    
+    func test_markRead_whenCurrentUserReadIsMissing_doesNothing() throws {
+        // GIVEN
+        let lastMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            cid: channelId
+        )
+        
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(
+                cid: channelId,
+                lastMessageAt: lastMessage.createdAt,
+                config: .mock(readEventsEnabled: true)
+            ),
+            messages: [lastMessage],
+            channelReads: []
+        )
+                
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            
+            try session.saveChannel(payload: channel)
+        }
+        
+        client.currentUserId = currentUser.id
+        
+        // WHEN
+        var completionCalled = false
+        controller.markRead { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // THEN
+        AssertAsync {
+            Assert.willBeTrue(completionCalled)
+            Assert.staysTrue(self.env.channelUpdater?.markRead_cid == nil)
+        }
+    }
+    
+    func test_markRead_whenChannelIsRead_doesNothing() throws {
+        // GIVEN
+        let lastMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            cid: channelId
+        )
+        
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt),
+            messages: [lastMessage],
+            channelReads: [
+                .init(
+                    user: currentUser,
+                    lastReadAt: lastMessage.createdAt,
+                    unreadMessagesCount: 0
+                )
+            ]
+        )
+                
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            
+            try session.saveChannel(payload: channel)
+        }
+        
+        client.currentUserId = currentUser.id
+        
+        // WHEN
+        var completionCalled = false
+        controller.markRead { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // THEN
+        AssertAsync {
+            Assert.willBeTrue(completionCalled)
+            Assert.staysTrue(self.env.channelUpdater?.markRead_cid == nil)
+        }
+    }
+    
+    func test_markRead_whenLastMessageInUnread_callsChannelUpdater() throws {
+        // GIVEN
+        let lastMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            cid: channelId
+        )
+        
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt),
+            messages: [lastMessage],
+            channelReads: [
+                .init(
+                    user: currentUser,
+                    lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                    unreadMessagesCount: 0
+                )
+            ]
+        )
+                
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channel)
+        }
+        
+        client.currentUserId = currentUser.id
+        
+        // WHEN
+        var completionCalled = false
+        controller.markRead { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // THEN
         XCTAssertEqual(env.channelUpdater!.markRead_cid, channelId)
-        XCTAssertFalse(completionCalled)
-        
-        // Simulate successful update
+        XCTAssertEqual(env.channelUpdater!.markRead_userId, currentUser.id)
         env.channelUpdater!.markRead_completion?(nil)
-        // Release reference of completion so we can deallocate stuff
-        env.channelUpdater!.markRead_completion = nil
         
-        // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
     }
     
