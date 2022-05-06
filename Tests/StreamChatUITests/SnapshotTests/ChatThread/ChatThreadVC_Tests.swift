@@ -30,11 +30,18 @@ final class ChatThreadVC_Tests: XCTestCase {
     }
     
     func test_emptyAppearance() {
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [],
+            state: .remoteDataFetched
+        )
         messageControllerMock.simulateInitial(
-            message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique)),
+            message: .mock(id: .unique, cid: .unique, text: "Parent message", author: .mock(id: .unique)),
             replies: [],
             state: .localDataFetched
         )
+        messageControllerMock.simulate(state: .remoteDataFetched)
+        vc.view.layoutIfNeeded()
         AssertSnapshot(
             vc,
             isEmbeddedInNavigationController: true,

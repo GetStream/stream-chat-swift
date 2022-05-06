@@ -6,57 +6,28 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-extension ChannelDetailPayload {
-    /// Returns a dummy channel detail payload with the given cid
+extension ChannelPayload {
+    /// Returns dummy channel payload with the given values.
     static func dummy(
-        cid: ChannelId,
-        members: [MemberPayload] = [.dummy()],
-        truncatedAt: Date? = nil
-    ) -> ChannelDetailPayload {
-        let channelCreatedDate = Date.unique
-        let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
-        
-        return .init(
-            cid: cid,
-            name: .unique,
-            imageURL: .unique(),
-            extraData: [:],
-            typeRawValue: cid.type.rawValue,
-            lastMessageAt: lastMessageAt,
-            createdAt: channelCreatedDate,
-            deletedAt: nil,
-            updatedAt: .unique,
-            truncatedAt: truncatedAt,
-            createdBy: .dummy(userId: .unique),
-            config: .init(
-                reactionsEnabled: true,
-                typingEventsEnabled: true,
-                readEventsEnabled: true,
-                connectEventsEnabled: true,
-                uploadsEnabled: true,
-                repliesEnabled: true,
-                quotesEnabled: true,
-                searchEnabled: true,
-                mutesEnabled: true,
-                urlEnrichmentEnabled: true,
-                messageRetention: "1000",
-                maxMessageLength: 100,
-                commands: [
-                    .init(
-                        name: "test",
-                        description: "test command",
-                        set: "test",
-                        args: "test"
-                    )
-                ],
-                createdAt: XCTestCase.channelCreatedDate,
-                updatedAt: XCTestCase.channelUpdateDate
-            ),
-            isFrozen: true,
-            memberCount: 100,
-            team: .unique,
+        channel: ChannelDetailPayload = .dummy(),
+        watchers: [UserPayload] = [],
+        members: [MemberPayload] = [],
+        membership: MemberPayload? = nil,
+        messages: [MessagePayload] = [],
+        pinnedMessages: [MessagePayload] = [],
+        channelReads: [ChannelReadPayload] = [],
+        isHidden: Bool? = nil
+    ) -> Self {
+        .init(
+            channel: channel,
+            watcherCount: watchers.count,
+            watchers: watchers,
             members: members,
-            cooldownDuration: .random(in: 0...120)
+            membership: membership,
+            messages: messages,
+            pinnedMessages: pinnedMessages,
+            channelReads: channelReads,
+            isHidden: isHidden
         )
     }
 }

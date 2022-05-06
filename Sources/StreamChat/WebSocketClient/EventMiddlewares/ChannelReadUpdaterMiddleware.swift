@@ -150,7 +150,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return .messageIsSystem
         }
         
-        if message.createdAt <= (channelRead.lastReadAt ?? Date.distantPast) {
+        if message.createdAt <= channelRead.lastReadAt {
             return .messageIsSeen
         }
         
