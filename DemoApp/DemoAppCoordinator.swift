@@ -3,6 +3,7 @@
 //
 
 import Atlantis
+import GDPerformanceView_Swift
 import StreamChat
 import StreamChatUI
 import UIKit
