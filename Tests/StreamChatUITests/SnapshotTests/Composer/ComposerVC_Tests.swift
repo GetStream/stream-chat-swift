@@ -261,4 +261,18 @@ final class ComposerVC_Tests: XCTestCase {
         
         AssertSnapshot(containerVC, variants: [.defaultLight])
     }
+    
+    func test_channelWithSlowModeActive_messageIsSent_SlowModeIsOnWithCountdownShown() {
+        // GIVEN
+        let composerVC = ComposerVC()
+        composerVC.cooldownTracker = CooldownTracker_Mock()
+        composerVC.appearance = Appearance.default
+        composerVC.content.text = "Test text"
+        
+        // WHEN
+        composerVC.handleCooldownTimer(with: 120)
+        
+        // THEN
+        AssertSnapshot(composerVC)
+    }
 }

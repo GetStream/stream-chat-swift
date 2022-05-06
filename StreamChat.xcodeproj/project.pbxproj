@@ -1685,8 +1685,13 @@
 		C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7504273936D900F93B34 /* WSCompression.swift */; };
 		C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */; };
 		C1FFD9FA27ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */; };
-		CF33B3AC28171BE500C84CDB /* CooldownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF33B3AB28171BE500C84CDB /* CooldownButton.swift */; };
-		CF33B3AD28171BE500C84CDB /* CooldownButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF33B3AB28171BE500C84CDB /* CooldownButton.swift */; };
+		CF1F1D452824243F002E2977 /* CooldownTracker_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1F1D442824243F002E2977 /* CooldownTracker_Tests.swift */; };
+		CF1F1D472824415C002E2977 /* Timer_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1F1D462824415C002E2977 /* Timer_Mock.swift */; };
+		CF1F1D4928249CC0002E2977 /* CooldownTracker_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1F1D4828249CC0002E2977 /* CooldownTracker_Mock.swift */; };
+		CF33B3AC28171BE500C84CDB /* CooldownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF33B3AB28171BE500C84CDB /* CooldownView.swift */; };
+		CF33B3AD28171BE500C84CDB /* CooldownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF33B3AB28171BE500C84CDB /* CooldownView.swift */; };
+		CF6E489F282341F2008416DC /* CountdownTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6E489E282341F2008416DC /* CountdownTracker.swift */; };
+		CF6E48A0282341F2008416DC /* CountdownTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6E489E282341F2008416DC /* CountdownTracker.swift */; };
 		CF8268B92800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8268B82800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift */; };
 		CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
 		CFA41B6827DA952300427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
@@ -3314,7 +3319,11 @@
 		C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint_Tests.swift; sourceTree = "<group>"; };
 		C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO.swift; sourceTree = "<group>"; };
 		C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Filter+ChatChannel.swift"; sourceTree = "<group>"; };
-		CF33B3AB28171BE500C84CDB /* CooldownButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooldownButton.swift; sourceTree = "<group>"; };
+		CF1F1D442824243F002E2977 /* CooldownTracker_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooldownTracker_Tests.swift; sourceTree = "<group>"; };
+		CF1F1D462824415C002E2977 /* Timer_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer_Mock.swift; sourceTree = "<group>"; };
+		CF1F1D4828249CC0002E2977 /* CooldownTracker_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooldownTracker_Mock.swift; sourceTree = "<group>"; };
+		CF33B3AB28171BE500C84CDB /* CooldownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooldownView.swift; sourceTree = "<group>"; };
+		CF6E489E282341F2008416DC /* CountdownTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownTracker.swift; sourceTree = "<group>"; };
 		CF8268B82800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelHeaderView_Tests.swift; sourceTree = "<group>"; };
 		CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemEnvironment+XStreamClient.swift"; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extensions.swift"; sourceTree = "<group>"; };
@@ -5081,6 +5090,7 @@
 				88A11B092590AFBB0000AC24 /* ChatMessage+Extensions.swift */,
 				640FE0D426A568C3006CE703 /* CollectionUpdatesMapper.swift */,
 				792DD9FA256E67C6001DB91B /* ComponentsProvider.swift */,
+				CF6E489E282341F2008416DC /* CountdownTracker.swift */,
 				ACA3C98526CA23F300EB8B07 /* DateUtils.swift */,
 				BDC80CB4265CF4B800F62CE2 /* ImageCDN.swift */,
 				ACD502A826BC0C670029FB7D /* ImageMerger.swift */,
@@ -6428,6 +6438,7 @@
 				BD40C1F4265FA80D004392CE /* ImageCDN_Tests.swift */,
 				ACDB5412269C6F2A007CD465 /* String+Extensions_Tests.swift */,
 				7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */,
+				CF1F1D442824243F002E2977 /* CooldownTracker_Tests.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -6444,6 +6455,8 @@
 			isa = PBXGroup;
 			children = (
 				849AE661270CB00000423A20 /* VideoLoader_Mock.swift */,
+				CF1F1D462824415C002E2977 /* Timer_Mock.swift */,
+				CF1F1D4828249CC0002E2977 /* CooldownTracker_Mock.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -6757,7 +6770,7 @@
 			isa = PBXGroup;
 			children = (
 				22753598257C442300D1FDB6 /* SendButton.swift */,
-				CF33B3AB28171BE500C84CDB /* CooldownButton.swift */,
+				CF33B3AB28171BE500C84CDB /* CooldownView.swift */,
 			);
 			path = SendButton;
 			sourceTree = "<group>";
@@ -8533,6 +8546,7 @@
 				DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */,
 				43F4750E26FB247C0009487D /* ChatReactionPickerReactionsView.swift in Sources */,
 				E7516B162642E11A00DE778C /* GiphyAttachmentViewInjector.swift in Sources */,
+				CF6E489F282341F2008416DC /* CountdownTracker.swift in Sources */,
 				E79AC10D25831A1500C3CE5D /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
 				C1FC2F7427416E150062530F /* Deprecated.swift in Sources */,
 				C1FC2F8B27416E1F0062530F /* SwiftyGifManager.swift in Sources */,
@@ -8557,7 +8571,7 @@
 				AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */,
 				C1FC2F6C27416E150062530F /* LinkedList.swift in Sources */,
 				C1FC2F7A27416E150062530F /* ImageTask.swift in Sources */,
-				CF33B3AC28171BE500C84CDB /* CooldownButton.swift in Sources */,
+				CF33B3AC28171BE500C84CDB /* CooldownView.swift in Sources */,
 				883998212576397900294DB9 /* ChatMessageGalleryView.swift in Sources */,
 				F64DFA8C26282F8B00F7F6F9 /* CGPoint+Extensions.swift in Sources */,
 				ADBBDA28279F0E9B00E47B1C /* ChannelNameFormatter.swift in Sources */,
@@ -8590,6 +8604,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */,
+				CF1F1D472824415C002E2977 /* Timer_Mock.swift in Sources */,
 				ACA3C98826CA23F900EB8B07 /* DateUtils_Tests.swift in Sources */,
 				AD158B6626C1876800C104CD /* ChatChannelVC+SwiftUI_Tests.swift in Sources */,
 				2208241625DEE8070033544B /* ChatChannelListCollectionViewCell_Tests.swift in Sources */,
@@ -8598,6 +8613,7 @@
 				8479C7A92812FCC000FC8CFD /* ChatMessageListVC_Tests.swift in Sources */,
 				AD71130225F138BA00932AEE /* ChatChannelAvatarView_Tests.swift in Sources */,
 				BDDD1EA42632C66200BA007B /* Components+SwiftUI_Tests.swift in Sources */,
+				CF1F1D452824243F002E2977 /* CooldownTracker_Tests.swift in Sources */,
 				79567F2B266F5DB1007EADD3 /* TitleContainerView_Tests.swift in Sources */,
 				7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */,
 				A3D9D68C27EDE54900725066 /* UIView+SimulateViewAddedToHierarchy.swift in Sources */,
@@ -8648,6 +8664,7 @@
 				E73BD9EC264D9B2900E208B7 /* ChatFileAttachmentListView+ItemView_Tests.swift in Sources */,
 				F87A4A5A26146DAC001653A8 /* ChatMessageActionControl_Tests.swift in Sources */,
 				F86A11022615B94B00D9FE19 /* ChatMessageActionsVC_Tests.swift in Sources */,
+				CF1F1D4928249CC0002E2977 /* CooldownTracker_Mock.swift in Sources */,
 				ADFCCD7525C9D4D10024505D /* AssertSnapshot.swift in Sources */,
 				F838F6CE263713090025E1F5 /* GalleryVC_Tests.swift in Sources */,
 				8897305E265D046D00F83739 /* ChatMessageLayoutOptionsResolver_Tests.swift in Sources */,
@@ -9935,7 +9952,7 @@
 				C121EBAC2746A1E800023E4C /* InputChatMessageView.swift in Sources */,
 				C121EBAD2746A1E800023E4C /* InputTextView.swift in Sources */,
 				C121EBAE2746A1E800023E4C /* CommandLabelView.swift in Sources */,
-				CF33B3AD28171BE500C84CDB /* CooldownButton.swift in Sources */,
+				CF33B3AD28171BE500C84CDB /* CooldownView.swift in Sources */,
 				C121EBAF2746A1E800023E4C /* ListCollectionViewLayout.swift in Sources */,
 				C121EBB02746A1E900023E4C /* CellSeparatorView.swift in Sources */,
 				C121EBB12746A1E900023E4C /* ContainerStackView.swift in Sources */,
@@ -10004,6 +10021,7 @@
 				ADA5A0F9276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */,
 				C121EBEA2746A1EA00023E4C /* ChatMessageGiphyView+GiphyBadge.swift in Sources */,
 				C121EBEB2746A1EB00023E4C /* AttachmentViewInjector.swift in Sources */,
+				CF6E48A0282341F2008416DC /* CountdownTracker.swift in Sources */,
 				C121EBEC2746A1EB00023E4C /* GalleryAttachmentViewInjector.swift in Sources */,
 				C121EBED2746A1EB00023E4C /* GiphyAttachmentViewInjector.swift in Sources */,
 				C121EBEE2746A1EB00023E4C /* LinkAttachmentViewInjector.swift in Sources */,

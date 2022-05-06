@@ -111,7 +111,7 @@ public struct ChatChannel {
     
     /// Latest message present on the channel sent by current user even if sent on a thread.
     ///
-    /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
+    /// - Important: The `lastMessageFromCurrentUser` property is loaded and evaluated lazily to maintain high performance.
     public var lastMessageFromCurrentUser: ChatMessage? { _lastMessageFromCurrentUser }
     @CoreDataLazy private var _lastMessageFromCurrentUser: ChatMessage?
     

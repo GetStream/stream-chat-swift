@@ -393,6 +393,73 @@ final class ChannelDTO_Tests: XCTestCase {
                 .map(\.user.id)
         )
     }
+    
+    func test_channelPayload_GetLastMessageFromCurrentUserOnAThread() throws {
+        let user: UserPayload = dummyCurrentUser
+        let channelId: ChannelId = .unique
+        let mainMessageId: String = .unique
+        let mainMessage = MessagePayload(
+            id: mainMessageId,
+            type: .regular,
+            user: user,
+            createdAt: Date.distantPast,
+            updatedAt: .unique,
+            deletedAt: nil,
+            text: .unique,
+            command: nil,
+            args: nil,
+            parentId: nil,
+            showReplyInChannel: true,
+            mentionedUsers: [dummyCurrentUser],
+            replyCount: 1,
+            extraData: [:],
+            reactionScores: ["like": 1],
+            reactionCounts: ["like": 1],
+            isSilent: false,
+            isShadowed: false,
+            attachments: [],
+            pinned: false
+        )
+        
+        let threadMessage = MessagePayload(
+            id: .unique,
+            type: .regular,
+            user: user,
+            createdAt: Date(),
+            updatedAt: .unique,
+            deletedAt: nil,
+            text: .unique,
+            command: nil,
+            args: nil,
+            parentId: mainMessageId,
+            showReplyInChannel: false,
+            mentionedUsers: [dummyCurrentUser],
+            replyCount: 0,
+            extraData: [:],
+            reactionScores: ["like": 1],
+            reactionCounts: ["like": 1],
+            isSilent: false,
+            isShadowed: false,
+            attachments: [],
+            pinned: false
+        )
+        
+        let channel = dummyPayload(with: channelId, messages: [mainMessage, threadMessage])
+        
+        try! database.createCurrentUser(id: user.id)
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        
+        guard let channel: ChatChannel = database.viewContext.channel(cid: channelId)?.asModel(),
+              let lastMessageFromCurrentUser = channel.lastMessageFromCurrentUser else {
+            XCTFail("\(#file), \(#function), \(#line) There should be a valid channel")
+            return
+        }
+        
+        XCTAssertEqual(lastMessageFromCurrentUser.text, threadMessage.text)
+    }
 
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random channel payload to db

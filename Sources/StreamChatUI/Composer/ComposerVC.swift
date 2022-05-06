@@ -186,16 +186,31 @@ open class ComposerVC: _ViewController,
         
         public mutating func slowdownMode(cooldown: Int) {
             self = .init(
-                text: "",
+                text: text,
                 state: .slowMode,
-                editingMessage: nil,
-                quotingMessage: nil,
+                editingMessage: editingMessage,
+                quotingMessage: quotingMessage,
                 threadMessage: threadMessage,
-                attachments: [],
-                mentionedUsers: [],
-                command: nil,
-                extraData: [:],
+                attachments: attachments,
+                mentionedUsers: mentionedUsers,
+                command: command,
+                extraData: extraData,
                 cooldownTime: cooldown
+            )
+        }
+        
+        public mutating func normalMode() {
+            self = .init(
+                text: text,
+                state: .new,
+                editingMessage: editingMessage,
+                quotingMessage: quotingMessage,
+                threadMessage: threadMessage,
+                attachments: attachments,
+                mentionedUsers: mentionedUsers,
+                command: command,
+                extraData: extraData,
+                cooldownTime: 0
             )
         }
     }
@@ -206,6 +221,8 @@ open class ComposerVC: _ViewController,
             updateContentIfNeeded()
         }
     }
+    
+    open var cooldownTracker: CooldownTracker = CooldownTracker()
 
     /// A symbol that is used to recognise when the user is mentioning a user.
     open var mentionSymbol = "@"
@@ -356,35 +373,31 @@ open class ComposerVC: _ViewController,
         switch content.state {
         case .new:
             composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.message
-            composerView.isUserInteractionEnabled = true
             Animate {
-                self.composerView.cooldownButton.isHidden = true
+                self.composerView.cooldownView.isHidden = true
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = false
-                self.composerView.headerView.isHidden = true
+                self.composerView.headerView.isHidden = self.content.quotingMessage == nil
             }
         case .quote:
             composerView.titleLabel.text = L10n.Composer.Title.reply
-            composerView.isUserInteractionEnabled = true
             Animate {
                 self.composerView.headerView.isHidden = false
             }
         case .edit:
             composerView.titleLabel.text = L10n.Composer.Title.edit
-            composerView.isUserInteractionEnabled = true
             Animate {
                 self.composerView.confirmButton.isHidden = false
-                self.composerView.cooldownButton.isHidden = true
+                self.composerView.cooldownView.isHidden = true
                 self.composerView.sendButton.isHidden = true
                 self.composerView.headerView.isHidden = false
             }
         case .slowMode:
             composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.slowMode
-            composerView.isUserInteractionEnabled = false
             Animate {
                 self.composerView.sendButton.isHidden = true
                 self.composerView.confirmButton.isHidden = true
-                self.composerView.cooldownButton.isHidden = false
+                self.composerView.cooldownView.isHidden = false
             }
         default:
             log.warning("The composer state \(content.state.description) was not handled.")
@@ -393,9 +406,11 @@ open class ComposerVC: _ViewController,
         composerView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
 
-        let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled || content.hasCommand
-        let isCommandsButtonHidden = !content.isEmpty || !isCommandsEnabled || content.hasCommand
-        let isShrinkInputButtonHidden = content.isEmpty || (!isCommandsEnabled && !isAttachmentsEnabled) || content.hasCommand
+        let isAttachmentButtonHidden = (!content.isEmpty && !composerView.shrinkInputButton.isHidden) || !isAttachmentsEnabled ||
+            content.hasCommand
+        let isCommandsButtonHidden = (!content.isEmpty && !composerView.shrinkInputButton.isHidden) || !isCommandsEnabled || content
+            .hasCommand
+        let isShrinkInputButtonHidden = !isAttachmentButtonHidden || !isCommandsButtonHidden
         
         Animate {
             self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
@@ -473,14 +488,14 @@ open class ComposerVC: _ViewController,
             // This is just a temporary solution. This will be handled on the LLC level
             // in CIS-883
             channelController?.sendStopTypingEvent()
+            content.clear()
         } else {
             createNewMessage(text: text)
-        }
-        
-        content.clear()
-        
-        if let cooldownDuration = channelController?.channel?.cooldownDuration {
-            handleCooldownTimer(with: cooldownDuration)
+            content.clear()
+            
+            if let cooldownDuration = channelController?.channel?.cooldownDuration {
+                handleCooldownTimer(with: cooldownDuration)
+            }
         }
     }
     
@@ -851,9 +866,9 @@ open class ComposerVC: _ViewController,
         }
     }
     
-    open func currentCooldownTime() -> Int {
-        guard let currentUserLastMessage = channelController?.channel?.lastMessageFromCurrentUser,
-              let cooldownDuration = channelController?.channel?.cooldownDuration else {
+    func currentCooldownTime() -> Int {
+        guard let cooldownDuration = channelController?.channel?.cooldownDuration,
+              let currentUserLastMessage = channelController?.channel?.lastMessageFromCurrentUser else {
             return 0
         }
         
@@ -862,18 +877,31 @@ open class ComposerVC: _ViewController,
     }
     
     open func handleCooldownTimer(with cooldown: Int) {
-        (composerView.cooldownButton as? CooldownButton)?.start(with: cooldown, onChange: { currentTime in
-            if currentTime == 0 {
-                self.content.clear()
-            } else {
+        cooldownTracker.start(with: cooldown, onChange: { currentTime in
+            guard currentTime != 0 else {
+                self.content.normalMode()
+                return
+            }
+            
+            if self.content.state != .edit {
                 self.content.slowdownMode(cooldown: currentTime)
             }
+            
+            self.composerView.cooldownView.cooldownLabel.text = "\(currentTime)"
         })
     }
 
     // MARK: - UITextViewDelegate
 
     open func textViewDidChange(_ textView: UITextView) {
+        if !textView.text.isEmpty {
+            if composerView.shrinkInputButton.isHidden {
+                Animate {
+                    self.composerView.shrinkInputButton.isHidden = false
+                }
+            }
+        }
+        
         // This guard removes the possibility of having a loop when updating the `UITextView`.
         // The aim is that `UITextView.text` is always in sync with `Content.text`.
         // With this in place we have bidirectional binding since if we update `Content.text`
