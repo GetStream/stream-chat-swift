@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+## StreamChat
+### ✅ Added
+- Expose `actions` on image attachment [#1979](https://github.com/GetStream/stream-chat-swift/issues/1979)
 
 ## StreamChat
 ### ✅ Added

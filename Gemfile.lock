@@ -190,7 +190,7 @@ GEM
       bundler
       fastlane
       pry
-    fastlane-plugin-sonarcloud_metric_kit (0.2.0)
+    fastlane-plugin-sonarcloud_metric_kit (0.2.1)
     fastlane-plugin-versioning (0.5.0)
     ffi (1.15.5)
     fourflusher (2.3.1)
