@@ -9,6 +9,11 @@ import UIKit
 
 final class ChannelList: ChatChannelListVC, ChatConnectionControllerDelegate {
     private lazy var connectionController = controller.client.connectionController()
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        (router as? CustomChannelListRouter)?.channelListWillAppear(self)
+    }
     
     override func setUp() {
         super.setUp()

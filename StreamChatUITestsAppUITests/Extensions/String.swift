@@ -24,3 +24,13 @@ extension String {
     }
     
 }
+
+extension Substring {
+    func capitalizingFirstLetter() -> Substring {
+        prefix(1).capitalized + dropFirst()
+    }
+
+    mutating func capitalizeFirstLetter() {
+        self = self.capitalizingFirstLetter()
+    }
+}

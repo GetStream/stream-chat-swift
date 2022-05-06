@@ -51,21 +51,14 @@ class InternetConnection {
     /// - Parameter monitor: an Internet connection monitor. Use nil for a default `InternetConnectionMonitor`.
     init(
         notificationCenter: NotificationCenter = .default,
-        monitor: InternetConnectionMonitor? = nil
+        monitor: InternetConnectionMonitor
     ) {
         self.notificationCenter = notificationCenter
-        
-        if let monitor = monitor {
-            self.monitor = monitor
-        } else if #available(iOS 12, *) {
-            self.monitor = Monitor()
-        } else {
-            self.monitor = LegacyMonitor()
-        }
-        
-        status = self.monitor.status
-        self.monitor.delegate = self
-        self.monitor.start()
+        self.monitor = monitor
+
+        status = monitor.status
+        monitor.delegate = self
+        monitor.start()
     }
     
     deinit {
@@ -155,7 +148,7 @@ extension InternetConnection.Status {
 
 // MARK: - Internet Connection Monitor
 
-private extension InternetConnection {
+extension InternetConnection {
     /// The default Internet connection monitor for iOS 12+.
     /// It uses Apple Network API.
     @available(iOS 12, *)
@@ -224,7 +217,7 @@ private extension InternetConnection {
 
 // MARK: Legacy Internet Connection Monitor for iOS 11 only
 
-private extension InternetConnection {
+extension InternetConnection {
     class LegacyMonitor: InternetConnectionMonitor {
         /// A Reachability instance for Internet connection monitoring.
         private lazy var reachability = createReachability()

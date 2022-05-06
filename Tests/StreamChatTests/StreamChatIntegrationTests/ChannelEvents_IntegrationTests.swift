@@ -150,13 +150,13 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         }
 
         let unwrappedUser = try XCTUnwrap(client.databaseContainer.viewContext.currentUser)
-        XCTAssertFalse(unwrappedUser.user.channelMutes.isEmpty)
+        XCTAssertFalse(unwrappedUser.channelMutes.isEmpty)
 
         let unwrappedEvent = try XCTUnwrap(event)
         client.eventNotificationCenter.process(unwrappedEvent)
 
         AssertAsync {
-            Assert.willBeTrue(self.client.databaseContainer.viewContext.currentUser?.user.channelMutes.isEmpty ?? false)
+            Assert.willBeTrue(self.client.databaseContainer.viewContext.currentUser?.channelMutes.isEmpty ?? false)
         }
     }
 
@@ -167,13 +167,13 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
 
         let unwrappedUser = try XCTUnwrap(client.databaseContainer.viewContext.currentUser)
-        XCTAssertTrue(unwrappedUser.user.channelMutes.isEmpty)
+        XCTAssertTrue(unwrappedUser.channelMutes.isEmpty)
 
         let unwrappedEvent = try XCTUnwrap(event)
         client.eventNotificationCenter.process(unwrappedEvent)
 
         AssertAsync {
-            Assert.willBeFalse(self.client.databaseContainer.viewContext.currentUser?.user.channelMutes.isEmpty ?? true)
+            Assert.willBeFalse(self.client.databaseContainer.viewContext.currentUser?.channelMutes.isEmpty ?? true)
         }
     }
 

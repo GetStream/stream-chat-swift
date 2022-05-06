@@ -159,5 +159,48 @@ final class UserRobot: Robot {
         app.back()
         return self
     }
+}
 
+// MARK: Debug menu
+
+extension UserRobot {
+
+    @discardableResult
+    func tapOnDebugMenu() -> Self {
+        MessageListPage.NavigationBar.debugMenu.tap()
+        return self
+    }
+
+    @discardableResult
+    func addParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
+        let debug = MessageListPage.Alert.Debug.self
+        debug.addMember.firstMatch.tap()
+        debug.addMemberTextField.firstMatch
+            .obtainKeyboardFocus()
+            .typeText(userId)
+        debug.addMemberOKButton.firstMatch.tap()
+        return self
+    }
+
+    @discardableResult
+    func removeParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
+        let debug = MessageListPage.Alert.Debug.self
+        debug.removeMember.firstMatch.tap()
+        debug.selectMember(withUserId: userId).firstMatch.tap()
+        return self
+    }
+
+    @discardableResult
+    func showMemberInfo() -> Self {
+        MessageListPage.Alert
+            .Debug.showMemberInfo.firstMatch.tap()
+        return self
+    }
+
+    @discardableResult
+    func dismissMemberInfo() -> Self {
+        MessageListPage.Alert
+            .Debug.dismissMemberInfo.firstMatch.tap()
+        return self
+    }
 }

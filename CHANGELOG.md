@@ -3,6 +3,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix unread messages count bumping logic [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
+    - respect muted channels
+    - respect muted users
+    - decrement when message is hard deleted
+### 🔄 Changed
+- Rename `mentionedMessages` to `mentions` in `ChannelUnreadCount` [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
+
 ## StreamChatUI
 ### 🔄 Changed
 - Deprecate `ChatMessage.isOnlyVisibleForCurrentUser` as it does not account deleted messages visability setting [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
@@ -12,6 +21,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `nonEmpty` filter for channel list query [#1960](https://github.com/GetStream/stream-chat-swift/pull/1960)
 ### 🐞 Fixed
 - Fix `onlyVisibleForYouIndicator` not being shown for ephemeral messages [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
+- Fix message popup UI glitch for bigger messages and iPad/Landscape [#1975](https://github.com/GetStream/stream-chat-swift/pull/1975)
+- Fix footnote being hidden for the message followed by `ephemeral` message [#1956](https://github.com/GetStream/stream-chat-swift/issues/1956)
+- Fix footnote being hidden for the message followed by `system` message [#1956](https://github.com/GetStream/stream-chat-swift/issues/1956)
 
 # [4.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.14.0)
 _April 26, 2022_

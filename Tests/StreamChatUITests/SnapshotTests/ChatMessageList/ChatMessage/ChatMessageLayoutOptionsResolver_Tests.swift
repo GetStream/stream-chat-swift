@@ -8,26 +8,13 @@
 import XCTest
 
 final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
-    private var optionsResolver: ChatMessageLayoutOptionsResolver!
     private var appearance: Appearance = Appearance()
-
-    // MARK: - Setup
-
-    override func setUp() {
-        super.setUp()
-
-        optionsResolver = .init()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-
-        optionsResolver = nil
-    }
-
+    
     // MARK: - Flipped
 
     func test_optionsForMessage_whenMessageIsSentByCurrentUser_includesFlipped() {
+        let sut = createOptionsResolver()
+        
         // Create a message sent NOT by the current user
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -38,7 +25,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageSentByCurrentUser]),
@@ -50,6 +37,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsSentNotByCurrentUser_doesNotIncludeFlipped() {
+        let sut = createOptionsResolver()
+        
         // Create a message sent by another current user
         let messageSentNotByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -60,7 +49,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageSentNotByCurrentUser]),
@@ -74,13 +63,15 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Bubble
 
     func test_optionsForMessage_includesBubbleByDefault() {
+        let sut = createOptionsResolver()
+        
         let channelHistory: [(ChatMessage, Bool)] = .directMessagesHistory(
-            minTimeIntervalBetweenMessagesInGroup: optionsResolver.maxTimeIntervalBetweenMessagesInGroup
+            minTimeIntervalBetweenMessagesInGroup: sut.maxTimeIntervalBetweenMessagesInGroup
         )
 
         for message in channelHistory.map(\.0) {
             // Calculate layout options for the current message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([message]),
@@ -95,6 +86,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Continuous bubble
 
     func test_optionsForMessage_whenMessageIsLastInSequence_doesNotIncludeContinuousBubble() {
+        let sut = createOptionsResolver()
+        
         for isSentByCurrentUser in [true, false] {
             // Create message
             let message: ChatMessage = .mock(
@@ -106,7 +99,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
 
             // Calculate layout options for the message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([message]),
@@ -119,6 +112,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsNotLastInSequence_includesContinuousBubble() {
+        let sut = createOptionsResolver()
+
         // Create a user
         let user: ChatUser = .mock(id: .unique)
 
@@ -140,13 +135,13 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 text: .unique,
                 author: user,
                 createdAt: message1.createdAt.addingTimeInterval(
-                    -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
+                    -(sut.maxTimeIntervalBetweenMessagesInGroup - 1)
                 ),
                 isSentByCurrentUser: isSentByCurrentUser
             )
 
             // Calculate layout options for the second message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 1, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([message1, message2]),
@@ -159,6 +154,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageBelongsToThread_includesContinuousBubble() {
+        let sut = createOptionsResolver()
+        
         // Create non-deleted thread root message
         let messageThreadRoot: ChatMessage = .mock(
             id: .unique,
@@ -182,7 +179,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         for threadMessage in [messageThreadRoot, messageThreadPart] {
             // Calculate layout options for the message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([threadMessage]),
@@ -197,6 +194,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Avatar size padding
 
     func test_optionsForMessage_whenMessageIsSentByCurrentUser_doesNotIncludeAvatarSizePadding() {
+        let sut = createOptionsResolver()
+
         // Create non-deleted message sent by current user
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -207,7 +206,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageSentByCurrentUser]),
@@ -219,6 +218,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageSentByAnotherUserIsNotLastInSequence_includesAvatarSizePadding() {
+        let sut = createOptionsResolver()
+
         // Create a user
         let anotherUser: ChatUser = .mock(id: .unique)
 
@@ -239,13 +240,13 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
-                -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
+                -(sut.maxTimeIntervalBetweenMessagesInGroup - 1)
             ),
             isSentByCurrentUser: false
         )
 
         // Calculate layout options for the second message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 1, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageFromAnotherUser1, messageFromAnotherUser2]),
@@ -257,6 +258,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageSentByAnotherUserIsLastInSequence_includesAvatarSizePadding() {
+        let sut = createOptionsResolver()
+
         // Create ephemeral message sent by another user
         let messageSentByAnotherUser: ChatMessage = .mock(
             id: .unique,
@@ -267,7 +270,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageSentByAnotherUser]),
@@ -281,6 +284,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Timestamp
 
     func test_optionsForMessage_whenMessageIsLastInSequence_includesTimestamp() {
+        let sut = createOptionsResolver()
+
         for isSentByCurrentUser in [true, false] {
             // Create message
             let message: ChatMessage = .mock(
@@ -292,7 +297,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
 
             // Calculate layout options for the message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([message]),
@@ -305,6 +310,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsNotLastInSequence_doesNotIncludeTimestamp() {
+        let sut = createOptionsResolver()
+        
         // Create a user
         let user: ChatUser = .mock(id: .unique)
 
@@ -326,13 +333,13 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 text: .unique,
                 author: user,
                 createdAt: message1.createdAt.addingTimeInterval(
-                    -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
+                    -(sut.maxTimeIntervalBetweenMessagesInGroup - 1)
                 ),
                 isSentByCurrentUser: isSentByCurrentUser
             )
 
             // Calculate layout options for the second message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 1, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([message1, message2]),
@@ -347,6 +354,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Only visible for current user
 
     func test_optionsForMessage_whenMessageIsNotSentByCurrentUser_doesNotIncludeOnlyVisibleToYouIndicator() {
+        let sut = createOptionsResolver()
+        
         // Create ephemeral message sent by another user
         let messageSentByAnotherUser: ChatMessage = .mock(
             id: .unique,
@@ -357,7 +366,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageSentByAnotherUser]),
@@ -369,6 +378,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageSentByCurrentUserIsEphemeral_includesOnlyVisibleToYouIndicator() {
+        let sut = createOptionsResolver()
+        
         // Create ephemeral message sent by current user
         let ephemeralMessageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -380,7 +391,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([ephemeralMessageSentByCurrentUser]),
@@ -392,6 +403,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
     
     func test_optionsForMessage_whenMessageSentByTheCurrentUserIsDeleted_includesOnlyVisibleToYouIndicator() {
+        let sut = createOptionsResolver(deletedMessagesVisibility: .visibleForCurrentUser)
+        
         // Create ephemeral message sent by current user
         let deletedMessageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -403,13 +416,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
         
-        // Set the config with `deletedMessagesVisibility == .visibleForCurrentUser`
-        var config = ChatClientConfig(apiKey: .init(.unique))
-        config.deletedMessagesVisibility = .visibleForCurrentUser
-        optionsResolver.config = config
-
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([deletedMessageSentByCurrentUser]),
@@ -433,13 +441,10 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         for deletedMessagesVisibility in [ChatClientConfig.DeletedMessageVisibility.alwaysVisible, .alwaysHidden] {
-            // Set the config with the given `deletedMessagesVisibility`
-            var config = ChatClientConfig(apiKey: .init(.unique))
-            config.deletedMessagesVisibility = deletedMessagesVisibility
-            optionsResolver.config = config
+            let sut = createOptionsResolver(deletedMessagesVisibility: deletedMessagesVisibility)
             
             // Calculate layout options for the message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([deletedMessageSentByCurrentUser]),
@@ -454,6 +459,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Text
 
     func test_optionsForMessage_whenMessageIsEphemeral_doesNotIncludeText() {
+        let sut = createOptionsResolver()
+        
         // Create ephemeral message
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
@@ -464,7 +471,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([ephemeralMessage]),
@@ -476,6 +483,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsDeleted_includesText() {
+        let sut = createOptionsResolver()
+
         // Create deleted message
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
@@ -486,7 +495,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([deletedMessage]),
@@ -498,6 +507,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageHasText_includesText() {
+        let sut = createOptionsResolver()
+        
         // Create non-ephemeral non-deleted message with text
         let message: ChatMessage = .mock(
             id: .unique,
@@ -507,7 +518,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([message]),
@@ -521,6 +532,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Avatar
 
     func test_optionsForMessage_whenDeletedMessageSentByAnotherUserIsLastInSequence_includesAvatar() {
+        let sut = createOptionsResolver()
+        
         // Create deleted message last in sequence by another user
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
@@ -532,7 +545,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([deletedMessage]),
@@ -544,6 +557,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsSentByCurrentUser_doesNotIncludeAvatar() {
+        let sut = createOptionsResolver()
+        
         // Create non-deleted message sent by current user that ends the sequence
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -554,7 +569,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageSentByCurrentUser]),
@@ -566,6 +581,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageSentByAnotherUserIsNotLastInSequence_doesNotIncludeAvatar() {
+        let sut = createOptionsResolver()
+        
         // Create a user
         let anotherUser: ChatUser = .mock(id: .unique)
 
@@ -586,13 +603,13 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
-                -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
+                -(sut.maxTimeIntervalBetweenMessagesInGroup - 1)
             ),
             isSentByCurrentUser: false
         )
 
         // Calculate layout options for the second message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 1, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageFromAnotherUser1, messageFromAnotherUser2]),
@@ -604,6 +621,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageSentByAnotherUserIsLastInSequence_includesAvatar() {
+        let sut = createOptionsResolver()
+
         // Create a user
         let anotherUser: ChatUser = .mock(id: .unique)
 
@@ -624,13 +643,13 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
-                -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
+                -(sut.maxTimeIntervalBetweenMessagesInGroup - 1)
             ),
             isSentByCurrentUser: false
         )
 
         // Calculate layout options for the last message in sequence
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageFromAnotherUser1, messageFromAnotherUser2]),
@@ -644,6 +663,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Author name
     
     func test_optionsForMessage_whenDeletedMessageSentByAnotherUserIsLastInSequence_includesAuthorName() {
+        let sut = createOptionsResolver()
+
         // Create deleted message
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
@@ -661,7 +682,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: notDMChannel,
             with: .init([deletedMessage]),
@@ -673,6 +694,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsSentByCurrentUser_doesNotIncludeAuthorName() {
+        let sut = createOptionsResolver()
+
         // Create non-deleted message sent by current user
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -689,7 +712,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: notDMChannel,
             with: .init([messageSentByCurrentUser]),
@@ -701,6 +724,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsNotLastInSequence_doesNotIncludeAuthorName() {
+        let sut = createOptionsResolver()
+
         // Create a user
         let anotherUser: ChatUser = .mock(id: .unique)
 
@@ -721,7 +746,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
-                -(optionsResolver.maxTimeIntervalBetweenMessagesInGroup - 1)
+                -(sut.maxTimeIntervalBetweenMessagesInGroup - 1)
             ),
             isSentByCurrentUser: false
         )
@@ -733,7 +758,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the second message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 1, section: 0),
             in: notDMChannel,
             with: .init([messageFromAnotherUser1, messageFromAnotherUser2]),
@@ -745,6 +770,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenChannelIsDirectMessaging_doesNotIncludeAuthorName() {
+        let sut = createOptionsResolver()
+
         // Create last message from current user
         let messageFromAnotherUser: ChatMessage = .mock(
             id: .unique,
@@ -760,7 +787,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: directMessagesChannel,
             with: .init([messageFromAnotherUser]),
@@ -772,6 +799,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageEndsTheSequenceSentByAnotherUserAndChannelIsNotDM_includesAuthorName() {
+        let sut = createOptionsResolver()
+
         // Create last message from current user
         let messageFromAnotherUser: ChatMessage = .mock(
             id: .unique,
@@ -788,7 +817,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: notDMChannel,
             with: .init([messageFromAnotherUser]),
@@ -802,6 +831,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Quoted message
 
     func test_optionsForMessage_whenMessageHasQuotedMessage_includesQuotedMessage() {
+        let sut = createOptionsResolver()
+
         // Create non-deleted message with quoted message
         let messageWithQuotedMessage: ChatMessage = .mock(
             id: .unique,
@@ -817,7 +848,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([messageWithQuotedMessage]),
@@ -829,6 +860,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeQuotedMessage() {
+        let sut = createOptionsResolver()
+
         // Create deleted message with quoted message
         let deletedMessageWithQuotedMessage: ChatMessage = .mock(
             id: .unique,
@@ -845,7 +878,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([deletedMessageWithQuotedMessage]),
@@ -859,6 +892,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Thread info
 
     func test_optionsForMessage_whenMessageBelongsToThread_includesThreadInfo() {
+        let sut = createOptionsResolver()
+
         // Create non-deleted thread root message
         let messageThreadRoot: ChatMessage = .mock(
             id: .unique,
@@ -882,7 +917,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         for threadMessage in [messageThreadRoot, messageThreadPart] {
             // Calculate layout options for the message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([threadMessage]),
@@ -895,6 +930,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeThreadInfo() {
+        let sut = createOptionsResolver()
+
         // Create deleted thread root message
         let messageThreadRoot: ChatMessage = .mock(
             id: .unique,
@@ -920,7 +957,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         for threadMessage in [messageThreadRoot, messageThreadPart] {
             // Calculate layout options for the message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([threadMessage]),
@@ -933,6 +970,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenRepliesEnabled_includesThreadInfo() {
+        let sut = createOptionsResolver()
+
         // Create deleted thread root message
         let messageThreadRoot: ChatMessage = .mock(
             id: .unique,
@@ -956,7 +995,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         for threadMessage in [messageThreadRoot, messageThreadPart] {
             // Calculate layout options for the message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique, config: .mock(repliesEnabled: true)),
                 with: .init([threadMessage]),
@@ -968,6 +1007,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenRepliesDisabled_doesNotIncludeThreadInfo() {
+        let sut = createOptionsResolver()
+
         // Create deleted thread root message
         let messageThreadRoot: ChatMessage = .mock(
             id: .unique,
@@ -991,7 +1032,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         for threadMessage in [messageThreadRoot, messageThreadPart] {
             // Calculate layout options for the message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique, config: .mock(repliesEnabled: false)),
                 with: .init([threadMessage]),
@@ -1005,6 +1046,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Reactions
 
     func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeReactions() {
+        let sut = createOptionsResolver()
+
         // Create deleted message with reactions
         let deletedMessageWithReactions: ChatMessage = .mock(
             id: .unique,
@@ -1032,7 +1075,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channelWithReactionsEnabled,
             with: .init([deletedMessageWithReactions]),
@@ -1044,6 +1087,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageHasUnhandledReactionsAndChannelEnablesReactions_doesNotIncludeReactions() {
+        let sut = createOptionsResolver()
+
         // Create non-deleted message with reactions
         let messageWithReactions: ChatMessage = .mock(
             id: .unique,
@@ -1070,7 +1115,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channelWithReactionsEnabled,
             with: .init([messageWithReactions]),
@@ -1082,6 +1127,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageHasReactionsAndChannelEnablesReactions_includesReactions() {
+        let sut = createOptionsResolver()
+
         // Create non-deleted message with reactions
         let messageWithReactions: ChatMessage = .mock(
             id: .unique,
@@ -1108,7 +1155,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channelWithReactionsEnabled,
             with: .init([messageWithReactions]),
@@ -1120,6 +1167,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageHasReactionsButChannelDisablesReactions_doesNotIncludesReactions() {
+        let sut = createOptionsResolver()
+
         // Create non-deleted message with reactions
         let messageWithReactions: ChatMessage = .mock(
             id: .unique,
@@ -1146,7 +1195,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channelWithReactionsDisabled,
             with: .init([messageWithReactions]),
@@ -1158,6 +1207,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageHasNoReactions_doesNotIncludeReactions() {
+        let sut = createOptionsResolver()
+
         // Create non-deleted message without reactions
         let messageWithoutReactions: ChatMessage = .mock(
             id: .unique,
@@ -1175,7 +1226,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channelWithReactionsEnabled,
             with: .init([messageWithoutReactions]),
@@ -1189,6 +1240,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - Error indicator
 
     func test_optionsForMessage_whenMessageHasFailedState_includesErrorIndicator() {
+        let sut = createOptionsResolver()
+
         for failedState: LocalMessageState in [.sendingFailed, .syncingFailed, .deletingFailed] {
             // Create non-deleted message with failed local state
             let messageWithFailedState: ChatMessage = .mock(
@@ -1202,7 +1255,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
 
             // Calculate layout options for the message
-            let layoutOptions = optionsResolver.optionsForMessage(
+            let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
                 with: .init([messageWithFailedState]),
@@ -1215,6 +1268,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
 
     func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeErrorIndicator() {
+        let sut = createOptionsResolver()
+
         // Create deleted message
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
@@ -1225,7 +1280,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([deletedMessage]),
@@ -1237,6 +1292,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
     
     func test_optionsForMessage_whenMessageIsSystem() {
+        let sut = createOptionsResolver()
+
         let systemMessage: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
@@ -1247,7 +1304,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
 
         // Calculate layout options for the message
-        let layoutOptions = optionsResolver.optionsForMessage(
+        let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
             with: .init([systemMessage]),
@@ -1257,13 +1314,15 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Assert only `.text` AND `.centered` is included in the options
         XCTAssertTrue(layoutOptions == [.text, .centered])
     }
-
-    // MARK: - Is message
-
+    
+    // MARK: - isMessageLastInSequence
+    
     func test_isMessageLastInSequence() {
+        let sut = createOptionsResolver()
+
         // Get mock channel history
         let testCases: [(ChatMessage, Bool)] = .directMessagesHistory(
-            minTimeIntervalBetweenMessagesInGroup: optionsResolver.maxTimeIntervalBetweenMessagesInGroup
+            minTimeIntervalBetweenMessagesInGroup: sut.maxTimeIntervalBetweenMessagesInGroup
         )
 
         // Iterate test cases
@@ -1273,7 +1332,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
             // Assert the actual value matches the expected one.
             XCTAssertEqual(
-                optionsResolver.isMessageLastInSequence(
+                sut.isMessageLastInSequence(
                     messageIndexPath: .init(item: index, section: 0),
                     messages: .init(testCases.map(\.0))
                 ),
@@ -1283,6 +1342,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     }
     
     func test_isMessageLastInSequence_whenTheNextMessageFromTheSameUserIsErrorMessage_returnsTrue() {
+        let sut = createOptionsResolver()
+
         let cid: ChannelId = .unique
         let author: ChatUser = .mock(id: .unique)
         
@@ -1303,9 +1364,69 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
         
         XCTAssertTrue(
-            optionsResolver.isMessageLastInSequence(
+            sut.isMessageLastInSequence(
                 messageIndexPath: .init(item: 1, section: 0),
                 messages: .init([deletedMessage, messageFollowedByErrorMessage])
+            )
+        )
+    }
+    
+    func test_isMessageLastInSequence_whenNextMessageFromSameUserIsEphemeral_returnsTrue() {
+        let sut = createOptionsResolver()
+
+        let cid: ChannelId = .unique
+        let author: ChatUser = .mock(id: .unique)
+        
+        let messageFollowedByEphemeralMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            author: author
+        )
+        
+        let ephemeralMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            type: .ephemeral,
+            author: author,
+            createdAt: messageFollowedByEphemeralMessage.createdAt.addingTimeInterval(1)
+        )
+        
+        XCTAssertTrue(
+            sut.isMessageLastInSequence(
+                messageIndexPath: .init(item: 1, section: 0),
+                messages: .init([ephemeralMessage, messageFollowedByEphemeralMessage])
+            )
+        )
+    }
+    
+    func test_isMessageLastInSequence_whenNextMessageFromSameUserIsSystem_returnsTrue() {
+        let sut = createOptionsResolver()
+
+        let cid: ChannelId = .unique
+        let author: ChatUser = .mock(id: .unique)
+        
+        let messageFollowedBySystemMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            author: author
+        )
+        
+        let systemMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: "Luke was removed from the channel",
+            type: .system,
+            author: author,
+            createdAt: messageFollowedBySystemMessage.createdAt.addingTimeInterval(1)
+        )
+        
+        XCTAssertTrue(
+            sut.isMessageLastInSequence(
+                messageIndexPath: .init(item: 1, section: 0),
+                messages: .init([systemMessage, messageFollowedBySystemMessage])
             )
         )
     }
@@ -1313,6 +1434,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     // MARK: - showOnlyVisibleToYouIndicator
     
     func test_showOnlyVisibleToYouIndicator_whenMessageIsSentByAnotherUser_returnsFalse() {
+        let sut = createOptionsResolver()
+
         let message: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
@@ -1322,11 +1445,13 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             deletedAt: .unique,
             isSentByCurrentUser: false
         )
-
-        XCTAssertFalse(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+        
+        XCTAssertFalse(sut.showOnlyVisibleToYouIndicator(for: message))
     }
 
     func test_showOnlyVisibleToYouIndicator_whenMessageIsEphemeralAndSentByCurrentUser_returnsTrue() {
+        let sut = createOptionsResolver()
+        
         let message: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
@@ -1335,11 +1460,13 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             author: .mock(id: .unique),
             isSentByCurrentUser: true
         )
-
-        XCTAssertTrue(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+        
+        XCTAssertTrue(sut.showOnlyVisibleToYouIndicator(for: message))
     }
 
     func test_showOnlyVisibleToYouIndicator_whenMessageIsDeletedAndSentByCurrentUser_returnsTrue() {
+        let sut = createOptionsResolver(deletedMessagesVisibility: .visibleForCurrentUser)
+
         let message: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
@@ -1350,11 +1477,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
         
-        var config = ChatClientConfig(apiKey: .init(.unique))
-        config.deletedMessagesVisibility = .visibleForCurrentUser
-        optionsResolver.config = config
-
-        XCTAssertTrue(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+        XCTAssertTrue(sut.showOnlyVisibleToYouIndicator(for: message))
     }
     
     func test_showOnlyVisibleToYouIndicator_whenMessageIsDeletedAndSentByCurrentUser_returnsFalse() {
@@ -1368,18 +1491,14 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         )
         
         for deletedMessagesVisibility in [ChatClientConfig.DeletedMessageVisibility.alwaysVisible, .alwaysHidden] {
-            var config = ChatClientConfig(apiKey: .init(.unique))
-            config.deletedMessagesVisibility = deletedMessagesVisibility
-            optionsResolver.config = config
+            let sut = createOptionsResolver(deletedMessagesVisibility: deletedMessagesVisibility)
             
-            XCTAssertFalse(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+            XCTAssertFalse(sut.showOnlyVisibleToYouIndicator(for: message))
         }
     }
     
     func test_showOnlyVisibleToYouIndicator_whenMessageNotDeletedAndSentByCurrentUser_returnsFalse() {
-        var config = ChatClientConfig(apiKey: .init(.unique))
-        config.deletedMessagesVisibility = .visibleForCurrentUser
-        optionsResolver.config = config
+        let sut = createOptionsResolver(deletedMessagesVisibility: .visibleForCurrentUser)
         
         for type in [MessageType.regular, .reply, .system, .error] {
             let message: ChatMessage = .mock(
@@ -1391,9 +1510,22 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 deletedAt: .unique,
                 isSentByCurrentUser: true
             )
-                        
-            XCTAssertFalse(optionsResolver.showOnlyVisibleToYouIndicator(for: message))
+            
+            XCTAssertFalse(sut.showOnlyVisibleToYouIndicator(for: message))
         }
+    }
+    
+    // MARK: - Helpers
+    
+    private func createOptionsResolver(
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility = .alwaysVisible
+    ) -> ChatMessageLayoutOptionsResolver {
+        var config = ChatClientConfig(apiKey: .init(.unique))
+        config.deletedMessagesVisibility = deletedMessagesVisibility
+        
+        let resolver = ChatMessageLayoutOptionsResolver()
+        resolver.config = config
+        return resolver
     }
 }
 

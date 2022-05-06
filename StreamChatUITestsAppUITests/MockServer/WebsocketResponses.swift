@@ -13,7 +13,7 @@ extension StreamMockServer {
     /// - Parameters: Void
     /// - Returns: Self
     func websocketDelay(closure: @escaping () -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + websocketDelay) {
             closure()
         }
     }
@@ -35,6 +35,7 @@ extension StreamMockServer {
         json[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
         json[EventPayload.CodingKeys.eventType.rawValue] = eventType.rawValue
         json[EventPayload.CodingKeys.channelId.rawValue] = channelId
+        json[EventPayload.CodingKeys.channelType.rawValue] = ChannelType.messaging.rawValue
         json[EventPayload.CodingKeys.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
         
         writeText(json.jsonToString())
@@ -67,7 +68,7 @@ extension StreamMockServer {
         
         switch eventType {
         case .messageNew:
-            let message = json[TopLevelKey.message] as? [String: Any]
+            let message = json[JSONKey.message] as? [String: Any]
             mockedMessage = mockMessage(
                 message,
                 channelId: channelId,
@@ -103,12 +104,12 @@ extension StreamMockServer {
         }
         
         if let channelId = channelId {
-            json[TopLevelKey.channelId] = channelId
-            json[TopLevelKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
+            json[JSONKey.channelId] = channelId
+            json[JSONKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
         }
         
-        json[TopLevelKey.user] = user
-        json[TopLevelKey.message] = mockedMessage
+        json[JSONKey.user] = user
+        json[JSONKey.message] = mockedMessage
         json[MessagePayloadsCodingKeys.createdAt.rawValue] = TestData.currentDate
         json[MessagePayloadsCodingKeys.type.rawValue] = eventType.rawValue
         
@@ -131,8 +132,8 @@ extension StreamMockServer {
     ) -> Self {
         let messageDetails = lastMessage
         var json = TestData.getMockResponse(fromFile: .wsReaction).json
-        var reaction = json[TopLevelKey.reaction] as? [String: Any]
-        var message = json[TopLevelKey.message] as? [String: Any]
+        var reaction = json[JSONKey.reaction] as? [String: Any]
+        var message = json[JSONKey.message] as? [String: Any]
         let messageId = messageDetails?[MessagePayloadsCodingKeys.id.rawValue] as? String
         let cid = messageDetails?[MessagePayloadsCodingKeys.cid.rawValue] as? String
         let channelId = cid?.split(separator: ":").last
@@ -154,14 +155,83 @@ extension StreamMockServer {
             timestamp: timestamp
         )
         
-        json[TopLevelKey.channelId] = channelId
-        json[TopLevelKey.cid] = cid
-        json[TopLevelKey.message] = message
-        json[TopLevelKey.reaction] = reaction
+        json[JSONKey.channelId] = channelId
+        json[JSONKey.cid] = cid
+        json[JSONKey.message] = message
+        json[JSONKey.reaction] = reaction
         json[MessageReactionPayload.CodingKeys.user.rawValue] = user
         json[MessageReactionPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
         json[MessageReactionPayload.CodingKeys.type.rawValue] = eventType.rawValue
         
+        writeText(json.jsonToString())
+        return self
+    }
+}
+
+// MARK: Channel Members
+
+extension StreamMockServer {
+
+    /// Adds new members to channel
+    ///
+    /// - Parameters:
+    ///     - members: json representation of members
+    ///     - channelId: channel id
+    ///     - timestamp: event timestamp
+    ///     - EventType: what needs to be done with the message
+    ///     - user: user who created the channel
+    /// - Returns: Self
+    @discardableResult
+    func websocketChannelUpdated(
+        with members: [[String: Any]],
+        channelId: String,
+        timestamp: String? = TestData.currentDate
+    ) -> Self {
+        var json = TestData.getMockResponse(fromFile: .wsChannelEvent).json
+        json[JSONKey.channelId] = channelId
+        json[JSONKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
+        json[JSONKey.channelType] = ChannelType.messaging.rawValue
+        json[JSONKey.createdAt] = TestData.currentDate
+        json[JSONKey.eventType] = EventType.channelUpdated.rawValue
+        json[JSONKey.user] = setUpUser(source: json, details: UserDetails.lukeSkywalker)
+
+        if var channel = json[JSONKey.channel] as? [String: Any] {
+            channel[JSONKey.members] = members
+            channel[ChannelCodingKeys.memberCount.rawValue] = members.count
+
+            json[ChannelCodingKeys.members.rawValue] = members
+            json[ChannelCodingKeys.memberCount.rawValue] = members.count
+            json[JSONKey.channel] = channel
+        }
+
+        writeText(json.jsonToString())
+        return self
+    }
+
+    /// Events: member.added, member.updatem member.removed
+    ///
+    /// - Parameters:
+    ///     - member: json representation of member
+    ///     - channelId: channel id
+    ///     - timestamp: event timestamp
+    ///     - EventType: what needs to be done with the message
+    /// - Returns: Self
+    @discardableResult
+    func websocketMember(
+        with member: [String: Any],
+        channelId: String,
+        timestamp: String? = TestData.currentDate,
+        eventType: EventType
+    ) -> Self {
+        var json = TestData.getMockResponse(fromFile: .wsMemberEvent).json
+        json[JSONKey.channelId] = channelId
+        json[JSONKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
+        json[JSONKey.channelType] = ChannelType.messaging.rawValue
+        json[JSONKey.createdAt] = TestData.currentDate
+        json[JSONKey.eventType] = eventType.rawValue
+        json[JSONKey.member] = member
+        json[JSONKey.user] = member[JSONKey.user]
+
         writeText(json.jsonToString())
         return self
     }

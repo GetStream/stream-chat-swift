@@ -2928,20 +2928,6 @@ final class ChannelController_Tests: XCTestCase {
         
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: read events is disabled for this channel.")
     }
-    
-    func test_markRead_whenTheChannelIsRead_doesNothing() throws {
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: self.channelId))
-        }
-
-        let error: Error? = try waitFor { completion in
-            controller.markRead { error in
-                completion(error)
-            }
-        }
-        
-        XCTAssertNil(error)
-    }
 
     func test_markRead_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
@@ -2977,7 +2963,7 @@ final class ChannelController_Tests: XCTestCase {
     
     func test_markRead_callsChannelUpdater() throws {
         // setup data for this test
-        let payload = dummyPayload(with: channelId, numberOfMessages: 3)
+        let payload = dummyPayload(with: channelId, numberOfMessages: 0)
         let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
 
         // Save two channels to DB (only one matching the query) and wait for completion
@@ -3000,13 +2986,6 @@ final class ChannelController_Tests: XCTestCase {
             completionCalled = true
         }
         
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-        
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
-        
         // Assert cid is passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.markRead_cid, channelId)
         XCTAssertFalse(completionCalled)
@@ -3018,8 +2997,6 @@ final class ChannelController_Tests: XCTestCase {
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_markRead_propagatesErrorFromUpdater() throws {
@@ -3047,6 +3024,27 @@ final class ChannelController_Tests: XCTestCase {
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_markRead_keepsControllerAlive() throws {
+        // GIVEN
+        let channel = dummyPayload(with: channelId, numberOfMessages: 3)
+        let currentUser: CurrentUserPayload = .dummy(userId: channel.channelReads.first!.user.id, role: .user)
+        client.currentUserId = currentUser.id
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channel)
+        }
+        
+        controller.markRead { _ in }
+        
+        // WHEN
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
     }
     
     // MARK: - Enable slow mode (cooldown)

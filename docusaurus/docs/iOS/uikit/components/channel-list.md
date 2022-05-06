@@ -6,30 +6,76 @@ import SingletonNote from '../../common-content/chat-client.md'
 import ComponentsNote from '../../common-content/components-note.md'
 import Properties from '../../common-content/reference-docs/stream-chat-ui/chat-channel-list/chat-channel-list-vc-properties.md'
 
-This component is used to display a list of channels. Channels are fetched from the API and kept in sync automatically. Behind the scenes this component uses the `Query Channels` API endpoint and Websocket events.
+The `ChatChannelListVC` is the UI component used to display a list of channels matching the given query.
+
+:::note
+The Channel List screen is backed by the low-level `ChatChannelListController` component which fetches channels from the API and keeps the list in sync with the remote.
+Read more about about channel list query and how `ChatChannelListController` works [here](../controllers/channels.md).
+:::
 
 ## Basic Usage
 
-You can show the list of channels for the current user by adding the `ChatChannelListVC` to your application.
-
+The first step to show the channel list screen in your app is to create `ChatChannelListVC` instance:
 ```swift
-class ViewController: ChatChannelListVC {
+// Create `ChatChannelController` with the given query
+let controller = ChatClient.shared.channelListController(query: ..., filter: ...)
+
+// Create a view controller backed by the low-level controller
+let channelListVC = ChatChannelListVC.make(with: controller)
+```
+
+When the `ChatChannelListVC` instance is created, there are multiple ways of showing it:
+1. modally
+1. inside existed `UINavigationController`
+1. as a tab inside `UITabBarController`
+1. as a child controller
+
+To present the channel list modally:
+```swift
+let navigationVC = UINavigationController(rootViewController: channelListVC)
+
+present(navigationVC, animated: true)
+```
+
+To push the channel list to existed navigation controller:
+```swift
+navigationController?.push(channelListVC, animated: true)
+```
+
+To show the channel list as a tab:
+```swift
+let navigationVC = UINavigationController(rootViewController: channelListVC)
+
+let tabBatVC = UITabBarController()
+tabBatVC.viewControllers = [..., navigationVC]
+```
+
+To show the channel list as a child:
+```swift
+class ParentVC: UIViewController {
+    let containerView: UIView
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        /// the query used to retrieve channels
-        let query = ChannelListQuery.init(filter: .containMembers(userIds: [ChatClient.shared.currentUserId!]))
         
-        /// create a controller and assign it to this view controller
-        self.controller = ChatClient.shared.channelListController(query: query)
+        let navigationVC = UINavigationController(rootViewController: channelListVC)
+        addChild(navigationVC)
+        navigationVC.view.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(navigationVC.view)
+        NSLayoutConstraint.activate([
+            navigationVC.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            navigationVC.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            navigationVC.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            navigationVC.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+        ])
+        navigationVC.didMove(toParent: self)
     }
 }
 ```
 
-<SingletonNote />
-
-If you have a navigation controller setup the SDK will navigate from the channel list to the channel view controller when the user taps on a channel. In the example above we are showing the channels where the current user is a member, you can change the query to fit your application needs.
+:::note
+In all the cases but the push to the existing navigation controller, the channel list is wrapped by `UINavigationController` before presenting to get the `channel list -> channel` navigation out of the box.
+:::
 
 ## UI Customization
 

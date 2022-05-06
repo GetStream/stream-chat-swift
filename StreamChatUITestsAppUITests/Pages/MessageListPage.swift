@@ -28,6 +28,31 @@ class MessageListPage {
         static var participants: XCUIElement {
             app.staticTexts.lastMatch!
         }
+
+        static var debugMenu: XCUIElement {
+            app.buttons["debug"].firstMatch
+        }
+    }
+
+    enum Alert {
+        enum Debug {
+            // Add member
+            static var alert: XCUIElement { app.alerts["Select an action"] }
+            static var addMember: XCUIElement { alert.buttons["Add member"] }
+            static var addMemberTextField: XCUIElement {app.textFields["debug_alert_textfield"] }
+            static var addMemberOKButton: XCUIElement {app.alerts["Enter user id"].buttons["OK"] }
+
+            // Remove member
+            static var removeMember: XCUIElement { alert.buttons["Remove a member"] }
+            static func selectMember(withUserId userId: String) -> XCUIElement {
+                app.alerts["Select a member"].buttons[userId]
+            }
+
+            // Show member info
+            static var showMemberInfo: XCUIElement { alert.buttons["Show Members"] }
+            static var dismissMemberInfo: XCUIElement { app.alerts["Members"].buttons["Cancel"] }
+        }
+
     }
     
     enum Composer {
@@ -102,7 +127,11 @@ class MessageListPage {
         static func deletedLabel(messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["onlyVisibleToYouLabel"]
         }
-        
+
+        static func errorButton(messageCell: XCUIElement) -> XCUIElement {
+            messageCell.buttons["error indicator"]
+        }
+
     }
     
     enum PopUpButtons {
