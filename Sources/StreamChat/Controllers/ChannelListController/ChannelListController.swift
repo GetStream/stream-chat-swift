@@ -154,16 +154,18 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private func updateChannelList(
         _ completion: ((_ error: Error?) -> Void)? = nil
     ) {
+        let limit = query.pagination.pageSize
         worker.update(
             channelListQuery: query
-        ) { result in
+        ) { [weak self] result in
             switch result {
-            case .success:
-                self.state = .remoteDataFetched
-                self.callback { completion?(nil) }
+            case let .success(channels):
+                self?.state = .remoteDataFetched
+                self?.hasLoadedAllPreviousChannels = channels.count < limit
+                self?.callback { completion?(nil) }
             case let .failure(error):
-                self.state = .remoteDataFetchFailed(ClientError(with: error))
-                self.callback { completion?(error) }
+                self?.state = .remoteDataFetchFailed(ClientError(with: error))
+                self?.callback { completion?(error) }
             }
         }
     }
