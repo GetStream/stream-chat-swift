@@ -17,7 +17,11 @@ class ChannelListQueryDTO: NSManagedObject {
     @NSManaged var channels: Set<ChannelDTO>
     
     static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
-        load(keyPath: "filterHash", equalTo: filterHash, context: context).first
+        load(
+            keyPath: #keyPath(ChannelListQueryDTO.filterHash),
+            equalTo: filterHash,
+            context: context
+        ).first
     }
     
     /// The fetch request that returns all existed queries from the database.

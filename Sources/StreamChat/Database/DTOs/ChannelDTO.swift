@@ -173,7 +173,6 @@ extension NSManagedObjectContext {
             )
             dto.extraData = Data()
         }
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         dto.createdAt = payload.createdAt

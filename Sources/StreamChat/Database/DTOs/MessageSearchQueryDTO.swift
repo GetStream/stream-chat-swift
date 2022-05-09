@@ -12,7 +12,11 @@ class MessageSearchQueryDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>
     
     static func load(filterHash: String, context: NSManagedObjectContext) -> MessageSearchQueryDTO? {
-        load(keyPath: "filterHash", equalTo: filterHash, context: context).first
+        load(
+            keyPath: #keyPath(MessageSearchQueryDTO.filterHash),
+            equalTo: filterHash,
+            context: context
+        ).first
     }
 }
 
@@ -22,7 +26,10 @@ extension NSManagedObjectContext: MessageSearchDatabaseSession {
     }
     
     func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO {
-        let request = MessageSearchQueryDTO.fetchRequest(keyPath: "filterHash", equalTo: query.filterHash)
+        let request = MessageSearchQueryDTO.fetchRequest(
+            keyPath: #keyPath(MessageSearchQueryDTO.filterHash),
+            equalTo: query.filterHash
+        )
         if let existingDTO = MessageSearchQueryDTO.load(by: request, context: self).first {
             return existingDTO
         }

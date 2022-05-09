@@ -32,9 +32,9 @@ extension NSFetchRequestGettable where Self: NSManagedObject {
         return request
     }
     
-    static func fetchRequest(keyPath: String, equalTo key: String) -> NSFetchRequest<Self> {
+    static func fetchRequest(keyPath: String, equalTo value: String) -> NSFetchRequest<Self> {
         let request = NSFetchRequest<Self>(entityName: entityName)
-        request.predicate = NSPredicate(format: "%K == %@", keyPath, key)
+        request.predicate = NSPredicate(format: "%K == %@", keyPath, value)
         return request
     }
 }
@@ -46,9 +46,9 @@ extension NSManagedObject {
         load(keyPath: "id", equalTo: id, context: context)
     }
     
-    static func load<T: NSManagedObject>(keyPath: String, equalTo key: String, context: NSManagedObjectContext) -> [T] {
+    static func load<T: NSManagedObject>(keyPath: String, equalTo value: String, context: NSManagedObjectContext) -> [T] {
         let request = NSFetchRequest<T>(entityName: entityName)
-        request.predicate = NSPredicate(format: "%K == %@", keyPath, key)
+        request.predicate = NSPredicate(format: "%K == %@", keyPath, value)
         return load(by: request, context: context)
     }
     
