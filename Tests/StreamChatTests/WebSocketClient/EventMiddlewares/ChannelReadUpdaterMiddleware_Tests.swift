@@ -683,7 +683,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel from the db and check the initial values
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
 
         let oldReadDate = try XCTUnwrap(loadedChannel?.reads.first?.lastReadAt)
@@ -760,7 +760,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
@@ -806,7 +806,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         let memberId = try XCTUnwrap(loadedChannel?.lastActiveMembers.first?.id)
@@ -855,7 +855,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
@@ -921,7 +921,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         let memberId = try XCTUnwrap(loadedChannel?.lastActiveMembers.first?.id)
@@ -971,7 +971,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         // Assert that the read event entity is updated
@@ -1016,7 +1016,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         // Assert that the read event entity is updated

@@ -348,7 +348,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         
         // Assert membership is nil
@@ -403,7 +403,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         
         // Load the MemberListQueryDTO
@@ -432,7 +432,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         
         // Assert membership is not nil
@@ -489,7 +489,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         
         // Assert membership is nil
@@ -582,7 +582,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         
         // Assert membership is nil
@@ -632,7 +632,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         
         // Assert membership is nil

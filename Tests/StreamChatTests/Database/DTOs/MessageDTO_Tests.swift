@@ -65,7 +65,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Load the channel from the db and check the fields are correct
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         // Load the message from the db and check the fields are correct
@@ -336,7 +336,7 @@ final class MessageDTO_Tests: XCTestCase {
                 // Save the message
                 messageDTO = try! session.saveMessage(payload: payload, for: channelId, syncOwnReactions: true)
 
-                XCTAssertTrue(messageDTO!.asModel().isPinned)
+                try? XCTAssertTrue(messageDTO?.asModel().isPinned ?? false)
             } completion: { _ in
                 completion((channelDTO, messageDTO))
             }
@@ -380,7 +380,7 @@ final class MessageDTO_Tests: XCTestCase {
             messageDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
-        let loadedMessage: ChatMessage? = database.viewContext.message(id: messageId)?.asModel()
+        let loadedMessage: ChatMessage? = try database.viewContext.message(id: messageId)?.asModel()
         XCTAssertEqual(loadedMessage?.extraData, [:])
     }
     
@@ -602,7 +602,7 @@ final class MessageDTO_Tests: XCTestCase {
         
         // Load the message from the db
         var loadedMessage: ChatMessage? {
-            database.viewContext.message(id: messageId)?.asModel()
+            try? database.viewContext.message(id: messageId)?.asModel()
         }
         
         // Assert the local state is set
@@ -782,11 +782,11 @@ final class MessageDTO_Tests: XCTestCase {
                 newMessageId = messageDTO.id
             }, completion: completion)
         }
-        
-        let loadedMessage: ChatMessage = try unwrapAsync(
-            database.viewContext.message(id: newMessageId)?
-                .asModel()
-        )
+
+        var message: ChatMessage { try XCTUnwrap(database.viewContext.message(id: newMessageId)).asModel() }
+
+        AssertAsync.willBeTrue((try? message) != nil)
+        let loadedMessage = try message
         
         XCTAssertEqual(loadedMessage.text, newMessageText)
         XCTAssertEqual(loadedMessage.command, newMessageCommand)
@@ -1549,7 +1549,7 @@ final class MessageDTO_Tests: XCTestCase {
     private func message(with id: MessageId) -> ChatMessage? {
         var message: ChatMessage?
         try? database.writeSynchronously { session in
-            message = session.message(id: id)?.asModel()
+            message = try session.message(id: id)?.asModel()
         }
         return message
     }

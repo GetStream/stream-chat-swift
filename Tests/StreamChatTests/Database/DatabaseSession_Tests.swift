@@ -39,7 +39,7 @@ final class DatabaseSession_Tests: XCTestCase {
         
         // Try to load the saved channel from DB
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)?.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         AssertAsync.willBeEqual(loadedChannel?.cid, channelId)
@@ -47,7 +47,7 @@ final class DatabaseSession_Tests: XCTestCase {
         // Try to load a saved channel owner from DB
         if let userId = channelPayload.channel.createdBy?.id {
             var loadedUser: ChatUser? {
-                database.viewContext.user(id: userId)?.asModel()
+                try? database.viewContext.user(id: userId)?.asModel()
             }
             
             AssertAsync.willBeEqual(loadedUser?.id, userId)
@@ -56,7 +56,7 @@ final class DatabaseSession_Tests: XCTestCase {
         // Try to load the saved member from DB
         if let member = channelPayload.channel.members?.first {
             var loadedMember: ChatUser? {
-                database.viewContext.member(userId: member.user.id, cid: channelId)?.asModel()
+                try? database.viewContext.member(userId: member.user.id, cid: channelId)?.asModel()
             }
             
             AssertAsync.willBeEqual(loadedMember?.id, member.user.id)
@@ -128,7 +128,7 @@ final class DatabaseSession_Tests: XCTestCase {
         
         // Try to load the saved message from DB
         var loadedMessage: ChatMessage? {
-            database.viewContext.message(id: messageId)?.asModel()
+            try? database.viewContext.message(id: messageId)?.asModel()
         }
         AssertAsync.willBeTrue(loadedMessage != nil)
         

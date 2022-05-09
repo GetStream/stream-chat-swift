@@ -76,7 +76,7 @@ final class UserDTO_Tests: XCTestCase {
             userDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
-        let loadedUser: ChatUser? = database.viewContext.user(id: userId)?.asModel()
+        let loadedUser: ChatUser? = try? database.viewContext.user(id: userId)?.asModel()
         XCTAssertEqual(loadedUser?.extraData, [:])
     }
     

@@ -307,7 +307,7 @@ final class ChannelListController_Tests: XCTestCase {
         var channel: ChatChannel!
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: channelPayload, query: self.query)
-            channel = dto.asModel()
+            channel = try dto.asModel()
         }
         
         // Simulate successful response from backend
@@ -359,7 +359,7 @@ final class ChannelListController_Tests: XCTestCase {
         var channel: ChatChannel!
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: channelPayload, query: self.query)
-            channel = dto.asModel()
+            channel = try dto.asModel()
         }
 
         // Simulate successful response from backend
@@ -425,7 +425,7 @@ final class ChannelListController_Tests: XCTestCase {
         var channel: ChatChannel!
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: channelPayload, query: self.query)
-            channel = dto.asModel()
+            channel = try dto.asModel()
         }
 
         // Simulate successful response from backend
@@ -736,7 +736,7 @@ final class ChannelListController_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
         }
 
-        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
+        let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: cid)).asModel()
         
         AssertAsync {
             Assert.willBeTrue(delegate.willChangeChannels_called)

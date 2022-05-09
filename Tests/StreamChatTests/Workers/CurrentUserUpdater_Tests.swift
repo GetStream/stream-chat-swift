@@ -118,7 +118,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
         
         var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser?.asModel()
+            try? database.viewContext.currentUser?.asModel()
         }
         
         // Check the completion is called and the current user model was updated
@@ -308,7 +308,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Assert data is stored in the DB
         var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser?.asModel()
+            try? database.viewContext.currentUser?.asModel()
         }
 
         // Assert the initial values, where we have
@@ -428,7 +428,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // Assert data is stored in the DB
         var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser?.asModel()
+            try? database.viewContext.currentUser?.asModel()
         }
         
         AssertAsync {
@@ -525,7 +525,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Assert data is stored in the DB
         var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser?.asModel()
+            try? database.viewContext.currentUser?.asModel()
         }
 
         // Make sure no devices are stored in the DB

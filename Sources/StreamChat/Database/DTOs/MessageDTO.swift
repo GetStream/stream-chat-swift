@@ -730,15 +730,12 @@ extension MessageDTO {
 
 private extension ChatMessage {
     init(fromDTO dto: MessageDTO) throws {
-        guard let channel = dto.channel,
-              dto.isValid && channel.isValid,
-              let dtoCid = try? ChannelId(cid: channel.cid),
-              let context = dto.managedObjectContext else {
+        guard dto.isValid, let context = dto.managedObjectContext else {
             throw InvalidModel(dto)
         }
         
         id = dto.id
-        cid = dtoCid
+        cid = try? dto.channel.map { try ChannelId(cid: $0.cid) }
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command

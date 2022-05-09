@@ -195,7 +195,7 @@ final class SyncOperations_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: channelId))
         }
 
-        let channel: ChatChannel = database.viewContext.channel(cid: channelId)!.asModel()
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId)).asModel()
         let unwantedChannelId = ChannelId.unique
         context.watchedAndSynchedChannelIds = [ChannelId.unique, ChannelId.unique]
         context.unwantedChannelIds = [ChannelId.unique]
@@ -227,7 +227,7 @@ final class SyncOperations_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: channelId))
         }
 
-        let channel: ChatChannel = database.viewContext.channel(cid: channelId)!.asModel()
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId)).asModel()
         let unwantedChannelId = ChannelId.unique
         context.synchedChannelIds = [channelId]
         context.unwantedChannelIds = [unwantedChannelId]
