@@ -43,7 +43,6 @@ final class SyncRepository_Tests: XCTestCase {
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
-            channelRepository: channelRepository,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: client.eventNotificationCenter,
             database: database,
@@ -95,7 +94,6 @@ final class SyncRepository_Tests: XCTestCase {
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
-            channelRepository: channelRepository,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -129,7 +127,6 @@ final class SyncRepository_Tests: XCTestCase {
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
-            channelRepository: channelRepository,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -241,7 +238,8 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 1)
         XCTAssertCall(
-            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 1
+            "resetChannelsQuery(for:pageSize:watchedAndSynchedChannelIds:synchedChannelIds:completion:)", on: channelRepository,
+            times: 1
         )
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
@@ -272,7 +270,8 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 1)
         XCTAssertCall(
-            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 1
+            "resetChannelsQuery(for:pageSize:watchedAndSynchedChannelIds:synchedChannelIds:completion:)", on: channelRepository,
+            times: 1
         )
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
@@ -476,7 +475,6 @@ final class SyncRepository_Tests: XCTestCase {
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
-            channelRepository: channelRepository,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -504,7 +502,6 @@ final class SyncRepository_Tests: XCTestCase {
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
-            channelRepository: channelRepository,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -543,7 +540,6 @@ final class SyncRepository_Tests: XCTestCase {
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
-            channelRepository: channelRepository,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -568,7 +564,6 @@ final class SyncRepository_Tests: XCTestCase {
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
-            channelRepository: channelRepository,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,

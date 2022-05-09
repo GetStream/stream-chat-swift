@@ -131,7 +131,7 @@ class SyncRepository {
         operations.append(contentsOf: refetchChannelListQueryOperations)
 
         // 4. Clean up unwanted channels
-        operations.append(CleanUnwantedChannelsOperation(database: database, context: context))
+        operations.append(DeleteUnwantedChannelsOperation(database: database, context: context))
 
         // 5. Run offline actions requests
         if config.isLocalStorageEnabled {

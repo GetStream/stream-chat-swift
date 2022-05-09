@@ -129,7 +129,7 @@ final class RefetchChannelListQueryOperation: AsyncOperation {
     }
 }
 
-final class CleanUnwantedChannelsOperation: AsyncOperation {
+final class DeleteUnwantedChannelsOperation: AsyncOperation {
     init(database: DatabaseContainer, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
             log.info("4. Clean up unwanted channels", subsystems: .offlineSupport)

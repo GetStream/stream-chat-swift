@@ -157,15 +157,15 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let limit = query.pagination.pageSize
         worker.update(
             channelListQuery: query
-        ) { [weak self] result in
+        ) { result in
             switch result {
             case let .success(channels):
-                self?.state = .remoteDataFetched
-                self?.hasLoadedAllPreviousChannels = channels.count < limit
-                self?.callback { completion?(nil) }
+                self.state = .remoteDataFetched
+                self.hasLoadedAllPreviousChannels = channels.count < limit
+                self.callback { completion?(nil) }
             case let .failure(error):
-                self?.state = .remoteDataFetchFailed(ClientError(with: error))
-                self?.callback { completion?(error) }
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
             }
         }
     }
@@ -312,13 +312,13 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
-        worker.update(channelListQuery: updatedQuery) { [weak self] result in
+        worker.update(channelListQuery: updatedQuery) { result in
             switch result {
             case let .success(channels):
-                self?.hasLoadedAllPreviousChannels = channels.count < limit
-                self?.callback { completion?(nil) }
+                self.hasLoadedAllPreviousChannels = channels.count < limit
+                self.callback { completion?(nil) }
             case let .failure(error):
-                self?.callback { completion?(error) }
+                self.callback { completion?(error) }
             }
         }
     }
