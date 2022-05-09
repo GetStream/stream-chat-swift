@@ -1044,7 +1044,7 @@ public extension ChatChannelController {
     ///
     func markRead(completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
-        guard let cid = cid, isChannelAlreadyCreated else {
+        guard let channel = channel else {
             channelModificationFailed(completion)
             return
         }
@@ -1054,15 +1054,13 @@ public extension ChatChannelController {
             channelFeatureDisabled(feature: "read events", completion: completion)
             return
         }
-        
-        guard channel?.isUnread == true else {
-            callback {
-                completion?(nil)
-            }
-            return
-        }
 
-        guard let currentUserId = client.currentUserId else {
+        guard
+            let currentUserId = client.currentUserId,
+            let currentUserRead = channel.reads.first(where: { $0.user.id == currentUserId }),
+            let lastMessageAt = channel.lastMessageAt,
+            currentUserRead.lastReadAt < lastMessageAt
+        else {
             callback {
                 completion?(nil)
             }
@@ -1075,7 +1073,7 @@ public extension ChatChannelController {
 
         markingRead = true
 
-        updater.markRead(cid: cid, userId: currentUserId) { error in
+        updater.markRead(cid: channel.cid, userId: currentUserId) { error in
             self.callback {
                 self.markingRead = false
                 completion?(error)

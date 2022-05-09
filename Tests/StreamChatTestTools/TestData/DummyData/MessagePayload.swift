@@ -42,7 +42,8 @@ extension MessagePayload {
         isShadowed: Bool = false,
         reactionScores: [MessageReactionType: Int] = ["like": 1],
         reactionCounts: [MessageReactionType: Int] = ["like": 1],
-        translations: [TranslationLanguage: String]? = nil
+        translations: [TranslationLanguage: String]? = nil,
+        mentionedUsers: [UserPayload] = [.dummy(userId: .unique)]
     ) -> MessagePayload {
         .init(
             id: messageId,
@@ -60,7 +61,7 @@ extension MessagePayload {
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,
             quotedMessage: quotedMessage,
-            mentionedUsers: [UserPayload.dummy(userId: .unique)],
+            mentionedUsers: mentionedUsers,
             threadParticipants: threadParticipants,
             replyCount: .random(in: 0...1000),
             extraData: extraData,

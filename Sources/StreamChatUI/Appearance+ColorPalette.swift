@@ -57,6 +57,8 @@ public extension Appearance {
         public var alternativeActiveTint: UIColor = .streamAccentGreen
         public var inactiveTint: UIColor = .streamGray
         public var alternativeInactiveTint: UIColor = .streamGrayGainsboro
+        
+        public var accentPrimary: UIColor = .streamAccentPrimary
     }
 }
 
@@ -64,6 +66,8 @@ public extension Appearance {
 // There is this static method `mode(_ light:, lightAlpha:, _ dark:, darkAlpha:)` which can help you in a great way with
 // implementing dark mode support.
 private extension UIColor {
+    static let streamAccentPrimary = mode(0x005fff, 0x337eff)
+    
     /// This is color palette used by design team.
     /// If you see any color not from this list in figma, point it out to anyone in design team.
     static let streamBlack = mode(0x000000, 0xffffff)

@@ -134,8 +134,8 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         let reactionAuthor = content.reaction.author
         let isCurrentUser = content.currentUserId == reactionAuthor.id
 
-        authorNameLabel.text = isCurrentUser ? L10n.Reaction.Authors.Cell.you : reactionAuthor.name
-
+        authorNameLabel.text = isCurrentUser ? L10n.you : reactionAuthor.name
+        
         reactionBubbleView.tailDirection = isCurrentUser ? .toTrailing : .toLeading
         reactionItemView.content = .init(
             useBigIcon: false,
