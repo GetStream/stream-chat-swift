@@ -383,11 +383,15 @@ open class ChatMessageListVC: _ViewController,
             for: indexPath
         )
 
-        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+        guard
+            let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
+            let channel = dataSource?.channel(for: self)
+        else {
             return cell
         }
 
         cell.messageContentView?.delegate = self
+        cell.messageContentView?.channel = channel
         cell.messageContentView?.content = message
 
         cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
@@ -466,6 +470,19 @@ open class ChatMessageListVC: _ViewController,
             .info(
                 "Tapped an avatarView. To customize the behavior, override messageContentViewDidTapOnAvatarView. Path: \(indexPath)"
             )
+    }
+    
+    /// This method is triggered when delivery status indicator on the message at the given index path is tapped.
+    /// - Parameter indexPath: The index path of the message cell.
+    open func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        
+        log.info(
+            """
+            Tapped an delivery status view. To customize the behavior, override
+            messageContentViewDidTapOnDeliveryStatusIndicator. Path: \(indexPath)"
+            """
+        )
     }
 
     // MARK: - GalleryContentViewDelegate

@@ -3,5 +3,19 @@ description: 'Run bootstrap.sh'
 runs:
   using: "composite"
   steps:
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: ~/.mint
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-mint-${{ hashFiles('**/Mintfile') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-mint-
     - run: ./Scripts/bootstrap.sh
       shell: bash

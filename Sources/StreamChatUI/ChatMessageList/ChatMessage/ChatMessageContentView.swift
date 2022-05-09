@@ -34,6 +34,15 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
     /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
     /// the content view is displayed outside the collection/table view.
     func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?)
+    
+    /// Gets called when delivery status indicator is tapped.
+    /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
+    /// the content view is displayed outside the collection/table view.
+    func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?)
+}
+
+public extension ChatMessageContentViewDelegate {
+    func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {}
 }
 
 /// A view that displays the message content.
@@ -51,8 +60,14 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// The delegate responsible for action handling.
     public weak var delegate: ChatMessageContentViewDelegate?
 
+    // TODO: Aggregate message and channel under one `struct Content` roof in v5
     /// The message this view displays.
     open var content: ChatMessage? {
+        didSet { updateContentIfNeeded() }
+    }
+    
+    /// The channel the message is sent to.
+    open var channel: ChatChannel? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -131,6 +146,11 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
     public private(set) var threadArrowView: ChatThreadArrowView?
 
+    /// Shows message delivery status.
+    /// Exists if `layout(options: ChatMessageLayoutOption)` was invoked with the options
+    /// containing `.messageDeliveryStatus`.
+    public private(set) var deliveryStatusView: ChatMessageDeliveryStatusView?
+    
     /// An object responsible for injecting the views needed to display the attachments content.
     public private(set) var attachmentViewInjector: AttachmentViewInjector?
 
@@ -288,11 +308,15 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 onlyVisibleToYouContainer!.addArrangedSubview(createOnlyVisibleToYouLabel())
                 footnoteSubviews.append(onlyVisibleToYouContainer!)
             }
+            if options.contains(.deliveryStatusIndicator) {
+                footnoteSubviews.append(createDeliveryStatusView())
+            }
             if attachmentViewInjector?.fillAllAvailableWidth == true {
                 footnoteSubviews.append(.spacer(axis: .horizontal))
             }
-
+            
             footnoteContainer = ContainerStackView(
+                spacing: 4,
                 arrangedSubviews: options.contains(.flipped) ? footnoteSubviews.reversed() : footnoteSubviews
             ).withAccessibilityIdentifier(identifier: "footnoteContainer")
             bubbleThreadFootnoteContainer.addArrangedSubview(footnoteContainer!)
@@ -551,6 +575,12 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 didTapOnReaction: nil
             )
         }
+        
+        // Delivery status
+        deliveryStatusView?.content = {
+            guard let channel = channel, let message = content else { return nil }
+            return .init(message: message, channel: channel)
+        }()
     }
 
     override open func tintColorDidChange() {
@@ -594,6 +624,11 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     @objc open func handleTapOnReactionsView() {
         delegate?.messageContentViewDidTapOnReactionsView(indexPath?())
+    }
+    
+    /// Handles tap on `deliveryStatusView` and forwards the action to the delegate.
+    @objc open func handleTapOnDeliveryStatusView() {
+        delegate?.messageContentViewDidTapOnDeliveryStatusIndicator(indexPath?())
     }
 	
     // MARK: - Setups
@@ -820,6 +855,20 @@ open class ChatMessageContentView: _View, ThemeProvider {
         }
         return onlyVisibleToYouLabel!
     }
+    
+    /// Instantiates, configures and assigns `deliveryStatusView` when called for the first time.
+    /// - Returns: The `deliveryStatusView` subview.
+    open func createDeliveryStatusView() -> ChatMessageDeliveryStatusView {
+        if deliveryStatusView == nil {
+            deliveryStatusView = components
+                .messageDeliveryStatusView
+                .init()
+                .withAccessibilityIdentifier(identifier: "deliveryStatusView")
+            
+            deliveryStatusView!.addTarget(self, action: #selector(handleTapOnDeliveryStatusView), for: .touchUpInside)
+        }
+        return deliveryStatusView!
+    }
 }
 
 private extension ChatMessage {
@@ -838,7 +887,8 @@ private extension ChatMessageLayoutOptions {
     static let footnote: Self = [
         .onlyVisibleToYouIndicator,
         .authorName,
-        .timestamp
+        .timestamp,
+        .deliveryStatusIndicator
     ]
     
     var hasFootnoteOptions: Bool {

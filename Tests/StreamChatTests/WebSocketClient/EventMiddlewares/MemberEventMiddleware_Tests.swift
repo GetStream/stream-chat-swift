@@ -146,6 +146,35 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user.id, newMemberId].sorted())
     }
     
+    func test_memberAddedEvent_marksChannelAsRead() throws {
+        let mockSession = DatabaseSession_Mock(underlyingSession: database.viewContext)
+        
+        // GIVEN
+        let newMemberId = UserId.unique
+        let channelPayload: ChannelPayload = .dummy()
+        let eventPayload: EventPayload = .init(
+            eventType: .memberAdded,
+            cid: channelPayload.channel.cid,
+            user: .dummy(userId: newMemberId),
+            memberContainer: .dummy(userId: newMemberId),
+            createdAt: .unique
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        let event = try MemberAddedEventDTO(from: eventPayload)
+        
+        // WHEN
+        _ = middleware.handle(event: event, session: mockSession)
+        
+        // THEN
+        XCTAssertEqual(mockSession.markChannelAsReadParams?.cid, event.cid)
+        XCTAssertEqual(mockSession.markChannelAsReadParams?.userId, event.member.user.id)
+        XCTAssertEqual(mockSession.markChannelAsReadParams?.at, event.createdAt)
+    }
+    
     // MARK: - MemberRemovedEvent
     
     func test_middleware_forwardsMemberRemovedEvent_ifDatabaseWriteGeneratesError() throws {
@@ -249,6 +278,31 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channelListObserver.observedChanges,
             [.update(cid, index: .init(item: 0, section: 0))]
         )
+    }
+    
+    func test_memberRemovedEvent_marksChannelAsUnread() throws {
+        let mockSession = DatabaseSession_Mock(underlyingSession: database.viewContext)
+
+        // GIVEN
+        let member: MemberPayload = .dummy()
+        let channelPayload: ChannelPayload = .dummy(members: [member])
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        // WHEN
+        let eventPayload: EventPayload = .init(
+            eventType: .memberRemoved,
+            cid: channelPayload.channel.cid,
+            user: member.user,
+            createdAt: .unique
+        )
+        let event = try MemberRemovedEventDTO(from: eventPayload)
+        _ = middleware.handle(event: event, session: mockSession)
+        
+        // THEN
+        XCTAssertEqual(mockSession.markChannelAsUnreadParams?.cid, event.cid)
+        XCTAssertEqual(mockSession.markChannelAsUnreadParams?.userId, event.user.id)
     }
     
     // MARK: - MemberUpdatedEvent

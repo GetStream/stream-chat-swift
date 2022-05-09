@@ -15,6 +15,10 @@ struct MemberEventMiddleware: EventMiddleware {
             case let event as MemberAddedEventDTO:
                 if let channel = session.channel(cid: event.cid) {
                     let member = try session.saveMember(payload: event.member, channelId: event.cid)
+                    
+                    // Mark all messages in channel as read
+                    session.markChannelAsRead(cid: event.cid, userId: event.member.user.id, at: event.createdAt)
+                    
                     insertMemberToMemberListQueries(channel, member)
                 }
 
@@ -28,6 +32,9 @@ struct MemberEventMiddleware: EventMiddleware {
                     // No need to throw MemberNotFound error here
                     break
                 }
+                
+                // Mark channel as unread
+                session.markChannelAsUnread(cid: event.cid, by: event.user.id)
                 
                 // We remove the member from the channel
                 channel.members.remove(member)

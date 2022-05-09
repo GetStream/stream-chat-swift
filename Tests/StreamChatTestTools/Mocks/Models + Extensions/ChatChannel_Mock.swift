@@ -83,7 +83,8 @@ public extension ChatChannel {
         reads: [ChatChannelRead] = [],
         extraData: [String: RawJSON] = [:],
         latestMessages: [ChatMessage] = [],
-        muteDetails: MuteDetails? = nil
+        muteDetails: MuteDetails? = nil,
+        previewMessage: ChatMessage? = nil
     ) -> Self {
         self.init(
             cid: cid,
@@ -108,6 +109,7 @@ public extension ChatChannel {
             extraData: extraData,
             latestMessages: { latestMessages },
             muteDetails: { muteDetails },
+            previewMessage: { previewMessage },
             underlyingContext: nil
         )
     }
@@ -133,7 +135,8 @@ public extension ChatChannel {
         reads: [ChatChannelRead] = [],
         extraData: [String: RawJSON] = [:],
         latestMessages: [ChatMessage] = [],
-        muteDetails: MuteDetails? = nil
+        muteDetails: MuteDetails? = nil,
+        previewMessage: ChatMessage? = nil
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: "!members" + .newUniqueId),
@@ -157,6 +160,7 @@ public extension ChatChannel {
             extraData: extraData,
             latestMessages: { latestMessages },
             muteDetails: { muteDetails },
+            previewMessage: { previewMessage },
             underlyingContext: nil
         )
     }
@@ -182,7 +186,8 @@ public extension ChatChannel {
         reads: [ChatChannelRead] = [],
         extraData: [String: RawJSON] = [:],
         latestMessages: [ChatMessage] = [],
-        muteDetails: MuteDetails? = nil
+        muteDetails: MuteDetails? = nil,
+        previewMessage: ChatMessage? = nil
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: .newUniqueId),
@@ -206,6 +211,7 @@ public extension ChatChannel {
             extraData: extraData,
             latestMessages: { latestMessages },
             muteDetails: { muteDetails },
+            previewMessage: { previewMessage },
             underlyingContext: nil
         )
     }

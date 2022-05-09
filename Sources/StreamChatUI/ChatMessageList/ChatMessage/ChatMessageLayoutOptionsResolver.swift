@@ -103,6 +103,9 @@ open class ChatMessageLayoutOptionsResolver {
         if message.isLastActionFailed {
             options.insert(.errorIndicator)
         }
+        if isLastInSequence && canShowDeliveryStatus(for: message, in: channel) {
+            options.insert(.deliveryStatusIndicator)
+        }
 
         return options
     }
@@ -203,6 +206,25 @@ open class ChatMessageLayoutOptionsResolver {
             }
             
             return config.deletedMessagesVisibility == .visibleForCurrentUser
+        default:
+            return false
+        }
+    }
+    
+    /// Makes a decision to show the delivery status for the given message in the given channel.
+    ///
+    /// - Parameters:
+    ///   - message: The message to show a delivery status for.
+    ///   - channel: The channel the message is sent to.
+    /// - Returns: `true` if delivery status should be shown.
+    open func canShowDeliveryStatus(for message: ChatMessage, in channel: ChatChannel) -> Bool {
+        guard let status = message.deliveryStatus else { return false }
+        
+        switch status {
+        case .pending:
+            return true
+        case .sent, .read:
+            return channel.config.readEventsEnabled
         default:
             return false
         }
