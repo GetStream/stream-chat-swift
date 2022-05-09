@@ -28,7 +28,11 @@ class UserListQueryDTO: NSManagedObject {
     }
     
     static func load(filterHash: String, context: NSManagedObjectContext) -> UserListQueryDTO? {
-        load(keyPath: "filterHash", equalTo: filterHash, context: context).first
+        load(
+            keyPath: #keyPath(UserListQueryDTO.filterHash),
+            equalTo: filterHash,
+            context: context
+        ).first
     }
 }
 
@@ -43,7 +47,10 @@ extension NSManagedObjectContext {
             return nil
         }
         
-        let request = UserListQueryDTO.fetchRequest(keyPath: "filterHash", equalTo: filterHash)
+        let request = UserListQueryDTO.fetchRequest(
+            keyPath: #keyPath(UserListQueryDTO.filterHash),
+            equalTo: filterHash
+        )
         if let existingDTO = UserListQueryDTO.load(by: request, context: self).first {
             return existingDTO
         }

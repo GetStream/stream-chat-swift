@@ -42,14 +42,14 @@ final class ChannelListPayload_Tests: XCTestCase {
         let messageCount = 25
         let channelReadCount = 20
         
-        let users = (0..<max(userCount, 30)).map { _ in UserPayload.dummy(userId: .unique) }
-        let channels = (0..<channelCount).map { _ -> ChannelPayload in
+        let users = (0..<max(userCount, 30)).map { userIndex in UserPayload.dummy(userId: "\(userIndex)") }
+        let channels = (0..<channelCount).map { channelIndex -> ChannelPayload in
             let channelUsers = users.shuffled().prefix(30)
             
             let channelCreatedDate = Date.unique
             let lastMessageDate = Date.unique(after: channelCreatedDate)
             
-            let cid = ChannelId.unique
+            let cid = ChannelId(type: .messaging, id: "\(channelIndex)")
             let channelOwner = channelUsers.randomElement()!
             let channelDetail = ChannelDetailPayload(
                 cid: cid,
@@ -101,8 +101,8 @@ final class ChannelListPayload_Tests: XCTestCase {
                 cooldownDuration: .random(in: 0...120)
             )
             
-            let messages = (0..<messageCount).map { _ -> MessagePayload in
-                let messageId = MessageId.unique
+            let messages = (0..<messageCount).map { messageIndex -> MessagePayload in
+                let messageId = "\(channelIndex)-\(messageIndex)"
                 let messageCreatedDate = Date.unique(after: channelCreatedDate)
                 let messageAuthor = channelUsers.randomElement()!
                 return MessagePayload(
@@ -119,11 +119,11 @@ final class ChannelListPayload_Tests: XCTestCase {
                     showReplyInChannel: .random(),
                     quotedMessageId: nil,
                     quotedMessage: nil,
-                    mentionedUsers: Bool.random() ? [channelUsers.randomElement()!] : [],
+                    mentionedUsers: messageIndex % 2 == 0 ? [channelUsers.randomElement()!] : [],
                     threadParticipants: [],
                     replyCount: .random(in: 0...10),
                     extraData: [:],
-                    latestReactions: Bool.random() ? (0..<3).map { _ in
+                    latestReactions: messageIndex % 2 == 0 ? (0..<3).map { _ in
                         MessageReactionPayload(
                             type: "like",
                             score: 1,
@@ -134,7 +134,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                             extraData: [:]
                         )
                     } : [],
-                    ownReactions: Bool.random() ? (0..<3).map { _ in
+                    ownReactions: messageIndex % 2 == 0 ? (0..<3).map { _ in
                         MessageReactionPayload(
                             type: "like",
                             score: 1,
@@ -149,7 +149,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     reactionCounts: [:],
                     isSilent: false,
                     isShadowed: false,
-                    attachments: Bool.random() ? [.dummy()] : [],
+                    attachments: messageIndex % 2 == 0 ? [.dummy()] : [],
                     channel: channelDetail,
                     pinned: false,
                     pinnedBy: nil,

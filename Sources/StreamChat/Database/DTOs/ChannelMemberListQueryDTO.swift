@@ -19,7 +19,11 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
     @NSManaged var members: Set<MemberDTO>
         
     static func load(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO? {
-        load(keyPath: "queryHash", equalTo: queryHash, context: context).first
+        load(
+            keyPath: #keyPath(ChannelMemberListQueryDTO.queryHash),
+            equalTo: queryHash,
+            context: context
+        ).first
     }
     
     static func loadOrCreate(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO {
