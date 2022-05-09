@@ -68,10 +68,8 @@ final class UserListUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(payload))
         
         // Assert the data is stored in the DB
-        var user: ChatUser? { try self.user(with: id) }
-
         AssertAsync {
-            Assert.willBeTrue((try? user) != nil)
+            Assert.willBeTrue((try? self.user(with: id)) != nil)
             Assert.willBeTrue(completionCalled)
         }
     }

@@ -866,16 +866,16 @@ final class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel
-        var channel: ChatChannel { try self.channel(with: cid) }
+        func getChannel() throws -> ChatChannel { try channel(with: cid) }
 
         // Assert channel's currentlyTypingUsers are not empty
-        try XCTAssertFalse(channel.currentlyTypingUsers.isEmpty)
+        try XCTAssertFalse(getChannel().currentlyTypingUsers.isEmpty)
         
         // Simulate `resetEphemeralValues`
         database.resetEphemeralValues()
         
         // Assert channel's currentlyTypingUsers are cleared
-        AssertAsync.willBeTrue((try? channel.currentlyTypingUsers.isEmpty) ?? false)
+        AssertAsync.willBeTrue((try? getChannel().currentlyTypingUsers.isEmpty) ?? false)
     }
     
     func test_createFromDTO_handlesExtraDataCorrectlyWhenPresent() throws {
@@ -904,19 +904,19 @@ final class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel
-        var channel: ChatChannel { try self.channel(with: cid) }
+        func getChannel() throws -> ChatChannel { try channel(with: cid) }
 
         // Assert channel's watchers are not empty, watcherCount not zero
-        try XCTAssertFalse(channel.lastActiveWatchers.isEmpty)
-        try XCTAssertNotEqual(channel.watcherCount, 0)
+        try XCTAssertFalse(getChannel().lastActiveWatchers.isEmpty)
+        try XCTAssertNotEqual(getChannel().watcherCount, 0)
         
         // Simulate `resetEphemeralValues`
         database.resetEphemeralValues()
         
         // Assert channel's watchers are cleared, watcherCount zero'ed
         AssertAsync {
-            Assert.willBeTrue((try? channel.lastActiveWatchers.isEmpty) ?? false)
-            Assert.willBeEqual(try? channel.watcherCount, 0)
+            Assert.willBeTrue((try? getChannel().lastActiveWatchers.isEmpty) ?? false)
+            Assert.willBeEqual(try? getChannel().watcherCount, 0)
         }
     }
 

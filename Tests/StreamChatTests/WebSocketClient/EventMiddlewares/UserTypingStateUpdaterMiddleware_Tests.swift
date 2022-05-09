@@ -70,20 +70,21 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         try database.createUser(id: userId)
         
         // Load the channel
-        var channel: ChatChannel { try self.channel(with: cid) }
+        var channel = try self.channel(with: cid)
 
         // Assert there is no typing users so far
-        try XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
+        XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
         
         // Simulate start typing event
         let event = TypingEventDTO.startTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-        
+
+        channel = try self.channel(with: cid)
         // Assert `TypingEvent` is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
         // Assert channel's currentlyTypingUsers are updated correctly
-        try XCTAssertEqual(channel.currentlyTypingUsers.first?.id, userId)
-        try XCTAssertEqual(channel.currentlyTypingUsers.count, 1)
+        XCTAssertEqual(channel.currentlyTypingUsers.first?.id, userId)
+        XCTAssertEqual(channel.currentlyTypingUsers.count, 1)
     }
     
     func test_middleware_handlesTypingFinishedEventCorrectly() throws {
