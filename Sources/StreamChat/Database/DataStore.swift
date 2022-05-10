@@ -34,7 +34,7 @@ public struct DataStore {
     ///
     /// - Parameter id: An id of a user.
     public func user(id: UserId) -> ChatUser? {
-        database.viewContext.user(id: id)?.asModel()
+        try? database.viewContext.user(id: id)?.asModel()
     }
     
     /// Loads a current user model with a matching `id` from the **local data store**.
@@ -46,7 +46,7 @@ public struct DataStore {
     /// - Returns: If there's a current user object in the locally cached data, returns the matching
     /// model object. If a user object doesn't exist locally, returns `nil`.
     public func currentUser() -> CurrentChatUser? {
-        database.viewContext.currentUser?.asModel()
+        try? database.viewContext.currentUser?.asModel()
     }
 
     /// Loads a channel model with a matching `cid` from the **local data store**.
@@ -60,7 +60,7 @@ public struct DataStore {
     ///
     /// - Parameter cid: An cid of a channel.
     public func channel(cid: ChannelId) -> ChatChannel? {
-        database.viewContext.channel(cid: cid)?.asModel()
+        try? database.viewContext.channel(cid: cid)?.asModel()
     }
     
     /// Loads a message model with a matching `id` from the **local data store**.
@@ -74,6 +74,6 @@ public struct DataStore {
     ///
     /// - Parameter id: An id of a message.
     public func message(id: MessageId) -> ChatMessage? {
-        database.viewContext.message(id: id)?.asModel()
+        try? database.viewContext.message(id: id)?.asModel()
     }
 }

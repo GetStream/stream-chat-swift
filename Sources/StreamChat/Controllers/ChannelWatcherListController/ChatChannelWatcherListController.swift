@@ -91,7 +91,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         let observer = environment.watcherListObserverBuilder(
             client.databaseContainer.viewContext,
             UserDTO.watcherFetchRequest(cid: query.cid),
-            { $0.asModel() as ChatUser },
+            { try $0.asModel() as ChatUser },
             NSFetchedResultsController<UserDTO>.self
         )
         
@@ -131,7 +131,7 @@ extension ChatChannelWatcherListController {
         var watcherListObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) -> ChatUser,
+            _ itemCreator: @escaping (UserDTO) throws -> ChatUser,
             _ controllerType: NSFetchedResultsController<UserDTO>.Type
         ) -> ListDatabaseObserver<ChatUser, UserDTO> = ListDatabaseObserver.init
     }

@@ -190,7 +190,7 @@ final class MessageRepositoryTests: XCTestCase {
         let dbMessage = self.message(for: id)
         var dbChannel: ChatChannel?
         try database.writeSynchronously { session in
-            dbChannel = session.channel(cid: self.cid)?.asModel()
+            dbChannel = try session.channel(cid: self.cid)?.asModel()
         }
         XCTAssertNotNil(message)
         XCTAssertNil(message?.localState)
@@ -328,7 +328,7 @@ final class MessageRepositoryTests: XCTestCase {
     private func message(for id: MessageId) -> ChatMessage? {
         var dbMessage: ChatMessage?
         try? database.writeSynchronously { session in
-            dbMessage = session.message(id: id)?.asModel()
+            dbMessage = try? session.message(id: id)?.asModel()
         }
         return dbMessage
     }

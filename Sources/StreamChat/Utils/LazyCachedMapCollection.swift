@@ -29,7 +29,16 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
         map: @escaping (SourceElement) -> Element
     ) where Collection.Element == SourceElement, Collection.Index == Index {
         generator = { map(source[$0]) }
-        cache = .init(capacity: source.count)
+
+        /// This is just an internal test to see how we behave when the DB models are immediately mapped instead of being lazily mapped
+        if StreamRuntimeCheck._isLazyMappingEnabled {
+            cache = .init(capacity: source.count)
+        } else {
+            if Thread.isMainThread {
+                log.debug("This should not be happening on the Main Thread")
+            }
+            cache = .init(elements: source.map(map))
+        }
     }
 
     private var generator: (Index) -> Element
@@ -73,6 +82,10 @@ extension RandomAccessCollection where Index == Int {
 private class Cache<Element> {
     init(capacity: Int) {
         values = ContiguousArray(repeating: nil, count: capacity)
+    }
+
+    init(elements: [Element]) {
+        values = ContiguousArray(elements)
     }
 
     var values: ContiguousArray<Element?>

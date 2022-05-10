@@ -125,7 +125,7 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
         environment.memberObserverBuilder(
             client.databaseContainer.viewContext,
             MemberDTO.member(userId, in: cid),
-            { $0.asModel() },
+            { try $0.asModel() },
             NSFetchedResultsController<MemberDTO>.self
         )
     }
@@ -191,7 +191,7 @@ extension ChatChannelMemberController {
         var memberObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
-            _ itemCreator: @escaping (MemberDTO) -> ChatChannelMember,
+            _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember,
             _ fetchedResultsControllerType: NSFetchedResultsController<MemberDTO>.Type
         ) -> EntityDatabaseObserver<ChatChannelMember, MemberDTO> = EntityDatabaseObserver.init
     }

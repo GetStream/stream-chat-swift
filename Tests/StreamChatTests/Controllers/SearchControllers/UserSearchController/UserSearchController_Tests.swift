@@ -88,7 +88,7 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(env.userListUpdater!.fetch_queries.first, .search(term: searchTerm))
     }
     
-    func test_searchWithTerm_whenNewSearchSucceeds() {
+    func test_searchWithTerm_whenNewSearchSucceeds() throws {
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
@@ -111,9 +111,8 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeTrue(searchCompletionCalled)
         
         // Load 1st query users from database
-        let context = client.databaseContainer.viewContext
-        let user1 = context.user(id: userPayload1.id)!.asModel()
-        let user2 = context.user(id: userPayload2.id)!.asModel()
+        let user1 = try user(with: userPayload1.id)
+        let user2 = try user(with: userPayload2.id)
         
         // Assert users are exposed
         XCTAssertEqual(controller.userArray, [user1, user2])
@@ -148,8 +147,8 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeTrue(searchCompletionCalled)
         
         // Load users from database
-        let user3 = context.user(id: userPayload3.id)!.asModel()
-        let user4 = context.user(id: userPayload4.id)!.asModel()
+        let user3 = try user(with: userPayload3.id)
+        let user4 = try user(with: userPayload4.id)
         
         // Assert users for 2nd query are exposed
         XCTAssertEqual(controller.userArray, [user3, user4])
@@ -169,7 +168,7 @@ final class UserSearchController_Tests: XCTestCase {
         ])
     }
     
-    func test_searchWithTerm_whenNewSearchFails() {
+    func test_searchWithTerm_whenNewSearchFails() throws {
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
@@ -192,9 +191,8 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeTrue(search1CompletionCalled)
         
         // Load 1st query users from database
-        let context = client.databaseContainer.viewContext
-        let user1 = context.user(id: userPayload1.id)!.asModel()
-        let user2 = context.user(id: userPayload2.id)!.asModel()
+        let user1 = try user(with: userPayload1.id)
+        let user2 = try user(with: userPayload2.id)
         
         // Assert users are exposed
         XCTAssertEqual(controller.userArray, [user1, user2])
@@ -291,7 +289,7 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(env.userListUpdater!.fetch_queries.first, query)
     }
     
-    func test_searchWithQuery_whenNewSearchSucceeds() {
+    func test_searchWithQuery_whenNewSearchSucceeds() throws {
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
@@ -313,9 +311,8 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeTrue(searchCompletionCalled)
         
         // Load 1st query users from database
-        let context = client.databaseContainer.viewContext
-        let user1 = context.user(id: userPayload1.id)!.asModel()
-        let user2 = context.user(id: userPayload2.id)!.asModel()
+        let user1 = try user(with: userPayload1.id)
+        let user2 = try user(with: userPayload2.id)
         
         // Assert users are exposed
         XCTAssertEqual(controller.userArray, [user1, user2])
@@ -350,8 +347,8 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeTrue(searchCompletionCalled)
         
         // Load users from database
-        let user3 = context.user(id: userPayload3.id)!.asModel()
-        let user4 = context.user(id: userPayload4.id)!.asModel()
+        let user3 = try user(with: userPayload3.id)
+        let user4 = try user(with: userPayload4.id)
         
         // Assert users for 2nd query are exposed
         XCTAssertEqual(controller.userArray, [user3, user4])
@@ -371,7 +368,7 @@ final class UserSearchController_Tests: XCTestCase {
         ])
     }
     
-    func test_searchWithQuery_whenNewSearchFails() {
+    func test_searchWithQuery_whenNewSearchFails() throws {
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
@@ -393,9 +390,8 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeTrue(search1CompletionCalled)
         
         // Load 1st query users from database
-        let context = client.databaseContainer.viewContext
-        let user1 = context.user(id: userPayload1.id)!.asModel()
-        let user2 = context.user(id: userPayload2.id)!.asModel()
+        let user1 = try user(with: userPayload1.id)
+        let user2 = try user(with: userPayload2.id)
         
         // Assert users are exposed
         XCTAssertEqual(controller.userArray, [user1, user2])
@@ -515,8 +511,7 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeTrue(searchCompletionCalled)
         
         // Load users are exposed
-        let context = client.databaseContainer.viewContext
-        let user1 = context.user(id: userPayload1.id)!.asModel()
+        let user1 = try user(with: userPayload1.id)
         XCTAssertEqual(controller.userArray, [user1])
         
         // Set the delegate
@@ -549,8 +544,8 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeTrue(loadNextUsersCompletionCalled)
         
         // Load users from database
-        let user2 = context.user(id: userPayload2.id)!.asModel()
-        let user3 = context.user(id: userPayload3.id)!.asModel()
+        let user2 = try user(with: userPayload2.id)
+        let user3 = try user(with: userPayload3.id)
         
         // Assert akk users are exposed
         XCTAssertEqual(controller.userArray, [user1, user2, user3])
@@ -582,8 +577,7 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeTrue(searchCompletionCalled)
         
         // Load users are exposed
-        let context = client.databaseContainer.viewContext
-        let user1 = context.user(id: userPayload1.id)!.asModel()
+        let user1 = try user(with: userPayload1.id)
         XCTAssertEqual(controller.userArray, [user1])
         
         // Remember current query and users
@@ -640,6 +634,12 @@ final class UserSearchController_Tests: XCTestCase {
 
         // Assert controller is not kept alive
         AssertAsync.staysTrue(weakController == nil)
+    }
+}
+
+private extension UserSearchController_Tests {
+    func user(with id: UserId) throws -> ChatUser {
+        try XCTUnwrap(client.databaseContainer.viewContext.user(id: id)).asModel()
     }
 }
 

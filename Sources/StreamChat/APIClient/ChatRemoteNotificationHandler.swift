@@ -142,7 +142,7 @@ public class ChatRemoteNotificationHandler {
 
             self?.syncRepository.syncExistingChannelsEvents { _ in
                 database.backgroundReadOnlyContext.perform {
-                    let channel = ChannelDTO.load(cid: cid, context: database.backgroundReadOnlyContext)?.asModel()
+                    let channel = try? ChannelDTO.load(cid: cid, context: database.backgroundReadOnlyContext)?.asModel()
                     completion(message, channel)
                 }
             }

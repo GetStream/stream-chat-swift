@@ -12,8 +12,9 @@ final class CommandDTO: NSManagedObject {
     @NSManaged var set: String
     @NSManaged var args: String
 
-    func asModel() -> Command {
-        .init(
+    func asModel() throws -> Command {
+        guard isValid else { throw InvalidModel(self) }
+        return .init(
             name: name,
             description: desc,
             set: set,

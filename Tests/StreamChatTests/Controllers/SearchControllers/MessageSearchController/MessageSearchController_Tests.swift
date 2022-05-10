@@ -80,7 +80,7 @@ final class MessageSearchController_Tests: XCTestCase {
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater?.search_completion = nil
         
-        var message: ChatMessage? { client.databaseContainer.viewContext.message(id: messageId)?.asModel() }
+        var message: ChatMessage? { try? client.databaseContainer.viewContext.message(id: messageId)?.asModel() }
         
         // Check if message is reported
         AssertAsync.willBeEqual(controller.messages.first, message)

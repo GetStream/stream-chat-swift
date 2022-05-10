@@ -3,6 +3,7 @@
 //
 
 import Atlantis
+import GDPerformanceView_Swift
 import StreamChat
 import StreamChatUI
 import UIKit
@@ -77,7 +78,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         ]
 
         // HTTP and WebSocket Proxy with Proxyman.app
-        if AppConfig.shared.demoAppConfig.isAtlantisEnabled {
+        if isStreamInternalConfiguration || AppConfig.shared.demoAppConfig.isAtlantisEnabled {
             Atlantis.start()
         } else {
             Atlantis.stop()
@@ -97,6 +98,13 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
 
         StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
+        StreamRuntimeCheck._isLazyMappingEnabled = !isStreamInternalConfiguration
+
+        // Performance tracker
+        if isStreamInternalConfiguration {
+            PerformanceMonitor.shared().performanceViewConfigurator.options = [.performance]
+            PerformanceMonitor.shared().start()
+        }
 
         let localizationProvider = Appearance.default.localizationProvider
         Appearance.default.localizationProvider = { key, table in

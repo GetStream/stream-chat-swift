@@ -165,13 +165,12 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
 extension CurrentUserDTO {
     /// Snapshots the current state of `CurrentUserDTO` and returns an immutable model object from it.
-    func asModel() -> CurrentChatUser { .create(fromDTO: self) }
+    func asModel() throws -> CurrentChatUser { try .create(fromDTO: self) }
 }
 
 extension CurrentChatUser {
-    fileprivate static func create(fromDTO dto: CurrentUserDTO) -> CurrentChatUser {
-        let context = dto.managedObjectContext!
-
+    fileprivate static func create(fromDTO dto: CurrentUserDTO) throws -> CurrentChatUser {
+        guard dto.isValid, let context = dto.managedObjectContext else { throw InvalidModel(dto) }
         let user = dto.user
 
         let extraData: [String: RawJSON]
@@ -185,15 +184,15 @@ extension CurrentChatUser {
             extraData = [:]
         }
 
-        let mutedUsers: [ChatUser] = dto.mutedUsers.map { $0.asModel() }
-        let flaggedUsers: [ChatUser] = dto.flaggedUsers.map { $0.asModel() }
+        let mutedUsers: [ChatUser] = try dto.mutedUsers.map { try $0.asModel() }
+        let flaggedUsers: [ChatUser] = try dto.flaggedUsers.map { try $0.asModel() }
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
 
         let fetchMutedChannels: () -> Set<ChatChannel> = {
-            Set(dto.channelMutes.map { $0.channel.asModel() })
+            Set(dto.channelMutes.compactMap { try? $0.channel.asModel() })
         }
 
-        return CurrentChatUser(
+        return try CurrentChatUser(
             id: user.id,
             name: user.name,
             imageURL: user.imageURL,
@@ -205,7 +204,7 @@ extension CurrentChatUser {
             lastActiveAt: user.lastActivityAt,
             teams: Set(user.teams),
             extraData: extraData,
-            devices: dto.devices.map { $0.asModel() },
+            devices: dto.devices.map { try $0.asModel() },
             currentDevice: dto.currentDevice?.asModel(),
             mutedUsers: Set(mutedUsers),
             flaggedUsers: Set(flaggedUsers),

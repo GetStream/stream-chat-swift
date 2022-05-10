@@ -43,7 +43,7 @@ class NotificationMessageNewEventDTO: EventDTO {
             let messageDTO = session.message(id: message.id)
         else { return nil }
         
-        return NotificationMessageNewEvent(
+        return try? NotificationMessageNewEvent(
             channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
             createdAt: createdAt,
@@ -80,7 +80,7 @@ class NotificationMarkAllReadEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return NotificationMarkAllReadEvent(
+        return try? NotificationMarkAllReadEvent(
             user: userDTO.asModel(),
             unreadCount: unreadCount,
             createdAt: createdAt
@@ -121,7 +121,7 @@ class NotificationMarkReadEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return NotificationMarkReadEvent(
+        return try? NotificationMarkReadEvent(
             user: userDTO.asModel(),
             cid: cid,
             unreadCount: unreadCount,
@@ -153,7 +153,7 @@ class NotificationMutesUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let currentUserDTO = session.currentUser else { return nil }
 
-        return NotificationMutesUpdatedEvent(
+        return try? NotificationMutesUpdatedEvent(
             currentUser: currentUserDTO.asModel(),
             createdAt: createdAt
         )
@@ -200,7 +200,7 @@ class NotificationAddedToChannelEventDTO: EventDTO {
             let memberDTO = session.member(userId: member.user.id, cid: channel.cid)
         else { return nil }
 
-        return NotificationAddedToChannelEvent(
+        return try? NotificationAddedToChannelEvent(
             channel: channelDTO.asModel(),
             unreadCount: unreadCount,
             member: memberDTO.asModel(),
@@ -246,7 +246,7 @@ class NotificationRemovedFromChannelEventDTO: EventDTO {
             let memberDTO = session.member(userId: member.user.id, cid: cid)
         else { return nil }
         
-        return NotificationRemovedFromChannelEvent(
+        return try? NotificationRemovedFromChannelEvent(
             user: userDTO.asModel(),
             cid: cid,
             member: memberDTO.asModel(),
@@ -278,7 +278,7 @@ class NotificationChannelMutesUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let currentUserDTO = session.currentUser else { return nil }
         
-        return NotificationChannelMutesUpdatedEvent(
+        return try? NotificationChannelMutesUpdatedEvent(
             currentUser: currentUserDTO.asModel(),
             createdAt: createdAt
         )
@@ -322,7 +322,7 @@ class NotificationInvitedEventDTO: EventDTO {
             let memberDTO = session.member(userId: member.user.id, cid: cid)
         else { return nil }
         
-        return NotificationInvitedEvent(
+        return try? NotificationInvitedEvent(
             user: userDTO.asModel(),
             cid: cid,
             member: memberDTO.asModel(),
@@ -372,7 +372,7 @@ class NotificationInviteAcceptedEventDTO: EventDTO {
             let memberDTO = session.member(userId: member.user.id, cid: channel.cid)
         else { return nil }
         
-        return NotificationInviteAcceptedEvent(
+        return try? NotificationInviteAcceptedEvent(
             user: userDTO.asModel(),
             channel: channelDTO.asModel(),
             member: memberDTO.asModel(),
@@ -422,7 +422,7 @@ class NotificationInviteRejectedEventDTO: EventDTO {
             let memberDTO = session.member(userId: member.user.id, cid: channel.cid)
         else { return nil }
         
-        return NotificationInviteRejectedEvent(
+        return try? NotificationInviteRejectedEvent(
             user: userDTO.asModel(),
             channel: channelDTO.asModel(),
             member: memberDTO.asModel(),
@@ -458,7 +458,7 @@ class NotificationChannelDeletedEventDTO: EventDTO {
     
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
-        return NotificationChannelDeletedEvent(
+        return try? NotificationChannelDeletedEvent(
             cid: cid,
             channel: channelDTO.asModel(),
             createdAt: createdAt

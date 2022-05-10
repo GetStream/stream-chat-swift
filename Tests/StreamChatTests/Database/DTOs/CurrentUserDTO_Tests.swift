@@ -105,7 +105,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         
         // Assert the data saved to DB
         var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser?.asModel()
+            try? database.viewContext.currentUser?.asModel()
         }
         
         // Assert only 1 device exists
@@ -191,7 +191,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             userDTO.user.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
-        let loadedUser: CurrentChatUser? = database.viewContext.currentUser?.asModel()
+        let loadedUser: CurrentChatUser? = try? database.viewContext.currentUser?.asModel()
         XCTAssertEqual(loadedUser?.extraData, [:])
     }
     

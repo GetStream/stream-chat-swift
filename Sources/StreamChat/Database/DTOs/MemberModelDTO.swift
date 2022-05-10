@@ -133,11 +133,12 @@ extension NSManagedObjectContext {
 }
 
 extension MemberDTO {
-    func asModel() -> ChatChannelMember { .create(fromDTO: self) }
+    func asModel() throws -> ChatChannelMember { try .create(fromDTO: self) }
 }
 
 extension ChatChannelMember {
-    fileprivate static func create(fromDTO dto: MemberDTO) -> ChatChannelMember {
+    fileprivate static func create(fromDTO dto: MemberDTO) throws -> ChatChannelMember {
+        guard dto.isValid else { throw InvalidModel(dto) }
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.user.extraData)

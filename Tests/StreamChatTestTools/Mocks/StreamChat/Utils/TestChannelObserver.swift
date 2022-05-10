@@ -14,7 +14,7 @@ final class TestChannelObserver {
         databaseObserver = .init(
             context: database.viewContext,
             fetchRequest: ChannelDTO.fetchRequest(for: cid),
-            itemCreator: { $0.asModel() }
+            itemCreator: { try $0.asModel() }
         )
 
         databaseObserver.onChange { [weak self] change in

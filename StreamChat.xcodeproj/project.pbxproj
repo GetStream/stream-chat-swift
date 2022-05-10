@@ -1620,6 +1620,7 @@
 		C143789127BC03EE00E23965 /* EndpointPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143788F27BC03EE00E23965 /* EndpointPath.swift */; };
 		C143789527BE65AE00E23965 /* QueuedRequestDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */; };
 		C143789727BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */; };
+		C149B744282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C149B743282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift */; };
 		C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
@@ -1635,6 +1636,11 @@
 		C1B0B38427BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */; };
 		C1B0B38627BFE8AB00C8207D /* MessageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */; };
 		C1B0B38727BFE8AB00C8207D /* MessageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */; };
+		C1B49B3B282283C100F4E89E /* GDPerformanceView-Swift in Frameworks */ = {isa = PBXBuildFile; productRef = C1B49B3A282283C100F4E89E /* GDPerformanceView-Swift */; };
+		C1B49B3D2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */; };
+		C1B49B3E2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */; };
+		C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
+		C1B49B412822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1E8AD57278C8A6E0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
 		C1E8AD58278C8A6F0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
@@ -3296,6 +3302,7 @@
 		C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO_Tests.swift; sourceTree = "<group>"; };
 		C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository_Tests.swift; sourceTree = "<group>"; };
 		C147D78527B4294900F8E7C5 /* Logger_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger_Spy.swift; sourceTree = "<group>"; };
+		C149B743282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Validation_Tests.swift"; sourceTree = "<group>"; };
 		C152F5FB27C3DC53003B4805 /* MessageRepository_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Spy.swift; sourceTree = "<group>"; };
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
@@ -3309,6 +3316,8 @@
 		C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointPath_Tests.swift; sourceTree = "<group>"; };
 		C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EndpointPath+OfflineRequest.swift"; sourceTree = "<group>"; };
 		C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository.swift; sourceTree = "<group>"; };
+		C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamRuntimeCheck.swift; sourceTree = "<group>"; };
+		C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Validation.swift"; sourceTree = "<group>"; };
 		C1BE72762732CB7B006EB51E /* ImageViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewExtensions.swift; sourceTree = "<group>"; };
 		C1BE72772732CB7B006EB51E /* FetchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchImage.swift; sourceTree = "<group>"; };
 		C1BE72792732CB7B006EB51E /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
@@ -3615,6 +3624,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1B49B3B282283C100F4E89E /* GDPerformanceView-Swift in Frameworks */,
 				ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */,
 				C121EC5D2746AC8C00023E4C /* StreamChat.framework in Frameworks */,
 				C1BE72732732CA62006EB51E /* Nuke in Frameworks */,
@@ -3973,6 +3983,7 @@
 				799C942D247D2FB9001F1104 /* MessageDTO.swift */,
 				8899BC4C25430E40003CB98B /* MessageReactionDTO.swift */,
 				7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */,
+				C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */,
 				79877A222498E50D00015F8B /* UserDTO.swift */,
 				DA84070F25250720005A0F62 /* UserListQueryDTO.swift */,
 			);
@@ -4106,6 +4117,7 @@
 				799C9428247D2FB9001F1104 /* ChatClientConfig.swift */,
 				79FC85E624ACCBC500A665ED /* Token.swift */,
 				8862922825AC720F00D9AE78 /* TokenProvider.swift */,
+				C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -5866,16 +5878,17 @@
 		A364D09D27D0C6D30029857A /* DTOs */ = {
 			isa = PBXGroup;
 			children = (
-				84C11BE027FB2C2B00000A9E /* ChannelReadDTO_Tests.swift */,
 				DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */,
 				79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */,
 				889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */,
 				88DA577D2631D73800FA8C53 /* ChannelMuteDTO_Tests.swift */,
+				84C11BE027FB2C2B00000A9E /* ChannelReadDTO_Tests.swift */,
 				79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */,
 				790A4C57252F2AF2001F4A23 /* DeviceDTO_Tests.swift */,
 				79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */,
 				7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */,
 				88AA928D254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift */,
+				C149B743282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift */,
 				C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */,
 				79877A202498E50D00015F8B /* UserDTO_Tests.swift */,
 			);
@@ -7709,6 +7722,7 @@
 			packageProductDependencies = (
 				C1BE72722732CA62006EB51E /* Nuke */,
 				ADDFDE2A2779EC8A003B3B07 /* Atlantis */,
+				C1B49B3A282283C100F4E89E /* GDPerformanceView-Swift */,
 			);
 			productName = DemoApp;
 			productReference = 792DDA57256FB69E001DB91B /* ChatSample.app */;
@@ -8085,6 +8099,7 @@
 				A39B03BF27EDFC2F00D6B18A /* XCRemoteSwiftPackageReference "swifter" */,
 				A3BD4813281A941B0090D511 /* XCRemoteSwiftPackageReference "AutomaticSettings" */,
 				A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */,
+				C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */,
 				E334B384282468F2002E9640 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
@@ -8413,7 +8428,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nmint run swiftlint\n";
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint; then\n  echo \"Runnning SwiftLint\"\n    mint run swiftlint\nelse\n  echo \"Warning: Mint not installed\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -8984,6 +8999,7 @@
 				882C5756252C791400E60C44 /* ChannelMemberListUpdater.swift in Sources */,
 				79896D5E25065ECD00BA8F1C /* ChannelRead.swift in Sources */,
 				C1FC2F972742579D0062530F /* Compression.swift in Sources */,
+				C1B49B3D2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
 				C1B0B38627BFE8AB00C8207D /* MessageRepository.swift in Sources */,
 				847E946E269C687300E31D0C /* EventsController.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
@@ -9156,6 +9172,7 @@
 				88EA9AD825470F6A007EE76B /* Dictionary+Extensions.swift in Sources */,
 				8AE335A824FCF999002B6677 /* Reachability_Vendor.swift in Sources */,
 				79D6CE2725F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift in Sources */,
+				C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */,
 				79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */,
 				DABC6ABC2546FD0100A8FC78 /* MessageAttachmentPayload.swift in Sources */,
 				C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */,
@@ -9277,6 +9294,7 @@
 				889B00E9252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift in Sources */,
 				A34ECB4827F5C9FA00A804C1 /* UserEvents_IntegrationTests.swift in Sources */,
 				8A0175F425013B6400570345 /* TypingEventSender_Tests.swift in Sources */,
+				C149B744282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift in Sources */,
 				8875CF9B2587A89F00BBA6AC /* AttachmentId_Tests.swift in Sources */,
 				79D6CF2125FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift in Sources */,
 				F61D7C3724FFE17200188A0E /* MessageEditor_Tests.swift in Sources */,
@@ -9675,6 +9693,7 @@
 				C121E809274544AC00023E4C /* ChatClientConfig.swift in Sources */,
 				C121E80A274544AC00023E4C /* EventMiddleware.swift in Sources */,
 				C121E80B274544AC00023E4C /* TypingStartCleanupMiddleware.swift in Sources */,
+				C1B49B3E2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
 				C121E80C274544AC00023E4C /* EventDataProcessorMiddleware.swift in Sources */,
 				C121E80D274544AC00023E4C /* ChannelReadUpdaterMiddleware.swift in Sources */,
 				C121E80E274544AC00023E4C /* UserTypingStateUpdaterMiddleware.swift in Sources */,
@@ -9694,6 +9713,7 @@
 				C121E81D274544AD00023E4C /* ChannelEvents.swift in Sources */,
 				AD6A248B280DA890003BA1E4 /* PushDevice.swift in Sources */,
 				C121E81E274544AD00023E4C /* MessageEvents.swift in Sources */,
+				C1B49B412822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */,
 				C121E81F274544AD00023E4C /* MemberEvents.swift in Sources */,
 				C121E820274544AD00023E4C /* ReactionEvents.swift in Sources */,
 				C121E821274544AD00023E4C /* NotificationEvents.swift in Sources */,
@@ -12426,6 +12446,14 @@
 				version = 1.16.0;
 			};
 		};
+		C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dani-gavrilov/GDPerformanceView-Swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
@@ -12517,6 +12545,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = Nuke;
+		};
+		C1B49B3A282283C100F4E89E /* GDPerformanceView-Swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */;
+			productName = "GDPerformanceView-Swift";
 		};
 		C1BE72722732CA62006EB51E /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

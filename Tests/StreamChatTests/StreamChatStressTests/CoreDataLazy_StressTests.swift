@@ -98,15 +98,15 @@ final class CoreDataLazy_Tests: StressTestCase {
                 
                     DispatchQueue.random.async {
                         // Serialize the DTO into a new model. This needs to be done on the valid queue for the DTO.
-                        var channel: ChatChannel!
+                        var channel: ChatChannel?
                         self.database.backgroundReadOnlyContext.performAndWait {
-                            channel = channelDTO.asModel()
+                            channel = try? channelDTO.asModel()
                         }
                         
                         // Access some lazy properties. This should be already thread safe.
-                        _ = channel.lastActiveMembers.randomElement()
-                        _ = channel.lastActiveWatchers.randomElement()
-                        _ = channel.latestMessages.randomElement()?.latestReactions.randomElement()
+                        _ = channel?.lastActiveMembers.randomElement()
+                        _ = channel?.lastActiveWatchers.randomElement()
+                        _ = channel?.latestMessages.randomElement()?.latestReactions.randomElement()
                         
                         group.leave()
                     }

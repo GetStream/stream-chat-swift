@@ -134,7 +134,8 @@ extension MessageReactionDTO {
     }
 
     /// Snapshots the current state of `MessageReactionDTO` and returns an immutable model object from it.
-    func asModel() -> ChatMessageReaction {
+    func asModel() throws -> ChatMessageReaction {
+        guard isValid else { throw InvalidModel(self) }
         let decodedExtraData: [String: RawJSON]
         
         if let extraData = self.extraData, !extraData.isEmpty {
@@ -148,7 +149,7 @@ extension MessageReactionDTO {
             decodedExtraData = [:]
         }
 
-        return .init(
+        return try .init(
             type: .init(rawValue: type),
             score: Int(score),
             createdAt: createdAt ?? .init(),
