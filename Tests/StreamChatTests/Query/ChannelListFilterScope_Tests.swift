@@ -32,6 +32,13 @@ final class ChannelListFilterScope_Tests: XCTestCase {
             Filter<ChannelListFilterScope>.in(.members, values: ids)
         )
     }
+    
+    func test_noTeam_helper() {
+        XCTAssertEqual(
+            Filter<ChannelListFilterScope>.noTeam,
+            Filter<ChannelListFilterScope>.equal(.team, to: nil)
+        )
+    }
 
     func test_safeSorting_added() {
         // Sortings without safe option

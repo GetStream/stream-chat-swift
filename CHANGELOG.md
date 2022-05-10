@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Rename `mentionedMessages` to `mentions` in `ChannelUnreadCount` [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
 
+## StreamChat
+### 🔄 Changed
+- Changes `.team` filter `FilterKey` to accept `nil` as a parameter  [#1968](https://github.com/GetStream/stream-chat-swift/pull/1968)
+
 ## StreamChatUI
 ### ✅ Added
 - Show delivery status indicator for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
