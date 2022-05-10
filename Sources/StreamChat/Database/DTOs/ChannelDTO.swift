@@ -330,12 +330,16 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel() -> ChatChannel { .create(fromDTO: self) }
+    func asModel() throws -> ChatChannel { try .create(fromDTO: self) }
 }
 
 extension ChatChannel {
     /// Create a ChannelModel struct from its DTO
-    fileprivate static func create(fromDTO dto: ChannelDTO) -> ChatChannel {
+    fileprivate static func create(fromDTO dto: ChannelDTO) throws -> ChatChannel {
+        guard dto.isValid, let cid = try? ChannelId(cid: dto.cid), let context = dto.managedObjectContext else {
+            throw InvalidModel(dto)
+        }
+
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
@@ -347,11 +351,7 @@ extension ChatChannel {
             extraData = [:]
         }
 
-        let cid = try! ChannelId(cid: dto.cid)
-        
-        let context = dto.managedObjectContext!
-        
-        let reads: [ChatChannelRead] = dto.reads.map { $0.asModel() }
+        let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }
         
         let unreadCount: () -> ChannelUnreadCount = {
             guard let currentUser = context.currentUser else { return .noUnread }
@@ -393,19 +393,19 @@ extension ChatChannel {
                     shouldShowShadowedMessages: dto.managedObjectContext?.shouldShowShadowedMessages ?? false,
                     context: context
                 )
-                .map { $0.asModel() }
+                .compactMap { try? $0.asModel() }
         }
         
         let fetchWatchers: () -> [ChatUser] = {
             UserDTO
                 .loadLastActiveWatchers(cid: cid, context: context)
-                .map { $0.asModel() }
+                .compactMap { try? $0.asModel() }
         }
         
         let fetchMembers: () -> [ChatChannelMember] = {
             MemberDTO
                 .loadLastActiveMembers(cid: cid, context: context)
-                .map { $0.asModel() }
+                .compactMap { try? $0.asModel() }
         }
 
         let fetchMuteDetails: () -> MuteDetails? = {
@@ -417,7 +417,7 @@ extension ChatChannel {
             )
         }
         
-        return ChatChannel(
+        return try ChatChannel(
             cid: cid,
             name: dto.name,
             imageURL: dto.imageURL,
@@ -431,8 +431,8 @@ extension ChatChannel {
             config: dto.config.asModel(),
             isFrozen: dto.isFrozen,
             lastActiveMembers: { fetchMembers() },
-            membership: dto.membership.map { $0.asModel() },
-            currentlyTypingUsers: { Set(dto.currentlyTypingUsers.map { $0.asModel() }) },
+            membership: dto.membership.map { try $0.asModel() },
+            currentlyTypingUsers: { Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() }) },
             lastActiveWatchers: { fetchWatchers() },
             team: dto.team,
             unreadCount: { unreadCount() },
@@ -443,9 +443,9 @@ extension ChatChannel {
             extraData: extraData,
             //            invitedMembers: [],
             latestMessages: { fetchMessages() },
-            pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },
+            pinnedMessages: { dto.pinnedMessages.compactMap { try? $0.asModel() } },
             muteDetails: fetchMuteDetails,
-            previewMessage: { dto.previewMessage?.asModel() },
+            previewMessage: { try? dto.previewMessage?.asModel() },
             underlyingContext: dto.managedObjectContext
         )
     }

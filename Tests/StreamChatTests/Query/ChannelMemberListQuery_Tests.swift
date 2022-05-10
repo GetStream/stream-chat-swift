@@ -359,7 +359,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         let fetchedMemberIDs = try database
             .viewContext
             .fetch(MemberDTO.members(matching: memberListQuery))
-            .map { $0.asModel().id }
+            .compactMap { try? $0.asModel().id }
         
         // Assert members order is correct
         XCTAssertEqual(

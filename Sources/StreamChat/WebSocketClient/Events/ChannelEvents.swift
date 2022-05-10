@@ -43,7 +43,7 @@ class ChannelUpdatedEventDTO: EventDTO {
         let userDTO = user.flatMap { session.user(id: $0.id) }
         let messageDTO = message.flatMap { session.message(id: $0.id) }
         
-        return ChannelUpdatedEvent(
+        return try? ChannelUpdatedEvent(
             channel: channelDTO.asModel(),
             user: userDTO?.asModel(),
             message: messageDTO?.asModel(),
@@ -85,7 +85,7 @@ class ChannelDeletedEventDTO: EventDTO {
                     
         let userDTO = user.flatMap { session.user(id: $0.id) }
         
-        return ChannelDeletedEvent(
+        return try? ChannelDeletedEvent(
             channel: channelDTO.asModel(),
             user: userDTO?.asModel(),
             createdAt: createdAt
@@ -132,7 +132,7 @@ class ChannelTruncatedEventDTO: EventDTO {
         let userDTO = user.flatMap { session.user(id: $0.id) }
         let messageDTO = message.flatMap { session.message(id: $0.id) }
         
-        return ChannelTruncatedEvent(
+        return try? ChannelTruncatedEvent(
             channel: channelDTO.asModel(),
             user: userDTO?.asModel(),
             message: messageDTO?.asModel(),
@@ -169,7 +169,7 @@ class ChannelVisibleEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return ChannelVisibleEvent(
+        return try? ChannelVisibleEvent(
             cid: cid,
             user: userDTO.asModel(),
             createdAt: createdAt
@@ -210,7 +210,7 @@ class ChannelHiddenEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return ChannelHiddenEvent(
+        return try? ChannelHiddenEvent(
             cid: cid,
             user: userDTO.asModel(),
             isHistoryCleared: isHistoryCleared,

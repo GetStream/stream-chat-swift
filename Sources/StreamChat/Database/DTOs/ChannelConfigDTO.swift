@@ -23,8 +23,9 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var updatedAt: Date
     @NSManaged var commands: NSOrderedSet
 
-    func asModel() -> ChannelConfig {
-        .init(
+    func asModel() throws -> ChannelConfig {
+        guard isValid else { throw InvalidModel(self) }
+        return .init(
             reactionsEnabled: reactionsEnabled,
             typingEventsEnabled: typingEventsEnabled,
             readEventsEnabled: readEventsEnabled,
@@ -38,9 +39,7 @@ final class ChannelConfigDTO: NSManagedObject {
             messageRetention: messageRetention,
             maxMessageLength: Int(maxMessageLength),
             commands: Array(Set(
-                commands
-                    .compactMap { $0 as? CommandDTO }
-                    .map { $0.asModel() }
+                commands.compactMap { try? ($0 as? CommandDTO)?.asModel() }
             )),
             createdAt: createdAt,
             updatedAt: updatedAt

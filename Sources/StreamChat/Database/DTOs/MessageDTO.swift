@@ -765,7 +765,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel() -> ChatMessage { .init(fromDTO: self) }
+    func asModel() throws -> ChatMessage { try .init(fromDTO: self) }
     
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
     func asRequestBody() -> MessageRequestBody {
@@ -807,11 +807,13 @@ extension MessageDTO {
 }
 
 private extension ChatMessage {
-    init(fromDTO dto: MessageDTO) {
-        let context = dto.managedObjectContext!
+    init(fromDTO dto: MessageDTO) throws {
+        guard dto.isValid, let context = dto.managedObjectContext else {
+            throw InvalidModel(dto)
+        }
         
         id = dto.id
-        cid = dto.channel.map { try! ChannelId(cid: $0.cid) }
+        cid = try? dto.channel.map { try ChannelId(cid: $0.cid) }
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command
@@ -849,7 +851,7 @@ private extension ChatMessage {
         if dto.pinned,
            let pinnedAt = dto.pinnedAt,
            let pinnedBy = dto.pinnedBy {
-            pinDetails = .init(
+            pinDetails = try .init(
                 pinnedAt: pinnedAt,
                 pinnedBy: pinnedBy.asModel(),
                 expiresAt: dto.pinExpires
@@ -864,7 +866,7 @@ private extension ChatMessage {
                 Set(
                     MessageReactionDTO
                         .loadReactions(ids: dto.ownReactions, context: context)
-                        .map { $0.asModel() }
+                        .compactMap { try? $0.asModel() }
                 )
             }, dto.managedObjectContext)
         } else {
@@ -876,7 +878,7 @@ private extension ChatMessage {
             Set(
                 MessageReactionDTO
                     .loadReactions(ids: dto.latestReactions, context: context)
-                    .map { $0.asModel() }
+                    .compactMap { try? $0.asModel() }
             )
         }, dto.managedObjectContext)
 
@@ -886,14 +888,16 @@ private extension ChatMessage {
             $_threadParticipants = (
                 {
                     let threadParticipants = dto.threadParticipants.array as? [UserDTO] ?? []
-                    return threadParticipants.map { $0.asModel() }
+                    return threadParticipants.compactMap { try? $0.asModel() }
                 },
                 dto.managedObjectContext
             )
         }
         
-        $_mentionedUsers = ({ Set(dto.mentionedUsers.map { $0.asModel() }) }, dto.managedObjectContext)
-        $_author = ({ dto.user.asModel() }, dto.managedObjectContext)
+        $_mentionedUsers = ({ Set(dto.mentionedUsers.compactMap { try? $0.asModel() }) }, dto.managedObjectContext)
+
+        let user = try dto.user.asModel()
+        $_author = ({ user }, nil)
         $_attachments = ({
             dto.attachments
                 .map { $0.asAnyModel() }
@@ -906,14 +910,13 @@ private extension ChatMessage {
             $_latestReplies = ({
                 MessageDTO
                     .loadReplies(for: dto.id, limit: 5, context: context)
-                    .map(ChatMessage.init)
+                    .compactMap { try? ChatMessage(fromDTO: $0) }
             }, dto.managedObjectContext)
         }
 
-        $_quotedMessage = ({ dto.quotedMessage?.asModel() }, dto.managedObjectContext)
-        
+        $_quotedMessage = ({ try? dto.quotedMessage?.asModel() }, dto.managedObjectContext)
         let readBy = {
-            Set(dto.reads.map(\.user).map { $0.asModel() })
+            Set(dto.reads.compactMap { try? $0.user.asModel() })
         }
         
         $_readBy = (readBy, dto.managedObjectContext)

@@ -560,14 +560,14 @@ extension ChatMessageController {
         var messageObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) -> ChatMessage,
+            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
         
         var repliesObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) -> ChatMessage,
+            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> ListDatabaseObserver<ChatMessage, MessageDTO> = ListDatabaseObserver.init
         
@@ -587,7 +587,7 @@ private extension ChatMessageController {
         let observer = environment.messageObserverBuilder(
             client.databaseContainer.viewContext,
             MessageDTO.message(withID: messageId),
-            { $0.asModel() },
+            { try $0.asModel() },
             NSFetchedResultsController<MessageDTO>.self
         )
         
@@ -614,7 +614,7 @@ private extension ChatMessageController {
                     deletedMessagesVisibility: deletedMessageVisibility,
                     shouldShowShadowedMessages: shouldShowShadowedMessages
                 ),
-                { $0.asModel() as ChatMessage },
+                { try $0.asModel() as ChatMessage },
                 NSFetchedResultsController<MessageDTO>.self
             )
             observer.onChange = { [weak self] changes in

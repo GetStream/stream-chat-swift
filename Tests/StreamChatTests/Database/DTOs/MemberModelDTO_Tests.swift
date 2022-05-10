@@ -56,7 +56,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         
         // Load the member from the db and check it's the same member
         var loadedMember: ChatChannelMember? {
-            database.viewContext.member(userId: userId, cid: channelId)?.asModel()
+            try? database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
 
         AssertAsync {
@@ -111,7 +111,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             memberDTO.user.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
-        let loadedMember: ChatChannelMember? = database.viewContext.member(userId: userId, cid: channelId)?.asModel()
+        let loadedMember: ChatChannelMember? = try? database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         XCTAssertEqual(loadedMember?.extraData, [:])
     }
     

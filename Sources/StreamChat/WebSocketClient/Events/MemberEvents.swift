@@ -40,7 +40,7 @@ class MemberAddedEventDTO: EventDTO {
             let memberDTO = session.member(userId: member.user.id, cid: cid)
         else { return nil }
         
-        return MemberAddedEvent(
+        return try? MemberAddedEvent(
             user: userDTO.asModel(),
             cid: cid,
             member: memberDTO.asModel(),
@@ -85,7 +85,7 @@ class MemberUpdatedEventDTO: EventDTO {
             let memberDTO = session.member(userId: member.user.id, cid: cid)
         else { return nil }
         
-        return MemberUpdatedEvent(
+        return try? MemberUpdatedEvent(
             user: userDTO.asModel(),
             cid: cid,
             member: memberDTO.asModel(),
@@ -122,7 +122,7 @@ class MemberRemovedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return MemberRemovedEvent(
+        return try? MemberRemovedEvent(
             user: userDTO.asModel(),
             cid: cid,
             createdAt: createdAt

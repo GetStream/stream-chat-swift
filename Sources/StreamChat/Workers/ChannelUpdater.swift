@@ -483,8 +483,8 @@ class ChannelUpdater: Worker {
                 var pinnedMessages: [ChatMessage] = []
                 self?.database.write { (session) in
                     payload.messages.forEach {
-                        if let dto = try? session.saveMessage(payload: $0, for: cid, syncOwnReactions: false) {
-                            pinnedMessages.append(dto.asModel())
+                        if let model = try? session.saveMessage(payload: $0, for: cid, syncOwnReactions: false)?.asModel() {
+                            pinnedMessages.append(model)
                         }
                     }
                 } completion: { _ in

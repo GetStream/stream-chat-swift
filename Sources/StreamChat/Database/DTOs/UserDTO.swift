@@ -144,7 +144,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
 
 extension UserDTO {
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
-    func asModel() -> ChatUser { .create(fromDTO: self) }
+    func asModel() throws -> ChatUser { try .create(fromDTO: self) }
     
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
     func asRequestBody() -> UserRequestBody {
@@ -194,7 +194,9 @@ extension UserDTO {
 }
 
 extension ChatUser {
-    fileprivate static func create(fromDTO dto: UserDTO) -> ChatUser {
+    fileprivate static func create(fromDTO dto: UserDTO) throws -> ChatUser {
+        guard dto.isValid else { throw InvalidModel(dto) }
+
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)

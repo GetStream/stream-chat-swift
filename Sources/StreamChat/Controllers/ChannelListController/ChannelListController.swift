@@ -75,7 +75,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer.viewContext,
             request,
-            { $0.asModel() }
+            { try $0.asModel() }
         )
         
         observer.onChange = { [weak self] changes in
@@ -107,7 +107,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer.viewContext,
             ChannelDTO.channelsFetchRequest(notLinkedTo: query),
-            { $0.asModel() }
+            { try $0.asModel() }
         )
         
         observer.onChange = { [weak self] changes in
@@ -341,7 +341,7 @@ extension ChatChannelListController {
         var createChannelListDatabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
-            _ itemCreator: @escaping (ChannelDTO) -> ChatChannel
+            _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel
         )
             -> ListDatabaseObserver<ChatChannel, ChannelDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)

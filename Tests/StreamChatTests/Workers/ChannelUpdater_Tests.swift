@@ -68,7 +68,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         
         // Assert the data is stored in the DB
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         AssertAsync {
             Assert.willBeTrue(channel != nil)
@@ -92,7 +92,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Assert the data is stored in the DB
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         AssertAsync {
             Assert.willBeTrue(channel != nil)
@@ -134,7 +134,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         var cid: ChannelId = .unique
 
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
 
         let callback: (ChannelId) -> Void = {
@@ -162,7 +162,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         var cid: ChannelId = .unique
 
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
 
         let callback: (ChannelId) -> Void = {
@@ -1322,7 +1322,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         
         // Assert that the dummy channel has a watcher

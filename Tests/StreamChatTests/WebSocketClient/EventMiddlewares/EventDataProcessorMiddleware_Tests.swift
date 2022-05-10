@@ -45,7 +45,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         
         // Assert the channel data is saved and the event is forwarded
         var loadedChannel: ChatChannel? {
-            database.viewContext.channel(cid: channelId)!.asModel()
+            try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         XCTAssertEqual(loadedChannel?.cid, channelId)
         XCTAssertEqual(outputEvent?.asEquatable, testEvent.asEquatable)
@@ -149,7 +149,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         )
 
         XCTAssertTrue(forwardedEvent is ReactionUpdatedEventDTO)
-        XCTAssertEqual(message.asModel().latestReactions, [reaction])
+        try XCTAssertEqual(message.asModel().latestReactions, [reaction])
     }
 
     func test_middleware_handlesReactionNewEvent() throws {
@@ -200,7 +200,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         )
         
         XCTAssertTrue(forwardedEvent is ReactionNewEventDTO)
-        XCTAssertEqual(message.asModel().latestReactions, [reaction])
+        try XCTAssertEqual(message.asModel().latestReactions, [reaction])
     }
 
     func test_eventWithInvalidPayload_isNotForwarded() throws {

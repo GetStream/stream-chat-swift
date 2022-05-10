@@ -64,7 +64,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         
         // Assert the data is stored in the DB
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         AssertAsync {
             Assert.willBeTrue(channel != nil)
@@ -383,7 +383,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertEqual(
-            Set(cids.compactMap { database.viewContext.channel(cid: $0)?.asModel().cid }),
+            Set(cids.compactMap { try? database.viewContext.channel(cid: $0)?.asModel().cid }),
             Set(cids)
         )
         XCTAssertNil(actualError)

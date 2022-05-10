@@ -260,9 +260,9 @@ final class UserListController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.saveUser(payload: self.dummyUser(id: id), query: self.query)
         }
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()
-        
+
+        let user = try XCTUnwrap(client.databaseContainer.viewContext.user(id: id)).asModel()
+
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
     }
     

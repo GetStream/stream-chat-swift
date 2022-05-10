@@ -112,7 +112,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     /// Used for observing the changes in the DB.
     private(set) var frc: NSFetchedResultsController<DTO>!
     
-    let itemCreator: (DTO) -> Item
+    let itemCreator: (DTO) throws -> Item
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
     
@@ -135,7 +135,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     init(
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
-        itemCreator: @escaping (DTO) -> Item,
+        itemCreator: @escaping (DTO) throws -> Item,
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.context = context
@@ -172,7 +172,11 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                 // `itemCreator` returns non-optional value, so we can use implicitly unwrapped optional
                 var result: Item!
                 context.performAndWait {
-                    result = itemCreator(dto)
+                    do {
+                        result = try itemCreator(dto)
+                    } catch {
+                        log.assertionFailure("Unable to convert a DB entity to model: \(error.localizedDescription)")
+                    }
                 }
                 return result
             }
@@ -220,16 +224,17 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                     newIndexPath: nil
                 )
             }
-            
+
+            // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
+            // calling `controllerDidChangeContent` so it properly reflects the state
+            self._items.computeValue = { [] }
+            self._items.reset()
+
             // Publish the changes
             self.changeAggregator.controllerDidChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
             
             // Remove delegate so it doesn't get further removal updates
             self.frc.delegate = nil
-            
-            // Remove the cached items since they're now deleted, technically
-            self._items.computeValue = { [] }
-            self._items.reset()
         }
         
         // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
@@ -264,7 +269,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     // TODO: Extend this to also provide `CollectionDifference` and `NSDiffableDataSourceSnapshot`
     
     /// Used for converting the `DTO`s provided by `FetchResultsController` to the resulting `Item`.
-    let itemCreator: (DTO) -> Item?
+    let itemCreator: (DTO) throws -> Item
 
     /// Called when the aggregator is about to change the current content. It gets called when the `FetchedResultsController`
     /// calls `controllerWillChangeContent` on its delegate.
@@ -281,7 +286,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     ///
     /// - Parameter itemCreator: Used for converting the `NSManagedObject`s provided by `FetchResultsController`
     /// to the resulting `Item`.
-    init(itemCreator: @escaping (DTO) -> Item?) {
+    init(itemCreator: @escaping (DTO) throws -> Item) {
         self.itemCreator = itemCreator
     }
     
@@ -301,7 +306,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         for type: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        guard let dto = anObject as? DTO, let item = itemCreator(dto) else {
+        guard let dto = anObject as? DTO, let item = try? itemCreator(dto) else {
             log.warning("Skipping the update from DB because the DTO can't be converted to the model object.")
             return
         }
