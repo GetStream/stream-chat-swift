@@ -328,7 +328,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         synchedChannelIds: Set<ChannelId>,
         completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {
-        let pageSize = Int.channelsPageSize
+        let pageSize = query.pagination.pageSize
         worker.resetChannelsQuery(
             for: query,
             pageSize: pageSize,
