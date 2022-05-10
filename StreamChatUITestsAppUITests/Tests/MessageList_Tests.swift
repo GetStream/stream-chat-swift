@@ -107,6 +107,7 @@ final class MessageList_Tests: StreamTestCase {
         AND("participant deletes the message: '\(message)'") {
             participantRobot
                 .waitForNewMessage(withText: message)
+                .chill(duration: 2)
                 .deleteMessage()
         }
         THEN("the message is deleted") {
