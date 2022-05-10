@@ -175,7 +175,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                     do {
                         result = try itemCreator(dto)
                     } catch {
-                        log.assertionFailure("Unable to convert a DB entity to model")
+                        log.assertionFailure("Unable to convert a DB entity to model: \(error.localizedDescription)")
                     }
                 }
                 return result
