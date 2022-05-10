@@ -56,7 +56,9 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("user sends the message: '\(message)'") {
-            userRobot.sendMessage(message)
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         AND("user deletes the message: '\(message)'") {
             userRobot.deleteMessage()

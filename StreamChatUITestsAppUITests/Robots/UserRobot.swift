@@ -182,6 +182,13 @@ extension UserRobot {
         app.back()
         return self
     }
+
+    @discardableResult
+    func moveToChannelListFromThreadReplies() -> Self {
+        tapOnBackButton()
+        tapOnBackButton()
+        return self
+    }
 }
 
 // MARK: Debug menu

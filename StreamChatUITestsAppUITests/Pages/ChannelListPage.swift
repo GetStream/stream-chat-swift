@@ -31,12 +31,16 @@ enum ChannelListPage {
             cell.otherElements["ChatAvatarView"].images.firstMatch
         }
 
-        static func readCount(messageCell: XCUIElement) -> XCUIElement {
-            messageCell.staticTexts["unreadCountLabel"]
+        static func readCount(in cell: XCUIElement) -> XCUIElement {
+            cell.staticTexts["unreadCountLabel"]
         }
 
-        static func statusCheckmark(for status: MessageDeliveryStatus, with messageCell: XCUIElement) -> XCUIElement {
-            messageCell.images["imageView_\(status.rawValue)"]
+        static func statusCheckmark(for status: MessageDeliveryStatus?, in cell: XCUIElement) -> XCUIElement {
+            var identifier = "imageView"
+            if let status = status {
+                identifier = "\(identifier)_\(status.rawValue)"
+            }
+            return cell.images[identifier]
         }
     }
 

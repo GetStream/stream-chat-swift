@@ -17,12 +17,14 @@ struct ChannelConfigs {
     func updateChannel(channel: inout [String: Any], withId id: String) {
         guard
             let config = configs[id],
-            var configJson = channel[JSONKey.config] as? [String: Any]
+            var innerChannel = channel[JSONKey.channel] as? [String: Any],
+            var configJson = innerChannel[JSONKey.config] as? [String: Any]
         else {
             return
         }
         config.update(json: &configJson)
-        channel[JSONKey.config] = configJson
+        innerChannel[JSONKey.config] = configJson
+        channel[JSONKey.channel] = innerChannel
     }
 
     mutating func updateConfig(config: ChannelConfig_Mock,
@@ -32,17 +34,14 @@ struct ChannelConfigs {
         guard
             var channels = json[JSONKey.channels] as? [[String: Any]],
             let channelIndex = server.channelIndex(withId: id),
-            var channel = server.channel(withId: id),
-            var innerChannel = channel[JSONKey.channel] as? [String: Any]
+            var channel = server.channel(withId: id)
         else {
             return
         }
 
         configs[id] = config
 
-        updateChannel(channel: &innerChannel, withId: id)
-
-        channel[JSONKey.channel] = innerChannel
+        updateChannel(channel: &channel, withId: id)
         channels[channelIndex] = channel
         json[JSONKey.channels] = channels
         server.channelList = json

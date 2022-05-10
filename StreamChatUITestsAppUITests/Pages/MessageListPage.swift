@@ -137,15 +137,15 @@ class MessageListPage {
     }
     
     enum Attributes {
-        static func reactionButton(messageCell: XCUIElement) -> XCUIElement {
+        static func reactionButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["ChatMessageReactionItemView"]
         }
         
-        static func threadButton(messageCell: XCUIElement) -> XCUIElement {
+        static func threadButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["threadReplyCountButton"]
         }
         
-        static func time(messageCell: XCUIElement) -> XCUIElement {
+        static func time(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["timestampLabel"]
         }
         
@@ -153,32 +153,36 @@ class MessageListPage {
             messageCell.staticTexts["authorNameLabel"]
         }
         
-        static func text(messageCell: XCUIElement) -> XCUIElement {
+        static func text(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.textViews["textView"]
         }
         
-        static func quotedText(_ text: String, messageCell: XCUIElement) -> XCUIElement {
+        static func quotedText(_ text: String, in messageCell: XCUIElement) -> XCUIElement {
             messageCell.textViews.matching(NSPredicate(format: "value LIKE '\(text)'")).firstMatch
         }
         
-        static func deletedIcon(messageCell: XCUIElement) -> XCUIElement {
+        static func deletedIcon(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.images["onlyVisibleToYouImageView"]
         }
         
-        static func deletedLabel(messageCell: XCUIElement) -> XCUIElement {
+        static func deletedLabel(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["onlyVisibleToYouLabel"]
         }
 
-        static func errorButton(messageCell: XCUIElement) -> XCUIElement {
+        static func errorButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["error indicator"]
         }
 
-        static func readCount(messageCell: XCUIElement) -> XCUIElement {
+        static func readCount(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["messageReadСountsLabel"]
         }
 
-        static func statusCheckmark(for status: MessageDeliveryStatus, with messageCell: XCUIElement) -> XCUIElement {
-            messageCell.images["imageView_\(status.rawValue)"]
+        static func statusCheckmark(for status: MessageDeliveryStatus?, in messageCell: XCUIElement) -> XCUIElement {
+            var identifier = "imageView"
+            if let status = status {
+                identifier = "\(identifier)_\(status.rawValue)"
+            }
+            return messageCell.images[identifier]
         }
     }
     

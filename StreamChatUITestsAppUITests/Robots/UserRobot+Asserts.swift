@@ -5,6 +5,7 @@
 import Foundation
 import XCTest
 import StreamChat
+@testable import StreamChatUI
 
 let channelAttributes = ChannelListPage.Attributes.self
 let channelCells = ChannelListPage.cells
@@ -16,48 +17,50 @@ extension UserRobot {
     func channelCell(withIndex index: Int? = nil,
                      file: StaticString = #filePath,
                      line: UInt = #line) -> XCUIElement {
-        let channelCell: XCUIElement
-        if let index = index {
+            guard let index = index else {
+                return channelCells.firstMatch
+            }
+
             let minExpectedCount = index + 1
             let cells = cells.waitCount(index)
             XCTAssertGreaterThanOrEqual(
                 cells.count,
                 minExpectedCount,
-                "Message cell is not found at index #\(index)"
+                "Message cell is not found at index #\(index)",
+                file: file,
+                line: line
             )
-            channelCell = channelCells.element(boundBy: index)
-        } else {
-            channelCell = channelCells.firstMatch
-        }
-        return channelCell
+            return channelCells.element(boundBy: index)
     }
 
     @discardableResult
     func assertLastMessageInChannelPreview(
         _ text: String,
         at cellIndex: Int? = nil,
-        authoredByUser: Bool,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
         let cell = channelCell(withIndex: cellIndex, file: file, line: line)
         let message = channelAttributes.lastMessage(in: cell)
-        let preview = "You: \(text)"
-        let actualText = message.waitForText(preview).text
-        XCTAssertEqual(preview, actualText, file: file, line: line)
+        let actualText = message.waitForText(text).text
+        XCTAssertTrue(actualText.contains(text), file: file, line: line)
         return self
     }
 
     @discardableResult
     func assertMessageDeliveryStatusInChannelPreview(
-        _ deliveryStatus: MessageDeliveryStatus,
+        _ deliveryStatus: MessageDeliveryStatus?,
         at cellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = channelCell(withIndex: cellIndex, file: file, line: line)
-        let checkmark = channelAttributes.statusCheckmark(for: deliveryStatus, with: messageCell)
-        XCTAssertEqual(checkmark.wait().exists, true)
+        let cell = channelCell(withIndex: cellIndex, file: file, line: line)
+        let checkmark = channelAttributes.statusCheckmark(for: deliveryStatus, in: cell)
+        if deliveryStatus == nil {
+            XCTAssertFalse(checkmark.exists, file: file, line: line)
+        } else {
+            XCTAssertTrue(checkmark.wait().exists, file: file, line: line)
+        }
 
         return self
     }
@@ -69,12 +72,12 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = channelCell(withIndex: cellIndex, file: file, line: line)
-        let readByCount = channelAttributes.readCount(messageCell: messageCell)
+        let cell = channelCell(withIndex: cellIndex, file: file, line: line)
+        let readByCount = channelAttributes.readCount(in: cell)
         if readBy == 0 {
-            XCTAssertFalse(readByCount.isHittable)
+            XCTAssertFalse(readByCount.isHittable, file: file, line: line)
         } else {
-            XCTAssertEqual(readByCount.wait().text, "\(readBy)")
+            XCTAssertEqual(readByCount.wait().text, "\(readBy)", file: file, line: line)
         }
         return self
     }
@@ -85,9 +88,12 @@ extension UserRobot {
 extension UserRobot {
 
     @discardableResult
-    func assertContextMenuOptionNotAvailable(option: MessageListPage.ContextMenu, forMessageAtIndex index: Int = 0) -> Self {
+    func assertContextMenuOptionNotAvailable(option: MessageListPage.ContextMenu,
+                                             forMessageAtIndex index: Int = 0,
+                                             file: StaticString = #filePath,
+                                             line: UInt = #line) -> Self {
         openContextMenu(messageCellIndex: index)
-        XCTAssertFalse(option.element.exists)
+        XCTAssertFalse(option.element.exists, file: file, line: line)
         return self
     }
 
@@ -98,24 +104,24 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
-        let errorButton = attributes.errorButton(messageCell: messageCell).wait()
+        let errorButton = attributes.errorButton(in: messageCell).wait()
         XCTAssertTrue(errorButton.exists, file: file, line: line)
         return self
     }
 
     @discardableResult
     func assertMessageDeliveryStatus(
-        _ deliveryStatus: MessageDeliveryStatus,
+        _ deliveryStatus: MessageDeliveryStatus?,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
         let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
-        let checkmark = attributes.statusCheckmark(for: deliveryStatus, with: messageCell)
-        if deliveryStatus == .failed {
-            XCTAssertEqual(checkmark.exists, false)
+        let checkmark = attributes.statusCheckmark(for: deliveryStatus, in: messageCell)
+        if deliveryStatus == .failed || deliveryStatus == nil {
+            XCTAssertFalse(checkmark.exists, file: file, line: line)
         } else {
-            XCTAssertEqual(checkmark.wait().exists, true)
+            XCTAssertTrue(checkmark.wait().exists, file: file, line: line)
         }
 
         return self
@@ -129,11 +135,11 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
-        let readByCount = attributes.readCount(messageCell: messageCell)
+        let readByCount = attributes.readCount(in: messageCell)
         if readBy == 0 {
-            XCTAssertFalse(readByCount.isHittable)
+            XCTAssertFalse(readByCount.isHittable, file: file, line: line)
         } else {
-            XCTAssertEqual(readByCount.wait().text, "\(readBy)")
+            XCTAssertEqual(readByCount.wait().text, "\(readBy)", file: file, line: line)
         }
         return self
     }
@@ -152,19 +158,19 @@ extension UserRobot {
     ) -> Self {
         let isThreadPageOpen = ThreadPage.alsoSendInChannelCheckbox.exists
         XCTAssertTrue(isThreadPageOpen, file: file, line: line)
-        return assertMessageReadCount(readBy: readBy, at: messageCellIndex)
+        return assertMessageReadCount(readBy: readBy, at: messageCellIndex, file: file, line: line)
     }
 
     @discardableResult
     func assertThreadReplyDeliveryStatus(
-        _ deliveryStatus: MessageDeliveryStatus,
+        _ deliveryStatus: MessageDeliveryStatus?,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
         let isThreadPageOpen = ThreadPage.alsoSendInChannelCheckbox.exists
         XCTAssertTrue(isThreadPageOpen, file: file, line: line)
-        return assertMessageDeliveryStatus(deliveryStatus, at: messageCellIndex)
+        return assertMessageDeliveryStatus(deliveryStatus, at: messageCellIndex, file: file, line: line)
     }
 
     @discardableResult
@@ -175,6 +181,6 @@ extension UserRobot {
     ) -> Self {
         let isThreadPageOpen = ThreadPage.alsoSendInChannelCheckbox.exists
         XCTAssertTrue(isThreadPageOpen, file: file, line: line)
-        return assertMessageFailedToBeSent(at: messageCellIndex)
+        return assertMessageFailedToBeSent(at: messageCellIndex, file: file, line: line)
     }
 }

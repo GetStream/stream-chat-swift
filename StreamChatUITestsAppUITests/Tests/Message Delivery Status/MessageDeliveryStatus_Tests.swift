@@ -74,8 +74,8 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
         }
         AND("delivery status is hidden") {
             userRobot
-            .assertMessageDeliveryStatus(.failed)
-            .assertMessageReadCount(readBy: 0)
+                .assertMessageDeliveryStatus(nil)
+                .assertMessageReadCount(readBy: 0)
         }
     }
 
@@ -188,7 +188,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
         THEN("delivery status for the previous message is hidden") {
             // indexes are reverted
             userRobot
-                .assertMessageDeliveryStatus(.failed, at: 1)
+                .assertMessageDeliveryStatus(nil, at: 1)
                 .assertMessageDeliveryStatus(.sent, at: 0)
         }
     }
@@ -214,7 +214,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
         }
         THEN("delivery status is hidden") {
             userRobot
-                .assertMessageDeliveryStatus(.failed)
+                .assertMessageDeliveryStatus(nil)
                 .assertMessageReadCount(readBy: 0)
         }
     }
@@ -268,7 +268,7 @@ extension MessageDeliveryStatus_Tests {
         }
         AND("delivery status is not shown") {
             userRobot
-            .assertMessageDeliveryStatus(.failed)
+            .assertMessageDeliveryStatus(nil)
             .assertMessageReadCount(readBy: 0)
         }
         AND("user can't preview this message in thread") {
@@ -349,7 +349,7 @@ extension MessageDeliveryStatus_Tests {
         }
         AND("delivery status is not shown") {
             userRobot
-                .assertThreadReplyDeliveryStatus(.failed)
+                .assertThreadReplyDeliveryStatus(nil)
                 .assertThreadReplyReadCount(readBy: 0)
         }
     }
@@ -463,7 +463,7 @@ extension MessageDeliveryStatus_Tests {
         THEN("delivery status for the previous message is hidden") {
             // indexes are reverted
             userRobot
-                .assertMessageDeliveryStatus(.failed, at: 1)
+                .assertMessageDeliveryStatus(nil, at: 1)
                 .assertMessageDeliveryStatus(.sent, at: 0)
         }
     }
@@ -490,7 +490,7 @@ extension MessageDeliveryStatus_Tests {
         }
         THEN("delivery status is hidden") {
             userRobot
-                .assertMessageDeliveryStatus(.failed)
+                .assertMessageDeliveryStatus(nil)
                 .assertMessageReadCount(readBy: 0)
         }
     }
@@ -519,7 +519,7 @@ extension MessageDeliveryStatus_Tests {
         }
         THEN("delivery status is hidden") {
             userRobot
-                .assertMessageDeliveryStatus(.failed)
+                .assertMessageDeliveryStatus(nil)
                 .assertMessageReadCount(readBy: 0)
         }
     }
@@ -566,7 +566,7 @@ extension MessageDeliveryStatus_Tests {
         }
         AND("delivery status is hidden") {
             userRobot
-            .assertMessageDeliveryStatus(.failed)
+            .assertMessageDeliveryStatus(nil)
             .assertMessageReadCount(readBy: 0)
         }
     }
@@ -590,7 +590,7 @@ extension MessageDeliveryStatus_Tests {
         }
         THEN("delivery status is hidden") {
             userRobot
-                .assertMessageDeliveryStatus(.failed)
+                .assertMessageDeliveryStatus(nil)
                 .assertMessageReadCount(readBy: 0)
         }
     }
@@ -619,7 +619,7 @@ extension MessageDeliveryStatus_Tests {
         }
         THEN("delivery status is hidden") {
             userRobot
-                .assertMessageDeliveryStatus(.failed)
+                .assertMessageDeliveryStatus(nil)
                 .assertMessageReadCount(readBy: 0)
         }
     }
@@ -650,7 +650,7 @@ extension MessageDeliveryStatus_Tests {
                 .removeParticipant(withUserId: participantOne)
         }
         AND("delivery status is hidden") {
-            userRobot.assertMessageDeliveryStatus(.failed)
+            userRobot.assertMessageDeliveryStatus(nil)
         }
         AND("user doesn't see read count") {
             userRobot.assertMessageReadCount(readBy: 0)
@@ -671,7 +671,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         AND("delivery status is hidden") {
-            userRobot.assertMessageDeliveryStatus(.failed)
+            userRobot.assertMessageDeliveryStatus(nil)
         }
         WHEN("user sends another message") {
             userRobot.sendMessage(secondMessage)
@@ -679,8 +679,8 @@ extension MessageDeliveryStatus_Tests {
         THEN("delivery status is hidden for all messages") {
             // indexes are reverted
             userRobot
-                .assertMessageDeliveryStatus(.failed, at: 1)
-                .assertMessageDeliveryStatus(.failed, at: 0)
+                .assertMessageDeliveryStatus(nil, at: 1)
+                .assertMessageDeliveryStatus(nil, at: 0)
         }
     }
 
@@ -699,14 +699,14 @@ extension MessageDeliveryStatus_Tests {
                 .waitForNewMessage(withText: message)
         }
         AND("delivery status is hidden") {
-            userRobot.assertMessageDeliveryStatus(.failed)
+            userRobot.assertMessageDeliveryStatus(nil)
         }
         WHEN("user removes the message") {
             userRobot.deleteMessage()
         }
         THEN("delivery status stays hidden") {
             userRobot
-                .assertMessageDeliveryStatus(.failed)
+                .assertMessageDeliveryStatus(nil)
                 .assertMessageReadCount(readBy: 0)
         }
     }

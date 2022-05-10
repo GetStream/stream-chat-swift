@@ -169,7 +169,10 @@ extension StreamMockServer {
         case .memberAdded:
             members.append(contentsOf: membersWithIds)
         case .memberRemoved:
-            members.removeAll(where: { ids.contains($0[JSONKey.userId] as! String) })
+            members.removeAll(where: {
+                let memberId = $0[JSONKey.userId] as? String
+                return ids.contains(memberId ?? "")
+            })
         default:
             return .badRequest(nil)
         }
@@ -178,8 +181,6 @@ extension StreamMockServer {
         channel[JSONKey.channel] = innerChannel
         channels[channelIndex] = channel
         json[JSONKey.channels] = channels
-
-        channelList = json
 
         if let channelId = (channel[JSONKey.channel] as? [String: Any])?[JSONKey.id] as? String {
             // Send web socket event with given event type
@@ -190,6 +191,8 @@ extension StreamMockServer {
             // Send channel update web socket event
             websocketChannelUpdated(with: members, channelId: channelId)
         }
+
+        channelList = json
 
         return .ok(.json(json))
     }

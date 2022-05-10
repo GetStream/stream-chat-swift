@@ -23,7 +23,9 @@ extension Robot {
             XCTAssertGreaterThanOrEqual(
                 cells.count,
                 minExpectedCount,
-                "Message cell is not found at index #\(index)"
+                "Message cell is not found at index #\(index)",
+                file: file,
+                line: line
             )
             messageCell = cells.element(boundBy: index)
         } else {
@@ -40,7 +42,7 @@ extension Robot {
         line: UInt = #line
     ) -> Self {
         let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
-        let message = attributes.text(messageCell: messageCell)
+        let message = attributes.text(in: messageCell)
         let actualText = message.waitForText(text).text
         XCTAssertEqual(text, actualText, file: file, line: line)
         return self
@@ -53,7 +55,7 @@ extension Robot {
         line: UInt = #line
     ) -> Self {
         let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
-        let message = attributes.text(messageCell: messageCell)
+        let message = attributes.text(in: messageCell)
         let expectedMessage = L10n.Message.deletedMessagePlaceholder
         let actualMessage = message.waitForText(expectedMessage).text
         XCTAssertEqual(expectedMessage, actualMessage, "Text is wrong", file: file, line: line)
@@ -83,7 +85,7 @@ extension Robot {
                            file: StaticString = #filePath,
                            line: UInt = #line) -> Self {
         let cell = mesageCell(withIndex: messageCellIndex, file: file, line: line).wait()
-        let textView = attributes.text(messageCell: cell)
+        let textView = attributes.text(in: cell)
         _ = textView.waitForText(text)
         return self
     }
@@ -120,7 +122,7 @@ extension Robot {
     ) -> Self {
         assertMessage(replyText, file: file, line: line)
         let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
-        let quotedMessage = attributes.quotedText(quotedText, messageCell: messageCell)
+        let quotedMessage = attributes.quotedText(quotedText, in: messageCell)
         XCTAssertTrue(quotedMessage.exists, "Quoted message was not showed", file: file, line: line)
         XCTAssertFalse(quotedMessage.isEnabled, "Quoted message should be disabled", file: file, line: line)
         return self
@@ -137,7 +139,7 @@ extension Robot {
         line: UInt = #line
     ) -> Self {
         let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
-        let reaction = attributes.reactionButton(messageCell: messageCell)
+        let reaction = attributes.reactionButton(in: messageCell)
         let errMessage = isPresent ? "There are no reactions" : "Reaction is presented"
         _ = isPresent ? reaction.wait() : reaction.waitForLoss()
         XCTAssertEqual(isPresent, reaction.exists, errMessage, file: file, line: line)
@@ -152,7 +154,7 @@ extension Robot {
                             file: StaticString = #filePath,
                             line: UInt = #line) -> Self {
         let cell = mesageCell(withIndex: messageCellIndex, file: file, line: line).wait()
-        let reaction = attributes.reactionButton(messageCell: cell)
+        let reaction = attributes.reactionButton(in: cell)
         reaction.wait()
         return self
     }

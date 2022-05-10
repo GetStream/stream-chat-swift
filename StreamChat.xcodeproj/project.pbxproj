@@ -7870,6 +7870,7 @@
 				A34407B627D8C33F0044F150 /* Sources */,
 				A34407B727D8C33F0044F150 /* Frameworks */,
 				A34407B827D8C33F0044F150 /* Resources */,
+				A3B78F1B282AB07100348AD1 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -8441,6 +8442,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which mint >/dev/null && mint which swiftgen; then\n  xcrun --sdk macosx mint run swiftgen config run --config ./Sources/StreamChatUI/.swiftgen.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
+		};
+		A3B78F1B282AB07100348AD1 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint; then\n  echo \"Runnning SwiftLint\"\n    mint run swiftlint\nelse\n  echo \"Warning: Mint not installed\"\nfi\n";
 		};
 		E3FBB83E27F737F10067608A /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
