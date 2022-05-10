@@ -1620,6 +1620,7 @@
 		C143789127BC03EE00E23965 /* EndpointPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143788F27BC03EE00E23965 /* EndpointPath.swift */; };
 		C143789527BE65AE00E23965 /* QueuedRequestDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */; };
 		C143789727BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */; };
+		C149B744282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C149B743282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift */; };
 		C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
@@ -3301,6 +3302,7 @@
 		C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO_Tests.swift; sourceTree = "<group>"; };
 		C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository_Tests.swift; sourceTree = "<group>"; };
 		C147D78527B4294900F8E7C5 /* Logger_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger_Spy.swift; sourceTree = "<group>"; };
+		C149B743282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Validation_Tests.swift"; sourceTree = "<group>"; };
 		C152F5FB27C3DC53003B4805 /* MessageRepository_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Spy.swift; sourceTree = "<group>"; };
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
@@ -5876,16 +5878,17 @@
 		A364D09D27D0C6D30029857A /* DTOs */ = {
 			isa = PBXGroup;
 			children = (
-				84C11BE027FB2C2B00000A9E /* ChannelReadDTO_Tests.swift */,
 				DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */,
 				79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */,
 				889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */,
 				88DA577D2631D73800FA8C53 /* ChannelMuteDTO_Tests.swift */,
+				84C11BE027FB2C2B00000A9E /* ChannelReadDTO_Tests.swift */,
 				79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */,
 				790A4C57252F2AF2001F4A23 /* DeviceDTO_Tests.swift */,
 				79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */,
 				7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */,
 				88AA928D254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift */,
+				C149B743282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift */,
 				C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */,
 				79877A202498E50D00015F8B /* UserDTO_Tests.swift */,
 			);
@@ -9291,6 +9294,7 @@
 				889B00E9252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift in Sources */,
 				A34ECB4827F5C9FA00A804C1 /* UserEvents_IntegrationTests.swift in Sources */,
 				8A0175F425013B6400570345 /* TypingEventSender_Tests.swift in Sources */,
+				C149B744282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift in Sources */,
 				8875CF9B2587A89F00BBA6AC /* AttachmentId_Tests.swift in Sources */,
 				79D6CF2125FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift in Sources */,
 				F61D7C3724FFE17200188A0E /* MessageEditor_Tests.swift in Sources */,
