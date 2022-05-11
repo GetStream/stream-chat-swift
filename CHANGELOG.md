@@ -5,11 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Expose `actions` on image attachment [#1979](https://github.com/GetStream/stream-chat-swift/issues/1979)
-
-## StreamChat
-### ✅ Added
 - Expose `readBy/readByCount` on `ChatMessage` containing info about users who has seen this message. These fields are populated only for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
-- Expose preview message on `ChatChannel` [#1935](https://github.com/GetStream/stream-chat-swift/issues/1935)
 ### 🐞 Fixed
 - Fix unread messages count bumping logic [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
     - respect muted channels
@@ -17,19 +13,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - decrement when message is hard deleted
 ### 🔄 Changed
 - Rename `mentionedMessages` to `mentions` in `ChannelUnreadCount` [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
-
-## StreamChat
-### 🔄 Changed
 - Changes `.team` filter `FilterKey` to accept `nil` as a parameter  [#1968](https://github.com/GetStream/stream-chat-swift/pull/1968)
 
 ## StreamChatUI
-### ✅ Added
-- Show delivery status indicator for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
-- Show delivery status indicator for messages sent by the current user in channel preview [#1935](https://github.com/GetStream/stream-chat-swift/issues/1935)
 ### 🔄 Changed
 - Deprecate `ChatMessage.isOnlyVisibleForCurrentUser` as it does not account deleted messages visability setting [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
 - Rename components related to message footnote content in `ChatMessageContentView` [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
 ### ✅ Added
+- Show delivery status indicator for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
+- Show delivery status indicator for messages sent by the current user in channel preview [#1935](https://github.com/GetStream/stream-chat-swift/issues/1935)
 - Add support for custom reactions sorting [#1944](https://github.com/GetStream/stream-chat-swift/pull/1944)
 - Add `nonEmpty` filter for channel list query [#1960](https://github.com/GetStream/stream-chat-swift/pull/1960)
 ### 🐞 Fixed
@@ -37,8 +29,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix message popup UI glitch for bigger messages and iPad/Landscape [#1975](https://github.com/GetStream/stream-chat-swift/pull/1975)
 - Fix footnote being hidden for the message followed by `ephemeral` message [#1956](https://github.com/GetStream/stream-chat-swift/issues/1956)
 - Fix footnote being hidden for the message followed by `system` message [#1956](https://github.com/GetStream/stream-chat-swift/issues/1956)
-### 💥 Removed
-- Unused `ChatChannelReadStatusCheckmarkView` type is removed. The `ChatMessageDeliveryStatusCheckmarkView` is introduced instead and used across both channel/message lists [#1935](https://github.com/GetStream/stream-chat-swift/issues/1935)
 
 # [4.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.14.0)
 _April 26, 2022_
