@@ -2036,6 +2036,54 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.type, MessageType.ephemeral.rawValue)
         XCTAssertNotNil(message.deletedAt)
     }
+    
+    func test_dispatchEphemeralMessageAction_cancel_changesPreviewMessage() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let currentUserId: UserId = .unique
+        
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+        // Create channel is the database
+        try database.createChannel(cid: cid, withMessages: true)
+        // Create a new `ephemeral` message in the database
+        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
+        
+        // Set ephemeral message as channel's previewMessage
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.message(id: messageId))
+            let channel = try XCTUnwrap(session.channel(cid: cid))
+            channel.previewMessage = message
+        }
+        
+        let cancelAction = AttachmentAction(
+            name: .unique,
+            value: "cancel",
+            style: .default,
+            type: .button,
+            text: .unique
+        )
+        
+        // Simulate `dispatchEphemeralMessageAction`
+        let completionError = try waitFor {
+            messageUpdater.dispatchEphemeralMessageAction(
+                cid: cid,
+                messageId: messageId,
+                action: cancelAction,
+                completion: $0
+            )
+        }
+        
+        // Assert error is `nil`
+        XCTAssertNil(completionError)
+        // Assert `apiClient` is not invoked, message is updated locally.
+        XCTAssertNil(apiClient.request_endpoint)
+        
+        // Load message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        // Assert `previewMessage` of the channel is updated
+        XCTAssertFalse(message.previewOfChannel?.cid == cid.rawValue)
+    }
 
     func test_dispatchEphemeralMessageAction_happyPath() throws {
         let cid: ChannelId = .unique
