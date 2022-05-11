@@ -22,8 +22,6 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     public var imageURL: URL
     /// A link to the image preview.
     public var imagePreviewURL: URL
-    /// Attachment actions.
-    public var actions: [AttachmentAction]
     /// An extra data.
     public var extraData: [String: RawJSON]?
     
@@ -39,17 +37,10 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     /// Creates `ImageAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
-    public init(
-        title: String?,
-        imageRemoteURL: URL,
-        imagePreviewRemoteURL: URL? = nil,
-        actions: [AttachmentAction] = [],
-        extraData: [String: RawJSON]? = nil
-    ) {
+    public init(title: String?, imageRemoteURL: URL, imagePreviewRemoteURL: URL? = nil, extraData: [String: RawJSON]?) {
         self.title = title
         imageURL = imageRemoteURL
         imagePreviewURL = imagePreviewRemoteURL ?? imageRemoteURL
-        self.actions = actions
         self.extraData = extraData
     }
 }
@@ -60,13 +51,9 @@ extension ImageAttachmentPayload: Hashable {}
 
 extension ImageAttachmentPayload: Encodable {
     public func encode(to encoder: Encoder) throws {
-        let actionsData = try JSONEncoder.default.encode(actions)
-        let actions = try JSONDecoder.default.decode([RawJSON].self, from: actionsData)
-        
         var values = extraData ?? [:]
         values[AttachmentCodingKeys.title.rawValue] = title.map { .string($0) }
         values[AttachmentCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
-        values[AttachmentCodingKeys.actions.rawValue] = .array(actions)
         try values.encode(to: encoder)
     }
 }
@@ -93,8 +80,6 @@ extension ImageAttachmentPayload: Decodable {
             imageRemoteURL: imageURL,
             imagePreviewRemoteURL: try container
                 .decodeIfPresent(URL.self, forKey: .thumbURL) ?? imageURL,
-            actions: try container
-                .decodeIfPresent([AttachmentAction].self, forKey: .actions) ?? [],
             extraData: try Self.decodeExtraData(from: decoder)
         )
     }
