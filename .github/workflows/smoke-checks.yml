@@ -117,7 +117,8 @@ jobs:
       run: bundle exec fastlane allure_upload
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.ALLURE_GITHUB_TOKEN }}
+        ALLURE_GITHUB_TOKEN: ${{ secrets.ALLURE_GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
