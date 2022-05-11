@@ -513,6 +513,7 @@ class MessageUpdater: Worker {
             guard action.isCancel == false else {
                 // For ephemeral messages we don't change `state` to `.deleted`
                 messageDTO.deletedAt = Date()
+                messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
                 return
             }
 
