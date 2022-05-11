@@ -108,9 +108,8 @@ public class ChatRemoteNotificationHandler {
         guard let type = dict["type"] else {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
-
-        switch EventType(rawValue: type) {
-        case .messageNew:
+        
+        if EventType(rawValue: type) == .messageNew {
             guard let cid = dict["cid"], let id = dict["id"], let channelId = try? ChannelId(cid: cid) else {
                 completion(.unknown(UnknownNotificationContent(content: content)))
                 return
@@ -122,7 +121,7 @@ public class ChatRemoteNotificationHandler {
                 }
                 completion(.message(MessageNotificationContent(message: message, channel: channel)))
             }
-        default:
+        } else {
             completion(.unknown(UnknownNotificationContent(content: content)))
         }
     }

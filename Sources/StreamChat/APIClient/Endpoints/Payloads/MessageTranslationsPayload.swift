@@ -35,11 +35,11 @@ public struct MessageTranslationsPayload: Decodable {
         
         originalLanguage = try container.decode(String.self, forKey: .originalLanguage)
         
-        var translated = [TranslationLanguage: String]()
+        var translatedDictionary = [TranslationLanguage: String]()
         
         for language in TranslationLanguage.allCases {
             if let translatedText = try container.decodeIfPresent(String.self, forKey: .translated(to: language)) {
-                translated[language] = translatedText
+                translatedDictionary[language] = translatedText
             }
         }
         
@@ -54,9 +54,9 @@ public struct MessageTranslationsPayload: Decodable {
             }
             let unknownLanguageCode = String(keyString.prefix(upTo: suffixRange.lowerBound))
             let translatedText = try container.decode(String.self, forKey: key)
-            translated[.init(languageCode: unknownLanguageCode)] = translatedText
+            translatedDictionary[.init(languageCode: unknownLanguageCode)] = translatedText
         }
         
-        self.translated = translated
+        translated = translatedDictionary
     }
 }
