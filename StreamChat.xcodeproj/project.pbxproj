@@ -12482,7 +12482,7 @@
 			repositoryURL = "https://github.com/GetStream/stream-chat-swift-test-helpers.git";
 			requirement = {
 				kind = revision;
-				revision = 3c5b3ebc3b65a671b2bf890f2745190872a1fabd;
+				revision = 246845edb41de52325b249165f68e045fd30d955;
 			};
 		};
 		AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {

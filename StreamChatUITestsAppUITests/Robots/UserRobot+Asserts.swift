@@ -42,7 +42,7 @@ extension UserRobot {
     ) -> Self {
         let cell = channelCell(withIndex: cellIndex, file: file, line: line)
         let message = channelAttributes.lastMessage(in: cell)
-        let actualText = message.waitForText(text).text
+        let actualText = message.waitForText(text, mustBeEqual: false).text
         XCTAssertTrue(actualText.contains(text), file: file, line: line)
         return self
     }
