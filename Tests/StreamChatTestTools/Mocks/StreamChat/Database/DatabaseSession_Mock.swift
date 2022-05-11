@@ -94,6 +94,10 @@ extension DatabaseSession_Mock {
     func cleanChannels(cids: Set<ChannelId>) {
         underlyingSession.cleanChannels(cids: cids)
     }
+
+    func removeChannels(cids: Set<ChannelId>) {
+        underlyingSession.removeChannels(cids: cids)
+    }
     
     func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         try throwErrorIfNeeded()

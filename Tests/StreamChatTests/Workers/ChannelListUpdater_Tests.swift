@@ -131,7 +131,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
         var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
         listUpdater.resetChannelsQuery(
             for: query,
-            watchedChannelIds: Set<ChannelId>(),
+            pageSize: query.pagination.pageSize,
+            watchedAndSynchedChannelIds: Set<ChannelId>(),
             synchedChannelIds: Set<ChannelId>()
         ) { result in
             receivedResult = result
@@ -166,7 +167,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
         var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
         listUpdater.resetChannelsQuery(
             for: query,
-            watchedChannelIds: Set<ChannelId>(),
+            pageSize: query.pagination.pageSize,
+            watchedAndSynchedChannelIds: Set<ChannelId>(),
             synchedChannelIds: Set<ChannelId>()
         ) { result in
             receivedResult = result
@@ -225,7 +227,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
         var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
         listUpdater.resetChannelsQuery(
             for: query,
-            watchedChannelIds: watchedChannelIds,
+            pageSize: query.pagination.pageSize,
+            watchedAndSynchedChannelIds: watchedChannelIds,
             synchedChannelIds: synchedChannelIds
         ) { result in
             receivedResult = result

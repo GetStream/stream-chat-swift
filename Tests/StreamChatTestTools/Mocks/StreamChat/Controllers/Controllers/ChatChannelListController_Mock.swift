@@ -4,9 +4,12 @@
 
 import Foundation
 @testable import StreamChat
+import StreamChatTestHelpers
 
-public class ChatChannelListController_Mock: ChatChannelListController {
+public class ChatChannelListController_Mock: ChatChannelListController, Spy {
+    public var recordedFunctions: [String] = []
     public var loadNextChannelsIsCalled = false
+    public var resetChannelsQueryResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
 
     /// Creates a new mock instance of `ChatChannelListController`.
     public static func mock() -> ChatChannelListController_Mock {
@@ -26,6 +29,15 @@ public class ChatChannelListController_Mock: ChatChannelListController {
 
     override public func loadNextChannels(limit: Int?, completion: ((Error?) -> Void)?) {
         loadNextChannelsIsCalled = true
+    }
+
+    override public func resetQuery(
+        watchedAndSynchedChannelIds: Set<ChannelId>,
+        synchedChannelIds: Set<ChannelId>,
+        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
+    ) {
+        record()
+        resetChannelsQueryResult.map(completion)
     }
 }
 
