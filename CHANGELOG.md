@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - respect muted channels
     - respect muted users
     - decrement when message is hard deleted
+- Fix paginated channels in channel list were left without channels when sync is executed [#1985](https://github.com/GetStream/stream-chat-swift/issues/1985)
 ### 🔄 Changed
 - Rename `mentionedMessages` to `mentions` in `ChannelUnreadCount` [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
 
