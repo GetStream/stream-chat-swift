@@ -2312,10 +2312,18 @@ final class MessageDTO_Tests: XCTestCase {
             channel: channel
         )
         
+        let deletedEphemeralMessage: MessagePayload = .dummy(
+            type: .ephemeral,
+            messageId: .unique,
+            authorUserId: .unique,
+            deletedAt: .unique,
+            channel: channel
+        )
+        
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
             
-            for message in [deletedMessageFromCurrentUser, deletedMessageFromAnotherUser] {
+            for message in [deletedMessageFromCurrentUser, deletedMessageFromAnotherUser, deletedEphemeralMessage] {
                 try session.saveMessage(
                     payload: message,
                     for: channel.cid,
