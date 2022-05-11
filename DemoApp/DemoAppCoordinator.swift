@@ -396,7 +396,7 @@ class CustomMessageContentView: ChatMessageContentView {
             }
         }
 
-        guard let authorNameLabel = authorNameLabel, authorNameLabel.text != "" else {
+        guard let authorNameLabel = authorNameLabel, authorNameLabel.text?.isEmpty == true else {
             return
         }
 

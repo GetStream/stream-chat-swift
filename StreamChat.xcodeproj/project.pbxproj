@@ -855,6 +855,10 @@
 		A3698DD62821504C00814143 /* ws_events_member.json in Resources */ = {isa = PBXBuildFile; fileRef = A3698DD52821504C00814143 /* ws_events_member.json */; };
 		A3698DD828215E2F00814143 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3698DD728215E2F00814143 /* Settings.swift */; };
 		A36F997A2818459C0078260D /* InternetConnectionMonitor_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36F99792818459C0078260D /* InternetConnectionMonitor_Mock.swift */; };
+		A3813B48282525280076E838 /* ws_events_user.json in Resources */ = {isa = PBXBuildFile; fileRef = A3813B47282525280076E838 /* ws_events_user.json */; };
+		A3813B4A282595960076E838 /* ChannelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3813B49282595960076E838 /* ChannelConfig.swift */; };
+		A3813B4C2825C8030076E838 /* CustomChatMessageListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3813B4B2825C8030076E838 /* CustomChatMessageListRouter.swift */; };
+		A3813B4E2825C8A30076E838 /* ThreadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3813B4D2825C8A30076E838 /* ThreadVC.swift */; };
 		A382131E2805C8AC0068D30E /* TestsEnvironmentSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A382131D2805C8AC0068D30E /* TestsEnvironmentSetup.swift */; };
 		A3960E0B27DA587B003AB2B0 /* RetryStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3960E0A27DA587B003AB2B0 /* RetryStrategy_Tests.swift */; };
 		A3960E0D27DA5973003AB2B0 /* ConnectionRecoveryHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3960E0C27DA5973003AB2B0 /* ConnectionRecoveryHandler_Tests.swift */; };
@@ -863,7 +867,10 @@
 		A39B040B27F196F200D6B18A /* StreamChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39B040A27F196F200D6B18A /* StreamChatUITests.swift */; };
 		A3A52B6627EB61FC00311DFC /* EventPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794927F0249E3DE6009D7EB7 /* EventPayload_Tests.swift */; };
 		A3A644B327BF99D400F92494 /* ChannelTruncateRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A644B227BF99D400F92494 /* ChannelTruncateRequestPayload_Tests.swift */; };
+		A3AFEAA72816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3AFEAA62816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift */; };
 		A3B0CFA227BBF52600F352F9 /* ChannelTruncateRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B0CFA127BBF52600F352F9 /* ChannelTruncateRequestPayload.swift */; };
+		A3B78F18282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B78F17282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift */; };
+		A3B78F1A282A6A8F00348AD1 /* UserRobot+Asserts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B78F19282A6A8F00348AD1 /* UserRobot+Asserts.swift */; };
 		A3BB3FFF261DA74D00365496 /* ContainerStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */; };
 		A3BD4815281A941B0090D511 /* AutomaticSettings in Frameworks */ = {isa = PBXBuildFile; productRef = A3BD4814281A941B0090D511 /* AutomaticSettings */; };
 		A3BD4818281A984C0090D511 /* DispatchQueue+AsyncAfter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BD4817281A984C0090D511 /* DispatchQueue+AsyncAfter.swift */; };
@@ -3048,6 +3055,10 @@
 		A3698DD52821504C00814143 /* ws_events_member.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ws_events_member.json; sourceTree = "<group>"; };
 		A3698DD728215E2F00814143 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		A36F99792818459C0078260D /* InternetConnectionMonitor_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternetConnectionMonitor_Mock.swift; sourceTree = "<group>"; };
+		A3813B47282525280076E838 /* ws_events_user.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ws_events_user.json; sourceTree = "<group>"; };
+		A3813B49282595960076E838 /* ChannelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelConfig.swift; sourceTree = "<group>"; };
+		A3813B4B2825C8030076E838 /* CustomChatMessageListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChatMessageListRouter.swift; sourceTree = "<group>"; };
+		A3813B4D2825C8A30076E838 /* ThreadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadVC.swift; sourceTree = "<group>"; };
 		A382131D2805C8AC0068D30E /* TestsEnvironmentSetup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestsEnvironmentSetup.swift; sourceTree = "<group>"; };
 		A3960E0A27DA587B003AB2B0 /* RetryStrategy_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetryStrategy_Tests.swift; sourceTree = "<group>"; };
 		A3960E0C27DA5973003AB2B0 /* ConnectionRecoveryHandler_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionRecoveryHandler_Tests.swift; sourceTree = "<group>"; };
@@ -3055,8 +3066,11 @@
 		A39A8AE6263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageLayoutOptionsResolver.swift; sourceTree = "<group>"; };
 		A39B040A27F196F200D6B18A /* StreamChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatUITests.swift; sourceTree = "<group>"; };
 		A3A644B227BF99D400F92494 /* ChannelTruncateRequestPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTruncateRequestPayload_Tests.swift; sourceTree = "<group>"; };
+		A3AFEAA62816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDeliveryStatus_Tests.swift; sourceTree = "<group>"; };
 		A3B0CFA127BBF52600F352F9 /* ChannelTruncateRequestPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTruncateRequestPayload.swift; sourceTree = "<group>"; };
 		A3B0CFA327BCF66A00F352F9 /* ChannelTruncated_with_message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelTruncated_with_message.json; sourceTree = "<group>"; };
+		A3B78F17282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageDeliveryStatus+ChannelList_Tests.swift"; sourceTree = "<group>"; };
+		A3B78F19282A6A8F00348AD1 /* UserRobot+Asserts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserRobot+Asserts.swift"; sourceTree = "<group>"; };
 		A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStackView.swift; sourceTree = "<group>"; };
 		A3BD4817281A984C0090D511 /* DispatchQueue+AsyncAfter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+AsyncAfter.swift"; sourceTree = "<group>"; };
 		A3BD484D281ABB620090D511 /* CustomChannelListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChannelListRouter.swift; sourceTree = "<group>"; };
@@ -4946,6 +4960,7 @@
 				82CED1CD27DF60AC006E967A /* http_reaction.json */,
 				A3698DD1282147A200814143 /* ws_events_channel.json */,
 				A3698DD52821504C00814143 /* ws_events_member.json */,
+				A3813B47282525280076E838 /* ws_events_user.json */,
 				825A32C727DBA243000402A9 /* ws_events.json */,
 				82E4CBD927F232EA0013B02D /* ws_health_check.json */,
 				822F268B27DA447F00E454FB /* ws_message.json */,
@@ -4977,6 +4992,7 @@
 				82D2E81E27D10F4300169ADA /* StreamMockServer.swift */,
 				82E4CBDF27F322EA0013B02D /* User.swift */,
 				82E4CBDB27F240C60013B02D /* WebsocketResponses.swift */,
+				A3813B49282595960076E838 /* ChannelConfig.swift */,
 			);
 			path = MockServer;
 			sourceTree = "<group>";
@@ -4993,11 +5009,12 @@
 		82AD02B627D8E3D4000611B7 /* Robots */ = {
 			isa = PBXGroup;
 			children = (
+				A3698DCD28212C8400814143 /* BackendRobot.swift */,
 				82AD02B827D8E416000611B7 /* DeviceRobot.swift */,
 				822F268D27DA460800E454FB /* ParticipantRobot.swift */,
 				82BA52F027E1F36B00951B87 /* Robot+CustomAssertions.swift */,
 				8298C8E827D22C3E004082D3 /* UserRobot.swift */,
-				A3698DCD28212C8400814143 /* BackendRobot.swift */,
+				A3B78F19282A6A8F00348AD1 /* UserRobot+Asserts.swift */,
 			);
 			path = Robots;
 			sourceTree = "<group>";
@@ -5016,6 +5033,7 @@
 		82AD02BE27D8E453000611B7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				A3B78F16282A670600348AD1 /* Message Delivery Status */,
 				82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */,
 				82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */,
 				82AD02BC27D8E44B000611B7 /* StreamTestCase.swift */,
@@ -5585,12 +5603,14 @@
 		A34407FA27D8C8AB0044F150 /* StreamChat */ = {
 			isa = PBXGroup;
 			children = (
-				A34407F627D8C8A70044F150 /* ChatClient+shared.swift */,
-				A34407F527D8C8A70044F150 /* User.swift */,
-				A34407FB27D8C9040044F150 /* StreamChatWrapper.swift */,
 				8210AA2727FC916B005F0B32 /* ChannelList.swift */,
-				A3BD484D281ABB620090D511 /* CustomChannelListRouter.swift */,
 				A3BD484F281AC16C0090D511 /* ChannelVC.swift */,
+				A34407F627D8C8A70044F150 /* ChatClient+shared.swift */,
+				A3BD484D281ABB620090D511 /* CustomChannelListRouter.swift */,
+				A3813B4B2825C8030076E838 /* CustomChatMessageListRouter.swift */,
+				A34407FB27D8C9040044F150 /* StreamChatWrapper.swift */,
+				A34407F527D8C8A70044F150 /* User.swift */,
+				A3813B4D2825C8A30076E838 /* ThreadVC.swift */,
 			);
 			path = StreamChat;
 			sourceTree = "<group>";
@@ -6519,6 +6539,15 @@
 				849AE661270CB00000423A20 /* VideoLoader_Mock.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		A3B78F16282A670600348AD1 /* Message Delivery Status */ = {
+			isa = PBXGroup;
+			children = (
+				A3AFEAA62816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift */,
+				A3B78F17282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift */,
+			);
+			path = "Message Delivery Status";
 			sourceTree = "<group>";
 		};
 		A3BD4816281A97750090D511 /* Extensions */ = {
@@ -7841,6 +7870,7 @@
 				A34407B627D8C33F0044F150 /* Sources */,
 				A34407B727D8C33F0044F150 /* Frameworks */,
 				A34407B827D8C33F0044F150 /* Resources */,
+				A3B78F1B282AB07100348AD1 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -8333,6 +8363,7 @@
 			files = (
 				82E4CBD627F22EC50013B02D /* http_channels.json in Resources */,
 				82CED1CE27DF60AC006E967A /* http_reaction.json in Resources */,
+				A3813B48282525280076E838 /* ws_events_user.json in Resources */,
 				82E4CBDA27F232EA0013B02D /* ws_health_check.json in Resources */,
 				822F268027DA3F7700E454FB /* http_events.json in Resources */,
 				A3698DCA2820325900814143 /* http_member.json in Resources */,
@@ -8411,6 +8442,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which mint >/dev/null && mint which swiftgen; then\n  xcrun --sdk macosx mint run swiftgen config run --config ./Sources/StreamChatUI/.swiftgen.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
+		};
+		A3B78F1B282AB07100348AD1 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint; then\n  echo \"Runnning SwiftLint\"\n    mint run swiftlint\nelse\n  echo \"Warning: Mint not installed\"\nfi\n";
 		};
 		E3FBB83E27F737F10067608A /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9611,6 +9660,7 @@
 				A3BD4818281A984C0090D511 /* DispatchQueue+AsyncAfter.swift in Sources */,
 				A3BD484E281ABB620090D511 /* CustomChannelListRouter.swift in Sources */,
 				A3698DD828215E2F00814143 /* Settings.swift in Sources */,
+				A3813B4C2825C8030076E838 /* CustomChatMessageListRouter.swift in Sources */,
 				A3698D802820187200814143 /* DebugMenu.swift in Sources */,
 				A34407C127D8C33F0044F150 /* ViewController.swift in Sources */,
 				A3BD4850281AC16C0090D511 /* ChannelVC.swift in Sources */,
@@ -9619,6 +9669,7 @@
 				A34407F827D8C8A70044F150 /* User.swift in Sources */,
 				A34407F927D8C8A70044F150 /* ChatClient+shared.swift in Sources */,
 				A34407FC27D8C9040044F150 /* StreamChatWrapper.swift in Sources */,
+				A3813B4E2825C8A30076E838 /* ThreadVC.swift in Sources */,
 				8210AA2827FC916B005F0B32 /* ChannelList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9644,17 +9695,21 @@
 				825A32AC27DA5462000402A9 /* Dictionary.swift in Sources */,
 				82E4CBDC27F240C60013B02D /* WebsocketResponses.swift in Sources */,
 				828C584927F72B090003EAD9 /* (null) in Sources */,
+				A3AFEAA72816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift in Sources */,
 				822F265727D8F75D00E454FB /* UserRobot.swift in Sources */,
+				A3B78F1A282A6A8F00348AD1 /* UserRobot+Asserts.swift in Sources */,
 				822F265527D8F75600E454FB /* String.swift in Sources */,
 				825A32CD27DBB46F000402A9 /* ChannelListPage.swift in Sources */,
 				822F265C27D8F79100E454FB /* StreamMockServer.swift in Sources */,
 				A3698DCE28212C8400814143 /* BackendRobot.swift in Sources */,
 				82B350FB27EA298800FEB6A0 /* ReactionResponses.swift in Sources */,
 				822F268E27DA460800E454FB /* ParticipantRobot.swift in Sources */,
+				A3B78F18282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift in Sources */,
 				825A32CB27DBB463000402A9 /* MessageListPage.swift in Sources */,
 				8224FD86280EC09800B32D43 /* HttpServer.swift in Sources */,
 				82E4CBE027F322EA0013B02D /* User.swift in Sources */,
 				822F265B27D8F76800E454FB /* LaunchArgument.swift in Sources */,
+				A3813B4A282595960076E838 /* ChannelConfig.swift in Sources */,
 				824445AB27EA364300DB2FD8 /* ChannelResponses.swift in Sources */,
 				822F265227D8F74700E454FB /* StreamTestCase.swift in Sources */,
 				822F266227D9FE5E00E454FB /* RequestRecorderURLProtocol_Mock.swift in Sources */,
@@ -12427,7 +12482,7 @@
 			repositoryURL = "https://github.com/GetStream/stream-chat-swift-test-helpers.git";
 			requirement = {
 				kind = revision;
-				revision = 3c5b3ebc3b65a671b2bf890f2745190872a1fabd;
+				revision = 246845edb41de52325b249165f68e045fd30d955;
 			};
 		};
 		AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {

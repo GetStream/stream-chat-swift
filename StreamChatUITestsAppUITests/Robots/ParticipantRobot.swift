@@ -16,7 +16,11 @@ final class ParticipantRobot: Robot {
     init(_ server: StreamMockServer) {
         self.server = server
     }
-    
+
+    var currentUserId: String {
+        UserDetails.userId(for: user)
+    }
+
     var user: [String: String] {
         get {
             return self._user
@@ -164,8 +168,10 @@ final class ParticipantRobot: Robot {
     
     private func participant() -> [String: Any]? {
         let json = TestData.toJson(.wsMessage)
-        let message = json[JSONKey.message] as! [String: Any]
-        let user = server.setUpUser(source: message, details: user)
-        return user
+        guard let message = json[JSONKey.message] as? [String: Any] else {
+            return nil
+        }
+
+        return server.setUpUser(source: message, details: _user)
     }
 }

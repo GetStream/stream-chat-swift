@@ -13,6 +13,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### sonar_upload
+
+```sh
+[bundle exec] fastlane sonar_upload
+```
+
+Get code coverage report and run complexity analysis for Sonar
+
 ### allure_upload
 
 ```sh
@@ -21,18 +29,18 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Upload test results to Allure TestOps
 
-### allure_testcase
+### allure_create_testcase
 
 ```sh
-[bundle exec] fastlane allure_testcase
+[bundle exec] fastlane allure_create_testcase
 ```
 
 Create test-case in Allure TestOps and get its id
 
-### allure_regression
+### allure_start_regression
 
 ```sh
-[bundle exec] fastlane allure_regression
+[bundle exec] fastlane allure_start_regression
 ```
 
 Sync and run regression test-plan on Allure TestOps
@@ -269,14 +277,6 @@ Test CocoaPods Integration
 ```
 
 Build and upload DemoApp to Emerge
-
-### sonar_upload
-
-```sh
-[bundle exec] fastlane sonar_upload
-```
-
-Get code coverage report and run complexity analysis for Sonar
 
 ----
 

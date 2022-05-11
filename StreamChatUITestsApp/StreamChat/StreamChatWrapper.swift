@@ -25,11 +25,15 @@ final class StreamChatWrapper {
         config.isLocalStorageEnabled = false
 
         // Customization
-        Components.default.channelListRouter = CustomChannelListRouter.self
-        Components.default.channelVC = ChannelVC.self
+        var components = Components.default
+        components.channelListRouter = CustomChannelListRouter.self
+        components.messageListRouter = CustomMessageListRouter.self
+        components.channelVC = ChannelVC.self
+        components.threadVC = ThreadVC.self
+        Components.default = components
 
         // create an instance of ChatClient and share it using the singleton
-        let environment: ChatClient.Environment = ChatClient.Environment()
+        let environment = ChatClient.Environment()
         ChatClient.shared = ChatClient(config: config, environment: environment)
 
         // connect to chat
