@@ -142,7 +142,12 @@ class MessageDTO: NSManagedObject {
         case .visibleForCurrentUser:
             deletedMessagesPredicate = onlyOwnDeletedMessagesPredicate()
         case .alwaysVisible:
-            deletedMessagesPredicate = NSPredicate(value: true) // an empty predicate to avoid optionals
+            deletedMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+                // Non-deleted messages
+                nonDeletedMessagesPredicate(),
+                // Deleted messages excluding ephemeral ones
+                NSPredicate(format: "deletedAt != nil AND type != %@", MessageType.ephemeral.rawValue)
+            ])
         }
 
         let ignoreHardDeletedMessagesPredicate = NSPredicate(
