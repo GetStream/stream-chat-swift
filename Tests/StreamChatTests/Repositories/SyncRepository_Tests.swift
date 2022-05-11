@@ -10,7 +10,6 @@ final class SyncRepository_Tests: XCTestCase {
     var _activeChannelControllers: NSHashTable<ChatChannelController>!
     var _activeChannelListControllers: NSHashTable<ChatChannelListController>!
     var client: ChatClient_Mock!
-    var channelRepository: ChannelListUpdater_Spy!
     var offlineRequestsRepository: OfflineRequestsRepository_Spy!
     var database: DatabaseContainer_Spy!
     var apiClient: APIClient_Spy!
@@ -29,7 +28,6 @@ final class SyncRepository_Tests: XCTestCase {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
         client = ChatClient_Mock(config: config)
-        channelRepository = ChannelListUpdater_Spy(database: client.databaseContainer, apiClient: client.apiClient)
         let messageRepository = MessageRepository_Spy(database: client.databaseContainer, apiClient: client.apiClient)
         offlineRequestsRepository = OfflineRequestsRepository_Spy(
             messageRepository: messageRepository,
@@ -56,8 +54,6 @@ final class SyncRepository_Tests: XCTestCase {
         _activeChannelListControllers = nil
         client.cleanUp()
         client = nil
-        channelRepository.cleanUp()
-        channelRepository = nil
         offlineRequestsRepository.clear()
         offlineRequestsRepository = nil
         database = nil
@@ -223,10 +219,10 @@ final class SyncRepository_Tests: XCTestCase {
             createChannel: true
         )
 
-        let chatListController = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
+        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
         chatListController.state = .remoteDataFetched
         _activeChannelListControllers.add(chatListController)
-        channelRepository.resetChannelsQueryResult = .success(([], []))
+        chatListController.resetChannelsQueryResult = .success(([], []))
 
         let eventDate = Date.unique
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(with: [eventDate])))
@@ -238,7 +234,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 1)
         XCTAssertCall(
-            "resetChannelsQuery(for:pageSize:watchedAndSynchedChannelIds:synchedChannelIds:completion:)", on: channelRepository,
+            "resetQuery(watchedAndSynchedChannelIds:synchedChannelIds:completion:)", on: chatListController,
             times: 1
         )
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
@@ -254,11 +250,11 @@ final class SyncRepository_Tests: XCTestCase {
             createChannel: true
         )
 
-        let chatListController = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
+        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
         chatListController.state = .remoteDataFetched
         _activeChannelListControllers.add(chatListController)
         let unwantedId = ChannelId.unique
-        channelRepository.resetChannelsQueryResult = .success(([], [unwantedId]))
+        chatListController.resetChannelsQueryResult = .success(([], [unwantedId]))
 
         let eventDate = Date.unique
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(with: [eventDate])))
@@ -270,7 +266,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 1)
         XCTAssertCall(
-            "resetChannelsQuery(for:pageSize:watchedAndSynchedChannelIds:synchedChannelIds:completion:)", on: channelRepository,
+            "resetQuery(watchedAndSynchedChannelIds:synchedChannelIds:completion:)", on: chatListController,
             times: 1
         )
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
@@ -597,7 +593,7 @@ final class SyncRepository_Tests: XCTestCase {
         _activeChannelControllers.add(channelController)
         
         // Add active channel list component
-        let channelListController = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
+        let channelListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
         channelListController.state = .remoteDataFetched
         _activeChannelListControllers.add(channelListController)
 
@@ -627,7 +623,7 @@ final class SyncRepository_Tests: XCTestCase {
         
         // Assert left operations are not executed
         AssertAsync {
-            Assert.staysTrue(self.channelRepository.recordedFunctions.isEmpty)
+            Assert.staysTrue(channelListController.recordedFunctions.isEmpty)
             Assert.staysFalse(completionCalled)
         }
     }
