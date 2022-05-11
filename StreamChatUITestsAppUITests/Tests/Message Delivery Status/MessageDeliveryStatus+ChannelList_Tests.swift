@@ -165,7 +165,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
 
 extension MessageDeliveryStatus_ChannelList_Tests {
 
-    func test_singleCheckmarkShownForMessageInPreview_whenThreadReplyIsSent() {
+    func test_noCheckmarkShownForMessageInPreview_whenThreadReplyIsSent() {
         linkToScenario(withId: 172)
 
         GIVEN("user opens chat") {
@@ -185,7 +185,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
         THEN("delivery status is hidden") {
             userRobot
                 .assertLastMessageInChannelPreview(message)
-                .assertMessageDeliveryStatusInChannelPreview(.sent)
+                .assertMessageDeliveryStatusInChannelPreview(nil)
                 .assertMessageReadCountInChannelPreview(readBy: 0)
         }
     }
@@ -219,7 +219,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
         }
     }
 
-    func test_doubleCheckmarkShownForMessageInPreview_whenThreadReplyReadByParticipant() {
+    func test_noCheckmarkShownForMessageInPreview_whenThreadReplyReadByParticipant() {
         linkToScenario(withId: 174)
 
         GIVEN("user opens the channel") {
@@ -242,7 +242,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
         THEN("user spots double checkmark next to the message") {
             userRobot
                 .assertLastMessageInChannelPreview(message)
-                .assertMessageDeliveryStatusInChannelPreview(.read)
+                .assertMessageDeliveryStatusInChannelPreview(nil)
         }
         AND("read count is hidden") {
             userRobot.assertMessageReadCountInChannelPreview(readBy: 0)
