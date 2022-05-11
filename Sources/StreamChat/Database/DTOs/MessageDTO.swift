@@ -754,7 +754,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         message.reactionScores[type.rawValue] = max(reactionScore - Int(reaction.score), 0)
-        message.reactionScores[type.rawValue] = reactionScore
         return reaction
     }
     
