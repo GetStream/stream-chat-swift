@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Expose `actions` on image attachment [#1979](https://github.com/GetStream/stream-chat-swift/issues/1979)
 - Expose `readBy/readByCount` on `ChatMessage` containing info about users who has seen this message. These fields are populated only for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
+- Expose preview message on `ChatChannel` [#1935](https://github.com/GetStream/stream-chat-swift/issues/1935)
 ### 🐞 Fixed
 - Fix unread messages count bumping logic [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
     - respect muted channels
