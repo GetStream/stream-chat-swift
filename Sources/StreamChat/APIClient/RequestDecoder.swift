@@ -39,7 +39,7 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.Unexpected("Expecting `HTTPURLResponse` but received: \(response?.description ?? "nil").")
         }
         
-        guard let data = data, data.isEmpty == false else {
+        guard let data = data, !data.isEmpty else {
             throw ClientError.ResponseBodyEmpty()
         }
         
