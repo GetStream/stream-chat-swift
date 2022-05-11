@@ -4,7 +4,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 ## StreamChat
 ### ✅ Added
-- Expose `actions` on image attachment [#1979](https://github.com/GetStream/stream-chat-swift/issues/1979)
 - Expose `readBy/readByCount` on `ChatMessage` containing info about users who has seen this message. These fields are populated only for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
 - Expose preview message on `ChatChannel` [#1935](https://github.com/GetStream/stream-chat-swift/issues/1935)
 ### 🐞 Fixed
@@ -13,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - respect muted users
     - decrement when message is hard deleted
 - Fix paginated channels in channel list were left without messages when sync is executed [#1985](https://github.com/GetStream/stream-chat-swift/issues/1985)
+- Fix `deletedMessagesVisibility == .alwaysVisible` shows deleted ephemeral messages in mesage list [#1991](https://github.com/GetStream/stream-chat-swift/issues/1991)
 ### 🔄 Changed
 - Rename `mentionedMessages` to `mentions` in `ChannelUnreadCount` [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
 - Changes `.team` filter `FilterKey` to accept `nil` as a parameter  [#1968](https://github.com/GetStream/stream-chat-swift/pull/1968)
