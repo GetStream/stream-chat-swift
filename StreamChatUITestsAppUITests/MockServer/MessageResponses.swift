@@ -6,6 +6,8 @@
 import Swifter
 import XCTest
 
+let messageKey = MessagePayloadsCodingKeys.self
+
 extension StreamMockServer {
     
     func configureMessagingEndpoints() {
@@ -24,9 +26,9 @@ extension StreamMockServer {
     
     func mockDeletedMessage(_ message: [String: Any]?, user: [String: Any]?) -> [String: Any]? {
         var mockedMessage = message
-        mockedMessage?[MessagePayloadsCodingKeys.deletedAt.rawValue] = TestData.currentDate
-        mockedMessage?[MessagePayloadsCodingKeys.type.rawValue] = MessageType.deleted.rawValue
-        mockedMessage?[MessagePayloadsCodingKeys.user.rawValue] = user
+        mockedMessage?[messageKey.deletedAt.rawValue] = TestData.currentDate
+        mockedMessage?[messageKey.type.rawValue] = MessageType.deleted.rawValue
+        mockedMessage?[messageKey.user.rawValue] = user
         return mockedMessage
     }
     
@@ -35,26 +37,32 @@ extension StreamMockServer {
         channelId: String?,
         messageId: String?,
         text: String?,
+        command: String? = nil,
+        type: MessageType = .regular,
         user: [String: Any]?,
         createdAt: String?,
         updatedAt: String?
     ) -> [String: Any]? {
         var mockedMessage = message
-        mockedMessage?[MessagePayloadsCodingKeys.user.rawValue] = user
+        mockedMessage?[messageKey.user.rawValue] = user
+        mockedMessage?[messageKey.type.rawValue] = type.rawValue
         if let createdAt = createdAt, let updatedAt = updatedAt {
-            mockedMessage?[MessagePayloadsCodingKeys.createdAt.rawValue] = createdAt
-            mockedMessage?[MessagePayloadsCodingKeys.updatedAt.rawValue] = updatedAt
+            mockedMessage?[messageKey.createdAt.rawValue] = createdAt
+            mockedMessage?[messageKey.updatedAt.rawValue] = updatedAt
         }
         if let messageId = messageId {
-            mockedMessage?[MessagePayloadsCodingKeys.id.rawValue] = messageId
+            mockedMessage?[messageKey.id.rawValue] = messageId
         }
         if let text = text {
-            mockedMessage?[MessagePayloadsCodingKeys.text.rawValue] = text
-            mockedMessage?[MessagePayloadsCodingKeys.html.rawValue] = text.html
+            mockedMessage?[messageKey.text.rawValue] = text
+            mockedMessage?[messageKey.html.rawValue] = text.html
+        }
+        if let command = command {
+            mockedMessage?[messageKey.command.rawValue] = command
         }
         if let channelId = channelId {
             let channelType = ChannelType.messaging.rawValue
-            mockedMessage?[MessagePayloadsCodingKeys.cid.rawValue] = "\(channelType):\(channelId)"
+            mockedMessage?[messageKey.cid.rawValue] = "\(channelType):\(channelId)"
             mockedMessage?[EventPayload.CodingKeys.channelId.rawValue] = channelId
         }
         return mockedMessage
@@ -63,7 +71,7 @@ extension StreamMockServer {
     private func messageUpdate(_ request: HttpRequest) throws -> HttpResponse {
         let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
         let message = findMessageById(messageId)
-        let cid = message?[MessagePayloadsCodingKeys.cid.rawValue] as? String
+        let cid = message?[messageKey.cid.rawValue] as? String
         let channelId = cid?.split(separator: ":").last.map { String($0) }
         if request.method == EndpointMethod.delete.rawValue {
             return messageDeletion(
@@ -86,9 +94,18 @@ extension StreamMockServer {
     ) -> HttpResponse {
         let json = TestData.toJson(request.body)
         let message = json[JSONKey.message] as? [String: Any]
-        let parentId = message?[MessagePayloadsCodingKeys.parentId.rawValue] as? String
-        let quotedMessageId = message?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] as? String
-        
+        let parentId = message?[messageKey.parentId.rawValue] as? String
+        let quotedMessageId = message?[messageKey.quotedMessageId.rawValue] as? String
+        if
+            let messageText = message?[messageKey.text.rawValue] as? String,
+            messageText.count > 2 {
+            let index = messageText.index(messageText.startIndex, offsetBy: 2)
+            if messageText.prefix(upTo: index).contains("/") {
+                return messageInvalidCommand(message,
+                                         command: String(messageText.dropFirst(2)),
+                                         channelId: channelId)
+            }
+        }
         if let parentId = parentId, let quotedMessageId = quotedMessageId {
             return quotedMessageCreationInThread(
                 message,
@@ -125,8 +142,8 @@ extension StreamMockServer {
         channelId: String?,
         eventType: EventType = .messageNew
     ) -> HttpResponse {
-        let text = message?[MessagePayloadsCodingKeys.text.rawValue] as? String
-        let messageId = message?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let text = message?[messageKey.text.rawValue] as? String
+        let messageId = message?[messageKey.id.rawValue] as? String
         var responseJson = TestData.toJson(.httpMessage)
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
@@ -161,8 +178,8 @@ extension StreamMockServer {
         quotedMessageId: String,
         eventType: EventType = .messageNew
     ) -> HttpResponse {
-        let text = message?[MessagePayloadsCodingKeys.text.rawValue] as? String
-        let messageId = message?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let text = message?[messageKey.text.rawValue] as? String
+        let messageId = message?[messageKey.id.rawValue] as? String
         var responseJson = TestData.toJson(.httpMessage)
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
@@ -177,8 +194,8 @@ extension StreamMockServer {
             eventType: eventType,
             user: user
         ) { message in
-            message?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
-            message?[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
+            message?[messageKey.quotedMessageId.rawValue] = quotedMessageId
+            message?[messageKey.quotedMessage.rawValue] = quotedMessage
             return message
         }
         
@@ -191,8 +208,8 @@ extension StreamMockServer {
             createdAt: timestamp,
             updatedAt: timestamp
         )
-        mockedMessage?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
-        mockedMessage?[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
+        mockedMessage?[messageKey.quotedMessageId.rawValue] = quotedMessageId
+        mockedMessage?[messageKey.quotedMessage.rawValue] = quotedMessage
         
         responseJson[JSONKey.message] = mockedMessage
         return .ok(.json(responseJson))
@@ -204,9 +221,9 @@ extension StreamMockServer {
         parentId: String,
         eventType: EventType = .messageNew
     ) -> HttpResponse {
-        let showInChannel = message?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] as? Bool
-        let text = message?[MessagePayloadsCodingKeys.text.rawValue] as? String
-        let messageId = message?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let showInChannel = message?[messageKey.showReplyInChannel.rawValue] as? Bool
+        let text = message?[messageKey.text.rawValue] as? String
+        let messageId = message?[messageKey.id.rawValue] as? String
         var responseJson = TestData.toJson(.httpMessage)
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
@@ -214,14 +231,14 @@ extension StreamMockServer {
         let parentMessage = findMessageById(parentId)
         
         websocketMessage(
-            parentMessage?[MessagePayloadsCodingKeys.text.rawValue] as? String,
+            parentMessage?[messageKey.text.rawValue] as? String,
             channelId: channelId,
             messageId: parentId,
-            timestamp: parentMessage?[MessagePayloadsCodingKeys.createdAt.rawValue] as? String,
+            timestamp: parentMessage?[messageKey.createdAt.rawValue] as? String,
             eventType: .messageUpdated,
             user: parentMessage?[JSONKey.user] as? [String: Any]
         ) { message in
-            message?[MessagePayloadsCodingKeys.threadParticipants.rawValue] = [user]
+            message?[messageKey.threadParticipants.rawValue] = [user]
             return message
         }
         
@@ -233,8 +250,8 @@ extension StreamMockServer {
             eventType: eventType,
             user: user
         ) { message in
-            message?[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
-            message?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = showInChannel
+            message?[messageKey.parentId.rawValue] = parentId
+            message?[messageKey.showReplyInChannel.rawValue] = showInChannel
             return message
         }
         
@@ -247,8 +264,8 @@ extension StreamMockServer {
             createdAt: timestamp,
             updatedAt: timestamp
         )
-        mockedMessage?[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
-        mockedMessage?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = showInChannel
+        mockedMessage?[messageKey.parentId.rawValue] = parentId
+        mockedMessage?[messageKey.showReplyInChannel.rawValue] = showInChannel
         
         responseJson[JSONKey.message] = mockedMessage
         return .ok(.json(responseJson))
@@ -261,9 +278,9 @@ extension StreamMockServer {
         quotedMessageId: String,
         eventType: EventType = .messageNew
     ) -> HttpResponse {
-        let showInChannel = message?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] as? Bool
-        let text = message?[MessagePayloadsCodingKeys.text.rawValue] as? String
-        let messageId = message?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let showInChannel = message?[messageKey.showReplyInChannel.rawValue] as? Bool
+        let text = message?[messageKey.text.rawValue] as? String
+        let messageId = message?[messageKey.id.rawValue] as? String
         var responseJson = TestData.toJson(.httpMessage)
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
@@ -272,14 +289,14 @@ extension StreamMockServer {
         let quotedMessage = findMessageById(quotedMessageId)
         
         websocketMessage(
-            parrentMessage?[MessagePayloadsCodingKeys.text.rawValue] as? String,
+            parrentMessage?[messageKey.text.rawValue] as? String,
             channelId: channelId,
             messageId: parentId,
-            timestamp: parrentMessage?[MessagePayloadsCodingKeys.createdAt.rawValue] as? String,
+            timestamp: parrentMessage?[messageKey.createdAt.rawValue] as? String,
             eventType: .messageUpdated,
             user: user
         ) { message in
-            message?[MessagePayloadsCodingKeys.threadParticipants.rawValue] = [user]
+            message?[messageKey.threadParticipants.rawValue] = [user]
             return message
         }
         
@@ -291,10 +308,10 @@ extension StreamMockServer {
             eventType: eventType,
             user: user
         ) { message in
-            message?[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
-            message?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = showInChannel
-            message?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
-            message?[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
+            message?[messageKey.parentId.rawValue] = parentId
+            message?[messageKey.showReplyInChannel.rawValue] = showInChannel
+            message?[messageKey.quotedMessageId.rawValue] = quotedMessageId
+            message?[messageKey.quotedMessage.rawValue] = quotedMessage
             return message
         }
         
@@ -307,10 +324,10 @@ extension StreamMockServer {
             createdAt: timestamp,
             updatedAt: timestamp
         )
-        mockedMessage?[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
-        mockedMessage?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = showInChannel
-        mockedMessage?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
-        mockedMessage?[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
+        mockedMessage?[messageKey.parentId.rawValue] = parentId
+        mockedMessage?[messageKey.showReplyInChannel.rawValue] = showInChannel
+        mockedMessage?[messageKey.quotedMessageId.rawValue] = quotedMessageId
+        mockedMessage?[messageKey.quotedMessage.rawValue] = quotedMessage
         
         responseJson[JSONKey.message] = mockedMessage
         return .ok(.json(responseJson))
@@ -342,5 +359,43 @@ extension StreamMockServer {
         let messages = findMessagesByParrentId(messageId)
         json[JSONKey.messages] = messages
         return .ok(.json(json))
+    }
+
+    private func messageInvalidCommand(
+        _ message: [String: Any]?,
+        command: String,
+        channelId: String?,
+        eventType: EventType = .messageRead
+    ) -> HttpResponse {
+        let text = "Sorry, command \(command) doesn't exist. Try posting your message without the starting /"
+        let messageId = message?[messageKey.id.rawValue] as? String
+        var responseJson = TestData.toJson(.httpMessage)
+        let responseMessage = responseJson[JSONKey.message] as? [String: Any]
+        let timestamp: String = TestData.currentDate
+        let user = setUpUser(source: responseMessage, details: UserDetails.lukeSkywalker)
+
+        websocketMessage(
+            text,
+            channelId: channelId,
+            messageId: messageId,
+            timestamp: timestamp,
+            eventType: eventType,
+            user: user
+        )
+
+        let mockedMessage = mockMessage(
+            responseMessage,
+            channelId: channelId,
+            messageId: messageId,
+            text: text,
+            command: command,
+            type: .error,
+            user: user,
+            createdAt: timestamp,
+            updatedAt: timestamp
+        )
+
+        responseJson[JSONKey.message] = mockedMessage
+        return .ok(.json(responseJson))
     }
 }

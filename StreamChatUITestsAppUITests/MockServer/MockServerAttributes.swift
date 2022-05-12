@@ -42,11 +42,6 @@ enum EndpointQuery {
     static let reactionType = ":reaction_type"
 }
 
-enum MessageType: String {
-    case regular
-    case deleted
-}
-
 enum JSONKey {
     static let messages = "messages"
     static let message = "message"
