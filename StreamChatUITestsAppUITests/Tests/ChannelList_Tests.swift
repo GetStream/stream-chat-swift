@@ -18,8 +18,9 @@ final class ChannelList_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("user sends a message with invalid command") {
-            userRobot.sendMessage(message)
-            userRobot.sendMessage("/\(invalidCommand)")
+            userRobot
+                .sendMessage(message)
+                .sendMessage("/\(invalidCommand)")
         }
         AND("error message is shown") {
             userRobot.waitForNewMessage(withText: Message.message(withInvalidCommand: invalidCommand))
