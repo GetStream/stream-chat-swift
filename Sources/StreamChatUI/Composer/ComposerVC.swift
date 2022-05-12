@@ -1060,11 +1060,6 @@ extension ComposerVC: ChatChannelControllerDelegate {
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        guard let message = channelController.channel?.lastMessageFromCurrentUser,
-              message.deliveryStatus == .sent else {
-            return
-        }
-        
         cooldownTracker.stop()
         cooldownTracker.start(with: currentCooldownTime())
     }

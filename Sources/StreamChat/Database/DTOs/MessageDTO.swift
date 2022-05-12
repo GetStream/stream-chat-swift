@@ -407,7 +407,8 @@ class MessageDTO: NSManagedObject {
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             .init(format: "channel.cid == %@", cid),
             .init(format: "user.id == %@", userId),
-            .init(format: "type != %@", MessageType.ephemeral.rawValue)
+            .init(format: "type != %@", MessageType.ephemeral.rawValue),
+            .init(format: "localMessageStateRaw == nil")
         ])
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = 1
