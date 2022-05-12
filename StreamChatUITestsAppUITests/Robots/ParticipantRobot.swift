@@ -16,7 +16,11 @@ final class ParticipantRobot: Robot {
     init(_ server: StreamMockServer) {
         self.server = server
     }
-    
+
+    var currentUserId: String {
+        UserDetails.userId(for: user)
+    }
+
     var user: [String: String] {
         get {
             return self._user
@@ -55,6 +59,13 @@ final class ParticipantRobot: Robot {
         return self
     }
     
+    // Think twice before using it
+    @discardableResult
+    func chill(duration: UInt32) -> Self {
+        sleep(duration)
+        return self
+    }
+    
     @discardableResult
     func readMessage() -> Self {
         server.websocketEvent(
@@ -79,7 +90,7 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func editMessage(_ text: String) -> Self {
-        let messageId = server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as! String
+        let messageId = server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
         server.websocketMessage(
             text,
             channelId: server.currentChannelId,
@@ -92,7 +103,7 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func deleteMessage() -> Self {
-        let messageId = server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as! String
+        let messageId = server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
         server.websocketMessage(
             channelId: server.currentChannelId,
             messageId: messageId,
@@ -104,11 +115,11 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func addReaction(type: TestData.Reactions) -> Self {
-        server.websocketDelay {
-            self.server.websocketReaction(
+        server.websocketDelay { [weak self] in
+            self?.server.websocketReaction(
                 type: type,
                 eventType: .reactionNew,
-                user: self.participant()
+                user: self?.participant()
             )
         }
         
@@ -117,11 +128,11 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func deleteReaction(type: TestData.Reactions) -> Self {
-        server.websocketDelay {
-            self.server.websocketReaction(
+        server.websocketDelay { [weak self] in
+            self?.server.websocketReaction(
                 type: type,
                 eventType: .reactionDeleted,
-                user: self.participant()
+                user: self?.participant()
             )
         }
         return self
@@ -130,7 +141,7 @@ final class ParticipantRobot: Robot {
     @discardableResult
     func replyToMessage(_ text: String) -> Self {
         let quotedMessage = server.lastMessage
-        let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as! String
+        let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
         server.websocketMessage(
             text,
             channelId: server.currentChannelId,
@@ -147,7 +158,7 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func replyToMessageInThread(_ text: String, alsoSendInChannel: Bool = false) -> Self {
-        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as! String)
+        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
         server.websocketMessage(
             text,
             channelId: server.currentChannelId,
@@ -164,8 +175,10 @@ final class ParticipantRobot: Robot {
     
     private func participant() -> [String: Any]? {
         let json = TestData.toJson(.wsMessage)
-        let message = json[JSONKey.message] as! [String: Any]
-        let user = server.setUpUser(source: message, details: user)
-        return user
+        guard let message = json[JSONKey.message] as? [String: Any] else {
+            return nil
+        }
+
+        return server.setUpUser(source: message, details: _user)
     }
 }

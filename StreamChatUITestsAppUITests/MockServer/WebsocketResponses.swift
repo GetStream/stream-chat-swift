@@ -17,7 +17,7 @@ extension StreamMockServer {
             closure()
         }
     }
-    
+
     /// Sends an event over a websocket connection
     ///
     /// - Parameters:
@@ -30,6 +30,12 @@ extension StreamMockServer {
         user: [String: Any]?,
         channelId: String
     ) -> Self {
+        let json = websocketEventJSON(eventType, user: user, channelId: channelId)
+        writeText(json.jsonToString())
+        return self
+    }
+
+    private func websocketEventJSON(_ eventType: EventType, user: [String: Any]?, channelId: String) -> [String: Any] {
         var json = TestData.getMockResponse(fromFile: .wsChatEvent).json
         json[EventPayload.CodingKeys.user.rawValue] = user
         json[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
@@ -37,9 +43,7 @@ extension StreamMockServer {
         json[EventPayload.CodingKeys.channelId.rawValue] = channelId
         json[EventPayload.CodingKeys.channelType.rawValue] = ChannelType.messaging.rawValue
         json[EventPayload.CodingKeys.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
-        
-        writeText(json.jsonToString())
-        return self
+        return json
     }
     
     /// Manages the lifecycle of the messages over a websocket connection
@@ -188,6 +192,10 @@ extension StreamMockServer {
         timestamp: String? = TestData.currentDate
     ) -> Self {
         var json = TestData.getMockResponse(fromFile: .wsChannelEvent).json
+
+        // updated config with current values
+        updateConfig(in: &json, withId: channelId)
+        
         json[JSONKey.channelId] = channelId
         json[JSONKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
         json[JSONKey.channelType] = ChannelType.messaging.rawValue

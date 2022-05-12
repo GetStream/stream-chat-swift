@@ -393,7 +393,7 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: payload)
         }
 
-        var channel: ChatChannel? { database.viewContext.channel(cid: channelId)?.asModel() }
+        var channel: ChatChannel? { try? database.viewContext.channel(cid: channelId)?.asModel() }
         XCTAssertNotNil(channel?.membership)
 
         // Simulate the channel was updated and it no longer has membership
@@ -416,7 +416,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         // Assert only 25 messages is serialized in the model
-        let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        let channel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
         XCTAssertEqual(channel?.latestMessages.count, 25)
     }
 
@@ -436,7 +436,7 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: payload)
         }
 
-        let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        let channel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
         XCTAssertEqual(channel?.pinnedMessages.count, payload.pinnedMessages.count)
     }
 
@@ -496,7 +496,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         // Assert only the 10 newest messages is serialized
-        let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        let channel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
         XCTAssertEqual(channel?.latestMessages.count, 10)
     }
 
@@ -530,7 +530,7 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: payload)
         }
 
-        let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        let channel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
         XCTAssertEqual(channel?.latestMessages.count, 1)
     }
 
@@ -564,7 +564,7 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: payload)
         }
 
-        let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        let channel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
         XCTAssertEqual(channel?.latestMessages.count, 2)
     }
     
@@ -771,7 +771,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the fields are correct
-        let loadedChannel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        let loadedChannel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
         
         XCTAssertEqual(loadedChannel?.extraData, [:])
     }
@@ -993,18 +993,16 @@ final class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel
-        var channel: ChatChannel {
-            database.viewContext.channel(cid: cid)!.asModel()
-        }
-        
+        func getChannel() throws -> ChatChannel { try channel(with: cid) }
+
         // Assert channel's currentlyTypingUsers are not empty
-        XCTAssertFalse(channel.currentlyTypingUsers.isEmpty)
+        try XCTAssertFalse(getChannel().currentlyTypingUsers.isEmpty)
         
         // Simulate `resetEphemeralValues`
         database.resetEphemeralValues()
         
         // Assert channel's currentlyTypingUsers are cleared
-        AssertAsync.willBeTrue(channel.currentlyTypingUsers.isEmpty)
+        AssertAsync.willBeTrue((try? getChannel().currentlyTypingUsers.isEmpty) ?? false)
     }
     
     func test_createFromDTO_handlesExtraDataCorrectlyWhenPresent() throws {
@@ -1012,9 +1010,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         let extraData: [String: RawJSON] = ["k": .string("v")]
         try database.createChannel(cid: cid, channelExtraData: extraData)
-        var channel: ChatChannel {
-            database.viewContext.channel(cid: cid)!.asModel()
-        }
+        let channel = try self.channel(with: cid)
         XCTAssertEqual(channel.extraData, ["k": .string("v")])
     }
 
@@ -1035,21 +1031,19 @@ final class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel
-        var channel: ChatChannel {
-            database.viewContext.channel(cid: cid)!.asModel()
-        }
-        
+        func getChannel() throws -> ChatChannel { try channel(with: cid) }
+
         // Assert channel's watchers are not empty, watcherCount not zero
-        XCTAssertFalse(channel.lastActiveWatchers.isEmpty)
-        XCTAssertNotEqual(channel.watcherCount, 0)
+        try XCTAssertFalse(getChannel().lastActiveWatchers.isEmpty)
+        try XCTAssertNotEqual(getChannel().watcherCount, 0)
         
         // Simulate `resetEphemeralValues`
         database.resetEphemeralValues()
         
         // Assert channel's watchers are cleared, watcherCount zero'ed
         AssertAsync {
-            Assert.willBeTrue(channel.lastActiveWatchers.isEmpty)
-            Assert.willBeEqual(channel.watcherCount, 0)
+            Assert.willBeTrue((try? getChannel().lastActiveWatchers.isEmpty) ?? false)
+            Assert.willBeEqual(try? getChannel().watcherCount, 0)
         }
     }
 
@@ -1193,5 +1187,11 @@ final class ChannelDTO_Tests: XCTestCase {
             Set(channel.latestMessages.map(\.id)),
             Set([message1.id, deletedMessageFromCurrentUser.id, shadowedMessageFromAnotherUser.id])
         )
+    }
+}
+
+private extension ChannelDTO_Tests {
+    func channel(with cid: ChannelId) throws -> ChatChannel {
+        try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
     }
 }

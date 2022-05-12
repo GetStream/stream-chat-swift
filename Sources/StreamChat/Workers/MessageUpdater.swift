@@ -246,8 +246,7 @@ class MessageUpdater: Worker {
                 var reactions: [ChatMessageReaction] = []
                 self.database.write({ session in
                     try payload.reactions.forEach {
-                        let reactionDTO = try session.saveReaction(payload: $0)
-                        let reaction = reactionDTO.asModel()
+                        let reaction = try session.saveReaction(payload: $0).asModel()
                         reactions.append(reaction)
                     }
                 }, completion: { error in
@@ -514,6 +513,7 @@ class MessageUpdater: Worker {
             guard action.isCancel == false else {
                 // For ephemeral messages we don't change `state` to `.deleted`
                 messageDTO.deletedAt = Date()
+                messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
                 return
             }
 

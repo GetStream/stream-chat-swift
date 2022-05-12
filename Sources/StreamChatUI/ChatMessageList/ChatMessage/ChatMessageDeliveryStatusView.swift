@@ -48,6 +48,11 @@ open class ChatMessageDeliveryStatusView: _Control, ThemeProvider {
         
         stackView.isUserInteractionEnabled = false
         isUserInteractionEnabled = false
+        accessibilityElements = [
+            messageReadСountsLabel,
+            messageDeliveryChekmarkView,
+            stackView
+        ]
     }
     
     override open func setUpAppearance() {

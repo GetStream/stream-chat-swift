@@ -85,7 +85,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            client.databaseContainer.viewContext.message(
+            try client.databaseContainer.viewContext.message(
                 id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779"
             )?.asModel().latestReactions.first?.updatedAt.description,
             lastUpdateMessageTime
@@ -96,7 +96,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
         AssertAsync {
             Assert.willBeEqual(
-                self.client.databaseContainer.viewContext.message(
+                try? self.client.databaseContainer.viewContext.message(
                     id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779"
                 )?.asModel().latestReactions.first?.updatedAt.description,
                 "2020-07-20 17:09:56 +0000"

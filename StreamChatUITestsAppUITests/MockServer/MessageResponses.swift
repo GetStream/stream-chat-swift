@@ -211,15 +211,15 @@ extension StreamMockServer {
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
         let user = setUpUser(source: responseMessage, details: UserDetails.lukeSkywalker)
-        let parrentMessage = findMessageById(parentId)
+        let parentMessage = findMessageById(parentId)
         
         websocketMessage(
-            parrentMessage?[MessagePayloadsCodingKeys.text.rawValue] as? String,
+            parentMessage?[MessagePayloadsCodingKeys.text.rawValue] as? String,
             channelId: channelId,
             messageId: parentId,
-            timestamp: parrentMessage?[MessagePayloadsCodingKeys.createdAt.rawValue] as? String,
+            timestamp: parentMessage?[MessagePayloadsCodingKeys.createdAt.rawValue] as? String,
             eventType: .messageUpdated,
-            user: user
+            user: parentMessage?[JSONKey.user] as? [String: Any]
         ) { message in
             message?[MessagePayloadsCodingKeys.threadParticipants.rawValue] = [user]
             return message
@@ -320,16 +320,18 @@ extension StreamMockServer {
         var json = TestData.toJson(.httpMessage)
         let message = findMessageById(messageId)
         let timestamp: String = TestData.currentDate
-        let user = setUpUser(source: message, details: UserDetails.lukeSkywalker)
+        let user = message?[JSONKey.user] as? [String: Any]
         let mockedMessage = mockDeletedMessage(message, user: user)
         
-        websocketMessage(
-            channelId: channelId,
-            messageId: messageId,
-            timestamp: timestamp,
-            eventType: .messageDeleted,
-            user: user
-        )
+        websocketDelay { [weak self] in
+            self?.websocketMessage(
+                channelId: channelId,
+                messageId: messageId,
+                timestamp: timestamp,
+                eventType: .messageDeleted,
+                user: user
+            )
+        }
         
         json[JSONKey.message] = mockedMessage
         return .ok(.json(json))

@@ -19,8 +19,9 @@ final class StreamMockServer {
     private var _messageList: [[String: Any]] = []
     private var _channelList = TestData.toJson(.httpChannels)
     private var _currentChannelId: String = ""
+    private var channelConfigs = ChannelConfigs()
     
-    public var messageList: [[String: Any]] {
+    var messageList: [[String: Any]] {
         get {
             return self._messageList
         }
@@ -29,7 +30,7 @@ final class StreamMockServer {
         }
     }
     
-    public var channelList: [String: Any] {
+    var channelList: [String: Any] {
         get {
             return self._channelList
         }
@@ -38,7 +39,7 @@ final class StreamMockServer {
         }
     }
     
-    public var currentChannelId: String {
+    var currentChannelId: String {
         get {
             return self._currentChannelId
         }
@@ -46,7 +47,7 @@ final class StreamMockServer {
             self._currentChannelId = newValue
         }
     }
-    
+
     func start(port: UInt16) {
         do {
             try server.start(port)
@@ -84,5 +85,22 @@ final class StreamMockServer {
     
     private func healthCheck() {
         writeText(TestData.getMockResponse(fromFile: .wsHealthCheck))
+    }
+}
+
+// MARK: Config
+
+extension StreamMockServer {
+
+    func config(forChannelId id: String) -> ChannelConfig_Mock? {
+        channelConfigs.config(forChannelId: id, server: self)
+    }
+
+    func updateConfig(config: ChannelConfig_Mock, forChannelWithId id: String) {
+        channelConfigs.updateConfig(config: config, forChannelWithId: id, server: self)
+    }
+
+    func updateConfig(in channel: inout [String: Any], withId id: String) {
+        channelConfigs.updateChannel(channel: &channel, withId: id)
     }
 }

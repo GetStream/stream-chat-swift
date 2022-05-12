@@ -129,3 +129,22 @@ var body: some Scene {
 ```
 
 These are all the steps needed to provide your own navigation header in the chat channel.
+
+## Using the Chat Info Screen
+
+In most chat apps, the navigation bar contains a link to a screen that contains information about the chat, such as its participants, list of the pinned messages, files, media, etc, as well as a possibility to add members to the chat. This view is displayed by default if you tap on the right navigation bar button in the channel header.
+
+If you want to use this screen in your custom navigation bar (or anywhere else), you can simply initalize it with a channel.
+
+```swift
+ToolbarItem(placement: .navigationBarTrailing) {
+    NavigationLink(destination: ChatChannelInfoView(channel: channel)) {
+        ChannelAvatarView(
+            avatar: headerImage,
+            showOnlineIndicator: onlineIndicatorShown,
+            size: CGSize(width: 36, height: 36)
+        )
+        .offset(x: 8)
+    }
+}
+```

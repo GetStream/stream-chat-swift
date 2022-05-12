@@ -129,8 +129,8 @@ extension StreamMockServer {
             timestamp: timestamp
         )
         
-        websocketDelay {
-            self.websocketReaction(
+        websocketDelay { [weak self] in
+            self?.websocketReaction(
                 type: TestData.Reactions(rawValue: String(describing: reactionType)),
                 eventType: eventType,
                 user: user

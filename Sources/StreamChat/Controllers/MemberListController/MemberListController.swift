@@ -93,7 +93,7 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         let observer = environment.memberListObserverBuilder(
             client.databaseContainer.viewContext,
             MemberDTO.members(matching: query),
-            { $0.asModel() },
+            { try $0.asModel() },
             NSFetchedResultsController<MemberDTO>.self
         )
         
@@ -157,7 +157,7 @@ extension ChatChannelMemberListController {
         var memberListObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
-            _ itemCreator: @escaping (MemberDTO) -> ChatChannelMember,
+            _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember,
             _ controllerType: NSFetchedResultsController<MemberDTO>.Type
         ) -> ListDatabaseObserver<ChatChannelMember, MemberDTO> = ListDatabaseObserver.init
     }

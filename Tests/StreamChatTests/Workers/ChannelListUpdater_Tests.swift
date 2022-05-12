@@ -64,7 +64,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         
         // Assert the data is stored in the DB
         var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
+            try? database.viewContext.channel(cid: cid)?.asModel()
         }
         AssertAsync {
             Assert.willBeTrue(channel != nil)
@@ -131,7 +131,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
         var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
         listUpdater.resetChannelsQuery(
             for: query,
-            watchedChannelIds: Set<ChannelId>(),
+            pageSize: query.pagination.pageSize,
+            watchedAndSynchedChannelIds: Set<ChannelId>(),
             synchedChannelIds: Set<ChannelId>()
         ) { result in
             receivedResult = result
@@ -166,7 +167,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
         var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
         listUpdater.resetChannelsQuery(
             for: query,
-            watchedChannelIds: Set<ChannelId>(),
+            pageSize: query.pagination.pageSize,
+            watchedAndSynchedChannelIds: Set<ChannelId>(),
             synchedChannelIds: Set<ChannelId>()
         ) { result in
             receivedResult = result
@@ -225,7 +227,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
         var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
         listUpdater.resetChannelsQuery(
             for: query,
-            watchedChannelIds: watchedChannelIds,
+            pageSize: query.pagination.pageSize,
+            watchedAndSynchedChannelIds: watchedChannelIds,
             synchedChannelIds: synchedChannelIds
         ) { result in
             receivedResult = result
@@ -383,7 +386,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertEqual(
-            Set(cids.compactMap { database.viewContext.channel(cid: $0)?.asModel().cid }),
+            Set(cids.compactMap { try? database.viewContext.channel(cid: $0)?.asModel().cid }),
             Set(cids)
         )
         XCTAssertNil(actualError)

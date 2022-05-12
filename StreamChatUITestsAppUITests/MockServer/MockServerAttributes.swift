@@ -14,12 +14,13 @@ enum MockFile: String {
     case wsChatEvent = "ws_events"
     case wsChannelEvent = "ws_events_channel"
     case wsMemberEvent = "ws_events_member"
+    case wsUserEvent = "ws_events_user"
     case wsReaction = "ws_reaction"
     case wsHealthCheck = "ws_health_check"
     case httpChannels = "http_channels"
 }
 
-struct MockEndpoint {
+enum MockEndpoint {
     static let connect = "/connect"
     
     static let messageUpdate = "/messages/\(EndpointQuery.messageId)"
@@ -46,7 +47,7 @@ enum MessageType: String {
     case deleted
 }
 
-struct JSONKey {
+enum JSONKey {
     static let messages = "messages"
     static let message = "message"
     static let reaction = "reaction"
@@ -58,21 +59,22 @@ struct JSONKey {
     static let channel = "channel"
     static let channelId = "channel_id"
     static let channelType = "channel_type"
+    static let config = "config"
     static let createdAt = "created_at"
     static let eventType = "type"
     static let members = "members"
     static let member = "member"
     static let id = "id"
 
-    struct Channel {
+    enum Channel {
         static let addMembers = "add_members"
         static let removeMembers = "remove_members"
     }
 }
 
-struct UserDetails {
+enum UserDetails {
 
-    static var users: [[String: Any]] {
+    static var users: [[String: String]] {
         [
             hanSolo,
             lukeSkywalker,
@@ -127,12 +129,16 @@ struct UserDetails {
         UserPayloadsCodingKeys.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
     ]
 
-    static func unknownUser(withUserId userId: String) -> [String: Any] {
+    static func unknownUser(withUserId userId: String) -> [String: String] {
         [
             UserPayloadsCodingKeys.id.rawValue: userId,
             UserPayloadsCodingKeys.name.rawValue: userName(for: userId),
             UserPayloadsCodingKeys.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
         ]
+    }
+
+    static func userId(for user: [String: String]) -> String {
+        user[UserPayloadsCodingKeys.id.rawValue] ?? leiaOrganaId
     }
 
     static func userName(for id: String) -> String {
@@ -142,17 +148,19 @@ struct UserDetails {
             .joined(separator: " ")
     }
 
-    static func user(withUserId userId: String) -> (id: String, name: String, url: String) {
-        var user = UserDetails.users.first(where: { ($0[UserPayloadsCodingKeys.id.rawValue] as? String) == userId })
-
-        if user == nil {
-            user = UserDetails.unknownUser(withUserId: userId)
-        }
-
+    static func userTuple(withUserId userId: String) -> (id: String, name: String, url: String) {
+        let user = user(withUserId: userId)
         return (
-            (user?[UserPayloadsCodingKeys.id.rawValue] as? String) ?? leiaOrganaId,
-            (user?[UserPayloadsCodingKeys.name.rawValue] as? String) ?? "Leia Organa",
-            (user?[UserPayloadsCodingKeys.imageURL.rawValue] as? String) ?? "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
+            user[UserPayloadsCodingKeys.id.rawValue] ?? leiaOrganaId,
+            user[UserPayloadsCodingKeys.name.rawValue] ?? "Leia Organa",
+            user[UserPayloadsCodingKeys.imageURL.rawValue] ?? "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
         )
+    }
+
+    static func user(withUserId userId: String) -> [String: String] {
+        guard let user = UserDetails.users.first(where: { $0[UserPayloadsCodingKeys.id.rawValue] == userId }) else {
+            return UserDetails.unknownUser(withUserId: userId)
+        }
+        return user
     }
 }

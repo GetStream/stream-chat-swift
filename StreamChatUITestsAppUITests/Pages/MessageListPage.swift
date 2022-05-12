@@ -4,6 +4,7 @@
 
 import Foundation
 import XCTest
+import StreamChat
 
 // swiftlint:disable convenience_type
 
@@ -52,7 +53,6 @@ class MessageListPage {
             static var showMemberInfo: XCUIElement { alert.buttons["Show Members"] }
             static var dismissMemberInfo: XCUIElement { app.alerts["Members"].buttons["Cancel"] }
         }
-
     }
     
     enum Composer {
@@ -81,30 +81,71 @@ class MessageListPage {
     }
     
     enum ContextMenu {
-        static var reactionsView: XCUIElement { app.otherElements["ChatReactionPickerReactionsView"] }
-        static var reply: XCUIElement { app.otherElements["InlineReplyActionItem"] }
-        static var threadReply: XCUIElement { app.otherElements["ThreadReplyActionItem"] }
-        static var copy: XCUIElement { app.otherElements["CopyActionItem"] }
-        static var flag: XCUIElement { app.otherElements["FlagActionItem"] }
-        static var mute: XCUIElement { app.otherElements["MuteUserActionItem"] }
-        static var unmute: XCUIElement { app.otherElements["UnmuteUserActionItem"] }
-        static var edit: XCUIElement { app.otherElements["EditActionItem"] }
-        static var delete: XCUIElement { app.otherElements["DeleteActionItem"] }
-        static var resend: XCUIElement { app.otherElements["ResendActionItem"] }
-        static var block: XCUIElement { app.otherElements["BlockUserActionItem"] }
-        static var unblock: XCUIElement { app.otherElements["UnblockUserActionItem"] }
+        case reactions
+        case reply
+        case threadReply
+        case copy
+        case flag
+        case mute
+        case edit
+        case delete
+        case resend
+        case block
+        case unblock
+
+        var element: XCUIElement {
+            switch self {
+            case .reactions:
+                return Element.reactionsView
+            case .reply:
+                return Element.reply
+            case .threadReply:
+                return Element.threadReply
+            case .copy:
+                return Element.copy
+            case .flag:
+                return Element.flag
+            case .mute:
+                return Element.mute
+            case .edit:
+                return Element.edit
+            case .delete:
+                return Element.delete
+            case .resend:
+                return Element.resend
+            case .block:
+                return Element.block
+            case .unblock:
+                return Element.unblock
+            }
+        }
+
+        struct Element {
+            static var reactionsView: XCUIElement { app.otherElements["ChatReactionPickerReactionsView"] }
+            static var reply: XCUIElement { app.otherElements["InlineReplyActionItem"] }
+            static var threadReply: XCUIElement { app.otherElements["ThreadReplyActionItem"] }
+            static var copy: XCUIElement { app.otherElements["CopyActionItem"] }
+            static var flag: XCUIElement { app.otherElements["FlagActionItem"] }
+            static var mute: XCUIElement { app.otherElements["MuteUserActionItem"] }
+            static var unmute: XCUIElement { app.otherElements["UnmuteUserActionItem"] }
+            static var edit: XCUIElement { app.otherElements["EditActionItem"] }
+            static var delete: XCUIElement { app.otherElements["DeleteActionItem"] }
+            static var resend: XCUIElement { app.otherElements["ResendActionItem"] }
+            static var block: XCUIElement { app.otherElements["BlockUserActionItem"] }
+            static var unblock: XCUIElement { app.otherElements["UnblockUserActionItem"] }
+        }
     }
     
     enum Attributes {
-        static func reactionButton(messageCell: XCUIElement) -> XCUIElement {
+        static func reactionButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["ChatMessageReactionItemView"]
         }
         
-        static func threadButton(messageCell: XCUIElement) -> XCUIElement {
+        static func threadButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["threadReplyCountButton"]
         }
         
-        static func time(messageCell: XCUIElement) -> XCUIElement {
+        static func time(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["timestampLabel"]
         }
         
@@ -112,26 +153,37 @@ class MessageListPage {
             messageCell.staticTexts["authorNameLabel"]
         }
         
-        static func text(messageCell: XCUIElement) -> XCUIElement {
+        static func text(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.textViews["textView"]
         }
         
-        static func quotedText(_ text: String, messageCell: XCUIElement) -> XCUIElement {
+        static func quotedText(_ text: String, in messageCell: XCUIElement) -> XCUIElement {
             messageCell.textViews.matching(NSPredicate(format: "value LIKE '\(text)'")).firstMatch
         }
         
-        static func deletedIcon(messageCell: XCUIElement) -> XCUIElement {
+        static func deletedIcon(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.images["onlyVisibleToYouImageView"]
         }
         
-        static func deletedLabel(messageCell: XCUIElement) -> XCUIElement {
+        static func deletedLabel(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["onlyVisibleToYouLabel"]
         }
 
-        static func errorButton(messageCell: XCUIElement) -> XCUIElement {
+        static func errorButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["error indicator"]
         }
 
+        static func readCount(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.staticTexts["messageReadСountsLabel"]
+        }
+
+        static func statusCheckmark(for status: MessageDeliveryStatus?, in messageCell: XCUIElement) -> XCUIElement {
+            var identifier = "imageView"
+            if let status = status {
+                identifier = "\(identifier)_\(status.rawValue)"
+            }
+            return messageCell.images[identifier]
+        }
     }
     
     enum PopUpButtons {

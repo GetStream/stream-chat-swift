@@ -84,7 +84,6 @@ public class ChatClient {
             config,
             activeChannelControllers,
             activeChannelListControllers,
-            channelRepository,
             offlineRequestsRepository,
             eventNotificationCenter,
             databaseContainer,
@@ -539,7 +538,6 @@ extension ChatClient {
             _ config: ChatClientConfig,
             _ activeChannelControllers: NSHashTable<ChatChannelController>,
             _ activeChannelListControllers: NSHashTable<ChatChannelListController>,
-            _ channelRepository: ChannelListUpdater,
             _ offlineRequestsRepository: OfflineRequestsRepository,
             _ eventNotificationCenter: EventNotificationCenter,
             _ database: DatabaseContainer,
@@ -549,11 +547,10 @@ extension ChatClient {
                 config: $0,
                 activeChannelControllers: $1,
                 activeChannelListControllers: $2,
-                channelRepository: $3,
-                offlineRequestsRepository: $4,
-                eventNotificationCenter: $5,
-                database: $6,
-                apiClient: $7
+                offlineRequestsRepository: $3,
+                eventNotificationCenter: $4,
+                database: $5,
+                apiClient: $6
             )
         }
         

@@ -101,7 +101,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     /// Used for observing the changes in the DB.
     private(set) var frc: NSFetchedResultsController<DTO>!
     
-    let itemCreator: (DTO) -> Item?
+    let itemCreator: (DTO) throws -> Item
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
     
@@ -124,7 +124,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     init(
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
-        itemCreator: @escaping (DTO) -> Item?,
+        itemCreator: @escaping (DTO) throws -> Item,
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.context = context
@@ -163,7 +163,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             return fetchedObjects.first.flatMap { dto in
                 var result: Item?
                 context.performAndWait {
-                    result = itemCreator(dto)
+                    result = try? itemCreator(dto)
                 }
                 return result
             }

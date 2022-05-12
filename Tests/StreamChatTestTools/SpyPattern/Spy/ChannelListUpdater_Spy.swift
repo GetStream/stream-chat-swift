@@ -57,7 +57,8 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
 
     override func resetChannelsQuery(
         for query: ChannelListQuery,
-        watchedChannelIds: Set<ChannelId>,
+        pageSize: Int,
+        watchedAndSynchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
         completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {

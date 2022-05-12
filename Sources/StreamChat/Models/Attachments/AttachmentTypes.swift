@@ -18,7 +18,6 @@ enum AttachmentCodingKeys: String, CodingKey, CaseIterable {
     case imageURL = "image_url"
     case assetURL = "asset_url"
     case titleLink = "title_link"
-    case actions
 }
 
 /// A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.

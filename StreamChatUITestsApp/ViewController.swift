@@ -4,6 +4,7 @@
 
 import UIKit
 import StreamChat
+import StreamChatUI
 
 final class ViewController: UIViewController {
 
@@ -12,6 +13,7 @@ final class ViewController: UIViewController {
 
     var channelController: ChatChannelController?
     var router: CustomChannelListRouter?
+    var messageListRouter: CustomMessageListRouter?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +46,8 @@ final class ViewController: UIViewController {
         router?.onChannelViewWillAppear = { [weak self] channelVC in
             guard let self = self else { return }
             self.channelController = channelVC.channelController
+
+            // show connection switch if needed
             let switchControl = self.createIsConnectedSwitchIfNeeded()
             if let switchControl = switchControl {
                 channelVC.navigationItem.titleView = switchControl
@@ -51,6 +55,9 @@ final class ViewController: UIViewController {
 
             // Show debug button on the right side
             channelVC.navigationItem.rightBarButtonItems?.append(self.createDebugButton())
+
+            // Hook on mesage list router
+            self.configureMessageListRouter(router: channelVC.messageListVC.router)
         }
 
         // Settings
@@ -62,6 +69,19 @@ final class ViewController: UIViewController {
         // pops when tapped on user icon
         router?.onLeave = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
+        }
+    }
+
+    private func configureMessageListRouter(router: ChatMessageListRouter) {
+        guard let router = router as? CustomMessageListRouter else {
+            return
+        }
+
+        self.messageListRouter = router
+        messageListRouter?.onThreadViewWillAppear = { [weak self] threadVC in
+            guard let self = self else { return }
+            threadVC.navigationItem.rightBarButtonItem = self.createDebugButton()
+            threadVC.navigationItem.titleView = self.createIsConnectedSwitchIfNeeded()
         }
     }
 

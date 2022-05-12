@@ -46,7 +46,7 @@ class TypingEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
         
-        return TypingEvent(
+        return try? TypingEvent(
             isTyping: isTyping,
             cid: cid,
             user: userDTO.asModel(),

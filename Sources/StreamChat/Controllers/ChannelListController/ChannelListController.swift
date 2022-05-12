@@ -75,7 +75,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer.viewContext,
             request,
-            { $0.asModel() }
+            { try $0.asModel() }
         )
         
         observer.onChange = { [weak self] changes in
@@ -107,7 +107,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer.viewContext,
             ChannelDTO.channelsFetchRequest(notLinkedTo: query),
-            { $0.asModel() }
+            { try $0.asModel() }
         )
         
         observer.onChange = { [weak self] changes in
@@ -154,12 +154,14 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private func updateChannelList(
         _ completion: ((_ error: Error?) -> Void)? = nil
     ) {
+        let limit = query.pagination.pageSize
         worker.update(
             channelListQuery: query
         ) { result in
             switch result {
-            case .success:
+            case let .success(channels):
                 self.state = .remoteDataFetched
+                self.hasLoadedAllPreviousChannels = channels.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
@@ -321,6 +323,28 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
+    func resetQuery(
+        watchedAndSynchedChannelIds: Set<ChannelId>,
+        synchedChannelIds: Set<ChannelId>,
+        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
+    ) {
+        let pageSize = query.pagination.pageSize
+        worker.resetChannelsQuery(
+            for: query,
+            pageSize: pageSize,
+            watchedAndSynchedChannelIds: watchedAndSynchedChannelIds,
+            synchedChannelIds: synchedChannelIds
+        ) { [weak self] result in
+            switch result {
+            case let .success((newChannels, unwantedCids)):
+                self?.hasLoadedAllPreviousChannels = newChannels.count < pageSize
+                completion(.success((newChannels, unwantedCids)))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
     @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
     public func markAllRead(completion: ((Error?) -> Void)? = nil) {
         worker.markAllRead { error in
@@ -341,7 +365,7 @@ extension ChatChannelListController {
         var createChannelListDatabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
-            _ itemCreator: @escaping (ChannelDTO) -> ChatChannel
+            _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel
         )
             -> ListDatabaseObserver<ChatChannel, ChannelDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)

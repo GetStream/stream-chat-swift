@@ -1,0 +1,18 @@
+{
+  "user": {
+    "id": "han_solo",
+    "role": "user",
+    "created_at": "2020-12-07T11:37:34.230369Z",
+    "updated_at": "2022-03-21T15:23:04.466699Z",
+    "last_active": "2022-03-28T17:49:21.522571744Z",
+    "banned": false,
+    "online": true,
+    "name": "Han Solo",
+    "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+    "birthland": "Corellia",
+    "extraData": {},
+    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+  },
+  "type": "user.presence.changed",
+  "created_at": "2022-05-06T09:41:39.052596002Z"
+}

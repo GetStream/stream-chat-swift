@@ -21,7 +21,7 @@ extension StreamMockServer {
 
     func memberJSONs(for ids: [String]) -> [[String: Any]] {
         ids.map {
-            let user = UserDetails.user(withUserId: $0)
+            let user = UserDetails.userTuple(withUserId: $0)
             var member = TestData.toJson(.httpMember)
             member[JSONKey.userId] = user.id
             member[UserPayloadsCodingKeys.id.rawValue] = user.name

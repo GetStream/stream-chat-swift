@@ -142,7 +142,12 @@ class MessageDTO: NSManagedObject {
         case .visibleForCurrentUser:
             deletedMessagesPredicate = onlyOwnDeletedMessagesPredicate()
         case .alwaysVisible:
-            deletedMessagesPredicate = NSPredicate(value: true) // an empty predicate to avoid optionals
+            deletedMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+                // Non-deleted messages
+                nonDeletedMessagesPredicate(),
+                // Deleted messages excluding ephemeral ones
+                NSPredicate(format: "deletedAt != nil AND type != %@", MessageType.ephemeral.rawValue)
+            ])
         }
 
         let ignoreHardDeletedMessagesPredicate = NSPredicate(
@@ -165,6 +170,19 @@ class MessageDTO: NSManagedObject {
         .init(orPredicateWithSubpredicates: [
             .init(format: "channel.truncatedAt == nil"),
             .init(format: "createdAt >= channel.truncatedAt")
+        ])
+    }
+    
+    /// Returns predicate for the channel preview message.
+    private static func previewMessagePredicate(cid: String, includeShadowedMessages: Bool) -> NSPredicate {
+        NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelMessagesPredicate(
+                for: cid,
+                deletedMessagesVisibility: .alwaysHidden,
+                shouldShowShadowedMessages: includeShadowedMessages
+            ),
+            .init(format: "type != %@", MessageType.ephemeral.rawValue),
+            .init(format: "type != %@", MessageType.error.rawValue)
         ])
     }
     
@@ -307,6 +325,19 @@ class MessageDTO: NSManagedObject {
         request.fetchLimit = limit
         request.fetchOffset = offset
         return load(by: request, context: context)
+    }
+    
+    static func preview(for cid: String, context: NSManagedObjectContext) -> MessageDTO? {
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = previewMessagePredicate(
+            cid: cid,
+            includeShadowedMessages: context.shouldShowShadowedMessages ?? false
+        )
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.fetchOffset = 0
+        request.fetchLimit = 1
+        
+        return load(by: request, context: context).first
     }
     
     static func load(id: String, context: NSManagedObjectContext) -> MessageDTO? {
@@ -474,8 +505,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             parentMessageDTO.replyCount += 1
         }
         
-        // When the current user submits the new message for sending - make it a channel preview.
-        channelDTO.previewMessage = message
+        // When the current user submits the new message that will be shown
+        // in the channel for sending - make it a channel preview.
+        if parentMessageId == nil || showReplyInChannel {
+            channelDTO.previewMessage = message
+        }
         
         return message
     }
@@ -603,6 +637,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                     $0.lastReadAt >= payload.createdAt && $0.user.id != payload.user.id
                 }
             )
+        }
+        
+        // Refetch channel preview if the current preview has changed.
+        //
+        // The current messsage can stop being a valid preview e.g.
+        // if it didn't pass moderation and obtained `error` type.
+        if payload.id == channelDTO.previewMessage?.id {
+            channelDTO.previewMessage = preview(for: cid)
         }
         
         return dto
@@ -758,26 +800,17 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         message.reactionScores[type.rawValue] = max(reactionScore - Int(reaction.score), 0)
-        message.reactionScores[type.rawValue] = reactionScore
         return reaction
     }
     
     func preview(for cid: ChannelId) -> MessageDTO? {
-        MessageDTO.load(
-            for: cid.rawValue,
-            limit: 1,
-            offset: 0,
-            deletedMessagesVisibility: .alwaysHidden,
-            shouldShowShadowedMessages: shouldShowShadowedMessages ?? false,
-            context: self
-        )
-        .first
+        MessageDTO.preview(for: cid.rawValue, context: self)
     }
 }
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel() -> ChatMessage { .init(fromDTO: self) }
+    func asModel() throws -> ChatMessage { try .init(fromDTO: self) }
     
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
     func asRequestBody() -> MessageRequestBody {
@@ -819,11 +852,13 @@ extension MessageDTO {
 }
 
 private extension ChatMessage {
-    init(fromDTO dto: MessageDTO) {
-        let context = dto.managedObjectContext!
+    init(fromDTO dto: MessageDTO) throws {
+        guard dto.isValid, let context = dto.managedObjectContext else {
+            throw InvalidModel(dto)
+        }
         
         id = dto.id
-        cid = dto.channel.map { try! ChannelId(cid: $0.cid) }
+        cid = try? dto.channel.map { try ChannelId(cid: $0.cid) }
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command
@@ -861,7 +896,7 @@ private extension ChatMessage {
         if dto.pinned,
            let pinnedAt = dto.pinnedAt,
            let pinnedBy = dto.pinnedBy {
-            pinDetails = .init(
+            pinDetails = try .init(
                 pinnedAt: pinnedAt,
                 pinnedBy: pinnedBy.asModel(),
                 expiresAt: dto.pinExpires
@@ -876,7 +911,7 @@ private extension ChatMessage {
                 Set(
                     MessageReactionDTO
                         .loadReactions(ids: dto.ownReactions, context: context)
-                        .map { $0.asModel() }
+                        .compactMap { try? $0.asModel() }
                 )
             }, dto.managedObjectContext)
         } else {
@@ -888,7 +923,7 @@ private extension ChatMessage {
             Set(
                 MessageReactionDTO
                     .loadReactions(ids: dto.latestReactions, context: context)
-                    .map { $0.asModel() }
+                    .compactMap { try? $0.asModel() }
             )
         }, dto.managedObjectContext)
 
@@ -898,14 +933,16 @@ private extension ChatMessage {
             $_threadParticipants = (
                 {
                     let threadParticipants = dto.threadParticipants.array as? [UserDTO] ?? []
-                    return threadParticipants.map { $0.asModel() }
+                    return threadParticipants.compactMap { try? $0.asModel() }
                 },
                 dto.managedObjectContext
             )
         }
         
-        $_mentionedUsers = ({ Set(dto.mentionedUsers.map { $0.asModel() }) }, dto.managedObjectContext)
-        $_author = ({ dto.user.asModel() }, dto.managedObjectContext)
+        $_mentionedUsers = ({ Set(dto.mentionedUsers.compactMap { try? $0.asModel() }) }, dto.managedObjectContext)
+
+        let user = try dto.user.asModel()
+        $_author = ({ user }, nil)
         $_attachments = ({
             dto.attachments
                 .map { $0.asAnyModel() }
@@ -918,14 +955,13 @@ private extension ChatMessage {
             $_latestReplies = ({
                 MessageDTO
                     .loadReplies(for: dto.id, limit: 5, context: context)
-                    .map(ChatMessage.init)
+                    .compactMap { try? ChatMessage(fromDTO: $0) }
             }, dto.managedObjectContext)
         }
 
-        $_quotedMessage = ({ dto.quotedMessage?.asModel() }, dto.managedObjectContext)
-        
+        $_quotedMessage = ({ try? dto.quotedMessage?.asModel() }, dto.managedObjectContext)
         let readBy = {
-            Set(dto.reads.map(\.user).map { $0.asModel() })
+            Set(dto.reads.compactMap { try? $0.user.asModel() })
         }
         
         $_readBy = (readBy, dto.managedObjectContext)

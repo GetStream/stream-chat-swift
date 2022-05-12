@@ -307,7 +307,7 @@ final class ChannelListController_Tests: XCTestCase {
         var channel: ChatChannel!
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: channelPayload, query: self.query)
-            channel = dto.asModel()
+            channel = try dto.asModel()
         }
         
         // Simulate successful response from backend
@@ -359,7 +359,7 @@ final class ChannelListController_Tests: XCTestCase {
         var channel: ChatChannel!
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: channelPayload, query: self.query)
-            channel = dto.asModel()
+            channel = try dto.asModel()
         }
 
         // Simulate successful response from backend
@@ -425,7 +425,7 @@ final class ChannelListController_Tests: XCTestCase {
         var channel: ChatChannel!
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: channelPayload, query: self.query)
-            channel = dto.asModel()
+            channel = try dto.asModel()
         }
 
         // Simulate successful response from backend
@@ -736,7 +736,7 @@ final class ChannelListController_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
         }
 
-        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
+        let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: cid)).asModel()
         
         AssertAsync {
             Assert.willBeTrue(delegate.willChangeChannels_called)
@@ -890,6 +890,86 @@ final class ChannelListController_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
+    }
+
+    // MARK: - Reset query
+
+    func test_resetQuery_whenSucceeds_updates_hasLoadedAllPreviousChannels_whenRecevingAFullPage() {
+        XCTAssertFalse(controller.hasLoadedAllPreviousChannels)
+
+        // Simulate synchronize to create all dependencies
+        controller.synchronize()
+
+        // Simulate a regular/full page
+        let channels: [ChatChannel] = (0..<controller.query.pagination.pageSize).map { _ in
+            ChatChannel.mock(cid: .unique)
+        }
+        env.channelListUpdater?.resetChannelsQueryResult = .success((synchedAndWatched: channels, unwanted: Set()))
+
+        let expectation = self.expectation(description: "Reset Query completes")
+        var receivedError: Error?
+        controller.resetQuery(
+            watchedAndSynchedChannelIds: Set(),
+            synchedChannelIds: Set()
+        ) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertNil(receivedError)
+        // When receiving a full page, we did not reach the end of the pagination
+        XCTAssertFalse(controller.hasLoadedAllPreviousChannels)
+    }
+
+    func test_resetQuery_whenSucceeds_updates_hasLoadedAllPreviousChannels_whenRecevingALastPage() {
+        XCTAssertFalse(controller.hasLoadedAllPreviousChannels)
+
+        // Simulate synchronize to create all dependencies
+        controller.synchronize()
+
+        // Simulate the last page
+        let channels = [ChatChannel.mock(cid: .unique)]
+        env.channelListUpdater?.resetChannelsQueryResult = .success((synchedAndWatched: channels, unwanted: Set()))
+
+        let expectation = self.expectation(description: "Reset Query completes")
+        var receivedError: Error?
+        controller.resetQuery(
+            watchedAndSynchedChannelIds: Set(),
+            synchedChannelIds: Set()
+        ) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertNil(receivedError)
+        // When receiving an incomplete page, we did reach the end of the pagination
+        XCTAssertTrue(controller.hasLoadedAllPreviousChannels)
+    }
+
+    func test_resetQuery_propagatesErrorFromUpdater() {
+        XCTAssertFalse(controller.hasLoadedAllPreviousChannels)
+
+        // Simulate synchronize to create all dependencies
+        controller.synchronize()
+
+        // Simulate a failure
+        let error = ClientError("Something went wrong")
+        env.channelListUpdater?.resetChannelsQueryResult = .failure(error)
+
+        let expectation = self.expectation(description: "Reset Query completes")
+        var receivedError: Error?
+        controller.resetQuery(
+            watchedAndSynchedChannelIds: Set(),
+            synchedChannelIds: Set()
+        ) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertEqual(receivedError, error)
     }
     
     // MARK: - Mark all read

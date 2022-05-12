@@ -32,12 +32,13 @@ class ChannelListUpdater: Worker {
 
     func resetChannelsQuery(
         for query: ChannelListQuery,
-        watchedChannelIds: Set<ChannelId>,
+        pageSize: Int,
+        watchedAndSynchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
         completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {
         var updatedQuery = query
-        updatedQuery.pagination = .init(pageSize: .channelsPageSize, offset: 0)
+        updatedQuery.pagination = .init(pageSize: pageSize, offset: 0)
 
         var unwantedCids = Set<ChannelId>()
         // Fetches the channels matching the query, and stores them in the database.
@@ -53,7 +54,7 @@ class ChannelListUpdater: Worker {
                         let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
                         let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
 
-                        let updatedChannels = synchedChannelIds.union(watchedChannelIds)
+                        let updatedChannels = synchedChannelIds.union(watchedAndSynchedChannelIds)
                         let localNotInRemote = localQueryCIDs.subtracting(remoteQueryCIDs)
                         let localInRemote = localQueryCIDs.intersection(remoteQueryCIDs)
 
@@ -72,12 +73,12 @@ class ChannelListUpdater: Worker {
                         // Those are the ones that exist locally but we are not interested in anymore in this context.
                         // In this case, it is going to query local ones not appearing in remote, subtracting the ones
                         // that are already being watched.
-                        unwantedCids = localNotInRemote.subtracting(watchedChannelIds)
+                        unwantedCids = localNotInRemote.subtracting(watchedAndSynchedChannelIds)
                     },
                     completion: { result in
                         switch result {
-                        case let .success(synchedAndWatchedChannels):
-                            completion(.success((synchedAndWatchedChannels, unwantedCids)))
+                        case let .success(newSynchedAndWatchedChannels):
+                            completion(.success((newSynchedAndWatchedChannels, unwantedCids)))
                         case let .failure(error):
                             completion(.failure(error))
                         }
@@ -154,7 +155,7 @@ private extension ChannelListUpdater {
         var channels: [ChatChannel] = []
         database.write { session in
             initialActions?(session)
-            channels = try session.saveChannelList(payload: payload, query: query).map { $0.asModel() }
+            channels = try session.saveChannelList(payload: payload, query: query).compactMap { try? $0.asModel() }
         } completion: { error in
             if let error = error {
                 log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
