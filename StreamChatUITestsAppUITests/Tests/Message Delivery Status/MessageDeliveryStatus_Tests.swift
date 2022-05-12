@@ -494,6 +494,26 @@ extension MessageDeliveryStatus_Tests {
                 .assertMessageReadCount(readBy: 0)
         }
     }
+
+    func test_deliveryStatusShownForPreviousMessage_whenErrorMessageShown() {
+        linkToScenario(withId: 184)
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("succesfully sends a new message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("user sends message with invalid command") {
+            userRobot.sendMessage("/command")
+        }
+        THEN("delivery status is shown for \(message)") {
+            userRobot.assertMessageDeliveryStatus(.sent)
+                .assertMessageReadCount(readBy: 0)
+        }
+    }
 }
 
 // MARK: Disabled Read Events feature
