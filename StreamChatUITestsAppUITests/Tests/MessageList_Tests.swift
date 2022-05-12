@@ -29,7 +29,7 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
-    func test_messageListUpdatesForParticipant_whenUser() {
+    func test_messageListUpdates_whenParticipantSendsMessage() {
         linkToScenario(withId: 26)
 
         let message = "message"
