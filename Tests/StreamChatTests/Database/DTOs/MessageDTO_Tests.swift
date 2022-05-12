@@ -21,6 +21,57 @@ final class MessageDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
+    // MARK: - saveMessage
+    
+    func test_saveMessage_whenMessageStopsBeingValidPreview_updatesChannelPreview() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        
+        let previousPreviewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: .init(),
+            cid: cid
+        )
+        
+        let previewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: previousPreviewMessage.createdAt.addingTimeInterval(1),
+            cid: cid
+        )
+        
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                previousPreviewMessage,
+                previewMessage
+            ]
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        
+        // WHEN
+        let updatedPreviewMessage: MessagePayload = .dummy(
+            type: .error,
+            messageId: previewMessage.id,
+            authorUserId: previewMessage.user.id,
+            cid: cid
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveMessage(payload: updatedPreviewMessage, for: cid, syncOwnReactions: false)
+        }
+        
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channelDTO.previewMessage?.id, previousPreviewMessage.id)
+    }
+    
     func test_saveMessage_messageSentByAnotherUser_hasNoReads() throws {
         // GIVEN
         let anotherUser: UserPayload = .dummy(userId: .unique)
@@ -933,8 +984,7 @@ final class MessageDTO_Tests: XCTestCase {
             )
             newMessageId = messageDTO.id
         }
-
-        let loadedChannel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
+        
         let loadedMessage: ChatMessage = try XCTUnwrap(database.viewContext.message(id: newMessageId)).asModel()
 
         XCTAssertEqual(loadedMessage.text, newMessageText)
@@ -2466,12 +2516,30 @@ final class MessageDTO_Tests: XCTestCase {
 
         let cid: ChannelId = .unique
         
+        let errorMessageFromCurrentUser: MessagePayload = .dummy(
+            type: .error,
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            text: .unique,
+            createdAt: .init(),
+            cid: cid
+        )
+        
+        let ephemeralMessageFromCurrentUser: MessagePayload = .dummy(
+            type: .ephemeral,
+            messageId: .unique,
+            authorUserId: currentUser.id,
+            text: .unique,
+            createdAt: errorMessageFromCurrentUser.createdAt.addingTimeInterval(-1),
+            cid: cid
+        )
+        
         let deletedMessageFromCurrentUser: MessagePayload = .dummy(
             type: .deleted,
             messageId: .unique,
             authorUserId: currentUser.id,
             text: .unique,
-            createdAt: .init(),
+            createdAt: ephemeralMessageFromCurrentUser.createdAt.addingTimeInterval(-1),
             deletedAt: .init(),
             cid: cid
         )
@@ -2506,6 +2574,8 @@ final class MessageDTO_Tests: XCTestCase {
         let channel: ChannelPayload = .dummy(
             channel: .dummy(cid: cid),
             messages: [
+                errorMessageFromCurrentUser,
+                ephemeralMessageFromCurrentUser,
                 deletedMessageFromCurrentUser,
                 deletedMessageFromAnotherUser,
                 shadowedMessageFromAnotherUser,

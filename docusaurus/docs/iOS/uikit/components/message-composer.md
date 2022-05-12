@@ -80,7 +80,7 @@ As you can see if you want to use the `ComposerVC` in your custom message list v
 
 ### Customization
 
-The `ComposerVC` and `ComposerView` are highly customizable in both styling and functionality. In case you want to change the styling, adding new views, and new functionality you can take a look at the [Customize Message Composer](../guides/customize-message-composer) guide. If you want to introduce a new custom attachment and make the composer support it, please read the [Message Composer Custom Attachments](../guides/working-with-custom-attachments) guide.
+The `ComposerVC` and `ComposerView` are highly customizable in both styling and functionality. In case you want to change the styling, adding new views, and new functionality you can take a look at the [Customize Message Composer](../../../guides/customize-message-composer) guide. If you want to introduce a new custom attachment and make the composer support it, please read the [Message Composer Custom Attachments](../../../guides/working-with-attachments) guide.
 
 ### Properties
 

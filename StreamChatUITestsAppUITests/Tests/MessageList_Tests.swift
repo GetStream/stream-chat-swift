@@ -10,7 +10,46 @@ final class MessageList_Tests: StreamTestCase {
         try super.setUpWithError()
         addTags([.coreFeatures])
     }
-    
+
+    func test_messageListUpdates_whenUserSendsMessage() {
+        linkToScenario(withId: 25)
+
+        let message = "message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user sends a message") {
+            userRobot.sendMessage("message")
+        }
+        THEN("message list updates") {
+            userRobot.assertMessage(message)
+        }
+    }
+
+    func test_messageListUpdates_whenParticipantSendsMessage() {
+        linkToScenario(withId: 26)
+
+        let message = "message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("participant sends a message") {
+            participantRobot
+                .startTyping()
+                .stopTyping()
+                .sendMessage(message)
+        }
+        THEN("MessageList updates for user") {
+            userRobot.assertMessage(message)
+        }
+    }
+
     func test_sendsMessageWithOneEmoji() throws {
         linkToScenario(withId: 63)
         
@@ -20,6 +59,22 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("user sends the emoji: '\(message)'") {
+            userRobot.sendMessage(message)
+        }
+        THEN("the message is delivered") {
+            userRobot.assertMessage(message)
+        }
+    }
+
+    func test_sendsMessageWithMultipleEmojis() throws {
+        linkToScenario(withId: 65)
+
+        let message = "🍏🙂👍"
+
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a message with multiple emojis - \(message)") {
             userRobot.sendMessage(message)
         }
         THEN("the message is delivered") {
@@ -137,6 +192,29 @@ final class MessageList_Tests: StreamTestCase {
         }
         THEN("the message is edited") {
             participantRobot.assertMessage(editedMessage)
+        }
+    }
+
+    func test_messageIncreases_whenUserEditsMessageWithOneLineText() {
+        linkToScenario(withId: 99)
+
+        let oneLineMessage = "first line"
+        let twoLinesMessage = "first line\nsecond line"
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends \(oneLineMessage) message") {
+            userRobot
+                .sendMessage(oneLineMessage)
+                .waitForNewMessage(withText: oneLineMessage)
+        }
+        WHEN("user edits their message so that the length becomes two lines") {
+            userRobot.editMessage(twoLinesMessage)
+        }
+        THEN("message cell updates its size") {
+            userRobot.assertMessage(twoLinesMessage)
         }
     }
 }
