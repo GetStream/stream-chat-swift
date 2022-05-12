@@ -83,7 +83,7 @@ open class InputTextView: UITextView, AppearanceProvider {
         textColor = appearance.colorPalette.text
         textAlignment = .natural
         adjustsFontForContentSizeCategory = true
-        
+
         placeholderLabel.font = font
         placeholderLabel.textColor = appearance.colorPalette.subtitleText
         placeholderLabel.adjustsFontSizeToFitWidth = true
