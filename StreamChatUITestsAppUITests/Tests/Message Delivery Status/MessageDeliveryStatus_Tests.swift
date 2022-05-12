@@ -496,6 +496,8 @@ extension MessageDeliveryStatus_Tests {
     }
 
     func test_deliveryStatusShownForPreviousMessage_whenErrorMessageShown() {
+        linkToScenario(withId: 184)
+
         GIVEN("user opens the channel") {
             userRobot
                 .login()

@@ -4,6 +4,12 @@
 
 @testable import StreamChat
 
+enum Message {
+    static func message(withInvalidCommand command: String) -> String {
+        "Sorry, command \(command) doesn't exist. Try posting your message without the starting /"
+    }
+}
+
 enum MockFile: String {
     case httpMessage = "http_message"
     case httpChatEvent = "http_events"

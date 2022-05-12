@@ -102,7 +102,7 @@ extension StreamMockServer {
             let index = messageText.index(messageText.startIndex, offsetBy: 2)
             if messageText.prefix(upTo: index).contains("/") {
                 return messageInvalidCommand(message,
-                                         command: String(messageText.dropFirst(2)),
+                                         command: String(messageText.dropFirst(1)),
                                          channelId: channelId)
             }
         }
@@ -367,7 +367,7 @@ extension StreamMockServer {
         channelId: String?,
         eventType: EventType = .messageRead
     ) -> HttpResponse {
-        let text = "Sorry, command \(command) doesn't exist. Try posting your message without the starting /"
+        let text = Message.message(withInvalidCommand: command)
         let messageId = message?[messageKey.id.rawValue] as? String
         var responseJson = TestData.toJson(.httpMessage)
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
