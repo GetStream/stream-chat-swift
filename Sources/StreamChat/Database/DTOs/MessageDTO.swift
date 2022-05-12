@@ -173,6 +173,19 @@ class MessageDTO: NSManagedObject {
         ])
     }
     
+    /// Returns predicate for the channel preview message.
+    private static func previewMessagePredicate(cid: String, includeShadowedMessages: Bool) -> NSPredicate {
+        NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelMessagesPredicate(
+                for: cid,
+                deletedMessagesVisibility: .alwaysHidden,
+                shouldShowShadowedMessages: includeShadowedMessages
+            ),
+            .init(format: "type != %@", MessageType.ephemeral.rawValue),
+            .init(format: "type != %@", MessageType.error.rawValue)
+        ])
+    }
+    
     /// Returns predicate with channel messages and replies that should be shown in channel.
     static func channelMessagesPredicate(
         for cid: String,
@@ -312,6 +325,19 @@ class MessageDTO: NSManagedObject {
         request.fetchLimit = limit
         request.fetchOffset = offset
         return load(by: request, context: context)
+    }
+    
+    static func preview(for cid: String, context: NSManagedObjectContext) -> MessageDTO? {
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = previewMessagePredicate(
+            cid: cid,
+            includeShadowedMessages: context.shouldShowShadowedMessages ?? false
+        )
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.fetchOffset = 0
+        request.fetchLimit = 1
+        
+        return load(by: request, context: context).first
     }
     
     static func load(id: String, context: NSManagedObjectContext) -> MessageDTO? {
@@ -601,6 +627,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             )
         }
         
+        // Refetch channel preview if the current preview has changed.
+        //
+        // The current messsage can stop being a valid preview e.g.
+        // if it didn't pass moderation and obtained `error` type.
+        if payload.id == channelDTO.previewMessage?.id {
+            channelDTO.previewMessage = preview(for: cid)
+        }
+        
         return dto
     }
 
@@ -758,15 +792,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     }
     
     func preview(for cid: ChannelId) -> MessageDTO? {
-        MessageDTO.load(
-            for: cid.rawValue,
-            limit: 1,
-            offset: 0,
-            deletedMessagesVisibility: .alwaysHidden,
-            shouldShowShadowedMessages: shouldShowShadowedMessages ?? false,
-            context: self
-        )
-        .first
+        MessageDTO.preview(for: cid.rawValue, context: self)
     }
 }
 
