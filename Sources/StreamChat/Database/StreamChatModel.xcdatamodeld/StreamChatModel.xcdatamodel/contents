@@ -60,6 +60,7 @@
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="channel" inverseEntity="MessageDTO"/>
         <relationship name="mute" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelMuteDTO" inverseName="channel" inverseEntity="ChannelMuteDTO"/>
         <relationship name="pinnedMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="pinnedChannel" inverseEntity="MessageDTO"/>
+        <relationship name="previewMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="previewOfChannel" inverseEntity="MessageDTO"/>
         <relationship name="queries" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelListQueryDTO" inverseName="channels" inverseEntity="ChannelListQueryDTO"/>
         <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="channel" inverseEntity="ChannelReadDTO"/>
         <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
@@ -112,9 +113,10 @@
         <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="channelMutes" inverseEntity="CurrentUserDTO"/>
     </entity>
     <entity name="ChannelReadDTO" representedClassName="ChannelReadDTO" syncable="YES">
-        <attribute name="lastReadAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastReadAt" attributeType="Date" defaultDateTimeInterval="0" usesScalarValueType="NO"/>
         <attribute name="unreadMessageCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="reads" inverseEntity="ChannelDTO"/>
+        <relationship name="readMessagesFromCurrentUser" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="reads" inverseEntity="MessageDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="channelReads" inverseEntity="UserDTO"/>
     </entity>
     <entity name="CommandDTO" representedClassName="CommandDTO" syncable="YES">
@@ -212,9 +214,11 @@
         <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="replies" inverseEntity="MessageDTO"/>
         <relationship name="pinnedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="pinnedMessages" inverseEntity="UserDTO"/>
         <relationship name="pinnedChannel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="pinnedMessages" inverseEntity="ChannelDTO"/>
+        <relationship name="previewOfChannel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="previewMessage" inverseEntity="ChannelDTO"/>
         <relationship name="quotedBy" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="quotedMessage" inverseEntity="MessageDTO"/>
         <relationship name="quotedMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="quotedBy" inverseEntity="MessageDTO"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="message" inverseEntity="MessageReactionDTO"/>
+        <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="readMessagesFromCurrentUser" inverseEntity="ChannelReadDTO"/>
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="parentMessage" inverseEntity="MessageDTO"/>
         <relationship name="searches" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageSearchQueryDTO" inverseName="messages" inverseEntity="MessageSearchQueryDTO"/>
         <relationship name="threadParticipants" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="UserDTO" inverseName="participatedThreads" inverseEntity="UserDTO"/>

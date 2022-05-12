@@ -42,7 +42,18 @@ class MessageDTO: NSManagedObject {
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
+    @NSManaged var previewOfChannel: ChannelDTO?
 
+    /// If the message is sent by the current user, this field
+    /// contains channel reads of other channel members (excluding the current user),
+    /// where `read.lastRead >= self.createdAt`.
+    ///
+    /// If the message has a channel read of a member, it is considered as seen/read by
+    /// that member.
+    ///
+    /// For messages authored NOT by the current user this field is always empty.
+    @NSManaged var reads: Set<ChannelReadDTO>
+    
     @NSManaged var pinned: Bool
     @NSManaged var pinnedBy: UserDTO?
     @NSManaged var pinnedAt: Date?
@@ -57,6 +68,13 @@ class MessageDTO: NSManagedObject {
     
     override func willSave() {
         super.willSave()
+        
+        // Manually mark the channel as dirty to trigger the entity update and give the UI a chance
+        // to reload the channel cell to reflect the updated preview.
+        if let channel = previewOfChannel, !channel.hasChanges, isUpdated {
+            let cid = channel.cid
+            channel.cid = cid
+        }
         
         prepareDefaultSortKeyIfNeeded()
     }
@@ -103,7 +121,7 @@ class MessageDTO: NSManagedObject {
     private static func onlyOwnDeletedMessagesPredicate() -> NSCompoundPredicate {
         .init(orPredicateWithSubpredicates: [
             // Non-deleted messages.
-            .init(format: "deletedAt == nil"),
+            nonDeletedMessagesPredicate(),
             // Deleted messages sent by current user excluding ephemeral ones.
             NSCompoundPredicate(andPredicateWithSubpredicates: [
                 .init(format: "deletedAt != nil"),
@@ -138,7 +156,7 @@ class MessageDTO: NSManagedObject {
     }
 
     /// Returns a predicate that filters out all deleted messages
-    private static func nonDeletedMessagesPredicate() -> NSCompoundPredicate {
+    private static func nonDeletedMessagesPredicate() -> NSPredicate {
         .init(format: "deletedAt == nil")
     }
 
@@ -271,12 +289,19 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
-    static func load(for cid: String, limit: Int, offset: Int = 0, context: NSManagedObjectContext) -> [MessageDTO] {
+    static func load(
+        for cid: String,
+        limit: Int,
+        offset: Int = 0,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool,
+        context: NSManagedObjectContext
+    ) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = channelMessagesPredicate(
             for: cid,
-            deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
-            shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
+            deletedMessagesVisibility: deletedMessagesVisibility,
+            shouldShowShadowedMessages: shouldShowShadowedMessages
         )
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
@@ -317,11 +342,41 @@ class MessageDTO: NSManagedObject {
         return load(by: request, context: context)
     }
     
+    static func loadCurrentUserMessages(
+        in cid: String,
+        createdAtFrom: Date,
+        createdAtThrough: Date,
+        context: NSManagedObjectContext
+    ) -> [MessageDTO] {
+        let subpredicates: [NSPredicate] = [
+            .init(format: "channel.cid == %@", cid),
+            .init(format: "user.currentUser != nil"),
+            .init(format: "createdAt > %@", createdAtFrom as NSDate),
+            .init(format: "createdAt <= %@", createdAtThrough as NSDate),
+            .init(format: "localMessageStateRaw == nil"),
+            nonTruncatedMessagesPredicate(),
+            nonDeletedMessagesPredicate()
+        ]
+        
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+        
+        return (try? context.fetch(request)) ?? []
+    }
+    
+    static func numberOfReads(for messageId: MessageId, context: NSManagedObjectContext) -> Int {
+        let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        request.predicate = NSPredicate(format: "readMessagesFromCurrentUser.id CONTAINS %@", messageId)
+        return (try? context.count(for: request)) ?? 0
+    }
+    
     static func loadLastMessageFromUserId(_ userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             .init(format: "channel.cid == %@", cid),
-            .init(format: "user.id == %@", userId)
+            .init(format: "user.id == %@", userId),
+            .init(format: "type != %@", MessageType.ephemeral.rawValue)
         ])
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = 1
@@ -418,6 +473,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             parentMessageDTO.replies.insert(message)
             parentMessageDTO.replyCount += 1
         }
+        
+        // When the current user submits the new message for sending - make it a channel preview.
+        channelDTO.previewMessage = message
         
         return message
     }
@@ -537,6 +595,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
+
+        // Calculate reads if the message is authored by the current user.
+        if payload.user.id == currentUser?.user.id {
+            dto.reads = Set(
+                channelDTO.reads.filter {
+                    $0.lastReadAt >= payload.createdAt && $0.user.id != payload.user.id
+                }
+            )
+        }
         
         return dto
     }
@@ -694,6 +761,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.reactionScores[type.rawValue] = reactionScore
         return reaction
     }
+    
+    func preview(for cid: ChannelId) -> MessageDTO? {
+        MessageDTO.load(
+            for: cid.rawValue,
+            limit: 1,
+            offset: 0,
+            deletedMessagesVisibility: .alwaysHidden,
+            shouldShowShadowedMessages: shouldShowShadowedMessages ?? false,
+            context: self
+        )
+        .first
+    }
 }
 
 extension MessageDTO {
@@ -844,6 +923,18 @@ private extension ChatMessage {
         }
 
         $_quotedMessage = ({ dto.quotedMessage?.asModel() }, dto.managedObjectContext)
+        
+        let readBy = {
+            Set(dto.reads.map(\.user).map { $0.asModel() })
+        }
+        
+        $_readBy = (readBy, dto.managedObjectContext)
+        
+        let readByCount = {
+            MessageDTO.numberOfReads(for: dto.id, context: context)
+        }
+        
+        $_readByCount = (readByCount, dto.managedObjectContext)
     }
 }
 

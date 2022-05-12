@@ -83,6 +83,9 @@ public extension ChatMessageLayoutOption {
     /// If set, the indicator saying that the message is visible to the current user only will be shown.
     static let onlyVisibleToYouIndicator: Self = "onlyVisibleToYouIndicator"
     
+    /// If set the delivery status will be shown for the message.
+    static let deliveryStatusIndicator: Self = "deliveryStatusIndicator"
+    
     /// If set all the content will have centered alignment. By default, the system messages are centered.
     ///
     /// `flipped` and `centered` are mutually exclusive. Only one of these two should be used at a time.

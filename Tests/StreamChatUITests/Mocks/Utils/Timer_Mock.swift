@@ -3,35 +3,22 @@
 //
 
 import Foundation
+import StreamChatUI
 
-final class Timer_Mock: Foundation.Timer {
-    private var hasBeenInvalidated: Bool = false
+final class PeriodicStreamTimer_Mock: StreamTimer {
+    var numberOftimesStopped: Int = 0
+    var numberOfTimesStarted: Int = 0
+    var numberOfTimerScheduled: Int = 0
     
-    static var block: (Foundation.Timer) -> Void = { _ in }
+    var isRunning: Bool = false
+    var onChange: (() -> Void)?
     
-    override var isValid: Bool { hasBeenInvalidated == false }
-    
-    override func fire() {
-        for _ in 0...Int.max {
-            Self.block(self)
-            
-            if hasBeenInvalidated {
-                break
-            }
-        }
+    func start() {
+        numberOfTimesStarted += 1
+        onChange?()
     }
     
-    override func invalidate() {
-        hasBeenInvalidated = true
-    }
-    
-    override class func scheduledTimer(
-        withTimeInterval interval: TimeInterval,
-        repeats: Bool,
-        block: @escaping (Foundation.Timer) -> Void
-    ) -> Foundation.Timer {
-        Self.block = block
-        
-        return self.init()
+    func stop() {
+        numberOftimesStopped += 1
     }
 }

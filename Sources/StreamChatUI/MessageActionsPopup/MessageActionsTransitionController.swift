@@ -255,6 +255,7 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
 
         let messageView = messageViewType.init()
         messageView.setUpLayoutIfNeeded(options: messageLayoutOptions, attachmentViewInjectorType: messageAttachmentInjectorType)
+        messageView.channel = originalView.channel
         messageView.content = message
 
         return messageView

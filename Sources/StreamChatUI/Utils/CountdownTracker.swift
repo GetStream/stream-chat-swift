@@ -4,42 +4,78 @@
 
 import UIKit
 
-open class CooldownTracker {
-    private let runLoop: RunLoop
-    private var timer: Timer.Type
-    private var currentTimer: Timer?
+public protocol StreamTimer {
+    func start()
+    func stop()
+    var onChange: (() -> Void)? { get set }
+    var isRunning: Bool { get }
+}
+
+class PeriodicStreamTimer: StreamTimer {
+    let period: TimeInterval
+    var runLoop = RunLoop.current
+    var timer: Timer?
+    var onChange: (() -> Void)?
     
-    public init(runloop: RunLoop = .current, timer: Timer.Type = Timer.self) {
-        runLoop = runloop
+    var isRunning: Bool {
+        timer?.isValid ?? false
+    }
+    
+    init(period: TimeInterval) {
+        self.period = period
+    }
+    
+    func start() {
+        timer = Timer.scheduledTimer(
+            withTimeInterval: period,
+            repeats: true
+        ) { _ in
+            self.onChange?()
+        }
+        runLoop.add(timer!, forMode: .common)
+        timer?.fire()
+    }
+    
+    func stop() {
+        timer?.invalidate()
+    }
+}
+
+open class CooldownTracker {
+    private var timer: StreamTimer
+    
+    open var onChange: ((Int) -> Void)?
+    
+    public init(timer: StreamTimer) {
         self.timer = timer
     }
     
-    open func start(with cooldown: Int, onChange: @escaping (Int) -> Void) {
+    open func start(with cooldown: Int) {
         guard cooldown > 0 else { return }
         
         var duration = cooldown
-        currentTimer = timer.scheduledTimer(
-            withTimeInterval: 1,
-            repeats: true
-        ) { timer in
-            onChange(duration)
+        
+        timer.onChange = { [weak self] in
+            self?.onChange?(duration)
             
             if duration == 0 {
-                timer.invalidate()
+                self?.timer.stop()
             } else {
                 duration -= 1
             }
         }
         
-        runLoop.add(currentTimer!, forMode: .common)
-        currentTimer?.fire()
+        timer.start()
+    }
+    
+    open func stop() {
+        if timer.isRunning {
+            timer.stop()
+        }
     }
     
     deinit {
-        guard let timer = self.currentTimer, timer.isValid else { return }
-        
-        runLoop.perform(inModes: [.common], block: {
-            timer.invalidate()
-        })
+        guard timer.isRunning else { return }
+        timer.stop()
     }
 }

@@ -14,13 +14,13 @@ open class CooldownView: _View, AppearanceProvider {
         super.layoutSubviews()
         
         layer.cornerRadius = min(bounds.width, bounds.height) / 2
-        cooldownLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
     }
     
     override open func setUpLayout() {
         super.setUpLayout()
         
         embed(cooldownLabel, insets: .init(top: 6, leading: 10, bottom: 6, trailing: 10))
+        cooldownLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
     }
     
     override open func setUpAppearance() {

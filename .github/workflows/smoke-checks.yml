@@ -29,20 +29,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/set-build-image-var
-      - name: Cache RubyGems
-        uses: actions/cache@v2
-        id: rubygem-cache
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-      - name: Cache Mint
-        uses: actions/cache@v2
-        id: mint-cache
-        with:
-          path: /usr/local/lib/mint
-          key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-          restore-keys: ${{ runner.os }}-mint-
       - uses: ./.github/actions/bootstrap
       - name: Run Danger
         run: bundle exec danger
@@ -58,34 +44,23 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 100
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+    - uses: ./.github/actions/set-build-image-var
     - uses: actions/setup-python@v3.0.0
       with:
         python-version: 3.8
         cache: 'pip'
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_SONAR: true
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
+    - name: Get branch name
+      id: get_branch_name
+      run: echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
     - name: Run Sonar analysis
       run: bundle exec fastlane sonar_upload
       env:
+        BRANCH_NAME: ${{ steps.get_branch_name.outputs.branch }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         PR_NUMBER: ${{ github.event.number }}
@@ -105,22 +80,7 @@ jobs:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
+    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Prepare iPhone 12 Pro with iOS 15.4
       uses: ./.github/actions/prepare-ios-simulator
@@ -146,18 +106,10 @@ jobs:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - run: bundle install
-    - name: Install Allure TestOps dependencies
-      run: ./Scripts/installAllureDependencies.sh
+    - uses: ./.github/actions/set-build-image-var
+    - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_ALLURE: true
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}"
     - name: Upload test results to Allure TestOps
@@ -165,6 +117,7 @@ jobs:
       run: bundle exec fastlane allure_upload
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.ALLURE_GITHUB_TOKEN }}
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -181,22 +134,7 @@ jobs:
     runs-on: macos-11
     steps:
     - uses: actions/checkout@v2
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
+    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Build LLC (Xcode 12)
       env:
@@ -222,22 +160,7 @@ jobs:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
+    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Build Sample App
       run: bundle exec fastlane build_sample
@@ -267,15 +190,8 @@ jobs:
   #   runs-on: macos-12
   #   steps:
   #   - uses: actions/checkout@v1
-  #   - name: Set build image var
-  #     run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-  #   - name: Cache RubyGems
-  #     uses: actions/cache@v2
-  #     id: rubygem-cache
-  #     with:
-  #       path: vendor/bundle
-  #       key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-  #       restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+  #   - uses: ./.github/actions/set-build-image-var
+  #   - uses: ./.github/actions/bootstrap
   #   - name: Build Docs Snippets
   #     run: bundle exec fastlane build_docs_snippets
   #   - uses: 8398a7/action-slack@v3
@@ -294,22 +210,7 @@ jobs:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
+    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane spm_integration
@@ -329,22 +230,7 @@ jobs:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
+    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane cocoapods_integration

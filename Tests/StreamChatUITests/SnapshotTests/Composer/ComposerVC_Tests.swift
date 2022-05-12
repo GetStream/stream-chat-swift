@@ -265,12 +265,13 @@ final class ComposerVC_Tests: XCTestCase {
     func test_channelWithSlowModeActive_messageIsSent_SlowModeIsOnWithCountdownShown() {
         // GIVEN
         let composerVC = ComposerVC()
-        composerVC.cooldownTracker = CooldownTracker_Mock()
+        composerVC.cooldownTracker = CooldownTracker_Mock(timer: PeriodicStreamTimer_Mock())
         composerVC.appearance = Appearance.default
         composerVC.content.text = "Test text"
+        composerVC.viewDidLoad()
         
         // WHEN
-        composerVC.handleCooldownTimer(with: 120)
+        composerVC.cooldownTracker.start(with: 120)
         
         // THEN
         AssertSnapshot(composerVC)

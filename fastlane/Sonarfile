@@ -25,7 +25,7 @@ lane :sonar_upload do
       project_version: version_number
     )
   else
-    branch = git_branch
+    branch = ENV['BRANCH_NAME'] || git_branch
 
     sonar(
       sonar_login: ENV['SONAR_TOKEN'],
@@ -38,6 +38,8 @@ lane :sonar_upload do
       slack_sonarcloud_metrics(new_period: version_number, branch: branch)
     when :develop
       slack_sonarcloud_metrics(branch: branch)
+    else
+      UI.message("Sonar MetricKit ignores branch: #{branch}")
     end
   end
 end
@@ -64,7 +66,7 @@ private_lane :slack_sonarcloud_metrics do |options|
   security_status = "Total: _#{vulnerabilities}_\nNew: _#{new_vulnerabilities}_ #{new_vulnerabilities.positive? ? '⚠️' : '✅'}"
 
   slack(
-    message: "[SonarCloud Report](https://sonarcloud.io/summary/new_code?id=#{project_key}&branch=#{options[:branch]})",
+    message: "[StreamChat](https://sonarcloud.io/summary/new_code?id=#{project_key}&branch=#{options[:branch]})",
     attachment_properties: {
       thumb_url: 'https://pbs.twimg.com/profile_images/955394530806829056/LC7DAYM3_400x400.jpg',
       fields: [

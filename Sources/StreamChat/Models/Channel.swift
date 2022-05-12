@@ -150,7 +150,14 @@ public struct ChatChannel {
     
     /// Additional data associated with the channel.
     public let extraData: [String: RawJSON]
-
+    
+    /// The channel message is supposed to be shown in channel preview.
+    ///
+    /// - Important: The `previewMessage` can differ from `latestMessages.first` (or even not be included into `latestMessages`)
+    /// because the preview message is the last `non-deleted` message sent to the channel.
+    public var previewMessage: ChatMessage? { _previewMessage }
+    @CoreDataLazy private var _previewMessage: ChatMessage?
+    
     // MARK: - Internal
     
     /// A helper variable to cache the result of the filter for only banned members.
@@ -187,6 +194,7 @@ public struct ChatChannel {
         lastMessageFromCurrentUser: @escaping (() -> ChatMessage?) = { nil },
         pinnedMessages: @escaping (() -> [ChatMessage]) = { [] },
         muteDetails: @escaping () -> MuteDetails?,
+        previewMessage: @escaping () -> ChatMessage?,
         underlyingContext: NSManagedObjectContext?
     ) {
         self.cid = cid
@@ -217,6 +225,7 @@ public struct ChatChannel {
         $_lastActiveWatchers = (lastActiveWatchers, underlyingContext)
         $_pinnedMessages = (pinnedMessages, underlyingContext)
         $_muteDetails = (muteDetails, underlyingContext)
+        $_previewMessage = (previewMessage, underlyingContext)
     }
 }
 

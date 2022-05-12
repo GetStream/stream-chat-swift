@@ -54,8 +54,8 @@ extension MemberDTO {
 }
 
 extension MemberDTO {
-    static func load(id: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
-        let memberId = MemberDTO.createId(userId: id, channeldId: channelId)
+    static func load(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
+        let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@", memberId)
         return try? context.fetch(request).first
@@ -68,13 +68,13 @@ extension MemberDTO {
     ///   - id: The id of the user to fetch
     ///   - context: The context used to fetch/create `UserDTO`
     ///
-    static func loadOrCreate(id: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO {
-        if let existing = Self.load(id: id, channelId: channelId, context: context) {
+    static func loadOrCreate(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO {
+        if let existing = Self.load(userId: userId, channelId: channelId, context: context) {
             return existing
         }
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MemberDTO
-        new.id = Self.createId(userId: id, channeldId: channelId)
+        new.id = Self.createId(userId: userId, channeldId: channelId)
         return new
     }
     
@@ -96,7 +96,7 @@ extension NSManagedObjectContext {
         channelId: ChannelId,
         query: ChannelMemberListQuery?
     ) throws -> MemberDTO {
-        let dto = MemberDTO.loadOrCreate(id: payload.user.id, channelId: channelId, context: self)
+        let dto = MemberDTO.loadOrCreate(userId: payload.user.id, channelId: channelId, context: self)
         
         // Save user-part of member first
         dto.user = try saveUser(payload: payload.user)
@@ -128,7 +128,7 @@ extension NSManagedObjectContext {
     }
     
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
-        MemberDTO.load(id: userId, channelId: cid, context: self)
+        MemberDTO.load(userId: userId, channelId: cid, context: self)
     }
 }
 
