@@ -55,9 +55,7 @@ final class CollectionUpdatesMapper {
             
             switch change {
             case let .insert(_, index):
-                if !updateIndexes.contains(index) {
-                    verifyConflict(index)
-                }
+                verifyConflict(index)
                 insertIndexes.insert(index)
             case let .move(_, fromIndex, toIndex):
                 verifyConflict(fromIndex)
@@ -67,10 +65,7 @@ final class CollectionUpdatesMapper {
                 verifyConflict(index)
                 removeIndexes.insert(index)
             case let .update(_, index):
-                // On updates, if there are conflicts in insertions, ignore them.
-                if !insertIndexes.contains(index) {
-                    verifyConflict(index)
-                }
+                verifyConflict(index)
                 updateIndexes.insert(index)
             }
         }
