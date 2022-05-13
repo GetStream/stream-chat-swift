@@ -49,6 +49,20 @@ extension Robot {
     }
 
     @discardableResult
+    func assertQuotedMessage(
+        _ text: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let message = attributes.quotedText(text, in: messageCell)
+        let actualText = message.waitForText(text).text
+        XCTAssertEqual(text, actualText, file: file, line: line)
+        return self
+    }
+
+    @discardableResult
     func assertDeletedMessage(
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
@@ -120,7 +134,7 @@ extension Robot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        assertMessage(replyText, file: file, line: line)
+        assertQuotedMessage(replyText, file: file, line: line)
         let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
         let quotedMessage = attributes.quotedText(quotedText, in: messageCell)
         XCTAssertTrue(quotedMessage.exists, "Quoted message was not showed", file: file, line: line)
