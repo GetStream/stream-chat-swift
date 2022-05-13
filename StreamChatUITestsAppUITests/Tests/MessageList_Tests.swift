@@ -218,3 +218,30 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 }
+
+// MARK: Quoted messages
+
+extension MessageList_Tests {
+
+    func test_quotedReplyInList_whenParticipantAddsQuotedReply() {
+        linkToScenario(withId: 52)
+
+        let message = "message"
+        let quotedMessage = "quoted reply"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("participant adds a quoted reply to users message") {
+            participantRobot.replyToMessage(quotedMessage)
+        }
+        THEN("user observes the reply in message list") {
+            userRobot.assertQuotedMessage(replyText: quotedMessage, quotedText: message)
+        }
+    }
+}
