@@ -666,7 +666,7 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
         
-        guard let channel: ChatChannel = database.viewContext.channel(cid: channelId)?.asModel(),
+        guard let channel: ChatChannel = try? database.viewContext.channel(cid: channelId)?.asModel(),
               let lastMessageFromCurrentUser = channel.lastMessageFromCurrentUser else {
             XCTFail("\(#file), \(#function), \(#line) There should be a valid channel")
             return
@@ -733,7 +733,7 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
         
-        guard let channel: ChatChannel = database.viewContext.channel(cid: channelId)?.asModel(),
+        guard let channel: ChatChannel = try? database.viewContext.channel(cid: channelId)?.asModel(),
               let lastMessageFromCurrentUser = channel.lastMessageFromCurrentUser else {
             XCTFail("\(#file), \(#function), \(#line) There should be a valid channel")
             return
