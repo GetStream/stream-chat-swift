@@ -802,6 +802,7 @@
 		A3147EBF27F6E52C00BA9972 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3147EBE27F6E52C00BA9972 /* StreamChatTestHelpers */; };
 		A3147EC127F6E53500BA9972 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3147EC027F6E53500BA9972 /* StreamChatTestHelpers */; };
 		A33FA816282D595C00DC40E8 /* ChannelList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33FA815282D595C00DC40E8 /* ChannelList_Tests.swift */; };
+		A33FA818282E559A00DC40E8 /* SlowMode_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33FA817282E559A00DC40E8 /* SlowMode_Tests.swift */; };
 		A344077427D753530044F150 /* ChannelUnreadCount_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A344075027D753530044F150 /* ChannelUnreadCount_Mock.swift */; };
 		A344077527D753530044F150 /* ChatChannel_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A344075127D753530044F150 /* ChatChannel_Mock.swift */; };
 		A344077627D753530044F150 /* ChatMessageReaction_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A344075227D753530044F150 /* ChatMessageReaction_Mock.swift */; };
@@ -3007,6 +3008,7 @@
 		A30DEC98260B47DE0066E8CE /* TitleContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleContainerView.swift; sourceTree = "<group>"; };
 		A311B42C27E8BB7400CFCF6D /* StreamChatTestTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatTestTools.swift; sourceTree = "<group>"; };
 		A33FA815282D595C00DC40E8 /* ChannelList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList_Tests.swift; sourceTree = "<group>"; };
+		A33FA817282E559A00DC40E8 /* SlowMode_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowMode_Tests.swift; sourceTree = "<group>"; };
 		A344074E27D753530044F150 /* ChatClientUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatClientUpdater_Mock.swift; sourceTree = "<group>"; };
 		A344075027D753530044F150 /* ChannelUnreadCount_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelUnreadCount_Mock.swift; sourceTree = "<group>"; };
 		A344075127D753530044F150 /* ChatChannel_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatChannel_Mock.swift; sourceTree = "<group>"; };
@@ -5052,6 +5054,7 @@
 				82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */,
 				82AD02BC27D8E44B000611B7 /* StreamTestCase.swift */,
 				A33FA815282D595C00DC40E8 /* ChannelList_Tests.swift */,
+				A33FA817282E559A00DC40E8 /* SlowMode_Tests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -9708,6 +9711,7 @@
 				82B350FD27EA2A3900FEB6A0 /* MessageResponses.swift in Sources */,
 				822F266027D9FDB500E454FB /* URLProtocol_Mock.swift in Sources */,
 				82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */,
+				A33FA818282E559A00DC40E8 /* SlowMode_Tests.swift in Sources */,
 				A39B040B27F196F200D6B18A /* StreamChatUITests.swift in Sources */,
 				82E4CBDE27F30E7D0013B02D /* MessageList.swift in Sources */,
 				82B3510127EA2B1400FEB6A0 /* EventResponses.swift in Sources */,

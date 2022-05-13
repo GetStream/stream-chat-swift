@@ -61,6 +61,7 @@ class MessageListPage {
         static var attachmentButton: XCUIElement { app.buttons["AttachmentButton"] }
         static var commandButton: XCUIElement { app.buttons["CommandButton"] }
         static var inputField: XCUIElement { app.otherElements["InputChatMessageView"] }
+        static var cooldown: XCUIElement { app.staticTexts["cooldownLabel"] }
     }
     
     enum Reactions {

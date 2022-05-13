@@ -12,7 +12,18 @@ import XCTest
 
 struct ChannelConfigs {
 
+    struct CoolDown {
+        var isEnabled = false
+        var duration: Int = 3
+    }
+
     private var configs: [String: ChannelConfig_Mock] = [:]
+
+    var coolDown = CoolDown()
+
+    mutating func setCooldown(enabled value: Bool, duration: Int) -> Void {
+        coolDown = CoolDown(isEnabled: value, duration: duration)
+    }
 
     func updateChannel(channel: inout [String: Any], withId id: String) {
         guard
