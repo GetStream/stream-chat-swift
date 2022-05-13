@@ -11,25 +11,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     private var isInitialized: Bool = false
     /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
     private let collectionUpdatesMapper = CollectionUpdatesMapper()
-    
-    // In some cases updates coming one by one might require scrolling to bottom.
-    //
-    // Scheduling the action and canceling the previous one ensures the scroll to bottom
-    // is done only once.
-    //
-    // Having a delay gives layout a chance to calculate the correct size for bottom cells
-    // so they are fully visible when scroll to bottom happens.
-    private var scrollToBottomAction: DispatchWorkItem? {
-        didSet {
-            oldValue?.cancel()
-            if let action = scrollToBottomAction {
-                DispatchQueue.main.asyncAfter(
-                    deadline: .now() + .milliseconds(200),
-                    execute: action
-                )
-            }
-        }
-    }
 
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -177,6 +158,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         completion: (() -> Void)? = nil
     ) {
         defer {
+            let lastMessageInserted = changes.first(where: { $0.isInsertion && $0.indexPath.row == 0 })?.item
+            if lastMessageInserted?.isSentByCurrentUser == true {
+                scrollToMostRecentMessage()
+            }
+
             completion?()
         }
 
@@ -202,12 +188,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                     // +1 instead of -1 because the message list is inverted
                     let previousIndex = IndexPath(row: index.row + 1, section: index.section)
                     self.reloadRows(at: [previousIndex], with: .none)
-                }
-            }
-
-            if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
-                scrollToBottomAction = .init { [weak self] in
-                    self?.scrollToMostRecentMessage()
                 }
             }
 
@@ -278,4 +258,28 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
 private extension CGAffineTransform {
     static let mirrorY = Self(scaleX: 1, y: -1)
+}
+
+private extension ListChange {
+    var isInsertion: Bool {
+        switch self {
+        case .insert:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var indexPath: IndexPath {
+        switch self {
+        case let .insert(_, index):
+            return index
+        case let .move(_, _, toIndex):
+            return toIndex
+        case let .update(_, index):
+            return index
+        case let .remove(_, index):
+            return index
+        }
+    }
 }

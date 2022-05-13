@@ -37,7 +37,7 @@ extension ListChange: CustomStringConvertible {
 
 extension ListChange {
     /// Returns the underlaying item that was changed.
-    var item: Item {
+    public var item: Item {
         switch self {
         case let .insert(item, _):
             return item
