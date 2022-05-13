@@ -33,7 +33,7 @@ class ChannelUpdater: Worker {
                 channelCreatedCallback?(payload.channel.cid)
                 database?.write { session in
                     if clearMessageHistory, let channelDTO = session.channel(cid: payload.channel.cid) {
-                        channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isPending == true }
+                        channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
                     }
 
                     try session.saveChannel(payload: payload)

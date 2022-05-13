@@ -407,7 +407,7 @@ public enum LocalMessageState: String {
     /// Deleting of the message failed after multiple of tries. The system is not trying to delete this message anymore.
     case deletingFailed
 
-    var isPending: Bool {
+    var isLocalOnly: Bool {
         switch self {
         case .pendingSync, .syncing, .syncingFailed, .pendingSend, .sending, .sendingFailed:
             return true

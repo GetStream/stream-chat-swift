@@ -984,7 +984,8 @@ final class MessageDTO_Tests: XCTestCase {
             )
             newMessageId = messageDTO.id
         }
-        
+
+        let loadedChannel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
         let loadedMessage: ChatMessage = try XCTUnwrap(database.viewContext.message(id: newMessageId)).asModel()
 
         XCTAssertEqual(loadedMessage.text, newMessageText)
@@ -1003,6 +1004,7 @@ final class MessageDTO_Tests: XCTestCase {
             loadedMessage._attachments.map { $0.uploadingState?.localFileURL },
             newMessageAttachments.map(\.localFileURL)
         )
+        XCTAssertEqual(loadedChannel.previewMessage?.id, loadedMessage.id)
     }
     
     func test_createNewMessage_whenRegularMessageIsCreated_makesItChannelPreview() throws {
