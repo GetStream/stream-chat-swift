@@ -8,7 +8,7 @@ final class ChannelList_Tests: StreamTestCase {
 
     let message = "message"
 
-    func test_newMessageShownInChannelPreview_whenComingBackFromOffline() {
+    func test_newMessageShownInChannelPreview_whenComingBackFromChannel() {
         linkToScenario(withId: 79)
 
         GIVEN("user opens the channel") {
