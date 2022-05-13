@@ -80,4 +80,3 @@ final class ChannelList_Tests: StreamTestCase {
         }
     }
 }
-
