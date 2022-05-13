@@ -366,7 +366,9 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         WHEN("user replies to message in thread") {
-            userRobot.replyToMessageInThread(threadReply)
+            userRobot
+                .replyToMessageInThread(threadReply)
+                .waitForNewMessage(withText: threadReply)
         }
         AND("participant reads the user's thread reply") {
             participantRobot.readMessage()
@@ -421,10 +423,12 @@ extension MessageDeliveryStatus_Tests {
         }
         AND("user replies to message in thread") {
             userRobot.replyToMessageInThread(threadReply)
+                participantRobot.chill(duration: 1)
         }
         AND("thread reply is read by participant") {
             participantRobot
                 .readMessage()
+                .chill(duration: 1)
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
@@ -510,8 +514,11 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage("/command")
         }
         THEN("delivery status is shown for \(message)") {
-            userRobot.assertMessageDeliveryStatus(.sent)
-                .assertMessageReadCount(readBy: 0)
+            userRobot
+                .assertMessageDeliveryStatus(.sent, at: 1)
+                .assertMessageReadCount(readBy: 0, at: 1)
+                .assertMessageDeliveryStatus(nil, at: 0)
+                .assertMessageReadCount(readBy: 0, at: 0)
         }
     }
 }
