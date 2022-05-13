@@ -78,6 +78,7 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func sendMessage(_ text: String) -> Self {
+        waitForChannelQueryUpdate()
         server.websocketMessage(
             text,
             channelId: server.currentChannelId,
@@ -103,12 +104,17 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func deleteMessage() -> Self {
-        let messageId = server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let user = participant()
+        guard let userId = user?[UserPayloadsCodingKeys.id.rawValue] as? String else {
+            return self
+        }
+        let message = server.findMessageByUserId(userId)
+        let messageId = message?[MessagePayloadsCodingKeys.id.rawValue] as? String
         server.websocketMessage(
             channelId: server.currentChannelId,
             messageId: messageId,
             eventType: .messageDeleted,
-            user: participant()
+            user: user
         )
         return self
     }
@@ -180,5 +186,12 @@ final class ParticipantRobot: Robot {
         }
 
         return server.setUpUser(source: message, details: _user)
+    }
+    
+    // To avoid collision of the first channel query call and a first participant's message
+    private func waitForChannelQueryUpdate(timeout: Double = 5) {
+        let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
+        while !server.channelQueryEndpointWasCalled
+                && endTime > Date().timeIntervalSince1970 * 1000 {}
     }
 }

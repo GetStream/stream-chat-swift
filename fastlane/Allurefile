@@ -7,8 +7,8 @@ allure_results_path = 'allure-results'
 
 desc 'Upload test results to Allure TestOps'
 lane :allure_upload do
-  github_path = "/repos/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}"
-  github_run = JSON.parse(github_api(path: github_path)[:body], api_token: ENV['ALLURE_GITHUB_TOKEN'])
+  github_path = "#{ENV['GITHUB_API_URL']}/repos/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}"
+  github_run = JSON.parse(sh("curl -s -H 'authorization: Bearer #{ENV['GITHUB_TOKEN']}' -X GET -G #{github_path}"))
   github_branch = github_run['head_branch']
   tags = []
   launch_name =
@@ -23,7 +23,15 @@ lane :allure_upload do
     end
   launch_id = allure_launch(name: launch_name, tags: tags)['id']
   allure_args = "-e #{allure_endpoint} --project-id #{allure_project_id} --launch-id #{launch_id}"
-  sh("./xcresults export test_output/StreamChatUITestsApp.xcresult #{allure_results_path}")
+
+  xcresult =
+    if File.exist?('test_output/merged.xcresult')
+      'test_output/merged.xcresult'
+    else
+      'test_output/StreamChatUITestsApp.xcresult'
+    end
+
+  sh("./xcresults export #{xcresult} #{allure_results_path}")
   sh("env BRANCH_NAME='#{github_branch}' ./allurectl upload #{allure_args} #{allure_results_path}")
   UI.success("Check out test results in Allure TestOps: #{allure_endpoint}/launch/#{launch_id} 🎉")
 end
