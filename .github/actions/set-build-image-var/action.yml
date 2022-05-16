@@ -1,7 +1,0 @@
-name: 'Set build image variable'
-description: 'Sets $ImageVersion with buil image version'
-runs:
-  using: "composite"
-  steps:
-    - run: echo "ImageVersion=$ImageVersion" >> $GITHUB_ENV
-      shell: bash
