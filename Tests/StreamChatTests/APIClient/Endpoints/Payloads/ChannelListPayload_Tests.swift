@@ -21,8 +21,8 @@ final class ChannelListPayload_Tests: XCTestCase {
     func test_hugeChannelListQuery_save() throws {
         let decodedPayload = createHugeChannelList()
         
-        let databaseContainer = DatabaseContainer_Spy()
         measure {
+            let databaseContainer = DatabaseContainer_Spy()
             let writeCompleted = expectation(description: "DB write complete")
             databaseContainer.write({ session in
                 try session.saveChannelList(payload: decodedPayload, query: .init(filter: .containMembers(userIds: [.unique])))
@@ -87,8 +87,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     updatedAt: .unique
                 ),
                 isFrozen: true,
-                memberCount: 100,
-                team: .unique,
+                isHidden: false,
                 members: channelUsers.map {
                     MemberPayload.dummy(
                         user: $0,
@@ -98,6 +97,8 @@ final class ChannelListPayload_Tests: XCTestCase {
                         isMemberBanned: false
                     )
                 },
+                memberCount: 100,
+                team: .unique,
                 cooldownDuration: .random(in: 0...120)
             )
             
@@ -178,7 +179,8 @@ final class ChannelListPayload_Tests: XCTestCase {
                         lastReadAt: .unique(after: channelCreatedDate),
                         unreadMessagesCount: (0..<10).randomElement()!
                     )
-                }
+                },
+                isHidden: false
             )
         }
         

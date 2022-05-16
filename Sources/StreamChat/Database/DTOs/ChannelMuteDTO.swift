@@ -29,11 +29,9 @@ final class ChannelMuteDTO: NSManagedObject {
         }
         
         let new = NSEntityDescription.insertNewObject(
-            forEntityName: ChannelMuteDTO.entityName,
             into: context,
-            forRequest: request,
-            cachingInto: FetchCache.shared
-        ) as! ChannelMuteDTO
+            for: request
+        )
         return new
     }
 }

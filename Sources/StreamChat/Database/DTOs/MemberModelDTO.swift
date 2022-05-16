@@ -55,7 +55,7 @@ extension MemberDTO {
 
 extension MemberDTO {
     static func load(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
-        let memberId = MemberDTO.createId(userId: id, channeldId: channelId)
+        let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
         return load(by: memberId, context: context).first
     }
     
@@ -67,7 +67,7 @@ extension MemberDTO {
     ///   - context: The context used to fetch/create `UserDTO`
     ///
     static func loadOrCreate(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO {
-        let memberId = MemberDTO.createId(userId: id, channeldId: channelId)
+        let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
         let request = fetchRequest(id: memberId)
         if let existing = load(by: request, context: context).first {
             return existing

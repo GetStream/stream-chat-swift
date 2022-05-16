@@ -16,6 +16,7 @@ extension NSEntityDescription {
         for request: NSFetchRequest<T>
     ) -> T {
         let entity = insertNewObject(forEntityName: T.entityName, into: context)
+        request.entity = NSEntityDescription.entity(forEntityName: T.entityName, in: context)!
         FetchCache.shared.set(request, objectIds: [entity.objectID])
         return entity as! T
     }
