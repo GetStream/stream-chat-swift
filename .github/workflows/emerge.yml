@@ -29,7 +29,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/set-build-image-var
       - uses: ./.github/actions/bootstrap
       - name: Run match_me
         env:
