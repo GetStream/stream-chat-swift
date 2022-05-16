@@ -18,7 +18,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/set-build-image-var
       - name: Extract version from branch name (for release branches)
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: |
