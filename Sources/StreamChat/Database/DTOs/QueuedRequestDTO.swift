@@ -18,12 +18,7 @@ class QueuedRequestDTO: NSManagedObject {
         context: NSManagedObjectContext
     ) -> QueuedRequestDTO {
         let request = fetchRequest(id: id)
-        let new = NSEntityDescription.insertNewObject(
-            forEntityName: Self.entityName,
-            into: context,
-            forRequest: request,
-            cachingInto: FetchCache.shared
-        ) as! QueuedRequestDTO
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         new.date = date
         new.endpoint = endpoint

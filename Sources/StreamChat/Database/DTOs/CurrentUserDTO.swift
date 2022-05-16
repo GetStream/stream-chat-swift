@@ -60,12 +60,7 @@ extension CurrentUserDTO {
         )
         if let existing = result.first { return existing }
         
-        let new = NSEntityDescription.insertNewObject(
-            forEntityName: Self.entityName,
-            into: context,
-            forRequest: request,
-            cachingInto: FetchCache.shared
-        ) as! CurrentUserDTO
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         return new
     }
 }

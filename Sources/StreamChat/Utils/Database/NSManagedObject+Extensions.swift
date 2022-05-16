@@ -11,25 +11,23 @@ extension NSManagedObject {
 }
 
 extension NSEntityDescription {
-    class func insertNewObject<T: NSFetchRequestResult>(
-        forEntityName entityName: String,
+    class func insertNewObject<T: NSManagedObject>(
         into context: NSManagedObjectContext,
-        forRequest request: NSFetchRequest<T>,
-        cachingInto cache: FetchCache
-    ) -> NSManagedObject {
-        let entity = insertNewObject(forEntityName: entityName, into: context)
-        cache.set(request, objectIds: [entity.objectID])
-        return entity
+        for request: NSFetchRequest<T>
+    ) -> T {
+        let entity = insertNewObject(forEntityName: T.entityName, into: context)
+        FetchCache.shared.set(request, objectIds: [entity.objectID])
+        return entity as! T
     }
 }
 
 protocol NSFetchRequestGettable {}
 
+private let idKey = "id"
+
 extension NSFetchRequestGettable where Self: NSManagedObject {
     static func fetchRequest(id: String) -> NSFetchRequest<Self> {
-        let request = NSFetchRequest<Self>(entityName: entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return request
+        fetchRequest(keyPath: idKey, equalTo: id)
     }
     
     static func fetchRequest(keyPath: String, equalTo value: String) -> NSFetchRequest<Self> {
@@ -43,7 +41,7 @@ extension NSManagedObject: NSFetchRequestGettable {}
 
 extension NSManagedObject {
     static func load<T: NSManagedObject>(by id: String, context: NSManagedObjectContext) -> [T] {
-        load(keyPath: "id", equalTo: id, context: context)
+        load(keyPath: idKey, equalTo: id, context: context)
     }
     
     static func load<T: NSManagedObject>(keyPath: String, equalTo value: String, context: NSManagedObjectContext) -> [T] {
@@ -67,40 +65,41 @@ extension NSManagedObject {
 }
 
 class FetchCache {
-    static let shared = FetchCache()
+    fileprivate static let shared = FetchCache()
     
     private var cache = [NSFetchRequest<NSFetchRequestResult>: [NSManagedObjectID]]()
     
-    func set<T>(_ request: NSFetchRequest<T>, objectIds: [NSManagedObjectID]) where T: NSFetchRequestResult {
-        cache[request as! NSFetchRequest<NSFetchRequestResult>] = objectIds
+    fileprivate func set<T>(_ request: NSFetchRequest<T>, objectIds: [NSManagedObjectID]) where T: NSFetchRequestResult {
+        guard let request = request as? NSFetchRequest<NSFetchRequestResult> else {
+            log.assertionFailure("Request should have a generic type conforming to NSFetchRequestResult")
+            return
+        }
+        cache[request] = objectIds
     }
     
-    func get<T>(_ request: NSFetchRequest<T>) -> [NSManagedObjectID]? where T: NSFetchRequestResult {
-        cache[request as! NSFetchRequest<NSFetchRequestResult>]
+    fileprivate func get<T>(_ request: NSFetchRequest<T>) -> [NSManagedObjectID]? where T: NSFetchRequestResult {
+        guard let request = request as? NSFetchRequest<NSFetchRequestResult> else {
+            log.assertionFailure("Request should have a generic type conforming to NSFetchRequestResult")
+            return nil
+        }
+        return cache[request]
     }
     
-    func clear() {
-        cache.removeAll()
+    static func clear() {
+        Self.shared.cache.removeAll()
     }
 }
 
 extension NSManagedObjectContext {
     func fetch<T>(_ request: NSFetchRequest<T>, using cache: FetchCache) throws -> [T] where T: NSFetchRequestResult {
         if let objectIds = cache.get(request) {
-            // We have `fetch`ed this request before
-            if !objectIds.isEmpty {
-                // ..and we've found the ids
-                return try objectIds.map { try existingObject(with: $0) as! T }
-            } else {
-                // ..and it's not in DB
-                return []
-            }
-        } else {
-            // We haven't `fetch`ed the request yet
-            let objects = try fetch(request)
-            let objectIds = objects.map { ($0 as! NSManagedObject).objectID }
-            cache.set(request, objectIds: objectIds)
-            return objects
+            return try objectIds.compactMap { try existingObject(with: $0) as? T }
         }
+
+        // We haven't `fetch`ed the request yet
+        let objects = try fetch(request)
+        let objectIds = objects.compactMap { ($0 as? NSManagedObject)?.objectID }
+        cache.set(request, objectIds: objectIds)
+        return objects
     }
 }

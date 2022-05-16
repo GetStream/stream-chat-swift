@@ -73,12 +73,7 @@ extension MemberDTO {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(
-            forEntityName: Self.entityName,
-            into: context,
-            forRequest: request,
-            cachingInto: FetchCache.shared
-        ) as! MemberDTO
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = memberId
         return new
     }

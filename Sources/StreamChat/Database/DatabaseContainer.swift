@@ -202,7 +202,7 @@ class DatabaseContainer: NSPersistentContainer {
         writableContext.perform {
             log.debug("Starting a database session.", subsystems: .database)
             // Clear the FetchCache
-            FetchCache.shared.clear()
+            FetchCache.clear()
             do {
                 try actions(self.writableContext)
                 // If you touch ManagedObject and update one of it properties to same value

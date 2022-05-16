@@ -350,12 +350,7 @@ class MessageDTO: NSManagedObject {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(
-            forEntityName: entityName,
-            into: context,
-            forRequest: request,
-            cachingInto: FetchCache.shared
-        ) as! Self
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         new.latestReactions = []
         new.ownReactions = []

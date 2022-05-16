@@ -37,12 +37,7 @@ extension DeviceDTO {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(
-            forEntityName: Self.entityName,
-            into: context,
-            forRequest: request,
-            cachingInto: FetchCache.shared
-        ) as! DeviceDTO
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         return new
     }

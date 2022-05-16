@@ -34,13 +34,7 @@ extension NSManagedObjectContext: MessageSearchDatabaseSession {
             return existingDTO
         }
         
-        let newDTO = NSEntityDescription
-            .insertNewObject(
-                forEntityName: MessageSearchQueryDTO.entityName,
-                into: self,
-                forRequest: request,
-                cachingInto: FetchCache.shared
-            ) as! MessageSearchQueryDTO
+        let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
         newDTO.filterHash = query.filterHash
         
         return newDTO
