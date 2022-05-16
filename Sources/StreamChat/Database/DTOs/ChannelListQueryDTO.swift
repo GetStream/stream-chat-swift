@@ -45,13 +45,7 @@ extension NSManagedObjectContext {
             return existingDTO
         }
         
-        let newDTO = NSEntityDescription
-            .insertNewObject(
-                forEntityName: ChannelListQueryDTO.entityName,
-                into: self,
-                forRequest: request,
-                cachingInto: FetchCache.shared
-            ) as! ChannelListQueryDTO
+        let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
         newDTO.filterHash = query.filter.filterHash
         
         let jsonData: Data

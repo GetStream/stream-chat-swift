@@ -32,12 +32,7 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(
-            forEntityName: Self.entityName,
-            into: context,
-            forRequest: request,
-            cachingInto: FetchCache.shared
-        ) as! ChannelMemberListQueryDTO
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.queryHash = queryHash
         return new
     }

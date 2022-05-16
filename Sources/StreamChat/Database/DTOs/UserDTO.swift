@@ -83,12 +83,7 @@ extension UserDTO {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(
-            forEntityName: Self.entityName,
-            into: context,
-            forRequest: request,
-            cachingInto: FetchCache.shared
-        ) as! UserDTO
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         new.teams = []
         return new

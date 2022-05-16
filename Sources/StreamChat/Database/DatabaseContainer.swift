@@ -201,10 +201,10 @@ class DatabaseContainer: NSPersistentContainer {
     func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         writableContext.perform {
             log.debug("Starting a database session.", subsystems: .database)
-            // Clear the FetchCache
-            FetchCache.shared.clear()
             do {
+                FetchCache.clear()
                 try actions(self.writableContext)
+                FetchCache.clear()
                 // If you touch ManagedObject and update one of it properties to same value
                 // Object will be marked as `updated` even it hasn't changed.
                 // By reseting such objects we remove updates that are not updates.
@@ -226,6 +226,7 @@ class DatabaseContainer: NSPersistentContainer {
                 
             } catch {
                 log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)
+                FetchCache.clear()
                 completion(error)
             }
         }

@@ -55,13 +55,7 @@ extension NSManagedObjectContext {
             return existingDTO
         }
         
-        let newDTO = NSEntityDescription
-            .insertNewObject(
-                forEntityName: UserListQueryDTO.entityName,
-                into: self,
-                forRequest: request,
-                cachingInto: FetchCache.shared
-            ) as! UserListQueryDTO
+        let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
         newDTO.filterHash = filterHash
         newDTO.shouldBeUpdatedInBackground = query.shouldBeUpdatedInBackground
         
