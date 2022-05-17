@@ -15,10 +15,10 @@ extension NSEntityDescription {
         into context: NSManagedObjectContext,
         for request: NSFetchRequest<T>
     ) -> T {
-        let entity = insertNewObject(forEntityName: T.entityName, into: context)
-        request.entity = NSEntityDescription.entity(forEntityName: T.entityName, in: context)!
-        FetchCache.shared.set(request, objectIds: [entity.objectID])
-        return entity as! T
+        let obj = T(context: context)
+        request.entity = obj.entity
+        FetchCache.shared.set(request, objectIds: [obj.objectID])
+        return obj
     }
 }
 
@@ -51,8 +51,8 @@ extension NSManagedObject {
         return load(by: request, context: context)
     }
     
-    static func load<T>(by request: NSFetchRequest<T>, context: NSManagedObjectContext) -> [T] {
-        request.entity = NSEntityDescription.entity(forEntityName: entityName, in: context)!
+    static func load<T: NSManagedObject>(by request: NSFetchRequest<T>, context: NSManagedObjectContext) -> [T] {
+        request.entity = NSEntityDescription.entity(forEntityName: T.entityName, in: context)!
         do {
             return try context.fetch(
                 request,
