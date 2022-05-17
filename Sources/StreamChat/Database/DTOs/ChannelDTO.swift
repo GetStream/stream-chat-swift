@@ -133,6 +133,10 @@ extension ChannelDTO: EphemeralValuesContainer {
     }
 }
 
+extension PerformanceMeasureItem {
+    static let saveChannelList = Self("saveChannelList")
+}
+
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
@@ -140,15 +144,21 @@ extension NSManagedObjectContext {
         payload: ChannelListPayload,
         query: ChannelListQuery
     ) throws -> [ChannelDTO] {
+        log.startMeasuring(item: .saveChannelList)
+        
         // The query will be saved during `saveChannel` call
         // but in case this query does not have any channels,
         // the query won't be saved, which will cause any future
         // channels to not become linked to this query
         _ = saveQuery(query: query)
         
-        return try payload.channels.map { channelPayload in
+        let list = try payload.channels.map { channelPayload in
             try saveChannel(payload: channelPayload, query: query)
         }
+        
+        log.endMeasuring(item: .saveChannelList)
+        
+        return list
     }
     
     func saveChannel(
@@ -215,7 +225,7 @@ extension NSManagedObjectContext {
                 
         let reads = Set(
             try payload.channelReads.map {
-                try saveChannelRead(payload: $0, for: payload.channel.cid)
+                try saveChannelRead(payload: $0, for: payload.channel.cid, channelDTO: dto)
             }
         )
         dto.reads.subtracting(reads).forEach { delete($0) }

@@ -1799,11 +1799,14 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in database.
         try database.createMessage(id: messageId, cid: cid)
+        
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         // Create attachment in database.
         try database.writeSynchronously {
             try $0.createNewAttachment(
                 attachment: .mockFile,
-                id: attachmentId
+                id: attachmentId,
+                messageDTO: messageDTO
             )
         }
 
@@ -1840,11 +1843,13 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in database.
         try database.createMessage(id: messageId, cid: cid)
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
                 attachment: .mockFile,
-                id: attachmentId
+                id: attachmentId,
+                messageDTO: messageDTO
             )
             attachmentDTO.localState = .uploadingFailed
         }
@@ -1871,11 +1876,13 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in database.
         try database.createMessage(id: messageId, cid: cid)
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
                 attachment: .mockFile,
-                id: attachmentId
+                id: attachmentId,
+                messageDTO: messageDTO
             )
             attachmentDTO.localState = .uploadingFailed
         }

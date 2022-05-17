@@ -464,7 +464,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.attachments = Set(
             try attachments.enumerated().map { index, attachment in
                 let id = AttachmentId(cid: cid, messageId: message.id, index: index)
-                return try createNewAttachment(attachment: attachment, id: id)
+                return try createNewAttachment(attachment: attachment, id: id, messageDTO: message)
             }
         )
         
@@ -584,20 +584,20 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.latestReactions = payload
             .latestReactions
-            .compactMap { try? saveReaction(payload: $0) }
+            .compactMap { try? saveReaction(payload: $0, for: dto) }
             .map(\.id)
 
         if syncOwnReactions {
             dto.ownReactions = payload
                 .ownReactions
-                .compactMap { try? saveReaction(payload: $0) }
+                .compactMap { try? saveReaction(payload: $0, for: dto) }
                 .map(\.id)
         }
 
         let attachments: Set<AttachmentDTO> = try Set(
             payload.attachments.enumerated().map { index, attachment in
                 let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
-                let dto = try saveAttachment(payload: attachment, id: id)
+                let dto = try saveAttachment(payload: attachment, id: id, messageDTO: dto)
                 return dto
             }
         )

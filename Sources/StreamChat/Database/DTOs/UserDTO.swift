@@ -79,9 +79,9 @@ extension UserDTO {
     ///
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> UserDTO {
         let request = fetchRequest(id: id)
-        if let existing = load(by: request, context: context).first {
-            return existing
-        }
+//        if let existing = load(by: request, context: context).first {
+//            return existing
+//        }
         
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id

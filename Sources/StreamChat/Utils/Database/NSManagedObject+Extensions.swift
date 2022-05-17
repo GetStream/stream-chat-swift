@@ -103,16 +103,50 @@ class FetchCache {
     }
 }
 
+extension PerformanceMeasureItem {
+    static let fetch = Self("fetch")
+}
+
+import OSLog
+
 extension NSManagedObjectContext {
     func fetch<T>(_ request: NSFetchRequest<T>, using cache: FetchCache) throws -> [T] where T: NSFetchRequestResult {
-        if let objectIds = cache.get(request) {
-            return try objectIds.compactMap { try existingObject(with: $0) as? T }
+        // log.startMeasuring(item: .fetch, "%s", String(describing: T.self))
+        if #available(iOSApplicationExtension 12.0, *) {
+            os_signpost(.begin, log: log.osLogHandler, name: PerformanceMeasureItem.fetch.name, "%s", request.entityName!)
         }
-
-        // We haven't `fetch`ed the request yet
-        let objects = try fetch(request)
-        let objectIds = objects.compactMap { ($0 as? NSManagedObject)?.objectID }
-        cache.set(request, objectIds: objectIds)
-        return objects
+        if let objectIds = cache.get(request) {
+            // We have `fetch`ed this request before
+            if !objectIds.isEmpty {
+                // ..and we've found the ids
+                do {
+                    let dtos = try objectIds.map { try existingObject(with: $0) as! T }
+                    log.endMeasuring(item: .fetch, "cache hit, existingObject")
+                    return dtos
+                } catch {
+                    throw error
+                }
+            } else {
+                // ..and it's not in DB
+                log.endMeasuring(item: .fetch, "cache hit, not in DB")
+                return []
+            }
+        } else {
+            // We haven't `fetch`ed the request yet
+            let objects = try fetch(request)
+            let objectIds = objects.map { ($0 as! NSManagedObject).objectID }
+            cache.set(request, objectIds: objectIds)
+            // log.endMeasuring(item: .fetch, "cache miss, found %d objects in DB", objectIds.count)
+            if #available(iOSApplicationExtension 12.0, *) {
+                os_signpost(
+                    .end,
+                    log: log.osLogHandler,
+                    name: PerformanceMeasureItem.fetch.name,
+                    "cache miss, found %d objects in DB",
+                    objectIds.count
+                )
+            }
+            return objects
+        }
     }
 }

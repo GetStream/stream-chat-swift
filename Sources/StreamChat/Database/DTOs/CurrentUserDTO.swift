@@ -22,6 +22,9 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var currentDevice: DeviceDTO?
     @NSManaged var channelMutes: Set<ChannelMuteDTO>
     
+    /// Key for asserting the uniqueness of the Current User. Corresponds to `user.id`
+    @NSManaged var uniquenessKey: String
+    
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
@@ -51,7 +54,7 @@ extension CurrentUserDTO {
     /// If the `CurrentUserDTO` entity exists in the context, fetches and returns it. Otherwise create a new `CurrentUserDTO`.
     ///
     /// - Parameter context: The context used to fetch/create `CurrentUserDTO`
-    fileprivate static func loadOrCreate(context: NSManagedObjectContext) -> CurrentUserDTO {
+    fileprivate static func loadOrCreate(id: String, context: NSManagedObjectContext) -> CurrentUserDTO {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
         let result = load(by: request, context: context)
         log.assert(
@@ -67,7 +70,7 @@ extension CurrentUserDTO {
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
     func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
-        let dto = CurrentUserDTO.loadOrCreate(context: self)
+        let dto = CurrentUserDTO.loadOrCreate(id: payload.id, context: self)
         dto.user = try saveUser(payload: payload)
 
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }

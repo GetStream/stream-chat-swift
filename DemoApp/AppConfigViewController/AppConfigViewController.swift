@@ -32,6 +32,7 @@ class AppConfig {
         chatClientConfig = ChatClientConfig(apiKeyString: apiKeyString)
         chatClientConfig.shouldShowShadowedMessages = true
         chatClientConfig.applicationGroupIdentifier = applicationGroupIdentifier
+        chatClientConfig.isLocalStorageEnabled = false
     }
 }
 

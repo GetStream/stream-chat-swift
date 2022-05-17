@@ -931,7 +931,7 @@ final class ChannelDTO_Tests: XCTestCase {
         )
 
         // When
-        let dto = config.asDTO(context: database.viewContext, cid: "test")
+        let dto = database.viewContext.saveChannelConfig(cid: .unique, payload: config)
 
         // Then
         let actual = dto.commands.compactMap { $0 as? CommandDTO }.map(\.name)

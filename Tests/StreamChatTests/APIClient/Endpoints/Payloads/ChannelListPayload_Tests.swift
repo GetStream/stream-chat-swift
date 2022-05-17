@@ -36,6 +36,32 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
     }
     
+    func test_coreDataLazy_performance() throws {
+        let decodedPayload = createHugeChannelList()
+        
+        let databaseContainer = DatabaseContainer_Spy()
+        let writeCompleted = expectation(description: "DB write complete")
+        databaseContainer.write({ session in
+            try session.saveChannelList(payload: decodedPayload, query: .init(filter: .containMembers(userIds: [.unique])))
+        }, completion: { error in
+            if let error = error {
+                XCTFail("DB write error: \(error)")
+            }
+            writeCompleted.fulfill()
+        })
+        wait(for: [writeCompleted], timeout: 10)
+        
+        measure {
+            for cid in decodedPayload.channels.map(\.channel.cid) {
+                do {
+                    _ = try XCTUnwrap(databaseContainer.viewContext.channel(cid: cid)).asModel()
+                } catch {
+                    XCTFail("ChannelDTO not found for cid \(cid)")
+                }
+            }
+        }
+    }
+    
     func createHugeChannelList() -> ChannelListPayload {
         let userCount = 600
         let channelCount = 20

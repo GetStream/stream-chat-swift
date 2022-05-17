@@ -193,9 +193,9 @@ extension DatabaseSession_Mock {
         underlyingSession.delete(reaction: reaction)
     }
     
-    func saveChannelRead(payload: ChannelReadPayload, for cid: ChannelId) throws -> ChannelReadDTO {
+    func saveChannelRead(payload: ChannelReadPayload, for cid: ChannelId, channelDTO: ChannelDTO) throws -> ChannelReadDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveChannelRead(payload: payload, for: cid)
+        return try underlyingSession.saveChannelRead(payload: payload, for: cid, channelDTO: channelDTO)
     }
     
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
@@ -266,14 +266,14 @@ extension DatabaseSession_Mock {
         underlyingSession.attachment(id: id)
     }
     
-    func saveAttachment(payload: MessageAttachmentPayload, id: AttachmentId) throws -> AttachmentDTO {
+    func saveAttachment(payload: MessageAttachmentPayload, id: AttachmentId, messageDTO: MessageDTO) throws -> AttachmentDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveAttachment(payload: payload, id: id)
+        return try underlyingSession.saveAttachment(payload: payload, id: id, messageDTO: messageDTO)
     }
     
-    func createNewAttachment(attachment: AnyAttachmentPayload, id: AttachmentId) throws -> AttachmentDTO {
+    func createNewAttachment(attachment: AnyAttachmentPayload, id: AttachmentId, messageDTO: MessageDTO) throws -> AttachmentDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.createNewAttachment(attachment: attachment, id: id)
+        return try underlyingSession.createNewAttachment(attachment: attachment, id: id, messageDTO: messageDTO)
     }
 
     func saveChannelMute(

@@ -260,14 +260,15 @@ extension Notification {
 
 // MARK: - Test helpers
 
-#if TESTS
+// #if TESTS
 extension WebSocketClient {
     /// Simulates connection status change
     func simulateConnectionStatus(_ status: WebSocketConnectionState) {
         connectionState = status
     }
 }
-#endif
+
+// #endif
 
 extension ClientError {
     public class WebSocket: ClientError {}

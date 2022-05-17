@@ -125,6 +125,11 @@
         <attribute name="name" attributeType="String" defaultValueString=""/>
         <attribute name="set" attributeType="String" defaultValueString=""/>
         <relationship name="channelConfig" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelConfigDTO" inverseName="commands" inverseEntity="ChannelConfigDTO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="name"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="CurrentUserDTO" representedClassName="CurrentUserDTO" syncable="YES">
         <attribute name="lastSynchedEventDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

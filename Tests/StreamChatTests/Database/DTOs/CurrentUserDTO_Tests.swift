@@ -38,15 +38,15 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_currentUserPayload_isStoredAndLoadedFromDB() throws {
-        let userPayload: UserPayload = .dummy(userId: .unique, extraData: ["k": .string("v")])
+        let userPayload: UserPayload = .dummy(userId: "currentUser", extraData: ["k": .string("v")])
         
         let payload: CurrentUserPayload = .dummy(
             userPayload: userPayload,
             devices: [DevicePayload.dummy],
             mutedUsers: [
-                .dummy(userId: .unique),
-                .dummy(userId: .unique),
                 .dummy(userId: .unique)
+                // .dummy(userId: .unique),
+                // .dummy(userId: .unique)
             ],
             mutedChannels: [
                 .init(
@@ -54,13 +54,13 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
                     user: userPayload,
                     createdAt: .unique,
                     updatedAt: .unique
-                ),
-                .init(
-                    mutedChannel: .dummy(cid: .unique),
-                    user: userPayload,
-                    createdAt: .unique,
-                    updatedAt: .unique
                 )
+//                .init(
+//                    mutedChannel: .dummy(cid: .unique),
+//                    user: userPayload,
+//                    createdAt: .unique,
+//                    updatedAt: .unique
+//                )
             ]
         )
         

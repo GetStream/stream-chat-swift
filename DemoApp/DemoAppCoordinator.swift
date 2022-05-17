@@ -72,7 +72,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     
     func setUpChat() {
         // Set the log level
-        LogConfig.level = .warning
+        LogConfig.level = .debug
         LogConfig.formatters = [
             PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
         ]

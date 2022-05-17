@@ -1337,13 +1337,16 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Create message in the database.
         try database.createMessage(id: messageId, cid: cid)
+        
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Create message attachments in the database.
         try database.writeSynchronously { session in
             for id in attachmentIDs {
                 try session.createNewAttachment(
                     attachment: [.mockFile, .mockImage, .init(payload: TestAttachmentPayload.unique)].randomElement()!,
-                    id: id
+                    id: id,
+                    messageDTO: messageDTO
                 )
             }
         }

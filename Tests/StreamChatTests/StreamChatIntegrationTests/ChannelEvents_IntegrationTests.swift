@@ -190,6 +190,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
             withMessages: true,
             withQuery: false
         )
+        
+        let channelDTO = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
 
         try client.databaseContainer.writeSynchronously { session in
             let read = try XCTUnwrap(
@@ -199,7 +201,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
                         lastReadAt: .unique,
                         unreadMessagesCount: .unique
                     ),
-                    for: channelId
+                    for: channelId,
+                    channelDTO: channelDTO
                 )
             )
             read.unreadMessageCount = 15

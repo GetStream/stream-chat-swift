@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import OSLog
 
 public var log: Logger {
     LogConfig.logger
@@ -196,6 +197,9 @@ public class Logger {
     public var destinations: [LogDestination]
     
     private let loggerQueue = DispatchQueue(label: "LoggerQueue \(UUID())")
+    
+    /// OSLog Handler. Used for measuring performance.
+    let osLogHandler = OSLog(subsystem: "io.getstream.OSLOG", category: "qos-measuring")
     
     /// Init a logger with a given identifier and destinations.
     public init(identifier: String = "", destinations: [LogDestination] = []) {
@@ -415,6 +419,36 @@ public class Logger {
             subsystems: subsystems
         )
     }
+    
+    public func startMeasuring(item: PerformanceMeasureItem) {
+        if #available(iOSApplicationExtension 12.0, *) {
+            os_signpost(.begin, log: osLogHandler, name: item.name)
+        }
+    }
+    
+    public func endMeasuring(item: PerformanceMeasureItem) {
+        if #available(iOSApplicationExtension 12.0, *) {
+            os_signpost(.end, log: osLogHandler, name: item.name)
+        }
+    }
+    
+    public func measureEvent(item: PerformanceMeasureItem) {
+        if #available(iOSApplicationExtension 12.0, *) {
+            os_signpost(.event, log: osLogHandler, name: item.name)
+        }
+    }
+    
+    public func startMeasuring(item: PerformanceMeasureItem, _ format: StaticString, _ arguments: CVarArg...) {
+        if #available(iOSApplicationExtension 12.0, *) {
+            os_signpost(.begin, log: osLogHandler, name: item.name, format, arguments)
+        }
+    }
+    
+    public func endMeasuring(item: PerformanceMeasureItem, _ format: StaticString, _ arguments: CVarArg...) {
+        if #available(iOSApplicationExtension 12.0, *) {
+            os_signpost(.end, log: osLogHandler, name: item.name, format, arguments)
+        }
+    }
 }
 
 private extension Logger {
@@ -443,5 +477,13 @@ extension Data {
         } catch {
             return "JSON decoding failed with error: \(error)"
         }
+    }
+}
+
+public struct PerformanceMeasureItem {
+    let name: StaticString
+    
+    init(_ name: StaticString) {
+        self.name = name
     }
 }

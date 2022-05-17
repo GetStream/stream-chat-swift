@@ -1197,7 +1197,7 @@ final class ChannelController_Tests: XCTestCase {
         
         // Create a channel in the DB
         try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
+            let channel = try $0.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
             // Create a read for the channel
             try $0.saveChannelRead(
                 payload: ChannelReadPayload(
@@ -1205,7 +1205,8 @@ final class ChannelController_Tests: XCTestCase {
                     lastReadAt: originalReadDate,
                     unreadMessagesCount: .unique // This value doesn't matter at all. It's not updated by events. We cam ignore it.
                 ),
-                for: self.channelId
+                for: self.channelId,
+                channelDTO: channel
             )
         }
         

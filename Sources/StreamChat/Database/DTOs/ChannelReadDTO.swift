@@ -52,8 +52,6 @@ class ChannelReadDTO: NSManagedObject {
         }
         
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
-        new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context)
-        new.user = UserDTO.loadOrCreate(id: userId, context: context)
         return new
     }
     
@@ -66,11 +64,13 @@ class ChannelReadDTO: NSManagedObject {
 extension NSManagedObjectContext {
     func saveChannelRead(
         payload: ChannelReadPayload,
-        for cid: ChannelId
+        for cid: ChannelId,
+        channelDTO: ChannelDTO
     ) throws -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self)
         
         dto.user = try saveUser(payload: payload.user)
+        dto.channel = channelDTO
         
         dto.lastReadAt = payload.lastReadAt
         dto.unreadMessageCount = Int32(payload.unreadMessagesCount)

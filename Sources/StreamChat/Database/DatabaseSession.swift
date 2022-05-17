@@ -235,7 +235,8 @@ protocol ChannelReadDatabaseSession {
     @discardableResult
     func saveChannelRead(
         payload: ChannelReadPayload,
-        for cid: ChannelId
+        for cid: ChannelId,
+        channelDTO: ChannelDTO
     ) throws -> ChannelReadDTO
     
     /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
@@ -292,7 +293,8 @@ protocol AttachmentDatabaseSession {
     @discardableResult
     func saveAttachment(
         payload: MessageAttachmentPayload,
-        id: AttachmentId
+        id: AttachmentId,
+        messageDTO: MessageDTO
     ) throws -> AttachmentDTO
     
     /// Creates a new `AttachmentDTO` object in the database from the given model for the message
@@ -300,7 +302,8 @@ protocol AttachmentDatabaseSession {
     @discardableResult
     func createNewAttachment(
         attachment: AnyAttachmentPayload,
-        id: AttachmentId
+        id: AttachmentId,
+        messageDTO: MessageDTO
     ) throws -> AttachmentDTO
 }
 
