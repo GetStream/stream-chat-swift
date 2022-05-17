@@ -20,18 +20,10 @@ if [[ $(command -v brew) == "" ]]; then
   exit 1
 fi
 
+# Set bash to Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
 set -Eeuo pipefail
 
 trap "echo ; echo ❌ The Bootstrap script failed to finish without error. See the log above to debug. ; echo" ERR
-
-puts "Install Mint if needed"
-brew install mint
-
-puts "Bootstrap Mint dependencies"
-mint bootstrap
-
-# Set bash to Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
-set -euo pipefail
 
 puts "Create git/hooks folder if needed"
 mkdir -p .git/hooks
@@ -43,13 +35,20 @@ ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 chmod +x ./hooks/git-format-staged
 
-# Install gems
 puts "Install bundle dependencies"
 bundle install
 
-# Copy internal Xcode scheme to the right folder for
-puts "Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
-cp Scripts/DemoApp-StreamDevelopers.xcscheme StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme
+if [[ ${XCODE_ACTIONS-default} == default ]]; then
+  puts "Install Mint if needed"
+  brew install mint
+
+  puts "Bootstrap Mint dependencies"
+  mint bootstrap
+
+  # Copy internal Xcode scheme to the right folder for
+  puts "Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
+  cp Scripts/DemoApp-StreamDevelopers.xcscheme StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme
+fi
 
 if [[ ${INSTALL_SONAR-default} == true ]]; then
   puts "Install sonar dependencies"

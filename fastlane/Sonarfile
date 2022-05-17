@@ -2,19 +2,23 @@
 
 desc 'Get code coverage report and run complexity analysis for Sonar'
 lane :sonar_upload do
+  sonar_args = ''
   version_number = get_version_number(
     xcodeproj: 'StreamChat.xcodeproj',
     target: 'StreamChat'
   )[/\d+\.\d+\.\d/]
 
-  slather
-
-  lizard(
-    source_folder: './Sources/',
-    language: 'swift',
-    export_type: 'xml',
-    report_file: 'reports/lizard.xml'
-  )
+  unless Dir.glob('test_output/*.xcresult').empty?
+    slather
+    lizard(
+      source_folder: './Sources/',
+      language: 'swift',
+      export_type: 'xml',
+      report_file: 'reports/lizard.xml'
+    )
+    sonar_args = '-Dsonar.coverageReportPaths="reports/sonarqube-generic-coverage.xml" ' \
+                 '-Dsonar.swift.lizard.report="reports/lizard.xml"'
+  end
 
   if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
     sonar(
@@ -22,7 +26,8 @@ lane :sonar_upload do
       pull_request_branch: ENV['GITHUB_HEAD_REF'],
       pull_request_base: ENV['GITHUB_BASE_REF'],
       pull_request_key: ENV['PR_NUMBER'],
-      project_version: version_number
+      project_version: version_number,
+      sonar_runner_args: sonar_args
     )
   else
     branch = ENV['BRANCH_NAME'] || git_branch
@@ -30,8 +35,11 @@ lane :sonar_upload do
     sonar(
       sonar_login: ENV['SONAR_TOKEN'],
       branch_name: branch,
-      project_version: version_number
+      project_version: version_number,
+      sonar_runner_args: sonar_args
     )
+
+    next if sonar_args.empty?
 
     case branch.to_sym
     when :main
