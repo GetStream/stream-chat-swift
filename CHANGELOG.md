@@ -2,9 +2,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+
+### 🔄 Changed
+
+# [4.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.15.0)
+_May 11, 2022_
 ## StreamChat
 ### ✅ Added
-- Expose `readBy/readByCount` on `ChatMessage` containing info about users who has seen this message. These fields are populated only for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
+- Expose `readBy/readByCount` on `ChatMessage` containing info about users who has seen this message. These fields are populated only for messages sent by the current user [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
 - Expose preview message on `ChatChannel` [#1935](https://github.com/GetStream/stream-chat-swift/issues/1935)
 ### 🐞 Fixed
 - Fix unread messages count bumping logic [#1978](https://github.com/GetStream/stream-chat-swift/issues/1978)
@@ -22,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Deprecate `ChatMessage.isOnlyVisibleForCurrentUser` as it does not account deleted messages visability setting [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
 - Rename components related to message footnote content in `ChatMessageContentView` [#1948](https://github.com/GetStream/stream-chat-swift/pull/1948)
 ### ✅ Added
-- Show delivery status indicator for messages sent by the current user. [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
+- Show delivery status indicator for messages sent by the current user [#1887](https://github.com/GetStream/stream-chat-swift/issues/1887)
 - Show delivery status indicator for messages sent by the current user in channel preview [#1935](https://github.com/GetStream/stream-chat-swift/issues/1935)
 - Add support for custom reactions sorting [#1944](https://github.com/GetStream/stream-chat-swift/pull/1944)
 - Add `nonEmpty` filter for channel list query [#1960](https://github.com/GetStream/stream-chat-swift/pull/1960)

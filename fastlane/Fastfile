@@ -115,7 +115,7 @@ lane :publish_release do |options|
   UI.user_error!("You need to pass the version of the release") unless version.length > 0
 
   # Create XCFrameworks
-  xcversion(version: "13.0")
+  xcversion(version: xcode_version)
   sh("cd .. && make frameworks")
 
   changes = read_changelog(version: version)
