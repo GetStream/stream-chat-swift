@@ -24,7 +24,7 @@ final class Batch_Tests: XCTestCase {
     func test_append() {
         // Create batcher for test events and keep track of handler calls
         var handlerCalls = [[TestEvent]]()
-        let batcher = Batcher<TestEvent>(period: 10, timerType: VirtualTimeTimer.self) { events in
+        let batcher = Batcher<TestEvent>(period: 10, timerType: VirtualTimeTimer.self) { events, _ in
             handlerCalls.append(events)
         }
 
@@ -72,8 +72,10 @@ final class Batch_Tests: XCTestCase {
     func test_processImmidiately() {
         // Create batcher with long period and keep track of handler calls
         var handlerCalls = [[TestEvent]]()
-        let batcher = Batcher<TestEvent>(period: 20, timerType: VirtualTimeTimer.self) { events in
+        var handlerCompletion: (() -> Void)?
+        let batcher = Batcher<TestEvent>(period: 20, timerType: VirtualTimeTimer.self) { events, completion in
             handlerCalls.append(events)
+            handlerCompletion = completion
         }
         
         // Prepare the event
@@ -83,15 +85,24 @@ final class Batch_Tests: XCTestCase {
         batcher.append(event)
         
         // Ask to process immidiately
-        batcher.processImmediately()
+        var completionCalled = false
+        batcher.processImmediately {
+            completionCalled = true
+        }
         
         // Wait for a small bit of time much less then a period
         time.run(numberOfSeconds: 0.1)
         
         // Assert handler is called sooner
         XCTAssertEqual(handlerCalls, [[event]])
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Complete batch processing
+        handlerCompletion?()
         
         // Assert current batch is empty
         XCTAssertEqual(batcher.currentBatch, [])
+        XCTAssertTrue(completionCalled)
     }
 }

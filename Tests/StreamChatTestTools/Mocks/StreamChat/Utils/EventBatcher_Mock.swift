@@ -8,12 +8,12 @@ import Foundation
 final class EventBatcher_Mock: EventBatcher {
     var currentBatch: [Event] = []
     
-    let handler: ([Event]) -> Void
+    let handler: (_ batch: [Event], _ completion: @escaping () -> Void) -> Void
     
     init(
         period: TimeInterval = 0,
         timerType: StreamChat.Timer.Type = DefaultTimer.self,
-        handler: @escaping ([Event]) -> Void
+        handler: @escaping (_ batch: [Event], _ completion: @escaping () -> Void) -> Void
     ) {
         self.handler = handler
     }
@@ -23,12 +23,12 @@ final class EventBatcher_Mock: EventBatcher {
     func append(_ event: Event) {
         mock_append.call(with: (event))
         
-        handler([event])
+        handler([event], {})
     }
     
     lazy var mock_processImmediately = MockFunc.mock(for: processImmediately)
     
-    func processImmediately() {
-        mock_processImmediately.call(with: ())
+    func processImmediately(completion: @escaping () -> Void) {
+        mock_processImmediately.call(with: (completion))
     }
 }
