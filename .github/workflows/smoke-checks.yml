@@ -136,7 +136,6 @@ jobs:
       with:
         name: "xcresult_${{ matrix.batch }}"
         path: "fastlane/test_output/*.xcresult"
-        if-no-files-found: error
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -156,13 +155,21 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@v3
+    - name: Skip Allure?
+      run: |
+        test_results=(`find ./ -maxdepth 2 -name "*.xcresult"`)
+        if [ ${#test_results[@]} -gt 0 ]; then
+          echo 'Allure job is needed!' && echo "ALLURE_NEEDED=true" >> $GITHUB_ENV
+        fi
     - uses: ./.github/actions/bootstrap
+      if: env.ALLURE_NEEDED == 'true'
       env:
-        INSTALL_ALLURE: true
         XCODE_ACTIONS: false
     - name: Merge xcresults
+      if: env.ALLURE_NEEDED == 'true'
       run: xcrun xcresulttool merge */*.xcresult --output-path fastlane/test_output/merged.xcresult
     - name: Upload test results to Allure TestOps
+      if: env.ALLURE_NEEDED == 'true'
       run: bundle exec fastlane allure_upload
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
