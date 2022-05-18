@@ -348,10 +348,12 @@ public class ChatClient {
         )
     }
     
-    /// Disconnects the chat client from the chat servers. No further updates from the servers
-    /// are received.
-    public func disconnect() {
-        clientUpdater.disconnect()
+    /// Stops active web-socket connection and cancels all queued API requests.
+    /// If there is a connection recovery flow running, it will be interrupted.
+    ///
+    /// - Parameter completion: The completion handler invoked when the `ChatClient` has been disconnected.
+    public func disconnect(completion: (() -> Void)? = nil) {
+        clientUpdater.disconnect { completion?() }
         userConnectionProvider = nil
     }
 

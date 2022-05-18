@@ -570,6 +570,33 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertTrue(testEnv.clientUpdater!.disconnect_called)
     }
     
+    func test_disconnect_callsCompletion() {
+        // Create a chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        
+        // Disconnect chat client
+        var completionCalled = false
+        client.disconnect {
+            completionCalled = true
+        }
+        
+        // Assert client is not recreated
+        XCTAssertTrue(testEnv.apiClient! === client.apiClient)
+        // Assert `disconnect` on updater is triggered
+        XCTAssertTrue(testEnv.clientUpdater!.disconnect_called)
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate completed disconnection
+        testEnv.clientUpdater!.disconnect_completion!()
+        
+        // Assert completion is called
+        XCTAssertTrue(completionCalled)
+    }
+    
     // MARK: - Background workers tests
     
     func test_productionClientIsInitalizedWithAllMandatoryBackgroundWorkers() {
