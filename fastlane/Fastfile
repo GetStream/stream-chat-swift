@@ -800,7 +800,7 @@ def testing_required?(type)
       pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
       sh("gh pr view #{pr_number} --json files -q '.files[].path'")
     when 'push'
-      sh("git diff-tree --no-commit-id --name-only -r HEAD^1..#{ENV['GITHUB_REF']}")
+      sh("git diff-tree --no-commit-id --name-only -r #{ENV['GITHUB_SHA']}^1..#{ENV['GITHUB_REF']}")
     end
 
   changed_files = changed_files.split("\n").select do |path|
