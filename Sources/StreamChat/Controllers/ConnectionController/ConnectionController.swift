@@ -92,11 +92,15 @@ public extension ChatConnectionController {
             }
         }
     }
-
-    /// Disconnects the chat client the controller represents from the chat servers.
-    /// No further updates from the servers are received.
-    func disconnect() {
-        chatClientUpdater.disconnect()
+    
+    /// Stops active web-socket connection for the underlaying `ChatClient` and
+    /// cancels all queued API requests. If there is a connection recovery flow running, it will be interrupted.
+    ///
+    /// - Parameter completion: The completion handler invoked when the `ChatClient` has been disconnected.
+    func disconnect(completion: (() -> Void)? = nil) {
+        chatClientUpdater.disconnect {
+            completion?()
+        }
     }
 }
 

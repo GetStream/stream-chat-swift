@@ -123,10 +123,20 @@ final class ChatConnectionController_Tests: XCTestCase {
 
     func test_disconnect_callsClientUpdater() {
         // Simulate `disconnect`.
-        controller.disconnect()
+        var connectCompletionCalled = false
+        controller.disconnect {
+            connectCompletionCalled = true
+        }
 
         // Assert the `chatClientUpdater` is called.
         XCTAssertTrue(env.chatClientUpdater.disconnect_called)
+        XCTAssertFalse(connectCompletionCalled)
+        
+        // Simulation completed disconection
+        env.chatClientUpdater.disconnect_completion?()
+        
+        // Assert completion handler is invoked
+        XCTAssertTrue(connectCompletionCalled)
     }
 }
 
