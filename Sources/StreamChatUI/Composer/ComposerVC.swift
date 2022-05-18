@@ -188,7 +188,7 @@ open class ComposerVC: _ViewController,
             )
         }
         
-        public mutating func slowdownMode(cooldown: Int) {
+        public mutating func slowMode(cooldown: Int) {
             self = .init(
                 text: text,
                 state: state,
@@ -226,7 +226,7 @@ open class ComposerVC: _ViewController,
         }
     }
     
-    open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(period: 1))
+    open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(interval: 1))
 
     /// A symbol that is used to recognise when the user is mentioning a user.
     open var mentionSymbol = "@"
@@ -350,7 +350,7 @@ open class ComposerVC: _ViewController,
                 return
             }
             
-            self?.content.slowdownMode(cooldown: currentTime)
+            self?.content.slowMode(cooldown: currentTime)
         }
     }
 
@@ -364,7 +364,7 @@ open class ComposerVC: _ViewController,
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        checkChannelCooldown()
+        resumeCurrentCooldown()
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -416,7 +416,7 @@ open class ComposerVC: _ViewController,
             log.warning("The composer state \(content.state.description) was not handled.")
         }
         
-        composerView.cooldownView.cooldownLabel.text = "\(content.cooldownTime)"
+        composerView.cooldownView.content = .init(cooldown: content.cooldownTime)
 
         composerView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
@@ -872,7 +872,8 @@ open class ComposerVC: _ViewController,
         }
     }
     
-    open func checkChannelCooldown() {
+    /// Resumes the cooldown if the channel has currently an active cooldown.
+    public func resumeCurrentCooldown() {
         if let currentCooldownTime = channelController?.currentCooldownTime(), currentCooldownTime > 0 {
             cooldownTracker.start(with: currentCooldownTime)
         }

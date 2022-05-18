@@ -4,11 +4,26 @@
 
 import UIKit
 
-/// A button for showing a cooldown when Slow Mode is active.
+/// A view showing a cooldown when Slow Mode is active.
 open class CooldownView: _View, AppearanceProvider {
+    public struct Content {
+        public var cooldown: Int
+    }
+    
+    open var content: Content? {
+        didSet { updateContentIfNeeded() }
+    }
+    
     public private(set) lazy var cooldownLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "cooldownLabel")
+    
+    override open func updateContent() {
+        super.updateContent()
+        
+        guard let cooldown = content?.cooldown else { return }
+        cooldownLabel.text = "\(cooldown)"
+    }
     
     override open func layoutSubviews() {
         super.layoutSubviews()

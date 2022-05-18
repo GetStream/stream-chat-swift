@@ -4,16 +4,16 @@
 
 import Foundation
 
-open class CooldownTracker {
+public class CooldownTracker {
     private var timer: StreamTimer
     
-    open var onChange: ((Int) -> Void)?
+    public var onChange: ((Int) -> Void)?
     
     public init(timer: StreamTimer) {
         self.timer = timer
     }
     
-    open func start(with cooldown: Int) {
+    public func start(with cooldown: Int) {
         guard cooldown > 0 else { return }
         
         var duration = cooldown
@@ -31,14 +31,13 @@ open class CooldownTracker {
         timer.start()
     }
     
-    open func stop() {
-        if timer.isRunning {
-            timer.stop()
-        }
+    public func stop() {
+        guard timer.isRunning else { return }
+        
+        timer.stop()
     }
     
     deinit {
-        guard timer.isRunning else { return }
-        timer.stop()
+        stop()
     }
 }

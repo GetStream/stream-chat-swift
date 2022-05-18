@@ -402,7 +402,7 @@ class MessageDTO: NSManagedObject {
         return (try? context.count(for: request)) ?? 0
     }
     
-    static func loadLastMessageFromUserId(_ userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
+    static func loadLastMessage(from userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             .init(format: "channel.cid == %@", cid),

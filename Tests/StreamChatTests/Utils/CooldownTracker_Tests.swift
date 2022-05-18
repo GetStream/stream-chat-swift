@@ -19,7 +19,7 @@ final class CooldownTracker_Tests: XCTestCase {
         sut.start(with: cooldownTime)
         
         // THEN
-        XCTAssertEqual(timer.numberOfTimesStarted, 1)
+        XCTAssertEqual(timer.startCallCount, 1)
     }
     
     func test_start_whenCooldownIsZero_thenDontStartTimer() {
@@ -32,7 +32,7 @@ final class CooldownTracker_Tests: XCTestCase {
         sut.start(with: cooldownTime)
         
         // THEN
-        XCTAssertEqual(timer.numberOfTimesStarted, 0)
+        XCTAssertEqual(timer.startCallCount, 0)
     }
     
     func test_start_whenDurationChanges_thenOnChangeIsCalled() {
@@ -40,16 +40,20 @@ final class CooldownTracker_Tests: XCTestCase {
         let cooldownTime = 3
         let timer = ScheduledStreamTimer_Mock()
         sut = CooldownTracker(timer: timer)
+        let exp = expectation(description: "on change is called")
+        var currentTimeChanged = 0
         sut.onChange = { currentTime in
-            // THEN
-            XCTAssertEqual(cooldownTime, currentTime)
-        }
-        timer.onChange = { [weak self] in
-            self?.sut.onChange?(cooldownTime)
+            currentTimeChanged = currentTime
+            exp.fulfill()
         }
         
         // WHEN
         sut.start(with: cooldownTime)
+        timer.onChange?()
+        
+        // THEN
+        waitForExpectations(timeout: 0.5)
+        XCTAssertEqual(cooldownTime, currentTimeChanged)
     }
     
     func test_start_whenDurationChanges_andDurationIsNotZero_thenDecreaseDuration_andTimerIsNotStopped() {
@@ -58,11 +62,48 @@ final class CooldownTracker_Tests: XCTestCase {
         let timer = ScheduledStreamTimer_Mock()
         sut = CooldownTracker(timer: timer)
         
+        let exp = expectation(description: "should decrease duration")
+        exp.expectedFulfillmentCount = 2
+        var durationChanged: Int = 3
+        sut.onChange = { duration in
+            durationChanged = duration
+            exp.fulfill()
+        }
+        
         // WHEN
         sut.start(with: cooldownTime)
+        timer.onChange?()
+        timer.onChange?()
         
         // THEN
-        XCTAssertEqual(timer.numberOftimesStopped, 0)
+        waitForExpectations(timeout: 0.5)
+        XCTAssertEqual(durationChanged, 2)
+        XCTAssertEqual(timer.stopCallCount, 0)
+    }
+    
+    func test_start_whenDurationChanges_andDurationIsZero_thenTimerIsStopped() {
+        // GIVEN
+        let cooldownTime = 1
+        let timer = ScheduledStreamTimer_Mock()
+        sut = CooldownTracker(timer: timer)
+        
+        let exp = expectation(description: "should decrease duration")
+        exp.expectedFulfillmentCount = 2
+        var durationChanged: Int = 1
+        sut.onChange = { duration in
+            durationChanged = duration
+            exp.fulfill()
+        }
+        
+        // WHEN
+        sut.start(with: cooldownTime)
+        timer.onChange?()
+        timer.onChange?()
+        
+        // THEN
+        waitForExpectations(timeout: 0.5)
+        XCTAssertEqual(durationChanged, 0)
+        XCTAssertEqual(timer.stopCallCount, 1)
     }
     
     func test_stop_whenTimerIsRunning_thenTimerIsNotStopped() {
@@ -75,7 +116,7 @@ final class CooldownTracker_Tests: XCTestCase {
         sut.stop()
         
         // THEN
-        XCTAssertEqual(timer.numberOftimesStopped, 1)
+        XCTAssertEqual(timer.stopCallCount, 1)
     }
     
     func test_deinit_whenTimerIsRunning_thenStopTimer() {
@@ -90,7 +131,7 @@ final class CooldownTracker_Tests: XCTestCase {
         sut = nil
         
         // THEN
-        XCTAssertEqual(timer.numberOftimesStopped, 1)
+        XCTAssertEqual(timer.stopCallCount, 1)
     }
     
     func test_deinit_whenTimerIsNotRunning_thenDontStopTimer() {
@@ -104,6 +145,6 @@ final class CooldownTracker_Tests: XCTestCase {
         sut = nil
         
         // THEN
-        XCTAssertEqual(timer.numberOftimesStopped, 0)
+        XCTAssertEqual(timer.stopCallCount, 0)
     }
 }

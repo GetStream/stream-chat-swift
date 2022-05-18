@@ -405,8 +405,8 @@ extension ChatChannel {
             guard let currentUser = context.currentUser else { return nil }
             
             return try? MessageDTO
-                .loadLastMessageFromUserId(
-                    currentUser.user.id,
+                .loadLastMessage(
+                    from: currentUser.user.id,
                     in: dto.cid,
                     context: context
                 )?

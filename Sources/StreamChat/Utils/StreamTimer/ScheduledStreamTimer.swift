@@ -5,7 +5,7 @@
 import Foundation
 
 public class ScheduledStreamTimer: StreamTimer {
-    let period: TimeInterval
+    let interval: TimeInterval
     var runLoop = RunLoop.current
     var timer: Foundation.Timer?
     public var onChange: (() -> Void)?
@@ -14,13 +14,13 @@ public class ScheduledStreamTimer: StreamTimer {
         timer?.isValid ?? false
     }
     
-    public init(period: TimeInterval) {
-        self.period = period
+    public init(interval: TimeInterval) {
+        self.interval = interval
     }
     
     public func start() {
         timer = Foundation.Timer.scheduledTimer(
-            withTimeInterval: period,
+            withTimeInterval: interval,
             repeats: true
         ) { _ in
             self.onChange?()
