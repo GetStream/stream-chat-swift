@@ -48,22 +48,29 @@ class ChatClientUpdater {
             client.currentToken = newToken
 
             // Disconnect from web-socket.
-            disconnect(source: .userInitiated)
-            
-            // Update web-socket endpoint.
-            client.webSocketClient?.connectEndpoint = .webSocketConnect(
-                userInfo: userInfo ?? .init(id: newToken.userId)
-            )
+            disconnect(source: .userInitiated) { [weak client] in
+                guard let client = client else {
+                    completion(nil)
+                    return
+                }
+                
+                // Update web-socket endpoint.
+                client.webSocketClient?.connectEndpoint = .webSocketConnect(
+                    userInfo: userInfo ?? .init(id: newToken.userId)
+                )
 
-            // Re-create backgroundWorker's since they are related to the previous user.
-            client.createBackgroundWorkers()
+                // Re-create backgroundWorker's since they are related to the previous user.
+                client.createBackgroundWorkers()
+                
+                // Stop tracking active components
+                client.activeChannelControllers.removeAllObjects()
+                client.activeChannelListControllers.removeAllObjects()
+                
+                // Reset all existing local data.
+                client.databaseContainer.removeAllData(force: true, completion: completion)
+            }
             
-            // Stop tracking active components
-            client.activeChannelControllers.removeAllObjects()
-            client.activeChannelListControllers.removeAllObjects()
-            
-            // Reset all existing local data.
-            return client.databaseContainer.removeAllData(force: true, completion: completion)
+            return
         }
 
         // Set the web-socket endpoint
@@ -179,13 +186,17 @@ class ChatClientUpdater {
 
     /// Disconnects the chat client the controller represents from the chat servers. No further updates from the servers
     /// are received.
-    func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
+    func disconnect(
+        source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
+        completion: @escaping () -> Void
+    ) {
         client.apiClient.flushRequestsQueue()
         client.syncRepository.cancelRecoveryFlow()
         
         // Disconnecting is not possible in connectionless mode (duh)
         guard client.config.isClientInActiveMode else {
             log.error(ClientError.ClientIsNotInActiveMode().localizedDescription)
+            completion()
             return
         }
 
@@ -193,17 +204,25 @@ class ChatClientUpdater {
             if source == .userInitiated {
                 log.warning("The client is already disconnected. Skipping the `disconnect` call.")
             }
+            completion()
             return
         }
 
         // Disconnect the web socket
-        client.webSocketClient?.disconnect(source: source)
+        client.webSocketClient?.disconnect(source: source) { [weak client] in
+            guard let client = client else {
+                completion()
+                return
+            }
+            
+            // Reset `connectionId`. This would happen asynchronously by the callback from WebSocketClient anyway, but it's
+            // safer to do it here synchronously to immediately stop all API calls.
+            client.connectionId = nil
 
-        // Reset `connectionId`. This would happen asynchronously by the callback from WebSocketClient anyway, but it's
-        // safer to do it here synchronously to immediately stop all API calls.
-        client.connectionId = nil
-
-        // Remove all waiters for connectionId
-        client.completeConnectionIdWaiters(connectionId: nil)
+            // Remove all waiters for connectionId
+            client.completeConnectionIdWaiters(connectionId: nil)
+            
+            completion()
+        }
     }
 }
