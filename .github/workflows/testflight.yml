@@ -1,6 +1,9 @@
 name: Test Flight Deploy DemoApp
 
 on:
+  pull_request:
+    branches:
+      - 'main'
   release:
     types: [published]
 
@@ -12,7 +15,6 @@ env:
 jobs:
   deploy:
     runs-on: macos-12
-
     steps:
     - name: Install Bot SSH Key
       uses: webfactory/ssh-agent@v0.4.1

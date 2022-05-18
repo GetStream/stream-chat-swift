@@ -358,7 +358,6 @@ end
 
 desc "Builds the latest version of Demo app and uploads it to TestFlight"
 lane :testflight_build do
-
   # Ask around if you're wandering where you can get this key from
   api_key = app_store_connect_api_key(
     key_id: "MT3PRT8TB7",
@@ -371,7 +370,7 @@ lane :testflight_build do
   build_number = latest_testflight_build_number(
     app_identifier: "io.getstream.iOS.ChatDemoApp",
     api_key: api_key
-  )
+  ) + 1
 
   # If version number is different from %d.%d.%d e.g. 3.2.1-beta-6.0 we won't be able to build a test flight build
   # so we take the current version and strip first %d.%d.%d out of it
@@ -391,13 +390,13 @@ lane :testflight_build do
   increment_build_number_in_plist(
     xcodeproj: "StreamChat.xcodeproj",
     target: "DemoApp",
-    build_number: (build_number + 1).to_s,
+    build_number: build_number.to_s
   )
 
   increment_build_number_in_plist(
     xcodeproj: "StreamChat.xcodeproj",
     target: "DemoAppPush",
-    build_number: (build_number + 1).to_s,
+    build_number: build_number.to_s
   )
 
   match_me
@@ -413,7 +412,17 @@ lane :testflight_build do
     output_directory: "archives"
   )
 
-  changelog = "This is the official sample app built with Stream’s iOS Chat SDK v4.0. It’s designed to highlight engaging features and new improvements to the SDK, but remember that this is just one possible implementation. You can start your own by borrowing and customizing the code from this sample, or build something completely different using Stream’s components."
+  external_groups = []
+  changelog =
+    if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
+      "This is the build for Regression testing on release candidate v#{version_number}"
+    else
+      external_groups << 'Public Link'
+      "This is the official sample app built with Stream's iOS Chat SDK v4.0. It's designed to highlight " \
+      'engaging features and new improvements to the SDK, but remember that this is just one possible ' \
+      'implementation. You can start your own by borrowing and customizing the code from this sample, ' \
+      "or build something completely different using Stream's components."
+    end
 
   pilot(
     api_key: api_key,
@@ -421,8 +430,8 @@ lane :testflight_build do
     app_identifier: "io.getstream.iOS.ChatDemoApp",
     app_platform: "ios",
     ipa: "archives/ChatSample.ipa",
-    groups: ['Public Link'],
-    distribute_external: true,
+    groups: external_groups,
+    distribute_external: external_groups.any?,
     reject_build_waiting_for_review: true,
     changelog: changelog
   )
@@ -777,7 +786,7 @@ lane :emerge_upload do
 end
 
 def testing_required?(type)
-  return true unless ENV['GITHUB_EVENT_NAME'] =~ /(push|pull_request)/
+  return true if ENV['GITHUB_EVENT_NAME'] !~ /(push|pull_request)/ || ENV['GITHUB_REF'].include?('main')
 
   sources = {
     e2e: %w[Sources StreamChatUITestsAppUITests StreamChatUITestsApp],
@@ -791,7 +800,7 @@ def testing_required?(type)
       pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
       sh("gh pr view #{pr_number} --json files -q '.files[].path'")
     when 'push'
-      sh("git diff-tree --no-commit-id --name-only -r HEAD..#{ENV['GITHUB_REF']}")
+      sh("git diff-tree --no-commit-id --name-only -r HEAD^1..#{ENV['GITHUB_REF']}")
     end
 
   changed_files = changed_files.split("\n").select do |path|
