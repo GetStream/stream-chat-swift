@@ -658,7 +658,27 @@ final class ChannelDTO_Tests: XCTestCase {
             pinned: false
         )
         
-        let channel = dummyPayload(with: channelId, messages: [message1, message2])
+        let message3 = MessagePayload(
+            id: .unique,
+            type: .ephemeral,
+            user: user,
+            createdAt: Date(),
+            updatedAt: .unique,
+            deletedAt: nil,
+            text: .unique,
+            showReplyInChannel: false,
+            mentionedUsers: [dummyCurrentUser],
+            replyCount: 0,
+            extraData: [:],
+            reactionScores: ["like": 1],
+            reactionCounts: ["like": 1],
+            isSilent: false,
+            isShadowed: false,
+            attachments: [],
+            pinned: false
+        )
+        
+        let channel = dummyPayload(with: channelId, messages: [message1, message2, message3])
         
         try! database.createCurrentUser(id: user.id)
         

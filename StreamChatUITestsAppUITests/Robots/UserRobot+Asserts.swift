@@ -189,6 +189,12 @@ extension UserRobot {
         XCTAssertTrue(MessageListPage.Composer.cooldown.exists)
         return self
     }
+    
+    @discardableResult
+    func assertCooldownIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
+        XCTAssertTrue(!MessageListPage.Composer.cooldown.exists)
+        return self
+    }
 
     @discardableResult
     func assertSendButtonNotHittable(file: StaticString = #filePath, line: UInt = #line) -> Self {

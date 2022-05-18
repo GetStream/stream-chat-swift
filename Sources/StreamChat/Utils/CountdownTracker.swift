@@ -2,44 +2,7 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
-
-public protocol StreamTimer {
-    func start()
-    func stop()
-    var onChange: (() -> Void)? { get set }
-    var isRunning: Bool { get }
-}
-
-class PeriodicStreamTimer: StreamTimer {
-    let period: TimeInterval
-    var runLoop = RunLoop.current
-    var timer: Timer?
-    var onChange: (() -> Void)?
-    
-    var isRunning: Bool {
-        timer?.isValid ?? false
-    }
-    
-    init(period: TimeInterval) {
-        self.period = period
-    }
-    
-    func start() {
-        timer = Timer.scheduledTimer(
-            withTimeInterval: period,
-            repeats: true
-        ) { _ in
-            self.onChange?()
-        }
-        runLoop.add(timer!, forMode: .common)
-        timer?.fire()
-    }
-    
-    func stop() {
-        timer?.invalidate()
-    }
-}
+import Foundation
 
 open class CooldownTracker {
     private var timer: StreamTimer

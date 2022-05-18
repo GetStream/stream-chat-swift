@@ -28,7 +28,6 @@ public struct ComposerState: RawRepresentable, Equatable {
     public static var new = ComposerState(rawValue: "new")
     public static var edit = ComposerState(rawValue: "edit")
     public static var quote = ComposerState(rawValue: "quote")
-    public static var slowMode = ComposerState(rawValue: "slowMode")
 }
 
 /// A view controller that manages the composer view.
@@ -227,7 +226,7 @@ open class ComposerVC: _ViewController,
         }
     }
     
-    open var cooldownTracker: CooldownTracker = CooldownTracker(timer: PeriodicStreamTimer(period: 1))
+    open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(period: 1))
 
     /// A symbol that is used to recognise when the user is mentioning a user.
     open var mentionSymbol = "@"
@@ -874,19 +873,9 @@ open class ComposerVC: _ViewController,
     }
     
     open func checkChannelCooldown() {
-        if currentCooldownTime() > 0 {
-            cooldownTracker.start(with: currentCooldownTime())
+        if let currentCooldownTime = channelController?.currentCooldownTime(), currentCooldownTime > 0 {
+            cooldownTracker.start(with: currentCooldownTime)
         }
-    }
-    
-    func currentCooldownTime() -> Int {
-        guard let cooldownDuration = channelController?.channel?.cooldownDuration,
-              let currentUserLastMessage = channelController?.channel?.lastMessageFromCurrentUser else {
-            return 0
-        }
-        
-        let currentTime = Date().timeIntervalSince(currentUserLastMessage.createdAt)
-        return cooldownDuration - Int(currentTime)
     }
 
     // MARK: - UITextViewDelegate
@@ -1061,6 +1050,6 @@ extension ComposerVC: ChatChannelControllerDelegate {
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         cooldownTracker.stop()
-        cooldownTracker.start(with: currentCooldownTime())
+        cooldownTracker.start(with: channelController.currentCooldownTime())
     }
 }
