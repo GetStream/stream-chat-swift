@@ -351,7 +351,9 @@ public class ChatClient {
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     public func disconnect() {
-        clientUpdater.disconnect()
+        clientUpdater.disconnect(source: .userInitiated) {
+            log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
+        }
         userConnectionProvider = nil
     }
 
@@ -614,7 +616,7 @@ extension ClientError {
     
     public class ClientHasBeenDeallocated: ClientError {
         override public var localizedDescription: String {
-            "ChatClient has beed deallocated, make sure to keep at least one strong reference to it."
+            "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
         }
     }
 }
