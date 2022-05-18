@@ -611,6 +611,12 @@ extension ClientError {
             """
         }
     }
+    
+    public class ClientHasBeenDeallocated: ClientError {
+        override public var localizedDescription: String {
+            "ChatClient has beed deallocated, make sure to keep at least one strong reference to it."
+        }
+    }
 }
 
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
