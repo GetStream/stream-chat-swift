@@ -99,7 +99,7 @@ final class WebSocketClient_Tests: XCTestCase {
         // Save currently existed engine.
         let oldEngine = webSocketClient.engine
         // Disconnect the client.
-        webSocketClient.disconnect()
+        webSocketClient.disconnect {}
 
         // Simulate connect to trigger engine creation or reuse.
         webSocketClient.connect()
@@ -117,7 +117,7 @@ final class WebSocketClient_Tests: XCTestCase {
         // Save currently existed engine.
         let oldEngine = webSocketClient.engine
         // Disconnect the client.
-        webSocketClient.disconnect()
+        webSocketClient.disconnect {}
 
         // Update request encode to provide different request.
         requestEncoder.encodeRequest = .success(.init(url: .unique()))
@@ -182,7 +182,7 @@ final class WebSocketClient_Tests: XCTestCase {
                 
         // Call `disconnect`, it should change connection state and call `disconnect` on the engine
         let source: WebSocketConnectionState.DisconnectionSource = .userInitiated
-        webSocketClient.disconnect(source: source)
+        webSocketClient.disconnect(source: source) {}
         
         // Assert disconnect is called
         AssertAsync.willBeEqual(engine!.disconnect_calledCount, 1)
@@ -227,7 +227,7 @@ final class WebSocketClient_Tests: XCTestCase {
             engine?.disconnect_calledCount = 0
             
             // Call `disconnect` with the given source
-            webSocketClient.disconnect(source: source)
+            webSocketClient.disconnect(source: source) {}
             
             // Assert connection state is changed to disconnecting respecting the source
             XCTAssertEqual(webSocketClient.connectionState, .disconnecting(source: source))
@@ -330,7 +330,7 @@ final class WebSocketClient_Tests: XCTestCase {
         
         // Disconnect
         assert(engine!.disconnect_calledCount == 0)
-        webSocketClient.disconnect()
+        webSocketClient.disconnect {}
         AssertAsync.willBeEqual(engine!.disconnect_calledCount, 1)
         
         // Reconnect again
@@ -487,9 +487,10 @@ final class WebSocketClient_Tests: XCTestCase {
         )
         
         // Assert incoming event get processed and posted
-        let (events, postNotifications, _) = try XCTUnwrap(eventNotificationCenter.mock_process.calls.first)
+        let (events, postNotifications, completion) = try XCTUnwrap(eventNotificationCenter.mock_process.calls.first)
         XCTAssertEqual(events.map(\.asEquatable), [incomingEvent.asEquatable])
         XCTAssertTrue(postNotifications)
+        XCTAssertNotNil(completion)
     }
     
     func test_whenDisconnectHappens_immidiateBatchedEventsProcessingIsTriggered() {
@@ -500,9 +501,19 @@ final class WebSocketClient_Tests: XCTestCase {
         XCTAssertFalse(eventsBatcher.mock_processImmediately.called)
         
         // Simulate disconnection
-        webSocketClient.disconnect()
+        var completionCalled = false
+        webSocketClient.disconnect {
+            completionCalled = true
+        }
         
         // Assert `processImmediately` is triggered
         AssertAsync.willBeTrue(eventsBatcher.mock_processImmediately.called)
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate batch processing completion
+        eventsBatcher.mock_processImmediately.calls.last?()
+        
+        // Assert completion called
+        XCTAssertTrue(completionCalled)
     }
 }
