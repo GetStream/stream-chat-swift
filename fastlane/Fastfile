@@ -786,7 +786,7 @@ lane :emerge_upload do
 end
 
 def testing_required?(type)
-  return true if ENV['GITHUB_EVENT_NAME'] !~ /(push|pull_request)/ || ENV['GITHUB_REF'].include?('main')
+  return true if ENV['GITHUB_EVENT_NAME'] != 'pull_request'
 
   sources = {
     e2e: %w[Sources StreamChatUITestsAppUITests StreamChatUITestsApp],
@@ -794,14 +794,9 @@ def testing_required?(type)
     ui: %w[Sources Tests/StreamChatUITests Tests/UISDKdocumentationTests]
   }
 
-  changed_files =
-    case ENV['GITHUB_EVENT_NAME']
-    when 'pull_request'
-      pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
-      sh("gh pr view #{pr_number} --json files -q '.files[].path'")
-    when 'push'
-      sh("git diff-tree --no-commit-id --name-only -r HEAD^1..#{ENV['GITHUB_REF']}")
-    end
+  pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
+
+  changed_files = sh("gh pr view #{pr_number} --json files -q '.files[].path'")
 
   changed_files = changed_files.split("\n").select do |path|
     sources[type.to_sym].any? { |required| path.start_with?(required) }
