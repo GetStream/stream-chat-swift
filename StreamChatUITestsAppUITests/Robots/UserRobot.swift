@@ -26,7 +26,7 @@ final class UserRobot: Robot {
         let cells = ChannelListPage.cells.waitCount(minExpectedCount)
         
         // TODO: CIS-1737
-        if !cells.firstMatch.wait().exists {
+        if !cells.firstMatch.wait(timeout: 5).exists {
             app.terminate()
             app.launch()
             login()

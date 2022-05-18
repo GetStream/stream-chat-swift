@@ -28,7 +28,6 @@ jobs:
     runs-on: macos-12
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/set-build-image-var
       - uses: ./.github/actions/bootstrap
       - name: Run Danger
         run: bundle exec danger
@@ -44,7 +43,6 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 100
-    - uses: ./.github/actions/set-build-image-var
     - uses: actions/setup-python@v3.0.0
       with:
         python-version: 3.8
@@ -54,6 +52,13 @@ jobs:
         INSTALL_SONAR: true
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+    - uses: test-summary/action@v1
+      with:
+        paths: fastlane/test_output/report.junit
+      if: failure()
     - name: Get branch name
       id: get_branch_name
       run: echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
@@ -80,7 +85,6 @@ jobs:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
-    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Prepare iPhone 12 Pro with iOS 15.4
       uses: ./.github/actions/prepare-ios-simulator
@@ -90,6 +94,13 @@ jobs:
         xcode: "13.3.1"
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"iPhone 12 Pro (15.4)"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+    - uses: test-summary/action@v1
+      with:
+        paths: fastlane/test_output/report.junit
+      if: failure()
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -104,21 +115,28 @@ jobs:
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
     runs-on: macos-12
+    strategy:
+      matrix:
+        batch: [0, 1, 2]
     steps:
     - uses: actions/checkout@v2
-    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_ALLURE: true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}"
-    - name: Upload test results to Allure TestOps
-      if: success() || failure()
-      run: bundle exec fastlane allure_upload
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}'
       env:
-        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-        ALLURE_GITHUB_TOKEN: ${{ secrets.ALLURE_GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
+        MATRIX_SIZE: ${{ strategy.job-total }}
+    - uses: test-summary/action@v1
+      with:
+        paths: fastlane/test_output/report.junit
+      if: failure()
+    - uses: actions/upload-artifact@v3
+      if: success() || failure()
+      with:
+        name: "xcresult_${{ matrix.batch }}"
+        path: "fastlane/test_output/*.xcresult"
+        if-no-files-found: error
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -130,21 +148,45 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
 
+  allure_testops:
+    name: Allure TestOps
+    runs-on: macos-12
+    if: success() || failure()
+    needs: [build-and-test-e2e-debug]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v3
+    - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_ALLURE: true
+        XCODE_ACTIONS: false
+    - name: Merge xcresults
+      run: xcrun xcresulttool merge */*.xcresult --output-path fastlane/test_output/merged.xcresult
+    - name: Upload test results to Allure TestOps
+      run: bundle exec fastlane allure_upload
+      env:
+        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+
   build-xcode12:
     name: Build LLC + UI (Xcode 12)
     runs-on: macos-11
     steps:
     - uses: actions/checkout@v2
-    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Build LLC (Xcode 12)
-      env:
-        XCODE_VERSION: "12.5.1"
       run: bundle exec fastlane test device:"iPhone 12" build_for_testing:true
-    - name: Build UI (Xcode 12)
       env:
         XCODE_VERSION: "12.5.1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+    - name: Build UI (Xcode 12)
       run: bundle exec fastlane test_ui device:"iPhone 12" build_for_testing:true
+      env:
+        XCODE_VERSION: "12.5.1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -161,7 +203,6 @@ jobs:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
-    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Build Sample App
       run: bundle exec fastlane build_sample
@@ -191,7 +232,6 @@ jobs:
   #   runs-on: macos-12
   #   steps:
   #   - uses: actions/checkout@v1
-  #   - uses: ./.github/actions/set-build-image-var
   #   - uses: ./.github/actions/bootstrap
   #   - name: Build Docs Snippets
   #     run: bundle exec fastlane build_docs_snippets
@@ -211,7 +251,6 @@ jobs:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
-    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane spm_integration
@@ -231,7 +270,6 @@ jobs:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
-    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane cocoapods_integration

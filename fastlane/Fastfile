@@ -11,7 +11,7 @@ stress_tests_cycles = 50
 
 before_all do
   if is_ci
-    setup_ci()
+    setup_ci
     xcversion(version: "~> #{xcode_version}")
   end
 end
@@ -115,7 +115,7 @@ lane :publish_release do |options|
   UI.user_error!("You need to pass the version of the release") unless version.length > 0
 
   # Create XCFrameworks
-  xcversion(version: "13.0")
+  xcversion(version: xcode_version)
   sh("cd .. && make frameworks")
 
   changes = read_changelog(version: version)
@@ -443,26 +443,27 @@ lane :get_next_issue_number do
 end
 
 # Adds "CI=TRUE" environment variable to the provided test plan file
-def setCIEnvironmentVariable(testPlanFile)
-  file = File.read(testPlanFile)
-  data_hash = JSON.parse(file)
+def add_ci_env_var_to(test_plan_file)
+  return unless is_ci
+
+  data_hash = JSON.parse(File.read(test_plan_file))
 
   # Create the `environmentVariableEntries` array if it doesn't exist
   data_hash['defaultOptions']['environmentVariableEntries'] ||= []
 
   # Append the `CI` ENV variable
-  data_hash['defaultOptions']['environmentVariableEntries'] << {"key"=>"CI", "value"=>"TRUE"}
-  File.write(testPlanFile, JSON.pretty_generate(data_hash))
+  data_hash['defaultOptions']['environmentVariableEntries'] << { 'key' => 'CI', 'value' => 'TRUE' }
+  File.write(test_plan_file, JSON.pretty_generate(data_hash))
 
-  puts "✅ `CI=TRUE` ENV variable added to " + testPlanFile
-  puts "Current testplan ENV variables:"
-  puts data_hash['defaultOptions']['environmentVariableEntries']
+  UI.success("✅ `CI=TRUE` ENV variable added to #{test_plan_file}")
+  UI.message("Current testplan ENV variables:\n#{data_hash['defaultOptions']['environmentVariableEntries']}")
 end
 
 desc "Runs tests in Debug config"
 lane :test do |options|
+  next unless testing_required?(:unit)
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
+  add_ci_env_var_to("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -477,24 +478,52 @@ end
 
 desc "Runs e2e ui tests using mock server in Debug config"
 lane :test_e2e_mock do |options|
+  next unless testing_required?(:e2e)
 
-  setCIEnvironmentVariable('../StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan')
+  add_ci_env_var_to('../StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan')
 
-  scan(
+  scan_options = {
     project: 'StreamChat.xcodeproj',
     scheme: 'StreamChatUITestsApp',
     testplan: 'StreamChatUITestsApp',
     configuration: 'Debug',
-    clean: true,
     devices: options[:device],
     number_of_retries: 1
+  }
+  scan(scan_options.merge(clean: true, build_for_testing: is_ci))
+
+  if is_ci
+    parallelize_tests_on_ci(
+      scan: scan_options,
+      derived_data: lane_context[SharedValues::SCAN_DERIVED_DATA_PATH],
+      batch: options[:batch]
+    )
+  end
+end
+
+private_lane :parallelize_tests_on_ci do |options|
+  xctestrun = Dir.glob("#{options[:derived_data]}/Build/Products/*.xctestrun").first
+  tests = retrieve_tests(xctestrun: xctestrun).values.flatten
+  slice_size = (tests.size / ENV['MATRIX_SIZE'].to_f).ceil
+  only_testing = []
+  tests.each_slice(slice_size) { |test| only_testing << test }
+  only_testing_batch = only_testing[options[:batch].to_i]
+
+  UI.success("Tests in total: #{only_testing.flatten.size}. Running #{only_testing_batch.size} of them ⌛️")
+  scan(
+    options[:scan].merge(
+      test_without_building: true,
+      derived_data_path: options[:derived_data],
+      only_testing: only_testing_batch
+    )
   )
 end
 
 desc "Runs ui tests in Debug config"
 lane :test_ui do |options|
+  next unless testing_required?(:ui)
 
-  setCIEnvironmentVariable("../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -509,8 +538,7 @@ end
 
 desc "Runs ui tests in Release config"
 lane :test_ui_release do |options|
-
-  setCIEnvironmentVariable("../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -524,8 +552,7 @@ end
 
 desc "Runs tests in Release config"
 lane :test_release do |options|
-
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -539,10 +566,9 @@ end
 
 desc "Runs tests in Release config on macOS"
 lane :test_release_macos do
+  add_ci_env_var_to("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
-
-  match_macos()
+  match_macos
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -557,10 +583,9 @@ end
 
 desc "Runs tests in Debug config on macOS"
 lane :test_debug_macos do
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
-
-  match_macos()
+  match_macos
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -593,7 +618,7 @@ lane :stress_test do
     devices: options[:device]
   )
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan')
 
   stress_tests_cycles.times {
     scan(
@@ -618,7 +643,7 @@ lane :stress_test_release do |options|
     devices: options[:device]
   )
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan')
 
   stress_tests_cycles.times {
     scan(
@@ -749,4 +774,29 @@ lane :emerge_upload do
     pr_number: pr_num,
     sha: sha
   )
+end
+
+def testing_required?(type)
+  return true unless ENV['GITHUB_EVENT_NAME'] =~ /(push|pull_request)/
+
+  sources = {
+    e2e: %w[Sources StreamChatUITestsAppUITests StreamChatUITestsApp],
+    unit: %w[Sources Tests StreamChat.xcodeproj],
+    ui: %w[Sources Tests/StreamChatUITests Tests/UISDKdocumentationTests]
+  }
+
+  changed_files =
+    case ENV['GITHUB_EVENT_NAME']
+    when 'pull_request'
+      pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
+      sh("gh pr view #{pr_number} --json files -q '.files[].path'")
+    when 'push'
+      sh("git diff-tree --no-commit-id --name-only -r HEAD..#{ENV['GITHUB_REF']}")
+    end
+
+  changed_files = changed_files.split("\n").select do |path|
+    sources[type.to_sym].any? { |required| path.start_with?(required) }
+  end
+
+  changed_files.size.positive?
 end

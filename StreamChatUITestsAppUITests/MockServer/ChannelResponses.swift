@@ -48,7 +48,8 @@ extension StreamMockServer {
     
     func configureChannelEndpoints() {
         server.register(MockEndpoint.query) { [weak self] request in
-            self?.updateChannelList(request)
+            self?.channelQueryEndpointWasCalled = true
+            return self?.updateChannelList(request)
         }
         server.register(MockEndpoint.channels) { [weak self] request in
             self?.updateChannelList(request)
