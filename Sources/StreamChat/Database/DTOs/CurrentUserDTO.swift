@@ -58,7 +58,9 @@ extension CurrentUserDTO {
             result.count <= 1,
             "The database is corrupted. There is more than 1 entity of the type `CurrentUserDTO` in the DB."
         )
-        if let existing = result.first { return existing }
+        if let existing = result.first {
+            return existing
+        }
         
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         return new
