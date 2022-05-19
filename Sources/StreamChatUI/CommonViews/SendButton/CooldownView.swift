@@ -21,8 +21,7 @@ open class CooldownView: _View, AppearanceProvider {
     override open func updateContent() {
         super.updateContent()
         
-        guard let cooldown = content?.cooldown else { return }
-        cooldownLabel.text = "\(cooldown)"
+        cooldownLabel.text = content.map { "\($0.cooldown)" }
     }
     
     override open func layoutSubviews() {
