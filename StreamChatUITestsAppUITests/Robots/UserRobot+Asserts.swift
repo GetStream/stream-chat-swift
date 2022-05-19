@@ -103,7 +103,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let errorButton = attributes.errorButton(in: messageCell).wait()
         XCTAssertTrue(errorButton.exists, file: file, line: line)
         return self
@@ -116,7 +116,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let checkmark = attributes.statusCheckmark(for: deliveryStatus, in: messageCell)
         if deliveryStatus == .failed || deliveryStatus == nil {
             XCTAssertFalse(checkmark.exists, file: file, line: line)
@@ -134,7 +134,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let readByCount = attributes.readCount(in: messageCell)
         if readBy == 0 {
             XCTAssertFalse(readByCount.isHittable, file: file, line: line)

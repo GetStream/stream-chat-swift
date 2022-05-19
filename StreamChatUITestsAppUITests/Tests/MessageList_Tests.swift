@@ -217,6 +217,24 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.assertMessage(twoLinesMessage)
         }
     }
+
+    func test_messageWithMultipleLinesShown_userSendsMessageWithMultipleLines() {
+        linkToScenario(withId: 57)
+
+        let message = "1\n2\n3\n"
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user sends a message with N new lines (e.g.: 3)") {
+            userRobot.sendMessage(message)
+        }
+        THEN("user observes a message cell with N lines") {
+            userRobot.assertMessage(message)
+        }
+    }
+
 }
 
 // MARK: Quoted messages
