@@ -93,7 +93,7 @@ class FetchCache {
     }
     
     static func clear() {
-        Self.shared.cache.removeAll()
+        Self.shared.clear()
     }
 
     private func clear() {

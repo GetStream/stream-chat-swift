@@ -153,6 +153,8 @@ class DatabaseContainer: NSPersistentContainer {
             }
         }
         
+        FetchCache.clear()
+        
         setupLoggerForDatabaseChanges()
     }
     
@@ -356,9 +358,11 @@ class DatabaseContainer: NSPersistentContainer {
                     let entities = try writableContext.fetch(fetchRequest) as? [EphemeralValuesContainer]
                     entities?.forEach { $0.resetEphemeralValues() }
                 }
+                FetchCache.clear()
                 try writableContext.save()
                 log.debug("Ephemeral values reset.", subsystems: .database)
             } catch {
+                FetchCache.clear()
                 log.error("Error resetting ephemeral values: \(error)", subsystems: .database)
             }
         }

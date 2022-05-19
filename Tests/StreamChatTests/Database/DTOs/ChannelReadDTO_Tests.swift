@@ -298,10 +298,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
         XCTAssertNotNil(readDTO)
             
         // WHEN
-        database.viewContext.markChannelAsUnread(
-            cid: channel.channel.cid,
-            by: member.user.id
-        )
+        try database.writeSynchronously { session in
+            session.markChannelAsUnread(cid: channel.channel.cid, by: member.user.id)
+        }
         
         // THEN
         XCTAssertNil(readDTO)

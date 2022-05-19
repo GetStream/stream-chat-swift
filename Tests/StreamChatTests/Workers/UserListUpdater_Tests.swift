@@ -67,10 +67,11 @@ final class UserListUpdater_Tests: XCTestCase {
         let payload = UserListPayload(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
         
+        AssertAsync.willBeTrue(completionCalled)
+        
         // Assert the data is stored in the DB
         AssertAsync {
             Assert.willBeTrue((try? self.user(with: id)) != nil)
-            Assert.willBeTrue(completionCalled)
         }
     }
     
@@ -113,29 +114,35 @@ final class UserListUpdater_Tests: XCTestCase {
     func test_mergePolicy_takesAffect() throws {
         // Simulate `update` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        listUpdater.update(userListQuery: query)
+        var completionCalled = false
+        listUpdater.update(userListQuery: query) { _ in completionCalled = true }
         
         // Simulate API response with user data
         let userId = UserId.unique
         let payload = UserListPayload(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
+        
+        AssertAsync.willBeTrue(completionCalled)
 
         // Assert user is inserted into DB
-        AssertAsync.willBeTrue((try? self.user(with: userId)) != nil)
-        let user = try self.user(with: userId)
+        var user: ChatUser? { try? self.user(with: userId) }
+        AssertAsync.willBeTrue(user != nil)
         
         // Simulate consequent `update` call with new users and `.merge` policy
         // We don't pass the `policy` argument since we expect it's `merge` by default
-        listUpdater.update(userListQuery: query)
+        completionCalled = false
+        listUpdater.update(userListQuery: query) { _ in completionCalled = true }
         
         // Simulate API response with user data
         let newUserId = UserId.unique
         let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
         
+        AssertAsync.willBeTrue(completionCalled)
+        
         // Assert new user is inserted into DB
-        AssertAsync.willBeTrue((try? self.user(with: newUserId)) != nil)
-        let newUser = try self.user(with: newUserId)
+        var newUser: ChatUser? { try? self.user(with: newUserId) }
+        AssertAsync.willBeTrue(newUser != nil)
 
         let userIds = [user!, newUser!].map(\.id)
 
@@ -160,12 +167,15 @@ final class UserListUpdater_Tests: XCTestCase {
         // Simulate `update` call
         // This call doesn't need `policy` argument specified since
         // it's the first call for this query, hence there's no data to `replace` or `merge` to
-        listUpdater.update(userListQuery: query)
+        var completionCalled = false
+        listUpdater.update(userListQuery: query) { _ in completionCalled = true }
         
         // Simulate API response with user data
         let userId = UserId.unique
         let payload = UserListPayload(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
+        
+        AssertAsync.willBeTrue(completionCalled)
         
         // Assert user is inserted into DB
         AssertAsync.willBeTrue((try? self.user(with: userId)) != nil)
@@ -175,12 +185,15 @@ final class UserListUpdater_Tests: XCTestCase {
         AssertAsync.willBeTrue(user != nil)
         
         // Simulate consequent `update` call with new users and `.replace` policy
-        listUpdater.update(userListQuery: query, policy: .replace)
+        completionCalled = false
+        listUpdater.update(userListQuery: query, policy: .replace) { _ in completionCalled = true }
         
         // Simulate API response with user data
         let newUserId = UserId.unique
         let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
+        
+        AssertAsync.willBeTrue(completionCalled)
         
         // Assert new user is inserted into DB
         AssertAsync.willBeTrue((try? self.user(with: newUserId)) != nil)
