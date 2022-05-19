@@ -312,7 +312,123 @@ extension MessageList_Tests {
 }
 
 // MARK: - Thread replies
-
 extension MessageList_Tests {
-    
+    func test_threadReplyAppearsInChannelAndThread_whenUserAddsThreadReplySentAlsoToChannel() {
+        linkToScenario(withId: 111)
+
+        let message = "message"
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("participant sends a message") {
+            participantRobot.sendMessage(message)
+        }
+        WHEN("user adds a thread reply to participant's message and sends it also to main channel") {
+            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        THEN("user observes the thread reply in thread") {
+            userRobot.assertThreadReply(threadReply)
+        }
+        AND("user observes the thread reply in channel") {
+            userRobot
+                .tapOnBackButton()
+                .assertMessage(threadReply)
+        }
+    }
+
+    func test_threadReplyIsRemovedEverywhere_whenParticipantRemovesItFromChannel() {
+        linkToScenario(withId: 112)
+
+        let message = "message"
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        AND("participant adds a thread reply to users's message and sends it also to main channel") {
+            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        WHEN("participant removes the thread reply from channel") {
+            participantRobot.deleteMessage()
+        }
+        THEN("user observes the thread reply removed in channel") {
+            userRobot.assertDeletedMessage()
+        }
+        AND("user observes the thread reply removed in thread") {
+            userRobot
+                .showThread(forMessageAt: 1)
+                .assertDeletedMessage()
+        }
+    }
+
+    func test_threadReplyIsRemovedEverywhere_whenUserRemovesItFromChannel() {
+        linkToScenario(withId: 114)
+
+        let message = "message"
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("participant sends a message") {
+            participantRobot.sendMessage(message)
+        }
+        AND("user adds a thread reply to participant's message and sends it also to main channel") {
+            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        WHEN("user removes thread reply from thread") {
+            userRobot.deleteMessage()
+        }
+        THEN("user observes the thread reply removed in thread") {
+            userRobot.assertDeletedMessage()
+        }
+        AND("user observes the thread reply removed in channel") {
+            userRobot
+                .tapOnBackButton()
+                .assertDeletedMessage()
+        }
+    }
+
+    func test_threadReplyIsRemovedEverywhere_whenUserRemovesItFromThread() {
+        linkToScenario(withId: 115)
+
+        let message = "message"
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("participant sends a message") {
+            participantRobot.sendMessage(message)
+        }
+        AND("user adds a thread reply to participant's message and sends it also to main channel") {
+            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        WHEN("user goes back to channel and removes thread reply") {
+            userRobot
+                .tapOnBackButton()
+                .deleteMessage()
+        }
+        THEN("user observes the thread reply removed in channel") {
+            userRobot.assertDeletedMessage()
+        }
+        AND("user observes the thread reply removed in thread") {
+            userRobot
+                .showThread(forMessageAt: 1)
+                .assertDeletedMessage()
+        }
+    }
 }
