@@ -282,6 +282,102 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
+    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserSendsNewMessage() {
+        linkToScenario(withId: 193)
+
+        let messages = Array(repeating: "Some Message", count: 50)
+        let newMessage = "New message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("channel is scrollable") {
+            participantRobot
+                .sendMultipleMessages(messages)
+        }
+
+        WHEN("user scrolls up") {
+            userRobot.scrollMessageListUp()
+        }
+        AND("user sends a new message") {
+            userRobot
+                .sendMessage(newMessage)
+                .waitForNewMessage(withText: newMessage)
+        }
+
+        THEN("message list is scrolled down") {
+            userRobot.assertMessageIsVisible(newMessage)
+        }
+    }
+
+    func test_messageListScrollsDown_whenMessageListIsScrolledDown_andUserReceivesNewMessage() {
+        linkToScenario(withId: 75)
+
+        let messages = Array(repeating: "Some Message", count: 50)
+        let lastMessage = "Last Message"
+        let newMessage = "New message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("channel is scrollable") {
+            participantRobot
+                .sendMultipleMessages(messages)
+                .waitForNewMessage(withText: "Some Message", at: 49)
+                .sendMessage(lastMessage)
+                .waitForNewMessage(withText: lastMessage)
+        }
+
+        WHEN("user is scrolled down") {
+            userRobot.assertMessage(lastMessage)
+        }
+        AND("participant sends a message") {
+            participantRobot
+                .sendMessage(newMessage)
+                .waitForNewMessage(withText: newMessage)
+        }
+
+        THEN("message list is scrolled down") {
+            userRobot.assertMessageIsVisible(newMessage)
+        }
+    }
+
+    func test_messageListDoesNotScrollDown_whenMessageListIsScrolledUp_andUserReceivesNewMessage() {
+        linkToScenario(withId: 194)
+
+        let messages = Array(repeating: "Some Message", count: 50)
+        let lastMessage = "Last Message"
+        let newMessage = "New message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("channel is scrollable") {
+            participantRobot
+                .sendMultipleMessages(messages)
+                .waitForNewMessage(withText: "Some Message", at: 49)
+                .sendMessage(lastMessage)
+                .waitForNewMessage(withText: lastMessage)
+        }
+
+        WHEN("user scrolls up") {
+            userRobot.scrollMessageListUp()
+        }
+        AND("participant sends a message") {
+            participantRobot.sendMessage(newMessage)
+        }
+
+        THEN("message list is scrolled up") {
+            userRobot.assertMessageIsNotVisible(newMessage)
+        }
+    }
+
 }
 
 // MARK: Quoted messages

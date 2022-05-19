@@ -13,6 +13,10 @@ class MessageListPage {
     static var cells: XCUIElementQuery {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMessageCell'"))
     }
+
+    static var list: XCUIElement {
+        app.tables.firstMatch
+    }
     
     static var typingIndicator: XCUIElement {
         app.otherElements["TypingIndicatorView"].staticTexts.firstMatch

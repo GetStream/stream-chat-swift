@@ -49,6 +49,30 @@ extension Robot {
     }
 
     @discardableResult
+    func assertMessageIsVisible(
+        _ text: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        XCTAssertTrue(messageCell.isHittable)
+        return self
+    }
+
+    @discardableResult
+    func assertMessageIsNotVisible(
+        _ text: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        XCTAssertFalse(messageCell.isHittable)
+        return self
+    }
+
+    @discardableResult
     func assertQuotedMessage(
         _ text: String,
         at messageCellIndex: Int? = nil,

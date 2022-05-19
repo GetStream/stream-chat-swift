@@ -88,6 +88,14 @@ final class ParticipantRobot: Robot {
         )
         return self
     }
+
+    @discardableResult
+    func sendMultipleMessages(_ texts: [String]) -> Self {
+        texts.forEach {
+            sendMessage($0)
+        }
+        return self
+    }
     
     @discardableResult
     func editMessage(_ text: String) -> Self {

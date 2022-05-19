@@ -198,6 +198,13 @@ extension UserRobot {
         tapOnBackButton()
         return self
     }
+
+    @discardableResult
+    func scrollMessageListUp() -> Self {
+        let topMessage = MessageListPage.cells.element(boundBy: 0)
+        MessageListPage.list.press(forDuration: 0.1, thenDragTo: topMessage)
+        return self
+    }
 }
 
 // MARK: Debug menu
