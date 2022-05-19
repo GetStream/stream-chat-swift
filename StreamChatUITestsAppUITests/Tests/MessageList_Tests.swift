@@ -22,7 +22,7 @@ final class MessageList_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("user sends a message") {
-            userRobot.sendMessage("message")
+            userRobot.sendMessage(message)
         }
         THEN("message list updates") {
             userRobot.assertMessage(message)
@@ -232,6 +232,17 @@ final class MessageList_Tests: StreamTestCase {
         }
         THEN("user observes a message cell with N lines") {
             userRobot.assertMessage(message)
+        }
+    }
+    
+    func test_composerGrowthLimit() {
+        linkToScenario(withId: 71)
+
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        THEN("user verifies that composer does not grow more than 5 lines") {
+            userRobot.assertComposerDoesNotGrowMoreThanFiveLines()
         }
     }
     

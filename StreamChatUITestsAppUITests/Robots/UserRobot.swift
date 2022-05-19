@@ -10,7 +10,6 @@ import StreamChat
 final class UserRobot: Robot {
 
     let composer = MessageListPage.Composer.self
-    let threadComposer = ThreadPage.Composer.self
     let contextMenu = MessageListPage.ContextMenu.self
     let debugAlert = MessageListPage.Alert.Debug.self
     
@@ -69,8 +68,18 @@ extension UserRobot {
     }
     
     @discardableResult
+    func typeText(_ text: String, obtainKeyboardFocus: Bool = true) -> Self {
+        if obtainKeyboardFocus {
+            composer.inputField.obtainKeyboardFocus().typeText(text)
+        } else {
+            composer.inputField.typeText(text)
+        }
+        return self
+    }
+    
+    @discardableResult
     func sendMessage(_ text: String) -> Self {
-        composer.inputField.obtainKeyboardFocus().typeText(text)
+        typeText(text)
         composer.sendButton.tap()
         return self
     }
@@ -149,7 +158,7 @@ extension UserRobot {
     @discardableResult
     func replyToMessage(_ text: String, messageCellIndex: Int = 0) -> Self {
         selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
-        composer.inputField.obtainKeyboardFocus().typeText(text)
+        typeText(text)
         composer.sendButton.tap()
         return self
     }
@@ -172,8 +181,8 @@ extension UserRobot {
         if alsoSendInChannel {
             threadCheckbox.wait().tap()
         }
-        threadComposer.inputField.obtainKeyboardFocus().typeText(text)
-        threadComposer.sendButton.tap()
+        typeText(text)
+        composer.sendButton.tap()
         return self
     }
     

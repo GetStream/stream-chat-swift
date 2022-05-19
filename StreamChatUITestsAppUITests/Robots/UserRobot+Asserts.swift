@@ -143,6 +143,20 @@ extension UserRobot {
         }
         return self
     }
+    
+    func assertComposerDoesNotGrowMoreThanFiveLines(file: StaticString = #filePath, line: UInt = #line) {
+        let composer = MessageListPage.Composer.inputField
+        var composerSize = composer.frame.size
+        for i in 0...4 {
+            let obtainKeyboardFocus = (i == 0) ? true : false
+            typeText("\(i)", obtainKeyboardFocus: obtainKeyboardFocus)
+            let updatedComposerSize = composer.frame.size
+            XCTAssertNotEqual(composerSize, updatedComposerSize, file: file, line: line)
+            composerSize = updatedComposerSize
+            typeText("\n", obtainKeyboardFocus: obtainKeyboardFocus)
+        }
+        XCTAssertEqual(composerSize, composer.frame.size, file: file, line: line)
+    }
 }
 
 // MARK: Thread Replies
