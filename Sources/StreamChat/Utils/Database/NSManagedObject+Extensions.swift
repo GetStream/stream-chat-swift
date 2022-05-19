@@ -67,7 +67,7 @@ extension NSManagedObject {
 
 class FetchCache {
     fileprivate static let shared = FetchCache()
-    private let queue = DispatchQueue(label: "io.stream.com.fetch-cache", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "io.stream.com.fetch-cache", qos: .userInitiated, attributes: .concurrent)
     private var cache = [NSFetchRequest<NSFetchRequestResult>: [NSManagedObjectID]]()
 
     fileprivate func set<T>(_ request: NSFetchRequest<T>, objectIds: [NSManagedObjectID]) where T: NSFetchRequestResult {
@@ -75,8 +75,8 @@ class FetchCache {
             log.assertionFailure("Request should have a generic type conforming to NSFetchRequestResult")
             return
         }
-        queue.sync {
-            cache[request] = objectIds
+        queue.async(flags: .barrier) {
+            self.cache[request] = objectIds
         }
     }
     
@@ -97,8 +97,8 @@ class FetchCache {
     }
 
     private func clear() {
-        queue.sync {
-            cache.removeAll()
+        queue.async(flags: .barrier) {
+            self.cache.removeAll()
         }
     }
 }
