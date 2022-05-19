@@ -164,6 +164,10 @@ class MessageDTO: NSManagedObject {
     private static func nonDeletedMessagesPredicate() -> NSPredicate {
         .init(format: "deletedAt == nil")
     }
+    
+    private static func channelPredicate(with cid: String) -> NSPredicate {
+        .init(format: "channel.cid == %@", cid)
+    }
 
     /// Returns predicate for displaying messages after the channel truncation date.
     private static func nonTruncatedMessagesPredicate() -> NSCompoundPredicate {
@@ -405,7 +409,7 @@ class MessageDTO: NSManagedObject {
     static func loadLastMessage(from userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            .init(format: "channel.cid == %@", cid),
+            channelPredicate(with: cid),
             .init(format: "user.id == %@", userId),
             .init(format: "type != %@", MessageType.ephemeral.rawValue),
             .init(format: "localMessageStateRaw == nil")

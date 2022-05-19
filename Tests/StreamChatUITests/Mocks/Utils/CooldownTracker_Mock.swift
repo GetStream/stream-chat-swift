@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChat
+@testable import StreamChat
 
 final class CooldownTracker_Mock: CooldownTracker {
     override func start(with cooldown: Int) {

@@ -618,64 +618,25 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_lastMessageFromCurrentUser() throws {
         let user: UserPayload = dummyCurrentUser
         let channelId: ChannelId = .unique
-        let message1 = MessagePayload(
-            id: .unique,
+        let message1: MessagePayload = .dummy(
             type: .regular,
-            user: user,
-            createdAt: Date.distantPast,
-            updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            showReplyInChannel: true,
-            mentionedUsers: [dummyCurrentUser],
-            replyCount: 1,
-            extraData: [:],
-            reactionScores: ["like": 1],
-            reactionCounts: ["like": 1],
-            isSilent: false,
-            isShadowed: false,
-            attachments: [],
-            pinned: false
+            messageId: .unique,
+            authorUserId: user.id,
+            createdAt: Date.distantPast
         )
         
-        let message2 = MessagePayload(
-            id: .unique,
+        let message2: MessagePayload = .dummy(
             type: .regular,
-            user: user,
-            createdAt: Date(),
-            updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser],
-            replyCount: 0,
-            extraData: [:],
-            reactionScores: ["like": 1],
-            reactionCounts: ["like": 1],
-            isSilent: false,
-            isShadowed: false,
-            attachments: [],
-            pinned: false
+            messageId: .unique,
+            authorUserId: user.id,
+            createdAt: Date()
         )
         
-        let message3 = MessagePayload(
-            id: .unique,
+        let message3: MessagePayload = .dummy(
             type: .ephemeral,
-            user: user,
-            createdAt: Date(),
-            updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser],
-            replyCount: 0,
-            extraData: [:],
-            reactionScores: ["like": 1],
-            reactionCounts: ["like": 1],
-            isSilent: false,
-            isShadowed: false,
-            attachments: [],
-            pinned: false
+            messageId: .unique,
+            authorUserId: user.id,
+            createdAt: Date()
         )
         
         let channel = dummyPayload(with: channelId, messages: [message1, message2, message3])

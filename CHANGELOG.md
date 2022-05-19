@@ -2,8 +2,9 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
-
-### 🔄 Changed
+## StreamChatUI
+### ✅ Added
+- Add Support for Slow Mode [#1953](https://github.com/GetStream/stream-chat-swift/pull/1953)
 
 # [4.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.15.0)
 _May 11, 2022_
@@ -42,7 +43,6 @@ _April 26, 2022_
 ## StreamChat
 ### ✅ Added
 - `quotesEnabled` property is added to the `ChannelConfig` [#1891](https://github.com/GetStream/stream-chat-swift/issues/1891)
-- Add Support for Slow Mode [#1953](https://github.com/GetStream/stream-chat-swift/pull/1953)
 
 ### 🔄 Changed
 - Assertions are no longer thrown by default. Check `StreamRuntimeCheck` to enable them [#1885](https://github.com/GetStream/stream-chat-swift/pull/1885)
