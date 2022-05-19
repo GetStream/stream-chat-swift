@@ -14,6 +14,10 @@ class MessageListPage {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMessageCell'"))
     }
     
+    static var typingIndicator: XCUIElement {
+        app.otherElements["TypingIndicatorView"].staticTexts.firstMatch
+    }
+    
     enum NavigationBar {
         
         static var header: XCUIElement { app.otherElements["ChatChannelHeaderView"] }

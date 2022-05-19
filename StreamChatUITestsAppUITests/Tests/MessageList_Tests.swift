@@ -234,6 +234,42 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.assertMessage(message)
         }
     }
+    
+    func test_typingIndicatorShown_whenParticipantStartsTyping() {
+        linkToScenario(withId: 72)
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("participant starts typing") {
+            participantRobot.startTyping()
+        }
+        THEN("user observes typing indicator is shown") {
+            let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
+            userRobot.assertTypingIndicatorShown(typingUserName: typingUserName)
+        }
+    }
+    
+    func test_typingIndicatorHidden_whenParticipantStopsTyping() {
+        linkToScenario(withId: 73)
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("participant starts typing") {
+            participantRobot.startTyping()
+        }
+        AND("participant stops typing") {
+            participantRobot.stopTyping()
+        }
+        THEN("user observes typing indicator has disappeared") {
+            userRobot.assertTypingIndicatorHidden()
+        }
+    }
 
 }
 

@@ -103,6 +103,28 @@ extension Robot {
         _ = textView.waitForText(text)
         return self
     }
+    
+    @discardableResult
+    func assertTypingIndicatorShown(
+        typingUserName: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let typingIndicatorView = MessageListPage.typingIndicator
+        let typingUserText = typingIndicatorView.waitForText(typingUserName).text
+        XCTAssert(typingUserText.contains(typingUserName), file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertTypingIndicatorHidden(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let typingIndicatorView = MessageListPage.typingIndicator
+        XCTAssertFalse(typingIndicatorView.exists, file: file, line: line)
+        return self
+    }
 }
 
 // MARK: Thread Replies
