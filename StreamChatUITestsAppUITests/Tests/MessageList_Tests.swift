@@ -327,7 +327,7 @@ final class MessageList_Tests: StreamTestCase {
         AND("channel is scrollable") {
             participantRobot
                 .sendMultipleMessages(messages)
-                .waitForNewMessage(withText: "Some Message", at: 49)
+                .waitForNewMessage(withText: "Some Message", at: messages.count - 1)
                 .sendMessage(lastMessage)
                 .waitForNewMessage(withText: lastMessage)
         }
@@ -348,7 +348,7 @@ final class MessageList_Tests: StreamTestCase {
 
     func test_messageListDoesNotScrollDown_whenMessageListIsScrolledUp_andUserReceivesNewMessage() {
         linkToScenario(withId: 194)
-
+        
         let messages = Array(repeating: "Some Message", count: 50)
         let lastMessage = "Last Message"
         let newMessage = "New message"
@@ -361,7 +361,7 @@ final class MessageList_Tests: StreamTestCase {
         AND("channel is scrollable") {
             participantRobot
                 .sendMultipleMessages(messages)
-                .waitForNewMessage(withText: "Some Message", at: 49)
+                .waitForNewMessage(withText: "Some Message", at: messages.count - 1)
                 .sendMessage(lastMessage)
                 .waitForNewMessage(withText: lastMessage)
         }
