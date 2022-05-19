@@ -262,6 +262,56 @@ extension MessageList_Tests {
             userRobot.assertQuotedMessage(replyText: quotedMessage, quotedText: message)
         }
     }
+    
+//    func test_quotedReplyIsDeletedByParticipant_deletedMessageIsShown() {
+////        linkToScenario(withId: 108)
+//
+//        let message = "message"
+//        let quotedMessage = "quoted reply"
+//
+//        GIVEN("user opens the channel") {
+//            userRobot
+//                .login()
+//                .openChannel()
+//        }
+//        AND("user sends a message") {
+//            userRobot.sendMessage(message)
+//        }
+//        AND("participant adds a quoted reply to users message") {
+//            participantRobot.replyToMessage(quotedMessage)
+//        }
+//        WHEN("participant deletes a quoted message") {
+//            participantRobot.selectOptionFromContextMenu(option: <#T##MessageListPage.ContextMenu#>, forMessageAtIndex: <#T##Int#>)
+//        }
+//        THEN("<#THEN#>") {
+//
+//        }
+//    }
+    
+    func test_quotedReplyIsDeletedByUser_deletedMessageIsShown() {
+//        linkToScenario(withId: 109)
+        
+        let message = "message"
+        let quotedMessage = "quoted reply"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("Participant sends a message") {
+            participantRobot.sendMessage(message)
+        }
+        AND("user adds a quoted reply to users message") {
+            userRobot.replyToMessage(quotedMessage)
+        }
+        WHEN("user deletes a quoted message") {
+            userRobot.selectOptionFromContextMenu(option: .delete)
+        }
+        THEN("deleted message is shown") {
+            userRobot.assertDeletedMessage()
+        }
+    }
 }
 
 // MARK: - Thread replies
