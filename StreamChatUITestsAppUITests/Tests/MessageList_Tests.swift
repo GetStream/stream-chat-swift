@@ -263,33 +263,33 @@ extension MessageList_Tests {
         }
     }
     
-//    func test_quotedReplyIsDeletedByParticipant_deletedMessageIsShown() {
-////        linkToScenario(withId: 108)
-//
-//        let message = "message"
-//        let quotedMessage = "quoted reply"
-//
-//        GIVEN("user opens the channel") {
-//            userRobot
-//                .login()
-//                .openChannel()
-//        }
-//        AND("user sends a message") {
-//            userRobot.sendMessage(message)
-//        }
-//        AND("participant adds a quoted reply to users message") {
-//            participantRobot.replyToMessage(quotedMessage)
-//        }
-//        WHEN("participant deletes a quoted message") {
-//            participantRobot.selectOptionFromContextMenu(option: <#T##MessageListPage.ContextMenu#>, forMessageAtIndex: <#T##Int#>)
-//        }
-//        THEN("<#THEN#>") {
-//
-//        }
-//    }
+    func test_quotedReplyIsDeletedByParticipant_deletedMessageIsShown() {
+        linkToScenario(withId: 108)
+
+        let message = "message"
+        let quotedMessage = "quoted reply"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        AND("participant adds a quoted reply to users message") {
+            participantRobot.replyToMessage(quotedMessage)
+        }
+        WHEN("participant deletes a quoted message") {
+            participantRobot.deleteMessage()
+        }
+        THEN("user observes Message deleted") {
+            userRobot.assertDeletedMessage()
+        }
+    }
     
     func test_quotedReplyIsDeletedByUser_deletedMessageIsShown() {
-//        linkToScenario(withId: 109)
+        linkToScenario(withId: 109)
         
         let message = "message"
         let quotedMessage = "quoted reply"
