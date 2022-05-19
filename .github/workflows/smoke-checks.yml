@@ -117,7 +117,7 @@ jobs:
     runs-on: macos-12
     strategy:
       matrix:
-        batch: [0, 1, 2]
+        batch: [0, 1, 2, 3]
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
