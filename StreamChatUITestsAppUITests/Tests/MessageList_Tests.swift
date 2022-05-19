@@ -221,7 +221,7 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageWithMultipleLinesShown_userSendsMessageWithMultipleLines() {
         linkToScenario(withId: 57)
 
-        let message = "1\n2\n3\n"
+        let message = "1\n2\n3"
         GIVEN("user opens the channel") {
             userRobot
                 .login()

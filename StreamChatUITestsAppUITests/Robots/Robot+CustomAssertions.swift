@@ -14,8 +14,8 @@ extension Robot {
 
     @discardableResult
     func messageCell(withIndex index: Int? = nil,
-                    file: StaticString = #filePath,
-                    line: UInt = #line) -> XCUIElement {
+                     file: StaticString = #filePath,
+                     line: UInt = #line) -> XCUIElement {
         let messageCell: XCUIElement
         if let index = index {
             let minExpectedCount = index + 1
