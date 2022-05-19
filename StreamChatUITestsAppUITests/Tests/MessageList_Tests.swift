@@ -306,7 +306,7 @@ extension MessageList_Tests {
             userRobot.replyToMessage(quotedMessage)
         }
         WHEN("user deletes a quoted message") {
-            userRobot.selectOptionFromContextMenu(option: .delete)
+            userRobot.deleteMessage()
         }
         THEN("deleted message is shown") {
             userRobot.assertDeletedMessage()

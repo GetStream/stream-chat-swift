@@ -60,7 +60,7 @@ class MessageListPage {
         static var confirmButton: XCUIElement { app.buttons["ConfirmButton"] }
         static var attachmentButton: XCUIElement { app.buttons["AttachmentButton"] }
         static var commandButton: XCUIElement { app.buttons["CommandButton"] }
-        static var inputField: XCUIElement { app.otherElements["InputChatMessageView"] }
+        static var inputField: XCUIElement { app.otherElements["inputTextContainer"] }
     }
     
     enum Reactions {
