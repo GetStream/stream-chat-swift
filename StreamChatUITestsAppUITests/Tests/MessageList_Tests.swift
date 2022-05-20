@@ -278,7 +278,9 @@ extension MessageList_Tests {
             userRobot.sendMessage(message)
         }
         AND("participant adds a quoted reply to users message") {
-            participantRobot.replyToMessage(quotedMessage)
+            participantRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessage(quotedMessage)
         }
         WHEN("participant deletes a quoted message") {
             participantRobot.deleteMessage()
