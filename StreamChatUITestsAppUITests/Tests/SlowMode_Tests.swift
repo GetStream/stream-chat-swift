@@ -10,6 +10,11 @@ final class SlowMode_Tests: StreamTestCase {
     let anotherNewMessage = "Another new message"
     let replyMessage = "reply message"
     let editedMessage = "edited message"
+    
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        addTags([.slowMode])
+    }
 
     func test_slowModeIsActiveAndCooldownIsShown_whenNewMessageIsSent() {
         linkToScenario(withId: 186)
@@ -20,13 +25,12 @@ final class SlowMode_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        WHEN("user types a new text message") {
-            userRobot.sendMessage(message)
+        WHEN("user sends a new text message") {
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
-        THEN("message is sent") {
-            userRobot.assertMessage(message)
-        }
-        AND("slow mode is active and cooldown is shown") {
+        THEN("slow mode is active and cooldown is shown") {
             userRobot.assertCooldownIsShown()
         }
     }
@@ -40,11 +44,10 @@ final class SlowMode_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        AND("user types a new text message") {
-            userRobot.sendMessage(message)
-        }
-        AND("message is sent") {
-            userRobot.assertMessage(message)
+        AND("user sends a new text message") {
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         AND("user selects reply to a message from context menu") {
             userRobot.selectOptionFromContextMenu(option: .reply)
@@ -69,11 +72,10 @@ final class SlowMode_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        AND("user types a new text message") {
-            userRobot.sendMessage(message)
-        }
-        AND("message is sent") {
-            userRobot.assertMessage(message)
+        AND("user sends a new text message") {
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         WHEN("user selects edit a message from context menu") {
             userRobot.editMessage(editedMessage)
@@ -90,16 +92,15 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 190)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 10)
+            backendRobot.setCooldown(enabled: true, duration: 15)
             userRobot
                 .login()
                 .openChannel()
         }
-        AND("user types a new text message") {
-            userRobot.sendMessage(message)
-        }
-        AND("message is sent") {
-            userRobot.assertMessage(message)
+        AND("user sends a new text message") {
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         AND("slow mode is active and cooldown is shown") {
             userRobot.assertCooldownIsShown()
@@ -108,7 +109,7 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.attemptToSendMessageWhileInSlowMode(anotherNewMessage)
         }
         THEN("message is not sent") {
-            userRobot.assertSendButtonNotHittable()
+            userRobot.assertSendButtonIsNotShown()
         }
     }
     
@@ -116,16 +117,15 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 191)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 10)
+            backendRobot.setCooldown(enabled: true, duration: 15)
             userRobot
                 .login()
                 .openChannel()
         }
-        AND("user types a new text message") {
-            userRobot.sendMessage(message)
-        }
-        AND("message is sent") {
-            userRobot.assertMessage(message)
+        AND("user sends a new text message") {
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         AND("user selects reply to a message from context menu") {
             userRobot.selectOptionFromContextMenu(option: .reply)
@@ -134,7 +134,7 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.attemptToSendMessageWhileInSlowMode(anotherNewMessage)
         }
         THEN("message is not sent") {
-            userRobot.assertSendButtonNotHittable()
+            userRobot.assertSendButtonIsNotShown()
         }
     }
     
@@ -142,16 +142,15 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 192)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 10)
+            backendRobot.setCooldown(enabled: true, duration: 15)
             userRobot
                 .login()
                 .openChannel()
         }
-        AND("user types a new text message") {
-            userRobot.sendMessage(message)
-        }
-        AND("message is sent") {
-            userRobot.assertMessage(message)
+        AND("user sends a new text message") {
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         AND("user selects thread to message from context menu") {
             userRobot.selectOptionFromContextMenu(option: .threadReply)
@@ -160,7 +159,7 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.attemptToSendMessageWhileInSlowMode(anotherNewMessage)
         }
         THEN("message is not sent") {
-            userRobot.assertSendButtonNotHittable()
+            userRobot.assertSendButtonIsNotShown()
         }
     }
 }
