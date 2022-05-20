@@ -54,10 +54,7 @@ extension NSManagedObject {
     static func load<T: NSManagedObject>(by request: NSFetchRequest<T>, context: NSManagedObjectContext) -> [T] {
         request.entity = NSEntityDescription.entity(forEntityName: T.entityName, in: context)!
         do {
-            return try context.fetch(
-                request,
-                using: FetchCache.shared
-            )
+            return try context.fetch(request, using: FetchCache.shared)
         } catch {
             log.error("Could not load \(error), \(error.localizedDescription)")
             return []

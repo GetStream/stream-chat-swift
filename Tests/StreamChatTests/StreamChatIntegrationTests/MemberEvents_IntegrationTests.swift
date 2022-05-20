@@ -40,10 +40,10 @@ final class MemberEvents_IntegrationTests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: unwrappedEvent.cid))
         }
 
-        var completionCalled = false
-        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled = true }
+        let completionCalled = expectation(description: "completion called")
+        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
         
-        AssertAsync.willBeTrue(completionCalled)
+        wait(for: [completionCalled], timeout: 1)
 
         AssertAsync {
             Assert.willNotBeNil(
@@ -60,10 +60,10 @@ final class MemberEvents_IntegrationTests: XCTestCase {
         let event = try eventDecoder.decode(from: json) as? MemberUpdatedEventDTO
 
         let unwrappedEvent = try XCTUnwrap(event)
-        var completionCalled = false
-        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled = true }
-
-        AssertAsync.willBeTrue(completionCalled)
+        let completionCalled = expectation(description: "completion called")
+        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        
+        wait(for: [completionCalled], timeout: 1)
         
         AssertAsync {
             Assert.willNotBeNil(
