@@ -46,7 +46,7 @@ extension StreamTestCase {
     enum Tags: String {
         case coreFeatures = "Core Features"
         case offlineSupport = "Offline Support"
-        case messageReceipts = "Message Receipts"
+        case messageDeliveryStatus = "Message Delivery Status"
     }
     
     func addTags(_ tags: [Tags]) {

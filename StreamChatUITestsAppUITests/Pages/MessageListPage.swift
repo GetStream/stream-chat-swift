@@ -13,6 +13,14 @@ class MessageListPage {
     static var cells: XCUIElementQuery {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMessageCell'"))
     }
+
+    static var list: XCUIElement {
+        app.tables.firstMatch
+    }
+    
+    static var typingIndicator: XCUIElement {
+        app.otherElements["TypingIndicatorView"].staticTexts.firstMatch
+    }
     
     enum NavigationBar {
         
@@ -60,7 +68,7 @@ class MessageListPage {
         static var confirmButton: XCUIElement { app.buttons["ConfirmButton"] }
         static var attachmentButton: XCUIElement { app.buttons["AttachmentButton"] }
         static var commandButton: XCUIElement { app.buttons["CommandButton"] }
-        static var inputField: XCUIElement { app.otherElements["InputChatMessageView"] }
+        static var inputField: XCUIElement { app.otherElements["inputTextContainer"] }
     }
     
     enum Reactions {
@@ -154,7 +162,7 @@ class MessageListPage {
         }
         
         static func text(in messageCell: XCUIElement) -> XCUIElement {
-            messageCell.textViews["textView"]
+            messageCell.textViews["textView"].firstMatch
         }
         
         static func quotedText(_ text: String, in messageCell: XCUIElement) -> XCUIElement {
