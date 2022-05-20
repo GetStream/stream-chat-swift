@@ -66,13 +66,14 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: cid)
         apiClient.test_simulateResponse(.success(payload))
         
+        AssertAsync.willBeTrue(completionCalled)
+        
         // Assert the data is stored in the DB
         var channel: ChatChannel? {
             try? database.viewContext.channel(cid: cid)?.asModel()
         }
         AssertAsync {
             Assert.willBeTrue(channel != nil)
-            Assert.willBeTrue(completionCalled)
         }
     }
 
@@ -89,6 +90,8 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid = ChannelId(type: .messaging, id: .unique)
         let payload = dummyPayload(with: cid)
         apiClient.test_simulateRecoveryResponse(.success(payload))
+        
+        AssertAsync.willBeTrue(completionCalled)
 
         // Assert the data is stored in the DB
         var channel: ChatChannel? {
@@ -96,7 +99,6 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
         AssertAsync {
             Assert.willBeTrue(channel != nil)
-            Assert.willBeTrue(completionCalled)
         }
     }
     
@@ -144,11 +146,17 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         // Simulate `updateChannel` call
-        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, channelCreatedCallback: callback, completion: nil)
+        let completionCalled = expectation(description: "completion called")
+        channelUpdater
+            .update(channelQuery: query, isInRecoveryMode: false, channelCreatedCallback: callback) { _ in
+                completionCalled.fulfill()
+            }
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
         apiClient.test_simulateResponse(.success(payload))
+        
+        wait(for: [completionCalled], timeout: 1)
 
         // Assert `channelCreatedCallback` is called
         XCTAssertEqual(cid, query.cid)
@@ -172,11 +180,17 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         // Simulate `updateChannel` call
-        channelUpdater.update(channelQuery: query, isInRecoveryMode: true, channelCreatedCallback: callback, completion: nil)
+        let completionCalled = expectation(description: "completion called")
+        channelUpdater
+            .update(channelQuery: query, isInRecoveryMode: true, channelCreatedCallback: callback) { _ in
+                completionCalled.fulfill()
+            }
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
         apiClient.test_simulateRecoveryResponse(.success(payload))
+        
+        wait(for: [completionCalled], timeout: 1)
 
         // Assert `channelCreatedCallback` is called
         XCTAssertEqual(cid, query.cid)
@@ -1334,12 +1348,15 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Call `channelWatchers` for this channel
         // This query doesn't provide any `offset` so it's requesting the first page of watchers
         let query = ChannelWatcherListQuery(cid: cid)
-        channelUpdater.channelWatchers(query: query)
+        let completionCalled = expectation(description: "completion called")
+        channelUpdater.channelWatchers(query: query) { _ in completionCalled.fulfill() }
         
         // Simulate successful response
         apiClient.test_simulateResponse(
             Result<ChannelPayload, Error>.success(dummyPayload(with: cid, watchers: []))
         )
+        
+        wait(for: [completionCalled], timeout: 1)
         
         // Assert that the old watcher is replaced
         AssertAsync {
