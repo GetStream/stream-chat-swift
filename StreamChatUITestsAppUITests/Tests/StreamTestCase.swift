@@ -45,6 +45,7 @@ extension StreamTestCase {
     
     enum Tags: String {
         case coreFeatures = "Core Features"
+        case slowMode = "Slow Mode"
         case offlineSupport = "Offline Support"
         case messageDeliveryStatus = "Message Delivery Status"
     }

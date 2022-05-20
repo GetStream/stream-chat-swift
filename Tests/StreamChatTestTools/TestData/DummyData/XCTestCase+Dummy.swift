@@ -143,7 +143,8 @@ extension XCTestCase {
             updatedAt: .unique
         ),
         channelExtraData: [String: RawJSON] = [:],
-        truncatedAt: Date? = nil
+        truncatedAt: Date? = nil,
+        cooldownDuration: Int? = nil
     ) -> ChannelPayload {
         var payloadMessages: [MessagePayload] = []
         if let messages = messages {
@@ -176,7 +177,7 @@ extension XCTestCase {
                     members: members,
                     memberCount: 100,
                     team: .unique,
-                    cooldownDuration: .random(in: 0...120)
+                    cooldownDuration: cooldownDuration ?? .random(in: 0...120)
                 ),
                 watcherCount: watchers?.count ?? 1,
                 watchers: watchers ?? [dummyUser],

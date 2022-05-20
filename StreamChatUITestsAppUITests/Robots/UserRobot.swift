@@ -85,6 +85,13 @@ extension UserRobot {
     }
     
     @discardableResult
+    func attemptToSendMessageWhileInSlowMode(_ text: String) -> Self {
+        composer.inputField.obtainKeyboardFocus().typeText(text)
+        composer.cooldown.tap()
+        return self
+    }
+    
+    @discardableResult
     func deleteMessage(messageCellIndex: Int = 0) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
         contextMenu.delete.element.wait().tap()

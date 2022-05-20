@@ -80,6 +80,8 @@ internal enum L10n {
       internal static var giphy: String { L10n.tr("Localizable", "composer.placeholder.giphy") }
       /// Send a message
       internal static var message: String { L10n.tr("Localizable", "composer.placeholder.message") }
+      /// Slow mode ON
+      internal static var slowMode: String { L10n.tr("Localizable", "composer.placeholder.slowMode") }
     }
     internal enum Suggestions {
       internal enum Commands {

@@ -78,3 +78,31 @@ extension StreamMockServer {
         channelConfigs.updateChannel(channel: &channel, withId: id)
     }
 }
+
+extension StreamMockServer {
+
+    func setCooldown(enabled: Bool, duration: Int, inChannelWithId id: String) {
+        channelConfigs.setCooldown(enabled: enabled, duration: duration)
+
+        var json = channelList
+        guard
+            var channels = json[JSONKey.channels] as? [[String: Any]],
+            let channelIndex = channelIndex(withId: id),
+            var channel = channel(withId: id),
+            var innerChannel = channel[JSONKey.channel] as? [String: Any]
+        else {
+            return
+        }
+
+        setCooldown(in: &innerChannel)
+        channel[JSONKey.channel] = innerChannel
+        channels[channelIndex] = channel
+        json[JSONKey.channels] = channels
+        channelList = json
+    }
+
+    func setCooldown(in channel: inout [String: Any]) {
+        let cooldown = channelConfigs.coolDown
+        channel["cooldown"] = cooldown.isEnabled ? cooldown.duration : nil
+    }
+}

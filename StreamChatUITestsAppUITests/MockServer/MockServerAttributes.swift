@@ -66,6 +66,7 @@ enum JSONKey {
     static let members = "members"
     static let member = "member"
     static let id = "id"
+    static let cooldown = "cooldown"
 
     enum Channel {
         static let addMembers = "add_members"

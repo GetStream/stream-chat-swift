@@ -119,19 +119,28 @@ extension StreamMockServer {
     private func updateChannelList(_ request: HttpRequest) -> HttpResponse {
         var json = channelList
         guard let id = request.params[EndpointQuery.channelId] else { return .ok(.json(json)) }
-        
+
         var channels = json[JSONKey.channels] as? [[String: Any]]
         if let index = channels?.firstIndex(where: {
             let channel = $0[ChannelPayload.CodingKeys.channel.rawValue] as? [String: Any]
             return (channel?[ChannelCodingKeys.id.rawValue] as? String) == id
         }) {
             let messageList = findMessagesByChannelId(id)
-            channels?[index][ChannelPayload.CodingKeys.messages.rawValue] = messageList
-            json[JSONKey.channels] = channels
+            if
+                var channel = channels?[index],
+                var innerChannel = channel[JSONKey.channel] as? [String: Any] {
+                setCooldown(in: &innerChannel)
+                channel[JSONKey.channel] = innerChannel
+
+                channel[ChannelPayload.CodingKeys.messages.rawValue] = messageList
+
+                channels?[index] = channel
+                json[JSONKey.channels] = channels
+            }
             currentChannelId = id
             channelList = json
         }
-        
+
         return .ok(.json(json))
     }
 
@@ -179,7 +188,9 @@ extension StreamMockServer {
         }
         innerChannel[ChannelCodingKeys.members.rawValue] = members
         innerChannel[ChannelCodingKeys.memberCount.rawValue] = members.count
+        setCooldown(in: &innerChannel)
         channel[JSONKey.channel] = innerChannel
+
         channels[channelIndex] = channel
         json[JSONKey.channels] = channels
 

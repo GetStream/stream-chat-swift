@@ -3398,6 +3398,44 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
+    func test_currentCooldownTime_whenSlowModeIsActive_andLastMessageFromCurrentUserExists_thenCooldownTimeIsGreaterThanZero(
+    ) throws {
+        // GIVEN
+        let user: UserPayload = dummyCurrentUser
+        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: user.id, createdAt: Date())
+        let channelPayload = dummyPayload(with: channelId, messages: [message], cooldownDuration: 5)
+        
+        try client.databaseContainer.createCurrentUser(id: user.id)
+        
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        // WHEN
+        let currentCooldownTime = controller.currentCooldownTime()
+        
+        // THEN
+        XCTAssertGreaterThan(currentCooldownTime, 0)
+    }
+    
+    func test_currentCooldownTime_whenSlowModeIsNotActive_thenCooldownTimeIsZero() throws {
+        // GIVEN
+        let user: UserPayload = dummyCurrentUser
+        let channelPayload = dummyPayload(with: channelId, cooldownDuration: 0)
+        
+        try client.databaseContainer.createCurrentUser(id: user.id)
+        
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        // WHEN
+        let currentCooldownTime = controller.currentCooldownTime()
+        
+        // THEN
+        XCTAssertEqual(currentCooldownTime, 0)
+    }
+    
     // MARK: - Start watching
     
     func test_startWatching_failsForNewChannels() throws {

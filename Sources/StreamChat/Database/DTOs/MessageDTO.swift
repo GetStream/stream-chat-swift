@@ -164,6 +164,14 @@ class MessageDTO: NSManagedObject {
     private static func nonDeletedMessagesPredicate() -> NSPredicate {
         .init(format: "deletedAt == nil")
     }
+    
+    private static func channelPredicate(with cid: String) -> NSPredicate {
+        .init(format: "channel.cid == %@", cid)
+    }
+    
+    private static func messageSentPredicate() -> NSPredicate {
+        .init(format: "localMessageStateRaw == nil")
+    }
 
     /// Returns predicate for displaying messages after the channel truncation date.
     private static func nonTruncatedMessagesPredicate() -> NSCompoundPredicate {
@@ -192,10 +200,6 @@ class MessageDTO: NSManagedObject {
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool
     ) -> NSCompoundPredicate {
-        let channelMessage = NSPredicate(
-            format: "channel.cid == %@", cid
-        )
-
         let channelMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             .init(format: "showReplyInChannel == 1"),
             .init(format: "parentMessageId == nil")
@@ -219,7 +223,7 @@ class MessageDTO: NSManagedObject {
         ])
         
         var subpredicates = [
-            channelMessage,
+            channelPredicate(with: cid),
             channelMessagePredicate,
             messageTypePredicate,
             nonTruncatedMessagesPredicate(),
@@ -379,11 +383,11 @@ class MessageDTO: NSManagedObject {
         context: NSManagedObjectContext
     ) -> [MessageDTO] {
         let subpredicates: [NSPredicate] = [
-            .init(format: "channel.cid == %@", cid),
+            channelPredicate(with: cid),
             .init(format: "user.currentUser != nil"),
             .init(format: "createdAt > %@", createdAtFrom as NSDate),
             .init(format: "createdAt <= %@", createdAtThrough as NSDate),
-            .init(format: "localMessageStateRaw == nil"),
+            messageSentPredicate(),
             nonTruncatedMessagesPredicate(),
             nonDeletedMessagesPredicate()
         ]
@@ -399,6 +403,19 @@ class MessageDTO: NSManagedObject {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
         request.predicate = NSPredicate(format: "readMessagesFromCurrentUser.id CONTAINS %@", messageId)
         return (try? context.count(for: request)) ?? 0
+    }
+    
+    static func loadLastMessage(from userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelPredicate(with: cid),
+            .init(format: "user.id == %@", userId),
+            .init(format: "type != %@", MessageType.ephemeral.rawValue),
+            messageSentPredicate()
+        ])
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.fetchLimit = 1
+        return load(by: request, context: context).first
     }
 }
 
