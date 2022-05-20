@@ -26,14 +26,14 @@ extension NSManagedObjectContext: MessageSearchDatabaseSession {
     }
     
     func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO {
+        if let existingDTO = MessageSearchQueryDTO.load(filterHash: query.filterHash, context: self) {
+            return existingDTO
+        }
+        
         let request = MessageSearchQueryDTO.fetchRequest(
             keyPath: #keyPath(MessageSearchQueryDTO.filterHash),
             equalTo: query.filterHash
         )
-        if let existingDTO = MessageSearchQueryDTO.load(by: request, context: self).first {
-            return existingDTO
-        }
-        
         let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
         newDTO.filterHash = query.filterHash
         

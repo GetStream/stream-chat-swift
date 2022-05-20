@@ -47,14 +47,14 @@ extension NSManagedObjectContext {
             return nil
         }
         
+        if let existingDTO = UserListQueryDTO.load(filterHash: filterHash, context: self) {
+            return existingDTO
+        }
+        
         let request = UserListQueryDTO.fetchRequest(
             keyPath: #keyPath(UserListQueryDTO.filterHash),
             equalTo: filterHash
         )
-        if let existingDTO = UserListQueryDTO.load(by: request, context: self).first {
-            return existingDTO
-        }
-        
         let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
         newDTO.filterHash = filterHash
         newDTO.shouldBeUpdatedInBackground = query.shouldBeUpdatedInBackground

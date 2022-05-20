@@ -58,11 +58,11 @@ class AttachmentDTO: NSManagedObject {
     }
     
     static func loadOrCreate(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO {
-        let request = fetchRequest(id: id.rawValue)
-        if let existing = load(by: request, context: context).first {
+        if let existing = load(id: id, context: context) {
             return existing
         }
         
+        let request = fetchRequest(id: id.rawValue)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.attachmentID = id
         return new

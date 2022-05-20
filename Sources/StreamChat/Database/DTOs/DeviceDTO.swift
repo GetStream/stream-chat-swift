@@ -32,11 +32,11 @@ extension DeviceDTO {
     ///   - context: The context used to fetch/create `UserDTO`
     ///
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> DeviceDTO {
-        let request = fetchRequest(id: id)
-        if let existing = load(by: request, context: context).first {
+        if let existing = load(id: id, context: context) {
             return existing
         }
         
+        let request = fetchRequest(id: id)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         return new

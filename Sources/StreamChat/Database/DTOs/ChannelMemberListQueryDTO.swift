@@ -27,11 +27,11 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
     }
     
     static func loadOrCreate(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO {
-        let request = fetchRequest(keyPath: "queryHash", equalTo: queryHash)
-        if let existing = load(by: request, context: context).first {
+        if let existing = load(queryHash: queryHash, context: context) {
             return existing
         }
         
+        let request = fetchRequest(keyPath: "queryHash", equalTo: queryHash)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.queryHash = queryHash
         return new

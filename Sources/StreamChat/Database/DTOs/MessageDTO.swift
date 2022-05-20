@@ -345,11 +345,11 @@ class MessageDTO: NSManagedObject {
     }
     
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> MessageDTO {
-        let request = fetchRequest(id: id)
-        if let existing = load(by: request, context: context).first {
+        if let existing = load(id: id, context: context) {
             return existing
         }
         
+        let request = fetchRequest(id: id)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         new.latestReactions = []

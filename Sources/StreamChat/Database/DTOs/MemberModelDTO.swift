@@ -67,12 +67,12 @@ extension MemberDTO {
     ///   - context: The context used to fetch/create `UserDTO`
     ///
     static func loadOrCreate(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO {
-        let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
-        let request = fetchRequest(id: memberId)
-        if let existing = load(by: request, context: context).first {
+        if let existing = load(userId: userId, channelId: channelId, context: context) {
             return existing
         }
         
+        let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
+        let request = fetchRequest(id: memberId)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = memberId
         return new

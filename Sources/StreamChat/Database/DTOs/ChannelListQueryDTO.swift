@@ -40,11 +40,11 @@ extension NSManagedObjectContext {
     }
     
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        let request = ChannelListQueryDTO.fetchRequest(keyPath: "filterHash", equalTo: query.filter.filterHash)
-        if let existingDTO = ChannelListQueryDTO.load(by: request, context: self).first {
+        if let existingDTO = channelListQuery(filterHash: query.filter.filterHash) {
             return existingDTO
         }
         
+        let request = ChannelListQueryDTO.fetchRequest(keyPath: "filterHash", equalTo: query.filter.filterHash)
         let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
         newDTO.filterHash = query.filter.filterHash
         

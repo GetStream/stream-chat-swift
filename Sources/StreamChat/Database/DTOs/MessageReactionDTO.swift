@@ -71,12 +71,12 @@ extension MessageReactionDTO {
         user: UserDTO,
         context: NSManagedObjectContext
     ) -> MessageReactionDTO {
-        let id = createId(userId: user.id, messageId: message.id, type: type)
-        let request = fetchRequest(id: id)
-        if let existing = load(by: request, context: context).first {
+        if let existing = load(userId: user.id, messageId: message.id, type: type, context: context) {
             return existing
         }
 
+        let id = createId(userId: user.id, messageId: message.id, type: type)
+        let request = fetchRequest(id: id)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         new.type = type.rawValue
