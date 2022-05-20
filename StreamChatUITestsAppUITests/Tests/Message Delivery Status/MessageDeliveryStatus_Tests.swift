@@ -443,12 +443,12 @@ extension MessageDeliveryStatus_Tests {
             userRobot
                 .waitForNewMessage(withText: message)
                 .replyToMessageInThread(threadReply)
-            participantRobot.chill(duration: 1000)
+            participantRobot.wait(0.1)
         }
         AND("thread reply is read by participant") {
             participantRobot
                 .readMessage()
-                .chill(duration: 1000)
+                .wait(0.1)
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)

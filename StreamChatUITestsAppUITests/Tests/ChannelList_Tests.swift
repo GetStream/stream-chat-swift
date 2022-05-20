@@ -50,7 +50,7 @@ final class ChannelList_Tests: StreamTestCase {
         WHEN("participant sends a new message") {
             participantRobot
                 .sendMessage(message)
-                .chill(duration: 2000)
+                .wait(2.0)
         }
         AND("user becomes online") {
             deviceRobot.setConnectivity(to: .on)

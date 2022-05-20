@@ -59,10 +59,11 @@ final class ParticipantRobot: Robot {
         return self
     }
     
-    // Sleep in milliseconds
+    // Sleep in seconds
     @discardableResult
-    func chill(duration: useconds_t) -> Self {
-        usleep(duration)
+    func wait(_ duration: TimeInterval) -> Self {
+        let sleepTime = UInt32(duration * 1000)
+        usleep(sleepTime)
         return self
     }
     
@@ -99,7 +100,7 @@ final class ParticipantRobot: Robot {
 
         texts.forEach {
             sendMessage($0)
-            chill(duration: 100)
+            wait(0.2)
         }
         return self
     }
