@@ -168,6 +168,10 @@ class MessageDTO: NSManagedObject {
     private static func channelPredicate(with cid: String) -> NSPredicate {
         .init(format: "channel.cid == %@", cid)
     }
+    
+    private static func messageSentPredicate() -> NSPredicate {
+        .init(format: "localMessageStateRaw == nil")
+    }
 
     /// Returns predicate for displaying messages after the channel truncation date.
     private static func nonTruncatedMessagesPredicate() -> NSCompoundPredicate {
@@ -383,7 +387,7 @@ class MessageDTO: NSManagedObject {
             .init(format: "user.currentUser != nil"),
             .init(format: "createdAt > %@", createdAtFrom as NSDate),
             .init(format: "createdAt <= %@", createdAtThrough as NSDate),
-            .init(format: "localMessageStateRaw == nil"),
+            messageSentPredicate(),
             nonTruncatedMessagesPredicate(),
             nonDeletedMessagesPredicate()
         ]
@@ -407,7 +411,7 @@ class MessageDTO: NSManagedObject {
             channelPredicate(with: cid),
             .init(format: "user.id == %@", userId),
             .init(format: "type != %@", MessageType.ephemeral.rawValue),
-            .init(format: "localMessageStateRaw == nil")
+            messageSentPredicate()
         ])
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = 1
