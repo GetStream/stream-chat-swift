@@ -156,7 +156,7 @@ extension UserRobot {
             XCTAssertGreaterThan(updatedComposerHeight, composerHeight, file: file, line: line)
             composerHeight = updatedComposerHeight
         }
-        typeText("5\n6", obtainKeyboardFocus: false)
+        typeText("\(limit)\n\(limit+1)", obtainKeyboardFocus: false)
         XCTAssertEqual(composerHeight, composer.height, file: file, line: line)
     }
 }
