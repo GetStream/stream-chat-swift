@@ -31,7 +31,10 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
             return existing
         }
         
-        let request = fetchRequest(keyPath: "queryHash", equalTo: queryHash)
+        let request = fetchRequest(
+            keyPath: #keyPath(ChannelMemberListQueryDTO.queryHash),
+            equalTo: queryHash
+        )
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.queryHash = queryHash
         return new
