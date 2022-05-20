@@ -45,7 +45,10 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         let channelId: ChannelId = ChannelId(type: .messaging, id: "new_channel_7070")
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        let completionCalled = expectation(description: "completion called")
+        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        
+        wait(for: [completionCalled], timeout: 1)
 
         AssertAsync {
             Assert.willNotBeNil(self.client.databaseContainer.viewContext.channel(cid: channelId))

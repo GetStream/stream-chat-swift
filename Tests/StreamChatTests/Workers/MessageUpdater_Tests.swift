@@ -986,6 +986,9 @@ final class MessageUpdater_Tests: XCTestCase {
             flaggedMessageId: messageId
         )
         apiClient.test_simulateResponse(.success(flagMessagePayload))
+        
+        // Assert flag completion is called.
+        AssertAsync.willBeTrue(flagCompletionCalled)
 
         // Load the message.
         var messageDTO: MessageDTO? {
@@ -993,8 +996,6 @@ final class MessageUpdater_Tests: XCTestCase {
         }
         
         AssertAsync {
-            // Assert flag completion is called.
-            Assert.willBeTrue(flagCompletionCalled)
             // Assert current user has the message flagged.
             Assert.willBeTrue(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? false)
             // Assert message is flagged by current user.
@@ -1015,9 +1016,10 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate unflag API response.
         apiClient.test_simulateResponse(.success(flagMessagePayload))
         
+        // Assert unflag completion is called.
+        AssertAsync.willBeTrue(unflagCompletionCalled)
+        
         AssertAsync {
-            // Assert unflag completion is called.
-            Assert.willBeTrue(unflagCompletionCalled)
             // Assert current user doesn't have the message as flagged.
             Assert.willBeFalse(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? true)
             // Assert message is not flagged by current user anymore.
