@@ -83,12 +83,9 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
     
     func saveAttachment(
         payload: MessageAttachmentPayload,
-        id: AttachmentId
+        id: AttachmentId,
+        messageDTO: MessageDTO
     ) throws -> AttachmentDTO {
-        guard let messageDTO = message(id: id.messageId) else {
-            throw ClientError.MessageDoesNotExist(messageId: id.messageId)
-        }
-
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         
         dto.attachmentType = payload.type
@@ -103,12 +100,9 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
     
     func createNewAttachment(
         attachment: AnyAttachmentPayload,
-        id: AttachmentId
+        id: AttachmentId,
+        messageDTO: MessageDTO
     ) throws -> AttachmentDTO {
-        guard let messageDTO = message(id: id.messageId) else {
-            throw ClientError.MessageDoesNotExist(messageId: id.messageId)
-        }
-
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         
         dto.attachmentType = attachment.type

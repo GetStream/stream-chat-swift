@@ -292,7 +292,8 @@ protocol AttachmentDatabaseSession {
     @discardableResult
     func saveAttachment(
         payload: MessageAttachmentPayload,
-        id: AttachmentId
+        id: AttachmentId,
+        messageDTO: MessageDTO
     ) throws -> AttachmentDTO
     
     /// Creates a new `AttachmentDTO` object in the database from the given model for the message
@@ -300,7 +301,8 @@ protocol AttachmentDatabaseSession {
     @discardableResult
     func createNewAttachment(
         attachment: AnyAttachmentPayload,
-        id: AttachmentId
+        id: AttachmentId,
+        messageDTO: MessageDTO
     ) throws -> AttachmentDTO
 }
 

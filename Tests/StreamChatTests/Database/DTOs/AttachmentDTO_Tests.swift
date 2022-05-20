@@ -29,8 +29,9 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Create channel, message and attachment in the database.
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         try database.writeSynchronously { session in
-            try session.saveAttachment(payload: attachment, id: attachmentId)
+            try session.saveAttachment(payload: attachment, id: attachmentId, messageDTO: messageDTO)
         }
         
         // Load the attachment from the database.
@@ -63,8 +64,9 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Create channel, message and attachment in the database.
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         try database.writeSynchronously { session in
-            try session.saveAttachment(payload: attachment, id: attachmentId)
+            try session.saveAttachment(payload: attachment, id: attachmentId, messageDTO: messageDTO)
         }
         
         // Load the attachment from the database.
@@ -100,8 +102,9 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Create channel, message and attachment in the database.
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         try database.writeSynchronously { session in
-            try session.saveAttachment(payload: attachment, id: attachmentId)
+            try session.saveAttachment(payload: attachment, id: attachmentId, messageDTO: messageDTO)
         }
         
         // Load the attachment from the database.
@@ -132,10 +135,12 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Create channel and message in the database.
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)
+        
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Create attachment with provided type in the database.
         try database.writeSynchronously { session in
-            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId)
+            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId, messageDTO: messageDTO)
         }
 
         // Load the attachment from the database.
@@ -170,10 +175,11 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Create channel and message in the database.
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Create attachment with provided type in the database.
         try database.writeSynchronously { session in
-            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId)
+            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId, messageDTO: messageDTO)
         }
 
         // Load the attachment from the database.
@@ -198,24 +204,24 @@ final class AttachmentDTO_Tests: XCTestCase {
         XCTAssertNil(attachmentModel.uploadingState)
     }
 
-    func test_saveAttachment_throws_whenMessageDoesNotExist() throws {
-        // Create channel in DB
-        let cid: ChannelId = .unique
-        try database.createChannel(cid: cid, withMessages: false)
-        
-        let payload: MessageAttachmentPayload = .dummy()
-        
-        // Try to save an attachment and catch an error
-        let error = try waitFor {
-            database.write({ session in
-                let id = AttachmentId(cid: cid, messageId: .unique, index: 0)
-                try session.saveAttachment(payload: payload, id: id)
-            }, completion: $0)
-        }
-        
-        // Assert correct error is thrown
-        XCTAssertTrue(error is ClientError.MessageDoesNotExist)
-    }
+//    func test_saveAttachment_throws_whenMessageDoesNotExist() throws {
+//        // Create channel in DB
+//        let cid: ChannelId = .unique
+//        try database.createChannel(cid: cid, withMessages: false)
+//
+//        let payload: MessageAttachmentPayload = .dummy()
+//
+//        // Try to save an attachment and catch an error
+//        let error = try waitFor {
+//            database.write({ session in
+//                let id = AttachmentId(cid: cid, messageId: .unique, index: 0)
+//                try session.saveAttachment(payload: payload, id: id)
+//            }, completion: $0)
+//        }
+//
+//        // Assert correct error is thrown
+//        XCTAssertTrue(error is ClientError.MessageDoesNotExist)
+//    }
 
     func test_saveAttachment_resetsLocalState() throws {
         let cid: ChannelId = .unique
@@ -228,10 +234,12 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         // Create message in the database.
         try database.createMessage(id: messageId, cid: cid)
+        
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Seed message attachment.
         try database.writeSynchronously { session in
-            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId)
+            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId, messageDTO: messageDTO)
         }
 
         // Load the attachment from the database.
@@ -245,7 +253,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Save attachment payload with the same id.
         let attachmentPayload: MessageAttachmentPayload = .dummy()
         try database.writeSynchronously { session in
-            try session.saveAttachment(payload: attachmentPayload, id: attachmentId)
+            try session.saveAttachment(payload: attachmentPayload, id: attachmentId, messageDTO: messageDTO)
         }
 
         // Assert attachment local file URL and state are nil.

@@ -266,14 +266,14 @@ extension DatabaseSession_Mock {
         underlyingSession.attachment(id: id)
     }
     
-    func saveAttachment(payload: MessageAttachmentPayload, id: AttachmentId) throws -> AttachmentDTO {
+    func saveAttachment(payload: MessageAttachmentPayload, id: AttachmentId, messageDTO: MessageDTO) throws -> AttachmentDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveAttachment(payload: payload, id: id)
+        return try underlyingSession.saveAttachment(payload: payload, id: id, messageDTO: messageDTO)
     }
     
-    func createNewAttachment(attachment: AnyAttachmentPayload, id: AttachmentId) throws -> AttachmentDTO {
+    func createNewAttachment(attachment: AnyAttachmentPayload, id: AttachmentId, messageDTO: MessageDTO) throws -> AttachmentDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.createNewAttachment(attachment: attachment, id: id)
+        return try underlyingSession.createNewAttachment(attachment: attachment, id: id, messageDTO: messageDTO)
     }
 
     func saveChannelMute(

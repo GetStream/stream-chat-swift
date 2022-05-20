@@ -986,9 +986,6 @@ final class MessageUpdater_Tests: XCTestCase {
             flaggedMessageId: messageId
         )
         apiClient.test_simulateResponse(.success(flagMessagePayload))
-        
-        // Assert flag completion is called.
-        AssertAsync.willBeTrue(flagCompletionCalled)
 
         // Load the message.
         var messageDTO: MessageDTO? {
@@ -996,6 +993,8 @@ final class MessageUpdater_Tests: XCTestCase {
         }
         
         AssertAsync {
+            // Assert flag completion is called.
+            Assert.willBeTrue(flagCompletionCalled)
             // Assert current user has the message flagged.
             Assert.willBeTrue(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? false)
             // Assert message is flagged by current user.
@@ -1016,10 +1015,9 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate unflag API response.
         apiClient.test_simulateResponse(.success(flagMessagePayload))
         
-        // Assert unflag completion is called.
-        AssertAsync.willBeTrue(unflagCompletionCalled)
-        
         AssertAsync {
+            // Assert unflag completion is called.
+            Assert.willBeTrue(unflagCompletionCalled)
             // Assert current user doesn't have the message as flagged.
             Assert.willBeFalse(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? true)
             // Assert message is not flagged by current user anymore.
@@ -1801,11 +1799,14 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in database.
         try database.createMessage(id: messageId, cid: cid)
+        
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         // Create attachment in database.
         try database.writeSynchronously {
             try $0.createNewAttachment(
                 attachment: .mockFile,
-                id: attachmentId
+                id: attachmentId,
+                messageDTO: messageDTO
             )
         }
 
@@ -1842,11 +1843,13 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in database.
         try database.createMessage(id: messageId, cid: cid)
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
                 attachment: .mockFile,
-                id: attachmentId
+                id: attachmentId,
+                messageDTO: messageDTO
             )
             attachmentDTO.localState = .uploadingFailed
         }
@@ -1873,11 +1876,13 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in database.
         try database.createMessage(id: messageId, cid: cid)
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
                 attachment: .mockFile,
-                id: attachmentId
+                id: attachmentId,
+                messageDTO: messageDTO
             )
             attachmentDTO.localState = .uploadingFailed
         }
@@ -2037,54 +2042,6 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert message has `deletedAt` field but stays in `ephemeral` state.
         XCTAssertEqual(message.type, MessageType.ephemeral.rawValue)
         XCTAssertNotNil(message.deletedAt)
-    }
-    
-    func test_dispatchEphemeralMessageAction_cancel_changesPreviewMessage() throws {
-        let cid: ChannelId = .unique
-        let messageId: MessageId = .unique
-        let currentUserId: UserId = .unique
-        
-        // Create current user is the database
-        try database.createCurrentUser(id: currentUserId)
-        // Create channel is the database
-        try database.createChannel(cid: cid, withMessages: true)
-        // Create a new `ephemeral` message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
-        
-        // Set ephemeral message as channel's previewMessage
-        try database.writeSynchronously { session in
-            let message = try XCTUnwrap(session.message(id: messageId))
-            let channel = try XCTUnwrap(session.channel(cid: cid))
-            channel.previewMessage = message
-        }
-        
-        let cancelAction = AttachmentAction(
-            name: .unique,
-            value: "cancel",
-            style: .default,
-            type: .button,
-            text: .unique
-        )
-        
-        // Simulate `dispatchEphemeralMessageAction`
-        let completionError = try waitFor {
-            messageUpdater.dispatchEphemeralMessageAction(
-                cid: cid,
-                messageId: messageId,
-                action: cancelAction,
-                completion: $0
-            )
-        }
-        
-        // Assert error is `nil`
-        XCTAssertNil(completionError)
-        // Assert `apiClient` is not invoked, message is updated locally.
-        XCTAssertNil(apiClient.request_endpoint)
-        
-        // Load message
-        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-        // Assert `previewMessage` of the channel is updated
-        XCTAssertFalse(message.previewOfChannel?.cid == cid.rawValue)
     }
 
     func test_dispatchEphemeralMessageAction_happyPath() throws {

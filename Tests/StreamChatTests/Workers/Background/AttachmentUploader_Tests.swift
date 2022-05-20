@@ -46,6 +46,8 @@ final class AttachmentUploader_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in the database.
         try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
+        
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         let attachmentEnvelopes: [AnyAttachmentPayload] = [
             .mockFile,
@@ -57,7 +59,7 @@ final class AttachmentUploader_Tests: XCTestCase {
             let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: index)
             // Seed attachment in `.pendingUpload` state to the database.
             try database.writeSynchronously { session in
-                try session.createNewAttachment(attachment: envelope, id: attachmentId)
+                try session.createNewAttachment(attachment: envelope, id: attachmentId, messageDTO: messageDTO)
             }
 
             // Load attachment from the database.
@@ -141,12 +143,14 @@ final class AttachmentUploader_Tests: XCTestCase {
 
         // Create message in the database.
         try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
+        
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Seed attachments with different `localState` to the database.
         try database.writeSynchronously { session in
             for index in (0..<localStates.count) {
                 let id = AttachmentId(cid: cid, messageId: messageId, index: index)
-                let attachment = try session.createNewAttachment(attachment: .mockFile, id: id)
+                let attachment = try session.createNewAttachment(attachment: .mockFile, id: id, messageDTO: messageDTO)
                 attachment.localState = localStates[index]
             }
         }
@@ -165,9 +169,10 @@ final class AttachmentUploader_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in the database.
         try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         // Seed attachment in `.pendingUpload` state to the database.
         try database.writeSynchronously { session in
-            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId)
+            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId, messageDTO: messageDTO)
         }
 
         // Wait attachment uploading begins.
