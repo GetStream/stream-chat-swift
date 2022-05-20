@@ -178,7 +178,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         }
 
         switch change {
-        case let .insert(message, index: index):
+        case let .insert(_, index: index):
             UIView.performWithoutAnimation {
                 self.performBatchUpdates {
                     self.insertRows(at: [index], with: .none)

@@ -59,10 +59,11 @@ final class ParticipantRobot: Robot {
         return self
     }
     
-    // Think twice before using it
+    // Sleep in seconds
     @discardableResult
-    func chill(duration: UInt32) -> Self {
-        sleep(duration)
+    func wait(_ duration: TimeInterval) -> Self {
+        let sleepTime = UInt32(duration * 1000)
+        usleep(sleepTime)
         return self
     }
     
@@ -86,6 +87,21 @@ final class ParticipantRobot: Robot {
             eventType: .messageNew,
             user: participant()
         )
+        return self
+    }
+
+    /// The given text will be decorated with the index, eg "message-10"
+    @discardableResult
+    func sendMultipleMessages(repeatingText text: String, count: Int) -> Self {
+        var texts = [String]()
+        for index in 1...count {
+            texts.append("\(text)-\(index)")
+        }
+
+        texts.forEach {
+            sendMessage($0)
+            wait(0.2)
+        }
         return self
     }
     
