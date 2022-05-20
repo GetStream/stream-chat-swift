@@ -117,7 +117,7 @@ jobs:
     runs-on: macos-12
     strategy:
       matrix:
-        batch: [0, 1, 2, 3]
+        batch: [0, 1, 2]
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
