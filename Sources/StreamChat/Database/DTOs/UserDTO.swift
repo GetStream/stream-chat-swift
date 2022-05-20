@@ -67,9 +67,7 @@ extension UserDTO {
     ///   - context: The context used to fetch `UserDTO`
     ///
     static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
-        let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return try? context.fetch(request).first
+        load(by: id, context: context).first
     }
     
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise creates a new
@@ -80,11 +78,12 @@ extension UserDTO {
     ///   - context: The context used to fetch/create `UserDTO`
     ///
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> UserDTO {
-        if let existing = Self.load(id: id, context: context) {
+        if let existing = load(id: id, context: context) {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! UserDTO
+        let request = fetchRequest(id: id)
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         new.teams = []
         return new

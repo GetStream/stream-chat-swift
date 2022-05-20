@@ -26,6 +26,9 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()"
+      ],
       "target" : {
         "containerPath" : "container:StreamChat.xcodeproj",
         "identifier" : "799C9450247D59B1001F1104",

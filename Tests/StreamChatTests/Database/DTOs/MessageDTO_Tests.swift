@@ -368,7 +368,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
     }
     
-    func test_messagePayload_withExtraData_isStoredAndLoadedFromDB() {
+    func test_messagePayload_withExtraData_isStoredAndLoadedFromDB() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
@@ -392,7 +392,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
         
         // Asynchronously save the payload to the db
-        database.write { session in
+        try database.writeSynchronously { session in
             try! session.saveCurrentUser(payload: CurrentUserPayload.dummy(userPayload: UserPayload.dummy(userId: userId)))
             // Create the channel first
             try! session.saveChannel(payload: channelPayload, query: nil)
@@ -785,7 +785,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.mentionedUserIds, mentionedUserIds)
     }
     
-    func test_additionalLocalState_isStored() {
+    func test_additionalLocalState_isStored() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
@@ -794,7 +794,7 @@ final class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: userId)
         
         // Asynchronously save the payload to the db
-        database.write { session in
+        try database.writeSynchronously { session in
             // Create the channel first
             try! session.saveChannel(payload: channelPayload, query: nil)
             
@@ -803,7 +803,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
         
         // Set the local state of the message
-        database.write {
+        try database.writeSynchronously {
             $0.message(id: messageId)?.localMessageState = .pendingSend
         }
         

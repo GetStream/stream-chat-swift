@@ -341,9 +341,7 @@ class MessageDTO: NSManagedObject {
     }
     
     static func load(id: String, context: NSManagedObjectContext) -> MessageDTO? {
-        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return load(by: request, context: context).first
+        load(by: id, context: context).first
     }
     
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> MessageDTO {
@@ -351,7 +349,8 @@ class MessageDTO: NSManagedObject {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! Self
+        let request = fetchRequest(id: id)
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         new.latestReactions = []
         new.ownReactions = []

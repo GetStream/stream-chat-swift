@@ -40,9 +40,7 @@ extension MessageReactionDTO {
         context: NSManagedObjectContext
     ) -> MessageReactionDTO? {
         let id = createId(userId: userId, messageId: messageId, type: type)
-        let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return try? context.fetch(request).first
+        return load(by: id, context: context).first
     }
 
     static let notLocallyDeletedPredicates: NSPredicate = {
@@ -64,7 +62,7 @@ extension MessageReactionDTO {
             NSPredicate(format: "id IN %@", ids),
             Self.notLocallyDeletedPredicates
         ])
-        return (try? context.fetch(request)) ?? []
+        return load(by: request, context: context)
     }
     
     static func loadOrCreate(
@@ -73,14 +71,14 @@ extension MessageReactionDTO {
         user: UserDTO,
         context: NSManagedObjectContext
     ) -> MessageReactionDTO {
-        let userId = user.id
-
-        if let existing = Self.load(userId: userId, messageId: message.id, type: type, context: context) {
+        if let existing = load(userId: user.id, messageId: message.id, type: type, context: context) {
             return existing
         }
 
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MessageReactionDTO
-        new.id = createId(userId: userId, messageId: message.id, type: type)
+        let id = createId(userId: user.id, messageId: message.id, type: type)
+        let request = fetchRequest(id: id)
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
+        new.id = id
         new.type = type.rawValue
         new.message = message
         new.user = user

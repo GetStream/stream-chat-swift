@@ -62,13 +62,14 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
         apiClient.test_simulateResponse(.success(payload))
         
+        AssertAsync.willBeTrue(completionCalled)
+        
         // Assert the data is stored in the DB
         var channel: ChatChannel? {
             try? database.viewContext.channel(cid: cid)?.asModel()
         }
         AssertAsync {
             Assert.willBeTrue(channel != nil)
-            Assert.willBeTrue(completionCalled)
         }
     }
     
@@ -107,13 +108,14 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let payload = ChannelListPayload(channels: [])
         apiClient.test_simulateResponse(.success(payload))
         
+        AssertAsync.willBeTrue(completionCalled)
+        
         // Assert the data is stored in the DB
         var queryDTO: ChannelListQueryDTO? {
             database.viewContext.channelListQuery(filterHash: query.filter.filterHash)
         }
         AssertAsync {
             Assert.willBeTrue(queryDTO != nil)
-            Assert.willBeTrue(completionCalled)
         }
     }
 
