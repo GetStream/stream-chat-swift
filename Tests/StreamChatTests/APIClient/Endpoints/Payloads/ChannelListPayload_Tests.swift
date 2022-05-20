@@ -9,7 +9,7 @@ import XCTest
 final class ChannelListPayload_Tests: XCTestCase {
     func test_channelQueryJSON_isSerialized_withDefaultExtraData() throws {
         // GIVEN
-        let url = XCTestCase.mockData(fromFile: "ChannelsQuery")
+        let url = XCTestCase.mockData(fromJSONFile: "ChannelsQuery")
 
         // WHEN
         let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
@@ -191,7 +191,7 @@ final class ChannelListPayload_Tests: XCTestCase {
 final class ChannelPayload_Tests: XCTestCase {
     func test_channelJSON_isSerialized_withDefaultExtraData() throws {
         // GIVEN
-        let url = XCTestCase.mockData(fromFile: "Channel")
+        let url = XCTestCase.mockData(fromJSONFile: "Channel")
 
         // WHEN
         let payload = try JSONDecoder.default.decode(ChannelPayload.self, from: url)

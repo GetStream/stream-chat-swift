@@ -22,7 +22,7 @@ final class TypingEvent_Tests: XCTestCase {
     }
 
     func test_parseTypingStartEvent() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStartTyping")
+        let json = XCTestCase.mockData(fromJSONFile: "UserStartTyping")
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
@@ -34,7 +34,7 @@ final class TypingEvent_Tests: XCTestCase {
     }
     
     func test_parseTypingStoptEvent() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStopTyping")
+        let json = XCTestCase.mockData(fromJSONFile: "UserStopTyping")
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
@@ -47,7 +47,7 @@ final class TypingEvent_Tests: XCTestCase {
     }
 
     func test_parseTypingStartEventInThread() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStartTypingThread")
+        let json = XCTestCase.mockData(fromJSONFile: "UserStartTypingThread")
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
@@ -58,7 +58,7 @@ final class TypingEvent_Tests: XCTestCase {
     }
     
     func test_parseTypingStoptEventInThread() throws {
-        let json = XCTestCase.mockData(fromFile: "UserStopTypingThread")
+        let json = XCTestCase.mockData(fromJSONFile: "UserStopTypingThread")
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return

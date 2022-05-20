@@ -17,7 +17,7 @@ protocol AccessibilityView {
     // Identifier for view
     var accessibilityViewIdentifier: String { get }
 
-    // This function is called once the view is being added to the view hiearchy
+    // This function is called once the view is being added to the view hierarchy
     func setAccessibilityIdentifier()
 }
 

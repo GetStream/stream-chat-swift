@@ -99,7 +99,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let jsonData = XCTestCase.mockData(fromFile: "Message")
+        let jsonData = XCTestCase.mockData(fromJSONFile: "Message")
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 
         waitForExpectations(timeout: 0.1, handler: nil)
@@ -152,7 +152,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let jsonData = XCTestCase.mockData(fromFile: "Message")
+        let jsonData = XCTestCase.mockData(fromJSONFile: "Message")
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 
         waitForExpectations(timeout: 0.1, handler: nil)
