@@ -118,6 +118,7 @@ jobs:
     strategy:
       matrix:
         batch: [0, 1, 2, 3]
+      fail-fast: false
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
