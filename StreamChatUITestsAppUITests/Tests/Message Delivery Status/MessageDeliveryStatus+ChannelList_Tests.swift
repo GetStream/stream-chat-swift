@@ -13,6 +13,11 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
     var pendingThreadReply: String { "pending \(threadReply)" }
     var failedThreadReply: String { "failed \(threadReply)" }
 
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        addTags([.messageDeliveryStatus])
+    }
+
     func test_deliveryStatusClocksShownInPreview_whenTheLastMessageIsInPendingState() {
         linkToScenario(withId: 166)
 

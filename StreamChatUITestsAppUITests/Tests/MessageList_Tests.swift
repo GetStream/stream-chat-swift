@@ -162,7 +162,7 @@ final class MessageList_Tests: StreamTestCase {
         AND("participant deletes the message: '\(message)'") {
             participantRobot
                 .waitForNewMessage(withText: message)
-                .chill(duration: 2)
+                .chill(duration: 2000)
                 .deleteMessage()
         }
         THEN("the message is deleted") {
@@ -285,7 +285,6 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserSendsNewMessage() {
         linkToScenario(withId: 193)
 
-        let messages = Array(repeating: "Some Message", count: 50)
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
@@ -294,10 +293,8 @@ final class MessageList_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("channel is scrollable") {
-            participantRobot
-                .sendMultipleMessages(messages)
+            participantRobot.sendMultipleMessages(repeatingText: "message", count: 50)
         }
-
         WHEN("user scrolls up") {
             userRobot.scrollMessageListUp()
         }
@@ -306,7 +303,6 @@ final class MessageList_Tests: StreamTestCase {
                 .sendMessage(newMessage)
                 .waitForNewMessage(withText: newMessage)
         }
-
         THEN("message list is scrolled down") {
             userRobot.assertMessageIsVisible(newMessage)
         }
@@ -315,8 +311,9 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageListScrollsDown_whenMessageListIsScrolledDown_andUserReceivesNewMessage() {
         linkToScenario(withId: 75)
 
-        let messages = Array(repeating: "Some Message", count: 50)
-        let lastMessage = "Last Message"
+        let count = 50
+        let message = "message"
+        let lastMessage = "\(message)-\(count)"
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
@@ -326,21 +323,14 @@ final class MessageList_Tests: StreamTestCase {
         }
         AND("channel is scrollable") {
             participantRobot
-                .sendMultipleMessages(messages)
-                .waitForNewMessage(withText: "Some Message", at: messages.count - 1)
-                .sendMessage(lastMessage)
+                .sendMultipleMessages(repeatingText: message, count: count)
                 .waitForNewMessage(withText: lastMessage)
         }
-
-        WHEN("user is scrolled down") {
-            userRobot.assertMessage(lastMessage)
-        }
-        AND("participant sends a message") {
+        WHEN("participant sends a message") {
             participantRobot
                 .sendMessage(newMessage)
                 .waitForNewMessage(withText: newMessage)
         }
-
         THEN("message list is scrolled down") {
             userRobot.assertMessageIsVisible(newMessage)
         }
@@ -348,9 +338,7 @@ final class MessageList_Tests: StreamTestCase {
 
     func test_messageListDoesNotScrollDown_whenMessageListIsScrolledUp_andUserReceivesNewMessage() {
         linkToScenario(withId: 194)
-        
-        let messages = Array(repeating: "Some Message", count: 50)
-        let lastMessage = "Last Message"
+
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
@@ -359,20 +347,14 @@ final class MessageList_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("channel is scrollable") {
-            participantRobot
-                .sendMultipleMessages(messages)
-                .waitForNewMessage(withText: "Some Message", at: messages.count - 1)
-                .sendMessage(lastMessage)
-                .waitForNewMessage(withText: lastMessage)
+            participantRobot.sendMultipleMessages(repeatingText: "message", count: 50)
         }
-
         WHEN("user scrolls up") {
             userRobot.scrollMessageListUp()
         }
         AND("participant sends a message") {
             participantRobot.sendMessage(newMessage)
         }
-
         THEN("message list is scrolled up") {
             userRobot.assertMessageIsNotVisible(newMessage)
         }
@@ -423,7 +405,9 @@ extension MessageList_Tests {
             userRobot.sendMessage(message)
         }
         WHEN("participant adds a quoted reply to users message") {
-            participantRobot.replyToMessage(quotedMessage)
+            participantRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessage(quotedMessage)
         }
         THEN("user observes the reply in message list") {
             userRobot.assertQuotedMessage(replyText: quotedMessage, quotedText: message)
@@ -472,7 +456,9 @@ extension MessageList_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user adds a quoted reply to users message") {
-            userRobot.replyToMessage(quotedMessage)
+            userRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessage(quotedMessage)
         }
         WHEN("user deletes a quoted message") {
             userRobot.deleteMessage()
@@ -500,7 +486,9 @@ extension MessageList_Tests {
             participantRobot.sendMessage(message)
         }
         WHEN("user adds a thread reply to participant's message and sends it also to main channel") {
-            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            userRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessageInThread(threadReply, alsoSendInChannel: true)
         }
         THEN("user observes the thread reply in thread") {
             userRobot.assertThreadReply(threadReply)
@@ -527,7 +515,9 @@ extension MessageList_Tests {
             userRobot.sendMessage(message)
         }
         AND("participant adds a thread reply to users's message and sends it also to main channel") {
-            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            participantRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessageInThread(threadReply, alsoSendInChannel: true)
         }
         WHEN("participant removes the thread reply from channel") {
             participantRobot.deleteMessage()
@@ -557,7 +547,9 @@ extension MessageList_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user adds a thread reply to participant's message and sends it also to main channel") {
-            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            userRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessageInThread(threadReply, alsoSendInChannel: true)
         }
         WHEN("user removes thread reply from thread") {
             userRobot.deleteMessage()
@@ -584,7 +576,9 @@ extension MessageList_Tests {
                 .openChannel()
         }
         AND("participant sends a message") {
-            participantRobot.sendMessage(message)
+            participantRobot
+                .waitForNewMessage(withText: message)
+                .sendMessage(message)
         }
         AND("user adds a thread reply to participant's message and sends it also to main channel") {
             userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)

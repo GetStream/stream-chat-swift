@@ -8,6 +8,11 @@ final class ChannelList_Tests: StreamTestCase {
 
     let message = "message"
 
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        addTags([.coreFeatures])
+    }
+
     func test_newMessageShownInChannelPreview_whenComingBackFromChannel() {
         linkToScenario(withId: 79)
 
@@ -43,7 +48,9 @@ final class ChannelList_Tests: StreamTestCase {
             deviceRobot.setConnectivity(to: .off)
         }
         WHEN("participant sends a new message") {
-            participantRobot.sendMessage(message).chill(duration: 2)
+            participantRobot
+                .sendMessage(message)
+                .chill(duration: 2000)
         }
         AND("user becomes online") {
             deviceRobot.setConnectivity(to: .on)

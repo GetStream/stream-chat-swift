@@ -14,6 +14,11 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
     var pendingThreadReply: String { "pending \(threadReply)" }
     var failedThreadReply: String { "failed \(threadReply)" }
 
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        addTags([.messageDeliveryStatus])
+    }
+
     // MARK: Message List
     func test_singleCheckmarkShown_whenMessageIsSent() {
         linkToScenario(withId: 129)
@@ -423,12 +428,12 @@ extension MessageDeliveryStatus_Tests {
         }
         AND("user replies to message in thread") {
             userRobot.replyToMessageInThread(threadReply)
-                participantRobot.chill(duration: 1)
+            participantRobot.chill(duration: 1000)
         }
         AND("thread reply is read by participant") {
             participantRobot
                 .readMessage()
-                .chill(duration: 1)
+                .chill(duration: 1000)
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
