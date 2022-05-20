@@ -52,8 +52,6 @@ class ChannelReadDTO: NSManagedObject {
         }
         
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
-        new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context)
-        new.user = UserDTO.loadOrCreate(id: userId, context: context)
         return new
     }
     
