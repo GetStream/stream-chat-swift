@@ -56,9 +56,7 @@ extension MemberDTO {
 extension MemberDTO {
     static func load(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
         let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
-        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", memberId)
-        return try? context.fetch(request).first
+        return load(by: memberId, context: context).first
     }
     
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise create a new
@@ -69,12 +67,14 @@ extension MemberDTO {
     ///   - context: The context used to fetch/create `UserDTO`
     ///
     static func loadOrCreate(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO {
-        if let existing = Self.load(userId: userId, channelId: channelId, context: context) {
+        if let existing = load(userId: userId, channelId: channelId, context: context) {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MemberDTO
-        new.id = Self.createId(userId: userId, channeldId: channelId)
+        let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
+        let request = fetchRequest(id: memberId)
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
+        new.id = memberId
         return new
     }
     

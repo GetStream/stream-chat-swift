@@ -40,7 +40,10 @@ final class MemberEvents_IntegrationTests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: unwrappedEvent.cid))
         }
 
-        client.eventNotificationCenter.process(unwrappedEvent)
+        let completionCalled = expectation(description: "completion called")
+        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        
+        wait(for: [completionCalled], timeout: 1)
 
         AssertAsync {
             Assert.willNotBeNil(
@@ -57,8 +60,11 @@ final class MemberEvents_IntegrationTests: XCTestCase {
         let event = try eventDecoder.decode(from: json) as? MemberUpdatedEventDTO
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
-
+        let completionCalled = expectation(description: "completion called")
+        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        
+        wait(for: [completionCalled], timeout: 1)
+        
         AssertAsync {
             Assert.willNotBeNil(
                 self.client.databaseContainer.viewContext.member(

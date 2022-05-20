@@ -21,9 +21,7 @@ extension DeviceDTO {
     ///   - context: The context used to fetch `DeviceDTO`
     ///
     static func load(id: String, context: NSManagedObjectContext) -> DeviceDTO? {
-        let request = NSFetchRequest<DeviceDTO>(entityName: DeviceDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return try? context.fetch(request).first
+        load(by: id, context: context).first
     }
     
     /// If a Device with the given id exists in the context, fetches and returns it. Otherwise creates a new
@@ -34,11 +32,12 @@ extension DeviceDTO {
     ///   - context: The context used to fetch/create `UserDTO`
     ///
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> DeviceDTO {
-        if let existing = Self.load(id: id, context: context) {
+        if let existing = load(id: id, context: context) {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! DeviceDTO
+        let request = fetchRequest(id: id)
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         return new
     }

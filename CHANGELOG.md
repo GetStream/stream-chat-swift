@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add Support for Slow Mode [#1953](https://github.com/GetStream/stream-chat-swift/pull/1953)
 
+## StreamChat
+### 🐞 Fixed
+- Saving payloads to local database is now 50% faster. Initial launch and displaying channel list should be noticeably faster [#1973](https://github.com/GetStream/stream-chat-swift/issues/1973)
+
 # [4.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.15.0)
 _May 11, 2022_
 ## StreamChat

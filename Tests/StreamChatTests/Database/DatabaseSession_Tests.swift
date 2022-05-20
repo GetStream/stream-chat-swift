@@ -20,7 +20,7 @@ final class DatabaseSession_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func test_eventPayloadChannelData_isSavedToDatabase() {
+    func test_eventPayloadChannelData_isSavedToDatabase() throws {
         // Prepare an Event payload with a channel data
         let channelId: ChannelId = .unique
         let channelPayload = dummyPayload(with: channelId)
@@ -33,7 +33,7 @@ final class DatabaseSession_Tests: XCTestCase {
         )
         
         // Save the event payload to DB
-        database.write { session in
+        try database.writeSynchronously { session in
             try session.saveEvent(payload: eventPayload)
         }
         
@@ -122,7 +122,7 @@ final class DatabaseSession_Tests: XCTestCase {
         )
         
         // Save the event payload to DB
-        database.write { session in
+        try database.writeSynchronously { session in
             try session.saveEvent(payload: eventPayload)
         }
         

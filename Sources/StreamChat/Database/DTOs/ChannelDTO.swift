@@ -112,11 +112,12 @@ class ChannelDTO: NSManagedObject {
     }
     
     static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
-        if let existing = Self.load(cid: cid, context: context) {
+        let request = fetchRequest(for: cid)
+        if let existing = load(by: request, context: context).first {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelDTO
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.cid = cid.rawValue
         return new
     }
@@ -167,7 +168,6 @@ extension NSManagedObjectContext {
             )
             dto.extraData = Data()
         }
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         dto.createdAt = payload.createdAt

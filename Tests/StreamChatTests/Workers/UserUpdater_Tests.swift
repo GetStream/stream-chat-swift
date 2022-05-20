@@ -232,14 +232,14 @@ final class UserUpdater_Tests: XCTestCase {
         let response = Result<UserListPayload, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
         
+        AssertAsync.willBeTrue(completionIsCalled)
+        
         // Load the user
         var user: UserDTO? {
             database.viewContext.user(id: userPayload.id)
         }
         
         AssertAsync {
-            // Assert the completion is called
-            Assert.willBeTrue(completionIsCalled)
             // Assert the user is saved to the database
             Assert.willBeEqual(user?.id, userPayload.id)
         }
@@ -284,6 +284,8 @@ final class UserUpdater_Tests: XCTestCase {
         )
         apiClient.test_simulateResponse(.success(payload))
         
+        AssertAsync.willBeTrue(flagCompletionCalled)
+        
         // Load current user
         let currentUser = database.viewContext.currentUser
         // Load flagged user
@@ -295,7 +297,6 @@ final class UserUpdater_Tests: XCTestCase {
         AssertAsync {
             Assert.willBeTrue(user != nil)
             Assert.willBeEqual(currentUser?.flaggedUsers ?? [], [user])
-            Assert.willBeTrue(flagCompletionCalled)
         }
         
         // Simulate `unflagUser` call.
