@@ -239,10 +239,12 @@ final class MessageList_Tests: StreamTestCase {
         linkToScenario(withId: 71)
 
         GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
+            userRobot
+                .login()
+                .openChannel()
         }
         THEN("user verifies that composer does not grow more than 5 lines") {
-            userRobot.assertComposerDoesNotGrowMoreThanFiveLines()
+            userRobot.assertComposerLimits(toNumberOfLines: 5)
         }
     }
     

@@ -144,10 +144,12 @@ extension UserRobot {
         return self
     }
     
-    func assertComposerDoesNotGrowMoreThanFiveLines(file: StaticString = #filePath, line: UInt = #line) {
+    func assertComposerLimits(toNumberOfLines limit: Int,
+                              file: StaticString = #filePath,
+                              line: UInt = #line) {
         let composer = MessageListPage.Composer.inputField
         var composerHeight = composer.height
-        for i in 1...4 {
+        for i in 1..<limit {
             let obtainKeyboardFocus = (i == 1) ? true : false
             typeText("\(i)\n", obtainKeyboardFocus: obtainKeyboardFocus)
             let updatedComposerHeight = composer.height
