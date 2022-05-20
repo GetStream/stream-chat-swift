@@ -56,7 +56,7 @@ if [[ ${INSTALL_SONAR-default} == true ]]; then
   brew install sonar-scanner
 fi
 
-if [[ ${ALLURE_NEEDED-default} == true ]]; then
+if [[ ${INSTALL_ALLURE-default} == true ]]; then
   puts "Install allurectl"
   DOWNLOAD_URL="https://github.com/allure-framework/allurectl/releases/download/1.22.1/allurectl_darwin_amd64"
   curl -sL "${DOWNLOAD_URL}" -o ./fastlane/allurectl
