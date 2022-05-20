@@ -384,6 +384,30 @@ final class MessageList_Tests: StreamTestCase {
 
 extension MessageList_Tests {
 
+    func test_quotedReplyInList_whenUserAddsQuotedReply() {
+        linkToScenario(withId: 51)
+
+        let message = "message"
+        let quotedMessage = "quoted reply"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("participant sends a message") {
+            participantRobot.sendMessage(message)
+        }
+        WHEN("user adds a quoted reply to participant message") {
+            userRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessage(quotedMessage)
+        }
+        THEN("user observes the reply in message list") {
+            userRobot.assertQuotedMessage(replyText: quotedMessage, quotedText: message)
+        }
+    }
+
     func test_quotedReplyInList_whenParticipantAddsQuotedReply() {
         linkToScenario(withId: 52)
 
