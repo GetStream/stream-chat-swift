@@ -584,13 +584,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.latestReactions = payload
             .latestReactions
-            .compactMap { try? saveReaction(payload: $0) }
+            .compactMap { try? saveReaction(payload: $0, for: dto) }
             .map(\.id)
 
         if syncOwnReactions {
             dto.ownReactions = payload
                 .ownReactions
-                .compactMap { try? saveReaction(payload: $0) }
+                .compactMap { try? saveReaction(payload: $0, for: dto) }
                 .map(\.id)
         }
 

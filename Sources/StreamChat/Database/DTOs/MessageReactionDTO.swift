@@ -115,6 +115,28 @@ extension NSManagedObjectContext {
         
         return dto
     }
+    
+    @discardableResult
+    func saveReaction(
+        payload: MessageReactionPayload,
+        for messageDTO: MessageDTO
+    ) throws -> MessageReactionDTO {
+        let dto = MessageReactionDTO.loadOrCreate(
+            message: messageDTO,
+            type: payload.type,
+            user: try saveUser(payload: payload.user),
+            context: self
+        )
+        
+        dto.score = Int64(clamping: payload.score)
+        dto.createdAt = payload.createdAt
+        dto.updatedAt = payload.updatedAt
+        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        dto.localState = nil
+        dto.version = nil
+        
+        return dto
+    }
 
     func delete(reaction: MessageReactionDTO) {
         delete(reaction)
