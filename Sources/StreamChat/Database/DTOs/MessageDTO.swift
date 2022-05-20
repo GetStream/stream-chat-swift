@@ -196,10 +196,6 @@ class MessageDTO: NSManagedObject {
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool
     ) -> NSCompoundPredicate {
-        let channelMessage = NSPredicate(
-            format: "channel.cid == %@", cid
-        )
-
         let channelMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             .init(format: "showReplyInChannel == 1"),
             .init(format: "parentMessageId == nil")
@@ -223,7 +219,7 @@ class MessageDTO: NSManagedObject {
         ])
         
         var subpredicates = [
-            channelMessage,
+            channelPredicate(with: cid),
             channelMessagePredicate,
             messageTypePredicate,
             nonTruncatedMessagesPredicate(),
@@ -384,7 +380,7 @@ class MessageDTO: NSManagedObject {
         context: NSManagedObjectContext
     ) -> [MessageDTO] {
         let subpredicates: [NSPredicate] = [
-            .init(format: "channel.cid == %@", cid),
+            channelPredicate(with: cid),
             .init(format: "user.currentUser != nil"),
             .init(format: "createdAt > %@", createdAtFrom as NSDate),
             .init(format: "createdAt <= %@", createdAtThrough as NSDate),
