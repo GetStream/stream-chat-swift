@@ -146,16 +146,16 @@ extension UserRobot {
     
     func assertComposerDoesNotGrowMoreThanFiveLines(file: StaticString = #filePath, line: UInt = #line) {
         let composer = MessageListPage.Composer.inputField
-        var composerSize = composer.frame.size
-        for i in 0...4 {
-            let obtainKeyboardFocus = (i == 0) ? true : false
-            typeText("\(i)", obtainKeyboardFocus: obtainKeyboardFocus)
-            let updatedComposerSize = composer.frame.size
-            XCTAssertNotEqual(composerSize, updatedComposerSize, file: file, line: line)
-            composerSize = updatedComposerSize
-            typeText("\n", obtainKeyboardFocus: obtainKeyboardFocus)
+        var composerHeight = composer.height
+        for i in 1...4 {
+            let obtainKeyboardFocus = (i == 1) ? true : false
+            typeText("\(i)\n", obtainKeyboardFocus: obtainKeyboardFocus)
+            let updatedComposerHeight = composer.height
+            XCTAssertGreaterThan(updatedComposerHeight, composerHeight, file: file, line: line)
+            composerHeight = updatedComposerHeight
         }
-        XCTAssertEqual(composerSize, composer.frame.size, file: file, line: line)
+        typeText("5\n6", obtainKeyboardFocus: false)
+        XCTAssertEqual(composerHeight, composer.height, file: file, line: line)
     }
 }
 
