@@ -6,11 +6,20 @@ allure_regression_testplan = 'Regression Testing'
 allure_results_path = 'allure-results'
 
 desc 'Upload test results to Allure TestOps'
-lane :allure_upload do
-  github_path = "#{ENV['GITHUB_API_URL']}/repos/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}"
-  github_run = JSON.parse(sh("curl -s -H 'authorization: Bearer #{ENV['GITHUB_TOKEN']}' -X GET -G #{github_path}"))
-  github_branch = github_run['head_branch']
+lane :allure_upload do |options|
+  branch = github_run_details['head_branch']
+  allure_args = "-e #{allure_endpoint} --project-id #{allure_project_id} --launch-id #{options[:launch_id]}"
+  sh("./xcresults export test_output/StreamChatUITestsApp.xcresult #{allure_results_path}")
+  sh("env BRANCH_NAME='#{branch}' ./allurectl upload #{allure_args} #{allure_results_path}")
+  UI.success("Check out test results in Allure TestOps: #{allure_endpoint}/launch/#{options[:launch_id]} 🎉")
+end
+
+desc 'Create launch on Allure TestOps'
+lane :allure_launch do
+  next unless testing_required?(:e2e)
+
   tags = []
+  github_run = github_run_details
   launch_name =
     if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
       pull_request = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']
@@ -21,19 +30,15 @@ lane :allure_upload do
     else
       github_run['name']
     end
-  launch_id = allure_launch(name: launch_name, tags: tags)['id']
-  allure_args = "-e #{allure_endpoint} --project-id #{allure_project_id} --launch-id #{launch_id}"
-
-  xcresult =
-    if File.exist?('test_output/merged.xcresult')
-      'test_output/merged.xcresult'
-    else
-      'test_output/StreamChatUITestsApp.xcresult'
-    end
-
-  sh("./xcresults export #{xcresult} #{allure_results_path}")
-  sh("env BRANCH_NAME='#{github_branch}' ./allurectl upload #{allure_args} #{allure_results_path}")
-  UI.success("Check out test results in Allure TestOps: #{allure_endpoint}/launch/#{launch_id} 🎉")
+  body = {
+    projectId: allure_project_id,
+    name: launch_name,
+    tags: tags,
+    autoclose: false,
+    closed: false
+  }.to_json
+  launch_id = allure_api(path: '/launch', http_method: 'POST', body: body)['id']
+  sh("echo 'LAUNCH_ID=#{launch_id}' >> $GITHUB_ENV")
 end
 
 desc 'Create test-case in Allure TestOps and get its id'
@@ -62,18 +67,6 @@ lane :allure_start_regression do |options|
   UI.success("#{rocket}\nTestplan with id #{testplan_id} launched successfully 🎉")
 end
 
-desc 'Create launch on Allure TestOps'
-private_lane :allure_launch do |options|
-  body = {
-    projectId: allure_project_id,
-    name: options[:name],
-    tags: options[:tags],
-    autoclose: false,
-    closed: false
-  }.to_json
-  allure_api(path: '/launch', http_method: 'POST', body: body)
-end
-
 desc 'Make a request to Allure TestOps via Rest API'
 private_lane :allure_api do |options|
   UI.user_error!('`ALLURE_TOKEN` env var has to be provided ⚠️') if ENV['ALLURE_TOKEN'].nil?
@@ -98,4 +91,10 @@ private_lane :allure_api do |options|
 
   response_body = http.request(request).read_body
   JSON.parse(response_body) unless response_body.empty?
+end
+
+def github_run_details
+  github_path = "#{ENV['GITHUB_API_URL']}/repos/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}"
+  output = sh(command: "curl -s -H 'authorization: Bearer #{ENV['GITHUB_TOKEN']}' -X GET -G #{github_path}", log: false)
+  JSON.parse(output)
 end

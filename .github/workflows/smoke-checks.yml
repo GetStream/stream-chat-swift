@@ -115,14 +115,22 @@ jobs:
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
     runs-on: macos-12
+    needs: allure_testops_launch
+    env:
+      LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
     strategy:
       matrix:
         batch: [0, 1, 2]
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
+      if: env.LAUNCH_ID != ''
     - uses: ./.github/actions/bootstrap
+      if: env.LAUNCH_ID != ''
+      env:
+        INSTALL_ALLURE: true
     - name: Run UI Tests (Debug)
+      if: env.LAUNCH_ID != ''
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -132,11 +140,12 @@ jobs:
       with:
         paths: fastlane/test_output/report.junit
       if: failure()
-    - uses: actions/upload-artifact@v3
-      if: success() || failure()
-      with:
-        name: "xcresult_${{ matrix.batch }}"
-        path: "fastlane/test_output/*.xcresult"
+    - name: Allure TestOps Upload
+      if: env.LAUNCH_ID != '' && (success() || failure())
+      run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -148,34 +157,25 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
 
-  allure_testops:
-    name: Allure TestOps
+  allure_testops_launch:
+    name: Launch Allure TestOps
     runs-on: macos-12
-    if: success() || failure()
-    needs: [build-and-test-e2e-debug]
+    outputs:
+      launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v3
-    - name: Skip Allure?
-      run: |
-        test_results=(`find ./ -maxdepth 2 -name "*.xcresult"`)
-        if [ ${#test_results[@]} -gt 0 ]; then
-          echo 'Allure job is needed!' && echo "ALLURE_NEEDED=true" >> $GITHUB_ENV
-        fi
     - uses: ./.github/actions/bootstrap
-      if: env.ALLURE_NEEDED == 'true'
       env:
         XCODE_ACTIONS: false
-    - name: Merge xcresults
-      if: env.ALLURE_NEEDED == 'true'
-      run: xcrun xcresulttool merge */*.xcresult --output-path fastlane/test_output/merged.xcresult
-    - name: Upload test results to Allure TestOps
-      if: env.ALLURE_NEEDED == 'true'
-      run: bundle exec fastlane allure_upload
+    - name: Create a new launch on Allure TestOps
+      run: bundle exec fastlane allure_launch
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
+    - id: get_launch_id
+      run: echo "::set-output name=launch_id::${{env.LAUNCH_ID}}"
+      if: env.LAUNCH_ID != ''
 
   build-xcode12:
     name: Build LLC + UI (Xcode 12)
