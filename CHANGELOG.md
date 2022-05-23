@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### ✅ Added
 - Add Support for Slow Mode [#1953](https://github.com/GetStream/stream-chat-swift/pull/1953)
+### 🐞 Fixed
+- Fix DM Channel with multiple members displaying only 1 user avatar [#2019](https://github.com/GetStream/stream-chat-swift/pull/2019)
 
 ## StreamChat
 ### 🐞 Fixed
