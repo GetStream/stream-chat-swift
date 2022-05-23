@@ -684,9 +684,3 @@ extension UserListQuery: Equatable {
             && lhs.shouldBeUpdatedInBackground == rhs.shouldBeUpdatedInBackground
     }
 }
-
-extension Sorting: Equatable where Key: Equatable {
-    public static func == (lhs: Sorting, rhs: Sorting) -> Bool {
-        lhs.key == rhs.key && lhs.direction == rhs.direction
-    }
-}

@@ -7,12 +7,13 @@ import Foundation
 /// The type that does events batching.
 protocol EventBatcher {
     typealias Batch = [Event]
+    typealias BatchHandler = (_ batch: Batch, _ completion: @escaping () -> Void) -> Void
     
     /// The current batch of events.
     var currentBatch: Batch { get }
     
     /// Creates new batch processor.
-    init(period: TimeInterval, timerType: Timer.Type, handler: @escaping (Batch) -> Void)
+    init(period: TimeInterval, timerType: Timer.Type, handler: @escaping BatchHandler)
     
     /// Adds the item to the current batch of events. If it's the first event also schedules batch processing
     /// that will happen when `period` has passed.
@@ -21,7 +22,7 @@ protocol EventBatcher {
     func append(_ event: Event)
     
     /// Ignores `period` and passes the current batch of events to handler as soon as possible.
-    func processImmediately()
+    func processImmediately(completion: @escaping () -> Void)
 }
 
 extension Batcher: EventBatcher where Item == Event {}
@@ -34,7 +35,7 @@ final class Batcher<Item> {
     /// The timer that  calls `processor` when fired.
     private var batchProcessingTimer: TimerControl?
     /// The closure which processes the batch.
-    private let handler: ([Item]) -> Void
+    private let handler: (_ batch: [Item], _ completion: @escaping () -> Void) -> Void
     /// The serial queue where item appends and batch processing is happening on.
     private let queue = DispatchQueue(label: "io.getstream.Batch.\(Item.self)")
     /// The current batch of items.
@@ -43,7 +44,7 @@ final class Batcher<Item> {
     init(
         period: TimeInterval,
         timerType: Timer.Type = DefaultTimer.self,
-        handler: @escaping ([Item]) -> Void
+        handler: @escaping (_ batch: [Item], _ completion: @escaping () -> Void) -> Void
     ) {
         self.period = max(period, 0)
         self.timerType = timerType
@@ -59,19 +60,19 @@ final class Batcher<Item> {
             self.batchProcessingTimer = self.timerType.schedule(
                 timeInterval: self.period,
                 queue: self.queue,
-                onFire: self.process
+                onFire: { self.process() }
             )
         }
     }
     
-    func processImmediately() {
+    func processImmediately(completion: @escaping () -> Void) {
         timerType.schedule(timeInterval: 0, queue: queue) { [weak self] in
-            self?.process()
+            self?.process(completion: completion)
         }
     }
     
-    private func process() {
-        handler(currentBatch)
+    private func process(completion: (() -> Void)? = nil) {
+        handler(currentBatch) { completion?() }
         currentBatch.removeAll()
         batchProcessingTimer?.cancel()
         batchProcessingTimer = nil

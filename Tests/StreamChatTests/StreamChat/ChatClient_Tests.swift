@@ -568,6 +568,8 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertTrue(testEnv.apiClient! === client.apiClient)
         // Assert `disconnect` on updater is triggered
         XCTAssertTrue(testEnv.clientUpdater!.disconnect_called)
+        // Assert source is user initiated
+        XCTAssertEqual(testEnv.clientUpdater!.disconnect_source, .userInitiated)
     }
     
     // MARK: - Background workers tests

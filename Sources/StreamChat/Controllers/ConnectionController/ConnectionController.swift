@@ -96,7 +96,9 @@ public extension ChatConnectionController {
     /// Disconnects the chat client the controller represents from the chat servers.
     /// No further updates from the servers are received.
     func disconnect() {
-        chatClientUpdater.disconnect()
+        chatClientUpdater.disconnect(source: .userInitiated) {
+            log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
+        }
     }
 }
 
