@@ -23,8 +23,9 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
     @Atomic var connect_called = false
     @Atomic var connect_completion: ((Error?) -> Void)?
 
-    @Atomic var disconnect_called = false
+    var disconnect_called: Bool { disconnect_source != nil }
     @Atomic var disconnect_source: WebSocketConnectionState.DisconnectionSource?
+    @Atomic var disconnect_completion: (() -> Void)?
 
     // MARK: - Overrides
 
@@ -60,10 +61,13 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
         connect_called = true
         connect_completion = completion
     }
-
-    override func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
-        disconnect_called = true
+    
+    override func disconnect(
+        source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
+        completion: @escaping () -> Void
+    ) {
         disconnect_source = source
+        disconnect_completion = completion
     }
 
     // MARK: - Clean Up
@@ -79,6 +83,7 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
         connect_called = false
         connect_completion = nil
 
-        disconnect_called = false
+        disconnect_source = nil
+        disconnect_completion = nil
     }
 }

@@ -19,6 +19,7 @@ final class WebSocketClient_Mock: WebSocketClient {
     @Atomic var disconnect_calledCounter = 0
     var disconnect_source: WebSocketConnectionState.DisconnectionSource?
     var disconnect_called: Bool { disconnect_calledCounter > 0 }
+    var disconnect_completion: (() -> Void)?
 
     override init(
         sessionConfiguration: URLSessionConfiguration,
@@ -46,9 +47,13 @@ final class WebSocketClient_Mock: WebSocketClient {
         _connect_calledCounter { $0 += 1 }
     }
 
-    override func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
+    override func disconnect(
+        source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
+        completion: @escaping () -> Void
+    ) {
         _disconnect_calledCounter { $0 += 1 }
         disconnect_source = source
+        disconnect_completion = completion
     }
     
     var mockEventsBatcher: EventBatcher_Mock {
