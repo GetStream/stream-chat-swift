@@ -131,7 +131,7 @@ class WebSocketClient {
         completion: @escaping () -> Void
     ) {
         connectionState = .disconnecting(source: source)
-        engineQueue.async { [weak engine, eventsBatcher] in
+        engineQueue.async { [engine, eventsBatcher] in
             engine?.disconnect()
             
             eventsBatcher.processImmediately(completion: completion)
