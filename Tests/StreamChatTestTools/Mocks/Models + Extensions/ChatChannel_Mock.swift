@@ -155,7 +155,7 @@ public extension ChatChannel {
             lastActiveWatchers: { lastActiveWatchers },
             unreadCount: { unreadCount },
             watcherCount: watcherCount,
-            memberCount: memberCount == nil ? lastActiveMembers.count : memberCount!,
+            memberCount: memberCount ?? lastActiveMembers.count,
             reads: reads,
             extraData: extraData,
             latestMessages: { latestMessages },
