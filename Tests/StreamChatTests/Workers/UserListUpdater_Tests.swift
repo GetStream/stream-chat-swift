@@ -55,10 +55,10 @@ final class UserListUpdater_Tests: XCTestCase {
     func test_update_successfullReponseData_areSavedToDB() {
         // Simulate `update` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        var completionCalled = false
+        let completionCalled = expectation(description: "completion called")
         listUpdater.update(userListQuery: query, completion: { error in
             XCTAssertNil(error)
-            completionCalled = true
+            completionCalled.fulfill()
         })
         
         // Simualte API response with user data
@@ -67,10 +67,11 @@ final class UserListUpdater_Tests: XCTestCase {
         let payload = UserListPayload(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
         
+        wait(for: [completionCalled], timeout: 1)
+        
         // Assert the data is stored in the DB
         AssertAsync {
             Assert.willBeTrue((try? self.user(with: id)) != nil)
-            Assert.willBeTrue(completionCalled)
         }
     }
     
@@ -113,29 +114,35 @@ final class UserListUpdater_Tests: XCTestCase {
     func test_mergePolicy_takesAffect() throws {
         // Simulate `update` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        listUpdater.update(userListQuery: query)
+        var completionCalled = expectation(description: "completion called")
+        listUpdater.update(userListQuery: query) { _ in completionCalled.fulfill() }
         
         // Simulate API response with user data
         let userId = UserId.unique
         let payload = UserListPayload(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
+        
+        wait(for: [completionCalled], timeout: 1)
 
         // Assert user is inserted into DB
-        AssertAsync.willBeTrue((try? self.user(with: userId)) != nil)
-        let user = try self.user(with: userId)
+        var user: ChatUser? { try? self.user(with: userId) }
+        AssertAsync.willBeTrue(user != nil)
         
         // Simulate consequent `update` call with new users and `.merge` policy
         // We don't pass the `policy` argument since we expect it's `merge` by default
-        listUpdater.update(userListQuery: query)
+        completionCalled = expectation(description: "completion called")
+        listUpdater.update(userListQuery: query) { _ in completionCalled.fulfill() }
         
         // Simulate API response with user data
         let newUserId = UserId.unique
         let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
         
+        wait(for: [completionCalled], timeout: 1)
+        
         // Assert new user is inserted into DB
-        AssertAsync.willBeTrue((try? self.user(with: newUserId)) != nil)
-        let newUser = try self.user(with: newUserId)
+        var newUser: ChatUser? { try? self.user(with: newUserId) }
+        AssertAsync.willBeTrue(newUser != nil)
 
         let userIds = [user!, newUser!].map(\.id)
 
@@ -160,12 +167,15 @@ final class UserListUpdater_Tests: XCTestCase {
         // Simulate `update` call
         // This call doesn't need `policy` argument specified since
         // it's the first call for this query, hence there's no data to `replace` or `merge` to
-        listUpdater.update(userListQuery: query)
+        var completionCalled = expectation(description: "completion called")
+        listUpdater.update(userListQuery: query) { _ in completionCalled.fulfill() }
         
         // Simulate API response with user data
         let userId = UserId.unique
         let payload = UserListPayload(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
+        
+        wait(for: [completionCalled], timeout: 1)
         
         // Assert user is inserted into DB
         AssertAsync.willBeTrue((try? self.user(with: userId)) != nil)
@@ -175,12 +185,15 @@ final class UserListUpdater_Tests: XCTestCase {
         AssertAsync.willBeTrue(user != nil)
         
         // Simulate consequent `update` call with new users and `.replace` policy
-        listUpdater.update(userListQuery: query, policy: .replace)
+        completionCalled = expectation(description: "completion called")
+        listUpdater.update(userListQuery: query, policy: .replace) { _ in completionCalled.fulfill() }
         
         // Simulate API response with user data
         let newUserId = UserId.unique
         let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
+        
+        wait(for: [completionCalled], timeout: 1)
         
         // Assert new user is inserted into DB
         AssertAsync.willBeTrue((try? self.user(with: newUserId)) != nil)

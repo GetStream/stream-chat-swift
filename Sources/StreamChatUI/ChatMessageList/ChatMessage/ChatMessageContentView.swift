@@ -892,7 +892,7 @@ private extension ChatMessageLayoutOptions {
     ]
     
     var hasFootnoteOptions: Bool {
-        !intersection(.footnote).isEmpty
+        !isDisjoint(with: .footnote)
     }
 }
 

@@ -1315,6 +1315,17 @@ public extension ChatChannelController {
             }
         }
     }
+    
+    /// Returns the current cooldown time for the channel. Returns 0 in case there is no cooldown active.
+    func currentCooldownTime() -> Int {
+        guard let cooldownDuration = channel?.cooldownDuration,
+              let currentUserLastMessage = channel?.lastMessageFromCurrentUser else {
+            return 0
+        }
+        
+        let currentTime = Date().timeIntervalSince(currentUserLastMessage.createdAt)
+        return cooldownDuration - Int(currentTime)
+    }
 }
 
 extension ChatChannelController {

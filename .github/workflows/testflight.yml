@@ -1,6 +1,9 @@
 name: Test Flight Deploy DemoApp
 
 on:
+  pull_request:
+    branches:
+      - 'main'
   release:
     types: [published]
 
@@ -12,14 +15,12 @@ env:
 jobs:
   deploy:
     runs-on: macos-12
-
     steps:
     - name: Install Bot SSH Key
       uses: webfactory/ssh-agent@v0.4.1
       with:
         ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
     - uses: actions/checkout@v2
-    - uses: ./.github/actions/set-build-image-var
     - uses: ./.github/actions/bootstrap
     - name: Deploy Demo app
       env:

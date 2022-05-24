@@ -56,7 +56,7 @@ extension ChannelConfig {
         if let loadedDto = ChannelConfigDTO.load(by: request, context: context).first {
             dto = loadedDto
         } else {
-            dto = ChannelConfigDTO(context: context)
+            dto = NSEntityDescription.insertNewObject(into: context, for: request)
         }
 
         dto.reactionsEnabled = reactionsEnabled

@@ -10,7 +10,6 @@ import StreamChat
 final class UserRobot: Robot {
 
     let composer = MessageListPage.Composer.self
-    let threadComposer = ThreadPage.Composer.self
     let contextMenu = MessageListPage.ContextMenu.self
     let debugAlert = MessageListPage.Alert.Debug.self
     
@@ -26,7 +25,7 @@ final class UserRobot: Robot {
         let cells = ChannelListPage.cells.waitCount(minExpectedCount)
         
         // TODO: CIS-1737
-        if !cells.firstMatch.wait().exists {
+        if !cells.firstMatch.wait(timeout: 5).exists {
             app.terminate()
             app.launch()
             login()
@@ -69,9 +68,26 @@ extension UserRobot {
     }
     
     @discardableResult
+    func typeText(_ text: String, obtainKeyboardFocus: Bool = true) -> Self {
+        if obtainKeyboardFocus {
+            composer.inputField.obtainKeyboardFocus().typeText(text)
+        } else {
+            composer.inputField.typeText(text)
+        }
+        return self
+    }
+    
+    @discardableResult
     func sendMessage(_ text: String) -> Self {
-        composer.inputField.obtainKeyboardFocus().typeText(text)
+        typeText(text)
         composer.sendButton.tap()
+        return self
+    }
+    
+    @discardableResult
+    func attemptToSendMessageWhileInSlowMode(_ text: String) -> Self {
+        composer.inputField.obtainKeyboardFocus().typeText(text)
+        composer.cooldown.tap()
         return self
     }
     
@@ -149,7 +165,7 @@ extension UserRobot {
     @discardableResult
     func replyToMessage(_ text: String, messageCellIndex: Int = 0) -> Self {
         selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
-        composer.inputField.obtainKeyboardFocus().typeText(text)
+        typeText(text)
         composer.sendButton.tap()
         return self
     }
@@ -172,8 +188,8 @@ extension UserRobot {
         if alsoSendInChannel {
             threadCheckbox.wait().tap()
         }
-        threadComposer.inputField.obtainKeyboardFocus().typeText(text)
-        threadComposer.sendButton.tap()
+        typeText(text)
+        composer.sendButton.tap()
         return self
     }
     
@@ -187,6 +203,13 @@ extension UserRobot {
     func moveToChannelListFromThreadReplies() -> Self {
         tapOnBackButton()
         tapOnBackButton()
+        return self
+    }
+
+    @discardableResult
+    func scrollMessageListUp() -> Self {
+        let topMessage = MessageListPage.cells.element(boundBy: 0)
+        MessageListPage.list.press(forDuration: 0.1, thenDragTo: topMessage)
         return self
     }
 }

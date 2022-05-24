@@ -13,9 +13,9 @@ let cells = MessageListPage.cells
 extension Robot {
 
     @discardableResult
-    func mesageCell(withIndex index: Int? = nil,
-                    file: StaticString = #filePath,
-                    line: UInt = #line) -> XCUIElement {
+    func messageCell(withIndex index: Int? = nil,
+                     file: StaticString = #filePath,
+                     line: UInt = #line) -> XCUIElement {
         let messageCell: XCUIElement
         if let index = index {
             let minExpectedCount = index + 1
@@ -41,10 +41,34 @@ extension Robot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let message = attributes.text(in: messageCell)
         let actualText = message.waitForText(text).text
         XCTAssertEqual(text, actualText, file: file, line: line)
+        return self
+    }
+
+    @discardableResult
+    func assertMessageIsVisible(
+        _ text: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        XCTAssertTrue(messageCell.isHittable)
+        return self
+    }
+
+    @discardableResult
+    func assertMessageIsNotVisible(
+        _ text: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        XCTAssertFalse(messageCell.isHittable)
         return self
     }
 
@@ -55,7 +79,7 @@ extension Robot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let message = attributes.quotedText(text, in: messageCell)
         let actualText = message.waitForText(text).text
         XCTAssertEqual(text, actualText, file: file, line: line)
@@ -68,7 +92,7 @@ extension Robot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let message = attributes.text(in: messageCell)
         let expectedMessage = L10n.Message.deletedMessagePlaceholder
         let actualMessage = message.waitForText(expectedMessage).text
@@ -83,7 +107,7 @@ extension Robot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let textView = attributes.author(messageCell: messageCell)
         let actualAuthor = textView.waitForText(author).text
         XCTAssertEqual(author, actualAuthor, file: file, line: line)
@@ -98,9 +122,31 @@ extension Robot {
                            at messageCellIndex: Int? = nil,
                            file: StaticString = #filePath,
                            line: UInt = #line) -> Self {
-        let cell = mesageCell(withIndex: messageCellIndex, file: file, line: line).wait()
+        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         let textView = attributes.text(in: cell)
         _ = textView.waitForText(text)
+        return self
+    }
+    
+    @discardableResult
+    func assertTypingIndicatorShown(
+        typingUserName: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let typingIndicatorView = MessageListPage.typingIndicator
+        let typingUserText = typingIndicatorView.waitForText(typingUserName).text
+        XCTAssert(typingUserText.contains(typingUserName), file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertTypingIndicatorHidden(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let typingIndicatorView = MessageListPage.typingIndicator
+        XCTAssertFalse(typingIndicatorView.exists, file: file, line: line)
         return self
     }
 }
@@ -135,7 +181,7 @@ extension Robot {
         line: UInt = #line
     ) -> Self {
         assertQuotedMessage(replyText, file: file, line: line)
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let quotedMessage = attributes.quotedText(quotedText, in: messageCell)
         XCTAssertTrue(quotedMessage.exists, "Quoted message was not showed", file: file, line: line)
         XCTAssertFalse(quotedMessage.isEnabled, "Quoted message should be disabled", file: file, line: line)
@@ -152,7 +198,7 @@ extension Robot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let reaction = attributes.reactionButton(in: messageCell)
         let errMessage = isPresent ? "There are no reactions" : "Reaction is presented"
         _ = isPresent ? reaction.wait() : reaction.waitForLoss()
@@ -167,7 +213,7 @@ extension Robot {
     func waitForNewReaction(at messageCellIndex: Int? = nil,
                             file: StaticString = #filePath,
                             line: UInt = #line) -> Self {
-        let cell = mesageCell(withIndex: messageCellIndex, file: file, line: line).wait()
+        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         let reaction = attributes.reactionButton(in: cell)
         reaction.wait()
         return self
