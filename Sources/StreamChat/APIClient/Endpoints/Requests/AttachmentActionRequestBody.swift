@@ -6,7 +6,7 @@ import Foundation
 
 /// The type describes the outgoing JSON to `message/{id}/action` endpoint
 struct AttachmentActionRequestBody: Encodable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case channelId = "id"
         case channelType = "type"
         case messageId = "message_id"

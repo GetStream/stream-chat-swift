@@ -193,6 +193,23 @@ class MessageListPage {
             }
             return messageCell.images[identifier]
         }
+        
+        static func giphySendButton(in messageCell: XCUIElement) -> XCUIElement {
+            attachmentActionButton(in: messageCell, label: "Send")
+        }
+        
+        static func giphyShuffleButton(in messageCell: XCUIElement) -> XCUIElement {
+            attachmentActionButton(in: messageCell, label: "Shuffle")
+        }
+        
+        static func giphyCancelButton(in messageCell: XCUIElement) -> XCUIElement {
+            attachmentActionButton(in: messageCell, label: "Cancel")
+        }
+        
+        private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {
+            messageCell.buttons.matching(NSPredicate(
+                format: "identifier LIKE 'ActionButton' AND label LIKE '\(label)'")).firstMatch
+        }
     }
     
     enum PopUpButtons {

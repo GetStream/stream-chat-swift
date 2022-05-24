@@ -863,6 +863,7 @@
 		A3A644B327BF99D400F92494 /* ChannelTruncateRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A644B227BF99D400F92494 /* ChannelTruncateRequestPayload_Tests.swift */; };
 		A3AFEAA72816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3AFEAA62816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift */; };
 		A3B0CFA227BBF52600F352F9 /* ChannelTruncateRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B0CFA127BBF52600F352F9 /* ChannelTruncateRequestPayload.swift */; };
+		A3B68B07284503AD00DF4321 /* http_message_ephemeral.json in Resources */ = {isa = PBXBuildFile; fileRef = A3B68B06284503AC00DF4321 /* http_message_ephemeral.json */; };
 		A3B78F18282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B78F17282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift */; };
 		A3B78F1A282A6A8F00348AD1 /* UserRobot+Asserts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B78F19282A6A8F00348AD1 /* UserRobot+Asserts.swift */; };
 		A3BB3FFF261DA74D00365496 /* ContainerStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */; };
@@ -880,7 +881,6 @@
 		A3C049D92840BDA700E25E38 /* http_member.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049CD2840BDA700E25E38 /* http_member.json */; };
 		A3C049DA2840BDA700E25E38 /* ws_reaction.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049CE2840BDA700E25E38 /* ws_reaction.json */; };
 		A3C049DB2840BDA700E25E38 /* ws_health_check.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049CF2840BDA700E25E38 /* ws_health_check.json */; };
-		A3C049DC2840BDA700E25E38 /* ws_message.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049D02840BDA700E25E38 /* ws_message.json */; };
 		A3C049DD2840BDA700E25E38 /* ws_events.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049D12840BDA700E25E38 /* ws_events.json */; };
 		A3C049DE2840BDA700E25E38 /* ws_events_channel.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049D22840BDA700E25E38 /* ws_events_channel.json */; };
 		A3C049DF2840BDA700E25E38 /* http_channels.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049D32840BDA700E25E38 /* http_channels.json */; };
@@ -3093,6 +3093,7 @@
 		A3AFEAA62816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDeliveryStatus_Tests.swift; sourceTree = "<group>"; };
 		A3B0CFA127BBF52600F352F9 /* ChannelTruncateRequestPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTruncateRequestPayload.swift; sourceTree = "<group>"; };
 		A3B0CFA327BCF66A00F352F9 /* ChannelTruncated_with_message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelTruncated_with_message.json; sourceTree = "<group>"; };
+		A3B68B06284503AC00DF4321 /* http_message_ephemeral.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = http_message_ephemeral.json; sourceTree = "<group>"; };
 		A3B78F17282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageDeliveryStatus+ChannelList_Tests.swift"; sourceTree = "<group>"; };
 		A3B78F19282A6A8F00348AD1 /* UserRobot+Asserts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserRobot+Asserts.swift"; sourceTree = "<group>"; };
 		A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStackView.swift; sourceTree = "<group>"; };
@@ -3109,7 +3110,6 @@
 		A3C049CD2840BDA700E25E38 /* http_member.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = http_member.json; sourceTree = "<group>"; };
 		A3C049CE2840BDA700E25E38 /* ws_reaction.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ws_reaction.json; sourceTree = "<group>"; };
 		A3C049CF2840BDA700E25E38 /* ws_health_check.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ws_health_check.json; sourceTree = "<group>"; };
-		A3C049D02840BDA700E25E38 /* ws_message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ws_message.json; sourceTree = "<group>"; };
 		A3C049D12840BDA700E25E38 /* ws_events.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ws_events.json; sourceTree = "<group>"; };
 		A3C049D22840BDA700E25E38 /* ws_events_channel.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ws_events_channel.json; sourceTree = "<group>"; };
 		A3C049D32840BDA700E25E38 /* http_channels.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = http_channels.json; sourceTree = "<group>"; };
@@ -6618,18 +6618,18 @@
 		A3C049C72840BDA700E25E38 /* JSONs */ = {
 			isa = PBXGroup;
 			children = (
-				A3C049C82840BDA700E25E38 /* ws_events_user.json */,
-				A3C049C92840BDA700E25E38 /* http_events.json */,
-				A3C049CA2840BDA700E25E38 /* http_reaction.json */,
-				A3C049CB2840BDA700E25E38 /* ws_events_member.json */,
-				A3C049CC2840BDA700E25E38 /* http_message.json */,
-				A3C049CD2840BDA700E25E38 /* http_member.json */,
-				A3C049CE2840BDA700E25E38 /* ws_reaction.json */,
-				A3C049CF2840BDA700E25E38 /* ws_health_check.json */,
-				A3C049D02840BDA700E25E38 /* ws_message.json */,
-				A3C049D12840BDA700E25E38 /* ws_events.json */,
-				A3C049D22840BDA700E25E38 /* ws_events_channel.json */,
 				A3C049D32840BDA700E25E38 /* http_channels.json */,
+				A3C049C92840BDA700E25E38 /* http_events.json */,
+				A3C049CD2840BDA700E25E38 /* http_member.json */,
+				A3B68B06284503AC00DF4321 /* http_message_ephemeral.json */,
+				A3C049CC2840BDA700E25E38 /* http_message.json */,
+				A3C049CA2840BDA700E25E38 /* http_reaction.json */,
+				A3C049D22840BDA700E25E38 /* ws_events_channel.json */,
+				A3C049CB2840BDA700E25E38 /* ws_events_member.json */,
+				A3C049C82840BDA700E25E38 /* ws_events_user.json */,
+				A3C049D12840BDA700E25E38 /* ws_events.json */,
+				A3C049CF2840BDA700E25E38 /* ws_health_check.json */,
+				A3C049CE2840BDA700E25E38 /* ws_reaction.json */,
 			);
 			path = JSONs;
 			sourceTree = "<group>";
@@ -8546,11 +8546,11 @@
 				A3C049DE2840BDA700E25E38 /* ws_events_channel.json in Resources */,
 				A3C049D52840BDA700E25E38 /* http_events.json in Resources */,
 				A3C049DD2840BDA700E25E38 /* ws_events.json in Resources */,
-				A3C049DC2840BDA700E25E38 /* ws_message.json in Resources */,
 				A3C049D42840BDA700E25E38 /* ws_events_user.json in Resources */,
 				A3C049DA2840BDA700E25E38 /* ws_reaction.json in Resources */,
 				A3C049D72840BDA700E25E38 /* ws_events_member.json in Resources */,
 				A3C049D82840BDA700E25E38 /* http_message.json in Resources */,
+				A3B68B07284503AD00DF4321 /* http_message_ephemeral.json in Resources */,
 				A3C049D62840BDA700E25E38 /* http_reaction.json in Resources */,
 				A3C049D92840BDA700E25E38 /* http_member.json in Resources */,
 			);

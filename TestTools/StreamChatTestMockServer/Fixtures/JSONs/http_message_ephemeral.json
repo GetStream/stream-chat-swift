@@ -1,0 +1,129 @@
+{
+  "message": {
+    "id": "83CA6796-199D-41DB-A6BB-AB063B6514A7",
+    "text": "/giphy /test",
+    "command": "giphy",
+    "html": "<p>/giphy /test</p>\n",
+    "type": "ephemeral",
+    "user": {
+      "id": "luke_skywalker",
+      "role": "user",
+      "created_at": "2020-12-07T11:36:47.059906Z",
+      "updated_at": "2022-05-24T08:44:26.667107Z",
+      "last_active": "2022-05-24T08:59:20.15938243Z",
+      "banned": false,
+      "online": true,
+      "testing": false,
+      "birthland": "Tatooine",
+      "extraData": {},
+      "extra_data": {},
+      "testing-this": 3.14,
+      "name": "Luke Skywalker",
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "image_url": "https://storage.googleapis.com/download/storage/v1/b/labate-image/o/images%2F72c305ac-74c7-40d6-a9ca-8c5c203496df-1649704417193.jpeg?generation=1649704417519668&alt=media",
+      "yetAnotherField": "40"
+    },
+    "attachments": [
+      {
+        "type": "giphy",
+        "title": "/test",
+        "title_link": "https://giphy.com/gifs/test-gw3IWyGkC0rsazTi",
+        "thumb_url": "https://media3.giphy.com/media/gw3IWyGkC0rsazTi/giphy.gif?cid=c4b03675ftkzvht75x1pi5fghm0jmtid0ft31v6g0cevus5d&rid=giphy.gif&ct=g",
+        "actions": [
+          {
+            "name": "image_action",
+            "text": "Send",
+            "style": "primary",
+            "type": "button",
+            "value": "send"
+          },
+          {
+            "name": "image_action",
+            "text": "Shuffle",
+            "style": "default",
+            "type": "button",
+            "value": "shuffle"
+          },
+          {
+            "name": "image_action",
+            "text": "Cancel",
+            "style": "default",
+            "type": "button",
+            "value": "cancel"
+          }
+        ],
+        "giphy": {
+          "original": {
+            "url": "https://media3.giphy.com/media/gw3IWyGkC0rsazTi/giphy.gif?cid=c4b03675ftkzvht75x1pi5fghm0jmtid0ft31v6g0cevus5d&rid=giphy.gif&ct=g",
+            "width": "265",
+            "height": "199",
+            "size": "156697",
+            "frames": "11"
+          },
+          "fixed_height": {
+            "url": "https://media3.giphy.com/media/gw3IWyGkC0rsazTi/200.gif?cid=c4b03675ftkzvht75x1pi5fghm0jmtid0ft31v6g0cevus5d&rid=200.gif&ct=g",
+            "width": "266",
+            "height": "200",
+            "size": "145473",
+            "frames": ""
+          },
+          "fixed_height_still": {
+            "url": "https://media3.giphy.com/media/gw3IWyGkC0rsazTi/200_s.gif?cid=c4b03675ftkzvht75x1pi5fghm0jmtid0ft31v6g0cevus5d&rid=200_s.gif&ct=g",
+            "width": "266",
+            "height": "200",
+            "size": "14164",
+            "frames": ""
+          },
+          "fixed_height_downsampled": {
+            "url": "https://media3.giphy.com/media/gw3IWyGkC0rsazTi/200_d.gif?cid=c4b03675ftkzvht75x1pi5fghm0jmtid0ft31v6g0cevus5d&rid=200_d.gif&ct=g",
+            "width": "266",
+            "height": "200",
+            "size": "93940",
+            "frames": ""
+          },
+          "fixed_width": {
+            "url": "https://media3.giphy.com/media/gw3IWyGkC0rsazTi/200w.gif?cid=c4b03675ftkzvht75x1pi5fghm0jmtid0ft31v6g0cevus5d&rid=200w.gif&ct=g",
+            "width": "200",
+            "height": "150",
+            "size": "98650",
+            "frames": ""
+          },
+          "fixed_width_still": {
+            "url": "https://media3.giphy.com/media/gw3IWyGkC0rsazTi/200w_s.gif?cid=c4b03675ftkzvht75x1pi5fghm0jmtid0ft31v6g0cevus5d&rid=200w_s.gif&ct=g",
+            "width": "200",
+            "height": "150",
+            "size": "13688",
+            "frames": ""
+          },
+          "fixed_width_downsampled": {
+            "url": "https://media3.giphy.com/media/gw3IWyGkC0rsazTi/200w_d.gif?cid=c4b03675ftkzvht75x1pi5fghm0jmtid0ft31v6g0cevus5d&rid=200w_d.gif&ct=g",
+            "width": "200",
+            "height": "150",
+            "size": "53503",
+            "frames": ""
+          }
+        }
+      }
+    ],
+    "latest_reactions": [],
+    "own_reactions": [],
+    "reaction_counts": {},
+    "reaction_scores": {},
+    "reply_count": 0,
+    "cid": "messaging:general",
+    "created_at": "2022-05-24T08:54:43.706201Z",
+    "updated_at": "2022-05-24T09:02:17.204065564Z",
+    "shadowed": false,
+    "mentioned_users": [],
+    "silent": false,
+    "pinned": false,
+    "pinned_at": null,
+    "pinned_by": null,
+    "pin_expires": null,
+    "command_info": {
+      "name": "Giphy"
+    },
+    "args": "/test"
+  },
+  "duration": "20.55ms"
+}

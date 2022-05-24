@@ -64,30 +64,30 @@ final class SlowMode_Tests: StreamTestCase {
         }
     }
     
-    func test_slowModeIsNotActiveAndCooldownIsNotShown_whenAMessageIsEdited() {
-        linkToScenario(withId: 189)
-
-        GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: cooldownDuration)
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("user sends a new text message") {
-            userRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
-        }
-        WHEN("user selects edit a message from context menu") {
-            userRobot.editMessage(editedMessage)
-        }
-        THEN("message is sent") {
-            userRobot.assertMessage(editedMessage)
-        }
-        AND("slow mode is not active and cooldown is not shown") {
-            userRobot.assertCooldownIsNotShown()
-        }
-    }
+//    func test_slowModeIsNotActiveAndCooldownIsNotShown_whenAMessageIsEdited() {
+//        linkToScenario(withId: 189)
+//
+//        GIVEN("user opens a channel") {
+//            backendRobot.setCooldown(enabled: true, duration: cooldownDuration)
+//            userRobot
+//                .login()
+//                .openChannel()
+//        }
+//        AND("user sends a new text message") {
+//            userRobot
+//                .sendMessage(message)
+//                .waitForNewMessage(withText: message)
+//        }
+//        WHEN("user selects edit a message from context menu") {
+//            userRobot.editMessage(editedMessage)
+//        }
+//        THEN("message is sent") {
+//            userRobot.assertMessage(editedMessage)
+//        }
+//        AND("slow mode is not active and cooldown is not shown") {
+//            userRobot.assertCooldownIsNotShown()
+//        }
+//    }
     
     func test_newMessageCantBeSent_whenSlowModeIsActiveAndCooldownIsShown() {
         linkToScenario(withId: 190)

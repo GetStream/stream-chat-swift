@@ -56,7 +56,7 @@ extension Robot {
         line: UInt = #line
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
-        XCTAssertTrue(messageCell.isHittable)
+        XCTAssertTrue(messageCell.waitForHitPoint().isHittable)
         return self
     }
 
