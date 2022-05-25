@@ -244,7 +244,8 @@ extension DatabaseContainer {
         quotedMessageId: MessageId? = nil
     ) throws {
         try writeSynchronously { session in
-            guard let channelDTO = channel ?? (try? session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))) else {
+            guard let channelDTO = channel ??
+                (try? session.saveChannel(payload: XCTestCase().dummyPayload(with: cid, numberOfMessages: 0))) else {
                 XCTFail("Failed to fetch channel when creating message")
                 return
             }

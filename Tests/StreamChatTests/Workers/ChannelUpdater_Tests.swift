@@ -55,53 +55,118 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_updateChannelQuery_successfulResponseData_areSavedToDB() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
-        var completionCalled = false
+        let expectation = self.expectation(description: "Update completes")
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
             XCTAssertNil(result.error)
-            completionCalled = true
+            expectation.fulfill()
         })
         
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = dummyPayload(with: cid)
+        let payload = dummyPayload(with: cid, numberOfMessages: 2)
         apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: 0.1)
         
-        AssertAsync.willBeTrue(completionCalled)
-        
-        // Assert the data is stored in the DB
-        var channel: ChatChannel? {
-            try? database.viewContext.channel(cid: cid)?.asModel()
-        }
-        AssertAsync {
-            Assert.willBeTrue(channel != nil)
-        }
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertNotNil(channel)
+        XCTAssertEqual(channel?.messages.count, 2)
     }
 
     func test_updateChannelQueryRecovery_successfulResponseData_areSavedToDB() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
-        var completionCalled = false
+        let expectation = self.expectation(description: "Update completes")
         channelUpdater.update(channelQuery: query, isInRecoveryMode: true, completion: { result in
             XCTAssertNil(result.error)
-            completionCalled = true
+            expectation.fulfill()
         })
 
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = dummyPayload(with: cid)
+        let payload = dummyPayload(with: cid, numberOfMessages: 2)
         apiClient.test_simulateRecoveryResponse(.success(payload))
-        
-        AssertAsync.willBeTrue(completionCalled)
+
+        waitForExpectations(timeout: 0.1)
 
         // Assert the data is stored in the DB
-        var channel: ChatChannel? {
-            try? database.viewContext.channel(cid: cid)?.asModel()
-        }
-        AssertAsync {
-            Assert.willBeTrue(channel != nil)
-        }
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertNotNil(channel)
+        XCTAssertEqual(channel?.messages.count, 2)
     }
-    
+
+    func test_updateChannelQuery_successfulResponseData_areSavedToDB_localOnlyMessagesAreKept() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+
+        try database.createCurrentUser()
+        try database.createChannel(cid: cid, withMessages: false)
+        // Local only message
+        try database.createMessage(cid: cid, localState: .sendingFailed)
+        try database.createMessage(cid: cid, localState: .deletingFailed)
+        // Not local only message
+        try database.createMessage(cid: cid, localState: .syncing)
+
+        try database.writeSynchronously { session in
+            let channel = session.channel(cid: cid)
+            XCTAssertEqual(channel?.messages.count, 3)
+        }
+
+        // Simulate `update(channelQuery:)` call
+        let query = ChannelQuery(cid: cid)
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
+            XCTAssertNil(result.error)
+            expectation.fulfill()
+        })
+
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: cid, numberOfMessages: 2)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: 0.1)
+
+        // Assert the data is stored in the DB
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertNotNil(channel)
+        XCTAssertEqual(channel?.messages.count, 4)
+    }
+
+    func test_updateChannelQueryRecovery_successfulResponseData_areSavedToDB_localOnlyMessagesAreKept() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+
+        try database.createCurrentUser()
+        try database.createChannel(cid: cid, withMessages: false)
+        // Local only message
+        try database.createMessage(cid: cid, localState: .sendingFailed)
+        try database.createMessage(cid: cid, localState: .deletingFailed)
+        // Not local only message
+        try database.createMessage(cid: cid, localState: .syncing)
+
+        try database.writeSynchronously { session in
+            let channel = session.channel(cid: cid)
+            XCTAssertEqual(channel?.messages.count, 3)
+        }
+
+        // Simulate `update(channelQuery:)` call
+        let query = ChannelQuery(cid: .unique)
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: true, completion: { result in
+            XCTAssertNil(result.error)
+            expectation.fulfill()
+        })
+
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: cid, numberOfMessages: 2)
+        apiClient.test_simulateRecoveryResponse(.success(payload))
+
+        waitForExpectations(timeout: 0.1)
+
+        // Assert the data is stored in the DB
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertNotNil(channel)
+        XCTAssertEqual(channel?.messages.count, 4)
+    }
+
     func test_updateChannelQuery_errorResponse_isPropagatedToCompletion() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)

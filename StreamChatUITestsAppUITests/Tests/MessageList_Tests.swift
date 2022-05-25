@@ -155,14 +155,11 @@ final class MessageList_Tests: StreamTestCase {
         }
         WHEN("participant sends the message: '\(message)'") {
             participantRobot
-                .startTyping()
-                .stopTyping()
                 .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         AND("participant deletes the message: '\(message)'") {
             participantRobot
-                .waitForNewMessage(withText: message)
-                .wait(3.0)
                 .deleteMessage()
         }
         THEN("the message is deleted") {
