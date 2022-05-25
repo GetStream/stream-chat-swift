@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class DemoChatChannelListRouter: ChatChannelListRouter {
+final class DemoChatChannelListRouter: ChatChannelListRouter {
     enum ChannelPresentingStyle {
         case push
         case modally
@@ -14,7 +14,8 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
     }
 
     var channelPresentingStyle: ChannelPresentingStyle = .push
-
+    var onLogout: (() -> Void)?
+    
     lazy var streamModalTransitioningDelegate = StreamModalTransitioningDelegate()
 
     func showCreateNewChannelFlow() {
@@ -29,9 +30,8 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
     
     override func showCurrentUserProfile() {
         rootViewController.presentAlert(title: nil, actions: [
-            .init(title: "Logout", style: .destructive, handler: { _ in
-                let window = self.rootViewController.view.window!
-                DemoAppCoordinator.logout(window: window)
+            .init(title: "Logout", style: .destructive, handler: { [weak self] _ in
+                self?.onLogout?()
             })
         ])
     }
@@ -298,5 +298,20 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                 self.rootViewController.presentAlert(title: "Channel \(cid) couldn't be deleted", message: "\(error)")
             }
         }
+    }
+    
+    func showHiddenChannels() {
+        let client = rootViewController.controller.client
+        
+        let vc = HiddenChannelListVC()
+        vc.router = self
+        vc.controller = client.channelListController(
+            query: .init(filter: .and([
+                .containMembers(userIds: [client.currentUserId!]),
+                .equal(.hidden, to: true)
+            ]))
+        )
+        
+        rootNavigationController?.pushViewController(vc, animated: true)
     }
 }

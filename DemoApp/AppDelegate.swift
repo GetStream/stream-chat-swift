@@ -26,18 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        guard let currentUserId = ChatClient.shared.currentUserId else {
-            log.warning("cannot add the device without connecting as user first, did you call connectUser")
-            return
-        }
-
-        ChatClient.shared.currentUserController().addDevice(.apn(token: deviceToken)) { error in
-            if let error = error {
+        ChatClient.shared.currentUserController().addDevice(.apn(token: deviceToken)) {
+            if let error = $0 {
                 log.error("adding a device failed with an error \(error)")
-                return
             }
-            UserDefaults(suiteName: applicationGroupIdentifier)?
-                .set(currentUserId, forKey: currentUserIdRegisteredForPush)
         }
     }
 

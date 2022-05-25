@@ -39,7 +39,7 @@ class UserCredentialsCell: UITableViewCell {
 
 class LoginViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
-    var didRequestChatPresentation: ((DemoUserType) -> Void)!
+    var onUserSelection: ((DemoUserType) -> Void)!
     
     let users: [DemoUserType] = UserCredentials.builtInUsers.map { DemoUserType.credentials($0) } + [.guest("guest"), .anonymous]
     
@@ -54,11 +54,6 @@ class LoginViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        // Disconnect the current client
-        if ChatClient.shared != nil {
-            ChatClient.shared = nil
-        }
         
         navigationController?.isNavigationBarHidden = true
         if let selectedRow = tableView.indexPathForSelectedRow {
@@ -109,13 +104,13 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
         
         switch user {
         case .credentials, .anonymous:
-            didRequestChatPresentation(user)
+            onUserSelection(user)
         case .guest:
             presentAlert(title: "Input a user id", message: nil, textFieldPlaceholder: "guest") { [weak self] userId in
                 if let userId = userId, !userId.isEmpty {
-                    self?.didRequestChatPresentation(.guest(userId))
+                    self?.onUserSelection(.guest(userId))
                 } else {
-                    self?.didRequestChatPresentation(.guest("guest"))
+                    self?.onUserSelection(.guest("guest"))
                 }
             }
         }
