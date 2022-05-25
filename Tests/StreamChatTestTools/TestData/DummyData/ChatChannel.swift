@@ -26,7 +26,10 @@ extension Array where Element == ChatChannel {
         )
         let channelWithOnlineIndicator = ChatChannel.mockDMChannel(
             lastMessageAt: .init(timeIntervalSince1970: 1_611_951_527_000),
-            lastActiveMembers: [.mock(id: .unique, name: "Darth Vader", imageURL: XCTestCase.TestImages.vader.url, isOnline: true)]
+            lastActiveMembers: [
+                .mock(id: .unique, name: "Darth Vader", imageURL: XCTestCase.TestImages.vader.url, isOnline: true),
+                .mock(id: .unique)
+            ]
         )
         let channelWithLongTextAndUnreadCount = ChatChannel.mock(
             cid: .init(type: .messaging, id: "test_channel3"),

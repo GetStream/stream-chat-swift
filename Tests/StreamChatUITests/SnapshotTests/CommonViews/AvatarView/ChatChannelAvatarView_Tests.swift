@@ -45,6 +45,22 @@ final class ChatChannelAvatarView_Tests: XCTestCase {
         view.content = (channel: channel, currentUserId: currentUserId)
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
+
+    func test_defaultAppearance_withDirectMessageChannel_whenMultipleMembers() {
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.components = .mock
+
+        channel = ChatChannel.mockDMChannel(lastActiveMembers: [
+            .mock(id: currentUserId, imageURL: TestImages.vader.url),
+            .mock(id: .unique, imageURL: TestImages.yoda.url),
+            .mock(id: .unique, imageURL: TestImages.chewbacca.url),
+            .mock(id: .unique, imageURL: TestImages.r2.url)
+        ])
+
+        view.content = (channel: channel, currentUserId: currentUserId)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
     
     func test_defaultAppearanceWithNoMembersInChannel() {
         let emptyChannel = ChatChannel.mockNonDMChannel(lastActiveMembers: [])
