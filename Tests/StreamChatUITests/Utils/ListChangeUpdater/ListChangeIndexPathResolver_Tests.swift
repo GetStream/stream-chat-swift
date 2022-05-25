@@ -7,9 +7,9 @@ import Foundation
 @testable import StreamChatUI
 import XCTest
 
-final class CollectionUpdatesMapper_Tests: XCTestCase {
+final class ListChangeIndexPathResolver_Tests: XCTestCase {
     func test_hasConflicts_returnsNil() {
-        let mapper = CollectionUpdatesMapper()
+        let mapper = ListChangeIndexPathResolver()
         
         let changes: [ListChange<Int>] = [
             .update(0, index: .init(row: 0, section: 0)),
@@ -30,7 +30,7 @@ final class CollectionUpdatesMapper_Tests: XCTestCase {
     }
     
     func test_hasNoConflicts_returnsIndices() {
-        let mapper = CollectionUpdatesMapper()
+        let mapper = ListChangeIndexPathResolver()
         
         let changes: [ListChange<Int>] = [
             .update(0, index: .init(row: 0, section: 0)),

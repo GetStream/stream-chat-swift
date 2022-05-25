@@ -5,9 +5,9 @@
 import StreamChat
 import UIKit
 
-/// The verification of conflicts is just a temporary solution
-/// until the root cause of the conflicts has been solved.
-final class CollectionUpdatesMapper {
+/// Component responsible to map ListChange's to IndexPaths.
+/// It also verifies if there is any conflict.
+final class ListChangeIndexPathResolver {
     struct IndexPathMove: Hashable, CustomStringConvertible {
         var fromIndex: IndexPath
         var toIndex: IndexPath
@@ -29,7 +29,7 @@ final class CollectionUpdatesMapper {
         update: Set<IndexPath>
     )
     
-    /// Verify if there are conflicts in changes and if there are call `onConflict`
+    /// Maps `ListChange`s to index paths and checks if there is any conflict.
     /// - Parameters:
     ///   - changes: changes
     /// - Returns: Returns the indices mapped to sets. Returns nil if there were conflicts.
