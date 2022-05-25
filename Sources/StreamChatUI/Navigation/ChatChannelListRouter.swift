@@ -8,6 +8,8 @@ import UIKit
 /// A `NavigationRouter` subclass that handles navigation actions of `ChatChannelListVC`.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, ComponentsProvider {
+    let modalTransitioningDelegate = StreamModalTransitioningDelegate()
+    
     /// Shows the view controller with the profile of the current user.
     open func showCurrentUserProfile() {
         log.error(
@@ -28,13 +30,17 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
             for: cid,
             channelListQuery: rootViewController.controller.query
         )
-
-        guard let navController = rootNavigationController else {
-            log.error("Can't push chat detail, no navigation controller available")
-            return
-        }
         
-        navController.show(vc, sender: self)
+        if let splitVC = rootViewController.splitViewController {
+            splitVC.showDetailViewController(UINavigationController(rootViewController: vc), sender: self)
+        } else if let navigationVC = rootViewController.navigationController {
+            navigationVC.show(vc, sender: self)
+        } else {
+            let navigationVC = UINavigationController(rootViewController: vc)
+            navigationVC.transitioningDelegate = modalTransitioningDelegate
+            navigationVC.modalPresentationStyle = .custom
+            rootViewController.show(navigationVC, sender: self)
+        }
     }
 
     /// Called when a user tapped `More` swipe action on a channel
