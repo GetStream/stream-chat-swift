@@ -52,12 +52,11 @@ open class ChatChannelListVC: _ViewController,
     
     /// Reuse identifier of `collectionViewCell`
     open var collectionViewCellReuseIdentifier: String { "Cell" }
-    
-    /// We use private property for channels count so we can update it inside `performBatchUpdates` as [documented](https://developer.apple.com/documentation/uikit/uicollectionview/1618045-performbatchupdates#discussion)
-    private var channelsCount = 0
 
-    /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
-    private let collectionUpdatesMapper = CollectionUpdatesMapper()
+    /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a view.
+    private lazy var listChangeUpdater: ListChangeUpdater = CollectionViewListChangeUpdater(
+        collectionView: collectionView
+    )
     
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
@@ -95,7 +94,6 @@ open class ChatChannelListVC: _ViewController,
         super.setUp()
         controller.delegate = self
         controller.synchronize()
-        channelsCount = controller.channels.count
         
         collectionView.register(
             components.channelCell.self,
@@ -161,7 +159,7 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        channelsCount
+        controller.channels.count
     }
     
     open func collectionView(
@@ -289,7 +287,6 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - ChatChannelListControllerDelegate
     
     open func controllerWillChangeChannels(_ controller: ChatChannelListController) {
-        channelsCount = controller.channels.count
         collectionView.layoutIfNeeded()
     }
     
@@ -297,26 +294,7 @@ open class ChatChannelListVC: _ViewController,
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
-        guard let indices = collectionUpdatesMapper.mapToSetsOfIndexPaths(
-            changes: changes
-        ) else {
-            channelsCount = controller.channels.count
-            collectionView.reloadData()
-            return
-        }
-
-        collectionView.performBatchUpdates(
-            {
-                collectionView.deleteItems(at: Array(indices.remove))
-                collectionView.insertItems(at: Array(indices.insert))
-                collectionView.reloadItems(at: Array(indices.update))
-                indices.move.forEach {
-                    collectionView.moveItem(at: $0.fromIndex, to: $0.toIndex)
-                }
-                
-                channelsCount = controller.channels.count
-            }
-        )
+        listChangeUpdater.performUpdate(with: changes)
     }
 
     @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")

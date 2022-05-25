@@ -9,8 +9,10 @@ import UIKit
 open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
-    /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
-    private let collectionUpdatesMapper = CollectionUpdatesMapper()
+    /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a view.
+    private lazy var listChangeUpdater: ListChangeUpdater = TableViewListChangeUpdater(
+        tableView: self
+    )
 
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -157,34 +159,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
-        let lastMessageInserted = changes.first(where: { $0.isInsertion && $0.indexPath.row == 0 })?.item
-        let scrollToBottomIfNeeded = {
+        listChangeUpdater.performUpdate(with: changes) { [weak self] _ in
+            let lastMessageInserted = changes.first(where: { $0.isInsertion && $0.indexPath.row == 0 })?.item
             if lastMessageInserted?.isSentByCurrentUser == true {
-                self.scrollToMostRecentMessage()
+                self?.scrollToMostRecentMessage()
             }
-        }
-
-        guard let indices = collectionUpdatesMapper.mapToSetsOfIndexPaths(
-            changes: changes
-        ) else {
-            reloadData()
-            scrollToBottomIfNeeded()
-            completion?()
-            return
-        }
-
-        UIView.performWithoutAnimation {
-            performBatchUpdates({
-                deleteRows(at: Array(indices.remove), with: .none)
-                insertRows(at: Array(indices.insert), with: .none)
-                reloadRows(at: Array(indices.update), with: .none)
-                indices.move.forEach {
-                    moveRow(at: $0.fromIndex, to: $0.toIndex)
-                }
-            }, completion: { _ in
-                scrollToBottomIfNeeded()
-                completion?()
-            })
         }
     }
 }
