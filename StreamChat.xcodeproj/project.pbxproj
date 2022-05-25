@@ -1122,6 +1122,12 @@
 		ADF34F9E25CDD8E600AD637C /* ConnectionController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34F9D25CDD8E600AD637C /* ConnectionController+SwiftUI.swift */; };
 		ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */; };
 		ADFA09C926A99E0A002A6EFA /* ChatThreadHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */; };
+		ADFB7E90283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */; };
+		ADFB7E91283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */; };
+		ADFB7E94283E703A00ABB6CF /* TableViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */; };
+		ADFB7E95283E703A00ABB6CF /* TableViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */; };
+		ADFB7E97283E73C600ABB6CF /* ListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E96283E73C600ABB6CF /* ListChangeUpdater.swift */; };
+		ADFB7E98283E73C600ABB6CF /* ListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E96283E73C600ABB6CF /* ListChangeUpdater.swift */; };
 		ADFCCD7525C9D4D10024505D /* AssertSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9F7B8525C821C300DF8CD2 /* AssertSnapshot.swift */; };
 		ADFCCD7625C9D4D10024505D /* SnapshotVariant.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */; };
 		BCE4831434E78C9538FA73F8 /* JSONDecoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE48068C1C02C0689BEB64E /* JSONDecoder_Tests.swift */; };
@@ -3265,6 +3271,9 @@
 		ADF34F9D25CDD8E600AD637C /* ConnectionController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+SwiftUI.swift"; sourceTree = "<group>"; };
 		ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+Combine.swift"; sourceTree = "<group>"; };
 		ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadHeaderView.swift; sourceTree = "<group>"; };
+		ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewListChangeUpdater.swift; sourceTree = "<group>"; };
+		ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewListChangeUpdater.swift; sourceTree = "<group>"; };
+		ADFB7E96283E73C600ABB6CF /* ListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListChangeUpdater.swift; sourceTree = "<group>"; };
 		BCE48068C1C02C0689BEB64E /* JSONDecoder_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONDecoder_Tests.swift; sourceTree = "<group>"; };
 		BCE483AC99F58A9034EA2ECE /* FilterEncoding_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterEncoding_Tests.swift; sourceTree = "<group>"; };
 		BCE4862E2C4943998F0DCBD9 /* FilterDecoding_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDecoding_Tests.swift; sourceTree = "<group>"; };
@@ -5140,6 +5149,7 @@
 		888123D0255D42F000070D5A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				ADFB7E92283E701C00ABB6CF /* ListChangeUpdater */,
 				22C23599259CA87B00DC805A /* Animation.swift */,
 				BDDD1EA52632C6D600BA007B /* AppearanceProvider.swift */,
 				88EF29FE2571288600B06EF1 /* Array+Extensions.swift */,
@@ -7108,6 +7118,16 @@
 			path = InputChatMessageView;
 			sourceTree = "<group>";
 		};
+		ADFB7E92283E701C00ABB6CF /* ListChangeUpdater */ = {
+			isa = PBXGroup;
+			children = (
+				ADFB7E96283E73C600ABB6CF /* ListChangeUpdater.swift */,
+				ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */,
+				ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */,
+			);
+			path = ListChangeUpdater;
+			sourceTree = "<group>";
+		};
 		BD3EA7F4264AD954003AFA09 /* AttachmentViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -8615,6 +8635,7 @@
 				84DA54DF2680C66A003A26CD /* PlayerView.swift in Sources */,
 				AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
+				ADFB7E94283E703A00ABB6CF /* TableViewListChangeUpdater.swift in Sources */,
 				88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */,
 				E7166CE225BEE20600B03B07 /* Appearance+Images.swift in Sources */,
 				88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */,
@@ -8623,6 +8644,7 @@
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				43F4750C26F4E4FF0009487D /* ChatMessageReactionItemView.swift in Sources */,
 				DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */,
+				ADFB7E97283E73C600ABB6CF /* ListChangeUpdater.swift in Sources */,
 				E79AC10B25831A1500C3CE5D /* ChatCommandSuggestionView.swift in Sources */,
 				AD4473B3263ABFA20030E583 /* ChatSuggestionsCollectionReusableView.swift in Sources */,
 				AD470C9C26C6D8C60090759A /* ChatMessageListVCDataSource.swift in Sources */,
@@ -8673,6 +8695,7 @@
 				88CABC4625933EE70061BB67 /* ChatReactionPickerBubbleView.swift in Sources */,
 				F838F6A92636D3C30025E1F5 /* ZoomTransitionController.swift in Sources */,
 				AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */,
+				ADFB7E90283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */,
 				8850B92A255C286B003AED69 /* Components.swift in Sources */,
 				AD8D1809268F7290004E3A5C /* TypingSuggester.swift in Sources */,
 				F880DEA32628528B0025AD64 /* GalleryVC.swift in Sources */,
@@ -10077,6 +10100,7 @@
 				C121EB8D2746A1E700023E4C /* ChatSuggestionsHeaderView.swift in Sources */,
 				C121EB8E2746A1E700023E4C /* ChatSuggestionsCollectionView.swift in Sources */,
 				C121EB8F2746A1E700023E4C /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
+				ADFB7E95283E703A00ABB6CF /* TableViewListChangeUpdater.swift in Sources */,
 				C121EB902746A1E700023E4C /* ChatSuggestionsCollectionReusableView.swift in Sources */,
 				C121EB912746A1E800023E4C /* ChatMentionSuggestionView.swift in Sources */,
 				C121EB922746A1E800023E4C /* ChatMentionSuggestionCollectionViewCell.swift in Sources */,
@@ -10133,6 +10157,7 @@
 				C121EBC52746A1E900023E4C /* ChatChannelListCollectionViewCell.swift in Sources */,
 				C121EBC62746A1E900023E4C /* ChatChannelListItemView.swift in Sources */,
 				C121EBC72746A1E900023E4C /* ChatChannelListItemView+SwiftUI.swift in Sources */,
+				ADFB7E98283E73C600ABB6CF /* ListChangeUpdater.swift in Sources */,
 				C121EBC82746A1E900023E4C /* SwipeableView.swift in Sources */,
 				C121EBC92746A1E900023E4C /* CellActionView.swift in Sources */,
 				C121EBCA2746A1E900023E4C /* ChatMessageDeliveryStatusCheckmarkView.swift in Sources */,
@@ -10160,6 +10185,7 @@
 				C121EBDC2746A1EA00023E4C /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				C121EBDD2746A1EA00023E4C /* ChatMessageReactionItemView.swift in Sources */,
 				C121EBDE2746A1EA00023E4C /* ChatReactionPickerReactionsView.swift in Sources */,
+				ADFB7E91283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */,
 				C121EBDF2746A1EA00023E4C /* ChatMessageAttachmentPreviewVC.swift in Sources */,
 				C121EBE02746A1EA00023E4C /* ChatFileAttachmentListView+ItemView.swift in Sources */,
 				C121EBE12746A1EA00023E4C /* ChatMessageFileAttachmentListView.swift in Sources */,
