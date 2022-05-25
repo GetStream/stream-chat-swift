@@ -20,7 +20,7 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 186)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 3)
+            backendRobot.setCooldown(enabled: true, duration: 10)
             userRobot
                 .login()
                 .openChannel()
