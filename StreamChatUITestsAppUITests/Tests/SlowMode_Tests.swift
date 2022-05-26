@@ -6,6 +6,7 @@ import XCTest
 
 final class SlowMode_Tests: StreamTestCase {
 
+    let cooldownDuration = 15
     let message = "message"
     let anotherNewMessage = "Another new message"
     let replyMessage = "reply message"
@@ -20,7 +21,7 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 186)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 10)
+            backendRobot.setCooldown(enabled: true, duration: cooldownDuration)
             userRobot
                 .login()
                 .openChannel()
@@ -39,13 +40,13 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 188)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 3)
+            backendRobot.setCooldown(enabled: true, duration: cooldownDuration)
             userRobot
                 .login()
                 .openChannel()
         }
         AND("user sends a new text message") {
-            userRobot
+            participantRobot
                 .sendMessage(message)
                 .waitForNewMessage(withText: message)
         }
@@ -67,7 +68,7 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 189)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 3)
+            backendRobot.setCooldown(enabled: true, duration: cooldownDuration)
             userRobot
                 .login()
                 .openChannel()
@@ -92,7 +93,7 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 190)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 15)
+            backendRobot.setCooldown(enabled: true, duration: cooldownDuration)
             userRobot
                 .login()
                 .openChannel()
@@ -117,7 +118,7 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 191)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 15)
+            backendRobot.setCooldown(enabled: true, duration: cooldownDuration)
             userRobot
                 .login()
                 .openChannel()
@@ -142,7 +143,7 @@ final class SlowMode_Tests: StreamTestCase {
         linkToScenario(withId: 192)
 
         GIVEN("user opens a channel") {
-            backendRobot.setCooldown(enabled: true, duration: 15)
+            backendRobot.setCooldown(enabled: true, duration: cooldownDuration)
             userRobot
                 .login()
                 .openChannel()
