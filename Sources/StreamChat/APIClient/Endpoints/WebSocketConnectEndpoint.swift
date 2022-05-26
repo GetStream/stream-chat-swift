@@ -13,6 +13,7 @@ extension Endpoint {
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
+            requiresToken: true,
             body: [
                 "json": WebSocketConnectPayload(userInfo: userInfo)
             ]

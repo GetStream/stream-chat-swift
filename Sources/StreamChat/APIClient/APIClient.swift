@@ -16,7 +16,7 @@ class APIClient {
     let decoder: RequestDecoder
     
     /// Used for reobtaining tokens when they expire and API client receives token expiration error
-    let tokenRefresher: (@escaping () -> Void) -> Void
+    let tokenRefresher: TokenRefresher
 
     /// Used to queue requests that happen while we are offline
     let queueOfflineRequest: QueueOfflineRequestBlock
@@ -43,9 +43,6 @@ class APIClient {
     /// requests to be run,
     @Atomic private var isInRecoveryMode: Bool = false
 
-    /// Shows whether the token is being refreshed at the moment
-    @Atomic private var isRefreshingToken: Bool = false
-    
     /// Amount of consecutive token refresh attempts
     @Atomic private var tokenRefreshConsecutiveFailures: Int = 0
 
@@ -71,7 +68,7 @@ class APIClient {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         CDNClient: CDNClient,
-        tokenRefresher: @escaping (@escaping () -> Void) -> Void,
+        tokenRefresher: TokenRefresher,
         queueOfflineRequest: @escaping QueueOfflineRequestBlock
     ) {
         encoder = requestEncoder
@@ -122,10 +119,12 @@ class APIClient {
                 switch result {
                 case .failure(_ as ClientError.RefreshingToken):
                     // Requeue request
+                    print("⚠️. APIClient queuing request for \(endpoint.path)")
                     self?.request(endpoint: endpoint, completion: completion)
                     done(.continue)
                 case .failure(_ as ClientError.TokenRefreshed):
                     // Retry request. Expired token has been refreshed
+                    print("⚠️. APIClient - token refreshed. Retrying \(endpoint.path)")
                     operation.resetRetries()
                     done(.retry)
                 case let .failure(error) where self?.isConnectionError(error) == true:
@@ -175,8 +174,8 @@ class APIClient {
             return completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
         }
 
-        guard !isRefreshingToken else {
-            completion(.failure(ClientError.RefreshingToken()))
+        guard !tokenRefresher.isRefreshingToken else {
+            handleExpiredToken(completion: completion)
             return
         }
 
@@ -214,20 +213,10 @@ class APIClient {
                     self.tokenRefreshConsecutiveFailures = 0
                     completion(.success(decodedResponse))
                 } catch {
-                    if error is ClientError.ExpiredToken == false {
+                    if error is ClientError.ExpiredToken {
+                        self.handleExpiredToken(completion: completion)
+                    } else {
                         completion(.failure(error))
-                        return
-                    }
-
-                    /// If the error is ExpiredToken, we need to refresh it. There are 2 possibilities here:
-                    /// 1. The token is not being refreshed, so we start the refresh, and we wait until it is completed. Then the request will be retried.
-                    /// 2. The token is already being refreshed, so we just put back the request to the queue (Cannot happen when running the queue in serial)
-                    ///
-                    /// This is done leveraging 2 error types. When ClientError.RefreshingToken is returned, we put back the request on the queue.
-                    /// But when ClientError.TokenRefreshed is returned, just retry the execution.
-                    /// This is done because we want to make sure that when the queue is running serial, there order is kept.
-                    self.refreshToken { refreshResult in
-                        completion(.failure(refreshResult))
                     }
                 }
             }
@@ -235,12 +224,24 @@ class APIClient {
         }
     }
 
+    private func handleExpiredToken<Response: Decodable>(completion: @escaping (Result<Response, Error>) -> Void) {
+        /// If the error is ExpiredToken, we need to refresh it. There are 2 possibilities here:
+        /// 1. The token is not being refreshed, so we start the refresh, and we wait until it is completed. Then the request will be retried.
+        /// 2. The token is already being refreshed, so we just put back the request to the queue (Cannot happen when running the queue in serial)
+        ///
+        /// This is done leveraging 2 error types. When ClientError.RefreshingToken is returned, we put back the request on the queue.
+        /// But when ClientError.TokenRefreshed is returned, just retry the execution.
+        /// This is done because we want to make sure that when the queue is running serial, there order is kept.
+        refreshToken { refreshResult in
+            completion(.failure(refreshResult))
+        }
+    }
+
     private func refreshToken(completion: @escaping (ClientError) -> Void) {
-        guard !isRefreshingToken else {
+        guard !operationQueue.isSuspended || !tokenRefresher.isRefreshingToken else {
             completion(ClientError.RefreshingToken())
             return
         }
-        isRefreshingToken = true
 
         // We stop the queue so no more operations are triggered during the refresh
         operationQueue.isSuspended = true
@@ -248,11 +249,15 @@ class APIClient {
         // Increase the amount of consecutive failures
         _tokenRefreshConsecutiveFailures.mutate { $0 += 1 }
 
-        tokenRefresher { [weak self] in
-            self?.isRefreshingToken = false
+        print("⚠️. APIClient asking for a new token")
+        tokenRefresher.refreshToken { [weak self] result in
             // We restart the queue now that token refresh is completed
             self?.operationQueue.isSuspended = false
-            completion(ClientError.TokenRefreshed())
+            if case .failure = result {
+                completion(ClientError.FailedRefreshingToken())
+            } else {
+                completion(ClientError.TokenRefreshed())
+            }
         }
     }
 

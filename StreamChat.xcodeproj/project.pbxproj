@@ -1651,6 +1651,8 @@
 		C1B49B3E2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */; };
 		C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
 		C1B49B412822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
+		C1B77239283F7AAA0063AEDE /* TokenRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B77238283F7AAA0063AEDE /* TokenRefresher.swift */; };
+		C1B7723A283F7AAA0063AEDE /* TokenRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B77238283F7AAA0063AEDE /* TokenRefresher.swift */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1E8AD57278C8A6E0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
 		C1E8AD58278C8A6F0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
@@ -3348,6 +3350,7 @@
 		C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository.swift; sourceTree = "<group>"; };
 		C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamRuntimeCheck.swift; sourceTree = "<group>"; };
 		C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Validation.swift"; sourceTree = "<group>"; };
+		C1B77238283F7AAA0063AEDE /* TokenRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenRefresher.swift; sourceTree = "<group>"; };
 		C1BE72762732CB7B006EB51E /* ImageViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewExtensions.swift; sourceTree = "<group>"; };
 		C1BE72772732CB7B006EB51E /* FetchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchImage.swift; sourceTree = "<group>"; };
 		C1BE72792732CB7B006EB51E /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
@@ -4156,6 +4159,7 @@
 				799C9428247D2FB9001F1104 /* ChatClientConfig.swift */,
 				79FC85E624ACCBC500A665ED /* Token.swift */,
 				8862922825AC720F00D9AE78 /* TokenProvider.swift */,
+				C1B77238283F7AAA0063AEDE /* TokenRefresher.swift */,
 				C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */,
 			);
 			path = Config;
@@ -9329,6 +9333,7 @@
 				797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */,
 				F6FF1DA624FD17B400151735 /* MessageController.swift in Sources */,
 				E7AD954F25D536AA00076DC3 /* SystemEnvironment+Version.swift in Sources */,
+				C1B77239283F7AAA0063AEDE /* TokenRefresher.swift in Sources */,
 				797E10A824EAF6DE00353791 /* UniqueId.swift in Sources */,
 				DA4EE5B8252B69E300CB26D4 /* UserListController+Combine.swift in Sources */,
 				F6ED5F7425023EB4005D7327 /* ConnectionRecoveryHandler.swift in Sources */,
@@ -9883,6 +9888,7 @@
 				C121E857274544AE00023E4C /* Worker.swift in Sources */,
 				C121E858274544AE00023E4C /* CurrentUserUpdater.swift in Sources */,
 				C121E859274544AE00023E4C /* ChannelListUpdater.swift in Sources */,
+				C1B7723A283F7AAA0063AEDE /* TokenRefresher.swift in Sources */,
 				C121E85A274544AE00023E4C /* ChannelUpdater.swift in Sources */,
 				C121E85B274544AE00023E4C /* EventNotificationCenter.swift in Sources */,
 				C121E85C274544AE00023E4C /* TypingEventsSender.swift in Sources */,

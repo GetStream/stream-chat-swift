@@ -90,6 +90,13 @@ public class ChatClient {
             apiClient
         )
     }()
+
+    private lazy var tokenRefresher = TokenRefresher(
+        clientUpdater: clientUpdater,
+        timerType: environment.timerType,
+        tokenExpirationRetryStrategy: environment.tokenExpirationRetryStrategy,
+        tokenRefreshBlock: tokenProvider
+    )
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
@@ -107,15 +114,7 @@ public class ChatClient {
                 decoder: decoder,
                 sessionConfiguration: urlSessionConfiguration
             ),
-            { [weak self] completion in
-                guard let self = self else {
-                    completion()
-                    return
-                }
-                self.refreshToken(
-                    completion: { _ in completion() }
-                )
-            },
+            tokenRefresher,
             { [weak self] endpoint in
                 self?.syncRepository.queueOfflineRequest(endpoint: endpoint)
             }
@@ -195,13 +194,7 @@ public class ChatClient {
     
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
-    
-    /// Retry timing strategy for refreshing an expiried token
-    private lazy var tokenExpirationRetryStrategy = environment.tokenExpirationRetryStrategy
-    
-    /// A timer that runs token refreshing job
-    private var tokenRetryTimer: TimerControl?
-    
+
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
     private var urlSessionConfiguration: URLSessionConfiguration {
@@ -229,7 +222,11 @@ public class ChatClient {
     @Atomic var currentToken: Token?
 
     /// In case of token expiration this property is used to obtain a new token
-    public var tokenProvider: TokenProvider?
+    public var tokenProvider: TokenProvider? {
+        didSet {
+            tokenRefresher.tokenRefreshBlock = tokenProvider
+        }
+    }
 
     /// Sets the user token to the client, this method is only needed to perform API calls
     /// without connecting as a user.
@@ -428,7 +425,7 @@ extension ChatClient {
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
             _ CDNClient: CDNClient,
-            _ tokenRefresher: @escaping (@escaping () -> Void) -> Void,
+            _ tokenRefresher: TokenRefresher,
             _ queueOfflineRequest: @escaping QueueOfflineRequestBlock
         ) -> APIClient = {
             APIClient(
@@ -640,8 +637,9 @@ extension ChatClient: ConnectionStateDelegate {
         case let .disconnected(source):
             if let error = source.serverError,
                error.isInvalidTokenError {
-                refreshToken(completion: nil)
-                shouldNotifyConnectionIdWaiters = false
+                print("⚠️. ChatClient - Websocket: asking for a new token")
+                tokenRefresher.refreshToken(completion: nil)
+                shouldNotifyConnectionIdWaiters = true
             } else {
                 shouldNotifyConnectionIdWaiters = true
             }
@@ -658,37 +656,6 @@ extension ChatClient: ConnectionStateDelegate {
             connectionId: connectionId,
             shouldNotifyWaiters: shouldNotifyConnectionIdWaiters
         )
-    }
-    
-    private func refreshToken(
-        completion: ((Error?) -> Void)?
-    ) {
-        guard let tokenProvider = tokenProvider else {
-            return log.assertionFailure(
-                "In case if token expiration is enabled on backend you need to provide a way to reobtain it via `tokenProvider` on ChatClient"
-            )
-        }
-        
-        let reconnectionDelay = tokenExpirationRetryStrategy.getDelayAfterTheFailure()
-        
-        tokenRetryTimer = environment
-            .timerType
-            .schedule(
-                timeInterval: reconnectionDelay,
-                queue: .main
-            ) { [clientUpdater] in
-                clientUpdater.reloadUserIfNeeded(
-                    userConnectionProvider: .closure { _, completion in
-                        tokenProvider { result in
-                            if case .success = result {
-                                self.tokenExpirationRetryStrategy.resetConsecutiveFailures()
-                            }
-                            completion(result)
-                        }
-                    },
-                    completion: completion
-                )
-            }
     }
     
     /// Update connectionId and notify waiters if needed

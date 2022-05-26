@@ -42,7 +42,7 @@ public extension UserCredentials {
             "luke_skywalker",
             "Luke Skywalker",
             "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIifQ.kFSLHRB5X62t0Zlc7nwczWUfsQMwfkpylC6jCUZ6Mc0",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIiLCJleHAiOjE2NTM0OTE2NjR9.0o-eLePnOnCdHv072wSPnt7V7nM-v173krID2BTFwTM",
             "Tatooine"
         ),
         (

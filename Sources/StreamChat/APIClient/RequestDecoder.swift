@@ -86,6 +86,7 @@ extension ClientError {
     class ExpiredToken: ClientError {}
     class RefreshingToken: ClientError {}
     class TokenRefreshed: ClientError {}
+    class FailedRefreshingToken: ClientError {}
     class ConnectionError: ClientError {}
     class TooManyTokenRefreshAttempts: ClientError {
         override var localizedDescription: String {

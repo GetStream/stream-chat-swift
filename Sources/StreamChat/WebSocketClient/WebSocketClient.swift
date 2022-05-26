@@ -73,8 +73,8 @@ class WebSocketClient {
             fatalError("Failed to create WebSocketEngine with error: \(error)")
         }
 
-        if let existedEngine = engine, existedEngine.request == request {
-            return existedEngine
+        if let existingEngine = engine, existingEngine.request == request {
+            return existingEngine
         }
 
         let engine = environment.createEngine(request, sessionConfiguration, engineQueue)
@@ -206,11 +206,10 @@ extension WebSocketClient: WebSocketEngineDelegate {
                 .data(using: .utf8)
                 .flatMap { try? JSONDecoder.default.decode(WebSocketErrorContainer.self, from: $0) }
                 .map { ClientError.WebSocket(with: $0?.error) }
-            
-            if let webSocketError = webSocketError {
-                // If there is an error from the server, the connection is about to be disconnected
-                connectionState = .disconnecting(source: .serverInitiated(error: webSocketError))
-            }
+
+            guard let webSocketError = webSocketError else { return }
+            // If there is an error from the server, the connection is about to be disconnected
+            connectionState = .disconnecting(source: .serverInitiated(error: webSocketError))
         }
     }
     
@@ -220,7 +219,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
             let serverError = engineError.map { ClientError.WebSocket(with: $0) }
             
             connectionState = .disconnected(source: .serverInitiated(error: serverError))
-        
+
         case let .disconnecting(source):
             connectionState = .disconnected(source: source)
         

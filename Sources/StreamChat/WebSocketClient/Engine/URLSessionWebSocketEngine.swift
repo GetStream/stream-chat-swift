@@ -63,6 +63,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     }
     
     func sendPing() {
+        // To check
         task?.sendPing { _ in }
     }
     
@@ -76,6 +77,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
             case let .success(message):
                 if case let .string(string) = message {
                     self.callbackQueue.async { [weak self] in
+                        print("⚠️. Websocket message \(message)")
                         self?.delegate?.webSocketDidReceiveMessage(string)
                     }
                 }
