@@ -295,4 +295,21 @@ final class ChatMessage_Tests: XCTestCase {
         
         XCTAssertEqual(message.deliveryStatus, .read)
     }
+
+    func test_isLocalOnly_returnsTheCorrectValue() {
+        let stateToLocalOnly: [LocalMessageState: Bool] = [
+            .pendingSync: true,
+            .syncing: true,
+            .syncingFailed: true,
+            .pendingSend: true,
+            .sending: true,
+            .sendingFailed: true,
+            .deleting: false,
+            .deletingFailed: false
+        ]
+
+        stateToLocalOnly.forEach { state, value in
+            XCTAssertEqual(state.isLocalOnly, value)
+        }
+    }
 }

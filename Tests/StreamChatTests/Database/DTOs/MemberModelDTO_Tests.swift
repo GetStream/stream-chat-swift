@@ -50,7 +50,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         )
         
         // Asynchronously save the payload to the db
-        database.write { session in
+        try database.writeSynchronously { session in
             try! session.saveMember(payload: payload, channelId: channelId)
         }
         

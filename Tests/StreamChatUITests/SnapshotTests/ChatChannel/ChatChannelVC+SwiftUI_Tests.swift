@@ -11,11 +11,14 @@ import XCTest
 @available(iOS 13.0, *)
 final class ChatChannelView_Tests: iOS13TestCase {
     var chatChannel: SwiftUIViewControllerRepresentable<ChatChannelVC>!
+    fileprivate var mockComposer: ComposerVC_Mock!
     var mockedChannelController: ChatChannelController_Mock!
 
     override func setUp() {
         super.setUp()
+        Components.default.messageComposerVC = ComposerVC_Mock.self
         mockedChannelController = ChatChannelController_Mock.mock()
+        
         chatChannel = ChatChannelVC.asView(mockedChannelController)
     }
 

@@ -171,7 +171,9 @@ private extension DefaultConnectionRecoveryHandler {
     func disconnectIfNeeded() {
         guard canBeDisconnected else { return }
         
-        webSocketClient.disconnect(source: .systemInitiated)
+        webSocketClient.disconnect(source: .systemInitiated) {
+            log.debug("Did disconnect automatically", subsystems: .webSocket)
+        }
     }
     
     var canBeDisconnected: Bool {

@@ -49,7 +49,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         }
       
         // Use the appropriate method to load avatar based on channel type
-        if channel.isDirectMessageChannel {
+        if channel.memberCount == 2 {
             loadDirectMessageChannelAvatar(channel: channel)
         } else {
             loadMergedAvatars(channel: channel)

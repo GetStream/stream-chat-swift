@@ -12,9 +12,11 @@ class MessageSearchQueryDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>
     
     static func load(filterHash: String, context: NSManagedObjectContext) -> MessageSearchQueryDTO? {
-        let request = NSFetchRequest<MessageSearchQueryDTO>(entityName: MessageSearchQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
-        return try? context.fetch(request).first
+        load(
+            keyPath: #keyPath(MessageSearchQueryDTO.filterHash),
+            equalTo: filterHash,
+            context: context
+        ).first
     }
 }
 
@@ -28,8 +30,11 @@ extension NSManagedObjectContext: MessageSearchDatabaseSession {
             return existingDTO
         }
         
-        let newDTO = NSEntityDescription
-            .insertNewObject(forEntityName: MessageSearchQueryDTO.entityName, into: self) as! MessageSearchQueryDTO
+        let request = MessageSearchQueryDTO.fetchRequest(
+            keyPath: #keyPath(MessageSearchQueryDTO.filterHash),
+            equalTo: query.filterHash
+        )
+        let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
         newDTO.filterHash = query.filterHash
         
         return newDTO

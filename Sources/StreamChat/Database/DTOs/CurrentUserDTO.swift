@@ -38,7 +38,7 @@ extension CurrentUserDTO {
     /// - Parameter context: The context used to fetch `CurrentUserDTO`
     fileprivate static func load(context: NSManagedObjectContext) -> CurrentUserDTO? {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
-        let result = (try? context.fetch(request)) ?? []
+        let result = load(by: request, context: context)
         
         log.assert(
             result.count <= 1,
@@ -52,11 +52,17 @@ extension CurrentUserDTO {
     ///
     /// - Parameter context: The context used to fetch/create `CurrentUserDTO`
     fileprivate static func loadOrCreate(context: NSManagedObjectContext) -> CurrentUserDTO {
-        if let existing = CurrentUserDTO.load(context: context) {
+        let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
+        let result = load(by: request, context: context)
+        log.assert(
+            result.count <= 1,
+            "The database is corrupted. There is more than 1 entity of the type `CurrentUserDTO` in the DB."
+        )
+        if let existing = result.first {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! CurrentUserDTO
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         return new
     }
 }

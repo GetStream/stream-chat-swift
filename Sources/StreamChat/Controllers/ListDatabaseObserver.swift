@@ -307,7 +307,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         newIndexPath: IndexPath?
     ) {
         guard let dto = anObject as? DTO, let item = try? itemCreator(dto) else {
-            log.warning("Skipping the update from DB because the DTO can't be converted to the model object.")
+            log.debug("Skipping the update from DB because the DTO can't be converted to the model object.")
             return
         }
         

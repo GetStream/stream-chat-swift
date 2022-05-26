@@ -9,8 +9,8 @@ class WebSocketClient {
     let eventNotificationCenter: EventNotificationCenter
     
     /// The batch of events received via the web-socket that wait to be processed.
-    private(set) lazy var eventsBatcher = environment.eventBatcherBuilder { [weak self] events in
-        self?.eventNotificationCenter.process(events)
+    private(set) lazy var eventsBatcher = environment.eventBatcherBuilder { [weak self] events, completion in
+        self?.eventNotificationCenter.process(events, completion: completion)
     }
     
     /// The current state the web socket connection.
@@ -126,12 +126,15 @@ class WebSocketClient {
     ///
     /// Calling this function has no effect, if the connection is in an inactive state.
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
-    func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
+    func disconnect(
+        source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
+        completion: @escaping () -> Void
+    ) {
         connectionState = .disconnecting(source: source)
         engineQueue.async { [weak engine, eventsBatcher] in
             engine?.disconnect()
             
-            eventsBatcher.processImmediately()
+            eventsBatcher.processImmediately(completion: completion)
         }
     }
 }
@@ -163,7 +166,9 @@ extension WebSocketClient {
             }
         }
         
-        var eventBatcherBuilder: (_ handler: @escaping ([Event]) -> Void) -> EventBatcher = {
+        var eventBatcherBuilder: (
+            _ handler: @escaping ([Event], @escaping () -> Void) -> Void
+        ) -> EventBatcher = {
             Batcher<Event>(period: 0.5, handler: $0)
         }
     }
@@ -235,7 +240,9 @@ extension WebSocketClient: WebSocketPingControllerDelegate {
     }
     
     func disconnectOnNoPongReceived() {
-        disconnect(source: .noPongReceived)
+        disconnect(source: .noPongReceived) {
+            log.debug("Websocket is disconnected because of no pong received", subsystems: .webSocket)
+        }
     }
 }
 
