@@ -39,8 +39,7 @@ You can implement `MyCustomAttachmentViewInjector` as a subclass of `FilesAttach
 
 In both cases you will implement at least these two methods: `contentViewDidLayout(options: ChatMessageLayoutOptions)` and `contentViewDidUpdateContent`. 
 
-To keep this easy to read we are going to create two classes: `MyCustomAttachmentViewInjector` and `MyCustomAttachmentView`. The latter can be a simple View class
-or you can also use StreamChatUI's [_View](../ui-components/CommonViews/_View)<!-- TODO page doesnt exist --> class which is what we recommended.
+To keep this easy to read we are going to create two classes: `MyCustomAttachmentViewInjector` and `MyCustomAttachmentView`. The latter is your custom attachment view, you can implement it programmatically or with interface builder using xibs.
 
 ```swift
 import StreamChat
@@ -55,32 +54,24 @@ class MyCustomAttachmentViewInjector: AttachmentViewInjector {
     }
 
     override func contentViewDidUpdateContent() {
-        attachmentView.content = attachments(payloadType: FileAttachmentPayload.self).first
+        attachmentView.fileAttachment = attachments(payloadType: FileAttachmentPayload.self).first
     }
 }
 
 
-class MyCustomAttachmentView: _View {
-    var content: ChatMessageFileAttachment? {
-        didSet { updateContentIfNeeded() }
+class MyCustomAttachmentView: UIView {
+    ...
+    var fileAttachment: ChatMessageFileAttachment? {
+        didSet {
+            update()
+        }
     }
 
-    override func setUpAppearance() {
-        super.setUpAppearance()
-    }
-
-    override func setUpLayout() {
-        super.setUpLayout()
-    }
-
-    override func updateContent() {
-        super.updateContent()
+    func update() {
+        // Update the UI here when the attachment changes
     }
 }
-
 ```
-
-### Register the cUstom Class to be Used for File Attachments
 
 The last step is to inform the SDK to use `MyCustomAttachmentViewInjector` for file attachments instead of the default one. This is something that you want to do as early as possible in your application life-cycle.
 
@@ -154,19 +145,25 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class WorkoutAttachmentView: _View {
-    var content: ChatMessageWorkoutAttachment? {
-        didSet { updateContentIfNeeded() }
-    }
+class WorkoutAttachmentView: UIView {
+    var workoutAttachment: ChatMessageWorkoutAttachment?
 
     let imageView = UIImageView()
     let distanceLabel = UILabel()
     let durationLabel = UILabel()
     let energyLabel = UILabel()
 
-    override func setUpAppearance() {
-        super.setUpAppearance()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
 
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupView()
+    }
+
+    func setupView() {
         distanceLabel.backgroundColor = .yellow
         distanceLabel.numberOfLines = 0
 
@@ -175,10 +172,6 @@ class WorkoutAttachmentView: _View {
 
         energyLabel.backgroundColor = .red
         energyLabel.numberOfLines = 0
-    }
-
-    override func setUpLayout() {
-        super.setUpLayout()
 
         imageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(imageView)
@@ -201,10 +194,8 @@ class WorkoutAttachmentView: _View {
         ])
     }
 
-    override func updateContent() {
-        super.updateContent()
-
-        if let attachment = content {
+    func update() {
+        if let attachment = workoutAttachment {
             Nuke.loadImage(with: attachment.imageURL, into: imageView)
             distanceLabel.text = "you walked \(attachment.workoutDistanceMeters ?? 0) meters!"
             durationLabel.text = "it took you \(attachment.workoutDurationSeconds ?? 0) seconds!"
@@ -226,15 +217,12 @@ open class WorkoutAttachmentViewInjector: AttachmentViewInjector {
     }
 
     override open func contentViewDidUpdateContent() {
-        workoutView.content = attachments(payloadType: WorkoutAttachmentPayload.self).first
+        workoutView.workoutAttachment = attachments(payloadType: WorkoutAttachmentPayload.self).first
     }
 }
 ```
 
-The `WorkoutAttachmentView` class is where all layout and content logic happens, as you can see we are using [_View](../ui-components/CommonViews/_View)<!-- TODO page doesnt exist --> and [ContainerStackView](../ui-components/CommonViews/ContainerStackView)`<!-- TODO page doesnt exist --> from StreamChatUI instead of their UIKit counterpart. 
-More information about this is available on their doc pages.
-
-In `contentViewDidLayout` we add `WorkoutAttachmentView` as a subview of `bubbleContentContainer` using `insertArrangedSubview`, more information about layout customizations is available here. The last interesting bit happens in `contentViewDidUpdateContent`, there we use the `attachments` method to retrieve all attachments for this messages with type `WorkoutAttachmentPayload` and then pick the first one. This allows us to have the type we defined earlier as the content to render in our custom view.
+The `WorkoutAttachmentView` class is where all layout and content logic happens. In `contentViewDidLayout` we add `WorkoutAttachmentView` as a subview of `bubbleContentContainer` using `insertArrangedSubview`, more information about layout customizations is available [here](../uikit/custom-components.md). The last interesting bit happens in `contentViewDidUpdateContent`, there we use the `attachments` method to retrieve all attachments for this messages with type `WorkoutAttachmentPayload` and then pick the first one. This allows us to have the type we defined earlier as the content to render in our custom view.
 
 Now that we have data and view ready we only need to configure the SDK to use `WorkoutAttachmentViewInjector` for workout attachments, this is done by changing the default `AttachmentViewCatalog` with our own.
 
