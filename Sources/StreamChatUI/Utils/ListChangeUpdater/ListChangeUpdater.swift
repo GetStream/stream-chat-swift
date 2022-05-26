@@ -6,7 +6,7 @@ import Foundation
 import StreamChat
 
 /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a view.
-public protocol ListChangeUpdater {
+protocol ListChangeUpdater {
     /// Perform the data changes in the view.
     /// - Parameters:
     ///   - changes: The provided changes reported by a list controller.
@@ -15,7 +15,7 @@ public protocol ListChangeUpdater {
 }
 
 // Helper to call performUpdate without a completion block.
-public extension ListChangeUpdater {
+extension ListChangeUpdater {
     /// Perform the data changes in the view.
     /// - Parameters:
     ///   - changes: The provided changes reported by a list controller.

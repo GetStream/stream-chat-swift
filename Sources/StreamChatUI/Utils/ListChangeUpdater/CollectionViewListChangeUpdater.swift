@@ -7,13 +7,13 @@ import StreamChat
 import UIKit
 
 /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a collection view.
-public class CollectionViewListChangeUpdater: ListChangeUpdater {
+class CollectionViewListChangeUpdater: ListChangeUpdater {
     /// Used for mapping `ListChanges` to `IndexPath` and verify possible conflicts.
     private let listChangeIndexPathResolver = ListChangeIndexPathResolver()
     /// The reference of the collection view to apply changes.
     private weak var collectionView: UICollectionView?
 
-    public init(collectionView: UICollectionView) {
+    init(collectionView: UICollectionView) {
         self.collectionView = collectionView
     }
 
@@ -21,7 +21,7 @@ public class CollectionViewListChangeUpdater: ListChangeUpdater {
     /// - Parameters:
     ///   - changes: The provided changes reported by a list controller.
     ///   - completion: A callback when the changes are fully executed.
-    public func performUpdate<Item>(with changes: [ListChange<Item>], completion: ((_ finished: Bool) -> Void)? = nil) {
+    func performUpdate<Item>(with changes: [ListChange<Item>], completion: ((_ finished: Bool) -> Void)? = nil) {
         guard let indices = listChangeIndexPathResolver.mapToSetsOfIndexPaths(
             changes: changes
         ) else {

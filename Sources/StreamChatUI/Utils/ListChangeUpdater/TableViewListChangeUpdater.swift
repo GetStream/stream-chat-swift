@@ -7,13 +7,13 @@ import StreamChat
 import UIKit
 
 /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a table view.
-public class TableViewListChangeUpdater: ListChangeUpdater {
+class TableViewListChangeUpdater: ListChangeUpdater {
     /// Used for mapping `ListChanges` to `IndexPath` and verify possible conflicts.
     private let listChangeIndexPathResolver = ListChangeIndexPathResolver()
     /// The reference of the table view to apply changes.
     private weak var tableView: UITableView?
 
-    public init(tableView: UITableView) {
+    init(tableView: UITableView) {
         self.tableView = tableView
     }
 
@@ -21,7 +21,7 @@ public class TableViewListChangeUpdater: ListChangeUpdater {
     /// - Parameters:
     ///   - changes: The provided changes reported by a list controller.
     ///   - completion: A callback when the changes are fully executed.
-    public func performUpdate<Item>(with changes: [ListChange<Item>], completion: ((_ finished: Bool) -> Void)? = nil) {
+    func performUpdate<Item>(with changes: [ListChange<Item>], completion: ((_ finished: Bool) -> Void)? = nil) {
         guard let indices = listChangeIndexPathResolver.mapToSetsOfIndexPaths(
             changes: changes
         ) else {
