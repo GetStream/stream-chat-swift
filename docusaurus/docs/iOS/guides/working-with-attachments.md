@@ -252,3 +252,57 @@ controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: 
     print("test message was added")
 }
 ```
+
+In case you need to interact with your custom attachment, there are a couple of steps required:
+1. Create a delegate for your custom attachment view which extends from `ChatMessageContentViewDelegate`.
+2. Create a custom `ChatMessageListVC` if you didn't already, and make it conform to the delegate created in step 1.
+3. Change your custom injector and add a tap gesture recognizer to your custom view. The delegate can be called by accessing `contentView.delegate` and casting it to your custom delegate.
+
+Below is the full example on how to add a interaction to the custom workout attachment:
+
+```swift
+// Step 1
+protocol WorkoutAttachmentViewDelegate: ChatMessageContentViewDelegate {
+    func didTapOnWorkoutAttachment(
+        _ attachment: ChatMessageWorkoutAttachment
+    )
+}
+
+// Step 2
+class CustomChatMessageListVC: ChatMessageListVC, WorkoutAttachmentViewDelegate {
+    func didTapOnWorkoutAttachment(_ attachment: ChatMessageWorkoutAttachment) {
+        // For example, here you can present a view controller to display the workout
+        let workoutViewController = WorkoutViewController(workout: attachment)
+        navigationController?.pushViewController(workoutViewController, animated: true)
+    }
+}
+
+// Step 3
+class WorkoutAttachmentViewInjector: AttachmentViewInjector {
+    let workoutView = WorkoutAttachmentView()
+
+    override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
+        contentView.bubbleContentContainer.insertArrangedSubview(workoutView, at: 0, respectsLayoutMargins: true)
+
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapOnWorkoutAttachment))
+        workoutView.addGestureRecognizer(tapGestureRecognizer)
+    }
+
+    override open func contentViewDidUpdateContent() {
+        workoutView.workoutAttachment = attachments(payloadType: WorkoutAttachmentPayload.self).first
+    }
+
+    @objc func handleTapOnWorkoutAttachment() {
+        guard let workoutAttachmentDelegate = contentView.delegate as? WorkoutAttachmentViewDelegate {
+            return
+        }
+
+        workoutAttachmentDelegate.didTapOnWorkoutAttachment(workoutView.content)
+    }
+}
+```
+
+Finally, don't forget to assign the custom message list if you didn't yet:
+```swift
+Components.default.messageListVC = CustomChatMessageListVC.self
+```
