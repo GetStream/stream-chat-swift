@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a collection view.
-class CollectionViewListChangeUpdater: ListChangeUpdater {
+final class CollectionViewListChangeUpdater: ListChangeUpdater {
     /// Used for mapping `ListChanges` to `IndexPath` and verify possible conflicts.
     private let listChangeIndexPathResolver = ListChangeIndexPathResolver()
     /// The reference of the collection view to apply changes.

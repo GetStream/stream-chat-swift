@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a table view.
-class TableViewListChangeUpdater: ListChangeUpdater {
+final class TableViewListChangeUpdater: ListChangeUpdater {
     /// Used for mapping `ListChanges` to `IndexPath` and verify possible conflicts.
     private let listChangeIndexPathResolver = ListChangeIndexPathResolver()
     /// The reference of the table view to apply changes.

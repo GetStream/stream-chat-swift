@@ -6,7 +6,7 @@
 @testable import StreamChatUI
 import XCTest
 
-class TableViewListChangeUpdater_Tests: XCTestCase {
+final class TableViewListChangeUpdater_Tests: XCTestCase {
     var sut: TableViewListChangeUpdater!
     var tableViewSpy: TableView_Spy!
 

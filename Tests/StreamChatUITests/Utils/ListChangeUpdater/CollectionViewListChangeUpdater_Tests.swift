@@ -6,7 +6,7 @@
 @testable import StreamChatUI
 import XCTest
 
-class CollectionViewListChangeUpdater_Tests: XCTestCase {
+final class CollectionViewListChangeUpdater_Tests: XCTestCase {
     var sut: CollectionViewListChangeUpdater!
     var collectionViewSpy: CollectionView_Spy!
 
