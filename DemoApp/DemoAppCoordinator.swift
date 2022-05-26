@@ -16,21 +16,29 @@ private var isStreamInternalConfiguration: Bool {
     ProcessInfo.processInfo.environment["STREAM_DEV"] != nil
 }
 
-final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
-    var connectionController: ChatConnectionController?
-    let navigationController: UINavigationController
-    let connectionDelegate: BannerShowingConnectionDelegate
+final class DemoAppCoordinator: NSObject {
+    let window: UIWindow
 
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-        connectionDelegate = BannerShowingConnectionDelegate(
-            showUnder: navigationController.navigationBar
-        )
+    init(window: UIWindow) {
+        self.window = window
+        
         super.init()
-
-        injectActions()
+        
+        UNUserNotificationCenter.current().delegate = self
     }
     
+    func start(cid: ChannelId? = nil) {
+        if let user = UserDefaults.shared.currentUser {
+            showChat(for: .credentials(user), cid: cid, animated: false)
+        } else {
+            showLogin(animated: false)
+        }
+    }
+}
+
+// MARK: - UNUserNotificationCenterDelegate
+
+extension DemoAppCoordinator: UNUserNotificationCenterDelegate {
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
@@ -52,25 +60,109 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
             return
         }
         
-        if let userId = UserDefaults(suiteName: applicationGroupIdentifier)?.string(forKey: currentUserIdRegisteredForPush),
-           let userCredentials = UserCredentials.builtInUsersByID(id: userId) {
-            presentChat(userType: .credentials(userCredentials), channelID: cid)
-        }
+        start(cid: cid)
     }
+}
 
-    func setupRemoteNotifications() {
-        UNUserNotificationCenter
-            .current()
-            .requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
-                if granted {
-                    DispatchQueue.main.async {
-                        UIApplication.shared.registerForRemoteNotifications()
-                    }
-                }
-            }
+// MARK: - Navigation
+
+private extension DemoAppCoordinator {
+    func showChat(for user: DemoUserType, cid: ChannelId? = nil, animated: Bool) {
+        logIn(as: user)
+        
+        let chatVC = makeChatVC(for: user, startOn: cid) { [weak self] in
+            guard let self = self else { return }
+            
+            self.logOut()
+        }
+        
+        set(rootViewController: chatVC, animated: animated)
     }
     
+    func showLogin(animated: Bool) {
+        let loginVC = makeLoginVC { [weak self] user in
+            self?.showChat(for: user, animated: true)
+        }
+        
+        set(rootViewController: loginVC, animated: animated)
+    }
+    
+    func set(rootViewController: UIViewController, animated: Bool) {
+        if animated {
+            UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft) {
+                self.window.rootViewController = rootViewController
+            }
+        } else {
+            window.rootViewController = rootViewController
+        }
+    }
+}
+
+// MARK: - Screens factory
+
+private extension DemoAppCoordinator {
+    func makeLoginVC(onUserSelection: @escaping (DemoUserType) -> Void) -> UIViewController {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let loginNVC = storyboard.instantiateInitialViewController() as! UINavigationController
+        
+        let loginVC = loginNVC.viewControllers.first as! LoginViewController
+        loginVC.onUserSelection = onUserSelection
+        
+        return loginNVC
+    }
+    
+    func makeChatVC(for user: DemoUserType, startOn cid: ChannelId?, onLogout: @escaping () -> Void) -> UIViewController {
+        let channelListQuery: ChannelListQuery
+        switch user {
+        case let .credentials(userCredentials):
+            channelListQuery = .init(filter: .containMembers(userIds: [userCredentials.id]))
+        case .anonymous, .guest:
+            channelListQuery = .init(filter: .equal(.type, to: .messaging))
+        }
+        
+        let channelController = cid.map { ChatClient.shared.channelController(for: $0) }
+        let channelVC = channelController.map { makeChannelVC(controller: $0) }
+        let channelNVC = channelVC.map { UINavigationController(rootViewController: $0) }
+        
+        let selectedChannel = channelController?.channel
+        let channelListController = ChatClient.shared.channelListController(query: channelListQuery)
+        let channelListVC = makeChannelListVC(
+            controller: channelListController,
+            selectedChannel: selectedChannel,
+            onLogout: onLogout
+        )
+        let channelListNVC = UINavigationController(rootViewController: channelListVC)
+        
+        let splitVC = UISplitViewController()
+        splitVC.preferredDisplayMode = .oneBesideSecondary
+        splitVC.viewControllers = [channelListNVC, channelNVC].compactMap { $0 }
+        return splitVC
+    }
+    
+    func makeChannelListVC(
+        controller: ChatChannelListController,
+        selectedChannel: ChatChannel?,
+        onLogout: @escaping () -> Void
+    ) -> UIViewController {
+        let channelListVC = DemoChatChannelListVC.make(with: controller)
+        channelListVC.demoRouter.onLogout = onLogout
+        channelListVC.selectedChannel = selectedChannel
+        return channelListVC
+    }
+    
+    func makeChannelVC(controller: ChatChannelController) -> UIViewController {
+        let channelVC = DemoChatChannelVC()
+        channelVC.channelController = controller
+        return channelVC
+    }
+}
+
+// MARK: - Auth
+
+private extension DemoAppCoordinator {
     func setUpChat() {
+        guard ChatClient.shared == nil else { return }
+        
         // Set the log level
         LogConfig.level = .warning
         LogConfig.formatters = [
@@ -89,12 +181,12 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         
         // Config
         Components.default.channelListRouter = DemoChatChannelListRouter.self
-        Components.default.channelVC = CustomChannelVC.self
-        Components.default.messageContentView = CustomMessageContentView.self
+        Components.default.channelVC = DemoChatChannelVC.self
+        Components.default.messageContentView = DemoChatMessageContentView.self
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
         Components.default._messageListDiffingEnabled = isStreamInternalConfiguration
-        Components.default.messageActionsVC = CustomChatMessageActionsVC.self
+        Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
 
         StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
@@ -114,137 +206,71 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
                 ? Bundle.main.localizedString(forKey: key, value: nil, table: table)
                 : localizedString
         }
-        
-        // Setup connection observer
-        connectionController = ChatClient.shared.connectionController()
-        connectionController?.delegate = connectionDelegate
     }
-
-    func presentChat(userType: DemoUserType, channelID: ChannelId? = nil) {
-        if ChatClient.shared == nil {
-            setUpChat()
-        }
-        
-        let controller: ChatChannelListController
-        
-        let connectCompletion: (Error?) -> Void = { [weak self] error in
-            if let error = error {
-                log.error("connecting the user failed \(error)")
-                if let self = self {
-                    DispatchQueue.main.async {
-                        self.navigationController.presentAlert(
-                            title: "Connecting failed",
-                            message: "Error: \(error)",
-                            okHandler: {
-                                DemoAppCoordinator.logout(window: self.navigationController.view.window!)
-                            }
-                        )
-                    }
-                }
-                return
-            }
-            self?.setupRemoteNotifications()
-        }
-        
-        switch userType {
+    
+    func connect(user: DemoUserType, completion: @escaping (Error?) -> Void) {
+        switch user {
         case let .credentials(userCredentials):
-            // Create a token
-            guard let token = try? Token(rawValue: userCredentials.token) else {
-                fatalError("There has been a problem getting the token, please check Stream API status")
-            }
-            
-            // Connect the User
             ChatClient.shared.connectUser(
                 userInfo: userCredentials.userInfo,
-                token: token,
-                completion: connectCompletion
+                token: userCredentials.token,
+                completion: completion
             )
-            
-            // Channels with the current user
-            controller = ChatClient.shared
-                .channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
-        case .anonymous:
-            ChatClient.shared.connectAnonymousUser(completion: connectCompletion)
-            controller = ChatClient.shared
-                .channelListController(query: .init(filter: .equal(.type, to: .messaging)))
         case let .guest(userId):
-            ChatClient.shared.connectGuestUser(userInfo: .init(id: userId), completion: connectCompletion)
-            controller = ChatClient.shared
-                .channelListController(query: .init(filter: .equal(.type, to: .messaging)))
+            ChatClient.shared.connectGuestUser(userInfo: .init(id: userId), completion: completion)
+        case .anonymous:
+            ChatClient.shared.connectAnonymousUser(completion: completion)
         }
-        
-        let chatList = DemoChannelListVC.make(with: controller)
-
-        navigationController.viewControllers = [chatList]
-        navigationController.isNavigationBarHidden = false
-        
-        // Init the channel VC and navigate there directly
-        if let cid = channelID {
-            let channelVC = CustomChannelVC()
-            channelVC.channelController = ChatClient.shared.channelController(for: cid)
-            navigationController.viewControllers.append(channelVC)
-        }
-
-        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
-        let window = navigationController.view.window!
-        let rootVC: UIViewController = isIpad
-            ? makeSplitViewController(channelListVC: chatList)
-            : navigationController
-
-        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: {
-            window.rootViewController = rootVC
-        })
     }
     
-    private func injectActions() {
-        if let loginViewController = navigationController.topViewController as? LoginViewController {
-            loginViewController.didRequestChatPresentation = { [weak self] in
-                self?.presentChat(userType: $0)
+    func logIn(as user: DemoUserType) {
+        UserDefaults.shared.currentUserId = user.staticUserId
+        
+        setUpChat()
+        
+        connect(user: user) { [weak self] in
+            if let error = $0 {
+                log.warning(error.localizedDescription)
+            } else {
+                self?.setupRemoteNotifications()
             }
         }
     }
-
-    private func makeSplitViewController(channelListVC: DemoChannelListVC) -> UISplitViewController {
-        let makeChannelVC: (String) -> UIViewController = { cid in
-            let channelVC = CustomChannelVC()
-            let channelController = channelListVC.controller.client.channelController(
-                for: ChannelId(type: .messaging, id: cid),
-                channelListQuery: channelListVC.controller.query
-            )
-            channelVC.channelController = channelController
-            return UINavigationController(rootViewController: channelVC)
+    
+    func logOut() {
+        let currentUserController = ChatClient.shared.currentUserController()
+        if let deviceId = currentUserController.currentUser?.currentDevice?.id {
+            currentUserController.removeDevice(id: deviceId) { error in
+                if let error = error {
+                    log.warning("removing the device failed with an error \(error)")
+                }
+            }
         }
-
-        let splitController = UISplitViewController()
-        splitController.viewControllers = [channelListVC, UIViewController()]
-        splitController.preferredDisplayMode = .oneBesideSecondary
-
-        channelListVC.didSelectChannel = { channel in
-            splitController.viewControllers[1] = makeChannelVC(channel.cid.id)
-        }
-
-        return splitController
+        
+        ChatClient.shared.disconnect()
+        ChatClient.shared = nil
+        
+        UserDefaults.shared.currentUserId = nil
+        
+        showLogin(animated: true)
     }
     
-    static func logout(window: UIWindow) {
-        ChatClient.shared.disconnect()
-        guard let navigationController = UIStoryboard(name: "Main", bundle: Bundle.main)
-            .instantiateInitialViewController() as? UINavigationController else {
-            return
-        }
-        guard let sceneDelegate = window.windowScene?.delegate as? SceneDelegate else {
-            return
-        }
-        sceneDelegate.coordinator = DemoAppCoordinator(navigationController: navigationController)
-        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft, animations: {
-            window.rootViewController = navigationController
-        })
+    func setupRemoteNotifications() {
+        UNUserNotificationCenter
+            .current()
+            .requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+                guard granted else { return }
+                
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
     }
 }
 
 // MARK: Custom Components for the Demo App
 
-class CustomChannelVC: ChatChannelVC {
+final class DemoChatChannelVC: ChatChannelVC {
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -257,14 +283,18 @@ class CustomChannelVC: ChatChannelVC {
         navigationItem.rightBarButtonItems?.append(debugButton)
     }
     
-    @objc func debugTap() {
-        if let cid = channelController.cid {
-            (navigationController?.viewControllers.first as? ChatChannelListVC)?.router.didTapMoreButton(for: cid)
-        }
+    @objc private func debugTap() {
+        guard
+            let cid = channelController.cid,
+            let mainVC = splitViewController?.viewControllers.first as? UINavigationController,
+            let channelListVC = mainVC.viewControllers.first as? DemoChatChannelListVC
+        else { return }
+        
+        channelListVC.demoRouter.didTapMoreButton(for: cid)
     }
 }
 
-class DemoChannelListVC: ChatChannelListVC, EventsControllerDelegate {
+final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     /// The `UIButton` instance used for navigating to new channel screen creation.
     lazy var createChannelButton: UIButton = {
         let button = UIButton()
@@ -278,12 +308,21 @@ class DemoChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         return button
     }()
 
-    let eventsController = ChatClient.shared.eventsController()
+    private lazy var eventsController = controller.client.eventsController()
+    private lazy var connectionController = controller.client.connectionController()
+    private lazy var connectionDelegate = BannerShowingConnectionDelegate(
+        showUnder: navigationController!.navigationBar
+    )
+    
+    var demoRouter: DemoChatChannelListRouter {
+        router as! DemoChatChannelListRouter
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         eventsController.delegate = self
+        connectionController.delegate = connectionDelegate
 
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(customView: hiddenChannelsButton),
@@ -294,52 +333,30 @@ class DemoChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     }
 
     @objc private func didTapCreateNewChannel(_ sender: Any) {
-        (router as! DemoChatChannelListRouter).showCreateNewChannelFlow()
+        demoRouter.showCreateNewChannelFlow()
     }
 
     @objc private func didTapHiddenChannelsButton(_ sender: Any) {
-        let channelListVC = HiddenChannelListVC()
-        channelListVC.controller = controller
-            .client
-            .channelListController(
-                query: .init(
-                    filter: .and(
-                        [
-                            .containMembers(userIds: [controller.client.currentUserId!]),
-                            .equal(.hidden, to: true)
-                        ]
-                    )
-                )
-            )
-        navigationController?.pushViewController(channelListVC, animated: true)
+        demoRouter.showHiddenChannels()
     }
-
-    var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
-
-    var didSelectChannel: ((ChatChannel) -> Void)?
-    var selectedChannel: ChatChannel? {
-        didSet {
-            if selectedChannel != oldValue, let channel = selectedChannel {
-                didSelectChannel?(channel)
-            }
-        }
-    }
+    
+    var highlightSelectedChannel: Bool { splitViewController?.isCollapsed == false }
+    var selectedChannel: ChatChannel?
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if isPad {
-            let channel = controller.channels[indexPath.row]
-            selectedChannel = channel
-            return
-        }
-
-        super.collectionView(collectionView, didSelectItemAt: indexPath)
+        let channel = controller.channels[indexPath.row]
+        selectedChannel = controller.channels[indexPath.row]
+        router.showChannel(for: channel.cid)
     }
 
     override func controller(_ controller: DataController, didChangeState state: DataController.State) {
         super.controller(controller, didChangeState: state)
 
-        if isPad && (state == .remoteDataFetched || state == .localDataFetched) {
+        if highlightSelectedChannel && (state == .remoteDataFetched || state == .localDataFetched) && selectedChannel == nil {
             guard let channel = self.controller.channels.first else { return }
+            
+            router.showChannel(for: channel.cid)
+            
             selectedChannel = channel
         }
     }
@@ -347,7 +364,7 @@ class DemoChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     override func controller(_ controller: ChatChannelListController, didChangeChannels changes: [ListChange<ChatChannel>]) {
         super.controller(controller, didChangeChannels: changes)
 
-        guard isPad else { return }
+        guard highlightSelectedChannel else { return }
         guard let selectedChannel = selectedChannel else { return }
         guard let selectedChannelRow = controller.channels.firstIndex(of: selectedChannel) else {
             return
@@ -371,7 +388,7 @@ class DemoChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     }
 }
 
-class HiddenChannelListVC: ChatChannelListVC {
+final class HiddenChannelListVC: ChatChannelListVC {
     override func setUpAppearance() {
         super.setUpAppearance()
 
@@ -380,8 +397,8 @@ class HiddenChannelListVC: ChatChannelListVC {
     }
 }
 
-class CustomMessageContentView: ChatMessageContentView {
-    override open func updateContent() {
+final class DemoChatMessageContentView: ChatMessageContentView {
+    override func updateContent() {
         super.updateContent()
 
         if content?.isShadowed == true {
@@ -408,7 +425,7 @@ class CustomMessageContentView: ChatMessageContentView {
     }
 }
 
-class CustomChatMessageActionsVC: ChatMessageActionsVC {
+final class DemoChatMessageActionsVC: ChatMessageActionsVC {
     // For the propose of the demo app, we add an extra hard delete message to test it.
     override var messageActions: [ChatMessageActionItem] {
         var actions = super.messageActions
@@ -419,7 +436,7 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
         return actions
     }
 
-    open func hardDeleteActionItem() -> ChatMessageActionItem {
+    func hardDeleteActionItem() -> ChatMessageActionItem {
         HardDeleteActionItem(
             action: { [weak self] _ in
                 guard let self = self else { return }
@@ -435,7 +452,7 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
         )
     }
     
-    open func translateActionItem() -> ChatMessageActionItem {
+    func translateActionItem() -> ChatMessageActionItem {
         TranslateActionitem(
             action: { [weak self] _ in
                 guard let self = self else { return }
@@ -448,13 +465,13 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
         )
     }
 
-    public struct HardDeleteActionItem: ChatMessageActionItem {
-        public var title: String { "Hard Delete Message" }
-        public var isDestructive: Bool { true }
-        public let icon: UIImage
-        public let action: (ChatMessageActionItem) -> Void
+    struct HardDeleteActionItem: ChatMessageActionItem {
+        var title: String { "Hard Delete Message" }
+        var isDestructive: Bool { true }
+        let icon: UIImage
+        let action: (ChatMessageActionItem) -> Void
 
-        public init(
+        init(
             action: @escaping (ChatMessageActionItem) -> Void,
             appearance: Appearance = .default
         ) {
@@ -463,13 +480,13 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
         }
     }
     
-    public struct TranslateActionitem: ChatMessageActionItem {
-        public var title: String { "Translate to Turkish" }
-        public var isDestructive: Bool { false }
-        public let icon: UIImage
-        public let action: (ChatMessageActionItem) -> Void
+    struct TranslateActionitem: ChatMessageActionItem {
+        var title: String { "Translate to Turkish" }
+        var isDestructive: Bool { false }
+        let icon: UIImage
+        let action: (ChatMessageActionItem) -> Void
         
-        public init(
+        init(
             action: @escaping (ChatMessageActionItem) -> Void,
             appearance: Appearance = .default
         ) {
@@ -489,5 +506,13 @@ extension MessageReactionType {
         case "wow": return 4
         default: return 5
         }
+    }
+}
+
+private extension DemoUserType {
+    var staticUserId: UserId? {
+        guard case let .credentials(user) = self else { return nil }
+        
+        return user.id
     }
 }

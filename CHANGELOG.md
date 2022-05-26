@@ -2,16 +2,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
-## StreamChatUI
-### ✅ Added
-- Add Support for Slow Mode [#1953](https://github.com/GetStream/stream-chat-swift/pull/1953)
-### 🐞 Fixed
-- Fix DM Channel with multiple members displaying only 1 user avatar [#2019](https://github.com/GetStream/stream-chat-swift/pull/2019)
-
 ## StreamChat
 ### 🐞 Fixed
 - Saving payloads to local database is now 50% faster. Initial launch and displaying channel list should be noticeably faster [#1973](https://github.com/GetStream/stream-chat-swift/issues/1973)
 - Fix not waiting for last batch of events to be processed when connecting as another user [#2016](https://github.com/GetStream/stream-chat-swift/issues/2016)
+
+## StreamChatUI
+### ✅ Added
+- Add Support for Slow Mode [#1953](https://github.com/GetStream/stream-chat-swift/pull/1953)
+- Present channel screen modally when channel list in not embedded by navigation controller [#2011](https://github.com/GetStream/stream-chat-swift/pull/2011)
+- Show channel screen as right detail when channel list is embedded by split view controller [#2011](https://github.com/GetStream/stream-chat-swift/pull/2011)
+### 🐞 Fixed
+- Fix DM Channel with multiple members displaying only 1 user avatar [#2019](https://github.com/GetStream/stream-chat-swift/pull/2019)
 
 # [4.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.15.0)
 _May 11, 2022_
