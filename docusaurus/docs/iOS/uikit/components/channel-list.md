@@ -28,6 +28,7 @@ When the `ChatChannelListVC` instance is created, there are multiple ways of sho
 1. modally
 1. inside existed `UINavigationController`
 1. as a tab inside `UITabBarController`
+1. inside `UISplitViewController`
 1. as a child controller
 
 To present the channel list modally:
@@ -48,6 +49,18 @@ let navigationVC = UINavigationController(rootViewController: channelListVC)
 
 let tabBatVC = UITabBarController()
 tabBatVC.viewControllers = [..., navigationVC]
+```
+
+To show the channel list as a main screen in split view controller and the selected channel as a detail:
+```swift
+let channelListNVC = UINavigationController(rootViewController: channelListVC)
+
+let splitVC = UISplitViewController()
+splitVC.preferredDisplayMode = .oneBesideSecondary
+splitVC.viewControllers = [
+    channelListNVC, 
+    /*optionally provide a controller shown as a detail till user opens a channel*/
+]
 ```
 
 To show the channel list as a child:
