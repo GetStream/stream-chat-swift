@@ -50,10 +50,14 @@ class MyCustomAttachmentViewInjector: AttachmentViewInjector {
     let attachmentView = MyCustomAttachmentView()
 
     override func contentViewDidLayout(options: ChatMessageLayoutOptions) {
+        super.contentViewDidLayout(options: options)
+
         contentView.bubbleContentContainer.insertArrangedSubview(attachmentView, at: 0, respectsLayoutMargins: true)
     }
 
     override func contentViewDidUpdateContent() {
+        super.contentViewDidUpdateContent()
+
         attachmentView.fileAttachment = attachments(payloadType: FileAttachmentPayload.self).first
     }
 }
@@ -217,10 +221,14 @@ open class WorkoutAttachmentViewInjector: AttachmentViewInjector {
     let workoutView = WorkoutAttachmentView()
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
+        super.contentViewDidLayout(options: options)
+
         contentView.bubbleContentContainer.insertArrangedSubview(workoutView, at: 0, respectsLayoutMargins: true)
     }
 
     override open func contentViewDidUpdateContent() {
+        super.contentViewDidUpdateContent()
+
         workoutView.workoutAttachment = attachments(payloadType: WorkoutAttachmentPayload.self).first
     }
 }
@@ -286,6 +294,8 @@ class WorkoutAttachmentViewInjector: AttachmentViewInjector {
     let workoutView = WorkoutAttachmentView()
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
+        super.contentViewDidLayout(options: options)
+
         contentView.bubbleContentContainer.insertArrangedSubview(workoutView, at: 0, respectsLayoutMargins: true)
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapOnWorkoutAttachment))
@@ -293,6 +303,8 @@ class WorkoutAttachmentViewInjector: AttachmentViewInjector {
     }
 
     override open func contentViewDidUpdateContent() {
+        super.contentViewDidUpdateContent()
+        
         workoutView.workoutAttachment = attachments(payloadType: WorkoutAttachmentPayload.self).first
     }
 
