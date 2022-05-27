@@ -146,7 +146,11 @@ import StreamChatUI
 import UIKit
 
 class WorkoutAttachmentView: UIView {
-    var workoutAttachment: ChatMessageWorkoutAttachment?
+    var workoutAttachment: ChatMessageWorkoutAttachment? {
+        didSet {
+            update()
+        }
+    }
 
     let imageView = UIImageView()
     let distanceLabel = UILabel()
