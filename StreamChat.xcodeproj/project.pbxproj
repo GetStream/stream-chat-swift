@@ -1805,6 +1805,7 @@
 		DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */; };
 		DBF17AE825D48865004517B3 /* BackgroundTaskScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF17AE725D48865004517B3 /* BackgroundTaskScheduler.swift */; };
 		E334B386282468F2002E9640 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = E334B385282468F2002E9640 /* Sentry */; };
+		E3B987EB2840D7EE00C2E101 /* MemberRole.json in Resources */ = {isa = PBXBuildFile; fileRef = E3B987EA2840D7EE00C2E101 /* MemberRole.json */; };
 		E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70120152583EBC90036DACD /* CALayer+Extensions.swift */; };
 		E7073A6325DD67B3003896B9 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7073A6225DD67B3003896B9 /* UILabel+Extensions.swift */; };
 		E7166CB225BED22B00B03B07 /* Appearance+ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7166CB125BED22B00B03B07 /* Appearance+ColorPalette.swift */; };
@@ -3472,6 +3473,7 @@
 		DBCAFE2325C44B920015AD58 /* LazyCachedMapCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyCachedMapCollection.swift; sourceTree = "<group>"; };
 		DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlyLinkTappableTextView.swift; sourceTree = "<group>"; };
 		DBF17AE725D48865004517B3 /* BackgroundTaskScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTaskScheduler.swift; sourceTree = "<group>"; };
+		E3B987EA2840D7EE00C2E101 /* MemberRole.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MemberRole.json; sourceTree = "<group>"; };
 		E70120152583EBC90036DACD /* CALayer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Extensions.swift"; sourceTree = "<group>"; };
 		E7073A6225DD67B3003896B9 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		E70A09E925F230EE00C55BBE /* CustomUIViewSubclasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUIViewSubclasses.swift; sourceTree = "<group>"; };
@@ -4267,6 +4269,7 @@
 				790A4C50252E0957001F4A23 /* Devices.json */,
 				88381E76258259C70047A6A3 /* FileUploadPayload.json */,
 				798779F62498E47700015F8B /* Member.json */,
+				E3B987EA2840D7EE00C2E101 /* MemberRole.json */,
 				224116B1258BACF90034184D /* Message.json */,
 				430156DD26B188A70006E7EA /* MessagePayload.json */,
 				430156DF26B1891E0006E7EA /* MessagePayloadWithCustom.json */,
@@ -8341,6 +8344,7 @@
 				A311B41D27E8B9BE00CFCF6D /* FlagMessagePayload+DefaultExtraData.json in Resources */,
 				A311B3DB27E8B98C00CFCF6D /* FileUploadPayload.json in Resources */,
 				A311B3FF27E8B9A800CFCF6D /* MessageRead.json in Resources */,
+				E3B987EB2840D7EE00C2E101 /* MemberRole.json in Resources */,
 				A311B40427E8B9AD00CFCF6D /* NotificationInviteRejected.json in Resources */,
 				A311B3F127E8B99800CFCF6D /* ChannelUpdated_ServerSide.json in Resources */,
 				A311B3DE27E8B98C00CFCF6D /* ChannelMembersQuery.json in Resources */,
