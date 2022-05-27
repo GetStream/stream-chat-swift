@@ -1643,6 +1643,8 @@
 		C186BFAF27AADB410099CCA6 /* SyncOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFAE27AADB410099CCA6 /* SyncOperations.swift */; };
 		C186BFB027AADB410099CCA6 /* SyncOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFAE27AADB410099CCA6 /* SyncOperations.swift */; };
 		C186BFB627AAFDAB0099CCA6 /* SyncOperations_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */; };
+		C18F5B522840BD2C00527915 /* DBDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18F5B512840BD2C00527915 /* DBDate.swift */; };
+		C18F5B532840BD2C00527915 /* DBDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18F5B512840BD2C00527915 /* DBDate.swift */; };
 		C19B9C3227D0FB0800D308C0 /* EndpointPath_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */; };
 		C1B0B38327BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */; };
 		C1B0B38427BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */; };
@@ -3362,6 +3364,7 @@
 		C186BFAE27AADB410099CCA6 /* SyncOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperations.swift; sourceTree = "<group>"; };
 		C186BFB127AAF7E00099CCA6 /* ChatChannelController_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelController_Spy.swift; sourceTree = "<group>"; };
 		C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperations_Tests.swift; sourceTree = "<group>"; };
+		C18F5B512840BD2C00527915 /* DBDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBDate.swift; sourceTree = "<group>"; };
 		C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointPath_Tests.swift; sourceTree = "<group>"; };
 		C1B0B38227BFC08800C8207D /* EndpointPath+OfflineRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EndpointPath+OfflineRequest.swift"; sourceTree = "<group>"; };
 		C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository.swift; sourceTree = "<group>"; };
@@ -4043,6 +4046,7 @@
 				796FD215250654940076C99B /* ChannelReadDTO.swift */,
 				C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */,
 				79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */,
+				C18F5B512840BD2C00527915 /* DBDate.swift */,
 				790A4C54252F25DA001F4A23 /* DeviceDTO.swift */,
 				7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */,
 				79877A212498E50D00015F8B /* MemberModelDTO.swift */,
@@ -9439,6 +9443,7 @@
 				C1FC2F9B2742579D0062530F /* FrameCollector.swift in Sources */,
 				8A0C3BBC24C0947400CAFD19 /* UserEvents.swift in Sources */,
 				DA4EE5B2252B67F500CB26D4 /* UserListController+SwiftUI.swift in Sources */,
+				C18F5B522840BD2C00527915 /* DBDate.swift in Sources */,
 				A30C3F20276B428F00DA5968 /* UnknownUserEvent.swift in Sources */,
 				79280F7A248918FD00CDEB89 /* StarscreamWebSocketEngine.swift in Sources */,
 				7963BD6926B0208900281F8C /* ChatMessageAudioAttachment.swift in Sources */,
@@ -10073,6 +10078,7 @@
 				C121E880274544AF00023E4C /* AttachmentId.swift in Sources */,
 				C121E881274544AF00023E4C /* AttachmentTypes.swift in Sources */,
 				C121E882274544AF00023E4C /* ChatMessageLinkAttachment.swift in Sources */,
+				C18F5B532840BD2C00527915 /* DBDate.swift in Sources */,
 				C121E883274544AF00023E4C /* ChatMessageGiphyAttachment.swift in Sources */,
 				CFE616BC28348AC800AE2ABF /* StreamTimer.swift in Sources */,
 				C121E884274544AF00023E4C /* ChatMessageFileAttachment.swift in Sources */,

@@ -29,12 +29,12 @@ public enum ChannelMemberListSortingKey: String, SortingKey {
 
 extension ChannelMemberListSortingKey {
     static let defaultSortDescriptor: NSSortDescriptor = {
-        let dateKeyPath: KeyPath<MemberDTO, Date> = \MemberDTO.memberCreatedAt
+        let dateKeyPath: KeyPath<MemberDTO, DBDate> = \MemberDTO.memberCreatedAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
     
     static let lastActiveSortDescriptor: NSSortDescriptor = {
-        let dateKeyPath: KeyPath<MemberDTO, Date?> = \MemberDTO.user.lastActivityAt
+        let dateKeyPath: KeyPath<MemberDTO, DBDate?> = \MemberDTO.user.lastActivityAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
     

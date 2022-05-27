@@ -15,7 +15,7 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
                 }
                 
                 memberDTO.isBanned = true
-                memberDTO.banExpiresAt = userBannedEvent.expiredAt
+                memberDTO.banExpiresAt = userBannedEvent.expiredAt?.bridgeDate
                 
             case let userUnbannedEvent as UserUnbannedEventDTO:
                 guard let memberDTO = session.member(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid) else {

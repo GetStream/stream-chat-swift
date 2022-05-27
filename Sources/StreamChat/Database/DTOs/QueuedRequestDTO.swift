@@ -7,7 +7,7 @@ import CoreData
 @objc(QueuedRequestDTO)
 class QueuedRequestDTO: NSManagedObject {
     @NSManaged private(set) var id: String
-    @NSManaged private(set) var date: Date
+    @NSManaged private(set) var date: DBDate
     @NSManaged private(set) var endpoint: Data
 
     @discardableResult
@@ -20,7 +20,7 @@ class QueuedRequestDTO: NSManagedObject {
         let request = fetchRequest(id: id)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
-        new.date = date
+        new.date = date.bridgeDate
         new.endpoint = endpoint
         return new
     }

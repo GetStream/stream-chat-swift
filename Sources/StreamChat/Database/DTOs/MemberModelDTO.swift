@@ -12,15 +12,15 @@ class MemberDTO: NSManagedObject {
     
     // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
     @NSManaged var channelRoleRaw: String?
-    @NSManaged var memberCreatedAt: Date
-    @NSManaged var memberUpdatedAt: Date
+    @NSManaged var memberCreatedAt: DBDate
+    @NSManaged var memberUpdatedAt: DBDate
 
-    @NSManaged var banExpiresAt: Date?
+    @NSManaged var banExpiresAt: DBDate?
     @NSManaged var isBanned: Bool
     @NSManaged var isShadowBanned: Bool
     
-    @NSManaged var inviteAcceptedAt: Date?
-    @NSManaged var inviteRejectedAt: Date?
+    @NSManaged var inviteAcceptedAt: DBDate?
+    @NSManaged var inviteRejectedAt: DBDate?
     @NSManaged var isInvited: Bool
     
     // MARK: - Relationships
@@ -106,14 +106,14 @@ extension NSManagedObjectContext {
             dto.channelRoleRaw = role.rawValue
         }
         
-        dto.memberCreatedAt = payload.createdAt
-        dto.memberUpdatedAt = payload.updatedAt
+        dto.memberCreatedAt = payload.createdAt.bridgeDate
+        dto.memberUpdatedAt = payload.updatedAt.bridgeDate
         dto.isBanned = payload.isBanned ?? false
         dto.isShadowBanned = payload.isShadowBanned ?? false
-        dto.banExpiresAt = payload.banExpiresAt
+        dto.banExpiresAt = payload.banExpiresAt?.bridgeDate
         dto.isInvited = payload.isInvited ?? false
-        dto.inviteAcceptedAt = payload.inviteAcceptedAt
-        dto.inviteRejectedAt = payload.inviteRejectedAt
+        dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
+        dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
         
         if let query = query {
             let queryDTO = try saveQuery(query)
@@ -160,19 +160,19 @@ extension ChatChannelMember {
             isBanned: dto.user.isBanned,
             isFlaggedByCurrentUser: dto.user.flaggedBy != nil,
             userRole: UserRole(rawValue: dto.user.userRoleRaw),
-            userCreatedAt: dto.user.userCreatedAt,
-            userUpdatedAt: dto.user.userUpdatedAt,
-            lastActiveAt: dto.user.lastActivityAt,
+            userCreatedAt: dto.user.userCreatedAt.bridgeDate,
+            userUpdatedAt: dto.user.userUpdatedAt.bridgeDate,
+            lastActiveAt: dto.user.lastActivityAt?.bridgeDate,
             teams: Set(dto.user.teams),
             extraData: extraData,
             memberRole: role,
-            memberCreatedAt: dto.memberCreatedAt,
-            memberUpdatedAt: dto.memberUpdatedAt,
+            memberCreatedAt: dto.memberCreatedAt.bridgeDate,
+            memberUpdatedAt: dto.memberUpdatedAt.bridgeDate,
             isInvited: dto.isInvited,
-            inviteAcceptedAt: dto.inviteAcceptedAt,
-            inviteRejectedAt: dto.inviteRejectedAt,
+            inviteAcceptedAt: dto.inviteAcceptedAt?.bridgeDate,
+            inviteRejectedAt: dto.inviteRejectedAt?.bridgeDate,
             isBannedFromChannel: dto.isBanned,
-            banExpiresAt: dto.banExpiresAt,
+            banExpiresAt: dto.banExpiresAt?.bridgeDate,
             isShadowBannedFromChannel: dto.isShadowBanned
         )
     }

@@ -36,7 +36,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
 
         case let event as NotificationMarkAllReadEventDTO:
             session.loadChannelReads(for: event.user.id).forEach { read in
-                read.lastReadAt = event.createdAt
+                read.lastReadAt = event.createdAt.bridgeDate
                 read.unreadMessageCount = 0
             }
             
@@ -150,7 +150,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return .messageIsSystem
         }
         
-        if message.createdAt <= channelRead.lastReadAt {
+        if message.createdAt <= channelRead.lastReadAt.bridgeDate {
             return .messageIsSeen
         }
         

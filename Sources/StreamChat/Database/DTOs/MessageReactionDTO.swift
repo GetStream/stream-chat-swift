@@ -13,8 +13,8 @@ final class MessageReactionDTO: NSManagedObject {
     @NSManaged fileprivate var localStateRaw: String
     @NSManaged var type: String
     @NSManaged var score: Int64
-    @NSManaged var createdAt: Date?
-    @NSManaged var updatedAt: Date?
+    @NSManaged var createdAt: DBDate?
+    @NSManaged var updatedAt: DBDate?
     @NSManaged var extraData: Data?
     
     @NSManaged var message: MessageDTO
@@ -107,8 +107,8 @@ extension NSManagedObjectContext {
         )
 
         dto.score = Int64(clamping: payload.score)
-        dto.createdAt = payload.createdAt
-        dto.updatedAt = payload.updatedAt
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.localState = nil
         dto.version = nil
@@ -150,8 +150,8 @@ extension MessageReactionDTO {
         return try .init(
             type: .init(rawValue: type),
             score: Int(score),
-            createdAt: createdAt ?? .init(),
-            updatedAt: updatedAt ?? .init(),
+            createdAt: createdAt?.bridgeDate ?? .init(),
+            updatedAt: updatedAt?.bridgeDate ?? .init(),
             author: user.asModel(),
             extraData: decodedExtraData
         )
