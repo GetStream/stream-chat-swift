@@ -39,8 +39,7 @@ You can implement `MyCustomAttachmentViewInjector` as a subclass of `FilesAttach
 
 In both cases you will implement at least these two methods: `contentViewDidLayout(options: ChatMessageLayoutOptions)` and `contentViewDidUpdateContent`. 
 
-To keep this easy to read we are going to create two classes: `MyCustomAttachmentViewInjector` and `MyCustomAttachmentView`. The latter can be a simple View class
-or you can also use StreamChatUI's [_View](../ui-components/CommonViews/_View)<!-- TODO page doesnt exist --> class which is what we recommended.
+To keep this easy to read we are going to create two classes: `MyCustomAttachmentViewInjector` and `MyCustomAttachmentView`. The latter is your custom attachment view, you can implement it programmatically or with interface builder using xibs.
 
 ```swift
 import StreamChat
@@ -51,36 +50,32 @@ class MyCustomAttachmentViewInjector: AttachmentViewInjector {
     let attachmentView = MyCustomAttachmentView()
 
     override func contentViewDidLayout(options: ChatMessageLayoutOptions) {
+        super.contentViewDidLayout(options: options)
+
         contentView.bubbleContentContainer.insertArrangedSubview(attachmentView, at: 0, respectsLayoutMargins: true)
     }
 
     override func contentViewDidUpdateContent() {
-        attachmentView.content = attachments(payloadType: FileAttachmentPayload.self).first
+        super.contentViewDidUpdateContent()
+
+        attachmentView.fileAttachment = attachments(payloadType: FileAttachmentPayload.self).first
     }
 }
 
 
-class MyCustomAttachmentView: _View {
-    var content: ChatMessageFileAttachment? {
-        didSet { updateContentIfNeeded() }
+class MyCustomAttachmentView: UIView {
+    ...
+    var fileAttachment: ChatMessageFileAttachment? {
+        didSet {
+            update()
+        }
     }
 
-    override func setUpAppearance() {
-        super.setUpAppearance()
-    }
-
-    override func setUpLayout() {
-        super.setUpLayout()
-    }
-
-    override func updateContent() {
-        super.updateContent()
+    func update() {
+        // Update the UI here when the attachment changes
     }
 }
-
 ```
-
-### Register the cUstom Class to be Used for File Attachments
 
 The last step is to inform the SDK to use `MyCustomAttachmentViewInjector` for file attachments instead of the default one. This is something that you want to do as early as possible in your application life-cycle.
 
@@ -154,9 +149,11 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class WorkoutAttachmentView: _View {
-    var content: ChatMessageWorkoutAttachment? {
-        didSet { updateContentIfNeeded() }
+class WorkoutAttachmentView: UIView {
+    var workoutAttachment: ChatMessageWorkoutAttachment? {
+        didSet {
+            update()
+        }
     }
 
     let imageView = UIImageView()
@@ -164,9 +161,17 @@ class WorkoutAttachmentView: _View {
     let durationLabel = UILabel()
     let energyLabel = UILabel()
 
-    override func setUpAppearance() {
-        super.setUpAppearance()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
 
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupView()
+    }
+
+    func setupView() {
         distanceLabel.backgroundColor = .yellow
         distanceLabel.numberOfLines = 0
 
@@ -175,10 +180,6 @@ class WorkoutAttachmentView: _View {
 
         energyLabel.backgroundColor = .red
         energyLabel.numberOfLines = 0
-    }
-
-    override func setUpLayout() {
-        super.setUpLayout()
 
         imageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(imageView)
@@ -201,10 +202,8 @@ class WorkoutAttachmentView: _View {
         ])
     }
 
-    override func updateContent() {
-        super.updateContent()
-
-        if let attachment = content {
+    func update() {
+        if let attachment = workoutAttachment {
             Nuke.loadImage(with: attachment.imageURL, into: imageView)
             distanceLabel.text = "you walked \(attachment.workoutDistanceMeters ?? 0) meters!"
             durationLabel.text = "it took you \(attachment.workoutDurationSeconds ?? 0) seconds!"
@@ -222,19 +221,20 @@ open class WorkoutAttachmentViewInjector: AttachmentViewInjector {
     let workoutView = WorkoutAttachmentView()
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
+        super.contentViewDidLayout(options: options)
+
         contentView.bubbleContentContainer.insertArrangedSubview(workoutView, at: 0, respectsLayoutMargins: true)
     }
 
     override open func contentViewDidUpdateContent() {
-        workoutView.content = attachments(payloadType: WorkoutAttachmentPayload.self).first
+        super.contentViewDidUpdateContent()
+
+        workoutView.workoutAttachment = attachments(payloadType: WorkoutAttachmentPayload.self).first
     }
 }
 ```
 
-The `WorkoutAttachmentView` class is where all layout and content logic happens, as you can see we are using [_View](../ui-components/CommonViews/_View)<!-- TODO page doesnt exist --> and [ContainerStackView](../ui-components/CommonViews/ContainerStackView)`<!-- TODO page doesnt exist --> from StreamChatUI instead of their UIKit counterpart. 
-More information about this is available on their doc pages.
-
-In `contentViewDidLayout` we add `WorkoutAttachmentView` as a subview of `bubbleContentContainer` using `insertArrangedSubview`, more information about layout customizations is available here. The last interesting bit happens in `contentViewDidUpdateContent`, there we use the `attachments` method to retrieve all attachments for this messages with type `WorkoutAttachmentPayload` and then pick the first one. This allows us to have the type we defined earlier as the content to render in our custom view.
+The `WorkoutAttachmentView` class is where all layout and content logic happens. In `contentViewDidLayout` we add `WorkoutAttachmentView` as a subview of `bubbleContentContainer` using `insertArrangedSubview`, more information about layout customizations is available [here](../uikit/custom-components.md). The last interesting bit happens in `contentViewDidUpdateContent`, there we use the `attachments` method to retrieve all attachments for this messages with type `WorkoutAttachmentPayload` and then pick the first one. This allows us to have the type we defined earlier as the content to render in our custom view.
 
 Now that we have data and view ready we only need to configure the SDK to use `WorkoutAttachmentViewInjector` for workout attachments, this is done by changing the default `AttachmentViewCatalog` with our own.
 
@@ -263,4 +263,62 @@ let attachment = WorkoutAttachmentPayload(workoutDistanceMeters: 150, workoutDur
 controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: attachment)]) { _ in
     print("test message was added")
 }
+```
+
+In case you need to interact with your custom attachment, there are a couple of steps required:
+1. Create a delegate for your custom attachment view which extends from `ChatMessageContentViewDelegate`.
+2. Create a custom `ChatMessageListVC` if you didn't already, and make it conform to the delegate created in step 1.
+3. Change your custom injector and add a tap gesture recognizer to your custom view. The delegate can be called by accessing `contentView.delegate` and casting it to your custom delegate.
+
+Below is the full example on how to add a interaction to the custom workout attachment:
+
+```swift
+// Step 1
+protocol WorkoutAttachmentViewDelegate: ChatMessageContentViewDelegate {
+    func didTapOnWorkoutAttachment(
+        _ attachment: ChatMessageWorkoutAttachment
+    )
+}
+
+// Step 2
+class CustomChatMessageListVC: ChatMessageListVC, WorkoutAttachmentViewDelegate {
+    func didTapOnWorkoutAttachment(_ attachment: ChatMessageWorkoutAttachment) {
+        // For example, here you can present a view controller to display the workout
+        let workoutViewController = WorkoutViewController(workout: attachment)
+        navigationController?.pushViewController(workoutViewController, animated: true)
+    }
+}
+
+// Step 3
+class WorkoutAttachmentViewInjector: AttachmentViewInjector {
+    let workoutView = WorkoutAttachmentView()
+
+    override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
+        super.contentViewDidLayout(options: options)
+
+        contentView.bubbleContentContainer.insertArrangedSubview(workoutView, at: 0, respectsLayoutMargins: true)
+
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapOnWorkoutAttachment))
+        workoutView.addGestureRecognizer(tapGestureRecognizer)
+    }
+
+    override open func contentViewDidUpdateContent() {
+        super.contentViewDidUpdateContent()
+        
+        workoutView.workoutAttachment = attachments(payloadType: WorkoutAttachmentPayload.self).first
+    }
+
+    @objc func handleTapOnWorkoutAttachment() {
+        guard let workoutAttachmentDelegate = contentView.delegate as? WorkoutAttachmentViewDelegate {
+            return
+        }
+
+        workoutAttachmentDelegate.didTapOnWorkoutAttachment(workoutView.content)
+    }
+}
+```
+
+Finally, don't forget to assign the custom message list if you didn't yet:
+```swift
+Components.default.messageListVC = CustomChatMessageListVC.self
 ```
