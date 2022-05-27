@@ -374,7 +374,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
         // Update second watcher to be created earlier than the first one.
         try client.databaseContainer.writeSynchronously { session in
-            session.user(id: watcher2ID)?.userCreatedAt = Date()
+            session.user(id: watcher2ID)?.userCreatedAt = DBDate()
         }
 
         // Assert `update` change is received for the second watcher.

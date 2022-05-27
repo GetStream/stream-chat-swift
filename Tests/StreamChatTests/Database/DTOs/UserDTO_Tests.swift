@@ -40,9 +40,9 @@ final class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.isOnline, loadedUserDTO.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedUserDTO.isBanned)
             Assert.willBeEqual(payload.role.rawValue, loadedUserDTO.userRoleRaw)
-            Assert.willBeEqual(payload.createdAt, loadedUserDTO.userCreatedAt)
-            Assert.willBeEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt)
-            Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO.lastActivityAt)
+            Assert.willBeEqual(payload.createdAt, loadedUserDTO.userCreatedAt.bridgeDate)
+            Assert.willBeEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt.bridgeDate)
+            Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO.lastActivityAt?.bridgeDate)
             Assert.willBeEqual(payload.teams, loadedUserDTO.teams)
             Assert.willBeEqual(
                 payload.extraData,
@@ -239,7 +239,7 @@ final class UserDTO_Tests: XCTestCase {
         
         // Check the lastActiveAt sorting.
         XCTAssertEqual(usersWithLastActiveAtSorting.count, 4)
-        XCTAssertEqual(usersWithLastActiveAtSorting.map(\.lastActivityAt), lastActiveDates)
+        XCTAssertEqual(usersWithLastActiveAtSorting.map(\.lastActivityAt?.bridgeDate), lastActiveDates)
         
         // Check the id sorting.
         XCTAssertEqual(usersWithIdSorting.count, 4)

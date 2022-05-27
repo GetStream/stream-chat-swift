@@ -424,7 +424,7 @@ final class ChannelController_Tests: XCTestCase {
             oldMessageId = dto.id
         }
         var channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt, originalLastMessageAt)
+        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
         
         // Create a new message payload that's newer than `channel.lastMessageAt`
         let newerMessagePayload: MessagePayload = .dummy(
@@ -437,7 +437,7 @@ final class ChannelController_Tests: XCTestCase {
             try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true)
         }
         channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt, newerMessagePayload.createdAt)
+        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
         
         // Check if the message ordering is correct
         // First message should be the newest message
@@ -944,7 +944,7 @@ final class ChannelController_Tests: XCTestCase {
         // Set channel `truncatedAt` date before the 5th message
         let truncatedAtDate = controller.messages[4].createdAt.addingTimeInterval(-0.1)
         try client.databaseContainer.writeSynchronously {
-            $0.channel(cid: self.channelId)?.truncatedAt = truncatedAtDate
+            $0.channel(cid: self.channelId)?.truncatedAt = truncatedAtDate.bridgeDate
         }
 
         // Check only the 5 messages after the truncatedAt date are visible
@@ -1222,7 +1222,7 @@ final class ChannelController_Tests: XCTestCase {
         // Update the read
         try client.databaseContainer.writeSynchronously {
             let read = try XCTUnwrap($0.loadChannelRead(cid: self.channelId, userId: userId))
-            read.lastReadAt = newReadDate
+            read.lastReadAt = newReadDate.bridgeDate
         }
 
         // Assert the value is updated and the delegate is called

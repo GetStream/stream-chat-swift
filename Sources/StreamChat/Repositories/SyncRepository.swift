@@ -241,15 +241,15 @@ class SyncRepository {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
                 self?.processMissingEventsPayload(payload) {
-                    self?
-                        .updateUserValue({ $0?.lastSynchedEventDate = (payload.eventPayloads.last?.createdAt ?? date).bridgeDate
-                        }) { error in
-                            if let error = error {
-                                completion(.failure(error))
-                            } else {
-                                completion(.success(channelIds))
-                            }
+                    self?.updateUserValue({
+                        $0?.lastSynchedEventDate = (payload.eventPayloads.last?.createdAt ?? date).bridgeDate
+                    }) { error in
+                        if let error = error {
+                            completion(.failure(error))
+                        } else {
+                            completion(.success(channelIds))
                         }
+                    }
                 }
             case let .failure(error):
                 log.error("Failed synching events: \(error).", subsystems: .offlineSupport)

@@ -53,7 +53,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let readDTO = try XCTUnwrap(
             ChannelReadDTO.load(cid: channel.channel.cid, userId: read.user.id, context: database.viewContext)
         )
-        XCTAssertEqual(readDTO.lastReadAt, newLastReadAt)
+        XCTAssertEqual(readDTO.lastReadAt.bridgeDate, newLastReadAt)
         XCTAssertEqual(readDTO.unreadMessageCount, 0)
     }
     
@@ -81,7 +81,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let createdReadDTO = try XCTUnwrap(
             ChannelReadDTO.load(cid: channel.channel.cid, userId: member.user.id, context: database.viewContext)
         )
-        XCTAssertEqual(createdReadDTO.lastReadAt, readAt)
+        XCTAssertEqual(createdReadDTO.lastReadAt.bridgeDate, readAt)
         XCTAssertEqual(createdReadDTO.unreadMessageCount, 0)
     }
     

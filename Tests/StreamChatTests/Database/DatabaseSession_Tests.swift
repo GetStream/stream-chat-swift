@@ -186,7 +186,7 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertNotNil(message?.pinnedAt)
         XCTAssertNotNil(message?.pinnedBy)
         XCTAssertEqual(message?.pinned, true)
-        XCTAssertEqual(message?.pinExpires, expireDate)
+        XCTAssertEqual(message?.pinExpires?.bridgeDate, expireDate)
     }
 
     func test_pinMessage_whenNoCurrentUser_throwsError() throws {

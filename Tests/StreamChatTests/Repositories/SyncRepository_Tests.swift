@@ -17,7 +17,7 @@ final class SyncRepository_Tests: XCTestCase {
     var repository: SyncRepository!
 
     private var lastSyncAtValue: Date? {
-        database.viewContext.currentUser?.lastSynchedEventDate
+        database.viewContext.currentUser?.lastSynchedEventDate?.bridgeDate
     }
 
     override func setUp() {
@@ -365,7 +365,7 @@ final class SyncRepository_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let query = ChannelListQuery(filter: .exists(.cid))
             try session.saveChannel(payload: .dummy(cid: .unique), query: query)
-            session.currentUser?.lastSynchedEventDate = Date()
+            session.currentUser?.lastSynchedEventDate = DBDate()
         }
         let result = getSyncExistingChannelEventsResult()
 
@@ -378,7 +378,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_syncExistingChannelsEvents_someChannels_apiFailure() throws {
         try database.createCurrentUser(id: "123")
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = Date().addingTimeInterval(-3600)
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
             try session.saveChannel(payload: .dummy(cid: .unique), query: query)
         }
@@ -395,7 +395,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_syncExistingChannelsEvents_someChannels_tooManyEventsError() throws {
         try database.createCurrentUser(id: "123")
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = Date().addingTimeInterval(-3600)
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
             try session.saveChannel(payload: .dummy(cid: .unique), query: query)
         }
@@ -415,7 +415,7 @@ final class SyncRepository_Tests: XCTestCase {
         try database.createCurrentUser(id: "123")
         let cid = try ChannelId(cid: "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F")
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = Date().addingTimeInterval(-3600)
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0), query: query)
         }
@@ -653,7 +653,7 @@ extension SyncRepository_Tests {
 
         try database.writeSynchronously { session in
             if let lastSynchedEventDate = lastSynchedEventDate {
-                session.currentUser?.lastSynchedEventDate = lastSynchedEventDate
+                session.currentUser?.lastSynchedEventDate = lastSynchedEventDate.bridgeDate
             }
             if createChannel {
                 let query = ChannelListQuery(filter: .exists(.cid))

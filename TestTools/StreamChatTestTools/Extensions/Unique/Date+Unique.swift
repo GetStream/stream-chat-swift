@@ -18,3 +18,13 @@ extension Date {
         Date(timeIntervalSince1970: .random(in: (date.timeIntervalSince1970 + 1)...Date.distantFuture.timeIntervalSince1970))
     }
 }
+
+extension NSDate {
+    static var unique: NSDate {
+        Date.unique as NSDate
+    }
+
+    static func unique(after date: NSDate) -> NSDate {
+        Date.unique(after: date as Date) as NSDate
+    }
+}
