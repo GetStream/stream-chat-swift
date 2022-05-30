@@ -6,9 +6,9 @@ import Foundation
 @_exported import StreamChatTestHelpers
 import XCTest
 
-public final class StreamChatTestTools {}
+extension Bundle {
 
-public extension Bundle {
+    private final class StreamChatTestTools {}
 
     static let bundleName = "StreamChat_StreamChatTestTools"
 
@@ -18,7 +18,7 @@ public extension Bundle {
     private static let other = "\(fixtures)/Other/"
 
     /// Returns the resource bundle associated with the current Swift module.
-    static var testTools: Bundle = {
+    static let testTools: Bundle = {
         let candidates = [
             // Bundle should be present here when the package is linked into an App.
             Bundle.main.resourceURL,

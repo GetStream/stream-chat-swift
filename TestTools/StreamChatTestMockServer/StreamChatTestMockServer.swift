@@ -4,15 +4,15 @@
 
 import Foundation
 
-public final class StreamChatTestMockServer {}
+extension Bundle {
 
-public extension Bundle {
+    private final class StreamChatTestMockServer {}
 
     static let bundleName = "StreamChat_StreamChatTestMockServer"
     static let resourcesJSONs = "Fixtures/JSONs/"
 
     /// Returns the resource bundle associated with the current Swift module.
-    static var testTools: Bundle = {
+    static let testTools: Bundle = {
         let candidates = [
             // Bundle should be present here when the package is linked into an App.
             Bundle.main.resourceURL,
