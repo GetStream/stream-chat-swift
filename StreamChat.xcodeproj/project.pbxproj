@@ -1641,6 +1641,9 @@
 		C143789527BE65AE00E23965 /* QueuedRequestDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */; };
 		C143789727BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */; };
 		C149B744282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C149B743282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift */; };
+		C14A46532845043300EF498E /* ThreadSafeWeakCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46522845043300EF498E /* ThreadSafeWeakCollection.swift */; };
+		C14A46542845043300EF498E /* ThreadSafeWeakCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46522845043300EF498E /* ThreadSafeWeakCollection.swift */; };
+		C14A46562845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */; };
 		C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
@@ -3365,6 +3368,8 @@
 		C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository_Tests.swift; sourceTree = "<group>"; };
 		C147D78527B4294900F8E7C5 /* Logger_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger_Spy.swift; sourceTree = "<group>"; };
 		C149B743282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Validation_Tests.swift"; sourceTree = "<group>"; };
+		C14A46522845043300EF498E /* ThreadSafeWeakCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeWeakCollection.swift; sourceTree = "<group>"; };
+		C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeWeakCollection_Tests.swift; sourceTree = "<group>"; };
 		C152F5FB27C3DC53003B4805 /* MessageRepository_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Spy.swift; sourceTree = "<group>"; };
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
@@ -4110,6 +4115,7 @@
 				DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */,
 				797A756524814EF8003CF16D /* SystemEnvironment.swift */,
 				CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */,
+				C14A46522845043300EF498E /* ThreadSafeWeakCollection.swift */,
 				792A4F3B247FFBB400EAF71D /* Timers.swift */,
 				797E10A724EAF6DE00353791 /* UniqueId.swift */,
 				F6D61D992510B3E300EB0624 /* Database */,
@@ -6221,6 +6227,7 @@
 				DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */,
 				79CD959324F9381700E87377 /* MulticastDelegate_Tests.swift */,
 				CF1F1D442824243F002E2977 /* CooldownTracker_Tests.swift */,
+				C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */,
 				A364D0BD27D12C600029857A /* Database */,
 				A3F65E3B27EB7357003F6256 /* EquatableEvent */,
 				A364D0C127D12EC30029857A /* Operations */,
@@ -9341,6 +9348,7 @@
 				881506EC258212BF0013935B /* MultipartFormData.swift in Sources */,
 				C1FC2F952742579D0062530F /* WebSocketServer.swift in Sources */,
 				C1FC2F9C2742579D0062530F /* HTTPHandler.swift in Sources */,
+				C14A46532845043300EF498E /* ThreadSafeWeakCollection.swift in Sources */,
 				792A4F472480107A00EAF71D /* Filter.swift in Sources */,
 				C1FC2F912742579D0062530F /* FoundationHTTPServerHandler.swift in Sources */,
 				22692C8F25D18097007C41D0 /* ChatMessageGiphyAttachment.swift in Sources */,
@@ -9644,6 +9652,7 @@
 				AD45333A25D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift in Sources */,
 				8A0D64AE24E5853F0017A3C0 /* DataController_Tests.swift in Sources */,
 				8486CAF926FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift in Sources */,
+				C14A46562845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift in Sources */,
 				ADC40C3226E26E9F005B616C /* UserSearchController_Tests.swift in Sources */,
 				8A0C3BC924C0BBAB00CAFD19 /* UserEvents_Tests.swift in Sources */,
 				A34ECB4627F5C9C200A804C1 /* MessageEvents_IntegrationTests.swift in Sources */,
@@ -10010,6 +10019,7 @@
 				C121E81C274544AD00023E4C /* TypingEvent.swift in Sources */,
 				C121E81D274544AD00023E4C /* ChannelEvents.swift in Sources */,
 				AD6A248B280DA890003BA1E4 /* PushDevice.swift in Sources */,
+				C14A46542845043300EF498E /* ThreadSafeWeakCollection.swift in Sources */,
 				C121E81E274544AD00023E4C /* MessageEvents.swift in Sources */,
 				C1B49B412822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */,
 				C121E81F274544AD00023E4C /* MemberEvents.swift in Sources */,
