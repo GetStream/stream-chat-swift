@@ -22,7 +22,7 @@ final class MessageEvents_Tests: XCTestCase {
     }
     
     func test_new() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageNew")
+        let json = XCTestCase.mockData(fromJSONFile: "MessageNew")
         let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
@@ -33,7 +33,7 @@ final class MessageEvents_Tests: XCTestCase {
     }
     
     func test_new_withMissingFields() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageNew+MissingFields")
+        let json = XCTestCase.mockData(fromJSONFile: "MessageNew+MissingFields")
         let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
@@ -44,7 +44,7 @@ final class MessageEvents_Tests: XCTestCase {
     }
     
     func test_updated() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageUpdated")
+        let json = XCTestCase.mockData(fromJSONFile: "MessageUpdated")
         let event = try eventDecoder.decode(from: json) as? MessageUpdatedEventDTO
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
@@ -53,7 +53,7 @@ final class MessageEvents_Tests: XCTestCase {
     }
     
     func test_messageDeletedEvent_clientSide() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageDeleted")
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
         XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
@@ -62,7 +62,7 @@ final class MessageEvents_Tests: XCTestCase {
     }
     
     func test_messageDeletedEvent_serverSide() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageDeleted+MissingUser")
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted+MissingUser")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
         XCTAssertNil(event?.user)
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
@@ -71,19 +71,19 @@ final class MessageEvents_Tests: XCTestCase {
     }
 
     func test_messageDeletedEvent_whenNotHardDelete_hardDeleteIsFalse() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageDeleted")
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
         XCTAssertEqual(event?.hardDelete, false)
     }
 
     func test_messageDeletedEvent_whenHardDelete_hardDeleteIsTrue() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageDeletedHard")
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDeletedHard")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
         XCTAssertEqual(event?.hardDelete, true)
     }
     
     func test_read() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageRead")
+        let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
         XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
@@ -92,7 +92,7 @@ final class MessageEvents_Tests: XCTestCase {
     }
     
     func test_read_withoutUnreadCount() throws {
-        let json = XCTestCase.mockData(fromFile: "MessageRead+MissingUnreadCount")
+        let json = XCTestCase.mockData(fromJSONFile: "MessageRead+MissingUnreadCount")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
         XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
