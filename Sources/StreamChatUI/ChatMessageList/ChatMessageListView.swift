@@ -9,8 +9,10 @@ import UIKit
 open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
-    /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
-    private let collectionUpdatesMapper = CollectionUpdatesMapper()
+    /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a view.
+    private lazy var listChangeUpdater: ListChangeUpdater = TableViewListChangeUpdater(
+        tableView: self
+    )
 
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -157,101 +159,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
-        defer {
+        listChangeUpdater.performUpdate(with: changes) { [weak self] _ in
             let lastMessageInserted = changes.first(where: { $0.isInsertion && $0.indexPath.row == 0 })?.item
             if lastMessageInserted?.isSentByCurrentUser == true {
-                scrollToMostRecentMessage()
+                self?.scrollToMostRecentMessage()
             }
-
-            completion?()
-        }
-
-        let hasConflictUpdates = collectionUpdatesMapper.mapToSetsOfIndexPaths(changes: changes) == nil
-        if hasConflictUpdates {
-            reloadData()
-            return
-        }
-
-        guard changes.count == 1, let change = changes.first else {
-            reloadData()
-            return
-        }
-
-        switch change {
-        case let .insert(_, index: index):
-            UIView.performWithoutAnimation {
-                self.performBatchUpdates {
-                    self.insertRows(at: [index], with: .none)
-                } completion: { _ in
-                    guard self.numberOfRows(inSection: index.section) > index.row + 1 else { return }
-                    // Update previous row to remove timestamp if needed
-                    // +1 instead of -1 because the message list is inverted
-                    let previousIndex = IndexPath(row: index.row + 1, section: index.section)
-                    self.reloadRows(at: [previousIndex], with: .none)
-                }
-            }
-
-        case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-            moveRow(at: fromIndex, to: toIndex)
-            reloadRows(at: [fromIndex, toIndex], with: .automatic)
-
-        case let .update(_, index: index):
-            reloadRows(at: [index], with: .automatic)
-
-        case .remove:
-            reloadData()
-        }
-    }
-
-    override open func reloadRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
-        let visibleCells = getVisibleCells()
-
-        var indexPathToReload: [IndexPath] = []
-
-        indexPaths.forEach { indexPath in
-            // Get currently shown cell at index path
-            let cellBeforeUpdate = visibleCells[indexPath]
-            let cellBeforeUpdateReuseIdentifier = reuseIdentifier(for: cellBeforeUpdate)
-            let cellBeforeUpdateMessage = cellBeforeUpdate?.messageContentView?.content
-
-            // Get the cell that will be shown if reload happens
-            let cellAfterUpdate = dataSource?.tableView(self, cellForRowAt: indexPath) as? ChatMessageCell
-            let cellAfterUpdateReuseIdentifier = reuseIdentifier(for: cellAfterUpdate)
-            let cellAfterUpdateMessage = cellAfterUpdate?.messageContentView?.content
-
-            if
-                cellBeforeUpdateReuseIdentifier == cellAfterUpdateReuseIdentifier,
-                cellBeforeUpdateMessage?.id == cellAfterUpdateMessage?.id,
-                cellBeforeUpdateMessage?.type == cellAfterUpdateMessage?.type,
-                cellBeforeUpdateMessage?.deletedAt == cellAfterUpdateMessage?.deletedAt,
-                cellBeforeUpdateMessage?.text == cellAfterUpdateMessage?.text,
-                cellBeforeUpdateMessage?.quotedMessage?.text == cellAfterUpdateMessage?.quotedMessage?.text,
-                cellBeforeUpdateMessage?.extraData == cellAfterUpdateMessage?.extraData {
-                // If identifiers and messages match we can simply update the current cell with new content
-                cellBeforeUpdate?.messageContentView?.content = cellAfterUpdateMessage
-            } else {
-                // If identifiers do not match or the cell size will need to change, ex: Editing text
-                // we do a reload to let the table view dequeue another cell
-                // with the layout fitting the updated message.
-                indexPathToReload.append(indexPath)
-            }
-        }
-
-        if !indexPathToReload.isEmpty {
-            UIView.performWithoutAnimation {
-                super.reloadRows(at: indexPathToReload, with: animation)
-            }
-        }
-    }
-
-    private func getVisibleCells() -> [IndexPath: ChatMessageCell] {
-        visibleCells.reduce(into: [:]) { result, cell in
-            guard
-                let cell = cell as? ChatMessageCell,
-                let indexPath = cell.messageContentView?.indexPath?()
-            else { return }
-
-            result[indexPath] = cell
         }
     }
 }
