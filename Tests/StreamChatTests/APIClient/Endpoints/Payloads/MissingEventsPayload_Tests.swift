@@ -8,7 +8,7 @@ import XCTest
 
 final class MissingEventsPayload_Tests: XCTestCase {
     func test_missingEventsPayload_isDeserialized() throws {
-        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload")
+        let json = XCTestCase.mockData(fromJSONFile: "MissingEventsPayload")
         let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
         XCTAssertEqual(payload.eventPayloads.count, 1)
         
@@ -71,7 +71,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
     }
 
     func test_missingEventsPayload_incompleteChannels_isDeserialized() throws {
-        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload-IncompleteChannel")
+        let json = XCTestCase.mockData(fromJSONFile: "MissingEventsPayload-IncompleteChannel")
         let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
         XCTAssertEqual(payload.eventPayloads.count, 4)
 
