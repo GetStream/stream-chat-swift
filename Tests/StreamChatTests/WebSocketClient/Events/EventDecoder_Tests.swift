@@ -23,7 +23,7 @@ final class EventDecoder_Tests: XCTestCase {
     
     func test_decode_whenValidSystemEventPayloadComes_returnsDecodedSystemEvent() throws {
         // Load valid system event JSON.
-        let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
+        let json = XCTestCase.mockData(fromJSONFile: "NotificationAddedToChannel")
         
         // Decode an event.
         let event = try eventDecoder.decode(from: json)

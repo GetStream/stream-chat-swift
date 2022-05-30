@@ -8,7 +8,7 @@ import XCTest
 
 final class ChannelMemberListPayload_Tests: XCTestCase {
     func test_queryJSON_isDeserialized_withDefaultExtraData() throws {
-        let json = XCTestCase.mockData(fromFile: "ChannelMembersQuery")
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelMembersQuery")
         let payload = try JSONDecoder.default.decode(ChannelMemberListPayload.self, from: json)
         XCTAssertEqual(payload.members.count, 1)
     }

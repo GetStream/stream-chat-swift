@@ -7,7 +7,7 @@
 import XCTest
 
 final class MemberPayload_Tests: XCTestCase {
-    let memberJSON = XCTestCase.mockData(fromFile: "Member")
+    let memberJSON = XCTestCase.mockData(fromJSONFile: "Member")
     
     func test_memberJSON_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberJSON)
