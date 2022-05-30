@@ -3,6 +3,7 @@
 //
 
 import Foundation
+@testable import StreamChat
 
 extension Date {
     /// Returns a new random date
@@ -19,12 +20,12 @@ extension Date {
     }
 }
 
-extension NSDate {
-    static var unique: NSDate {
-        Date.unique as NSDate
+extension DBDate {
+    static var unique: DBDate {
+        Date.unique.bridgeDate
     }
 
-    static func unique(after date: NSDate) -> NSDate {
-        Date.unique(after: date as Date) as NSDate
+    static func unique(after date: DBDate) -> DBDate {
+        Date.unique(after: date.bridgeDate).bridgeDate
     }
 }
