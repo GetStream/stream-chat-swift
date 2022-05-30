@@ -29,7 +29,7 @@ struct MemberContainerPayload: Decodable {
 struct MemberPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
-        case role
+        case role = "channel_role"
         case isBanned = "banned"
         case isShadowBanned = "shadow_banned"
         case banExpiresAt = "ban_expires"
