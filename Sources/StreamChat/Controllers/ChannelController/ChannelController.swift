@@ -378,6 +378,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                         log.warning("Callback called while self is nil")
                         return
                     }
+                    log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
                     $0.channelController(self, didUpdateMessages: changes)
                 }
             }

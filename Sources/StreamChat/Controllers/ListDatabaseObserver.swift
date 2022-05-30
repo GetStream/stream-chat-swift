@@ -20,18 +20,33 @@ public enum ListChange<Item> {
 }
 
 extension ListChange: CustomStringConvertible {
-    /// Returns pretty `ListChange` description
+    /// Returns pretty `ListChange` type description.
     public var description: String {
-        switch self {
-        case let .insert(item, indexPath):
-            return "Insert at \(indexPath): \(item)"
-        case let .move(item, from, to):
-            return "Move from \(from) to \(to): \(item)"
-        case let .update(item, indexPath):
-            return "Update at \(indexPath): \(item)"
-        case let .remove(item, indexPath):
-            return "Remove at \(indexPath): \(item)"
+        let indexPathDescription: (IndexPath) -> String = { indexPath in
+            "(\(indexPath.row), \(indexPath.section))"
         }
+        switch self {
+        case let .insert(_, indexPath):
+            return "Insert \(indexPathDescription(indexPath))"
+        case let .move(_, from, to):
+            return "Move \(indexPathDescription(from)) to \(indexPathDescription(to))"
+        case let .update(_, indexPath):
+            return "Update \(indexPathDescription(indexPath))"
+        case let .remove(_, indexPath):
+            return "Remove \(indexPathDescription(indexPath))"
+        }
+    }
+}
+
+extension ListChange where Item == ChatMessage {
+    public var debugDescription: String {
+        "\(description) - (text:\(item.text), id:\(item.id))"
+    }
+}
+
+extension ListChange where Item == ChatChannel {
+    public var debugDescription: String {
+        "\(description) - (cid:\(item.cid))"
     }
 }
 
