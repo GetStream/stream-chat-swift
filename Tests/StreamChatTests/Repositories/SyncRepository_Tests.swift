@@ -7,8 +7,8 @@
 import XCTest
 
 final class SyncRepository_Tests: XCTestCase {
-    var _activeChannelControllers: NSHashTable<ChatChannelController>!
-    var _activeChannelListControllers: NSHashTable<ChatChannelListController>!
+    var _activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>!
+    var _activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>!
     var client: ChatClient_Mock!
     var offlineRequestsRepository: OfflineRequestsRepository_Spy!
     var database: DatabaseContainer_Spy!
@@ -23,8 +23,8 @@ final class SyncRepository_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
-        _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
+        _activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
+        _activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
         client = ChatClient_Mock(config: config)
