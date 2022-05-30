@@ -45,6 +45,26 @@ final class NSManagedObject_Validation_Tests: XCTestCase {
             XCTAssertFalse(message.isValid)
         }
     }
+
+    func test_deletedObject_doesNotCrash_whenAccessingDate() throws {
+        guard let message = try createMessage() else {
+            XCTFail()
+            return
+        }
+
+        try database.writeSynchronously { session in
+            session.delete(message: message)
+        }
+
+        // Should default to Date(timeIntervalSince1970: 0) for non optional values
+        XCTAssertEqual(message.createdAt.bridgeDate, Date(timeIntervalSince1970: 0))
+        XCTAssertEqual(message.updatedAt.bridgeDate, Date(timeIntervalSince1970: 0))
+        XCTAssertNil(message.deletedAt?.bridgeDate)
+        XCTAssertNil(message.pinnedAt?.bridgeDate)
+        XCTAssertNil(message.pinExpires?.bridgeDate)
+        XCTAssertNil(message.locallyCreatedAt?.bridgeDate)
+        XCTAssertNil(message.defaultSortingKey?.bridgeDate)
+    }
 }
 
 private extension NSManagedObject_Validation_Tests {
