@@ -86,3 +86,7 @@ custom_rules:
     match_kinds:
       - identifier
     message: "Plain constraints methods are forbidden. Use `pin(...)` alternative"
+  coredata_date_forbidden:
+    included: "Sources/StreamChat/Database/DTOs"
+    regex: "@NSManaged(| \\S*)* var \\S*: (NS)?Date"
+    message: "Please define dates as DBDate instead of Date or NSDate. Check the definition of DBDate for more information"
