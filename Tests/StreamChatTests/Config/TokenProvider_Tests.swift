@@ -9,7 +9,7 @@ import XCTest
 final class TokenProvider_Tests: XCTestCase {
     func test_anonymousProvider_propagatesToken() throws {
         // Get token from `anonymous` provider.
-        let token = try waitFor { UserConnectionProvider.anonymous.getToken(.mock, $0) }.get()
+        let token = try waitFor { UserConnectionProvider.anonymous.tokenProvider($0) }.get()
 
         // Assert token is correct.
         XCTAssertEqual(token.rawValue, "")
@@ -22,7 +22,7 @@ final class TokenProvider_Tests: XCTestCase {
 
         // Get a token from `development` token provider.
         let token = try waitFor {
-            UserConnectionProvider.development(userId: userId).getToken(.mock, $0)
+            UserConnectionProvider.development(userId: userId).tokenProvider($0)
         }.get()
 
         // Assert token is correct.
@@ -38,43 +38,13 @@ final class TokenProvider_Tests: XCTestCase {
 
         // Get a token from `static` token provider.
         let receivedToken = try waitFor {
-            UserConnectionProvider.static(token).getToken(.mock, $0)
+            UserConnectionProvider.static(token).tokenProvider($0)
         }.get()
 
         // Assert token is propagated.
         XCTAssertEqual(receivedToken, token)
     }
-
-    func test_closureProvider_propagatesToken() throws {
-        // Create a token.
-        let token = Token.unique()
-
-        // Get a token from `closure` token provider.
-        let receivedToken = try waitFor {
-            UserConnectionProvider
-                .closure { $1(.success(token)) }
-                .getToken(.mock, $0)
-        }.get()
-
-        // Assert token is propagated.
-        XCTAssertEqual(receivedToken, token)
-    }
-
-    func test_closureProvider_propagatesError() throws {
-        // Create an error.
-        let error = TestError()
-
-        // Get a token from `closure` token provider.
-        let receivedError = try waitFor {
-            UserConnectionProvider
-                .closure { $1(.failure(error)) }
-                .getToken(.mock, $0)
-        }.error
-
-        // Assert error is propagated.
-        XCTAssertEqual(receivedError as! TestError, error)
-    }
-
+    
     func test_guestProvider_callsAPIClient_and_propagatesToken() throws {
         // Create guest user data.
         let userId: UserId = .unique
@@ -86,7 +56,8 @@ final class TokenProvider_Tests: XCTestCase {
         let client = ChatClient.mock
 
         // Create a `guest` token provider.
-        let tokenProvider = UserConnectionProvider.guest(
+        let provider = UserConnectionProvider.guest(
+            client: client,
             userId: userId,
             name: userName,
             imageURL: imageURL,
@@ -95,7 +66,7 @@ final class TokenProvider_Tests: XCTestCase {
 
         // Get token from provider and capture the result.
         var getTokenResult: Result<Token, Error>?
-        tokenProvider.getToken(client) {
+        provider.tokenProvider {
             getTokenResult = $0
         }
 
@@ -134,7 +105,8 @@ final class TokenProvider_Tests: XCTestCase {
         let client = ChatClient.mock
 
         // Create a `guest` token provider.
-        let tokenProvider = UserConnectionProvider.guest(
+        let provider = UserConnectionProvider.guest(
+            client: client,
             userId: userId,
             name: userName,
             imageURL: imageURL,
@@ -143,7 +115,7 @@ final class TokenProvider_Tests: XCTestCase {
 
         // Get token from provider and capture the result.
         var getTokenResult: Result<Token, Error>?
-        tokenProvider.getToken(client) {
+        provider.tokenProvider {
             getTokenResult = $0
         }
 
