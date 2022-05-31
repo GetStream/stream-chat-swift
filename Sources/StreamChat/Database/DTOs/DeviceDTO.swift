@@ -8,7 +8,7 @@ import Foundation
 @objc(DeviceDTO)
 class DeviceDTO: NSManagedObject {
     @NSManaged var id: String
-    @NSManaged var createdAt: Date?
+    @NSManaged var createdAt: DBDate?
     
     @NSManaged var user: CurrentUserDTO
 }
@@ -46,6 +46,6 @@ extension DeviceDTO {
 extension DeviceDTO {
     func asModel() throws -> Device {
         guard isValid else { throw InvalidModel(self) }
-        return Device(id: id, createdAt: createdAt)
+        return Device(id: id, createdAt: createdAt?.bridgeDate)
     }
 }

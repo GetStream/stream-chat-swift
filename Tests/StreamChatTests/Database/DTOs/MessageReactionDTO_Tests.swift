@@ -279,8 +279,8 @@ final class MessageReactionDTO_Tests: XCTestCase {
         let userExtraData = try encoder.encode(payload.user.extraData)
 
         // Assert loaded message reaction has valid fields.
-        XCTAssertEqual(dto.createdAt, payload.createdAt)
-        XCTAssertEqual(dto.updatedAt, payload.updatedAt)
+        XCTAssertEqual(dto.createdAt?.bridgeDate, payload.createdAt)
+        XCTAssertEqual(dto.updatedAt?.bridgeDate, payload.updatedAt)
         XCTAssertEqual(dto.type, payload.type.rawValue)
         XCTAssertEqual(dto.score, Int64(payload.score))
         XCTAssertEqual(dto.extraData, reactionExtraData)

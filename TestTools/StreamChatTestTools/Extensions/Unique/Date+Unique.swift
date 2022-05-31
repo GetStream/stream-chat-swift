@@ -3,6 +3,7 @@
 //
 
 import Foundation
+@testable import StreamChat
 
 extension Date {
     /// Returns a new random date
@@ -16,5 +17,15 @@ extension Date {
     /// Returns a new random date after the provided date
     static func unique(after date: Date) -> Date {
         Date(timeIntervalSince1970: .random(in: (date.timeIntervalSince1970 + 1)...Date.distantFuture.timeIntervalSince1970))
+    }
+}
+
+extension DBDate {
+    static var unique: DBDate {
+        Date.unique.bridgeDate
+    }
+
+    static func unique(after date: DBDate) -> DBDate {
+        Date.unique(after: date.bridgeDate).bridgeDate
     }
 }

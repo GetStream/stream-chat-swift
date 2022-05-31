@@ -1617,7 +1617,7 @@ final class MessageUpdater_Tests: XCTestCase {
             XCTAssertNil(completionError)
             XCTAssertEqual(message.localMessageState, expectedState)
             XCTAssertEqual(message.pinned, true)
-            XCTAssertEqual(message.pinExpires, pin.expirationDate)
+            XCTAssertEqual(message.pinExpires?.bridgeDate, pin.expirationDate)
             XCTAssertEqual(message.pinnedBy?.id, currentUserId)
             XCTAssertNotNil(message.pinnedAt)
         }

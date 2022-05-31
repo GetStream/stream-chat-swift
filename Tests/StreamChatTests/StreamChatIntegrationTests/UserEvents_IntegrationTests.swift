@@ -102,7 +102,7 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
         try client.databaseContainer.createUser(id: "luke_skywalker", updatedAt: previousUpdateDate)
         XCTAssertEqual(
-            client.databaseContainer.viewContext.user(id: "luke_skywalker")?.userUpdatedAt,
+            client.databaseContainer.viewContext.user(id: "luke_skywalker")?.userUpdatedAt.bridgeDate,
             previousUpdateDate
         )
 

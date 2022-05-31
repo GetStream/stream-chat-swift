@@ -31,8 +31,8 @@ class SyncRepository {
     private let config: ChatClientConfig
     private let database: DatabaseContainer
     private let apiClient: APIClient
-    let activeChannelControllers: NSHashTable<ChatChannelController>
-    let activeChannelListControllers: NSHashTable<ChatChannelListController>
+    let activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>
+    let activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
 
@@ -45,8 +45,8 @@ class SyncRepository {
 
     init(
         config: ChatClientConfig,
-        activeChannelControllers: NSHashTable<ChatChannelController>,
-        activeChannelListControllers: NSHashTable<ChatChannelListController>,
+        activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>,
+        activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>,
         offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
@@ -75,9 +75,9 @@ class SyncRepository {
                 return
             }
             
-            guard let lastSyncAt = currentUser.lastSynchedEventDate else {
+            guard let lastSyncAt = currentUser.lastSynchedEventDate?.bridgeDate else {
                 log.info("It's the first session of the current user, skipping recovery flow", subsystems: .offlineSupport)
-                self?.updateUserValue({ $0?.lastSynchedEventDate = Date() }) { _ in
+                self?.updateUserValue({ $0?.lastSynchedEventDate = DBDate() }) { _ in
                     completion()
                 }
                 return
@@ -162,7 +162,7 @@ class SyncRepository {
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
     func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
         getUser { [weak self] currentUser in
-            guard let lastSyncAt = currentUser?.lastSynchedEventDate else {
+            guard let lastSyncAt = currentUser?.lastSynchedEventDate?.bridgeDate else {
                 completion(.failure(.noNeedToSync))
                 return
             }
@@ -241,7 +241,9 @@ class SyncRepository {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
                 self?.processMissingEventsPayload(payload) {
-                    self?.updateUserValue({ $0?.lastSynchedEventDate = payload.eventPayloads.last?.createdAt ?? date }) { error in
+                    self?.updateUserValue({
+                        $0?.lastSynchedEventDate = (payload.eventPayloads.last?.createdAt ?? date).bridgeDate
+                    }) { error in
                         if let error = error {
                             completion(.failure(error))
                         } else {

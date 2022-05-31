@@ -12,7 +12,7 @@ class CurrentUserDTO: NSManagedObject {
     
     /// Contains the timestamp when last sync process was finished.
     /// The date later serves as reference date for the last event synced using `/sync` endpoint
-    @NSManaged var lastSynchedEventDate: Date?
+    @NSManaged var lastSynchedEventDate: DBDate?
 
     @NSManaged var flaggedUsers: Set<UserDTO>
     @NSManaged var flaggedMessages: Set<MessageDTO>
@@ -113,7 +113,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         
         let deviceDTOs = devices.map { device -> DeviceDTO in
             let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
-            dto.createdAt = device.createdAt
+            dto.createdAt = device.createdAt?.bridgeDate
             dto.user = currentUser
             return dto
         }
@@ -205,9 +205,9 @@ extension CurrentChatUser {
             isOnline: user.isOnline,
             isBanned: user.isBanned,
             userRole: UserRole(rawValue: user.userRoleRaw),
-            createdAt: user.userCreatedAt,
-            updatedAt: user.userUpdatedAt,
-            lastActiveAt: user.lastActivityAt,
+            createdAt: user.userCreatedAt.bridgeDate,
+            updatedAt: user.userUpdatedAt.bridgeDate,
+            lastActiveAt: user.lastActivityAt?.bridgeDate,
             teams: Set(user.teams),
             extraData: extraData,
             devices: dto.devices.map { try $0.asModel() },

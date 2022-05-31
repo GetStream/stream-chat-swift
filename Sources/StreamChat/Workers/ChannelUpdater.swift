@@ -185,7 +185,7 @@ class ChannelUpdater: Worker {
                     if let channel = $0.channel(cid: cid) {
                         channel.isHidden = true
                         if clearHistory {
-                            channel.truncatedAt = Date()
+                            channel.truncatedAt = DBDate()
                         }
                     }
                 } completion: {

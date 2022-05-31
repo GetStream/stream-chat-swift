@@ -7,7 +7,7 @@ import Foundation
 
 @objc(ChannelReadDTO)
 class ChannelReadDTO: NSManagedObject {
-    @NSManaged var lastReadAt: Date
+    @NSManaged var lastReadAt: DBDate
     @NSManaged var unreadMessageCount: Int32
     
     // MARK: - Relationships
@@ -72,7 +72,7 @@ extension NSManagedObjectContext {
         
         dto.user = try saveUser(payload: payload.user)
         
-        dto.lastReadAt = payload.lastReadAt
+        dto.lastReadAt = payload.lastReadAt.bridgeDate
         dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
         
         return dto
@@ -83,7 +83,7 @@ extension NSManagedObjectContext {
             let previousLastReadAt = read.lastReadAt
             
             // We have a read object saved, we can update it
-            read.lastReadAt = at
+            read.lastReadAt = at.bridgeDate
             read.unreadMessageCount = 0
             
             // Mark messages authored by the current user sent within `previousLastReadAt...at` window
@@ -98,14 +98,14 @@ extension NSManagedObjectContext {
             let read = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
             read.channel = channel
             read.user = member.user
-            read.lastReadAt = at
+            read.lastReadAt = at.bridgeDate
             read.unreadMessageCount = 0
             
             // Mark all locally existed messages authored by the current user
             // as seen by the channel member with `userId`.
             markMessagesFromCurrentUserAsRead(
                 for: read,
-                previousReadAt: .distantPast
+                previousReadAt: Date.distantPast.bridgeDate
             )
         } else {
             // If we don't have a read object saved for the user,
@@ -134,7 +134,7 @@ extension NSManagedObjectContext {
     
     private func markMessagesFromCurrentUserAsRead(
         for read: ChannelReadDTO,
-        previousReadAt: Date
+        previousReadAt: DBDate
     ) {
         guard read.user.currentUser == nil else {
             // Current user is not accounted in his own message reads.
@@ -143,8 +143,8 @@ extension NSManagedObjectContext {
         
         let messages = MessageDTO.loadCurrentUserMessages(
             in: read.channel.cid,
-            createdAtFrom: previousReadAt,
-            createdAtThrough: read.lastReadAt,
+            createdAtFrom: previousReadAt.bridgeDate,
+            createdAtThrough: read.lastReadAt.bridgeDate,
             context: self
         )
         
@@ -158,7 +158,7 @@ extension ChatChannelRead {
     fileprivate static func create(fromDTO dto: ChannelReadDTO) throws -> ChatChannelRead {
         guard dto.isValid else { throw InvalidModel(dto) }
         return try .init(
-            lastReadAt: dto.lastReadAt,
+            lastReadAt: dto.lastReadAt.bridgeDate,
             unreadMessagesCount: Int(dto.unreadMessageCount),
             user: dto.user.asModel()
         )
