@@ -7,8 +7,8 @@ import Foundation
 
 @objc(ChannelMuteDTO)
 final class ChannelMuteDTO: NSManagedObject {
-    @NSManaged var createdAt: Date
-    @NSManaged var updatedAt: Date
+    @NSManaged var createdAt: DBDate
+    @NSManaged var updatedAt: DBDate
     @NSManaged var channel: ChannelDTO
     @NSManaged var currentUser: CurrentUserDTO
     
@@ -48,8 +48,8 @@ extension NSManagedObjectContext {
         let dto = ChannelMuteDTO.loadOrCreate(cid: payload.mutedChannel.cid, context: self)
         dto.channel = channel
         dto.currentUser = currentUser
-        dto.createdAt = payload.createdAt
-        dto.updatedAt = payload.updatedAt
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
 
         return dto
     }

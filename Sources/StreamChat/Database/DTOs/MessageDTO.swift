@@ -13,9 +13,9 @@ class MessageDTO: NSManagedObject {
     @NSManaged var text: String
     @NSManaged var type: String
     @NSManaged var command: String?
-    @NSManaged var createdAt: Date
-    @NSManaged var updatedAt: Date
-    @NSManaged var deletedAt: Date?
+    @NSManaged var createdAt: DBDate
+    @NSManaged var updatedAt: DBDate
+    @NSManaged var deletedAt: DBDate?
     @NSManaged var isHardDeleted: Bool
     @NSManaged var args: String?
     @NSManaged var parentMessageId: MessageId?
@@ -56,15 +56,15 @@ class MessageDTO: NSManagedObject {
     
     @NSManaged var pinned: Bool
     @NSManaged var pinnedBy: UserDTO?
-    @NSManaged var pinnedAt: Date?
-    @NSManaged var pinExpires: Date?
+    @NSManaged var pinnedAt: DBDate?
+    @NSManaged var pinExpires: DBDate?
 
     // The timestamp the message was created locally. Applies only for the messages of the current user.
-    @NSManaged var locallyCreatedAt: Date?
+    @NSManaged var locallyCreatedAt: DBDate?
     
     // We use `Date!` to replicate a required value. The value must be marked as optional in the CoreData model, because we change
     // it in the `willSave` phase, which happens after the validation.
-    @NSManaged var defaultSortingKey: Date!
+    @NSManaged var defaultSortingKey: DBDate!
     
     override func willSave() {
         super.willSave()
@@ -385,8 +385,8 @@ class MessageDTO: NSManagedObject {
         let subpredicates: [NSPredicate] = [
             channelPredicate(with: cid),
             .init(format: "user.currentUser != nil"),
-            .init(format: "createdAt > %@", createdAtFrom as NSDate),
-            .init(format: "createdAt <= %@", createdAtThrough as NSDate),
+            .init(format: "createdAt > %@", createdAtFrom.bridgeDate),
+            .init(format: "createdAt <= %@", createdAtThrough.bridgeDate),
             messageSentPredicate(),
             nonTruncatedMessagesPredicate(),
             nonDeletedMessagesPredicate()
@@ -456,13 +456,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         // We make `createdDate` 0.1 second bigger than Channel's most recent message
         // so if the local time is not in sync, the message will still appear in the correct position
         // even if the sending fails
-        let createdAt = createdAt ?? (max(channelDTO.lastMessageAt?.addingTimeInterval(0.1) ?? Date(), Date()))
-        message.locallyCreatedAt = createdAt
+        let createdAt = createdAt ?? (max(channelDTO.lastMessageAt?.addingTimeInterval(0.1).bridgeDate ?? Date(), Date()))
+        message.locallyCreatedAt = createdAt.bridgeDate
         // It's fine that we're saving an incorrect value for `createdAt` and `updatedAt`
         // When message is successfully sent, backend sends the actual dates
         // and these are set correctly in `saveMessage`
-        message.createdAt = createdAt
-        message.updatedAt = createdAt
+        message.createdAt = createdAt.bridgeDate
+        message.updatedAt = createdAt.bridgeDate
 
         if let pinning = pinning {
             try pin(message: message, pinning: pinning)
@@ -499,7 +499,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.user = currentUserDTO.user
         message.channel = channelDTO
         
-        let newLastMessageAt = max(channelDTO.lastMessageAt ?? createdAt, createdAt)
+        let newLastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? createdAt, createdAt).bridgeDate
         channelDTO.lastMessageAt = newLastMessageAt
         channelDTO.defaultSortingAt = newLastMessageAt
         
@@ -523,9 +523,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
 
         dto.text = payload.text
-        dto.createdAt = payload.createdAt
-        dto.updatedAt = payload.updatedAt
-        dto.deletedAt = payload.deletedAt
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
+        dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.type = payload.type.rawValue
         dto.command = payload.command
         dto.args = payload.args
@@ -555,8 +555,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         dto.pinned = payload.pinned
-        dto.pinExpires = payload.pinExpires
-        dto.pinnedAt = payload.pinnedAt
+        dto.pinExpires = payload.pinExpires?.bridgeDate
+        dto.pinnedAt = payload.pinnedAt?.bridgeDate
         if let pinnedByUser = payload.pinnedBy {
             dto.pinnedBy = try saveUser(payload: pinnedByUser)
         }
@@ -589,7 +589,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             array: payload.threadParticipants.map { try saveUser(payload: $0) }
         )
 
-        channelDTO.lastMessageAt = max(channelDTO.lastMessageAt ?? payload.createdAt, payload.createdAt)
+        channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
         
         if dto.pinned {
             channelDTO.pinnedMessages.insert(dto)
@@ -626,8 +626,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         dto.pinned = payload.pinned
-        dto.pinnedAt = payload.pinnedAt
-        dto.pinExpires = payload.pinExpires
+        dto.pinnedAt = payload.pinnedAt?.bridgeDate
+        dto.pinExpires = payload.pinExpires?.bridgeDate
         if let pinnedBy = payload.pinnedBy {
             dto.pinnedBy = try saveUser(payload: pinnedBy)
         }
@@ -638,7 +638,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if payload.user.id == currentUser?.user.id {
             dto.reads = Set(
                 channelDTO.reads.filter {
-                    $0.lastReadAt >= payload.createdAt && $0.user.id != payload.user.id
+                    $0.lastReadAt.bridgeDate >= payload.createdAt && $0.user.id != payload.user.id
                 }
             )
         }
@@ -705,11 +705,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
-        let pinnedDate = Date()
+        let pinnedDate = DBDate()
         message.pinned = true
         message.pinnedAt = pinnedDate
         message.pinnedBy = currentUserDTO.user
-        message.pinExpires = pinning.expirationDate
+        message.pinExpires = pinning.expirationDate?.bridgeDate
     }
 
     func unpin(message: MessageDTO) {
@@ -849,7 +849,7 @@ extension MessageDTO {
                 .compactMap { $0.asRequestPayload() },
             mentionedUserIds: mentionedUsers.map(\.id),
             pinned: pinned,
-            pinExpires: pinExpires,
+            pinExpires: pinExpires?.bridgeDate,
             extraData: decodedExtraData
         )
     }
@@ -866,10 +866,10 @@ private extension ChatMessage {
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command
-        createdAt = dto.createdAt
-        locallyCreatedAt = dto.locallyCreatedAt
-        updatedAt = dto.updatedAt
-        deletedAt = dto.deletedAt
+        createdAt = dto.createdAt.bridgeDate
+        locallyCreatedAt = dto.locallyCreatedAt?.bridgeDate
+        updatedAt = dto.updatedAt.bridgeDate
+        deletedAt = dto.deletedAt?.bridgeDate
         arguments = dto.args
         parentMessageId = dto.parentMessageId
         showReplyInChannel = dto.showReplyInChannel
@@ -901,9 +901,9 @@ private extension ChatMessage {
            let pinnedAt = dto.pinnedAt,
            let pinnedBy = dto.pinnedBy {
             pinDetails = try .init(
-                pinnedAt: pinnedAt,
+                pinnedAt: pinnedAt.bridgeDate,
                 pinnedBy: pinnedBy.asModel(),
-                expiresAt: dto.pinExpires
+                expiresAt: dto.pinExpires?.bridgeDate
             )
         } else {
             pinDetails = nil

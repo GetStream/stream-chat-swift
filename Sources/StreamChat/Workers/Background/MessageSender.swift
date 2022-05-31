@@ -75,7 +75,10 @@ class MessageSender: Worker {
                     }
                     // Create the array if it didn't exist
                     newRequests[cid] = newRequests[cid] ?? []
-                    newRequests[cid]!.append(.init(messageId: dto.id, createdLocallyAt: dto.locallyCreatedAt ?? dto.createdAt))
+                    newRequests[cid]!.append(.init(
+                        messageId: dto.id,
+                        createdLocallyAt: (dto.locallyCreatedAt ?? dto.createdAt).bridgeDate
+                    ))
                 }
             case .move, .remove:
                 break

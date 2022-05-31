@@ -40,7 +40,7 @@ extension UserListSortingKey {
     }()
     
     static let lastActiveSortDescriptor: NSSortDescriptor = {
-        let dateKeyPath: KeyPath<UserDTO, Date?> = \UserDTO.lastActivityAt
+        let dateKeyPath: KeyPath<UserDTO, DBDate?> = \UserDTO.lastActivityAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
     

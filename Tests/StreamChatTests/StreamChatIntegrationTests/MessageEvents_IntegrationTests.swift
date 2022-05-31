@@ -71,7 +71,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            client.databaseContainer.viewContext.message(id: "1ff9f6d0-df70-4703-aef0-379f95ad7366")?.updatedAt,
+            client.databaseContainer.viewContext.message(id: "1ff9f6d0-df70-4703-aef0-379f95ad7366")?.updatedAt.bridgeDate,
             lastUpdateMessageTime
         )
 

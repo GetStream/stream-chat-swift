@@ -294,10 +294,10 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.memberCount, loadedChannel?.memberCount)
         XCTAssertEqual(channelPayload.extraData, loadedChannel?.extraData)
         XCTAssertEqual(channelPayload.typeRawValue, loadedChannel?.type.rawValue)
-        XCTAssertEqual(loadedChannel?.lastMessageAt, messagePayload.createdAt)
-        XCTAssertEqual(channelPayload.createdAt, loadedChannel?.createdAt)
-        XCTAssertEqual(channelPayload.updatedAt, loadedChannel?.updatedAt)
-        XCTAssertEqual(channelPayload.deletedAt, loadedChannel?.deletedAt)
+        XCTAssertNearlySameDate(loadedChannel?.lastMessageAt, messagePayload.createdAt)
+        XCTAssertNearlySameDate(channelPayload.createdAt, loadedChannel?.createdAt)
+        XCTAssertNearlySameDate(channelPayload.updatedAt, loadedChannel?.updatedAt)
+        XCTAssertNearlySameDate(channelPayload.deletedAt, loadedChannel?.deletedAt)
         
         // Config
         XCTAssertEqual(channelPayload.config.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
@@ -313,8 +313,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.config.messageRetention, loadedChannel?.config.messageRetention)
         XCTAssertEqual(channelPayload.config.maxMessageLength, loadedChannel?.config.maxMessageLength)
         XCTAssertEqual(channelPayload.config.commands, loadedChannel?.config.commands)
-        XCTAssertEqual(channelPayload.config.createdAt, loadedChannel?.config.createdAt)
-        XCTAssertEqual(channelPayload.config.updatedAt, loadedChannel?.config.updatedAt)
+        XCTAssertNearlySameDate(channelPayload.config.createdAt, loadedChannel?.config.createdAt)
+        XCTAssertNearlySameDate(channelPayload.config.updatedAt, loadedChannel?.config.updatedAt)
         
         // Creator
         XCTAssertEqual(channelPayload.createdBy!.id, loadedChannel?.createdBy?.id)
@@ -330,9 +330,9 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(messagePayload.id, loadedMessage?.id)
         XCTAssertEqual(messagePayload.type.rawValue, loadedMessage?.type)
         XCTAssertEqual(messagePayload.user.id, loadedMessage?.user.id)
-        XCTAssertEqual(messagePayload.createdAt, loadedMessage?.createdAt)
-        XCTAssertEqual(messagePayload.updatedAt, loadedMessage?.updatedAt)
-        XCTAssertEqual(messagePayload.deletedAt, loadedMessage?.deletedAt)
+        XCTAssertNearlySameDate(messagePayload.createdAt, loadedMessage?.createdAt.bridgeDate)
+        XCTAssertNearlySameDate(messagePayload.updatedAt, loadedMessage?.updatedAt.bridgeDate)
+        XCTAssertNearlySameDate(messagePayload.deletedAt, loadedMessage?.deletedAt?.bridgeDate)
         XCTAssertEqual(messagePayload.text, loadedMessage?.text)
         XCTAssertEqual(loadedMessage?.command, messagePayload.command)
         XCTAssertEqual(loadedMessage?.args, messagePayload.args)
@@ -340,8 +340,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(messagePayload.quotedMessage?.id, loadedMessage?.quotedMessage?.id)
         XCTAssertEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
         XCTAssertEqual(messagePayload.pinned, loadedMessage?.pinned)
-        XCTAssertEqual(messagePayload.pinExpires, loadedMessage?.pinExpires!)
-        XCTAssertEqual(messagePayload.pinnedAt, loadedMessage?.pinnedAt!)
+        XCTAssertNearlySameDate(messagePayload.pinExpires, loadedMessage?.pinExpires?.bridgeDate)
+        XCTAssertNearlySameDate(messagePayload.pinnedAt, loadedMessage?.pinnedAt?.bridgeDate)
         XCTAssertEqual(messagePayload.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
         XCTAssertEqual(
             messagePayload.mentionedUsers.map(\.id),
@@ -417,17 +417,17 @@ final class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.id, loadedMessage?.id)
             Assert.willBeEqual(messagePayload.type.rawValue, loadedMessage?.type)
             Assert.willBeEqual(messagePayload.user.id, loadedMessage?.user.id)
-            Assert.willBeEqual(messagePayload.createdAt, loadedMessage?.createdAt)
-            Assert.willBeEqual(messagePayload.updatedAt, loadedMessage?.updatedAt)
-            Assert.willBeEqual(messagePayload.deletedAt, loadedMessage?.deletedAt)
+            Assert.willBeEqual(messagePayload.createdAt.bridgeDate, loadedMessage?.createdAt)
+            Assert.willBeEqual(messagePayload.updatedAt.bridgeDate, loadedMessage?.updatedAt)
+            Assert.willBeEqual(messagePayload.deletedAt?.bridgeDate, loadedMessage?.deletedAt)
             Assert.willBeEqual(messagePayload.text, loadedMessage?.text)
             Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
             Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
             Assert.willBeEqual(messagePayload.pinned, loadedMessage?.pinned)
-            Assert.willBeEqual(messagePayload.pinExpires, loadedMessage?.pinExpires!)
-            Assert.willBeEqual(messagePayload.pinnedAt, loadedMessage?.pinnedAt!)
+            Assert.willBeEqual(messagePayload.pinExpires?.bridgeDate, loadedMessage?.pinExpires!)
+            Assert.willBeEqual(messagePayload.pinnedAt?.bridgeDate, loadedMessage?.pinnedAt!)
             Assert.willBeEqual(messagePayload.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
             Assert.willBeEqual(
                 messagePayload.mentionedUsers.map(\.id),
@@ -660,9 +660,9 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.cid, messagePayload.channel?.cid)
         XCTAssertEqual(loadedMessage.type, messagePayload.type)
         XCTAssertEqual(loadedMessage.author.id, messagePayload.user.id)
-        XCTAssertEqual(loadedMessage.createdAt, messagePayload.createdAt)
-        XCTAssertEqual(loadedMessage.updatedAt, messagePayload.updatedAt)
-        XCTAssertEqual(loadedMessage.deletedAt, messagePayload.deletedAt)
+        XCTAssertNearlySameDate(loadedMessage.createdAt, messagePayload.createdAt)
+        XCTAssertNearlySameDate(loadedMessage.updatedAt, messagePayload.updatedAt)
+        XCTAssertNearlySameDate(loadedMessage.deletedAt, messagePayload.deletedAt)
         XCTAssertEqual(loadedMessage.text, messagePayload.text)
         XCTAssertEqual(loadedMessage.command, messagePayload.command)
         XCTAssertEqual(loadedMessage.arguments, messagePayload.args)
@@ -1390,8 +1390,8 @@ final class MessageDTO_Tests: XCTestCase {
             try $0.saveMessage(payload: olderMessagePayload, for: channelId, syncOwnReactions: true)
         }
         var channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt, originalLastMessageAt)
-        
+        XCTAssertNearlySameDate(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
+
         // Create a new message payload that's newer than `channel.lastMessageAt`
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
@@ -1404,7 +1404,7 @@ final class MessageDTO_Tests: XCTestCase {
             try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true)
         }
         channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt, newerMessagePayload.createdAt)
+        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
     }
     
     func test_saveMultipleMessagesWithSameQuotedMessage() throws {
@@ -2687,8 +2687,8 @@ final class MessageDTO_Tests: XCTestCase {
         
         let results = MessageDTO.loadCurrentUserMessages(
             in: lookInAnotherChannel ? .unique : message.channel!.cid.rawValue,
-            createdAtFrom: createdAtFrom ?? messageDTO.createdAt.addingTimeInterval(-10),
-            createdAtThrough: createdAtThrough ?? messageDTO.createdAt.addingTimeInterval(10),
+            createdAtFrom: createdAtFrom ?? messageDTO.createdAt.bridgeDate.addingTimeInterval(-10),
+            createdAtThrough: createdAtThrough ?? messageDTO.createdAt.bridgeDate.addingTimeInterval(10),
             context: context
         )
         

@@ -59,7 +59,7 @@ public enum ChannelListSortingKey: String, SortingKey {
 
 extension ChannelListSortingKey {
     static let defaultSortDescriptor: NSSortDescriptor = {
-        let dateKeyPath: KeyPath<ChannelDTO, Date> = \ChannelDTO.defaultSortingAt
+        let dateKeyPath: KeyPath<ChannelDTO, DBDate> = \ChannelDTO.defaultSortingAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
     

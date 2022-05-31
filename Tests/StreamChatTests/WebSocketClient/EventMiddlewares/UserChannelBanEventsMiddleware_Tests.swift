@@ -106,7 +106,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         // Assert the member ban information is updated
         XCTAssertEqual(member.isBanned, true)
-        XCTAssertEqual(member.banExpiresAt, eventPayload.banExpiredAt!)
+        XCTAssertEqual(member.banExpiresAt?.bridgeDate, eventPayload.banExpiredAt!)
 
         XCTAssert(forwardedEvent is UserBannedEventDTO)
     }

@@ -449,7 +449,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
-        XCTAssertEqual(channel?.oldestMessageAt, payload.messages.map(\.createdAt).min())
+        XCTAssertNearlySameDate(channel?.oldestMessageAt?.bridgeDate, payload.messages.map(\.createdAt).min())
     }
 
     func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_oldestMessageAtIsNotUpdated() throws {
@@ -473,7 +473,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
-        XCTAssertEqual(channel?.oldestMessageAt, oldMessageCreatedAt)
+        XCTAssertEqual(channel?.oldestMessageAt?.bridgeDate, oldMessageCreatedAt)
     }
     
     func test_channelPayload_truncatedMessagesAreIgnored() throws {
@@ -487,7 +487,7 @@ final class ChannelDTO_Tests: XCTestCase {
             // Truncate the channel to leave only 10 newest messages
             // We're dropping 9 messages to fullfil the predicate: createdAt >= channel.truncatedAt"
             let truncateDate = channelDTO.messages
-                .sorted(by: { $0.createdAt < $1.createdAt })
+                .sorted(by: { $0.createdAt.bridgeDate < $1.createdAt.bridgeDate })
                 .dropLast(9)
                 .last?
                 .createdAt
@@ -824,11 +824,11 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // Check the default sorting.
         XCTAssertEqual(channelsWithDefaultSorting.count, 4)
-        XCTAssertEqual(channelsWithDefaultSorting.map { $0.lastMessageAt ?? $0.createdAt }, createdAndLastMessageDates)
+        XCTAssertEqual(channelsWithDefaultSorting.map { ($0.lastMessageAt ?? $0.createdAt).bridgeDate }, createdAndLastMessageDates)
 
         // Check the sorting by `updatedAt`.
         XCTAssertEqual(channelsWithUpdatedAtSorting.count, 4)
-        XCTAssertEqual(channelsWithUpdatedAtSorting.map(\.updatedAt), updatedAtDates)
+        XCTAssertEqual(channelsWithUpdatedAtSorting.map(\.updatedAt.bridgeDate), updatedAtDates)
     }
 
     /// `ChannelListSortingKey` test for sort descriptor and encoded value.

@@ -172,7 +172,7 @@ extension DatabaseContainer {
             if !withMessages {
                 let context = session as! NSManagedObjectContext
                 dto.messages.forEach { context.delete($0) }
-                dto.oldestMessageAt = .distantPast
+                dto.oldestMessageAt = Date.distantPast.bridgeDate
             }
             
             if withQuery {
