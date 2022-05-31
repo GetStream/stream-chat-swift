@@ -8,8 +8,15 @@ import XCTest
 public extension StreamMockServer {
     
     func saveMessage(_ message: [String: Any]?) {
-        guard let message = message else { return }
-        messageList.append(message)
+        guard let newMessage = message else { return }
+        let idKey = MessagePayloadsCodingKeys.id.rawValue
+        if let index = messageList.firstIndex(where: { (message) -> Bool in
+            (newMessage[idKey] as? String) == (message[idKey] as? String)
+        }) {
+            messageList[index] = newMessage
+        } else {
+            messageList.append(newMessage)
+        }
     }
     
     var firstMessage: [String: Any]? {
@@ -40,8 +47,9 @@ public extension StreamMockServer {
     }
     
     func findMessagesByChannelId(_ channelId: String) -> [[String: Any]] {
+        let cid = MessagePayloadsCodingKeys.cid.rawValue
         return messageList.filter {
-            String(describing: $0[MessagePayloadsCodingKeys.cid.rawValue]).contains(":\(channelId)")
+            String(describing: $0[cid]).contains(":\(channelId)")
         }
     }
     
@@ -55,6 +63,7 @@ public extension StreamMockServer {
         }
     }
     
+    @discardableResult
     private func waitForMessageList() -> [[String: Any]] {
         let endTime = TestData.waitingEndTime
         while messageList.isEmpty && endTime > TestData.currentTimeInterval {}

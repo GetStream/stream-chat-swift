@@ -159,8 +159,7 @@ final class MessageList_Tests: StreamTestCase {
                 .waitForNewMessage(withText: message)
         }
         AND("participant deletes the message: '\(message)'") {
-            participantRobot
-                .deleteMessage()
+            participantRobot.deleteMessage()
         }
         THEN("the message is deleted") {
             userRobot.assertDeletedMessage()
@@ -576,8 +575,8 @@ extension MessageList_Tests {
         }
         AND("participant sends a message") {
             participantRobot
-                .waitForNewMessage(withText: message)
                 .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         AND("user adds a thread reply to participant's message and sends it also to main channel") {
             userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)

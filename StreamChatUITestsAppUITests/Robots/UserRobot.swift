@@ -198,18 +198,97 @@ extension UserRobot {
         app.back()
         return self
     }
+    
+    @discardableResult
+    func leaveChatFromChannelList() -> Self {
+        ChannelListPage.userAvatar.wait().tap()
+        return self
+    }
 
     @discardableResult
     func moveToChannelListFromThreadReplies() -> Self {
-        tapOnBackButton()
-        tapOnBackButton()
         return self
+            .tapOnBackButton()
+            .tapOnBackButton()
     }
 
     @discardableResult
     func scrollMessageListUp() -> Self {
         let topMessage = MessageListPage.cells.element(boundBy: 0)
         MessageListPage.list.press(forDuration: 0.1, thenDragTo: topMessage)
+        return self
+    }
+    
+    @discardableResult
+    func openComposerCommands() -> Self {
+        if MessageListPage.ComposerCommands.cells.count == 0 {
+            MessageListPage.Composer.commandButton.wait().tap()
+        }
+        return self
+    }
+    
+    @discardableResult
+    func sendGiphy(useComposerCommand: Bool = false, shuffle: Bool = false) -> Self {
+        let giphyText = "Test"
+        if useComposerCommand {
+            openComposerCommands()
+            MessageListPage.ComposerCommands.giphyImage.wait().tap()
+            sendMessage("\(giphyText)")
+        } else {
+            sendMessage("/giphy\(giphyText)")
+        }
+        if shuffle { tapOnShuffleGiphyButton() }
+        return tapOnSendGiphyButton()
+    }
+    
+    @discardableResult
+    func replyWithGiphy(
+        useComposerCommand: Bool = false,
+        shuffle: Bool = false,
+        messageCellIndex: Int = 0
+    ) -> Self {
+        return self
+            .selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
+            .sendGiphy(useComposerCommand: useComposerCommand, shuffle: shuffle)
+    }
+    
+    @discardableResult
+    func replyWithGiphyInThread(
+        useComposerCommand: Bool = false,
+        shuffle: Bool = false,
+        alsoSendInChannel: Bool = false,
+        messageCellIndex: Int = 0
+    ) -> Self {
+        let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
+        if !threadCheckbox.exists {
+            showThread(forMessageAt: messageCellIndex)
+        }
+        if alsoSendInChannel {
+            threadCheckbox.wait().tap()
+        }
+        return sendGiphy(useComposerCommand: useComposerCommand, shuffle: shuffle)
+    }
+    
+    @discardableResult
+    func tapOnSendGiphyButton(messageCellIndex: Int = 0) -> Self {
+        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
+        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        MessageListPage.Attributes.giphySendButton(in: messageCell).wait().tap()
+        return self
+    }
+    
+    @discardableResult
+    func tapOnShuffleGiphyButton(messageCellIndex: Int = 0) -> Self {
+        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
+        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        MessageListPage.Attributes.giphyShuffleButton(in: messageCell).wait().tap()
+        return self
+    }
+    
+    @discardableResult
+    func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
+        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().tap()
         return self
     }
 }

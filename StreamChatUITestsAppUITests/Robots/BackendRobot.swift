@@ -38,7 +38,8 @@ final class BackendRobot: Robot {
 
     @discardableResult
     func setCooldown(enabled value: Bool, duration: Int) -> Self {
-        server.setCooldown(enabled: value, duration: duration, inChannelWithId: "general")
+        let id = server.currentChannelId.isEmpty ? "general" : server.currentChannelId
+        server.setCooldown(enabled: value, duration: duration, inChannelWithId: id)
         return self
     }
 }

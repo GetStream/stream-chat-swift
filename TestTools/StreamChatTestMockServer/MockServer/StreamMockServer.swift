@@ -11,9 +11,6 @@ public final class StreamMockServer {
     // Delays all HTTP responses by given time interval, 0 by default
     public static var httpResponseDelay: TimeInterval = 0.0
 
-    // This constant is used inside `websocketDelay` func that delays websocket requests and responses by given time interval, 1.5 by default
-    public var websocketDelay: TimeInterval = 1.5
-
     public private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
     private var channelConfigs = ChannelConfigs()
@@ -105,6 +102,6 @@ public extension StreamMockServer {
 
     func setCooldown(in channel: inout [String: Any]) {
         let cooldown = channelConfigs.coolDown
-        channel["cooldown"] = cooldown.isEnabled ? cooldown.duration : nil
+        channel[ChannelCodingKeys.cooldownDuration.rawValue] = cooldown.isEnabled ? cooldown.duration : nil
     }
 }

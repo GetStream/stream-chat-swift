@@ -8,16 +8,6 @@ import Swifter
 import StreamChatTestHelpers
 
 public extension StreamMockServer {
-    
-    /// Delays websocket
-    ///
-    /// - Parameters: Void
-    /// - Returns: Self
-    func websocketDelay(closure: @escaping () -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + websocketDelay) {
-            closure()
-        }
-    }
 
     /// Sends an event over a websocket connection
     ///
@@ -62,18 +52,26 @@ public extension StreamMockServer {
         channelId: String?,
         messageId: String?,
         timestamp: String? = TestData.currentDate,
+        messageType: MessageType = .regular,
         eventType: EventType,
         user: [String: Any]?,
         intercept: ((inout [String: Any]?) -> [String: Any]?)? = nil
     ) -> Self {
         guard let messageId = messageId else { return self }
         
-        var json = TestData.getMockResponse(fromFile: .wsMessage).json
+        let mockFile = messageType == .ephemeral ? MockFile.ephemeralMessage : MockFile.message
+        var json = TestData.getMockResponse(fromFile: mockFile).json
         var mockedMessage: [String: Any]?
         
         switch eventType {
         case .messageNew:
-            let message = json[JSONKey.message] as? [String: Any]
+            var message = json[JSONKey.message] as? [String: Any]
+            if messageType == .ephemeral {
+                var attachments = message?[MessagePayloadsCodingKeys.attachments.rawValue] as? [[String: Any]]
+                attachments?[0][GiphyAttachmentSpecificCodingKeys.actions.rawValue] = nil
+                message?[MessagePayloadsCodingKeys.attachments.rawValue] = attachments
+                message?[MessagePayloadsCodingKeys.type.rawValue] = MessageType.regular.rawValue
+            }
             mockedMessage = mockMessage(
                 message,
                 channelId: channelId,
@@ -87,10 +85,9 @@ public extension StreamMockServer {
             saveMessage(mockedMessage)
         case .messageDeleted:
             let message = findMessageById(messageId)
-            let id = message?[MessagePayloadsCodingKeys.id.rawValue] as! String
             mockedMessage = mockDeletedMessage(message, user: user)
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
-            removeMessage(id: id)
+            saveMessage(mockedMessage)
         case .messageUpdated:
             let message = findMessageById(messageId)
             mockedMessage = mockMessage(
@@ -110,6 +107,7 @@ public extension StreamMockServer {
         
         if let channelId = channelId {
             json[JSONKey.channelId] = channelId
+            json[JSONKey.channelType] = ChannelType.messaging.rawValue
             json[JSONKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
         }
         
@@ -168,6 +166,7 @@ public extension StreamMockServer {
         json[MessageReactionPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
         json[MessageReactionPayload.CodingKeys.type.rawValue] = eventType.rawValue
         
+        saveMessage(message)
         writeText(json.jsonToString())
         return self
     }

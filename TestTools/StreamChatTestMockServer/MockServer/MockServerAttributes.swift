@@ -12,19 +12,20 @@ public enum Message {
 }
 
 public enum MockFile: String {
-    case httpMessage = "http_message"
+    case message = "http_message"
+    case ephemeralMessage = "http_message_ephemeral"
     case httpChatEvent = "http_events"
     case httpReaction = "http_reaction"
     case httpReplies = "http_replies"
     case httpMember = "http_member"
-    case wsMessage = "ws_message"
+    case httpChannels = "http_channels"
+    
     case wsChatEvent = "ws_events"
     case wsChannelEvent = "ws_events_channel"
     case wsMemberEvent = "ws_events_member"
     case wsUserEvent = "ws_events_user"
     case wsReaction = "ws_reaction"
     case wsHealthCheck = "ws_health_check"
-    case httpChannels = "http_channels"
 
     var filePath: String {
         "\(Bundle.testTools.pathToJSONsFolder)\(rawValue)"
@@ -33,12 +34,11 @@ public enum MockFile: String {
 
 public enum MockEndpoint {
     public static let connect = "/connect"
-    
     public static let messageUpdate = "/messages/\(EndpointQuery.messageId)"
     public static let replies = "/messages/\(EndpointQuery.messageId)/replies"
     public static let reaction = "/messages/\(EndpointQuery.messageId)/reaction"
     public static let reactionUpdate = "/messages/\(EndpointQuery.messageId)/reaction/\(EndpointQuery.reactionType)"
-    
+    public static let action = "/messages/\(EndpointQuery.messageId)/action"
     public static let channels = "/channels"
     public static let channel = "/channels/messaging/\(EndpointQuery.channelId)"
     public static let event = "/channels/messaging/\(EndpointQuery.channelId)/event"
@@ -72,10 +72,16 @@ public enum JSONKey {
     public static let member = "member"
     public static let id = "id"
     public static let cooldown = "cooldown"
+    public static let attachmentAction = "image_action"
 
     public enum Channel {
         public static let addMembers = "add_members"
         public static let removeMembers = "remove_members"
+    }
+    
+    public enum AttachmentAction {
+        public static let send = "send"
+        public static let shuffle = "shuffle"
     }
 }
 
@@ -99,6 +105,7 @@ public enum UserDetails {
         UserPayloadsCodingKeys.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
     ]
 
+    public static let currentUserId = "luke_skywalker"
     public static let lukeSkywalker = [
         UserPayloadsCodingKeys.id.rawValue: "luke_skywalker",
         UserPayloadsCodingKeys.name.rawValue: "Luke Skywalker",

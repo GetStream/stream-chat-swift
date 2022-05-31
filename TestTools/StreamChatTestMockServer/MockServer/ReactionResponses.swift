@@ -113,13 +113,15 @@ public extension StreamMockServer {
         let timestamp = TestData.currentDate
         let user = setUpUser(source: message, details: UserDetails.lukeSkywalker)
         
-        json[JSONKey.message] = mockMessageWithReaction(
+        let mockedMessage = mockMessageWithReaction(
             message,
             fromUser: user,
             reactionType: reactionType,
             timestamp: timestamp,
             deleted: eventType == .reactionDeleted
         )
+        json[JSONKey.message] = mockedMessage
+        saveMessage(mockedMessage)
         
         json[JSONKey.reaction] = mockReaction(
             reaction,
@@ -129,13 +131,12 @@ public extension StreamMockServer {
             timestamp: timestamp
         )
         
-        websocketDelay { [weak self] in
-            self?.websocketReaction(
-                type: TestData.Reactions(rawValue: String(describing: reactionType)),
-                eventType: eventType,
-                user: user
-            )
-        }
+        websocketReaction(
+            type: TestData.Reactions(rawValue: String(describing: reactionType)),
+            eventType: eventType,
+            user: user
+        )
+        
         return .ok(.json(json))
     }
 }

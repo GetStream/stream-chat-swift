@@ -10,8 +10,8 @@ import XCTest
 final class ParticipantRobot: Robot {
 
     private var server: StreamMockServer
-    private var _threadParentId: String?
-    private var _user: [String: String] = UserDetails.hanSolo
+    private var threadParentId: String?
+    private var user: [String: String] = UserDetails.hanSolo
     
     init(_ server: StreamMockServer) {
         self.server = server
@@ -19,24 +19,6 @@ final class ParticipantRobot: Robot {
 
     var currentUserId: String {
         UserDetails.userId(for: user)
-    }
-
-    var user: [String: String] {
-        get {
-            return self._user
-        }
-        set {
-            self._user = newValue
-        }
-    }
-    
-    private var threadParentId: String? {
-        get {
-            return self._threadParentId
-        }
-        set {
-            self._threadParentId = newValue
-        }
     }
     
     @discardableResult
@@ -137,26 +119,21 @@ final class ParticipantRobot: Robot {
     
     @discardableResult
     func addReaction(type: TestData.Reactions) -> Self {
-        server.websocketDelay { [weak self] in
-            self?.server.websocketReaction(
-                type: type,
-                eventType: .reactionNew,
-                user: self?.participant()
-            )
-        }
-        
+        server.websocketReaction(
+            type: type,
+            eventType: .reactionNew,
+            user: participant()
+        )
         return self
     }
     
     @discardableResult
     func deleteReaction(type: TestData.Reactions) -> Self {
-        server.websocketDelay { [weak self] in
-            self?.server.websocketReaction(
-                type: type,
-                eventType: .reactionDeleted,
-                user: self?.participant()
-            )
-        }
+        server.websocketReaction(
+            type: type,
+            eventType: .reactionDeleted,
+            user: participant()
+        )
         return self
     }
     
@@ -195,13 +172,61 @@ final class ParticipantRobot: Robot {
         return self
     }
     
+    @discardableResult
+    func sendGiphy() -> Self {
+        waitForChannelQueryUpdate()
+        server.websocketMessage(
+            channelId: server.currentChannelId,
+            messageId: TestData.uniqueId,
+            messageType: .ephemeral,
+            eventType: .messageNew,
+            user: participant()
+        )
+        return self
+    }
+    
+    @discardableResult
+    func replyWithGiphy() -> Self {
+        let quotedMessage = server.lastMessage
+        let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        server.websocketMessage(
+            channelId: server.currentChannelId,
+            messageId: TestData.uniqueId,
+            messageType: .ephemeral,
+            eventType: .messageNew,
+            user: participant()
+        ) { message in
+            message?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
+            message?[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
+            return message
+        }
+        return self
+    }
+    
+    @discardableResult
+    func replyWithGiphyInThread(alsoSendInChannel: Bool = false) -> Self {
+        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
+        server.websocketMessage(
+            channelId: server.currentChannelId,
+            messageId: TestData.uniqueId,
+            messageType: .ephemeral,
+            eventType: .messageNew,
+            user: participant()
+        ) { message in
+            message?[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
+            message?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = alsoSendInChannel
+            return message
+        }
+        return self
+    }
+    
     private func participant() -> [String: Any]? {
-        let json = TestData.toJson(.wsMessage)
+        let json = TestData.toJson(.message)
         guard let message = json[JSONKey.message] as? [String: Any] else {
             return nil
         }
 
-        return server.setUpUser(source: message, details: _user)
+        return server.setUpUser(source: message, details: user)
     }
     
     // To avoid collision of the first channel query call and a first participant's message
