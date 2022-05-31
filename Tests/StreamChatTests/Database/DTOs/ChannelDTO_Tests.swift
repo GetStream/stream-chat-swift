@@ -449,7 +449,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
-        XCTAssertEqual(channel?.oldestMessageAt?.bridgeDate, payload.messages.map(\.createdAt).min())
+        XCTAssertNearlySameDate(channel?.oldestMessageAt?.bridgeDate, payload.messages.map(\.createdAt).min())
     }
 
     func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_oldestMessageAtIsNotUpdated() throws {

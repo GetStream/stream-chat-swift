@@ -294,10 +294,10 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.memberCount, loadedChannel?.memberCount)
         XCTAssertEqual(channelPayload.extraData, loadedChannel?.extraData)
         XCTAssertEqual(channelPayload.typeRawValue, loadedChannel?.type.rawValue)
-        XCTAssertEqual(loadedChannel?.lastMessageAt, messagePayload.createdAt)
-        XCTAssertEqual(channelPayload.createdAt, loadedChannel?.createdAt)
-        XCTAssertEqual(channelPayload.updatedAt, loadedChannel?.updatedAt)
-        XCTAssertEqual(channelPayload.deletedAt, loadedChannel?.deletedAt)
+        XCTAssertNearlySameDate(loadedChannel?.lastMessageAt, messagePayload.createdAt)
+        XCTAssertNearlySameDate(channelPayload.createdAt, loadedChannel?.createdAt)
+        XCTAssertNearlySameDate(channelPayload.updatedAt, loadedChannel?.updatedAt)
+        XCTAssertNearlySameDate(channelPayload.deletedAt, loadedChannel?.deletedAt)
         
         // Config
         XCTAssertEqual(channelPayload.config.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
@@ -313,8 +313,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.config.messageRetention, loadedChannel?.config.messageRetention)
         XCTAssertEqual(channelPayload.config.maxMessageLength, loadedChannel?.config.maxMessageLength)
         XCTAssertEqual(channelPayload.config.commands, loadedChannel?.config.commands)
-        XCTAssertEqual(channelPayload.config.createdAt, loadedChannel?.config.createdAt)
-        XCTAssertEqual(channelPayload.config.updatedAt, loadedChannel?.config.updatedAt)
+        XCTAssertNearlySameDate(channelPayload.config.createdAt, loadedChannel?.config.createdAt)
+        XCTAssertNearlySameDate(channelPayload.config.updatedAt, loadedChannel?.config.updatedAt)
         
         // Creator
         XCTAssertEqual(channelPayload.createdBy!.id, loadedChannel?.createdBy?.id)
@@ -330,9 +330,9 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(messagePayload.id, loadedMessage?.id)
         XCTAssertEqual(messagePayload.type.rawValue, loadedMessage?.type)
         XCTAssertEqual(messagePayload.user.id, loadedMessage?.user.id)
-        XCTAssertEqual(messagePayload.createdAt.bridgeDate, loadedMessage?.createdAt)
-        XCTAssertEqual(messagePayload.updatedAt.bridgeDate, loadedMessage?.updatedAt)
-        XCTAssertEqual(messagePayload.deletedAt?.bridgeDate, loadedMessage?.deletedAt)
+        XCTAssertNearlySameDate(messagePayload.createdAt, loadedMessage?.createdAt.bridgeDate)
+        XCTAssertNearlySameDate(messagePayload.updatedAt, loadedMessage?.updatedAt.bridgeDate)
+        XCTAssertNearlySameDate(messagePayload.deletedAt, loadedMessage?.deletedAt?.bridgeDate)
         XCTAssertEqual(messagePayload.text, loadedMessage?.text)
         XCTAssertEqual(loadedMessage?.command, messagePayload.command)
         XCTAssertEqual(loadedMessage?.args, messagePayload.args)
@@ -340,8 +340,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(messagePayload.quotedMessage?.id, loadedMessage?.quotedMessage?.id)
         XCTAssertEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
         XCTAssertEqual(messagePayload.pinned, loadedMessage?.pinned)
-        XCTAssertEqual(messagePayload.pinExpires?.bridgeDate, loadedMessage?.pinExpires!)
-        XCTAssertEqual(messagePayload.pinnedAt?.bridgeDate, loadedMessage?.pinnedAt!)
+        XCTAssertNearlySameDate(messagePayload.pinExpires, loadedMessage?.pinExpires?.bridgeDate)
+        XCTAssertNearlySameDate(messagePayload.pinnedAt, loadedMessage?.pinnedAt?.bridgeDate)
         XCTAssertEqual(messagePayload.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
         XCTAssertEqual(
             messagePayload.mentionedUsers.map(\.id),
@@ -660,9 +660,9 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.cid, messagePayload.channel?.cid)
         XCTAssertEqual(loadedMessage.type, messagePayload.type)
         XCTAssertEqual(loadedMessage.author.id, messagePayload.user.id)
-        XCTAssertEqual(loadedMessage.createdAt, messagePayload.createdAt)
-        XCTAssertEqual(loadedMessage.updatedAt, messagePayload.updatedAt)
-        XCTAssertEqual(loadedMessage.deletedAt, messagePayload.deletedAt)
+        XCTAssertNearlySameDate(loadedMessage.createdAt, messagePayload.createdAt)
+        XCTAssertNearlySameDate(loadedMessage.updatedAt, messagePayload.updatedAt)
+        XCTAssertNearlySameDate(loadedMessage.deletedAt, messagePayload.deletedAt)
         XCTAssertEqual(loadedMessage.text, messagePayload.text)
         XCTAssertEqual(loadedMessage.command, messagePayload.command)
         XCTAssertEqual(loadedMessage.arguments, messagePayload.args)
@@ -1390,8 +1390,8 @@ final class MessageDTO_Tests: XCTestCase {
             try $0.saveMessage(payload: olderMessagePayload, for: channelId, syncOwnReactions: true)
         }
         var channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
-        
+        XCTAssertNearlySameDate(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
+
         // Create a new message payload that's newer than `channel.lastMessageAt`
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: messageId,

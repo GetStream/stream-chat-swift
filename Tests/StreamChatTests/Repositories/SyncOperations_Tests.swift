@@ -62,7 +62,7 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.synchedChannelIds.count, 0)
-        XCTAssertEqual(database.viewContext.currentUser?.lastSynchedEventDate?.bridgeDate, originalDate)
+        XCTAssertNearlySameDate(database.viewContext.currentUser?.lastSynchedEventDate?.bridgeDate, originalDate)
         XCTAssertCall(
             "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:completion:)",
             on: syncRepository,

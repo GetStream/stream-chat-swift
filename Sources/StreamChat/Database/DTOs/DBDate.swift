@@ -22,7 +22,7 @@ import Foundation
 ///
 /// *How does `bridgeDate`work on a deleted object?*
 ///
-/// When the conversion is from `Date` to `NSDate`, there is no issue. A `Date` cannot be backed by a nil value, so we /// are safe.
+/// When the conversion is from `Date` to `NSDate`, there is no issue. A `Date` cannot be backed by a nil value, so we are safe.
 ///
 /// When the conversion is from `NSDate` to `Date` we have 2 possibilities:
 /// - When `NSDate` is backed by a value:

@@ -287,13 +287,13 @@ final class SyncRepository_Tests: XCTestCase {
         let eventsPayload1 = messageEventPayload(with: [firstDate, secondDate])
         waitForSyncLocalStateRun(requestResult: .success(eventsPayload1))
         
-        XCTAssertEqual(lastSyncAtValue, secondDate)
+        XCTAssertNearlySameDate(lastSyncAtValue, secondDate)
                 
         let thirdDate = secondDate.addingTimeInterval(1)
         let eventsPayload2 = messageEventPayload(with: [thirdDate])
         waitForSyncLocalStateRun(requestResult: .success(eventsPayload2))
         
-        XCTAssertEqual(lastSyncAtValue, thirdDate)
+        XCTAssertNearlySameDate(lastSyncAtValue, thirdDate)
     }
 
     // MARK: - Sync existing channels events

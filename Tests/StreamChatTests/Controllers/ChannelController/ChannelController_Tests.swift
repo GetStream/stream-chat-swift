@@ -424,8 +424,8 @@ final class ChannelController_Tests: XCTestCase {
             oldMessageId = dto.id
         }
         var channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
-        
+        XCTAssertNearlySameDate(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
+
         // Create a new message payload that's newer than `channel.lastMessageAt`
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: .unique,
