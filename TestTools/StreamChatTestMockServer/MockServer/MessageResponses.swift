@@ -102,12 +102,12 @@ public extension StreamMockServer {
         formData: [String: Any]
     ) -> HttpResponse {
         var json = TestData.toJson(.ephemeralMessage)
-        var message = findEphemeralMessageById(messageId)
-        let imageAction = formData[JSONKey.imageAction] as? String
+        var message = findMessageById(messageId)
+        let attachmentAction = formData[JSONKey.attachmentAction] as? String
         let timestamp = TestData.currentDate
         
-        switch imageAction {
-        case JSONKey.ImageActions.send:
+        switch attachmentAction {
+        case JSONKey.AttachmentAction.send:
             let quotedMessageId = message?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] as? String
             let parentId = message?[MessagePayloadsCodingKeys.parentId.rawValue] as? String
             let showInChannel = message?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] as? Bool
@@ -125,7 +125,7 @@ public extension StreamMockServer {
                 quotedMessageId: quotedMessageId,
                 showInChannel: showInChannel
             )
-        case JSONKey.ImageActions.shuffle:
+        case JSONKey.AttachmentAction.shuffle:
             break
         default:
             return .badRequest(nil)
@@ -215,7 +215,7 @@ public extension StreamMockServer {
         )
         
         if messageType == .ephemeral {
-            saveEphemeralMessage(mockedMessage)
+            saveMessage(mockedMessage)
         } else {
             sendWebsocketMessages(
                 messageId: messageId,
@@ -262,7 +262,7 @@ public extension StreamMockServer {
         mockedMessage?[messageKey.quotedMessage.rawValue] = quotedMessage
         
         if messageType == .ephemeral {
-            saveEphemeralMessage(mockedMessage)
+            saveMessage(mockedMessage)
         } else {
             sendWebsocketMessages(
                 messageId: messageId,
@@ -310,7 +310,7 @@ public extension StreamMockServer {
         mockedMessage?[messageKey.showReplyInChannel.rawValue] = showInChannel
         
         if messageType == .ephemeral {
-            saveEphemeralMessage(mockedMessage)
+            saveMessage(mockedMessage)
         } else {
             sendWebsocketMessages(
                 messageId: messageId,
@@ -363,7 +363,7 @@ public extension StreamMockServer {
         mockedMessage?[messageKey.quotedMessage.rawValue] = quotedMessage
         
         if messageType == .ephemeral {
-            saveEphemeralMessage(mockedMessage)
+            saveMessage(mockedMessage)
         } else {
             sendWebsocketMessages(
                 messageId: messageId,

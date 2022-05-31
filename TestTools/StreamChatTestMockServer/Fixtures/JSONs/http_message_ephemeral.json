@@ -1,9 +1,9 @@
 {
   "message": {
     "id": "83CA6796-199D-41DB-A6BB-AB063B6514A7",
-    "text": "/giphy /test",
+    "text": "/giphy Test",
     "command": "giphy",
-    "html": "<p>/giphy /test</p>\n",
+    "html": "<p>/giphy Test</p>\n",
     "type": "ephemeral",
     "user": {
       "id": "luke_skywalker",
@@ -26,7 +26,7 @@
     "attachments": [
       {
         "type": "giphy",
-        "title": "/test",
+        "title": "Test",
         "title_link": "https://giphy.com/gifs/test-gw3IWyGkC0rsazTi",
         "thumb_url": "https://media3.giphy.com/media/gw3IWyGkC0rsazTi/giphy.gif?cid=c4b03675ftkzvht75x1pi5fghm0jmtid0ft31v6g0cevus5d&rid=giphy.gif&ct=g",
         "actions": [
@@ -123,7 +123,7 @@
     "command_info": {
       "name": "Giphy"
     },
-    "args": "/test"
+    "args": "Test"
   },
   "duration": "20.55ms"
 }

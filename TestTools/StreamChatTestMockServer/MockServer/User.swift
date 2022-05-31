@@ -11,14 +11,9 @@ public extension StreamMockServer {
         source: [String: Any]?,
         details: [String: String] = [:]
     ) -> [String: Any]? {
-        var user = source?[JSONKey.user] as? [String: Any]
-        if !details.isEmpty {
-            user?[UserPayloadsCodingKeys.id.rawValue] = details[UserPayloadsCodingKeys.id.rawValue]
-            user?[UserPayloadsCodingKeys.name.rawValue] = details[UserPayloadsCodingKeys.name.rawValue]
-            user?[UserPayloadsCodingKeys.imageURL.rawValue] = details[UserPayloadsCodingKeys.imageURL.rawValue]
-            user?["image_url"] = details[UserPayloadsCodingKeys.imageURL.rawValue]
-        }
-        return user
+        guard let user = source?[JSONKey.user] as? [String: Any] else { return nil }
+        
+        return user.merging(details) { $1 }
     }
 
     func memberJSONs(for ids: [String]) -> [[String: Any]] {

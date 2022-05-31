@@ -71,7 +71,6 @@ public extension StreamMockServer {
                 attachments?[0][GiphyAttachmentSpecificCodingKeys.actions.rawValue] = nil
                 message?[MessagePayloadsCodingKeys.attachments.rawValue] = attachments
                 message?[MessagePayloadsCodingKeys.type.rawValue] = MessageType.regular.rawValue
-                removeEphemeralMessage(id: messageId)
             }
             mockedMessage = mockMessage(
                 message,

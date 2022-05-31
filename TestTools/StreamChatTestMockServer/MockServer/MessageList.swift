@@ -19,18 +19,6 @@ public extension StreamMockServer {
         }
     }
     
-    func saveEphemeralMessage(_ message: [String: Any]?) {
-        guard let newMessage = message else { return }
-        let idKey = MessagePayloadsCodingKeys.id.rawValue
-        if let index = ephemeralMessageList.firstIndex(where: { (message) -> Bool in
-            (newMessage[idKey] as? String) == (message[idKey] as? String)
-        }) {
-            ephemeralMessageList[index] = newMessage
-        } else {
-            ephemeralMessageList.append(newMessage)
-        }
-    }
-    
     var firstMessage: [String: Any]? {
         try? XCTUnwrap(waitForMessageList().first)
     }
@@ -47,12 +35,6 @@ public extension StreamMockServer {
         try? XCTUnwrap(waitForMessageWithId(id))
     }
     
-    func findEphemeralMessageById(_ id: String) -> [String: Any]? {
-        return ephemeralMessageList.first(where: {
-            ($0[MessagePayloadsCodingKeys.id.rawValue] as? String) == id
-        })
-    }
-    
     func findMessageByUserId(_ userId: String) -> [String: Any]? {
         try? XCTUnwrap(waitForMessageWithUserId(userId))
     }
@@ -66,23 +48,8 @@ public extension StreamMockServer {
     
     func findMessagesByChannelId(_ channelId: String) -> [[String: Any]] {
         let cid = MessagePayloadsCodingKeys.cid.rawValue
-        let ephemeralMessages = ephemeralMessageList.filter {
+        return messageList.filter {
             String(describing: $0[cid]).contains(":\(channelId)")
-        }
-        var messages = messageList.filter {
-            String(describing: $0[cid]).contains(":\(channelId)")
-        }
-        messages += ephemeralMessages
-        return messages
-    }
-    
-    func removeEphemeralMessage(id: String) {
-        let deletedMessage = findEphemeralMessageById(id)
-        let idKey = MessagePayloadsCodingKeys.id.rawValue
-        if let deletedIndex = ephemeralMessageList.firstIndex(where: { (message) -> Bool in
-            (message[idKey] as? String) == (deletedMessage?[idKey] as? String)
-        }) {
-            ephemeralMessageList.remove(at: deletedIndex)
         }
     }
     

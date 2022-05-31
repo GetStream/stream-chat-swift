@@ -72,14 +72,14 @@ public enum JSONKey {
     public static let member = "member"
     public static let id = "id"
     public static let cooldown = "cooldown"
-    public static let imageAction = "image_action"
+    public static let attachmentAction = "image_action"
 
     public enum Channel {
         public static let addMembers = "add_members"
         public static let removeMembers = "remove_members"
     }
     
-    public enum ImageActions {
+    public enum AttachmentAction {
         public static let send = "send"
         public static let shuffle = "shuffle"
     }
