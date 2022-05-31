@@ -31,8 +31,8 @@ class SyncRepository {
     private let config: ChatClientConfig
     private let database: DatabaseContainer
     private let apiClient: APIClient
-    let activeChannelControllers: NSHashTable<ChatChannelController>
-    let activeChannelListControllers: NSHashTable<ChatChannelListController>
+    let activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>
+    let activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
 
@@ -45,8 +45,8 @@ class SyncRepository {
 
     init(
         config: ChatClientConfig,
-        activeChannelControllers: NSHashTable<ChatChannelController>,
-        activeChannelListControllers: NSHashTable<ChatChannelListController>,
+        activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>,
+        activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>,
         offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
