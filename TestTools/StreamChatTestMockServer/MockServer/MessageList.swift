@@ -53,6 +53,16 @@ public extension StreamMockServer {
         }
     }
     
+    func removeMessage(id: String) {
+        let deletedMessage = try? XCTUnwrap(waitForMessageWithId(id))
+        let idKey = MessagePayloadsCodingKeys.id.rawValue
+        if let deletedIndex = messageList.firstIndex(where: { (message) -> Bool in
+            (message[idKey] as? String) == (deletedMessage?[idKey] as? String)
+        }) {
+            messageList.remove(at: deletedIndex)
+        }
+    }
+    
     @discardableResult
     private func waitForMessageList() -> [[String: Any]] {
         let endTime = TestData.waitingEndTime
