@@ -281,8 +281,6 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
 /// When this object is set as `NSFetchedResultsControllerDelegate`, it aggregates the callbacks from the fetched results
 /// controller and forwards them in the way of `[Change<Item>]`. You can set the `onDidChange` callback to receive these updates.
 class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResultsControllerDelegate {
-    // TODO: Extend this to also provide `CollectionDifference` and `NSDiffableDataSourceSnapshot`
-    
     /// Used for converting the `DTO`s provided by `FetchResultsController` to the resulting `Item`.
     let itemCreator: (DTO) throws -> Item
 
@@ -342,7 +340,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
             currentChanges.append(.move(item, fromIndex: fromIndex, toIndex: toIndex))
             
         case .update:
-            guard let index = indexPath else {
+            guard let index = newIndexPath else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.update` change.")
                 return
             }
