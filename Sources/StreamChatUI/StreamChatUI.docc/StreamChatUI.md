@@ -1,13 +1,5 @@
-# ``StreamChat``
+# ``StreamChatUI``
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+Build your own app chat experience for iOS using the official Stream Chat API.
 
-## Overview
-
-<!--@START_MENU_TOKEN@-->Text<!--@END_MENU_TOKEN@-->
-
-## Topics
-
-### <!--@START_MENU_TOKEN@-->Group<!--@END_MENU_TOKEN@-->
-
-- <!--@START_MENU_TOKEN@-->``Symbol``<!--@END_MENU_TOKEN@-->
+The StreamChatUI SDK is our UI SDK for UIKit components. If your application needs to support iOS 13 and below, this is the right UI SDK for you.

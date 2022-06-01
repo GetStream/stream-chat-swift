@@ -3000,7 +3000,7 @@
 		A30C3F21276B4F8800DA5968 /* UnknownUserEvent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownUserEvent_Tests.swift; sourceTree = "<group>"; };
 		A30DEC98260B47DE0066E8CE /* TitleContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleContainerView.swift; sourceTree = "<group>"; };
 		A311B42C27E8BB7400CFCF6D /* StreamChatTestTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatTestTools.swift; sourceTree = "<group>"; };
-		A3331C2D28475FDB00699273 /* StreamChatUI.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; name = StreamChatUI.docc; path = Sources/StreamChatUI/StreamChatUI.docc; sourceTree = "<group>"; };
+		A3331C2D28475FDB00699273 /* StreamChatUI.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = StreamChatUI.docc; sourceTree = "<group>"; };
 		A33FA815282D595C00DC40E8 /* ChannelList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList_Tests.swift; sourceTree = "<group>"; };
 		A344074E27D753530044F150 /* ChatClientUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatClientUpdater_Mock.swift; sourceTree = "<group>"; };
 		A344075027D753530044F150 /* ChannelUnreadCount_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelUnreadCount_Mock.swift; sourceTree = "<group>"; };
@@ -3142,7 +3142,7 @@
 		A3C7BAE427E4EABC00BBF4FA /* ChannelEvents_IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEvents_IntegrationTests.swift; sourceTree = "<group>"; };
 		A3C7BAE627E4EC4000BBF4FA /* ChannelListQuery+Equatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListQuery+Equatable.swift"; sourceTree = "<group>"; };
 		A3C7BAE827E4ECE800BBF4FA /* TestMemberEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMemberEvent.swift; sourceTree = "<group>"; };
-		A3CC15D128475F4A00C2979C /* StreamChat.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; name = StreamChat.docc; path = Sources/StreamChat/StreamChat.docc; sourceTree = "<group>"; };
+		A3CC15D128475F4A00C2979C /* StreamChat.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = StreamChat.docc; sourceTree = "<group>"; };
 		A3D15D8027E9CF5A006B34D7 /* AssertAsync+Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AssertAsync+Events.swift"; sourceTree = "<group>"; };
 		A3D15D8327E9D4B5006B34D7 /* VirtualTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTimer.swift; sourceTree = "<group>"; };
 		A3D15D8427E9D4B5006B34D7 /* VirtualTime_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTime_Tests.swift; sourceTree = "<group>"; };
@@ -3793,6 +3793,7 @@
 		790881AB254327C800896F03 /* StreamChat */ = {
 			isa = PBXGroup;
 			children = (
+				A3CC15D128475F4A00C2979C /* StreamChat.docc */,
 				799C941D247D2F80001F1104 /* Sources.h */,
 				799C941E247D2F80001F1104 /* Info.plist */,
 				79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */,
@@ -3817,6 +3818,7 @@
 		7908823025432C6400896F03 /* StreamChatUI */ = {
 			isa = PBXGroup;
 			children = (
+				A3331C2D28475FDB00699273 /* StreamChatUI.docc */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
 				7908823225432C6400896F03 /* Info.plist */,
 				BDDD1EA22632C50200BA007B /* Appearance.swift */,
@@ -5417,8 +5419,6 @@
 		8AD5EC8522E9A3E8005CFAC9 = {
 			isa = PBXGroup;
 			children = (
-				A3331C2D28475FDB00699273 /* StreamChatUI.docc */,
-				A3CC15D128475F4A00C2979C /* StreamChat.docc */,
 				8261340927F20B7A0034AC37 /* StreamChatUITestsApp.xctestplan */,
 				AD9BE32526680E4200A6D284 /* Stream.playground */,
 				792E3D6A25C97D920040B0C2 /* Package.swift */,
