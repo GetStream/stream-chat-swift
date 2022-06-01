@@ -1,1 +1,199 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelhiddenevent\/createdat"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent\/createdAt","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The date a channel was hidden."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"title":"createdAt","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat18ChannelHiddenEventV9createdAt10Foundation4DateVvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelHiddenEvent/createdAt":{"role":"symbol","title":"createdAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The date a channel was hidden."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent\/createdAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelhiddenevent\/createdat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelHiddenEvent":{"role":"symbol","title":"ChannelHiddenEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelHiddenEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel is hidden."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelHiddenEvent"}],"url":"\/documentation\/streamchat\/channelhiddenevent"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The date a channel was hidden.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent\/createdAt"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18ChannelHiddenEventV9createdAt10Foundation4DateVvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "createdAt"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10Foundation4DateV",
+        "text" : "Date"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "createdAt"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "createdAt"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10Foundation4DateV",
+              "text" : "Date"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelhiddenevent\/createdat"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelHiddenEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel is hidden.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelHiddenEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelHiddenEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelHiddenEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelhiddenevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelHiddenEvent/createdAt": {
+  "abstract" : [
+    {
+      "text" : "The date a channel was hidden.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createdAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent\/createdAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createdAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelhiddenevent\/createdat"
+}
+}
+}

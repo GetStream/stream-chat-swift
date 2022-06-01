@@ -1,1 +1,589 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageNewEvent"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messagenewevent"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Triggered when a new message is sent to channel."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageNewEvent"}],"title":"MessageNewEvent","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat15MessageNewEventV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"MessageNewEvent"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/channel","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/cid","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/createdAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/message","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/messageId","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/unreadCount","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/user","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/userId","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/watcherCount"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount":{"role":"symbol","title":"HasUnreadCount","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"HasUnreadCount"}],"abstract":[{"type":"text","text":"A bounding protocol for all events that have unread counts."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"HasUnreadCount"}],"url":"\/documentation\/streamchat\/hasunreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/unreadCount":{"role":"symbol","title":"unreadCount","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"unreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The unread counts."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/unreadCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagenewevent\/unreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/message":{"role":"symbol","title":"message","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"message"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"}],"abstract":[{"type":"text","text":"The message that was sent."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/message","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagenewevent\/message"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/createdAt":{"role":"symbol","title":"createdAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The event timestamp."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/createdAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagenewevent\/createdat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/user":{"role":"symbol","title":"user","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"user"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"}],"abstract":[{"type":"text","text":"The user who sent a message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/user","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagenewevent\/user"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/channel":{"role":"symbol","title":"channel","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"channel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"}],"abstract":[{"type":"text","text":"The channel a message was sent to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/channel","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagenewevent\/channel"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"abstract":[{"type":"text","text":"The channel identifier the message was sent to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/cid","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagenewevent\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent":{"role":"symbol","title":"MessageNewEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageNewEvent"}],"abstract":[{"type":"text","text":"Triggered when a new message is sent to channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageNewEvent"}],"url":"\/documentation\/streamchat\/messagenewevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/watcherCount":{"role":"symbol","title":"watcherCount","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"watcherCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The # of channel watchers."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/watcherCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagenewevent\/watchercount"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/userId":{"role":"symbol","title":"userId","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"userId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/userId","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/messagenewevent\/userid"},"doc://io.getstream.StreamChat/documentation/StreamChat/Event":{"role":"symbol","title":"Event","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Event"}],"abstract":[{"type":"text","text":"An "},{"type":"codeVoice","code":"Event"},{"type":"text","text":" object representing an event in the chat system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Event"}],"url":"\/documentation\/streamchat\/event"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/messageId":{"role":"symbol","title":"messageId","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/messageId","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/messagenewevent\/messageid"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Triggered when a new message is sent to channel.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat15MessageNewEventV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "MessageNewEvent"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "MessageNewEvent"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "MessageNewEvent"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "MessageNewEvent"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/channel",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/cid",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/createdAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/message",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/messageId",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/unreadCount",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/user",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/userId",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/watcherCount"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messagenewevent"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Event": {
+  "abstract" : [
+    {
+      "text" : "An ",
+      "type" : "text"
+    },
+    {
+      "code" : "Event",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " object representing an event in the chat system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Event",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/event"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount": {
+  "abstract" : [
+    {
+      "text" : "A bounding protocol for all events that have unread counts.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasUnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasUnreadCount"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HasUnreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/hasunreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a new message is sent to channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageNewEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageNewEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageNewEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/channel": {
+  "abstract" : [
+    {
+      "text" : "The channel a message was sent to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/channel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent\/channel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/cid": {
+  "abstract" : [
+    {
+      "text" : "The channel identifier the message was sent to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/cid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent\/cid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/createdAt": {
+  "abstract" : [
+    {
+      "text" : "The event timestamp.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createdAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/createdAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createdAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent\/createdat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/message": {
+  "abstract" : [
+    {
+      "text" : "The message that was sent.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "message"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/message",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "message",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent\/message"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/messageId": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/messageId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messageId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent\/messageid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/unreadCount": {
+  "abstract" : [
+    {
+      "text" : "The unread counts.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/unreadCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent\/unreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/user": {
+  "abstract" : [
+    {
+      "text" : "The user who sent a message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "user"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/user",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "user",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent\/user"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/userId": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "userId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/userId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "userId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent\/userid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent/watcherCount": {
+  "abstract" : [
+    {
+      "text" : "The # of channel watchers.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "watcherCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent\/watcherCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "watcherCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent\/watchercount"
+}
+}
+}

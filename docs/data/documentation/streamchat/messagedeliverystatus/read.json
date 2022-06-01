@@ -1,1 +1,224 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"read"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus","preciseIdentifier":"s:10StreamChat21MessageDeliveryStatusV","text":"MessageDeliveryStatus"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messagedeliverystatus\/read"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus\/read","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The message delivery state for message that is successfully sent and read by at least one channel member."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"read"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageDeliveryStatus","preciseIdentifier":"s:10StreamChat21MessageDeliveryStatusV"}],"title":"read","roleHeading":"Type Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat21MessageDeliveryStatusV4readACvpZ","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeliveryStatus/read":{"role":"symbol","title":"read","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"read"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageDeliveryStatus","preciseIdentifier":"s:10StreamChat21MessageDeliveryStatusV"}],"abstract":[{"type":"text","text":"The message delivery state for message that is successfully sent and read by at least one channel member."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus\/read","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagedeliverystatus\/read"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeliveryStatus":{"role":"symbol","title":"MessageDeliveryStatus","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageDeliveryStatus"}],"abstract":[{"type":"text","text":"The type describing message delivery status."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageDeliveryStatus"}],"url":"\/documentation\/streamchat\/messagedeliverystatus"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The message delivery state for message that is successfully sent and read by at least one channel member.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus\/read"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat21MessageDeliveryStatusV4readACvpZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "read"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat21MessageDeliveryStatusV",
+        "text" : "MessageDeliveryStatus"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "read"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "read"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat21MessageDeliveryStatusV",
+              "text" : "MessageDeliveryStatus"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messagedeliverystatus\/read"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeliveryStatus": {
+  "abstract" : [
+    {
+      "text" : "The type describing message delivery status.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageDeliveryStatus"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageDeliveryStatus"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageDeliveryStatus",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeliverystatus"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeliveryStatus/read": {
+  "abstract" : [
+    {
+      "text" : "The message delivery state for message that is successfully sent and read by at least one channel member.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "read"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat21MessageDeliveryStatusV",
+      "text" : "MessageDeliveryStatus"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus\/read",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "read",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeliverystatus\/read"
+}
+}
+}

@@ -1,1 +1,294 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Pagination","preciseIdentifier":"s:10StreamChat10PaginationV","text":"Pagination"},{"kind":"text","text":"?"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/userlistquery\/pagination"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListQuery\/pagination","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A pagination."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Pagination","preciseIdentifier":"s:10StreamChat10PaginationV"},{"kind":"text","text":"?"}],"title":"pagination","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat13UserListQueryV10paginationAA10PaginationVSgvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListQuery"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListQuery/pagination":{"role":"symbol","title":"pagination","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Pagination","preciseIdentifier":"s:10StreamChat10PaginationV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"A pagination."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListQuery\/pagination","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistquery\/pagination"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListQuery":{"role":"symbol","title":"UserListQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserListQuery"}],"abstract":[{"type":"text","text":"A query is used for querying specific users from backend."},{"type":"text","text":" "},{"type":"text","text":"You can specify filter, sorting and pagination."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserListQuery"}],"url":"\/documentation\/streamchat\/userlistquery"},"doc://io.getstream.StreamChat/documentation/StreamChat/Pagination":{"role":"symbol","title":"Pagination","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Pagination"}],"abstract":[{"type":"text","text":"Basic pagination with "},{"type":"codeVoice","code":"pageSize"},{"type":"text","text":" and "},{"type":"codeVoice","code":"offset"},{"type":"text","text":"."},{"type":"text","text":" "},{"type":"text","text":"Used everywhere except "},{"type":"codeVoice","code":"ChannelQuery"},{"type":"text","text":". (See "},{"type":"codeVoice","code":"MessagesPagination"},{"type":"text","text":")"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Pagination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Pagination"}],"url":"\/documentation\/streamchat\/pagination"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A pagination.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListQuery"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListQuery\/pagination"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat13UserListQueryV10paginationAA10PaginationVSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "pagination"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat10PaginationV",
+        "text" : "Pagination"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "pagination"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "pagination"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Pagination",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat10PaginationV",
+              "text" : "Pagination"
+            },
+            {
+              "kind" : "text",
+              "text" : "?"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/userlistquery\/pagination"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Pagination": {
+  "abstract" : [
+    {
+      "text" : "Basic pagination with ",
+      "type" : "text"
+    },
+    {
+      "code" : "pageSize",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and ",
+      "type" : "text"
+    },
+    {
+      "code" : "offset",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Used everywhere except ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelQuery",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ". (See ",
+      "type" : "text"
+    },
+    {
+      "code" : "MessagesPagination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ")",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Pagination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Pagination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Pagination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Pagination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pagination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListQuery": {
+  "abstract" : [
+    {
+      "text" : "A query is used for querying specific users from backend.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "You can specify filter, sorting and pagination.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserListQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserListQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserListQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListQuery/pagination": {
+  "abstract" : [
+    {
+      "text" : "A pagination.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pagination"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10PaginationV",
+      "text" : "Pagination"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListQuery\/pagination",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "pagination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistquery\/pagination"
+}
+}
+}

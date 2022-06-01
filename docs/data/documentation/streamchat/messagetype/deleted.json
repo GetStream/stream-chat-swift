@@ -1,1 +1,172 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"deleted"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messagetype\/deleted"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageType\/deleted","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A deleted message."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"deleted"}],"title":"MessageType.deleted","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat11MessageTypeO7deletedyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageType"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageType/deleted":{"role":"symbol","title":"MessageType.deleted","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"deleted"}],"abstract":[{"type":"text","text":"A deleted message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageType\/deleted","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagetype\/deleted"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageType":{"role":"symbol","title":"MessageType","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageType"}],"abstract":[{"type":"text","text":"A type of the message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageType"}],"url":"\/documentation\/streamchat\/messagetype"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A deleted message.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageType"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageType\/deleted"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat11MessageTypeO7deletedyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "deleted"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "MessageType.deleted"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "deleted"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messagetype\/deleted"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageType": {
+  "abstract" : [
+    {
+      "text" : "A type of the message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagetype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageType/deleted": {
+  "abstract" : [
+    {
+      "text" : "A deleted message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deleted"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageType\/deleted",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "MessageType.deleted",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagetype\/deleted"
+}
+}
+}

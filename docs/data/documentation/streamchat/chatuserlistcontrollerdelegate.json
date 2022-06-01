@@ -1,1 +1,419 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserListControllerDelegate"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate","preciseIdentifier":"s:10StreamChat27DataControllerStateDelegateP","text":"DataControllerStateDelegate"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatuserlistcontrollerdelegate"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController\/ObservableObject-swift.class"],"kind":"relationships","title":"Conforming Types","type":"conformingTypes"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate","interfaceLanguage":"swift"},"abstract":[{"type":"codeVoice","code":"ChatUserListController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserListControllerDelegate"}],"title":"ChatUserListControllerDelegate","roleHeading":"Protocol","role":"symbol","symbolKind":"protocol","externalID":"s:10StreamChat0B26UserListControllerDelegateP","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatUserListControllerDelegate"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate\/controller(_:didChangeUsers:)-12q4i","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate\/memberListController(_:didChangeMembers:)"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListControllerDelegate/controller(_:didChangeUsers:)-12q4i":{"defaultImplementations":1,"role":"symbol","title":"controller(_:didChangeUsers:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatUserListController","preciseIdentifier":"s:10StreamChat0B18UserListControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeUsers"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">])"}],"abstract":[{"type":"text","text":"The controller changed the list of observed users."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate\/controller(_:didChangeUsers:)-12q4i","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/chatuserlistcontrollerdelegate\/controller(_:didchangeusers:)-12q4i"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListController/ObservableObject-swift.class":{"role":"symbol","title":"ChatUserListController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"UserListController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatuserlistcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListControllerDelegate":{"role":"symbol","title":"ChatUserListControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserListControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatUserListController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserListControllerDelegate"}],"url":"\/documentation\/streamchat\/chatuserlistcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate":{"role":"symbol","title":"DataControllerStateDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataControllerStateDelegate"}],"abstract":[{"type":"text","text":"A delegate protocol some Controllers use to propagate the information about controller "},{"type":"codeVoice","code":"state"},{"type":"text","text":" changes. You can use it to let"},{"type":"text","text":" "},{"type":"text","text":"users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataControllerStateDelegate"}],"url":"\/documentation\/streamchat\/datacontrollerstatedelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListControllerDelegate/memberListController(_:didChangeMembers:)":{"role":"symbol","title":"memberListController(_:didChangeMembers:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberListController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelMemberListController","preciseIdentifier":"s:10StreamChat0B27ChannelMemberListControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeMembers"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatChannelMember","preciseIdentifier":"s:10StreamChat0B13ChannelMemberC"},{"kind":"text","text":">])"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate\/memberListController(_:didChangeMembers:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatuserlistcontrollerdelegate\/memberlistcontroller(_:didchangemembers:)"}}}
+{
+  "abstract" : [
+    {
+      "code" : "ChatUserListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B26UserListControllerDelegateP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatUserListControllerDelegate"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatUserListControllerDelegate"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "ChatUserListControllerDelegate"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatUserListControllerDelegate"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat27DataControllerStateDelegateP",
+              "text" : "DataControllerStateDelegate"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController\/ObservableObject-swift.class"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate\/controller(_:didChangeUsers:)-12q4i",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate\/memberListController(_:didChangeMembers:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatuserlistcontrollerdelegate"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "UserListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserListController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuserlistcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatUserListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserListControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserListControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserListControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuserlistcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListControllerDelegate/controller(_:didChangeUsers:)-12q4i": {
+  "abstract" : [
+    {
+      "text" : "The controller changed the list of observed users.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B18UserListControllerC",
+      "text" : "ChatUserListController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+      "text" : "ListChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate\/controller(_:didChangeUsers:)-12q4i",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "controller(_:didChangeUsers:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuserlistcontrollerdelegate\/controller(_:didchangeusers:)-12q4i"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListControllerDelegate/memberListController(_:didChangeMembers:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberListController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B27ChannelMemberListControllerC",
+      "text" : "ChatChannelMemberListController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeMembers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+      "text" : "ListChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B13ChannelMemberC",
+      "text" : "ChatChannelMember"
+    },
+    {
+      "kind" : "text",
+      "text" : ">])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate\/memberListController(_:didChangeMembers:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "memberListController(_:didChangeMembers:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuserlistcontrollerdelegate\/memberlistcontroller(_:didchangemembers:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate": {
+  "abstract" : [
+    {
+      "text" : "A delegate protocol some Controllers use to propagate the information about controller ",
+      "type" : "text"
+    },
+    {
+      "code" : "state",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " changes. You can use it to let",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataControllerStateDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataControllerStateDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataControllerStateDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontrollerstatedelegate"
+}
+}
+}

@@ -1,1 +1,539 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserListSortingKey"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/userlistsortingkey"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/SortingKey","doc:\/\/io.getstream.StreamChat\/SE","doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH","doc:\/\/io.getstream.StreamChat\/SY"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey","interfaceLanguage":"swift"},"abstract":[{"type":"codeVoice","code":"UserListSortingKey"},{"type":"text","text":" is keys by which you can get sorted users after query."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserListSortingKey"}],"title":"UserListSortingKey","roleHeading":"Enumeration","role":"symbol","symbolKind":"enum","externalID":"s:10StreamChat18UserListSortingKeyO","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"UserListSortingKey"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Enumeration Cases","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/id","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/isBanned","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/lastActivityAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/name","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/role"]},{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/init(rawValue:)"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/encode(to:)"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/Equatable-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/RawRepresentable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/init(rawValue:)":{"role":"symbol","title":"init(rawValue:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"?("},{"kind":"externalParam","text":"rawValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/init(rawValue:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/init(rawvalue:)"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/RawRepresentable-Implementations":{"role":"collectionGroup","title":"RawRepresentable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/RawRepresentable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/rawrepresentable-implementations"},"doc://io.getstream.StreamChat/SE":{"type":"unresolvable","title":"Swift.Encodable","identifier":"doc:\/\/io.getstream.StreamChat\/SE"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/lastActivityAt":{"role":"symbol","title":"UserListSortingKey.lastActivityAt","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"lastActivityAt"}],"abstract":[{"type":"text","text":"Sort users by last activity date."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/lastActivityAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/lastactivityat"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/isBanned":{"role":"symbol","title":"UserListSortingKey.isBanned","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"isBanned"}],"abstract":[{"type":"text","text":"Sort users by ban status."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/isBanned","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/isbanned"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/SY":{"type":"unresolvable","title":"Swift.RawRepresentable","identifier":"doc:\/\/io.getstream.StreamChat\/SY"},"doc://io.getstream.StreamChat/documentation/StreamChat/SortingKey":{"role":"symbol","title":"SortingKey","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"SortingKey"}],"abstract":[{"type":"text","text":"A sorting key protocol."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/SortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"SortingKey"}],"url":"\/documentation\/streamchat\/sortingkey"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey":{"role":"symbol","title":"UserListSortingKey","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserListSortingKey"}],"abstract":[{"type":"codeVoice","code":"UserListSortingKey"},{"type":"text","text":" is keys by which you can get sorted users after query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserListSortingKey"}],"url":"\/documentation\/streamchat\/userlistsortingkey"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/role":{"role":"symbol","title":"UserListSortingKey.role","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"role"}],"abstract":[{"type":"text","text":"Sort users by role. ("},{"type":"codeVoice","code":"user"},{"type":"text","text":", "},{"type":"codeVoice","code":"admin"},{"type":"text","text":", "},{"type":"codeVoice","code":"guest"},{"type":"text","text":", "},{"type":"codeVoice","code":"anonymous"},{"type":"text","text":")"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/role","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/role"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/name":{"role":"symbol","title":"UserListSortingKey.name","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"name"}],"abstract":[{"type":"text","text":"Sort users by name."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/name","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/name"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/encode(to:)":{"role":"symbol","title":"encode(to:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"encode"},{"kind":"text","text":"("},{"kind":"externalParam","text":"to"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Encoder","preciseIdentifier":"s:s7EncoderP"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/encode(to:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/encode(to:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/id":{"role":"symbol","title":"UserListSortingKey.id","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"id"}],"abstract":[{"type":"text","text":"Sort users by id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/id","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/id"}}}
+{
+  "abstract" : [
+    {
+      "code" : "UserListSortingKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is keys by which you can get sorted users after query.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18UserListSortingKeyO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "UserListSortingKey"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "UserListSortingKey"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "UserListSortingKey"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "UserListSortingKey"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/SortingKey",
+        "doc:\/\/io.getstream.StreamChat\/SE",
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH",
+        "doc:\/\/io.getstream.StreamChat\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/id",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/isBanned",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/lastActivityAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/name",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/role"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/encode(to:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/Equatable-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/userlistsortingkey"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SE": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SY": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/SortingKey": {
+  "abstract" : [
+    {
+      "text" : "A sorting key protocol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/SortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/sortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey": {
+  "abstract" : [
+    {
+      "code" : "UserListSortingKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is keys by which you can get sorted users after query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserListSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserListSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserListSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/rawrepresentable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/encode(to:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/id": {
+  "abstract" : [
+    {
+      "text" : "Sort users by id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "id"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/id",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "UserListSortingKey.id",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/id"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/init(rawvalue:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/isBanned": {
+  "abstract" : [
+    {
+      "text" : "Sort users by ban status.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isBanned"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/isBanned",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "UserListSortingKey.isBanned",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/isbanned"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/lastActivityAt": {
+  "abstract" : [
+    {
+      "text" : "Sort users by last activity date.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "lastActivityAt"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/lastActivityAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "UserListSortingKey.lastActivityAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/lastactivityat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/name": {
+  "abstract" : [
+    {
+      "text" : "Sort users by name.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "name"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/name",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "UserListSortingKey.name",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/name"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/role": {
+  "abstract" : [
+    {
+      "text" : "Sort users by role. (",
+      "type" : "text"
+    },
+    {
+      "code" : "user",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", ",
+      "type" : "text"
+    },
+    {
+      "code" : "admin",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", ",
+      "type" : "text"
+    },
+    {
+      "code" : "guest",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", ",
+      "type" : "text"
+    },
+    {
+      "code" : "anonymous",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ")",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "role"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/role",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "UserListSortingKey.role",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/role"
+}
+}
+}

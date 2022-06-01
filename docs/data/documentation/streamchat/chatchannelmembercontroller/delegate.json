@@ -1,1 +1,287 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"delegate"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberControllerDelegate","preciseIdentifier":"s:10StreamChat0B31ChannelMemberControllerDelegateP","text":"ChatChannelMemberControllerDelegate"},{"kind":"text","text":"? { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" "},{"kind":"keyword","text":"set"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannelmembercontroller\/delegate"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/delegate","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Set the delegate of "},{"type":"codeVoice","code":"ChatMemberController"},{"type":"text","text":" to observe the changes in the system."}],"kind":"symbol","metadata":{"role":"symbol","title":"delegate","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"delegate"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannelMemberControllerDelegate","preciseIdentifier":"s:10StreamChat0B31ChannelMemberControllerDelegateP"},{"kind":"text","text":"?"}],"symbolKind":"property","externalID":"s:10StreamChat0B23ChannelMemberControllerC8delegateAA0bcdE8Delegate_pSgvp","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController/delegate":{"role":"symbol","title":"delegate","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"delegate"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannelMemberControllerDelegate","preciseIdentifier":"s:10StreamChat0B31ChannelMemberControllerDelegateP"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Set the delegate of "},{"type":"codeVoice","code":"ChatMemberController"},{"type":"text","text":" to observe the changes in the system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/delegate","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmembercontroller\/delegate"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController":{"role":"symbol","title":"ChatChannelMemberController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMemberController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelMemberController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat member."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelMemberController"}],"url":"\/documentation\/streamchat\/chatchannelmembercontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberControllerDelegate":{"role":"symbol","title":"ChatChannelMemberControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMemberControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatChannelMemberControllerDelegate"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelMemberControllerDelegate"}],"url":"\/documentation\/streamchat\/chatchannelmembercontrollerdelegate"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Set the delegate of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMemberController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to observe the changes in the system.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/delegate"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B23ChannelMemberControllerC8delegateAA0bcdE8Delegate_pSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "delegate"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B31ChannelMemberControllerDelegateP",
+        "text" : "ChatChannelMemberControllerDelegate"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "delegate"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "delegate"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberControllerDelegate",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B31ChannelMemberControllerDelegateP",
+              "text" : "ChatChannelMemberControllerDelegate"
+            },
+            {
+              "kind" : "text",
+              "text" : "? { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelmembercontroller\/delegate"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelMemberController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat member.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmembercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController/delegate": {
+  "abstract" : [
+    {
+      "text" : "Set the delegate of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMemberController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to observe the changes in the system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "delegate"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B31ChannelMemberControllerDelegateP",
+      "text" : "ChatChannelMemberControllerDelegate"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/delegate",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "delegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmembercontroller\/delegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelMemberControllerDelegate",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmembercontrollerdelegate"
+}
+}
+}

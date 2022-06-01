@@ -1,1 +1,184 @@
-{"variants":[{"paths":["\/documentation\/streamchat\/eventtype\/expressiblebyextendedgraphemeclusterliteral-implementations"],"traits":[{"interfaceLanguage":"swift"}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"article","metadata":{"modules":[{"name":"StreamChat"}],"role":"collectionGroup","title":"ExpressibleByExtendedGraphemeClusterLiteral Implementations"},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/init(extendedGraphemeClusterLiteral:)"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/EventType/init(extendedGraphemeClusterLiteral:)":{"conformance":{"constraints":[{"type":"codeVoice","code":"ExtendedGraphemeClusterLiteralType"},{"type":"text","text":" is "},{"type":"codeVoice","code":"Self.StringLiteralType"},{"type":"text","text":"."}],"availabilityPrefix":[{"type":"text","text":"Available when"}],"conformancePrefix":[{"type":"text","text":"Conforms when"}]},"role":"symbol","title":"init(extendedGraphemeClusterLiteral:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"extendedGraphemeClusterLiteral"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Self"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"StringLiteralType"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/init(extendedGraphemeClusterLiteral:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/eventtype\/init(extendedgraphemeclusterliteral:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/EventType":{"role":"symbol","title":"EventType","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"EventType"}],"abstract":[{"type":"text","text":"An event type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"EventType"}],"url":"\/documentation\/streamchat\/eventtype"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "ExpressibleByExtendedGraphemeClusterLiteral Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/init(extendedGraphemeClusterLiteral:)"
+      ],
+      "title" : "Initializers"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/eventtype\/expressiblebyextendedgraphemeclusterliteral-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EventType": {
+  "abstract" : [
+    {
+      "text" : "An event type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EventType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EventType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "EventType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/eventtype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EventType/init(extendedGraphemeClusterLiteral:)": {
+  "abstract" : [
+
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "ExtendedGraphemeClusterLiteralType",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " is ",
+        "type" : "text"
+      },
+      {
+        "code" : "Self.StringLiteralType",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "extendedGraphemeClusterLiteral"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "StringLiteralType"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/init(extendedGraphemeClusterLiteral:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(extendedGraphemeClusterLiteral:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/eventtype\/init(extendedgraphemeclusterliteral:)"
+}
+}
+}

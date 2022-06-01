@@ -1,1 +1,284 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalCaching"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Advanced settings for the local caching and model serialization."}],"kind":"symbol","metadata":{"navigatorTitle":[{"kind":"identifier","text":"LocalCaching"}],"role":"symbol","title":"ChatClientConfig.LocalCaching","roleHeading":"Structure","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalCaching"}],"symbolKind":"struct","externalID":"s:10StreamChat0B12ClientConfigV12LocalCachingV","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct\/chatChannel"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct\/Equatable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/LocalCaching-swift.struct/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/LocalCaching-swift.struct/chatChannel":{"role":"symbol","title":"chatChannel","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"chatChannel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatClientConfig","preciseIdentifier":"s:10StreamChat0B12ClientConfigV"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B12ClientConfigV0B7ChannelV"}],"abstract":[{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":" specific local caching and model serialization settings."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct\/chatChannel","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct\/chatchannel"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/LocalCaching-swift.struct":{"role":"symbol","title":"ChatClientConfig.LocalCaching","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalCaching"}],"abstract":[{"type":"text","text":"Advanced settings for the local caching and model serialization."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LocalCaching"}],"url":"\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig":{"role":"symbol","title":"ChatClientConfig","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClientConfig"}],"abstract":[{"type":"text","text":"A configuration object used to configure a "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClientConfig"}],"url":"\/documentation\/streamchat\/chatclientconfig"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Advanced settings for the local caching and model serialization.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B12ClientConfigV12LocalCachingV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "LocalCaching"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "LocalCaching"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "ChatClientConfig.LocalCaching"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "LocalCaching"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct\/chatChannel"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig": {
+  "abstract" : [
+    {
+      "text" : "A configuration object used to configure a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClientConfig"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClientConfig"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClientConfig",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/LocalCaching-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "Advanced settings for the local caching and model serialization.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LocalCaching"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LocalCaching"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClientConfig.LocalCaching",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/LocalCaching-swift.struct/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/LocalCaching-swift.struct/chatChannel": {
+  "abstract" : [
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " specific local caching and model serialization settings.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "chatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B12ClientConfigV",
+      "text" : "ChatClientConfig"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B12ClientConfigV0B7ChannelV",
+      "text" : "ChatChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct\/chatChannel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "chatChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct\/chatchannel"
+}
+}
+}

@@ -1,1 +1,172 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletedAt"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelcodingkeys\/deletedat"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/deletedAt","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A deleted date."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletedAt"}],"title":"ChannelCodingKeys.deletedAt","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat17ChannelCodingKeysO9deletedAtyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys":{"role":"symbol","title":"ChannelCodingKeys","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelCodingKeys"}],"abstract":[{"type":"text","text":"Coding keys channel related payloads."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelCodingKeys"}],"url":"\/documentation\/streamchat\/channelcodingkeys"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys/deletedAt":{"role":"symbol","title":"ChannelCodingKeys.deletedAt","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletedAt"}],"abstract":[{"type":"text","text":"A deleted date."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/deletedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelcodingkeys\/deletedat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A deleted date.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/deletedAt"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat17ChannelCodingKeysO9deletedAtyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "deletedAt"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "ChannelCodingKeys.deletedAt"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "deletedAt"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelcodingkeys\/deletedat"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys": {
+  "abstract" : [
+    {
+      "text" : "Coding keys channel related payloads.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelCodingKeys"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelCodingKeys"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelCodingKeys",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelcodingkeys"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys/deletedAt": {
+  "abstract" : [
+    {
+      "text" : "A deleted date.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deletedAt"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/deletedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ChannelCodingKeys.deletedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelcodingkeys\/deletedat"
+}
+}
+}

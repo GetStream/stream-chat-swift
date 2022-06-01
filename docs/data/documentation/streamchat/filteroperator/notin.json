@@ -1,1 +1,172 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"notIn"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/filteroperator\/notin"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterOperator\/notIn","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Matches none of the values specified in an array."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"notIn"}],"title":"FilterOperator.notIn","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat14FilterOperatorO5notInyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterOperator"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/FilterOperator/notIn":{"role":"symbol","title":"FilterOperator.notIn","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"notIn"}],"abstract":[{"type":"text","text":"Matches none of the values specified in an array."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterOperator\/notIn","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/filteroperator\/notin"},"doc://io.getstream.StreamChat/documentation/StreamChat/FilterOperator":{"role":"symbol","title":"FilterOperator","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"FilterOperator"}],"abstract":[{"type":"text","text":"An enum with possible operators to use in filters."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterOperator","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"FilterOperator"}],"url":"\/documentation\/streamchat\/filteroperator"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Matches none of the values specified in an array.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterOperator"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterOperator\/notIn"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat14FilterOperatorO5notInyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "notIn"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "FilterOperator.notIn"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "notIn"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/filteroperator\/notin"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FilterOperator": {
+  "abstract" : [
+    {
+      "text" : "An enum with possible operators to use in filters.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FilterOperator"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterOperator",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FilterOperator"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FilterOperator",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filteroperator"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FilterOperator/notIn": {
+  "abstract" : [
+    {
+      "text" : "Matches none of the values specified in an array.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "notIn"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterOperator\/notIn",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "FilterOperator.notIn",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filteroperator\/notin"
+}
+}
+}

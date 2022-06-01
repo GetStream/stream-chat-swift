@@ -1,1 +1,172 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"truncatedAt"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelcodingkeys\/truncatedat"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/truncatedAt","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A truncated date."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"truncatedAt"}],"title":"ChannelCodingKeys.truncatedAt","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat17ChannelCodingKeysO11truncatedAtyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys/truncatedAt":{"role":"symbol","title":"ChannelCodingKeys.truncatedAt","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"truncatedAt"}],"abstract":[{"type":"text","text":"A truncated date."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/truncatedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelcodingkeys\/truncatedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys":{"role":"symbol","title":"ChannelCodingKeys","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelCodingKeys"}],"abstract":[{"type":"text","text":"Coding keys channel related payloads."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelCodingKeys"}],"url":"\/documentation\/streamchat\/channelcodingkeys"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A truncated date.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/truncatedAt"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat17ChannelCodingKeysO11truncatedAtyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "truncatedAt"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "ChannelCodingKeys.truncatedAt"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "truncatedAt"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelcodingkeys\/truncatedat"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys": {
+  "abstract" : [
+    {
+      "text" : "Coding keys channel related payloads.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelCodingKeys"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelCodingKeys"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelCodingKeys",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelcodingkeys"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys/truncatedAt": {
+  "abstract" : [
+    {
+      "text" : "A truncated date.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "truncatedAt"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/truncatedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ChannelCodingKeys.truncatedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelcodingkeys\/truncatedat"
+}
+}
+}

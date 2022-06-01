@@ -1,1 +1,207 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"videoURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/videoattachmentpayload\/videourl"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload\/videoURL","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A link to the video."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"videoURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"}],"title":"videoURL","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat22VideoAttachmentPayloadV8videoURL10Foundation0G0Vvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload":{"role":"symbol","title":"VideoAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"VideoAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".media"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"VideoAttachmentPayload"}],"url":"\/documentation\/streamchat\/videoattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload/videoURL":{"role":"symbol","title":"videoURL","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"videoURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"}],"abstract":[{"type":"text","text":"A link to the video."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload\/videoURL","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/videoattachmentpayload\/videourl"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A link to the video.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload\/videoURL"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat22VideoAttachmentPayloadV8videoURL10Foundation0G0Vvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "videoURL"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10Foundation3URLV",
+        "text" : "URL"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "videoURL"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "videoURL"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10Foundation3URLV",
+              "text" : "URL"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/videoattachmentpayload\/videourl"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".media",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VideoAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VideoAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VideoAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/videoattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload/videoURL": {
+  "abstract" : [
+    {
+      "text" : "A link to the video.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "videoURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload\/videoURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "videoURL",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/videoattachmentpayload\/videourl"
+}
+}
+}

@@ -1,1 +1,353 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"move"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Item","preciseIdentifier":"s:10StreamChat10ListChangeO4Itemxmfp"},{"kind":"text","text":", "},{"kind":"externalParam","text":"fromIndex"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"IndexPath","preciseIdentifier":"s:10Foundation9IndexPathV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"toIndex"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"IndexPath","preciseIdentifier":"s:10Foundation9IndexPathV"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/listchange\/move(_:fromindex:toindex:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange\/move(_:fromIndex:toIndex:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"An item was moved from "},{"type":"codeVoice","code":"fromIndex"},{"type":"text","text":" to "},{"type":"codeVoice","code":"toIndex"},{"type":"text","text":". Moving an item also automatically mean you should reload its UI."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"move"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"Item","preciseIdentifier":"s:10StreamChat10ListChangeO4Itemxmfp"},{"kind":"text","text":", "},{"kind":"externalParam","text":"fromIndex"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"IndexPath","preciseIdentifier":"s:10Foundation9IndexPathV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"toIndex"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"IndexPath","preciseIdentifier":"s:10Foundation9IndexPathV"},{"kind":"text","text":")"}],"title":"ListChange.move(_:fromIndex:toIndex:)","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat10ListChangeO4moveyACyxGx_10Foundation9IndexPathVAHtcAEmlF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ListChange/move(_:fromIndex:toIndex:)":{"role":"symbol","title":"ListChange.move(_:fromIndex:toIndex:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"move"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"Item","preciseIdentifier":"s:10StreamChat10ListChangeO4Itemxmfp"},{"kind":"text","text":", "},{"kind":"externalParam","text":"fromIndex"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"IndexPath","preciseIdentifier":"s:10Foundation9IndexPathV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"toIndex"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"IndexPath","preciseIdentifier":"s:10Foundation9IndexPathV"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"An item was moved from "},{"type":"codeVoice","code":"fromIndex"},{"type":"text","text":" to "},{"type":"codeVoice","code":"toIndex"},{"type":"text","text":". Moving an item also automatically mean you should reload its UI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange\/move(_:fromIndex:toIndex:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/listchange\/move(_:fromindex:toindex:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ListChange":{"role":"symbol","title":"ListChange","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ListChange"}],"abstract":[{"type":"text","text":"This enum describes the changes of the given collections of items."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ListChange"}],"url":"\/documentation\/streamchat\/listchange"}}}
+{
+  "abstract" : [
+    {
+      "text" : "An item was moved from ",
+      "type" : "text"
+    },
+    {
+      "code" : "fromIndex",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to ",
+      "type" : "text"
+    },
+    {
+      "code" : "toIndex",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ". Moving an item also automatically mean you should reload its UI.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange\/move(_:fromIndex:toIndex:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat10ListChangeO4moveyACyxGx_10Foundation9IndexPathVAHtcAEmlF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "move"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat10ListChangeO4Itemxmfp",
+        "text" : "Item"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "fromIndex"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10Foundation9IndexPathV",
+        "text" : "IndexPath"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "toIndex"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10Foundation9IndexPathV",
+        "text" : "IndexPath"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "ListChange.move(_:fromIndex:toIndex:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "move"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat10ListChangeO4Itemxmfp",
+              "text" : "Item"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "fromIndex"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10Foundation9IndexPathV",
+              "text" : "IndexPath"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "toIndex"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10Foundation9IndexPathV",
+              "text" : "IndexPath"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/listchange\/move(_:fromindex:toindex:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ListChange": {
+  "abstract" : [
+    {
+      "text" : "This enum describes the changes of the given collections of items.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ListChange"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ListChange"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ListChange",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/listchange"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ListChange/move(_:fromIndex:toIndex:)": {
+  "abstract" : [
+    {
+      "text" : "An item was moved from ",
+      "type" : "text"
+    },
+    {
+      "code" : "fromIndex",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to ",
+      "type" : "text"
+    },
+    {
+      "code" : "toIndex",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ". Moving an item also automatically mean you should reload its UI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "move"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO4Itemxmfp",
+      "text" : "Item"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fromIndex"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation9IndexPathV",
+      "text" : "IndexPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "toIndex"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation9IndexPathV",
+      "text" : "IndexPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange\/move(_:fromIndex:toIndex:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ListChange.move(_:fromIndex:toIndex:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/listchange\/move(_:fromindex:toindex:)"
+}
+}
+}

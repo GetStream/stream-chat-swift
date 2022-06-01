@@ -1,1 +1,429 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV","text":"ChannelId"},{"kind":"text","text":", "},{"kind":"externalParam","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Pagination","preciseIdentifier":"s:10StreamChat10PaginationV","text":"Pagination"},{"kind":"text","text":" = .init(pageSize: .channelWatchersPageSize))"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"cid","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The channel identifier."}]}]},{"name":"pagination","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Pagination parameters for fetching watchers. Defaults to fetching first 30 watchers."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelwatcherlistquery\/init(cid:pagination:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelWatcherListQuery\/init(cid:pagination:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Creates new "},{"type":"codeVoice","code":"ChannelWatcherListQuery"},{"type":"text","text":" instance."}],"kind":"symbol","metadata":{"fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Pagination","preciseIdentifier":"s:10StreamChat10PaginationV"},{"kind":"text","text":")"}],"title":"init(cid:pagination:)","roleHeading":"Initializer","role":"symbol","symbolKind":"init","externalID":"s:10StreamChat23ChannelWatcherListQueryV3cid10paginationAcA0C2IdV_AA10PaginationVtcfc","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelWatcherListQuery"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId":{"role":"symbol","title":"ChannelId","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelId"}],"abstract":[{"type":"text","text":"A type representing a unique identifier of a "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelId"}],"url":"\/documentation\/streamchat\/channelid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelWatcherListQuery":{"role":"symbol","title":"ChannelWatcherListQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelWatcherListQuery"}],"abstract":[{"type":"text","text":"A query type used for fetching a channel’s watchers from the backend."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelWatcherListQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelWatcherListQuery"}],"url":"\/documentation\/streamchat\/channelwatcherlistquery"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelWatcherListQuery/init(cid:pagination:)":{"role":"symbol","title":"init(cid:pagination:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Pagination","preciseIdentifier":"s:10StreamChat10PaginationV"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Creates new "},{"type":"codeVoice","code":"ChannelWatcherListQuery"},{"type":"text","text":" instance."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelWatcherListQuery\/init(cid:pagination:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelwatcherlistquery\/init(cid:pagination:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/Pagination":{"role":"symbol","title":"Pagination","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Pagination"}],"abstract":[{"type":"text","text":"Basic pagination with "},{"type":"codeVoice","code":"pageSize"},{"type":"text","text":" and "},{"type":"codeVoice","code":"offset"},{"type":"text","text":"."},{"type":"text","text":" "},{"type":"text","text":"Used everywhere except "},{"type":"codeVoice","code":"ChannelQuery"},{"type":"text","text":". (See "},{"type":"codeVoice","code":"MessagesPagination"},{"type":"text","text":")"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Pagination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Pagination"}],"url":"\/documentation\/streamchat\/pagination"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Creates new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelWatcherListQuery",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelWatcherListQuery"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelWatcherListQuery\/init(cid:pagination:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat23ChannelWatcherListQueryV3cid10paginationAcA0C2IdV_AA10PaginationVtcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "cid"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+        "text" : "ChannelId"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "pagination"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat10PaginationV",
+        "text" : "Pagination"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(cid:pagination:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "cid"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+              "text" : "ChannelId"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "pagination"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Pagination",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat10PaginationV",
+              "text" : "Pagination"
+            },
+            {
+              "kind" : "text",
+              "text" : " = .init(pageSize: .channelWatchersPageSize))"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The channel identifier.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "cid"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Pagination parameters for fetching watchers. Defaults to fetching first 30 watchers.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "pagination"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelwatcherlistquery\/init(cid:pagination:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId": {
+  "abstract" : [
+    {
+      "text" : "A type representing a unique identifier of a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelWatcherListQuery": {
+  "abstract" : [
+    {
+      "text" : "A query type used for fetching a channel’s watchers from the backend.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelWatcherListQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelWatcherListQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelWatcherListQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelWatcherListQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelwatcherlistquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelWatcherListQuery/init(cid:pagination:)": {
+  "abstract" : [
+    {
+      "text" : "Creates new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelWatcherListQuery",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pagination"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10PaginationV",
+      "text" : "Pagination"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelWatcherListQuery\/init(cid:pagination:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(cid:pagination:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelwatcherlistquery\/init(cid:pagination:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Pagination": {
+  "abstract" : [
+    {
+      "text" : "Basic pagination with ",
+      "type" : "text"
+    },
+    {
+      "code" : "pageSize",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and ",
+      "type" : "text"
+    },
+    {
+      "code" : "offset",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Used everywhere except ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelQuery",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ". (See ",
+      "type" : "text"
+    },
+    {
+      "code" : "MessagesPagination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ")",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Pagination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Pagination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Pagination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Pagination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pagination"
+}
+}
+}

@@ -1,1 +1,240 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"eventType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType","preciseIdentifier":"s:10StreamChat9EventTypeV","text":"EventType"},{"kind":"text","text":"?"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatpushnotificationinfo\/eventtype"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationInfo\/eventType","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"eventType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"EventType","preciseIdentifier":"s:10StreamChat9EventTypeV"},{"kind":"text","text":"?"}],"title":"eventType","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B20PushNotificationInfoC9eventTypeAA05EventG0VSgvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationInfo"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatPushNotificationInfo":{"role":"symbol","title":"ChatPushNotificationInfo","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatPushNotificationInfo"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationInfo","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatPushNotificationInfo"}],"url":"\/documentation\/streamchat\/chatpushnotificationinfo"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/EventType":{"role":"symbol","title":"EventType","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"EventType"}],"abstract":[{"type":"text","text":"An event type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"EventType"}],"url":"\/documentation\/streamchat\/eventtype"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatPushNotificationInfo/eventType":{"role":"symbol","title":"eventType","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"eventType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"EventType","preciseIdentifier":"s:10StreamChat9EventTypeV"},{"kind":"text","text":"?"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationInfo\/eventType","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatpushnotificationinfo\/eventtype"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationInfo"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationInfo\/eventType"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B20PushNotificationInfoC9eventTypeAA05EventG0VSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "eventType"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9EventTypeV",
+        "text" : "EventType"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "eventType"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "eventType"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9EventTypeV",
+              "text" : "EventType"
+            },
+            {
+              "kind" : "text",
+              "text" : "?"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatpushnotificationinfo\/eventtype"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatPushNotificationInfo": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatPushNotificationInfo"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationInfo",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatPushNotificationInfo"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatPushNotificationInfo",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatpushnotificationinfo"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatPushNotificationInfo/eventType": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "eventType"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9EventTypeV",
+      "text" : "EventType"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationInfo\/eventType",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "eventType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatpushnotificationinfo\/eventtype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EventType": {
+  "abstract" : [
+    {
+      "text" : "An event type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EventType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EventType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "EventType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/eventtype"
+}
+}
+}

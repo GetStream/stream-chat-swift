@@ -1,1 +1,200 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"disconnect"},{"kind":"text","text":"()"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatclient\/disconnect()"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/disconnect()","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Disconnects the chat client from the chat servers. No further updates from the servers"},{"type":"text","text":" "},{"type":"text","text":"are received."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"disconnect"},{"kind":"text","text":"()"}],"title":"disconnect()","roleHeading":"Instance Method","role":"symbol","symbolKind":"method","externalID":"s:10StreamChat0B6ClientC10disconnectyyF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/disconnect()":{"role":"symbol","title":"disconnect()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"disconnect"},{"kind":"text","text":"()"}],"abstract":[{"type":"text","text":"Disconnects the chat client from the chat servers. No further updates from the servers"},{"type":"text","text":" "},{"type":"text","text":"are received."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/disconnect()","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/disconnect()"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient":{"role":"symbol","title":"ChatClient","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClient"}],"abstract":[{"type":"text","text":"The root object representing a Stream Chat."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClient"}],"url":"\/documentation\/streamchat\/chatclient"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Disconnects the chat client from the chat servers. No further updates from the servers",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "are received.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/disconnect()"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B6ClientC10disconnectyyF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "disconnect"
+      },
+      {
+        "kind" : "text",
+        "text" : "()"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "disconnect()"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "disconnect"
+            },
+            {
+              "kind" : "text",
+              "text" : "()"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatclient\/disconnect()"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient": {
+  "abstract" : [
+    {
+      "text" : "The root object representing a Stream Chat.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClient",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/disconnect()": {
+  "abstract" : [
+    {
+      "text" : "Disconnects the chat client from the chat servers. No further updates from the servers",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "are received.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "disconnect"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/disconnect()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "disconnect()",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/disconnect()"
+}
+}
+}

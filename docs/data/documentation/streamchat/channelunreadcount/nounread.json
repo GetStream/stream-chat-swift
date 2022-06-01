@@ -1,1 +1,224 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"noUnread"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount","preciseIdentifier":"s:10StreamChat18ChannelUnreadCountV","text":"ChannelUnreadCount"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelunreadcount\/nounread"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount\/noUnread","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The default value representing no unread messages."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"noUnread"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelUnreadCount","preciseIdentifier":"s:10StreamChat18ChannelUnreadCountV"}],"title":"noUnread","roleHeading":"Type Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat18ChannelUnreadCountV02noD0ACvpZ","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelUnreadCount":{"role":"symbol","title":"ChannelUnreadCount","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelUnreadCount"}],"abstract":[{"type":"text","text":"A struct describing unread counts for a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelUnreadCount"}],"url":"\/documentation\/streamchat\/channelunreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelUnreadCount/noUnread":{"role":"symbol","title":"noUnread","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"noUnread"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelUnreadCount","preciseIdentifier":"s:10StreamChat18ChannelUnreadCountV"}],"abstract":[{"type":"text","text":"The default value representing no unread messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount\/noUnread","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelunreadcount\/nounread"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The default value representing no unread messages.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount\/noUnread"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18ChannelUnreadCountV02noD0ACvpZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "noUnread"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat18ChannelUnreadCountV",
+        "text" : "ChannelUnreadCount"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "noUnread"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "noUnread"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat18ChannelUnreadCountV",
+              "text" : "ChannelUnreadCount"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelunreadcount\/nounread"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelUnreadCount": {
+  "abstract" : [
+    {
+      "text" : "A struct describing unread counts for a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelUnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelUnreadCount"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelUnreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelunreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelUnreadCount/noUnread": {
+  "abstract" : [
+    {
+      "text" : "The default value representing no unread messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "noUnread"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat18ChannelUnreadCountV",
+      "text" : "ChannelUnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUnreadCount\/noUnread",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "noUnread",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelunreadcount\/nounread"
+}
+}
+}

@@ -1,1 +1,564 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"query"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"Value"},{"kind":"text","text":">("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"key"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey","preciseIdentifier":"s:10StreamChat9FilterKeyV","text":"FilterKey"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"Scope","preciseIdentifier":"s:10StreamChat6FilterV5Scopexmfp"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Value","preciseIdentifier":"s:10StreamChat6FilterV5query_4textACyxGAA0C3KeyVyxqd__G_SStAA0C5ValueRd__lFZ0G0L_qd__mfp"},{"kind":"text","text":">, "},{"kind":"externalParam","text":"text"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter","preciseIdentifier":"s:10StreamChat6FilterV","text":"Filter"},{"kind":"text","text":" "},{"kind":"keyword","text":"where"},{"kind":"text","text":" "},{"kind":"typeIdentifier","text":"Value"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterValue","preciseIdentifier":"s:10StreamChat11FilterValueP","text":"FilterValue"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/filter\/query(_:text:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter\/query(_:text:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Matches values by performing text search with the specified value."}],"kind":"symbol","metadata":{"conformance":{"constraints":[{"type":"codeVoice","code":"Scope"},{"type":"text","text":" conforms to "},{"type":"codeVoice","code":"FilterScope"},{"type":"text","text":"."}],"availabilityPrefix":[{"type":"text","text":"Available when"}],"conformancePrefix":[{"type":"text","text":"Conforms when"}]},"role":"symbol","title":"query(_:text:)","roleHeading":"Type Method","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"query"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"Value"},{"kind":"text","text":">("},{"kind":"typeIdentifier","text":"FilterKey","preciseIdentifier":"s:10StreamChat9FilterKeyV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"Scope","preciseIdentifier":"s:10StreamChat6FilterV5Scopexmfp"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Value","preciseIdentifier":"s:10StreamChat6FilterV5query_4textACyxGAA0C3KeyVyxqd__G_SStAA0C5ValueRd__lFZ0G0L_qd__mfp"},{"kind":"text","text":">, "},{"kind":"externalParam","text":"text"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Filter","preciseIdentifier":"s:10StreamChat6FilterV"}],"symbolKind":"method","externalID":"s:10StreamChat6FilterV5query_4textACyxGAA0C3KeyVyxqd__G_SStAA0C5ValueRd__lFZ","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/FilterKey":{"role":"symbol","title":"FilterKey","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"FilterKey"}],"abstract":[{"type":"text","text":"A helper struct that represents a key of a filter."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"FilterKey"}],"url":"\/documentation\/streamchat\/filterkey"},"doc://io.getstream.StreamChat/documentation/StreamChat/FilterValue":{"role":"symbol","title":"FilterValue","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"FilterValue"}],"abstract":[{"type":"text","text":"A protocol to which all values that can be used as "},{"type":"codeVoice","code":"Filter"},{"type":"text","text":" values conform."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterValue","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"FilterValue"}],"url":"\/documentation\/streamchat\/filtervalue"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/Filter/query(_:text:)":{"conformance":{"constraints":[{"type":"codeVoice","code":"Scope"},{"type":"text","text":" conforms to "},{"type":"codeVoice","code":"FilterScope"},{"type":"text","text":"."}],"availabilityPrefix":[{"type":"text","text":"Available when"}],"conformancePrefix":[{"type":"text","text":"Conforms when"}]},"role":"symbol","title":"query(_:text:)","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"query"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"Value"},{"kind":"text","text":">("},{"kind":"typeIdentifier","text":"FilterKey","preciseIdentifier":"s:10StreamChat9FilterKeyV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"Scope","preciseIdentifier":"s:10StreamChat6FilterV5Scopexmfp"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Value","preciseIdentifier":"s:10StreamChat6FilterV5query_4textACyxGAA0C3KeyVyxqd__G_SStAA0C5ValueRd__lFZ0G0L_qd__mfp"},{"kind":"text","text":">, "},{"kind":"externalParam","text":"text"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Filter","preciseIdentifier":"s:10StreamChat6FilterV"}],"abstract":[{"type":"text","text":"Matches values by performing text search with the specified value."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter\/query(_:text:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/filter\/query(_:text:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/Filter":{"role":"symbol","title":"Filter","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Filter"}],"abstract":[{"type":"text","text":"Filter is used to specify the details about which elements should be returned from a specific query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Filter"}],"url":"\/documentation\/streamchat\/filter"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Matches values by performing text search with the specified value.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter\/query(_:text:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "conformance" : {
+      "availabilityPrefix" : [
+        {
+          "text" : "Available when",
+          "type" : "text"
+        }
+      ],
+      "conformancePrefix" : [
+        {
+          "text" : "Conforms when",
+          "type" : "text"
+        }
+      ],
+      "constraints" : [
+        {
+          "code" : "Scope",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : " conforms to ",
+          "type" : "text"
+        },
+        {
+          "code" : "FilterScope",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : ".",
+          "type" : "text"
+        }
+      ]
+    },
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat6FilterV5query_4textACyxGAA0C3KeyVyxqd__G_SStAA0C5ValueRd__lFZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "query"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "genericParameter",
+        "text" : "Value"
+      },
+      {
+        "kind" : "text",
+        "text" : ">("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9FilterKeyV",
+        "text" : "FilterKey"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6FilterV5Scopexmfp",
+        "text" : "Scope"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6FilterV5query_4textACyxGAA0C3KeyVyxqd__G_SStAA0C5ValueRd__lFZ0G0L_qd__mfp",
+        "text" : "Value"
+      },
+      {
+        "kind" : "text",
+        "text" : ">, "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "text"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : ") -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6FilterV",
+        "text" : "Filter"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Method",
+    "symbolKind" : "method",
+    "title" : "query(_:text:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "query"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "kind" : "genericParameter",
+              "text" : "Value"
+            },
+            {
+              "kind" : "text",
+              "text" : ">("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "key"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9FilterKeyV",
+              "text" : "FilterKey"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6FilterV5Scopexmfp",
+              "text" : "Scope"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6FilterV5query_4textACyxGAA0C3KeyVyxqd__G_SStAA0C5ValueRd__lFZ0G0L_qd__mfp",
+              "text" : "Value"
+            },
+            {
+              "kind" : "text",
+              "text" : ">, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "text"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : ") -> "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6FilterV",
+              "text" : "Filter"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "where"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "Value"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterValue",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat11FilterValueP",
+              "text" : "FilterValue"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/filter\/query(_:text:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Filter": {
+  "abstract" : [
+    {
+      "text" : "Filter is used to specify the details about which elements should be returned from a specific query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Filter"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Filter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Filter",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filter"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Filter/query(_:text:)": {
+  "abstract" : [
+    {
+      "text" : "Matches values by performing text search with the specified value.",
+      "type" : "text"
+    }
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "Scope",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "FilterScope",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "query"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9FilterKeyV",
+      "text" : "FilterKey"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6FilterV5Scopexmfp",
+      "text" : "Scope"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6FilterV5query_4textACyxGAA0C3KeyVyxqd__G_SStAA0C5ValueRd__lFZ0G0L_qd__mfp",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "text"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6FilterV",
+      "text" : "Filter"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter\/query(_:text:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "query(_:text:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filter\/query(_:text:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FilterKey": {
+  "abstract" : [
+    {
+      "text" : "A helper struct that represents a key of a filter.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FilterKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FilterKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FilterKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filterkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FilterValue": {
+  "abstract" : [
+    {
+      "text" : "A protocol to which all values that can be used as ",
+      "type" : "text"
+    },
+    {
+      "code" : "Filter",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " values conform.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FilterValue"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterValue",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FilterValue"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FilterValue",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filtervalue"
+}
+}
+}

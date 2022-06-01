@@ -1,1 +1,169 @@
-{"variants":[{"paths":["\/documentation\/streamchat\/chatmessage\/hashable-implementations"],"traits":[{"interfaceLanguage":"swift"}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Hashable-Implementations","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"article","metadata":{"modules":[{"name":"StreamChat"}],"role":"collectionGroup","title":"Hashable Implementations"},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage"]]},"topicSections":[{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/hash(into:)"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/hash(into:)":{"role":"symbol","title":"hash(into:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"hash"},{"kind":"text","text":"("},{"kind":"externalParam","text":"into"},{"kind":"text","text":": "},{"kind":"keyword","text":"inout"},{"kind":"text","text":" "},{"kind":"typeIdentifier","text":"Hasher","preciseIdentifier":"s:s6HasherV"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/hash(into:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/hash(into:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage":{"role":"symbol","title":"ChatMessage","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessage"}],"abstract":[{"type":"text","text":"A type representing a chat message. "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":" is an immutable snapshot of a chat message entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessage"}],"url":"\/documentation\/streamchat\/chatmessage"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Hashable-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "Hashable Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/hash(into:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessage\/hashable-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat message. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat message entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/hash(into:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hash"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "into"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s6HasherV",
+      "text" : "Hasher"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/hash(into:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "hash(into:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/hash(into:)"
+}
+}
+}

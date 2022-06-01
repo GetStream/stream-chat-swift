@@ -1,1 +1,255 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelType","preciseIdentifier":"s:10StreamChat11ChannelTypeO","text":"ChannelType"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannel\/type"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/type","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The type of the channel."}],"kind":"symbol","metadata":{"role":"symbol","title":"type","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelType","preciseIdentifier":"s:10StreamChat11ChannelTypeO"}],"symbolKind":"property","externalID":"s:10StreamChat0B7ChannelV4typeAA0C4TypeOvp","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/type":{"role":"symbol","title":"type","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelType","preciseIdentifier":"s:10StreamChat11ChannelTypeO"}],"abstract":[{"type":"text","text":"The type of the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/type","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/type"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelType":{"role":"symbol","title":"ChannelType","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelType"}],"abstract":[{"type":"text","text":"An enum describing possible types of a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelType"}],"url":"\/documentation\/streamchat\/channeltype"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel":{"role":"symbol","title":"ChatChannel","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannel"}],"abstract":[{"type":"text","text":"A type representing a chat channel. "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":" is an immutable snapshot of a channel entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannel"}],"url":"\/documentation\/streamchat\/chatchannel"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The type of the channel.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/type"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B7ChannelV4typeAA0C4TypeOvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "type"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat11ChannelTypeO",
+        "text" : "ChannelType"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "type"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "type"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelType",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat11ChannelTypeO",
+              "text" : "ChannelType"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannel\/type"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelType": {
+  "abstract" : [
+    {
+      "text" : "An enum describing possible types of a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channeltype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat channel. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a channel entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/type": {
+  "abstract" : [
+    {
+      "text" : "The type of the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11ChannelTypeO",
+      "text" : "ChannelType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/type",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "type",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/type"
+}
+}
+}

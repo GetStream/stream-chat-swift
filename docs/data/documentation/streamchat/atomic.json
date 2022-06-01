@@ -1,1 +1,516 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"attribute","text":"@propertyWrapper"},{"kind":"text","text":" "},{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"Atomic"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"T"},{"kind":"text","text":">"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"overview","level":2,"type":"heading","text":"Overview"},{"type":"aside","style":"warning","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Be aware that accessing and setting a value are two distinct operations, so using operators like "},{"type":"codeVoice","code":"+="},{"type":"text","text":" results"},{"type":"text","text":" "},{"type":"text","text":"in two separate atomic operations. To work around this issue, you can access the wrapper directly and use the"},{"type":"text","text":" "},{"type":"codeVoice","code":"mutate(_ changes:)"},{"type":"text","text":" method:"}]}]},{"type":"codeListing","syntax":null,"code":["  \/\/ Correct","  atomicValue = 1","  let value = atomicValue","","  atomicValue += 1 \/\/ Incorrect! Accessing and setting a value are two atomic operations.","  _atomicValue.mutate { $0 += 1 } \/\/ Correct","  _atomicValue { $0 += 1 } \/\/ Also possible"]},{"type":"aside","style":"note","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Even though the value guarded by "},{"type":"codeVoice","code":"Atomic"},{"type":"text","text":" is thread-safe, the "},{"type":"codeVoice","code":"Atomic"},{"type":"text","text":" class itself is not. Mutating the instance"},{"type":"text","text":" "},{"type":"text","text":"itself from multiple threads can cause a crash."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/atomic"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A mutable thread safe variable."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"Atomic"}],"title":"Atomic","roleHeading":"Class","role":"symbol","symbolKind":"class","externalID":"s:10StreamChat6AtomicC","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"Atomic"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/init(wrappedValue:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/wrappedValue"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/callAsFunction(_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/mutate(_:)"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic/callAsFunction(_:)":{"role":"symbol","title":"callAsFunction(_:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"callAsFunction"},{"kind":"text","text":"(("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"value"},{"kind":"text","text":": "},{"kind":"keyword","text":"inout"},{"kind":"text","text":" "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat6AtomicC1Txmfp"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Update the value safely."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/callAsFunction(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/atomic\/callasfunction(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic/mutate(_:)":{"role":"symbol","title":"mutate(_:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"mutate"},{"kind":"text","text":"(("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"value"},{"kind":"text","text":": "},{"kind":"keyword","text":"inout"},{"kind":"text","text":" "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat6AtomicC1Txmfp"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Update the value safely."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/mutate(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/atomic\/mutate(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic":{"role":"symbol","title":"Atomic","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"Atomic"}],"abstract":[{"type":"text","text":"A mutable thread safe variable."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Atomic"}],"url":"\/documentation\/streamchat\/atomic"},"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic/init(wrappedValue:)":{"role":"symbol","title":"init(wrappedValue:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"wrappedValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat6AtomicC1Txmfp"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/init(wrappedValue:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/atomic\/init(wrappedvalue:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic/wrappedValue":{"role":"symbol","title":"wrappedValue","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"wrappedValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat6AtomicC1Txmfp"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/wrappedValue","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/atomic\/wrappedvalue"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A mutable thread safe variable.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat6AtomicC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Atomic"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Atomic"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "Atomic"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "attribute",
+              "text" : "@propertyWrapper"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Atomic"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "kind" : "genericParameter",
+              "text" : "T"
+            },
+            {
+              "kind" : "text",
+              "text" : ">"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Be aware that accessing and setting a value are two distinct operations, so using operators like ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "+=",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " results",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "in two separate atomic operations. To work around this issue, you can access the wrapper directly and use the",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "mutate(_ changes:)",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " method:",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "warning",
+          "type" : "aside"
+        },
+        {
+          "code" : [
+            "  \/\/ Correct",
+            "  atomicValue = 1",
+            "  let value = atomicValue",
+            "",
+            "  atomicValue += 1 \/\/ Incorrect! Accessing and setting a value are two atomic operations.",
+            "  _atomicValue.mutate { $0 += 1 } \/\/ Correct",
+            "  _atomicValue { $0 += 1 } \/\/ Also possible"
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Even though the value guarded by ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "Atomic",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " is thread-safe, the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "Atomic",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " class itself is not. Mutating the instance",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "itself from multiple threads can cause a crash.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "note",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/init(wrappedValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/wrappedValue"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/callAsFunction(_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/mutate(_:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/atomic"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic": {
+  "abstract" : [
+    {
+      "text" : "A mutable thread safe variable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Atomic"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Atomic"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Atomic",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/atomic"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic/callAsFunction(_:)": {
+  "abstract" : [
+    {
+      "text" : "Update the value safely.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "callAsFunction"
+    },
+    {
+      "kind" : "text",
+      "text" : "(("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "_"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "internalParam",
+      "text" : "value"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6AtomicC1Txmfp",
+      "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/callAsFunction(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "callAsFunction(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/atomic\/callasfunction(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic/init(wrappedValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "wrappedValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6AtomicC1Txmfp",
+      "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/init(wrappedValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(wrappedValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/atomic\/init(wrappedvalue:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic/mutate(_:)": {
+  "abstract" : [
+    {
+      "text" : "Update the value safely.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mutate"
+    },
+    {
+      "kind" : "text",
+      "text" : "(("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "_"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "internalParam",
+      "text" : "value"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6AtomicC1Txmfp",
+      "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/mutate(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "mutate(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/atomic\/mutate(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Atomic/wrappedValue": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "wrappedValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6AtomicC1Txmfp",
+      "text" : "T"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Atomic\/wrappedValue",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "wrappedValue",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/atomic\/wrappedvalue"
+}
+}
+}

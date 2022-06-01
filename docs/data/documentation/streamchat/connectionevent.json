@@ -1,1 +1,290 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionEvent"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","preciseIdentifier":"s:10StreamChat5EventP","text":"Event"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/connectionevent"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HealthCheckEvent"],"kind":"relationships","title":"Conforming Types","type":"conformingTypes"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionEvent"}],"title":"ConnectionEvent","roleHeading":"Protocol","role":"symbol","symbolKind":"protocol","externalID":"s:10StreamChat15ConnectionEventP","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ConnectionEvent"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent\/connectionId"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/HealthCheckEvent":{"role":"symbol","title":"HealthCheckEvent","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"HealthCheckEvent"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HealthCheckEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"HealthCheckEvent"}],"url":"\/documentation\/streamchat\/healthcheckevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/Event":{"role":"symbol","title":"Event","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Event"}],"abstract":[{"type":"text","text":"An "},{"type":"codeVoice","code":"Event"},{"type":"text","text":" object representing an event in the chat system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Event"}],"url":"\/documentation\/streamchat\/event"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionEvent":{"role":"symbol","title":"ConnectionEvent","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionEvent"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ConnectionEvent"}],"url":"\/documentation\/streamchat\/connectionevent"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionEvent/connectionId":{"role":"symbol","title":"connectionId","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectionId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent\/connectionId","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/connectionevent\/connectionid"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat15ConnectionEventP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ConnectionEvent"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ConnectionEvent"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "ConnectionEvent"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ConnectionEvent"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat5EventP",
+              "text" : "Event"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HealthCheckEvent"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent\/connectionId"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/connectionevent"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionEvent": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConnectionEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionEvent/connectionId": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectionId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent\/connectionId",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "connectionId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionevent\/connectionid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Event": {
+  "abstract" : [
+    {
+      "text" : "An ",
+      "type" : "text"
+    },
+    {
+      "code" : "Event",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " object representing an event in the chat system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Event",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/event"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/HealthCheckEvent": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HealthCheckEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HealthCheckEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HealthCheckEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HealthCheckEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/healthcheckevent"
+}
+}
+}

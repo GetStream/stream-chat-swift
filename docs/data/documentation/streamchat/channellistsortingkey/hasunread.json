@@ -1,1 +1,200 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"hasUnread"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channellistsortingkey\/hasunread"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey\/hasUnread","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Sort channels by unread state. When using this sorting key, every unread channel weighs the same,"},{"type":"text","text":" "},{"type":"text","text":"so they’re sorted by "},{"type":"codeVoice","code":"updatedAt"}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"hasUnread"}],"title":"ChannelListSortingKey.hasUnread","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat21ChannelListSortingKeyO9hasUnreadyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListSortingKey/hasUnread":{"role":"symbol","title":"ChannelListSortingKey.hasUnread","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"hasUnread"}],"abstract":[{"type":"text","text":"Sort channels by unread state. When using this sorting key, every unread channel weighs the same,"},{"type":"text","text":" "},{"type":"text","text":"so they’re sorted by "},{"type":"codeVoice","code":"updatedAt"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey\/hasUnread","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channellistsortingkey\/hasunread"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListSortingKey":{"role":"symbol","title":"ChannelListSortingKey","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelListSortingKey"}],"abstract":[{"type":"codeVoice","code":"ChannelListSortingKey"},{"type":"text","text":" is keys by which you can get sorted channels after query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelListSortingKey"}],"url":"\/documentation\/streamchat\/channellistsortingkey"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Sort channels by unread state. When using this sorting key, every unread channel weighs the same,",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "so they’re sorted by ",
+      "type" : "text"
+    },
+    {
+      "code" : "updatedAt",
+      "type" : "codeVoice"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey\/hasUnread"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat21ChannelListSortingKeyO9hasUnreadyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "hasUnread"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "ChannelListSortingKey.hasUnread"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "hasUnread"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channellistsortingkey\/hasunread"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListSortingKey": {
+  "abstract" : [
+    {
+      "code" : "ChannelListSortingKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is keys by which you can get sorted channels after query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelListSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistsortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListSortingKey/hasUnread": {
+  "abstract" : [
+    {
+      "text" : "Sort channels by unread state. When using this sorting key, every unread channel weighs the same,",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "so they’re sorted by ",
+      "type" : "text"
+    },
+    {
+      "code" : "updatedAt",
+      "type" : "codeVoice"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hasUnread"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey\/hasUnread",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ChannelListSortingKey.hasUnread",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistsortingkey\/hasunread"
+}
+}
+}

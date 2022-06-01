@@ -1,1 +1,285 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cooldownDuration"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannel\/cooldownduration"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cooldownDuration","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Cooldown duration for the channel, if it’s in slow mode."},{"type":"text","text":" "},{"type":"text","text":"This value will be 0 if the channel is not in slow mode."},{"type":"text","text":" "},{"type":"text","text":"This value is in seconds."},{"type":"text","text":" "},{"type":"text","text":"For more information, please check "},{"type":"reference","isActive":true,"identifier":"https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cooldownDuration"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"title":"cooldownDuration","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B7ChannelV16cooldownDurationSivp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel"]]},"references":{"https://getstream.io/chat/docs/javascript/slow_mode/?language=swift":{"title":"documentation","titleInlineContent":[{"type":"text","text":"documentation"}],"type":"link","identifier":"https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift","url":"https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/cooldownDuration":{"role":"symbol","title":"cooldownDuration","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cooldownDuration"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"Cooldown duration for the channel, if it’s in slow mode."},{"type":"text","text":" "},{"type":"text","text":"This value will be 0 if the channel is not in slow mode."},{"type":"text","text":" "},{"type":"text","text":"This value is in seconds."},{"type":"text","text":" "},{"type":"text","text":"For more information, please check "},{"type":"reference","isActive":true,"identifier":"https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cooldownDuration","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/cooldownduration"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel":{"role":"symbol","title":"ChatChannel","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannel"}],"abstract":[{"type":"text","text":"A type representing a chat channel. "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":" is an immutable snapshot of a channel entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannel"}],"url":"\/documentation\/streamchat\/chatchannel"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Cooldown duration for the channel, if it’s in slow mode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This value will be 0 if the channel is not in slow mode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This value is in seconds.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "For more information, please check ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cooldownDuration"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B7ChannelV16cooldownDurationSivp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "cooldownDuration"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Si",
+        "text" : "Int"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "cooldownDuration"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "cooldownDuration"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Si",
+              "text" : "Int"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannel\/cooldownduration"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat channel. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a channel entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/cooldownDuration": {
+  "abstract" : [
+    {
+      "text" : "Cooldown duration for the channel, if it’s in slow mode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This value will be 0 if the channel is not in slow mode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This value is in seconds.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "For more information, please check ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cooldownDuration"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cooldownDuration",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cooldownDuration",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/cooldownduration"
+},
+"https://getstream.io/chat/docs/javascript/slow_mode/?language=swift": {
+  "identifier" : "https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift",
+  "title" : "documentation",
+  "titleInlineContent" : [
+    {
+      "text" : "documentation",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift"
+}
+}
+}

@@ -1,1 +1,563 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelListController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery","preciseIdentifier":"s:10StreamChat16ChannelListQueryV","text":"ChannelListQuery"},{"kind":"text","text":", "},{"kind":"externalParam","text":"filter"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV","text":"ChatChannel"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")? = nil) -> "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController","preciseIdentifier":"s:10StreamChat0B21ChannelListControllerC","text":"ChatChannelListController"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"return-value","level":2,"type":"heading","text":"Return Value"},{"type":"paragraph","inlineContent":[{"type":"text","text":"A new instance of "},{"type":"codeVoice","code":"ChatChannelListController"}]}]},{"kind":"parameters","parameters":[{"name":"query","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The query specify the filter and sorting of the channels the controller should fetch."}]}]},{"name":"filter","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"A block that determines whether the channels belongs to this controller."}]}]}]},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"type":"paragraph","inlineContent":[{"type":"text","text":"When passing "},{"type":"codeVoice","code":"filter"},{"type":"text","text":", make sure the runtime logic matches the one expected by the filter passed in the query object."},{"type":"text","text":" "},{"type":"text","text":"If they don’t match, there can be jumps when loading the list."}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatclient\/channellistcontroller(query:filter:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:filter:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChannelListController"},{"type":"text","text":" with the provided channel query and filter block."}],"kind":"symbol","metadata":{"role":"symbol","title":"channelListController(query:filter:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelListController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelListQuery","preciseIdentifier":"s:10StreamChat16ChannelListQueryV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"filter"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")?) -> "},{"kind":"typeIdentifier","text":"ChatChannelListController","preciseIdentifier":"s:10StreamChat0B21ChannelListControllerC"}],"symbolKind":"method","externalID":"s:10StreamChat0B6ClientC21channelListController5query6filterAA0b7ChanneleF0CAA0iE5QueryV_SbAA0bI0VcSgtF","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel":{"role":"symbol","title":"ChatChannel","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannel"}],"abstract":[{"type":"text","text":"A type representing a chat channel. "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":" is an immutable snapshot of a channel entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannel"}],"url":"\/documentation\/streamchat\/chatchannel"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController":{"role":"symbol","title":"ChatChannelListController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelListController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelListController"},{"type":"text","text":" is a controller class which allows observing a list of chat channels based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelListController"}],"url":"\/documentation\/streamchat\/chatchannellistcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelListController(query:filter:)":{"role":"symbol","title":"channelListController(query:filter:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelListController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelListQuery","preciseIdentifier":"s:10StreamChat16ChannelListQueryV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"filter"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")?) -> "},{"kind":"typeIdentifier","text":"ChatChannelListController","preciseIdentifier":"s:10StreamChat0B21ChannelListControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChannelListController"},{"type":"text","text":" with the provided channel query and filter block."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:filter:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/channellistcontroller(query:filter:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery":{"role":"symbol","title":"ChannelListQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelListQuery"}],"abstract":[{"type":"text","text":"A query is used for querying specific channels from backend."},{"type":"text","text":" "},{"type":"text","text":"You can specify filter, sorting, pagination, limit for fetched messages in channel and other options."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelListQuery"}],"url":"\/documentation\/streamchat\/channellistquery"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient":{"role":"symbol","title":"ChatClient","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClient"}],"abstract":[{"type":"text","text":"The root object representing a Stream Chat."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClient"}],"url":"\/documentation\/streamchat\/chatclient"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the provided channel query and filter block.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:filter:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B6ClientC21channelListController5query6filterAA0b7ChanneleF0CAA0iE5QueryV_SbAA0bI0VcSgtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "channelListController"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "query"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat16ChannelListQueryV",
+        "text" : "ChannelListQuery"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "filter"
+      },
+      {
+        "kind" : "text",
+        "text" : ": (("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+        "text" : "ChatChannel"
+      },
+      {
+        "kind" : "text",
+        "text" : ") -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      },
+      {
+        "kind" : "text",
+        "text" : ")?) -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B21ChannelListControllerC",
+        "text" : "ChatChannelListController"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "channelListController(query:filter:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "channelListController"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "query"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat16ChannelListQueryV",
+              "text" : "ChannelListQuery"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "filter"
+            },
+            {
+              "kind" : "text",
+              "text" : ": (("
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+              "text" : "ChatChannel"
+            },
+            {
+              "kind" : "text",
+              "text" : ") -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : ")? = nil) -> "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B21ChannelListControllerC",
+              "text" : "ChatChannelListController"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "return-value",
+          "level" : 2,
+          "text" : "Return Value",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "A new instance of ",
+              "type" : "text"
+            },
+            {
+              "code" : "ChatChannelListController",
+              "type" : "codeVoice"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The query specify the filter and sorting of the channels the controller should fetch.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "query"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A block that determines whether the channels belongs to this controller.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "filter"
+        }
+      ]
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "When passing ",
+              "type" : "text"
+            },
+            {
+              "code" : "filter",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", make sure the runtime logic matches the one expected by the filter passed in the query object.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "If they don’t match, there can be jumps when loading the list.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatclient\/channellistcontroller(query:filter:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery": {
+  "abstract" : [
+    {
+      "text" : "A query is used for querying specific channels from backend.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelListQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat channel. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a channel entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing a list of chat channels based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelListController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient": {
+  "abstract" : [
+    {
+      "text" : "The root object representing a Stream Chat.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClient",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelListController(query:filter:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the provided channel query and filter block.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelListController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "query"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ChannelListQueryV",
+      "text" : "ChannelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "filter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B21ChannelListControllerC",
+      "text" : "ChatChannelListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:filter:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelListController(query:filter:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/channellistcontroller(query:filter:)"
+}
+}
+}

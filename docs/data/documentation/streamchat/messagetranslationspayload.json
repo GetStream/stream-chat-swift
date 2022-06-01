@@ -1,1 +1,299 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageTranslationsPayload"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messagetranslationspayload"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/Se"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageTranslationsPayload"}],"title":"MessageTranslationsPayload","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat26MessageTranslationsPayloadV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"MessageTranslationsPayload"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/init(from:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/originalLanguage","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/translated"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/MessageTranslationsPayload/translated":{"role":"symbol","title":"translated","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"translated"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"TranslationLanguage","preciseIdentifier":"s:10StreamChat19TranslationLanguageV"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"]"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/translated","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagetranslationspayload\/translated"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageTranslationsPayload":{"role":"symbol","title":"MessageTranslationsPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageTranslationsPayload"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageTranslationsPayload"}],"url":"\/documentation\/streamchat\/messagetranslationspayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageTranslationsPayload/originalLanguage":{"role":"symbol","title":"originalLanguage","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"originalLanguage"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/originalLanguage","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagetranslationspayload\/originallanguage"},"doc://io.getstream.StreamChat/Se":{"type":"unresolvable","title":"Swift.Decodable","identifier":"doc:\/\/io.getstream.StreamChat\/Se"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageTranslationsPayload/init(from:)":{"role":"symbol","title":"init(from:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"from"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Decoder","preciseIdentifier":"s:s7DecoderP"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/init(from:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagetranslationspayload\/init(from:)"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat26MessageTranslationsPayloadV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "MessageTranslationsPayload"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "MessageTranslationsPayload"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "MessageTranslationsPayload"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "MessageTranslationsPayload"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/Se"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/originalLanguage",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/translated"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messagetranslationspayload"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/Se": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageTranslationsPayload": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageTranslationsPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageTranslationsPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageTranslationsPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagetranslationspayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageTranslationsPayload/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagetranslationspayload\/init(from:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageTranslationsPayload/originalLanguage": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "originalLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/originalLanguage",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "originalLanguage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagetranslationspayload\/originallanguage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageTranslationsPayload/translated": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "translated"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19TranslationLanguageV",
+      "text" : "TranslationLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageTranslationsPayload\/translated",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "translated",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagetranslationspayload\/translated"
+}
+}
+}

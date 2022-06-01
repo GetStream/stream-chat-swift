@@ -1,1 +1,219 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"update"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Item","preciseIdentifier":"s:10StreamChat12EntityChangeO4Itemxmfp"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/entitychange\/update(_:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange\/update(_:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The item was updated."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"update"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"Item","preciseIdentifier":"s:10StreamChat12EntityChangeO4Itemxmfp"},{"kind":"text","text":")"}],"title":"EntityChange.update(_:)","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat12EntityChangeO6updateyACyxGxcAEmlF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/EntityChange/update(_:)":{"role":"symbol","title":"EntityChange.update(_:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"update"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"Item","preciseIdentifier":"s:10StreamChat12EntityChangeO4Itemxmfp"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"The item was updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange\/update(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/entitychange\/update(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/EntityChange":{"role":"symbol","title":"EntityChange","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"EntityChange"}],"abstract":[{"type":"text","text":"This enum describes the changes to a certain item when observing it."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"EntityChange"}],"url":"\/documentation\/streamchat\/entitychange"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The item was updated.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange\/update(_:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat12EntityChangeO6updateyACyxGxcAEmlF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "update"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat12EntityChangeO4Itemxmfp",
+        "text" : "Item"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "EntityChange.update(_:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "update"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat12EntityChangeO4Itemxmfp",
+              "text" : "Item"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/entitychange\/update(_:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EntityChange": {
+  "abstract" : [
+    {
+      "text" : "This enum describes the changes to a certain item when observing it.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EntityChange"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EntityChange"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "EntityChange",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/entitychange"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EntityChange/update(_:)": {
+  "abstract" : [
+    {
+      "text" : "The item was updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "update"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12EntityChangeO4Itemxmfp",
+      "text" : "Item"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange\/update(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "EntityChange.update(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/entitychange\/update(_:)"
+}
+}
+}

@@ -1,1 +1,548 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageDeletedEvent"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messagedeletedevent"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Triggered when a new message is deleted."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageDeletedEvent"}],"title":"MessageDeletedEvent","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat19MessageDeletedEventV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"MessageDeletedEvent"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/channel","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/cid","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/createdAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/deletedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/isHardDelete","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/message","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/messageId","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/user","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/userId"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/channel":{"role":"symbol","title":"channel","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"channel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"}],"abstract":[{"type":"text","text":"The channel a message was deleted from."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/channel","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagedeletedevent\/channel"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/message":{"role":"symbol","title":"message","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"message"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"}],"abstract":[{"type":"text","text":"The deleted message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/message","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagedeletedevent\/message"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"abstract":[{"type":"text","text":"The channel identifier a message was deleted from."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/cid","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagedeletedevent\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/user":{"role":"symbol","title":"user","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"user"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The user who deleted the message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/user","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagedeletedevent\/user"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/userId":{"role":"symbol","title":"userId","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"userId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/userId","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/messagedeletedevent\/userid"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/messageId":{"role":"symbol","title":"messageId","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/messageId","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/messagedeletedevent\/messageid"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/deletedAt":{"role":"symbol","title":"deletedAt","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/deletedAt","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/messagedeletedevent\/deletedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent":{"role":"symbol","title":"MessageDeletedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageDeletedEvent"}],"abstract":[{"type":"text","text":"Triggered when a new message is deleted."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageDeletedEvent"}],"url":"\/documentation\/streamchat\/messagedeletedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/createdAt":{"role":"symbol","title":"createdAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The event timestamp."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/createdAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagedeletedevent\/createdat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/isHardDelete":{"role":"symbol","title":"isHardDelete","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"isHardDelete"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"A Boolean value indicating wether it is an hard delete or not."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/isHardDelete","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagedeletedevent\/isharddelete"},"doc://io.getstream.StreamChat/documentation/StreamChat/Event":{"role":"symbol","title":"Event","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Event"}],"abstract":[{"type":"text","text":"An "},{"type":"codeVoice","code":"Event"},{"type":"text","text":" object representing an event in the chat system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Event"}],"url":"\/documentation\/streamchat\/event"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Triggered when a new message is deleted.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat19MessageDeletedEventV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "MessageDeletedEvent"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "MessageDeletedEvent"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "MessageDeletedEvent"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "MessageDeletedEvent"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/channel",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/cid",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/createdAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/deletedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/isHardDelete",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/message",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/messageId",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/user",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/userId"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messagedeletedevent"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Event": {
+  "abstract" : [
+    {
+      "text" : "An ",
+      "type" : "text"
+    },
+    {
+      "code" : "Event",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " object representing an event in the chat system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Event",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/event"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a new message is deleted.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageDeletedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageDeletedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageDeletedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/channel": {
+  "abstract" : [
+    {
+      "text" : "The channel a message was deleted from.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/channel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent\/channel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/cid": {
+  "abstract" : [
+    {
+      "text" : "The channel identifier a message was deleted from.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/cid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent\/cid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/createdAt": {
+  "abstract" : [
+    {
+      "text" : "The event timestamp.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createdAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/createdAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createdAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent\/createdat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/deletedAt": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deletedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/deletedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deletedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent\/deletedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/isHardDelete": {
+  "abstract" : [
+    {
+      "text" : "A Boolean value indicating wether it is an hard delete or not.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isHardDelete"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/isHardDelete",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isHardDelete",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent\/isharddelete"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/message": {
+  "abstract" : [
+    {
+      "text" : "The deleted message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "message"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/message",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "message",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent\/message"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/messageId": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/messageId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messageId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent\/messageid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/user": {
+  "abstract" : [
+    {
+      "text" : "The user who deleted the message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "user"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/user",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "user",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent\/user"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent/userId": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "userId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent\/userId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "userId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent\/userid"
+}
+}
+}

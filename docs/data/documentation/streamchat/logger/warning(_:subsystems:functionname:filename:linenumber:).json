@@ -1,1 +1,556 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"warning"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"message"},{"kind":"text","text":": "},{"kind":"attribute","text":"@autoclosure"},{"kind":"text","text":" () -> "},{"kind":"keyword","text":"Any"},{"kind":"text","text":", "},{"kind":"externalParam","text":"subsystems"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV","text":"LogSubsystem"},{"kind":"text","text":" = .other, "},{"kind":"externalParam","text":"functionName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":" = "},{"kind":"keyword","text":"#function"},{"kind":"text","text":", "},{"kind":"externalParam","text":"fileName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":" = "},{"kind":"keyword","text":"#file"},{"kind":"text","text":", "},{"kind":"externalParam","text":"lineNumber"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UInt","preciseIdentifier":"s:Su"},{"kind":"text","text":" = "},{"kind":"keyword","text":"#line"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"message","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Message to be logged"}]}]},{"name":"functionName","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Function of the caller"}]}]},{"name":"fileName","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"File of the caller"}]}]},{"name":"lineNumber","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Line number of the caller"}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/logger\/warning(_:subsystems:functionname:filename:linenumber:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger\/warning(_:subsystems:functionName:fileName:lineNumber:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Log a warning message."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"warning"},{"kind":"text","text":"(() -> "},{"kind":"keyword","text":"Any"},{"kind":"text","text":", "},{"kind":"externalParam","text":"subsystems"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"functionName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"fileName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"lineNumber"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UInt","preciseIdentifier":"s:Su"},{"kind":"text","text":")"}],"title":"warning(_:subsystems:functionName:fileName:lineNumber:)","roleHeading":"Instance Method","role":"symbol","symbolKind":"method","externalID":"s:10StreamChat6LoggerC7warning_10subsystems12functionName04fileG010lineNumberyypyXK_AA12LogSubsystemVs12StaticStringVALSutF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/Logger":{"role":"symbol","title":"Logger","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"Logger"}],"abstract":[{"type":"text","text":"Entity used for logging messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Logger"}],"url":"\/documentation\/streamchat\/logger"},"doc://io.getstream.StreamChat/documentation/StreamChat/Logger/warning(_:subsystems:functionName:fileName:lineNumber:)":{"role":"symbol","title":"warning(_:subsystems:functionName:fileName:lineNumber:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"warning"},{"kind":"text","text":"(() -> "},{"kind":"keyword","text":"Any"},{"kind":"text","text":", "},{"kind":"externalParam","text":"subsystems"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"functionName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"fileName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"lineNumber"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UInt","preciseIdentifier":"s:Su"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Log a warning message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger\/warning(_:subsystems:functionName:fileName:lineNumber:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logger\/warning(_:subsystems:functionname:filename:linenumber:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem":{"role":"symbol","title":"LogSubsystem","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogSubsystem"}],"abstract":[{"type":"text","text":"Entity for identifying which subsystem the log message comes from."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogSubsystem"}],"url":"\/documentation\/streamchat\/logsubsystem"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Log a warning message.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger\/warning(_:subsystems:functionName:fileName:lineNumber:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat6LoggerC7warning_10subsystems12functionName04fileG010lineNumberyypyXK_AA12LogSubsystemVs12StaticStringVALSutF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "warning"
+      },
+      {
+        "kind" : "text",
+        "text" : "(() -> "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "Any"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "subsystems"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+        "text" : "LogSubsystem"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "functionName"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s12StaticStringV",
+        "text" : "StaticString"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "fileName"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s12StaticStringV",
+        "text" : "StaticString"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "lineNumber"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Su",
+        "text" : "UInt"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "warning(_:subsystems:functionName:fileName:lineNumber:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "warning"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "message"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "attribute",
+              "text" : "@autoclosure"
+            },
+            {
+              "kind" : "text",
+              "text" : " () -> "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "Any"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "subsystems"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+              "text" : "LogSubsystem"
+            },
+            {
+              "kind" : "text",
+              "text" : " = .other, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "functionName"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s12StaticStringV",
+              "text" : "StaticString"
+            },
+            {
+              "kind" : "text",
+              "text" : " = "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "#function"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "fileName"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s12StaticStringV",
+              "text" : "StaticString"
+            },
+            {
+              "kind" : "text",
+              "text" : " = "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "#file"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "lineNumber"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Su",
+              "text" : "UInt"
+            },
+            {
+              "kind" : "text",
+              "text" : " = "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "#line"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Message to be logged",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "message"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Function of the caller",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "functionName"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "File of the caller",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "fileName"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Line number of the caller",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "lineNumber"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/logger\/warning(_:subsystems:functionname:filename:linenumber:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem": {
+  "abstract" : [
+    {
+      "text" : "Entity for identifying which subsystem the log message comes from.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogSubsystem",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Logger": {
+  "abstract" : [
+    {
+      "text" : "Entity used for logging messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Logger"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Logger"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Logger",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logger"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Logger/warning(_:subsystems:functionName:fileName:lineNumber:)": {
+  "abstract" : [
+    {
+      "text" : "Log a warning message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "warning"
+    },
+    {
+      "kind" : "text",
+      "text" : "(() -> "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "Any"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "subsystems"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "functionName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s12StaticStringV",
+      "text" : "StaticString"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fileName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s12StaticStringV",
+      "text" : "StaticString"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "lineNumber"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Su",
+      "text" : "UInt"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger\/warning(_:subsystems:functionName:fileName:lineNumber:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "warning(_:subsystems:functionName:fileName:lineNumber:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logger\/warning(_:subsystems:functionname:filename:linenumber:)"
+}
+}
+}

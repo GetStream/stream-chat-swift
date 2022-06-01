@@ -1,1 +1,326 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"teams"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TeamId","preciseIdentifier":"s:10StreamChat6TeamIda","text":"TeamId"},{"kind":"text","text":">"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"type":"paragraph","inlineContent":[{"type":"text","text":"You need to enable multi-tenancy if you want to use this, else it’ll be empty. Refer to"},{"type":"text","text":" "},{"type":"reference","isActive":true,"identifier":"https:\/\/getstream.io\/chat\/docs\/multi_tenant_chat\/?language=swift"},{"type":"text","text":" for more info."}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatuser\/teams"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser\/teams","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Teams the user belongs to."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"teams"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"TeamId","preciseIdentifier":"s:10StreamChat6TeamIda"},{"kind":"text","text":">"}],"title":"teams","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B4UserC5teamsShySSGvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser"]]},"references":{"https://getstream.io/chat/docs/multi_tenant_chat/?language=swift":{"title":"docs","titleInlineContent":[{"type":"text","text":"docs"}],"type":"link","identifier":"https:\/\/getstream.io\/chat\/docs\/multi_tenant_chat\/?language=swift","url":"https:\/\/getstream.io\/chat\/docs\/multi_tenant_chat\/?language=swift"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser":{"role":"symbol","title":"ChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUser"}],"abstract":[{"type":"text","text":"A type representing a chat user. "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" is an immutable snapshot of a chat user entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUser"}],"url":"\/documentation\/streamchat\/chatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/TeamId":{"role":"symbol","title":"TeamId","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"TeamId"}],"abstract":[{"type":"text","text":"A unique identifier of team."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TeamId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"TeamId"}],"url":"\/documentation\/streamchat\/teamid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser/teams":{"role":"symbol","title":"teams","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"teams"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"TeamId","preciseIdentifier":"s:10StreamChat6TeamIda"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"Teams the user belongs to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser\/teams","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatuser\/teams"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Teams the user belongs to.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser\/teams"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B4UserC5teamsShySSGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "teams"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sh",
+        "text" : "Set"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6TeamIda",
+        "text" : "TeamId"
+      },
+      {
+        "kind" : "text",
+        "text" : ">"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "teams"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "teams"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sh",
+              "text" : "Set"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TeamId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6TeamIda",
+              "text" : "TeamId"
+            },
+            {
+              "kind" : "text",
+              "text" : ">"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "You need to enable multi-tenancy if you want to use this, else it’ll be empty. Refer to",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "https:\/\/getstream.io\/chat\/docs\/multi_tenant_chat\/?language=swift",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " for more info.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatuser\/teams"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat user entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser/teams": {
+  "abstract" : [
+    {
+      "text" : "Teams the user belongs to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "teams"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6TeamIda",
+      "text" : "TeamId"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser\/teams",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "teams",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser\/teams"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/TeamId": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of team.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TeamId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TeamId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TeamId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TeamId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/teamid"
+},
+"https://getstream.io/chat/docs/multi_tenant_chat/?language=swift": {
+  "identifier" : "https:\/\/getstream.io\/chat\/docs\/multi_tenant_chat\/?language=swift",
+  "title" : "docs",
+  "titleInlineContent" : [
+    {
+      "text" : "docs",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/getstream.io\/chat\/docs\/multi_tenant_chat\/?language=swift"
+}
+}
+}

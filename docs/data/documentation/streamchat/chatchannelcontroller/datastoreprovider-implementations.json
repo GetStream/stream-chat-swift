@@ -1,1 +1,152 @@
-{"variants":[{"paths":["\/documentation\/streamchat\/chatchannelcontroller\/datastoreprovider-implementations"],"traits":[{"interfaceLanguage":"swift"}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/DataStoreProvider-Implementations","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"article","metadata":{"modules":[{"name":"StreamChat"}],"role":"collectionGroup","title":"DataStoreProvider Implementations"},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/dataStore"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController":{"role":"symbol","title":"ChatChannelController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelController"}],"url":"\/documentation\/streamchat\/chatchannelcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/dataStore":{"role":"symbol","title":"dataStore","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"dataStore"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DataStore","preciseIdentifier":"s:10StreamChat9DataStoreV"}],"abstract":[{"type":"codeVoice","code":"DataStore"},{"type":"text","text":" provide access to all locally available model objects based on their id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/dataStore","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontroller\/datastore"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/DataStoreProvider-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "DataStoreProvider Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/dataStore"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelcontroller\/datastoreprovider-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/dataStore": {
+  "abstract" : [
+    {
+      "code" : "DataStore",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " provide access to all locally available model objects based on their id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dataStore"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9DataStoreV",
+      "text" : "DataStore"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/dataStore",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "dataStore",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/datastore"
+}
+}
+}

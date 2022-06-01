@@ -1,1 +1,444 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelEventsController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"for"},{"kind":"text","text":" "},{"kind":"internalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV","text":"ChannelId"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelEventsController","preciseIdentifier":"s:10StreamChat23ChannelEventsControllerC","text":"ChannelEventsController"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"return-value","level":2,"type":"heading","text":"Return Value"},{"type":"paragraph","inlineContent":[{"type":"text","text":"A new instance of "},{"type":"codeVoice","code":"ChannelEventsController"},{"type":"text","text":"."}]}]},{"kind":"parameters","parameters":[{"name":"cid","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"A channel identifier."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatclient\/channeleventscontroller(for:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelEventsController(for:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChannelEventsController"},{"type":"text","text":" that can be used to listen to system events"},{"type":"text","text":" "},{"type":"text","text":"related to the channel with "},{"type":"codeVoice","code":"cid"},{"type":"text","text":" and to send custom events."}],"kind":"symbol","metadata":{"role":"symbol","title":"channelEventsController(for:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelEventsController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"for"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChannelEventsController","preciseIdentifier":"s:10StreamChat23ChannelEventsControllerC"}],"symbolKind":"method","externalID":"s:10StreamChat0B6ClientC23channelEventsController3forAA07ChanneleF0CAA0H2IdV_tF","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelEventsController":{"role":"symbol","title":"ChannelEventsController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelEventsController"}],"abstract":[{"type":"codeVoice","code":"ChannelEventsController"},{"type":"text","text":" is a controller class which allows to observe channel"},{"type":"text","text":" "},{"type":"text","text":"events and send custom events."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelEventsController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelEventsController"}],"url":"\/documentation\/streamchat\/channeleventscontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId":{"role":"symbol","title":"ChannelId","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelId"}],"abstract":[{"type":"text","text":"A type representing a unique identifier of a "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelId"}],"url":"\/documentation\/streamchat\/channelid"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient":{"role":"symbol","title":"ChatClient","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClient"}],"abstract":[{"type":"text","text":"The root object representing a Stream Chat."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClient"}],"url":"\/documentation\/streamchat\/chatclient"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelEventsController(for:)":{"role":"symbol","title":"channelEventsController(for:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelEventsController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"for"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChannelEventsController","preciseIdentifier":"s:10StreamChat23ChannelEventsControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChannelEventsController"},{"type":"text","text":" that can be used to listen to system events"},{"type":"text","text":" "},{"type":"text","text":"related to the channel with "},{"type":"codeVoice","code":"cid"},{"type":"text","text":" and to send custom events."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelEventsController(for:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/channeleventscontroller(for:)"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelEventsController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that can be used to listen to system events",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "related to the channel with ",
+      "type" : "text"
+    },
+    {
+      "code" : "cid",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and to send custom events.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelEventsController(for:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B6ClientC23channelEventsController3forAA07ChanneleF0CAA0H2IdV_tF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "channelEventsController"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "for"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+        "text" : "ChannelId"
+      },
+      {
+        "kind" : "text",
+        "text" : ") -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat23ChannelEventsControllerC",
+        "text" : "ChannelEventsController"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "channelEventsController(for:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "channelEventsController"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "for"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "cid"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+              "text" : "ChannelId"
+            },
+            {
+              "kind" : "text",
+              "text" : ") -> "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelEventsController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat23ChannelEventsControllerC",
+              "text" : "ChannelEventsController"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "return-value",
+          "level" : 2,
+          "text" : "Return Value",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "A new instance of ",
+              "type" : "text"
+            },
+            {
+              "code" : "ChannelEventsController",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A channel identifier.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "cid"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatclient\/channeleventscontroller(for:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelEventsController": {
+  "abstract" : [
+    {
+      "code" : "ChannelEventsController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows to observe channel",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "events and send custom events.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelEventsController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelEventsController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelEventsController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelEventsController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channeleventscontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId": {
+  "abstract" : [
+    {
+      "text" : "A type representing a unique identifier of a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient": {
+  "abstract" : [
+    {
+      "text" : "The root object representing a Stream Chat.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClient",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelEventsController(for:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelEventsController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that can be used to listen to system events",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "related to the channel with ",
+      "type" : "text"
+    },
+    {
+      "code" : "cid",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and to send custom events.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelEventsController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat23ChannelEventsControllerC",
+      "text" : "ChannelEventsController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelEventsController(for:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelEventsController(for:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/channeleventscontroller(for:)"
+}
+}
+}

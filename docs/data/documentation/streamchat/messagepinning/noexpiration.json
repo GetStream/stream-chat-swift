@@ -1,1 +1,224 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"noExpiration"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning","preciseIdentifier":"s:10StreamChat14MessagePinningV","text":"MessagePinning"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messagepinning\/noexpiration"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning\/noExpiration","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Pins a message with infinite expiration."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"noExpiration"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessagePinning","preciseIdentifier":"s:10StreamChat14MessagePinningV"}],"title":"noExpiration","roleHeading":"Type Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat14MessagePinningV12noExpirationACvpZ","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessagePinning/noExpiration":{"role":"symbol","title":"noExpiration","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"noExpiration"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessagePinning","preciseIdentifier":"s:10StreamChat14MessagePinningV"}],"abstract":[{"type":"text","text":"Pins a message with infinite expiration."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning\/noExpiration","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagepinning\/noexpiration"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessagePinning":{"role":"symbol","title":"MessagePinning","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessagePinning"}],"abstract":[{"type":"text","text":"Describes the pinning expiration"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessagePinning"}],"url":"\/documentation\/streamchat\/messagepinning"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Pins a message with infinite expiration.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning\/noExpiration"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat14MessagePinningV12noExpirationACvpZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "noExpiration"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat14MessagePinningV",
+        "text" : "MessagePinning"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "noExpiration"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "noExpiration"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat14MessagePinningV",
+              "text" : "MessagePinning"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messagepinning\/noexpiration"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessagePinning": {
+  "abstract" : [
+    {
+      "text" : "Describes the pinning expiration",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessagePinning"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessagePinning"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessagePinning",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagepinning"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessagePinning/noExpiration": {
+  "abstract" : [
+    {
+      "text" : "Pins a message with infinite expiration.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "noExpiration"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14MessagePinningV",
+      "text" : "MessagePinning"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagePinning\/noExpiration",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "noExpiration",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagepinning\/noexpiration"
+}
+}
+}

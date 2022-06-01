@@ -1,1 +1,505 @@
-{"variants":[{"paths":["\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/chatchannelcontrollerdelegate-implementations"],"traits":[{"interfaceLanguage":"swift"}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/ChatChannelControllerDelegate-Implementations","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"article","metadata":{"modules":[{"name":"StreamChat"}],"role":"collectionGroup","title":"ChatChannelControllerDelegate Implementations"},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class"]]},"topicSections":[{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didChangeTypingUsers:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didReceiveMemberEvent:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didUpdateChannel:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didUpdateMessages:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/userController(_:didUpdateUser:)"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/channelController(_:didReceiveMemberEvent:)":{"role":"symbol","title":"channelController(_:didReceiveMemberEvent:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didReceiveMemberEvent"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MemberEvent","preciseIdentifier":"s:10StreamChat11MemberEventP"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"The controller received a "},{"type":"codeVoice","code":"MemberEvent"},{"type":"text","text":" related to the channel it observes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didReceiveMemberEvent:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/channelcontroller(_:didreceivememberevent:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/channelController(_:didChangeTypingUsers:)":{"role":"symbol","title":"channelController(_:didChangeTypingUsers:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeTypingUsers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">)"}],"abstract":[{"type":"text","text":"The controller received a change related to users typing in the channel it observes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didChangeTypingUsers:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/channelcontroller(_:didchangetypingusers:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/channelController(_:didUpdateChannel:)":{"role":"symbol","title":"channelController(_:didUpdateChannel:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didUpdateChannel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":">)"}],"abstract":[{"type":"text","text":"The controller observed a change in the "},{"type":"codeVoice","code":"Channel"},{"type":"text","text":" entity."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didUpdateChannel:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/channelcontroller(_:didupdatechannel:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChannelListController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/channelController(_:didUpdateMessages:)":{"role":"symbol","title":"channelController(_:didUpdateMessages:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didUpdateMessages"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":">])"}],"abstract":[{"type":"text","text":"The controller observed changes in the "},{"type":"codeVoice","code":"Messages"},{"type":"text","text":" of the observed channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didUpdateMessages:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/channelcontroller(_:didupdatemessages:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController":{"role":"symbol","title":"ChatChannelController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelController"}],"url":"\/documentation\/streamchat\/chatchannelcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/userController(_:didUpdateUser:)":{"role":"symbol","title":"userController(_:didUpdateUser:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"userController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatUserController","preciseIdentifier":"s:10StreamChat0B14UserControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didUpdateUser"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">)"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/userController(_:didUpdateUser:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/usercontroller(_:didupdateuser:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/ChatChannelControllerDelegate-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "ChatChannelControllerDelegate Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didChangeTypingUsers:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didReceiveMemberEvent:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didUpdateChannel:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didUpdateMessages:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/userController(_:didUpdateUser:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/chatchannelcontrollerdelegate-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/channelController(_:didChangeTypingUsers:)": {
+  "abstract" : [
+    {
+      "text" : "The controller received a change related to users typing in the channel it observes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeTypingUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didChangeTypingUsers:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelController(_:didChangeTypingUsers:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/channelcontroller(_:didchangetypingusers:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/channelController(_:didReceiveMemberEvent:)": {
+  "abstract" : [
+    {
+      "text" : "The controller received a ",
+      "type" : "text"
+    },
+    {
+      "code" : "MemberEvent",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " related to the channel it observes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didReceiveMemberEvent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11MemberEventP",
+      "text" : "MemberEvent"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didReceiveMemberEvent:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelController(_:didReceiveMemberEvent:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/channelcontroller(_:didreceivememberevent:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/channelController(_:didUpdateChannel:)": {
+  "abstract" : [
+    {
+      "text" : "The controller observed a change in the ",
+      "type" : "text"
+    },
+    {
+      "code" : "Channel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " entity.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didUpdateChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+      "text" : "EntityChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didUpdateChannel:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelController(_:didUpdateChannel:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/channelcontroller(_:didupdatechannel:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/channelController(_:didUpdateMessages:)": {
+  "abstract" : [
+    {
+      "text" : "The controller observed changes in the ",
+      "type" : "text"
+    },
+    {
+      "code" : "Messages",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " of the observed channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didUpdateMessages"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+      "text" : "ListChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ">])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/channelController(_:didUpdateMessages:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelController(_:didUpdateMessages:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/channelcontroller(_:didupdatemessages:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class/userController(_:didUpdateUser:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "userController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B14UserControllerC",
+      "text" : "ChatUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didUpdateUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+      "text" : "EntityChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class\/userController(_:didUpdateUser:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "userController(_:didUpdateUser:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class\/usercontroller(_:didupdateuser:)"
+}
+}
+}

@@ -1,1 +1,1098 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"required"},{"kind":"text","text":" "},{"kind":"keyword","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"identifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":", "},{"kind":"externalParam","text":"level"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO","text":"LogLevel"},{"kind":"text","text":", "},{"kind":"externalParam","text":"subsystems"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV","text":"LogSubsystem"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showDate"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"dateFormatter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DateFormatter","preciseIdentifier":"c:objc(cs)NSDateFormatter"},{"kind":"text","text":", "},{"kind":"externalParam","text":"formatters"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogFormatter","preciseIdentifier":"s:10StreamChat12LogFormatterP","text":"LogFormatter"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"showLevel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showIdentifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showThreadName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showFileName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showLineNumber"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showFunctionName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"identifier","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Identifier for this destination. Will be shown on the logs if "},{"type":"codeVoice","code":"showIdentifier"},{"type":"text","text":" is "},{"type":"codeVoice","code":"true"}]}]},{"name":"level","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Output level for this destination. Messages will only be shown if their output level is higher than this."}]}]},{"name":"showDate","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Toggle for showing date in logs"}]}]},{"name":"dateFormatter","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"DateFormatter instance for formatting the date in logs. Defaults to ISO8601 formatter."}]}]},{"name":"formatters","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters)."},{"type":"text","text":" "},{"type":"text","text":"Please see "},{"type":"codeVoice","code":"LogFormatter"},{"type":"text","text":" for more info."}]}]},{"name":"showLevel","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Toggle for showing log level in logs"}]}]},{"name":"showIdentifier","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Toggle for showing identifier in logs"}]}]},{"name":"showThreadName","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Toggle for showing thread name in logs"}]}]},{"name":"showFileName","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Toggle for showing file name in logs"}]}]},{"name":"showLineNumber","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Toggle for showing line number in logs"}]}]},{"name":"showFunctionName","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Toggle for showing function name in logs"}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/consolelogdestination\/init(identifier:level:subsystems:showdate:dateformatter:formatters:showlevel:showidentifier:showthreadname:showfilename:showlinenumber:showfunctionname:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConsoleLogDestination\/init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Initialize the log destination with given parameters."}],"kind":"symbol","metadata":{"fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"identifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":", "},{"kind":"externalParam","text":"level"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO"},{"kind":"text","text":", "},{"kind":"externalParam","text":"subsystems"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showDate"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"dateFormatter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DateFormatter","preciseIdentifier":"c:objc(cs)NSDateFormatter"},{"kind":"text","text":", "},{"kind":"externalParam","text":"formatters"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"LogFormatter","preciseIdentifier":"s:10StreamChat12LogFormatterP"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"showLevel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showIdentifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showThreadName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showFileName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showLineNumber"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showFunctionName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")"}],"title":"init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)","roleHeading":"Initializer","role":"symbol","symbolKind":"init","externalID":"s:10StreamChat21ConsoleLogDestinationC10identifier5level10subsystems8showDate13dateFormatter10formatters0I5Level0I10Identifier0I10ThreadName0i4FileQ00I10LineNumber0i8FunctionQ0ACSS_AA0dN0OAA0D9SubsystemVSbSo06NSDateL0CSayAA0dL0_pGS6btcfc","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConsoleLogDestination"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogFormatter":{"role":"symbol","title":"LogFormatter","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogFormatter"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogFormatter","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogFormatter"}],"url":"\/documentation\/streamchat\/logformatter"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConsoleLogDestination":{"role":"symbol","title":"ConsoleLogDestination","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConsoleLogDestination"}],"abstract":[{"type":"text","text":"Basic destination for outputting messages to console."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConsoleLogDestination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ConsoleLogDestination"}],"url":"\/documentation\/streamchat\/consolelogdestination"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel":{"role":"symbol","title":"LogLevel","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogLevel"}],"abstract":[{"type":"text","text":"Log level for any messages to be logged."},{"type":"text","text":" "},{"type":"text","text":"Please check "},{"type":"reference","isActive":true,"identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"},{"type":"text","text":" to understand different logging levels."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogLevel"}],"url":"\/documentation\/streamchat\/loglevel"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConsoleLogDestination/init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)":{"role":"symbol","title":"init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"identifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":", "},{"kind":"externalParam","text":"level"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO"},{"kind":"text","text":", "},{"kind":"externalParam","text":"subsystems"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showDate"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"dateFormatter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DateFormatter","preciseIdentifier":"c:objc(cs)NSDateFormatter"},{"kind":"text","text":", "},{"kind":"externalParam","text":"formatters"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"LogFormatter","preciseIdentifier":"s:10StreamChat12LogFormatterP"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"showLevel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showIdentifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showThreadName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showFileName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showLineNumber"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"showFunctionName"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Initialize the log destination with given parameters."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConsoleLogDestination\/init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/consolelogdestination\/init(identifier:level:subsystems:showdate:dateformatter:formatters:showlevel:showidentifier:showthreadname:showfilename:showlinenumber:showfunctionname:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem":{"role":"symbol","title":"LogSubsystem","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogSubsystem"}],"abstract":[{"type":"text","text":"Entity for identifying which subsystem the log message comes from."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogSubsystem"}],"url":"\/documentation\/streamchat\/logsubsystem"},"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code":{"title":"this Apple Logging Article","titleInlineContent":[{"type":"text","text":"this Apple Logging Article"}],"type":"link","identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code","url":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Initialize the log destination with given parameters.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConsoleLogDestination"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConsoleLogDestination\/init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat21ConsoleLogDestinationC10identifier5level10subsystems8showDate13dateFormatter10formatters0I5Level0I10Identifier0I10ThreadName0i4FileQ00I10LineNumber0i8FunctionQ0ACSS_AA0dN0OAA0D9SubsystemVSbSo06NSDateL0CSayAA0dL0_pGS6btcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "identifier"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "level"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+        "text" : "LogLevel"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "subsystems"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+        "text" : "LogSubsystem"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "showDate"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "dateFormatter"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "c:objc(cs)NSDateFormatter",
+        "text" : "DateFormatter"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "formatters"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat12LogFormatterP",
+        "text" : "LogFormatter"
+      },
+      {
+        "kind" : "text",
+        "text" : "], "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "showLevel"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "showIdentifier"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "showThreadName"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "showFileName"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "showLineNumber"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "showFunctionName"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "required"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "identifier"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "level"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+              "text" : "LogLevel"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "subsystems"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+              "text" : "LogSubsystem"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "showDate"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "dateFormatter"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "c:objc(cs)NSDateFormatter",
+              "text" : "DateFormatter"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "formatters"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogFormatter",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat12LogFormatterP",
+              "text" : "LogFormatter"
+            },
+            {
+              "kind" : "text",
+              "text" : "], "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "showLevel"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "showIdentifier"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "showThreadName"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "showFileName"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "showLineNumber"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "showFunctionName"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Identifier for this destination. Will be shown on the logs if ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "showIdentifier",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " is ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "true",
+                  "type" : "codeVoice"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "identifier"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Output level for this destination. Messages will only be shown if their output level is higher than this.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "level"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Toggle for showing date in logs",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "showDate"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "DateFormatter instance for formatting the date in logs. Defaults to ISO8601 formatter.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "dateFormatter"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters).",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Please see ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "LogFormatter",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " for more info.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "formatters"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Toggle for showing log level in logs",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "showLevel"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Toggle for showing identifier in logs",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "showIdentifier"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Toggle for showing thread name in logs",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "showThreadName"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Toggle for showing file name in logs",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "showFileName"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Toggle for showing line number in logs",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "showLineNumber"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Toggle for showing function name in logs",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "showFunctionName"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/consolelogdestination\/init(identifier:level:subsystems:showdate:dateformatter:formatters:showlevel:showidentifier:showthreadname:showfilename:showlinenumber:showfunctionname:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConsoleLogDestination": {
+  "abstract" : [
+    {
+      "text" : "Basic destination for outputting messages to console.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConsoleLogDestination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConsoleLogDestination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConsoleLogDestination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConsoleLogDestination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/consolelogdestination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConsoleLogDestination/init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)": {
+  "abstract" : [
+    {
+      "text" : "Initialize the log destination with given parameters.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "level"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+      "text" : "LogLevel"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "subsystems"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "showDate"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "dateFormatter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "c:objc(cs)NSDateFormatter",
+      "text" : "DateFormatter"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "formatters"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogFormatterP",
+      "text" : "LogFormatter"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "showLevel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "showIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "showThreadName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "showFileName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "showLineNumber"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "showFunctionName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConsoleLogDestination\/init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(identifier:level:subsystems:showDate:dateFormatter:formatters:showLevel:showIdentifier:showThreadName:showFileName:showLineNumber:showFunctionName:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/consolelogdestination\/init(identifier:level:subsystems:showdate:dateformatter:formatters:showlevel:showidentifier:showthreadname:showfilename:showlinenumber:showfunctionname:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogFormatter": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogFormatter"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogFormatter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogFormatter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogFormatter",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logformatter"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel": {
+  "abstract" : [
+    {
+      "text" : "Log level for any messages to be logged.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Please check ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " to understand different logging levels.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogLevel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem": {
+  "abstract" : [
+    {
+      "text" : "Entity for identifying which subsystem the log message comes from.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogSubsystem",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem"
+},
+"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code": {
+  "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+  "title" : "this Apple Logging Article",
+  "titleInlineContent" : [
+    {
+      "text" : "this Apple Logging Article",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"
+}
+}
+}

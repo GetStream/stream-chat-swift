@@ -1,1 +1,1079 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataControllerStateDelegate"},{"kind":"text","text":" : AnyObject"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/datacontrollerstatedelegate"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate"],"kind":"relationships","title":"Inherited By","type":"inheritedBy"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/ObservableObject-swift.class","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/ObservableObject-swift.class","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/ObservableObject-swift.class","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController\/ObservableObject-swift.class","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController\/ObservableObject-swift.class","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController\/ObservableObject-swift.class"],"kind":"relationships","title":"Conforming Types","type":"conformingTypes"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A delegate protocol some Controllers use to propagate the information about controller "},{"type":"codeVoice","code":"state"},{"type":"text","text":" changes. You can use it to let"},{"type":"text","text":" "},{"type":"text","text":"users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataControllerStateDelegate"}],"title":"DataControllerStateDelegate","roleHeading":"Protocol","role":"symbol","symbolKind":"protocol","externalID":"s:10StreamChat27DataControllerStateDelegateP","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"DataControllerStateDelegate"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-6kgca"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelMemberListController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChatChannelMemberListController"},{"type":"text","text":" type which makes it possible to use the controller"},{"type":"text","text":" "},{"type":"text","text":"comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannelmemberlistcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListControllerDelegate":{"role":"symbol","title":"ChatChannelMemberListControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMemberListControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatChannelMemberListController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelMemberListControllerDelegate"}],"url":"\/documentation\/streamchat\/chatchannelmemberlistcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelWatcherListController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChatChannelWatcherListController"},{"type":"text","text":" type which makes it possible to use the controller"},{"type":"text","text":" "},{"type":"text","text":"comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListControllerDelegate":{"role":"symbol","title":"ChatChannelWatcherListControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelWatcherListControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatChannelWatcherListController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelWatcherListControllerDelegate"}],"url":"\/documentation\/streamchat\/chatchannelwatcherlistcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberControllerDelegate":{"role":"symbol","title":"ChatChannelMemberControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMemberControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatChannelMemberControllerDelegate"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelMemberControllerDelegate"}],"url":"\/documentation\/streamchat\/chatchannelmembercontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchControllerDelegate":{"role":"symbol","title":"ChatMessageSearchControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageSearchControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatMessageSearchController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageSearchControllerDelegate"}],"url":"\/documentation\/streamchat\/chatmessagesearchcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelControllerDelegate":{"role":"symbol","title":"ChatChannelControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelControllerDelegate"}],"url":"\/documentation\/streamchat\/chatchannelcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChannelListController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelListController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChannelListController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate":{"role":"symbol","title":"ChatChannelListControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelListControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatChannelListController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelListControllerDelegate"}],"url":"\/documentation\/streamchat\/chatchannellistcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListController/ObservableObject-swift.class":{"role":"symbol","title":"ChatUserListController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"UserListController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatuserlistcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageControllerDelegate":{"role":"symbol","title":"ChatMessageControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatMessageController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageControllerDelegate"}],"url":"\/documentation\/streamchat\/chatmessagecontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate":{"role":"symbol","title":"DataControllerStateDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataControllerStateDelegate"}],"abstract":[{"type":"text","text":"A delegate protocol some Controllers use to propagate the information about controller "},{"type":"codeVoice","code":"state"},{"type":"text","text":" changes. You can use it to let"},{"type":"text","text":" "},{"type":"text","text":"users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataControllerStateDelegate"}],"url":"\/documentation\/streamchat\/datacontrollerstatedelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserControllerDelegate":{"role":"symbol","title":"ChatUserControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatUserControllerDelegate"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserControllerDelegate"}],"url":"\/documentation\/streamchat\/chatusercontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchController/ObservableObject-swift.class":{"role":"symbol","title":"ChatMessageSearchController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"CurrentUserController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatmessagesearchcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/ObservableObject-swift.class":{"role":"symbol","title":"ChatMessageController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"CurrentUserController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatmessagecontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListControllerDelegate":{"role":"symbol","title":"ChatUserListControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserListControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatUserListController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserListControllerDelegate"}],"url":"\/documentation\/streamchat\/chatuserlistcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserController/ObservableObject-swift.class":{"role":"symbol","title":"ChatUserController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChatUserController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatusercontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchControllerDelegate":{"role":"symbol","title":"ChatUserSearchControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserSearchControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatUserSearchController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserSearchControllerDelegate"}],"url":"\/documentation\/streamchat\/chatusersearchcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelMemberController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChatChannelMemberController"},{"type":"text","text":" type which makes it possible to use the controller"},{"type":"text","text":" "},{"type":"text","text":"comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannelmembercontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate/controller(_:didChangeState:)-6kgca":{"defaultImplementations":1,"role":"symbol","title":"controller(_:didChangeState:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeState"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"State","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Called when the observed controller changed it’s state."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-6kgca","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/datacontrollerstatedelegate\/controller(_:didchangestate:)-6kgca"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A delegate protocol some Controllers use to propagate the information about controller ",
+      "type" : "text"
+    },
+    {
+      "code" : "state",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " changes. You can use it to let",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat27DataControllerStateDelegateP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "DataControllerStateDelegate"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "DataControllerStateDelegate"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "DataControllerStateDelegate"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "DataControllerStateDelegate"
+            },
+            {
+              "kind" : "text",
+              "text" : " : AnyObject"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherited By",
+      "type" : "inheritedBy"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/ObservableObject-swift.class",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/ObservableObject-swift.class",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/ObservableObject-swift.class",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController\/ObservableObject-swift.class",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController\/ObservableObject-swift.class",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController\/ObservableObject-swift.class"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-6kgca"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/datacontrollerstatedelegate"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelListController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelListControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelMemberController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmembercontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelMemberControllerDelegate",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmembercontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelMemberListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberListController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmemberlistcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelMemberListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberListControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberListControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberListControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmemberlistcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelWatcherListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelWatcherListController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelWatcherListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelWatcherListControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelWatcherListControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelWatcherListControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelwatcherlistcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageSearchController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagesearchcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageSearchController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageSearchControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageSearchControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageSearchControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagesearchcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusercontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatUserControllerDelegate",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusercontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "UserListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserListController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuserlistcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatUserListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserListControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserListControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserListControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuserlistcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatUserSearchController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserSearchControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserSearchControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserSearchControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusersearchcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate": {
+  "abstract" : [
+    {
+      "text" : "A delegate protocol some Controllers use to propagate the information about controller ",
+      "type" : "text"
+    },
+    {
+      "code" : "state",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " changes. You can use it to let",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataControllerStateDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataControllerStateDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataControllerStateDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontrollerstatedelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate/controller(_:didChangeState:)-6kgca": {
+  "abstract" : [
+    {
+      "text" : "Called when the observed controller changed it’s state.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeState"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+      "text" : "State"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-6kgca",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "controller(_:didChangeState:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontrollerstatedelegate\/controller(_:didchangestate:)-6kgca"
+}
+}
+}

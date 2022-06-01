@@ -1,1 +1,572 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelListControllerDelegate"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate","preciseIdentifier":"s:10StreamChat27DataControllerStateDelegateP","text":"DataControllerStateDelegate"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannellistcontrollerdelegate"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class"],"kind":"relationships","title":"Conforming Types","type":"conformingTypes"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate","interfaceLanguage":"swift"},"abstract":[{"type":"codeVoice","code":"ChatChannelListController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelListControllerDelegate"}],"title":"ChatChannelListControllerDelegate","roleHeading":"Protocol","role":"symbol","symbolKind":"protocol","externalID":"s:10StreamChat0B29ChannelListControllerDelegateP","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatChannelListControllerDelegate"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:didChangeChannels:)-6qxho","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:shouldAddNewChannelToList:)-13k90","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:shouldListUpdatedChannel:)-2cl5","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controllerWillChangeChannels(_:)-8h2sh"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelListController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChannelListController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate/controller(_:shouldAddNewChannelToList:)-13k90":{"defaultImplementations":1,"role":"symbol","title":"controller(_:shouldAddNewChannelToList:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelListController","preciseIdentifier":"s:10StreamChat0B21ChannelListControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"shouldAddNewChannelToList"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"strong","inlineContent":[{"type":"text","text":"⚠️ This method is deprecated:"}]},{"type":"text","text":" Please use "},{"type":"codeVoice","code":"filter"},{"type":"text","text":" when initializing a "},{"type":"codeVoice","code":"ChatChannelListController"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:shouldAddNewChannelToList:)-13k90","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/chatchannellistcontrollerdelegate\/controller(_:shouldaddnewchanneltolist:)-13k90"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate/controllerWillChangeChannels(_:)-8h2sh":{"defaultImplementations":1,"role":"symbol","title":"controllerWillChangeChannels(_:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controllerWillChangeChannels"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelListController","preciseIdentifier":"s:10StreamChat0B21ChannelListControllerC"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"The controller will update the list of observed channels."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controllerWillChangeChannels(_:)-8h2sh","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/chatchannellistcontrollerdelegate\/controllerwillchangechannels(_:)-8h2sh"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate":{"role":"symbol","title":"ChatChannelListControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelListControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatChannelListController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelListControllerDelegate"}],"url":"\/documentation\/streamchat\/chatchannellistcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate/controller(_:didChangeChannels:)-6qxho":{"defaultImplementations":1,"role":"symbol","title":"controller(_:didChangeChannels:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelListController","preciseIdentifier":"s:10StreamChat0B21ChannelListControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeChannels"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":">])"}],"abstract":[{"type":"text","text":"The controller changed the list of observed channels."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:didChangeChannels:)-6qxho","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/chatchannellistcontrollerdelegate\/controller(_:didchangechannels:)-6qxho"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate":{"role":"symbol","title":"DataControllerStateDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataControllerStateDelegate"}],"abstract":[{"type":"text","text":"A delegate protocol some Controllers use to propagate the information about controller "},{"type":"codeVoice","code":"state"},{"type":"text","text":" changes. You can use it to let"},{"type":"text","text":" "},{"type":"text","text":"users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataControllerStateDelegate"}],"url":"\/documentation\/streamchat\/datacontrollerstatedelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate/controller(_:shouldListUpdatedChannel:)-2cl5":{"defaultImplementations":1,"role":"symbol","title":"controller(_:shouldListUpdatedChannel:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelListController","preciseIdentifier":"s:10StreamChat0B21ChannelListControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"shouldListUpdatedChannel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"strong","inlineContent":[{"type":"text","text":"⚠️ This method is deprecated:"}]},{"type":"text","text":" Please use "},{"type":"codeVoice","code":"filter"},{"type":"text","text":" when initializing a "},{"type":"codeVoice","code":"ChatChannelListController"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:shouldListUpdatedChannel:)-2cl5","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/chatchannellistcontrollerdelegate\/controller(_:shouldlistupdatedchannel:)-2cl5"}}}
+{
+  "abstract" : [
+    {
+      "code" : "ChatChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B29ChannelListControllerDelegateP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatChannelListControllerDelegate"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatChannelListControllerDelegate"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "ChatChannelListControllerDelegate"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatChannelListControllerDelegate"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat27DataControllerStateDelegateP",
+              "text" : "DataControllerStateDelegate"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:didChangeChannels:)-6qxho",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:shouldAddNewChannelToList:)-13k90",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:shouldListUpdatedChannel:)-2cl5",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controllerWillChangeChannels(_:)-8h2sh"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannellistcontrollerdelegate"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelListController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelListControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate/controller(_:didChangeChannels:)-6qxho": {
+  "abstract" : [
+    {
+      "text" : "The controller changed the list of observed channels.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B21ChannelListControllerC",
+      "text" : "ChatChannelListController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeChannels"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+      "text" : "ListChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ">])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:didChangeChannels:)-6qxho",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "controller(_:didChangeChannels:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontrollerdelegate\/controller(_:didchangechannels:)-6qxho"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate/controller(_:shouldAddNewChannelToList:)-13k90": {
+  "abstract" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "⚠️ This method is deprecated:",
+          "type" : "text"
+        }
+      ],
+      "type" : "strong"
+    },
+    {
+      "text" : " Please use ",
+      "type" : "text"
+    },
+    {
+      "code" : "filter",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " when initializing a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelListController",
+      "type" : "codeVoice"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B21ChannelListControllerC",
+      "text" : "ChatChannelListController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "shouldAddNewChannelToList"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:shouldAddNewChannelToList:)-13k90",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "controller(_:shouldAddNewChannelToList:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontrollerdelegate\/controller(_:shouldaddnewchanneltolist:)-13k90"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate/controller(_:shouldListUpdatedChannel:)-2cl5": {
+  "abstract" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "⚠️ This method is deprecated:",
+          "type" : "text"
+        }
+      ],
+      "type" : "strong"
+    },
+    {
+      "text" : " Please use ",
+      "type" : "text"
+    },
+    {
+      "code" : "filter",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " when initializing a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelListController",
+      "type" : "codeVoice"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B21ChannelListControllerC",
+      "text" : "ChatChannelListController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "shouldListUpdatedChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controller(_:shouldListUpdatedChannel:)-2cl5",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "controller(_:shouldListUpdatedChannel:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontrollerdelegate\/controller(_:shouldlistupdatedchannel:)-2cl5"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListControllerDelegate/controllerWillChangeChannels(_:)-8h2sh": {
+  "abstract" : [
+    {
+      "text" : "The controller will update the list of observed channels.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controllerWillChangeChannels"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B21ChannelListControllerC",
+      "text" : "ChatChannelListController"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListControllerDelegate\/controllerWillChangeChannels(_:)-8h2sh",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "controllerWillChangeChannels(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontrollerdelegate\/controllerwillchangechannels(_:)-8h2sh"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate": {
+  "abstract" : [
+    {
+      "text" : "A delegate protocol some Controllers use to propagate the information about controller ",
+      "type" : "text"
+    },
+    {
+      "code" : "state",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " changes. You can use it to let",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataControllerStateDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataControllerStateDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataControllerStateDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontrollerstatedelegate"
+}
+}
+}

@@ -1,1 +1,339 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"subscript"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"R"},{"kind":"text","text":">("},{"kind":"internalParam","text":"r"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"R"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Self"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"SubSequence"},{"kind":"text","text":" "},{"kind":"keyword","text":"where"},{"kind":"text","text":" "},{"kind":"typeIdentifier","text":"R"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RangeExpression","preciseIdentifier":"s:SX"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Self"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"Index"},{"kind":"text","text":" == "},{"kind":"typeIdentifier","text":"R"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"Bound"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/lazycachedmapcollection\/subscript(_:)-l5o6"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/subscript(_:)-l5o6","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Inherited from "},{"type":"codeVoice","code":"Collection.subscript(_:)"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"role":"symbol","title":"subscript(_:)","roleHeading":"Instance Subscript","fragments":[{"kind":"keyword","text":"subscript"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"R"},{"kind":"text","text":">("},{"kind":"typeIdentifier","text":"R"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Self"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"SubSequence"}],"symbolKind":"subscript","externalID":"s:SlsEy11SubSequenceQzqd__cSXRd__5BoundQyd__5IndexRtzluip::SYNTHESIZED::s:10StreamChat23LazyCachedMapCollectionV","extendedModule":"Swift","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/Collection-Implementations"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection":{"role":"symbol","title":"LazyCachedMapCollection","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LazyCachedMapCollection"}],"abstract":[{"type":"text","text":"Read-only collection that applies transformation to element on first access."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LazyCachedMapCollection"}],"url":"\/documentation\/streamchat\/lazycachedmapcollection"},"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection/Collection-Implementations":{"role":"collectionGroup","title":"Collection Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/Collection-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/lazycachedmapcollection\/collection-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection/subscript(_:)-l5o6":{"role":"symbol","title":"subscript(_:)","fragments":[{"kind":"keyword","text":"subscript"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"R"},{"kind":"text","text":">("},{"kind":"typeIdentifier","text":"R"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Self"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"SubSequence"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/subscript(_:)-l5o6","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/lazycachedmapcollection\/subscript(_:)-l5o6"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "Collection.subscript(_:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/Collection-Implementations"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/subscript(_:)-l5o6"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "Swift",
+    "externalID" : "s:SlsEy11SubSequenceQzqd__cSXRd__5BoundQyd__5IndexRtzluip::SYNTHESIZED::s:10StreamChat23LazyCachedMapCollectionV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "subscript"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "genericParameter",
+        "text" : "R"
+      },
+      {
+        "kind" : "text",
+        "text" : ">("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "text" : "R"
+      },
+      {
+        "kind" : "text",
+        "text" : ") -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "text" : "Self"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "text" : "SubSequence"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Subscript",
+    "symbolKind" : "subscript",
+    "title" : "subscript(_:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "subscript"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "kind" : "genericParameter",
+              "text" : "R"
+            },
+            {
+              "kind" : "text",
+              "text" : ">("
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "r"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "R"
+            },
+            {
+              "kind" : "text",
+              "text" : ") -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "Self"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "SubSequence"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "where"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "R"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SX",
+              "text" : "RangeExpression"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "Self"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "Index"
+            },
+            {
+              "kind" : "text",
+              "text" : " == "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "R"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "Bound"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/lazycachedmapcollection\/subscript(_:)-l5o6"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection": {
+  "abstract" : [
+    {
+      "text" : "Read-only collection that applies transformation to element on first access.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LazyCachedMapCollection"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LazyCachedMapCollection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LazyCachedMapCollection",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/lazycachedmapcollection"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection/Collection-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/Collection-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Collection Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/lazycachedmapcollection\/collection-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection/subscript(_:)-l5o6": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "subscript"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "R"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "R"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "SubSequence"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/subscript(_:)-l5o6",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "subscript(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/lazycachedmapcollection\/subscript(_:)-l5o6"
+}
+}
+}

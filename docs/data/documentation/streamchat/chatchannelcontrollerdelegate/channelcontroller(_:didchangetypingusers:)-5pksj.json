@@ -1,1 +1,477 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"channelController"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC","text":"ChatChannelController"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeTypingUsers"},{"kind":"text","text":" "},{"kind":"internalParam","text":"typingUsers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC","text":"ChatUser"},{"kind":"text","text":">)"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannelcontrollerdelegate\/channelcontroller(_:didchangetypingusers:)-5pksj"],"traits":[{"interfaceLanguage":"swift"}]}],"defaultImplementationsSections":[{"title":"ChatChannelControllerDelegate Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate\/channelController(_:didChangeTypingUsers:)-yv1m"]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate\/channelController(_:didChangeTypingUsers:)-5pksj","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The controller received a change related to users typing in the channel it observes."}],"kind":"symbol","metadata":{"role":"symbol","title":"channelController(_:didChangeTypingUsers:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeTypingUsers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">)"}],"symbolKind":"method","externalID":"s:10StreamChat0B25ChannelControllerDelegateP07channelD0_20didChangeTypingUsersyAA0bcD0C_ShyAA0B4UserCGtF","required":true,"modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelControllerDelegate/channelController(_:didChangeTypingUsers:)-5pksj":{"defaultImplementations":1,"role":"symbol","title":"channelController(_:didChangeTypingUsers:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeTypingUsers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">)"}],"abstract":[{"type":"text","text":"The controller received a change related to users typing in the channel it observes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate\/channelController(_:didChangeTypingUsers:)-5pksj","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/chatchannelcontrollerdelegate\/channelcontroller(_:didchangetypingusers:)-5pksj"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelControllerDelegate":{"role":"symbol","title":"ChatChannelControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelControllerDelegate"}],"url":"\/documentation\/streamchat\/chatchannelcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController":{"role":"symbol","title":"ChatChannelController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelController"}],"url":"\/documentation\/streamchat\/chatchannelcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser":{"role":"symbol","title":"ChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUser"}],"abstract":[{"type":"text","text":"A type representing a chat user. "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" is an immutable snapshot of a chat user entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUser"}],"url":"\/documentation\/streamchat\/chatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelControllerDelegate/channelController(_:didChangeTypingUsers:)-yv1m":{"role":"symbol","title":"channelController(_:didChangeTypingUsers:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeTypingUsers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">)"}],"abstract":[{"type":"text","text":"The controller received a change related to users typing in the channel it observes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate\/channelController(_:didChangeTypingUsers:)-yv1m","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontrollerdelegate\/channelcontroller(_:didchangetypingusers:)-yv1m"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The controller received a change related to users typing in the channel it observes.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementationsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate\/channelController(_:didChangeTypingUsers:)-yv1m"
+      ],
+      "title" : "ChatChannelControllerDelegate Implementations"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate\/channelController(_:didChangeTypingUsers:)-5pksj"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B25ChannelControllerDelegateP07channelD0_20didChangeTypingUsersyAA0bcD0C_ShyAA0B4UserCGtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "channelController"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+        "text" : "ChatChannelController"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "didChangeTypingUsers"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sh",
+        "text" : "Set"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B4UserC",
+        "text" : "ChatUser"
+      },
+      {
+        "kind" : "text",
+        "text" : ">)"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "required" : true,
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "channelController(_:didChangeTypingUsers:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "channelController"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "channelController"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+              "text" : "ChatChannelController"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "didChangeTypingUsers"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "typingUsers"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sh",
+              "text" : "Set"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B4UserC",
+              "text" : "ChatUser"
+            },
+            {
+              "kind" : "text",
+              "text" : ">)"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelcontrollerdelegate\/channelcontroller(_:didchangetypingusers:)-5pksj"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelControllerDelegate/channelController(_:didChangeTypingUsers:)-5pksj": {
+  "abstract" : [
+    {
+      "text" : "The controller received a change related to users typing in the channel it observes.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeTypingUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate\/channelController(_:didChangeTypingUsers:)-5pksj",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "channelController(_:didChangeTypingUsers:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontrollerdelegate\/channelcontroller(_:didchangetypingusers:)-5pksj"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelControllerDelegate/channelController(_:didChangeTypingUsers:)-yv1m": {
+  "abstract" : [
+    {
+      "text" : "The controller received a change related to users typing in the channel it observes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeTypingUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelControllerDelegate\/channelController(_:didChangeTypingUsers:)-yv1m",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelController(_:didChangeTypingUsers:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontrollerdelegate\/channelcontroller(_:didchangetypingusers:)-yv1m"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat user entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser"
+}
+}
+}

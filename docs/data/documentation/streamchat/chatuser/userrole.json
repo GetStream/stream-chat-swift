@@ -1,1 +1,239 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"userRole"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserRole","preciseIdentifier":"s:10StreamChat8UserRoleV","text":"UserRole"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatuser\/userrole"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser\/userRole","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The role of the user."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"userRole"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserRole","preciseIdentifier":"s:10StreamChat8UserRoleV"}],"title":"userRole","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B4UserC8userRoleAA0cE0Vvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser/userRole":{"role":"symbol","title":"userRole","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"userRole"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserRole","preciseIdentifier":"s:10StreamChat8UserRoleV"}],"abstract":[{"type":"text","text":"The role of the user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser\/userRole","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatuser\/userrole"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser":{"role":"symbol","title":"ChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUser"}],"abstract":[{"type":"text","text":"A type representing a chat user. "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" is an immutable snapshot of a chat user entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUser"}],"url":"\/documentation\/streamchat\/chatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserRole":{"role":"symbol","title":"UserRole","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserRole"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserRole","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserRole"}],"url":"\/documentation\/streamchat\/userrole"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The role of the user.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser\/userRole"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B4UserC8userRoleAA0cE0Vvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "userRole"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat8UserRoleV",
+        "text" : "UserRole"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "userRole"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "userRole"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserRole",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat8UserRoleV",
+              "text" : "UserRole"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatuser\/userrole"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat user entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser/userRole": {
+  "abstract" : [
+    {
+      "text" : "The role of the user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "userRole"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8UserRoleV",
+      "text" : "UserRole"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser\/userRole",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "userRole",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser\/userrole"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserRole": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserRole"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserRole",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserRole"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserRole",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userrole"
+}
+}
+}

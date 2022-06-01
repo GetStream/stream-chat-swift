@@ -1,1 +1,609 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMember"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannelmember"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH","doc:\/\/io.getstream.StreamChat\/s12IdentifiableP"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A type representing a chat channel member. "},{"type":"codeVoice","code":"ChatChannelMember"},{"type":"text","text":" is an immutable snapshot of a channel entity at the given time."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMember"}],"title":"ChatChannelMember","roleHeading":"Class","role":"symbol","symbolKind":"class","externalID":"s:10StreamChat0B13ChannelMemberC","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatChannelMember"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/banExpiresAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/inviteAcceptedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/inviteRejectedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/isBannedFromChannel","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/isInvited","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberCreatedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberRole","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberUpdatedAt"]}],"references":{"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/memberCreatedAt":{"role":"symbol","title":"memberCreatedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberCreatedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The date the user was added to the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberCreatedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmember\/membercreatedat"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/s12IdentifiableP":{"type":"unresolvable","title":"Swift.Identifiable","identifier":"doc:\/\/io.getstream.StreamChat\/s12IdentifiableP"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/inviteRejectedAt":{"role":"symbol","title":"inviteRejectedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"inviteRejectedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If the member rejected a channel invitation, this field contains date of when the invitation was rejected,"},{"type":"text","text":" "},{"type":"text","text":"otherwise it’s "},{"type":"codeVoice","code":"nil"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/inviteRejectedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmember\/inviterejectedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser":{"role":"symbol","title":"ChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUser"}],"abstract":[{"type":"text","text":"A type representing a chat user. "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" is an immutable snapshot of a chat user entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUser"}],"url":"\/documentation\/streamchat\/chatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/isBannedFromChannel":{"role":"symbol","title":"isBannedFromChannel","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"isBannedFromChannel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"codeVoice","code":"true"},{"type":"text","text":" if the member if banned from the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/isBannedFromChannel","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmember\/isbannedfromchannel"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/banExpiresAt":{"role":"symbol","title":"banExpiresAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"banExpiresAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If the member is banned from the channel, this field contains the date when the ban expires."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/banExpiresAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmember\/banexpiresat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/memberUpdatedAt":{"role":"symbol","title":"memberUpdatedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberUpdatedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The date the membership was updated for the last time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberUpdatedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmember\/memberupdatedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/isInvited":{"role":"symbol","title":"isInvited","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"isInvited"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Returns "},{"type":"codeVoice","code":"true"},{"type":"text","text":" if the member has been invited to the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/isInvited","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmember\/isinvited"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/inviteAcceptedAt":{"role":"symbol","title":"inviteAcceptedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"inviteAcceptedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If the member accepted a channel invitation, this field contains date of when the invitation was accepted,"},{"type":"text","text":" "},{"type":"text","text":"otherwise it’s "},{"type":"codeVoice","code":"nil"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/inviteAcceptedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmember\/inviteacceptedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember":{"role":"symbol","title":"ChatChannelMember","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMember"}],"abstract":[{"type":"text","text":"A type representing a chat channel member. "},{"type":"codeVoice","code":"ChatChannelMember"},{"type":"text","text":" is an immutable snapshot of a channel entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelMember"}],"url":"\/documentation\/streamchat\/chatchannelmember"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/memberRole":{"role":"symbol","title":"memberRole","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberRole"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MemberRole","preciseIdentifier":"s:10StreamChat10MemberRoleV"}],"abstract":[{"type":"text","text":"The role of the user within the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberRole","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmember\/memberrole"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A type representing a chat channel member. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelMember",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a channel entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B13ChannelMemberC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatChannelMember"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatChannelMember"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "ChatChannelMember"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatChannelMember"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH",
+        "doc:\/\/io.getstream.StreamChat\/s12IdentifiableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/banExpiresAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/inviteAcceptedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/inviteRejectedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/isBannedFromChannel",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/isInvited",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberCreatedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberRole",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberUpdatedAt"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelmember"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat channel member. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelMember",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a channel entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMember"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMember"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMember",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmember"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/banExpiresAt": {
+  "abstract" : [
+    {
+      "text" : "If the member is banned from the channel, this field contains the date when the ban expires.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "banExpiresAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/banExpiresAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "banExpiresAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmember\/banexpiresat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/inviteAcceptedAt": {
+  "abstract" : [
+    {
+      "text" : "If the member accepted a channel invitation, this field contains date of when the invitation was accepted,",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "otherwise it’s ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "inviteAcceptedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/inviteAcceptedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "inviteAcceptedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmember\/inviteacceptedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/inviteRejectedAt": {
+  "abstract" : [
+    {
+      "text" : "If the member rejected a channel invitation, this field contains date of when the invitation was rejected,",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "otherwise it’s ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "inviteRejectedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/inviteRejectedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "inviteRejectedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmember\/inviterejectedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/isBannedFromChannel": {
+  "abstract" : [
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the member if banned from the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isBannedFromChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/isBannedFromChannel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isBannedFromChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmember\/isbannedfromchannel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/isInvited": {
+  "abstract" : [
+    {
+      "text" : "Returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the member has been invited to the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isInvited"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/isInvited",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isInvited",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmember\/isinvited"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/memberCreatedAt": {
+  "abstract" : [
+    {
+      "text" : "The date the user was added to the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberCreatedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberCreatedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "memberCreatedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmember\/membercreatedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/memberRole": {
+  "abstract" : [
+    {
+      "text" : "The role of the user within the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberRole"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10MemberRoleV",
+      "text" : "MemberRole"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberRole",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "memberRole",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmember\/memberrole"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMember/memberUpdatedAt": {
+  "abstract" : [
+    {
+      "text" : "The date the membership was updated for the last time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberUpdatedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMember\/memberUpdatedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "memberUpdatedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmember\/memberupdatedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat user entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser"
+},
+"doc://io.getstream.StreamChat/s12IdentifiableP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s12IdentifiableP",
+  "title" : "Swift.Identifiable",
+  "type" : "unresolvable"
+}
+}
+}

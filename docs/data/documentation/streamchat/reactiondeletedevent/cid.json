@@ -1,1 +1,242 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV","text":"ChannelId"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/reactiondeletedevent\/cid"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent\/cid","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The channel identifier the message lives in."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"title":"cid","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat20ReactionDeletedEventV3cidAA9ChannelIdVvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionDeletedEvent/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"abstract":[{"type":"text","text":"The channel identifier the message lives in."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent\/cid","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/reactiondeletedevent\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionDeletedEvent":{"role":"symbol","title":"ReactionDeletedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ReactionDeletedEvent"}],"abstract":[{"type":"text","text":"Triggered when a reaction is deleted."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ReactionDeletedEvent"}],"url":"\/documentation\/streamchat\/reactiondeletedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId":{"role":"symbol","title":"ChannelId","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelId"}],"abstract":[{"type":"text","text":"A type representing a unique identifier of a "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelId"}],"url":"\/documentation\/streamchat\/channelid"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The channel identifier the message lives in.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent\/cid"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat20ReactionDeletedEventV3cidAA9ChannelIdVvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "cid"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+        "text" : "ChannelId"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "cid"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "cid"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+              "text" : "ChannelId"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/reactiondeletedevent\/cid"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId": {
+  "abstract" : [
+    {
+      "text" : "A type representing a unique identifier of a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionDeletedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a reaction is deleted.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReactionDeletedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReactionDeletedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReactionDeletedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/reactiondeletedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionDeletedEvent/cid": {
+  "abstract" : [
+    {
+      "text" : "The channel identifier the message lives in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent\/cid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/reactiondeletedevent\/cid"
+}
+}
+}

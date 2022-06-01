@@ -1,1 +1,452 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"userController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"controller"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController","preciseIdentifier":"s:10StreamChat0B14UserControllerC","text":"ChatUserController"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didUpdateUser"},{"kind":"text","text":" "},{"kind":"internalParam","text":"change"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO","text":"EntityChange"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC","text":"ChatUser"},{"kind":"text","text":">)"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatusercontrollerdelegate\/usercontroller(_:didupdateuser:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate\/userController(_:didUpdateUser:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The controller observed a change in the "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" entity."}],"kind":"symbol","metadata":{"role":"symbol","title":"userController(_:didUpdateUser:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"userController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatUserController","preciseIdentifier":"s:10StreamChat0B14UserControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didUpdateUser"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">)"}],"symbolKind":"method","externalID":"s:10StreamChat0B22UserControllerDelegateP04userD0_09didUpdateC0yAA0bcD0C_AA12EntityChangeOyAA0bC0CGtF","required":true,"modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserControllerDelegate":{"role":"symbol","title":"ChatUserControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatUserControllerDelegate"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserControllerDelegate"}],"url":"\/documentation\/streamchat\/chatusercontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser":{"role":"symbol","title":"ChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUser"}],"abstract":[{"type":"text","text":"A type representing a chat user. "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" is an immutable snapshot of a chat user entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUser"}],"url":"\/documentation\/streamchat\/chatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserControllerDelegate/userController(_:didUpdateUser:)":{"role":"symbol","title":"userController(_:didUpdateUser:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"userController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatUserController","preciseIdentifier":"s:10StreamChat0B14UserControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didUpdateUser"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">)"}],"abstract":[{"type":"text","text":"The controller observed a change in the "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" entity."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate\/userController(_:didUpdateUser:)","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/chatusercontrollerdelegate\/usercontroller(_:didupdateuser:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserController":{"role":"symbol","title":"ChatUserController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserController"}],"abstract":[{"type":"codeVoice","code":"ChatUserController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserController"}],"url":"\/documentation\/streamchat\/chatusercontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/EntityChange":{"role":"symbol","title":"EntityChange","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"EntityChange"}],"abstract":[{"type":"text","text":"This enum describes the changes to a certain item when observing it."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"EntityChange"}],"url":"\/documentation\/streamchat\/entitychange"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The controller observed a change in the ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " entity.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate\/userController(_:didUpdateUser:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B22UserControllerDelegateP04userD0_09didUpdateC0yAA0bcD0C_AA12EntityChangeOyAA0bC0CGtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "userController"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B14UserControllerC",
+        "text" : "ChatUserController"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "didUpdateUser"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+        "text" : "EntityChange"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B4UserC",
+        "text" : "ChatUser"
+      },
+      {
+        "kind" : "text",
+        "text" : ">)"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "required" : true,
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "userController(_:didUpdateUser:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "userController"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "controller"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B14UserControllerC",
+              "text" : "ChatUserController"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "didUpdateUser"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "change"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+              "text" : "EntityChange"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B4UserC",
+              "text" : "ChatUser"
+            },
+            {
+              "kind" : "text",
+              "text" : ">)"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatusercontrollerdelegate\/usercontroller(_:didupdateuser:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat user entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserController": {
+  "abstract" : [
+    {
+      "code" : "ChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatUserControllerDelegate",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusercontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserControllerDelegate/userController(_:didUpdateUser:)": {
+  "abstract" : [
+    {
+      "text" : "The controller observed a change in the ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " entity.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "userController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B14UserControllerC",
+      "text" : "ChatUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didUpdateUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+      "text" : "EntityChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserControllerDelegate\/userController(_:didUpdateUser:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "userController(_:didUpdateUser:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusercontrollerdelegate\/usercontroller(_:didupdateuser:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EntityChange": {
+  "abstract" : [
+    {
+      "text" : "This enum describes the changes to a certain item when observing it.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EntityChange"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EntityChange"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "EntityChange",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/entitychange"
+}
+}
+}

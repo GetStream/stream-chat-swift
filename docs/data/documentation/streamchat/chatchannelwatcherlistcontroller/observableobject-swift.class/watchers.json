@@ -1,1 +1,404 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"watchers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection","preciseIdentifier":"s:10StreamChat23LazyCachedMapCollectionV","text":"LazyCachedMapCollection"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC","text":"ChatUser"},{"kind":"text","text":"> { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" "},{"kind":"keyword","text":"set"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class\/watchers"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/watchers","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The channel members."}],"kind":"symbol","metadata":{"role":"symbol","title":"watchers","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"watchers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LazyCachedMapCollection","preciseIdentifier":"s:10StreamChat23LazyCachedMapCollectionV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">"}],"symbolKind":"property","externalID":"s:10StreamChat0B28ChannelWatcherListControllerC16ObservableObjectC8watchersAA23LazyCachedMapCollectionVyAA0B4UserCGvp","modules":[{"name":"StreamChat"}],"platforms":[{"beta":false,"unavailable":false,"name":"iOS","introducedAt":"13.0","deprecated":false}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelWatcherListController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChatChannelWatcherListController"},{"type":"text","text":" type which makes it possible to use the controller"},{"type":"text","text":" "},{"type":"text","text":"comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser":{"role":"symbol","title":"ChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUser"}],"abstract":[{"type":"text","text":"A type representing a chat user. "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" is an immutable snapshot of a chat user entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUser"}],"url":"\/documentation\/streamchat\/chatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController":{"role":"symbol","title":"ChatChannelWatcherListController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelWatcherListController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelWatcherListController"},{"type":"text","text":" is a controller class which allows observing"},{"type":"text","text":" "},{"type":"text","text":"a list of chat watchers based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelWatcherListController"}],"url":"\/documentation\/streamchat\/chatchannelwatcherlistcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class/watchers":{"role":"symbol","title":"watchers","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"watchers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LazyCachedMapCollection","preciseIdentifier":"s:10StreamChat23LazyCachedMapCollectionV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"The channel members."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/watchers","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class\/watchers"},"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection":{"role":"symbol","title":"LazyCachedMapCollection","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LazyCachedMapCollection"}],"abstract":[{"type":"text","text":"Read-only collection that applies transformation to element on first access."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LazyCachedMapCollection"}],"url":"\/documentation\/streamchat\/lazycachedmapcollection"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The channel members.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/watchers"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B28ChannelWatcherListControllerC16ObservableObjectC8watchersAA23LazyCachedMapCollectionVyAA0B4UserCGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "watchers"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat23LazyCachedMapCollectionV",
+        "text" : "LazyCachedMapCollection"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B4UserC",
+        "text" : "ChatUser"
+      },
+      {
+        "kind" : "text",
+        "text" : ">"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "platforms" : [
+      {
+        "beta" : false,
+        "deprecated" : false,
+        "introducedAt" : "13.0",
+        "name" : "iOS",
+        "unavailable" : false
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "watchers"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "watchers"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat23LazyCachedMapCollectionV",
+              "text" : "LazyCachedMapCollection"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B4UserC",
+              "text" : "ChatUser"
+            },
+            {
+              "kind" : "text",
+              "text" : "> { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class\/watchers"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelWatcherListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a list of chat watchers based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelWatcherListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelWatcherListController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelWatcherListController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelwatcherlistcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelWatcherListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelWatcherListController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class/watchers": {
+  "abstract" : [
+    {
+      "text" : "The channel members.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "watchers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat23LazyCachedMapCollectionV",
+      "text" : "LazyCachedMapCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/watchers",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "watchers",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class\/watchers"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat user entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection": {
+  "abstract" : [
+    {
+      "text" : "Read-only collection that applies transformation to element on first access.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LazyCachedMapCollection"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LazyCachedMapCollection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LazyCachedMapCollection",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/lazycachedmapcollection"
+}
+}
+}

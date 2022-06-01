@@ -1,1 +1,454 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"PushProvider"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/pushprovider"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/s43ExpressibleByExtendedGraphemeClusterLiteralP","doc:\/\/io.getstream.StreamChat\/s26ExpressibleByStringLiteralP","doc:\/\/io.getstream.StreamChat\/s33ExpressibleByUnicodeScalarLiteralP","doc:\/\/io.getstream.StreamChat\/SH","doc:\/\/io.getstream.StreamChat\/SY"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A type that represents the supported push providers."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"PushProvider"}],"title":"PushProvider","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat12PushProviderV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"PushProvider"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/init(rawValue:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/init(stringLiteral:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/rawValue"]},{"title":"Type Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/apn","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/firebase"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/Equatable-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/ExpressibleByUnicodeScalarLiteral-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/RawRepresentable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/ExpressibleByExtendedGraphemeClusterLiteral-Implementations":{"role":"collectionGroup","title":"ExpressibleByExtendedGraphemeClusterLiteral Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/pushprovider\/expressiblebyextendedgraphemeclusterliteral-implementations"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/s33ExpressibleByUnicodeScalarLiteralP":{"type":"unresolvable","title":"Swift.ExpressibleByUnicodeScalarLiteral","identifier":"doc:\/\/io.getstream.StreamChat\/s33ExpressibleByUnicodeScalarLiteralP"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/rawValue":{"role":"symbol","title":"rawValue","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"rawValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/rawValue","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pushprovider\/rawvalue"},"doc://io.getstream.StreamChat/SY":{"type":"unresolvable","title":"Swift.RawRepresentable","identifier":"doc:\/\/io.getstream.StreamChat\/SY"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/firebase":{"role":"symbol","title":"firebase","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"firebase"},{"kind":"text","text":": `Self`"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/firebase","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pushprovider\/firebase"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/pushprovider\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/apn":{"role":"symbol","title":"apn","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"apn"},{"kind":"text","text":": `Self`"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/apn","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pushprovider\/apn"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/init(rawValue:)":{"role":"symbol","title":"init(rawValue:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"rawValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/init(rawValue:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pushprovider\/init(rawvalue:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider":{"role":"symbol","title":"PushProvider","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"PushProvider"}],"abstract":[{"type":"text","text":"A type that represents the supported push providers."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"PushProvider"}],"url":"\/documentation\/streamchat\/pushprovider"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/RawRepresentable-Implementations":{"role":"collectionGroup","title":"RawRepresentable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/RawRepresentable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/pushprovider\/rawrepresentable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/s43ExpressibleByExtendedGraphemeClusterLiteralP":{"type":"unresolvable","title":"Swift.ExpressibleByExtendedGraphemeClusterLiteral","identifier":"doc:\/\/io.getstream.StreamChat\/s43ExpressibleByExtendedGraphemeClusterLiteralP"},"doc://io.getstream.StreamChat/s26ExpressibleByStringLiteralP":{"type":"unresolvable","title":"Swift.ExpressibleByStringLiteral","identifier":"doc:\/\/io.getstream.StreamChat\/s26ExpressibleByStringLiteralP"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/init(stringLiteral:)":{"role":"symbol","title":"init(stringLiteral:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"stringLiteral"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/init(stringLiteral:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pushprovider\/init(stringliteral:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/ExpressibleByUnicodeScalarLiteral-Implementations":{"role":"collectionGroup","title":"ExpressibleByUnicodeScalarLiteral Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/ExpressibleByUnicodeScalarLiteral-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/pushprovider\/expressiblebyunicodescalarliteral-implementations"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A type that represents the supported push providers.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat12PushProviderV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "PushProvider"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "PushProvider"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "PushProvider"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "PushProvider"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/s43ExpressibleByExtendedGraphemeClusterLiteralP",
+        "doc:\/\/io.getstream.StreamChat\/s26ExpressibleByStringLiteralP",
+        "doc:\/\/io.getstream.StreamChat\/s33ExpressibleByUnicodeScalarLiteralP",
+        "doc:\/\/io.getstream.StreamChat\/SH",
+        "doc:\/\/io.getstream.StreamChat\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/init(rawValue:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/init(stringLiteral:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/rawValue"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/apn",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/firebase"
+      ],
+      "title" : "Type Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/Equatable-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/ExpressibleByUnicodeScalarLiteral-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/pushprovider"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SY": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that represents the supported push providers.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PushProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PushProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PushProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/ExpressibleByExtendedGraphemeClusterLiteral-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ExpressibleByExtendedGraphemeClusterLiteral Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider\/expressiblebyextendedgraphemeclusterliteral-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/ExpressibleByUnicodeScalarLiteral-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/ExpressibleByUnicodeScalarLiteral-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ExpressibleByUnicodeScalarLiteral Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider\/expressiblebyunicodescalarliteral-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider\/rawrepresentable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/apn": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "apn"
+    },
+    {
+      "kind" : "text",
+      "text" : ": `Self`"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/apn",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "apn",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider\/apn"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/firebase": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "firebase"
+    },
+    {
+      "kind" : "text",
+      "text" : ": `Self`"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/firebase",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "firebase",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider\/firebase"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider\/init(rawvalue:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/init(stringLiteral:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "stringLiteral"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/init(stringLiteral:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(stringLiteral:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider\/init(stringliteral:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushProvider/rawValue": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushProvider\/rawValue",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "rawValue",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushprovider\/rawvalue"
+},
+"doc://io.getstream.StreamChat/s26ExpressibleByStringLiteralP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s26ExpressibleByStringLiteralP",
+  "title" : "Swift.ExpressibleByStringLiteral",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s33ExpressibleByUnicodeScalarLiteralP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s33ExpressibleByUnicodeScalarLiteralP",
+  "title" : "Swift.ExpressibleByUnicodeScalarLiteral",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s43ExpressibleByExtendedGraphemeClusterLiteralP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s43ExpressibleByExtendedGraphemeClusterLiteralP",
+  "title" : "Swift.ExpressibleByExtendedGraphemeClusterLiteral",
+  "type" : "unresolvable"
+}
+}
+}

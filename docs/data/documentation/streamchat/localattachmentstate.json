@@ -1,1 +1,361 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalAttachmentState"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/localattachmentstate"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A local state of the attachment. Applies only for attachments linked to the new messages sent from current device."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalAttachmentState"}],"title":"LocalAttachmentState","roleHeading":"Enumeration","role":"symbol","symbolKind":"enum","externalID":"s:10StreamChat20LocalAttachmentStateO","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"LocalAttachmentState"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Enumeration Cases","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/pendingUpload","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/unknown","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploaded","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploading(progress:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploadingFailed"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/Equatable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState":{"role":"symbol","title":"LocalAttachmentState","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalAttachmentState"}],"abstract":[{"type":"text","text":"A local state of the attachment. Applies only for attachments linked to the new messages sent from current device."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LocalAttachmentState"}],"url":"\/documentation\/streamchat\/localattachmentstate"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/localattachmentstate\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/uploaded":{"role":"symbol","title":"LocalAttachmentState.uploaded","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploaded"}],"abstract":[{"type":"text","text":"The attachment is successfully uploaded."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploaded","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/localattachmentstate\/uploaded"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/pendingUpload":{"role":"symbol","title":"LocalAttachmentState.pendingUpload","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"pendingUpload"}],"abstract":[{"type":"text","text":"The attachment is waiting to be uploaded."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/pendingUpload","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/localattachmentstate\/pendingupload"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/uploadingFailed":{"role":"symbol","title":"LocalAttachmentState.uploadingFailed","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploadingFailed"}],"abstract":[{"type":"text","text":"Uploading of the message failed. The system will not trying to upload this attachment anymore."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploadingFailed","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/localattachmentstate\/uploadingfailed"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/uploading(progress:)":{"role":"symbol","title":"LocalAttachmentState.uploading(progress:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploading"},{"kind":"text","text":"("},{"kind":"externalParam","text":"progress"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Double","preciseIdentifier":"s:Sd"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"The attachment is currently being uploaded. The progress in [0, 1] range."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploading(progress:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/localattachmentstate\/uploading(progress:)"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/unknown":{"role":"symbol","title":"LocalAttachmentState.unknown","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"unknown"}],"abstract":[{"type":"text","text":"The current state is unknown"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/unknown","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/localattachmentstate\/unknown"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat20LocalAttachmentStateO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "LocalAttachmentState"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "LocalAttachmentState"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "LocalAttachmentState"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "LocalAttachmentState"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/pendingUpload",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/unknown",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploaded",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploading(progress:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploadingFailed"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/localattachmentstate"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState": {
+  "abstract" : [
+    {
+      "text" : "A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LocalAttachmentState"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LocalAttachmentState"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LocalAttachmentState",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/pendingUpload": {
+  "abstract" : [
+    {
+      "text" : "The attachment is waiting to be uploaded.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pendingUpload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/pendingUpload",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LocalAttachmentState.pendingUpload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate\/pendingupload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/unknown": {
+  "abstract" : [
+    {
+      "text" : "The current state is unknown",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unknown"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/unknown",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LocalAttachmentState.unknown",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate\/unknown"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/uploaded": {
+  "abstract" : [
+    {
+      "text" : "The attachment is successfully uploaded.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "uploaded"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploaded",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LocalAttachmentState.uploaded",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate\/uploaded"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/uploading(progress:)": {
+  "abstract" : [
+    {
+      "text" : "The attachment is currently being uploaded. The progress in [0, 1] range.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "uploading"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "progress"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sd",
+      "text" : "Double"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploading(progress:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LocalAttachmentState.uploading(progress:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate\/uploading(progress:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/uploadingFailed": {
+  "abstract" : [
+    {
+      "text" : "Uploading of the message failed. The system will not trying to upload this attachment anymore.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "uploadingFailed"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploadingFailed",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LocalAttachmentState.uploadingFailed",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate\/uploadingfailed"
+}
+}
+}

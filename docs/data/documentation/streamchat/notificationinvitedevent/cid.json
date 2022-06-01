@@ -1,1 +1,242 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV","text":"ChannelId"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/notificationinvitedevent\/cid"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent\/cid","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The channel identifier the current user was invited to."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"title":"cid","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat24NotificationInvitedEventV3cidAA9ChannelIdVvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInvitedEvent":{"role":"symbol","title":"NotificationInvitedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationInvitedEvent"}],"abstract":[{"type":"text","text":"Triggered when current user is invited to a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationInvitedEvent"}],"url":"\/documentation\/streamchat\/notificationinvitedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInvitedEvent/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"abstract":[{"type":"text","text":"The channel identifier the current user was invited to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent\/cid","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/notificationinvitedevent\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId":{"role":"symbol","title":"ChannelId","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelId"}],"abstract":[{"type":"text","text":"A type representing a unique identifier of a "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelId"}],"url":"\/documentation\/streamchat\/channelid"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The channel identifier the current user was invited to.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent\/cid"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat24NotificationInvitedEventV3cidAA9ChannelIdVvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "cid"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+        "text" : "ChannelId"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "cid"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "cid"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+              "text" : "ChannelId"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/notificationinvitedevent\/cid"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId": {
+  "abstract" : [
+    {
+      "text" : "A type representing a unique identifier of a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInvitedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when current user is invited to a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInvitedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInvitedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationInvitedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationinvitedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInvitedEvent/cid": {
+  "abstract" : [
+    {
+      "text" : "The channel identifier the current user was invited to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent\/cid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationinvitedevent\/cid"
+}
+}
+}

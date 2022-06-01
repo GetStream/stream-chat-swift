@@ -1,1 +1,1729 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Event"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/event"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent"],"kind":"relationships","title":"Inherited By","type":"inheritedBy"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelDeletedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelTruncatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUpdatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelVisibleEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CleanUpTypingEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HealthCheckEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberAddedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberRemovedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReadEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageUpdatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationChannelDeletedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationChannelMutesUpdatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteAcceptedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteRejectedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMarkAllReadEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMarkReadEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMessageNewEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationRemovedFromChannelEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionNewEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownChannelEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserBannedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserGloballyBannedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserGloballyUnbannedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserPresenceChangedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserUnbannedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserUpdatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserWatchingEvent"],"kind":"relationships","title":"Conforming Types","type":"conformingTypes"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"An "},{"type":"codeVoice","code":"Event"},{"type":"text","text":" object representing an event in the chat system."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Event"}],"title":"Event","roleHeading":"Protocol","role":"symbol","symbolKind":"protocol","externalID":"s:10StreamChat5EventP","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"Event"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMutesUpdatedEvent":{"role":"symbol","title":"NotificationMutesUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationMutesUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when current user mutes\/unmutes a user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationMutesUpdatedEvent"}],"url":"\/documentation\/streamchat\/notificationmutesupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberRemovedEvent":{"role":"symbol","title":"MemberRemovedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberRemovedEvent"}],"abstract":[{"type":"text","text":"Triggered when a member is removed from a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberRemovedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberRemovedEvent"}],"url":"\/documentation\/streamchat\/memberremovedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserGloballyBannedEvent":{"role":"symbol","title":"UserGloballyBannedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserGloballyBannedEvent"}],"abstract":[{"type":"text","text":"Triggered when user is banned not in a specific channel but globally."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserGloballyBannedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserGloballyBannedEvent"}],"url":"\/documentation\/streamchat\/usergloballybannedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionNewEvent":{"role":"symbol","title":"ReactionNewEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ReactionNewEvent"}],"abstract":[{"type":"text","text":"Triggered a new reaction is added."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionNewEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ReactionNewEvent"}],"url":"\/documentation\/streamchat\/reactionnewevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMarkAllReadEvent":{"role":"symbol","title":"NotificationMarkAllReadEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationMarkAllReadEvent"}],"abstract":[{"type":"text","text":"Triggered when all channels the current user is member of are marked as read."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMarkAllReadEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationMarkAllReadEvent"}],"url":"\/documentation\/streamchat\/notificationmarkallreadevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/CleanUpTypingEvent":{"role":"symbol","title":"CleanUpTypingEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"CleanUpTypingEvent"}],"abstract":[{"type":"text","text":"A special event type which is only emitted by the SDK and never the backend."},{"type":"text","text":" "},{"type":"text","text":"This event is emitted by "},{"type":"codeVoice","code":"TypingStartCleanupMiddleware"},{"type":"text","text":" to signal that a typing event"},{"type":"text","text":" "},{"type":"text","text":"must be cleaned up, due to timeout of that event."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CleanUpTypingEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CleanUpTypingEvent"}],"url":"\/documentation\/streamchat\/cleanuptypingevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent":{"role":"symbol","title":"MessageNewEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageNewEvent"}],"abstract":[{"type":"text","text":"Triggered when a new message is sent to channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageNewEvent"}],"url":"\/documentation\/streamchat\/messagenewevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/Event":{"role":"symbol","title":"Event","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Event"}],"abstract":[{"type":"text","text":"An "},{"type":"codeVoice","code":"Event"},{"type":"text","text":" object representing an event in the chat system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Event"}],"url":"\/documentation\/streamchat\/event"},"doc://io.getstream.StreamChat/documentation/StreamChat/TypingEvent":{"role":"symbol","title":"TypingEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"TypingEvent"}],"abstract":[{"type":"text","text":"Triggered when user starts\/stops typing in a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"TypingEvent"}],"url":"\/documentation\/streamchat\/typingevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInviteRejectedEvent":{"role":"symbol","title":"NotificationInviteRejectedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationInviteRejectedEvent"}],"abstract":[{"type":"text","text":"Triggered when the current user rejects an invite to a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteRejectedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationInviteRejectedEvent"}],"url":"\/documentation\/streamchat\/notificationinviterejectedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationRemovedFromChannelEvent":{"role":"symbol","title":"NotificationRemovedFromChannelEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationRemovedFromChannelEvent"}],"abstract":[{"type":"text","text":"Triggered when the current user is removed from a channel member list."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationRemovedFromChannelEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationRemovedFromChannelEvent"}],"url":"\/documentation\/streamchat\/notificationremovedfromchannelevent"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMessageNewEvent":{"role":"symbol","title":"NotificationMessageNewEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationMessageNewEvent"}],"abstract":[{"type":"text","text":"Triggered when a new message is sent to a channel the current user is member of."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMessageNewEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationMessageNewEvent"}],"url":"\/documentation\/streamchat\/notificationmessagenewevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserPresenceChangedEvent":{"role":"symbol","title":"UserPresenceChangedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserPresenceChangedEvent"}],"abstract":[{"type":"text","text":"Triggered when user status changes (eg. online, offline, away, etc.)"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserPresenceChangedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserPresenceChangedEvent"}],"url":"\/documentation\/streamchat\/userpresencechangedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInviteAcceptedEvent":{"role":"symbol","title":"NotificationInviteAcceptedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationInviteAcceptedEvent"}],"abstract":[{"type":"text","text":"Triggered when the current user accepts an invite to a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteAcceptedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationInviteAcceptedEvent"}],"url":"\/documentation\/streamchat\/notificationinviteacceptedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserUpdatedEvent":{"role":"symbol","title":"UserUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when user is updated"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserUpdatedEvent"}],"url":"\/documentation\/streamchat\/userupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberAddedEvent":{"role":"symbol","title":"MemberAddedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberAddedEvent"}],"abstract":[{"type":"text","text":"Triggered when a new member is added to a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberAddedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberAddedEvent"}],"url":"\/documentation\/streamchat\/memberaddedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMarkReadEvent":{"role":"symbol","title":"NotificationMarkReadEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationMarkReadEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel the current user is member of is marked as read."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMarkReadEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationMarkReadEvent"}],"url":"\/documentation\/streamchat\/notificationmarkreadevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent":{"role":"symbol","title":"MemberEvent","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberEvent"}],"abstract":[{"type":"text","text":"A protocol for any "},{"type":"codeVoice","code":"MemberEvent"},{"type":"text","text":" where it has a "},{"type":"codeVoice","code":"member"},{"type":"text","text":", and "},{"type":"codeVoice","code":"channel"},{"type":"text","text":" payload."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberEvent"}],"url":"\/documentation\/streamchat\/memberevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelVisibleEvent":{"role":"symbol","title":"ChannelVisibleEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelVisibleEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel is made visible."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelVisibleEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelVisibleEvent"}],"url":"\/documentation\/streamchat\/channelvisibleevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent":{"role":"symbol","title":"NotificationAddedToChannelEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationAddedToChannelEvent"}],"abstract":[{"type":"text","text":"Triggered when the current user is added to the channel member list."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationAddedToChannelEvent"}],"url":"\/documentation\/streamchat\/notificationaddedtochannelevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageUpdatedEvent":{"role":"symbol","title":"MessageUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when a message is updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageUpdatedEvent"}],"url":"\/documentation\/streamchat\/messageupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserWatchingEvent":{"role":"symbol","title":"UserWatchingEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserWatchingEvent"}],"abstract":[{"type":"text","text":"Triggered when a user starts\/stops watching a channel"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserWatchingEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserWatchingEvent"}],"url":"\/documentation\/streamchat\/userwatchingevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelHiddenEvent":{"role":"symbol","title":"ChannelHiddenEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelHiddenEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel is hidden."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelHiddenEvent"}],"url":"\/documentation\/streamchat\/channelhiddenevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelUpdatedEvent":{"role":"symbol","title":"ChannelUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel is updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelUpdatedEvent"}],"url":"\/documentation\/streamchat\/channelupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationChannelDeletedEvent":{"role":"symbol","title":"NotificationChannelDeletedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationChannelDeletedEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel is deleted, this event is delivered to all channel members"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationChannelDeletedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationChannelDeletedEvent"}],"url":"\/documentation\/streamchat\/notificationchanneldeletedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelTruncatedEvent":{"role":"symbol","title":"ChannelTruncatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelTruncatedEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel is truncated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelTruncatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelTruncatedEvent"}],"url":"\/documentation\/streamchat\/channeltruncatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent":{"role":"symbol","title":"MemberUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel member is updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberUpdatedEvent"}],"url":"\/documentation\/streamchat\/memberupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationChannelMutesUpdatedEvent":{"role":"symbol","title":"NotificationChannelMutesUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationChannelMutesUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when current user mutes\/unmutes a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationChannelMutesUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationChannelMutesUpdatedEvent"}],"url":"\/documentation\/streamchat\/notificationchannelmutesupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnknownUserEvent":{"role":"symbol","title":"UnknownUserEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UnknownUserEvent"}],"abstract":[{"type":"text","text":"An event type SDK fallbacks to if incoming event was failed to be"},{"type":"text","text":" "},{"type":"text","text":"decoded as a system event."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UnknownUserEvent"}],"url":"\/documentation\/streamchat\/unknownuserevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent":{"role":"symbol","title":"MessageDeletedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageDeletedEvent"}],"abstract":[{"type":"text","text":"Triggered when a new message is deleted."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageDeletedEvent"}],"url":"\/documentation\/streamchat\/messagedeletedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatusUpdated":{"role":"symbol","title":"ConnectionStatusUpdated","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionStatusUpdated"}],"abstract":[{"type":"text","text":"Emitted when "},{"type":"codeVoice","code":"Client"},{"type":"text","text":" changes it’s connection status. You can listen to this event and indicate the different connection"},{"type":"text","text":" "},{"type":"text","text":"states in the UI (banners like “Offline”, “Reconnecting””, etc.)."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ConnectionStatusUpdated"}],"url":"\/documentation\/streamchat\/connectionstatusupdated"},"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionUpdatedEvent":{"role":"symbol","title":"ReactionUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ReactionUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when a reaction is updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ReactionUpdatedEvent"}],"url":"\/documentation\/streamchat\/reactionupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnknownChannelEvent":{"role":"symbol","title":"UnknownChannelEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UnknownChannelEvent"}],"abstract":[{"type":"text","text":"An event type SDK fallbacks to if incoming event was failed to be"},{"type":"text","text":" "},{"type":"text","text":"decoded as a system event."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownChannelEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UnknownChannelEvent"}],"url":"\/documentation\/streamchat\/unknownchannelevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageReadEvent":{"role":"symbol","title":"MessageReadEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageReadEvent"}],"abstract":[{"type":"codeVoice","code":"ChannelReadEvent"},{"type":"text","text":", this event tells that User has mark read all messages in channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReadEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageReadEvent"}],"url":"\/documentation\/streamchat\/messagereadevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserGloballyUnbannedEvent":{"role":"symbol","title":"UserGloballyUnbannedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserGloballyUnbannedEvent"}],"abstract":[{"type":"text","text":"Triggered when user is removed from global ban."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserGloballyUnbannedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserGloballyUnbannedEvent"}],"url":"\/documentation\/streamchat\/usergloballyunbannedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionEvent":{"role":"symbol","title":"ConnectionEvent","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionEvent"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ConnectionEvent"}],"url":"\/documentation\/streamchat\/connectionevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/HealthCheckEvent":{"role":"symbol","title":"HealthCheckEvent","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"HealthCheckEvent"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HealthCheckEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"HealthCheckEvent"}],"url":"\/documentation\/streamchat\/healthcheckevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserUnbannedEvent":{"role":"symbol","title":"UserUnbannedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserUnbannedEvent"}],"abstract":[{"type":"text","text":"Triggered when banned user is unbanned in a specific channel"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserUnbannedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserUnbannedEvent"}],"url":"\/documentation\/streamchat\/userunbannedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionDeletedEvent":{"role":"symbol","title":"ReactionDeletedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ReactionDeletedEvent"}],"abstract":[{"type":"text","text":"Triggered when a reaction is deleted."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ReactionDeletedEvent"}],"url":"\/documentation\/streamchat\/reactiondeletedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserBannedEvent":{"role":"symbol","title":"UserBannedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserBannedEvent"}],"abstract":[{"type":"text","text":"Triggered when user is banned in a specific channel"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserBannedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserBannedEvent"}],"url":"\/documentation\/streamchat\/userbannedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelDeletedEvent":{"role":"symbol","title":"ChannelDeletedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelDeletedEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel is deleted."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelDeletedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelDeletedEvent"}],"url":"\/documentation\/streamchat\/channeldeletedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount":{"role":"symbol","title":"HasUnreadCount","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"HasUnreadCount"}],"abstract":[{"type":"text","text":"A bounding protocol for all events that have unread counts."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"HasUnreadCount"}],"url":"\/documentation\/streamchat\/hasunreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInvitedEvent":{"role":"symbol","title":"NotificationInvitedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationInvitedEvent"}],"abstract":[{"type":"text","text":"Triggered when current user is invited to a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationInvitedEvent"}],"url":"\/documentation\/streamchat\/notificationinvitedevent"}}}
+{
+  "abstract" : [
+    {
+      "text" : "An ",
+      "type" : "text"
+    },
+    {
+      "code" : "Event",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " object representing an event in the chat system.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat5EventP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Event"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Event"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "Event"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Event"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherited By",
+      "type" : "inheritedBy"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelDeletedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelTruncatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUpdatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelVisibleEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CleanUpTypingEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HealthCheckEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberAddedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberRemovedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReadEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageUpdatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationChannelDeletedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationChannelMutesUpdatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteAcceptedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteRejectedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMarkAllReadEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMarkReadEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMessageNewEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationRemovedFromChannelEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionNewEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownChannelEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserBannedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserGloballyBannedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserGloballyUnbannedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserPresenceChangedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserUnbannedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserUpdatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserWatchingEvent"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/event"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelDeletedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel is deleted.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelDeletedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelDeletedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelDeletedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelDeletedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channeldeletedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelHiddenEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel is hidden.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelHiddenEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelHiddenEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelHiddenEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelHiddenEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelhiddenevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelTruncatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel is truncated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelTruncatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelTruncatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelTruncatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelTruncatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channeltruncatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel is updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelVisibleEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel is made visible.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelVisibleEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelVisibleEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelVisibleEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelVisibleEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelvisibleevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CleanUpTypingEvent": {
+  "abstract" : [
+    {
+      "text" : "A special event type which is only emitted by the SDK and never the backend.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This event is emitted by ",
+      "type" : "text"
+    },
+    {
+      "code" : "TypingStartCleanupMiddleware",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to signal that a typing event",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "must be cleaned up, due to timeout of that event.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CleanUpTypingEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CleanUpTypingEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CleanUpTypingEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CleanUpTypingEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/cleanuptypingevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionEvent": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConnectionEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatusUpdated": {
+  "abstract" : [
+    {
+      "text" : "Emitted when ",
+      "type" : "text"
+    },
+    {
+      "code" : "Client",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " changes it’s connection status. You can listen to this event and indicate the different connection",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "states in the UI (banners like “Offline”, “Reconnecting””, etc.).",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionStatusUpdated"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionStatusUpdated"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConnectionStatusUpdated",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionstatusupdated"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Event": {
+  "abstract" : [
+    {
+      "text" : "An ",
+      "type" : "text"
+    },
+    {
+      "code" : "Event",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " object representing an event in the chat system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Event",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/event"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount": {
+  "abstract" : [
+    {
+      "text" : "A bounding protocol for all events that have unread counts.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasUnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasUnreadCount"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HasUnreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/hasunreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/HealthCheckEvent": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HealthCheckEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HealthCheckEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HealthCheckEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HealthCheckEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/healthcheckevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberAddedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a new member is added to a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberAddedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberAddedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberAddedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberAddedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberaddedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent": {
+  "abstract" : [
+    {
+      "text" : "A protocol for any ",
+      "type" : "text"
+    },
+    {
+      "code" : "MemberEvent",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " where it has a ",
+      "type" : "text"
+    },
+    {
+      "code" : "member",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", and ",
+      "type" : "text"
+    },
+    {
+      "code" : "channel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " payload.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberRemovedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a member is removed from a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberRemovedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberRemovedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberRemovedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberRemovedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberremovedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel member is updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeletedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a new message is deleted.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageDeletedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeletedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageDeletedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageDeletedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeletedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNewEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a new message is sent to channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageNewEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNewEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageNewEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageNewEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenewevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageReadEvent": {
+  "abstract" : [
+    {
+      "code" : "ChannelReadEvent",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", this event tells that User has mark read all messages in channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageReadEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReadEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageReadEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageReadEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagereadevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a message is updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messageupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when the current user is added to the channel member list.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationAddedToChannelEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationAddedToChannelEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationAddedToChannelEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationaddedtochannelevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationChannelDeletedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel is deleted, this event is delivered to all channel members",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationChannelDeletedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationChannelDeletedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationChannelDeletedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationChannelDeletedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationchanneldeletedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationChannelMutesUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when current user mutes\/unmutes a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationChannelMutesUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationChannelMutesUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationChannelMutesUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationChannelMutesUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationchannelmutesupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInviteAcceptedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when the current user accepts an invite to a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInviteAcceptedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteAcceptedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInviteAcceptedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationInviteAcceptedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationinviteacceptedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInviteRejectedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when the current user rejects an invite to a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInviteRejectedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteRejectedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInviteRejectedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationInviteRejectedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationinviterejectedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInvitedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when current user is invited to a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInvitedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInvitedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationInvitedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationinvitedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMarkAllReadEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when all channels the current user is member of are marked as read.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMarkAllReadEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMarkAllReadEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMarkAllReadEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationMarkAllReadEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationmarkallreadevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMarkReadEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel the current user is member of is marked as read.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMarkReadEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMarkReadEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMarkReadEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationMarkReadEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationmarkreadevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMessageNewEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a new message is sent to a channel the current user is member of.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMessageNewEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMessageNewEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMessageNewEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationMessageNewEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationmessagenewevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMutesUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when current user mutes\/unmutes a user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMutesUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMutesUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationMutesUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationmutesupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationRemovedFromChannelEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when the current user is removed from a channel member list.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationRemovedFromChannelEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationRemovedFromChannelEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationRemovedFromChannelEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationRemovedFromChannelEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationremovedfromchannelevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionDeletedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a reaction is deleted.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReactionDeletedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionDeletedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReactionDeletedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReactionDeletedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/reactiondeletedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionNewEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered a new reaction is added.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReactionNewEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionNewEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReactionNewEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReactionNewEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/reactionnewevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a reaction is updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReactionUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReactionUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReactionUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/reactionupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/TypingEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when user starts\/stops typing in a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TypingEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TypingEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TypingEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/typingevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnknownChannelEvent": {
+  "abstract" : [
+    {
+      "text" : "An event type SDK fallbacks to if incoming event was failed to be",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "decoded as a system event.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UnknownChannelEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownChannelEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UnknownChannelEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UnknownChannelEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unknownchannelevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnknownUserEvent": {
+  "abstract" : [
+    {
+      "text" : "An event type SDK fallbacks to if incoming event was failed to be",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "decoded as a system event.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UnknownUserEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UnknownUserEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UnknownUserEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unknownuserevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserBannedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when user is banned in a specific channel",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserBannedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserBannedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserBannedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserBannedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userbannedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserGloballyBannedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when user is banned not in a specific channel but globally.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserGloballyBannedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserGloballyBannedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserGloballyBannedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserGloballyBannedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/usergloballybannedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserGloballyUnbannedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when user is removed from global ban.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserGloballyUnbannedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserGloballyUnbannedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserGloballyUnbannedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserGloballyUnbannedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/usergloballyunbannedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserPresenceChangedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when user status changes (eg. online, offline, away, etc.)",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserPresenceChangedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserPresenceChangedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserPresenceChangedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserPresenceChangedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userpresencechangedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserUnbannedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when banned user is unbanned in a specific channel",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserUnbannedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserUnbannedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserUnbannedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserUnbannedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userunbannedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when user is updated",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserWatchingEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a user starts\/stops watching a channel",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserWatchingEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserWatchingEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserWatchingEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserWatchingEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userwatchingevent"
+}
+}
+}

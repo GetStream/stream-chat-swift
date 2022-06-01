@@ -1,1 +1,169 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletingFailed"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/localreactionstate\/deletingfailed"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState\/deletingFailed","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Deleting of the reaction failed and cannot be fulfilled"}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletingFailed"}],"title":"LocalReactionState.deletingFailed","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat18LocalReactionStateO14deletingFailedyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LocalReactionState":{"role":"symbol","title":"LocalReactionState","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalReactionState"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LocalReactionState"}],"url":"\/documentation\/streamchat\/localreactionstate"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalReactionState/deletingFailed":{"role":"symbol","title":"LocalReactionState.deletingFailed","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletingFailed"}],"abstract":[{"type":"text","text":"Deleting of the reaction failed and cannot be fulfilled"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState\/deletingFailed","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/localreactionstate\/deletingfailed"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Deleting of the reaction failed and cannot be fulfilled",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState\/deletingFailed"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18LocalReactionStateO14deletingFailedyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "deletingFailed"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "LocalReactionState.deletingFailed"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "deletingFailed"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/localreactionstate\/deletingfailed"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalReactionState": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LocalReactionState"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LocalReactionState"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LocalReactionState",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localreactionstate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalReactionState/deletingFailed": {
+  "abstract" : [
+    {
+      "text" : "Deleting of the reaction failed and cannot be fulfilled",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deletingFailed"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState\/deletingFailed",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LocalReactionState.deletingFailed",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localreactionstate\/deletingfailed"
+}
+}
+}

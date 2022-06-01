@@ -1,1 +1,242 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType","preciseIdentifier":"s:10StreamChat9EventTypeV","text":"EventType"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/unknownuserevent\/type"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent\/type","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"An event type."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"EventType","preciseIdentifier":"s:10StreamChat9EventTypeV"}],"title":"type","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat16UnknownUserEventV4typeAA0E4TypeVvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/UnknownUserEvent/type":{"role":"symbol","title":"type","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"EventType","preciseIdentifier":"s:10StreamChat9EventTypeV"}],"abstract":[{"type":"text","text":"An event type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent\/type","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/unknownuserevent\/type"},"doc://io.getstream.StreamChat/documentation/StreamChat/EventType":{"role":"symbol","title":"EventType","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"EventType"}],"abstract":[{"type":"text","text":"An event type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"EventType"}],"url":"\/documentation\/streamchat\/eventtype"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnknownUserEvent":{"role":"symbol","title":"UnknownUserEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UnknownUserEvent"}],"abstract":[{"type":"text","text":"An event type SDK fallbacks to if incoming event was failed to be"},{"type":"text","text":" "},{"type":"text","text":"decoded as a system event."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UnknownUserEvent"}],"url":"\/documentation\/streamchat\/unknownuserevent"}}}
+{
+  "abstract" : [
+    {
+      "text" : "An event type.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent\/type"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat16UnknownUserEventV4typeAA0E4TypeVvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "type"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9EventTypeV",
+        "text" : "EventType"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "type"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "type"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9EventTypeV",
+              "text" : "EventType"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/unknownuserevent\/type"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EventType": {
+  "abstract" : [
+    {
+      "text" : "An event type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EventType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EventType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "EventType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/eventtype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnknownUserEvent": {
+  "abstract" : [
+    {
+      "text" : "An event type SDK fallbacks to if incoming event was failed to be",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "decoded as a system event.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UnknownUserEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UnknownUserEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UnknownUserEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unknownuserevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnknownUserEvent/type": {
+  "abstract" : [
+    {
+      "text" : "An event type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9EventTypeV",
+      "text" : "EventType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnknownUserEvent\/type",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "type",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unknownuserevent\/type"
+}
+}
+}

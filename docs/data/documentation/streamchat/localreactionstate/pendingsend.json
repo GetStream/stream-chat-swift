@@ -1,1 +1,169 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"pendingSend"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/localreactionstate\/pendingsend"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState\/pendingSend","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The reaction is waiting to be sent to the server"}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"pendingSend"}],"title":"LocalReactionState.pendingSend","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat18LocalReactionStateO11pendingSendyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LocalReactionState":{"role":"symbol","title":"LocalReactionState","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalReactionState"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LocalReactionState"}],"url":"\/documentation\/streamchat\/localreactionstate"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalReactionState/pendingSend":{"role":"symbol","title":"LocalReactionState.pendingSend","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"pendingSend"}],"abstract":[{"type":"text","text":"The reaction is waiting to be sent to the server"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState\/pendingSend","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/localreactionstate\/pendingsend"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The reaction is waiting to be sent to the server",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState\/pendingSend"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18LocalReactionStateO11pendingSendyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "pendingSend"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "LocalReactionState.pendingSend"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "pendingSend"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/localreactionstate\/pendingsend"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalReactionState": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LocalReactionState"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LocalReactionState"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LocalReactionState",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localreactionstate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalReactionState/pendingSend": {
+  "abstract" : [
+    {
+      "text" : "The reaction is waiting to be sent to the server",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pendingSend"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalReactionState\/pendingSend",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LocalReactionState.pendingSend",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localreactionstate\/pendingsend"
+}
+}
+}

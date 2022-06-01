@@ -1,1 +1,224 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"httpRequests"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV","text":"LogSubsystem"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/logsubsystem\/httprequests"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/httpRequests","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The subsystem responsible for HTTP operations."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"httpRequests"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"}],"title":"httpRequests","roleHeading":"Type Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat12LogSubsystemV12httpRequestsACvpZ","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem":{"role":"symbol","title":"LogSubsystem","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogSubsystem"}],"abstract":[{"type":"text","text":"Entity for identifying which subsystem the log message comes from."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogSubsystem"}],"url":"\/documentation\/streamchat\/logsubsystem"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/httpRequests":{"role":"symbol","title":"httpRequests","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"httpRequests"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"}],"abstract":[{"type":"text","text":"The subsystem responsible for HTTP operations."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/httpRequests","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/httprequests"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The subsystem responsible for HTTP operations.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/httpRequests"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat12LogSubsystemV12httpRequestsACvpZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "httpRequests"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+        "text" : "LogSubsystem"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "httpRequests"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "httpRequests"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+              "text" : "LogSubsystem"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/logsubsystem\/httprequests"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem": {
+  "abstract" : [
+    {
+      "text" : "Entity for identifying which subsystem the log message comes from.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogSubsystem",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/httpRequests": {
+  "abstract" : [
+    {
+      "text" : "The subsystem responsible for HTTP operations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "httpRequests"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/httpRequests",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "httpRequests",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/httprequests"
+}
+}
+}

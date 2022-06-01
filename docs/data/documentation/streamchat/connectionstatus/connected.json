@@ -1,1 +1,172 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"connected"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/connectionstatus\/connected"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus\/connected","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The client is connected to the remote server."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"connected"}],"title":"ConnectionStatus.connected","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat16ConnectionStatusO9connectedyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatus":{"role":"symbol","title":"ConnectionStatus","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionStatus"}],"abstract":[{"type":"text","text":"Describes the possible states of the client connection to the servers."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ConnectionStatus"}],"url":"\/documentation\/streamchat\/connectionstatus"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatus/connected":{"role":"symbol","title":"ConnectionStatus.connected","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"connected"}],"abstract":[{"type":"text","text":"The client is connected to the remote server."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus\/connected","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/connectionstatus\/connected"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The client is connected to the remote server.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus\/connected"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat16ConnectionStatusO9connectedyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "connected"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "ConnectionStatus.connected"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "connected"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/connectionstatus\/connected"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatus": {
+  "abstract" : [
+    {
+      "text" : "Describes the possible states of the client connection to the servers.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionStatus"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionStatus"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConnectionStatus",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionstatus"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatus/connected": {
+  "abstract" : [
+    {
+      "text" : "The client is connected to the remote server.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connected"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus\/connected",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ConnectionStatus.connected",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionstatus\/connected"
+}
+}
+}

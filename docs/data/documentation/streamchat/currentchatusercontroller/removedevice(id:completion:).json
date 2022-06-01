@@ -1,1 +1,458 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"removeDevice"},{"kind":"text","text":"("},{"kind":"externalParam","text":"id"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DeviceId","preciseIdentifier":"s:10StreamChat8DeviceIda","text":"DeviceId"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")? = nil)"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"id","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Device id to be removed. You can obtain registered devices via "},{"type":"codeVoice","code":"currentUser.devices"},{"type":"text","text":"."},{"type":"text","text":" "},{"type":"text","text":"If "},{"type":"codeVoice","code":"currentUser.devices"},{"type":"text","text":" is not up-to-date, please make an "},{"type":"codeVoice","code":"synchronize"},{"type":"text","text":" call."}]}]},{"name":"completion","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Called when device is successfully deregistered, or with error."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/currentchatusercontroller\/removedevice(id:completion:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/removeDevice(id:completion:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Removes a registered device from the current user."},{"type":"text","text":" "},{"type":"codeVoice","code":"connectUser"},{"type":"text","text":" must be called before calling this."}],"kind":"symbol","metadata":{"role":"symbol","title":"removeDevice(id:completion:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"removeDevice"},{"kind":"text","text":"("},{"kind":"externalParam","text":"id"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DeviceId","preciseIdentifier":"s:10StreamChat8DeviceIda"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"symbolKind":"method","externalID":"s:10StreamChat07CurrentB14UserControllerC12removeDevice2id10completionySS_ys5Error_pSgcSgtF","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/removeDevice(id:completion:)":{"role":"symbol","title":"removeDevice(id:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"removeDevice"},{"kind":"text","text":"("},{"kind":"externalParam","text":"id"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DeviceId","preciseIdentifier":"s:10StreamChat8DeviceIda"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Removes a registered device from the current user."},{"type":"text","text":" "},{"type":"codeVoice","code":"connectUser"},{"type":"text","text":" must be called before calling this."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/removeDevice(id:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/removedevice(id:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/DeviceId":{"role":"symbol","title":"DeviceId","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"DeviceId"}],"abstract":[{"type":"text","text":"A unique identifier of a device."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DeviceId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DeviceId"}],"url":"\/documentation\/streamchat\/deviceid"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController":{"role":"symbol","title":"CurrentChatUserController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserController"}],"abstract":[{"type":"codeVoice","code":"CurrentChatUserController"},{"type":"text","text":" is a controller class which allows observing and mutating the currently logged-in"},{"type":"text","text":" "},{"type":"text","text":"user of "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUserController"}],"url":"\/documentation\/streamchat\/currentchatusercontroller"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Removes a registered device from the current user.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "code" : "connectUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " must be called before calling this.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/removeDevice(id:completion:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat07CurrentB14UserControllerC12removeDevice2id10completionySS_ys5Error_pSgcSgtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "removeDevice"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "id"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat8DeviceIda",
+        "text" : "DeviceId"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "completion"
+      },
+      {
+        "kind" : "text",
+        "text" : ": (("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5ErrorP",
+        "text" : "Error"
+      },
+      {
+        "kind" : "text",
+        "text" : "?) -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s4Voida",
+        "text" : "Void"
+      },
+      {
+        "kind" : "text",
+        "text" : ")?)"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "removeDevice(id:completion:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "removeDevice"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "id"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DeviceId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat8DeviceIda",
+              "text" : "DeviceId"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "completion"
+            },
+            {
+              "kind" : "text",
+              "text" : ": (("
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5ErrorP",
+              "text" : "Error"
+            },
+            {
+              "kind" : "text",
+              "text" : "?) -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s4Voida",
+              "text" : "Void"
+            },
+            {
+              "kind" : "text",
+              "text" : ")? = nil)"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Device id to be removed. You can obtain registered devices via ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "currentUser.devices",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : ".",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "If ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "currentUser.devices",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " is not up-to-date, please make an ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "synchronize",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " call.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "id"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Called when device is successfully deregistered, or with error.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "completion"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/currentchatusercontroller\/removedevice(id:completion:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController": {
+  "abstract" : [
+    {
+      "code" : "CurrentChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating the currently logged-in",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "user of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUserController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/removeDevice(id:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Removes a registered device from the current user.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "code" : "connectUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " must be called before calling this.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "removeDevice"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8DeviceIda",
+      "text" : "DeviceId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/removeDevice(id:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "removeDevice(id:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/removedevice(id:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DeviceId": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of a device.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeviceId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DeviceId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeviceId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeviceId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/deviceid"
+}
+}
+}

@@ -1,1 +1,238 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId","preciseIdentifier":"s:10StreamChat9MessageIda","text":"MessageId"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessagecontroller\/messageid"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageId","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The identified of the message this controllers represents."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"}],"title":"messageId","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B17MessageControllerC9messageIdSSvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/messageId":{"role":"symbol","title":"messageId","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"}],"abstract":[{"type":"text","text":"The identified of the message this controllers represents."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageId","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/messageid"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageId":{"role":"symbol","title":"MessageId","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageId"}],"abstract":[{"type":"text","text":"A unique identifier of a message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageId"}],"url":"\/documentation\/streamchat\/messageid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController":{"role":"symbol","title":"ChatMessageController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageController"}],"abstract":[{"type":"codeVoice","code":"ChatMessageController"},{"type":"text","text":" is a controller class which allows observing and mutating a chat message entity."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageController"}],"url":"\/documentation\/streamchat\/chatmessagecontroller"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The identified of the message this controllers represents.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageId"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B17MessageControllerC9messageIdSSvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "messageId"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9MessageIda",
+        "text" : "MessageId"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "messageId"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "messageId"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9MessageIda",
+              "text" : "MessageId"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessagecontroller\/messageid"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating a chat message entity.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/messageId": {
+  "abstract" : [
+    {
+      "text" : "The identified of the message this controllers represents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messageId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/messageid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageId": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of a message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messageid"
+}
+}
+}

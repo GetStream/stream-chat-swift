@@ -1,1 +1,283 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"maxAttachmentSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int64","preciseIdentifier":"s:s5Int64V"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatclientconfig\/maxattachmentsize"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentSize","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Returns max possible attachment size in bytes."},{"type":"text","text":" "},{"type":"text","text":"The value is taken from custom "},{"type":"codeVoice","code":"maxAttachmentSize"},{"type":"text","text":" type custom "},{"type":"codeVoice","code":"CDNClient"},{"type":"text","text":" type."},{"type":"text","text":" "},{"type":"text","text":"The default value is 20 MiB."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"maxAttachmentSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int64","preciseIdentifier":"s:s5Int64V"}],"title":"maxAttachmentSize","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B12ClientConfigV17maxAttachmentSizes5Int64Vvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig":{"role":"symbol","title":"ChatClientConfig","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClientConfig"}],"abstract":[{"type":"text","text":"A configuration object used to configure a "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClientConfig"}],"url":"\/documentation\/streamchat\/chatclientconfig"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/maxAttachmentSize":{"role":"symbol","title":"maxAttachmentSize","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"maxAttachmentSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int64","preciseIdentifier":"s:s5Int64V"}],"abstract":[{"type":"text","text":"Returns max possible attachment size in bytes."},{"type":"text","text":" "},{"type":"text","text":"The value is taken from custom "},{"type":"codeVoice","code":"maxAttachmentSize"},{"type":"text","text":" type custom "},{"type":"codeVoice","code":"CDNClient"},{"type":"text","text":" type."},{"type":"text","text":" "},{"type":"text","text":"The default value is 20 MiB."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentSize","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/maxattachmentsize"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Returns max possible attachment size in bytes.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The value is taken from custom ",
+      "type" : "text"
+    },
+    {
+      "code" : "maxAttachmentSize",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type custom ",
+      "type" : "text"
+    },
+    {
+      "code" : "CDNClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The default value is 20 MiB.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentSize"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B12ClientConfigV17maxAttachmentSizes5Int64Vvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "maxAttachmentSize"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5Int64V",
+        "text" : "Int64"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "maxAttachmentSize"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "maxAttachmentSize"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5Int64V",
+              "text" : "Int64"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatclientconfig\/maxattachmentsize"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig": {
+  "abstract" : [
+    {
+      "text" : "A configuration object used to configure a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClientConfig"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClientConfig"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClientConfig",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/maxAttachmentSize": {
+  "abstract" : [
+    {
+      "text" : "Returns max possible attachment size in bytes.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The value is taken from custom ",
+      "type" : "text"
+    },
+    {
+      "code" : "maxAttachmentSize",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type custom ",
+      "type" : "text"
+    },
+    {
+      "code" : "CDNClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The default value is 20 MiB.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "maxAttachmentSize"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5Int64V",
+      "text" : "Int64"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentSize",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "maxAttachmentSize",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/maxattachmentsize"
+}
+}
+}

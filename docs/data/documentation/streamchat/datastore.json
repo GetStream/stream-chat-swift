@@ -1,1 +1,467 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataStore"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/datastore"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore","interfaceLanguage":"swift"},"abstract":[{"type":"codeVoice","code":"DataStore"},{"type":"text","text":" provide access to all locally available model objects based on their id."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataStore"}],"title":"DataStore","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat9DataStoreV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"DataStore"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/channel(cid:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/currentUser()","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/message(id:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/user(id:)"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore/message(id:)":{"role":"symbol","title":"message(id:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"message"},{"kind":"text","text":"("},{"kind":"externalParam","text":"id"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Loads a message model with a matching "},{"type":"codeVoice","code":"id"},{"type":"text","text":" from the "},{"type":"strong","inlineContent":[{"type":"text","text":"local data store"}]},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/message(id:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/datastore\/message(id:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore/currentUser()":{"role":"symbol","title":"currentUser()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUser"},{"kind":"text","text":"() -> "},{"kind":"typeIdentifier","text":"CurrentChatUser","preciseIdentifier":"s:10StreamChat07CurrentB4UserC"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Loads a current user model with a matching "},{"type":"codeVoice","code":"id"},{"type":"text","text":" from the "},{"type":"strong","inlineContent":[{"type":"text","text":"local data store"}]},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/currentUser()","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/datastore\/currentuser()"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore/user(id:)":{"role":"symbol","title":"user(id:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"user"},{"kind":"text","text":"("},{"kind":"externalParam","text":"id"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Loads a user model with a matching "},{"type":"codeVoice","code":"id"},{"type":"text","text":" from the "},{"type":"strong","inlineContent":[{"type":"text","text":"local data store"}]},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/user(id:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/datastore\/user(id:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore/channel(cid:)":{"role":"symbol","title":"channel(cid:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channel"},{"kind":"text","text":"("},{"kind":"externalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Loads a channel model with a matching "},{"type":"codeVoice","code":"cid"},{"type":"text","text":" from the "},{"type":"strong","inlineContent":[{"type":"text","text":"local data store"}]},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/channel(cid:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/datastore\/channel(cid:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore":{"role":"symbol","title":"DataStore","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataStore"}],"abstract":[{"type":"codeVoice","code":"DataStore"},{"type":"text","text":" provide access to all locally available model objects based on their id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataStore"}],"url":"\/documentation\/streamchat\/datastore"}}}
+{
+  "abstract" : [
+    {
+      "code" : "DataStore",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " provide access to all locally available model objects based on their id.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat9DataStoreV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "DataStore"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "DataStore"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "DataStore"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "DataStore"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/channel(cid:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/currentUser()",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/message(id:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/user(id:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/datastore"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore": {
+  "abstract" : [
+    {
+      "code" : "DataStore",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " provide access to all locally available model objects based on their id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataStore"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataStore"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataStore",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datastore"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore/channel(cid:)": {
+  "abstract" : [
+    {
+      "text" : "Loads a channel model with a matching ",
+      "type" : "text"
+    },
+    {
+      "code" : "cid",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " from the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "local data store",
+          "type" : "text"
+        }
+      ],
+      "type" : "strong"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channel"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/channel(cid:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channel(cid:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datastore\/channel(cid:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore/currentUser()": {
+  "abstract" : [
+    {
+      "text" : "Loads a current user model with a matching ",
+      "type" : "text"
+    },
+    {
+      "code" : "id",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " from the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "local data store",
+          "type" : "text"
+        }
+      ],
+      "type" : "strong"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB4UserC",
+      "text" : "CurrentChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/currentUser()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentUser()",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datastore\/currentuser()"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore/message(id:)": {
+  "abstract" : [
+    {
+      "text" : "Loads a message model with a matching ",
+      "type" : "text"
+    },
+    {
+      "code" : "id",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " from the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "local data store",
+          "type" : "text"
+        }
+      ],
+      "type" : "strong"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "message"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/message(id:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "message(id:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datastore\/message(id:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore/user(id:)": {
+  "abstract" : [
+    {
+      "text" : "Loads a user model with a matching ",
+      "type" : "text"
+    },
+    {
+      "code" : "id",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " from the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "local data store",
+          "type" : "text"
+        }
+      ],
+      "type" : "strong"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "user"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore\/user(id:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "user(id:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datastore\/user(id:)"
+}
+}
+}

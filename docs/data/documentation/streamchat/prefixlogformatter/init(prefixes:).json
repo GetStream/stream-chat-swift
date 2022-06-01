@@ -1,1 +1,315 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"prefixes"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO","text":"LogLevel"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"])"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/prefixlogformatter\/init(prefixes:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PrefixLogFormatter\/init(prefixes:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"prefixes"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"])"}],"title":"init(prefixes:)","roleHeading":"Initializer","role":"symbol","symbolKind":"init","externalID":"s:10StreamChat18PrefixLogFormatterC8prefixesACSDyAA0D5LevelOSSG_tcfc","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PrefixLogFormatter"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/PrefixLogFormatter/init(prefixes:)":{"role":"symbol","title":"init(prefixes:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"prefixes"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"])"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PrefixLogFormatter\/init(prefixes:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/prefixlogformatter\/init(prefixes:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/PrefixLogFormatter":{"role":"symbol","title":"PrefixLogFormatter","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"PrefixLogFormatter"}],"abstract":[{"type":"text","text":"Formats the given log message with the given prefixes by log level."},{"type":"text","text":" "},{"type":"text","text":"Useful for emphasizing different leveled messages on console, when used as:"},{"type":"text","text":" "},{"type":"codeVoice","code":"prefixes: [.info: \"ℹ️\", .debug: \"🛠\", .error: \"❌\", .fault: \"🚨\"]"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PrefixLogFormatter","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"PrefixLogFormatter"}],"url":"\/documentation\/streamchat\/prefixlogformatter"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel":{"role":"symbol","title":"LogLevel","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogLevel"}],"abstract":[{"type":"text","text":"Log level for any messages to be logged."},{"type":"text","text":" "},{"type":"text","text":"Please check "},{"type":"reference","isActive":true,"identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"},{"type":"text","text":" to understand different logging levels."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogLevel"}],"url":"\/documentation\/streamchat\/loglevel"},"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code":{"title":"this Apple Logging Article","titleInlineContent":[{"type":"text","text":"this Apple Logging Article"}],"type":"link","identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code","url":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PrefixLogFormatter"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PrefixLogFormatter\/init(prefixes:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18PrefixLogFormatterC8prefixesACSDyAA0D5LevelOSSG_tcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "prefixes"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+        "text" : "LogLevel"
+      },
+      {
+        "kind" : "text",
+        "text" : " : "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : "])"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(prefixes:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "prefixes"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+              "text" : "LogLevel"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : "])"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/prefixlogformatter\/init(prefixes:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel": {
+  "abstract" : [
+    {
+      "text" : "Log level for any messages to be logged.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Please check ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " to understand different logging levels.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogLevel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PrefixLogFormatter": {
+  "abstract" : [
+    {
+      "text" : "Formats the given log message with the given prefixes by log level.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Useful for emphasizing different leveled messages on console, when used as:",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "code" : "prefixes: [.info: \"ℹ️\", .debug: \"🛠\", .error: \"❌\", .fault: \"🚨\"]",
+      "type" : "codeVoice"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PrefixLogFormatter"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PrefixLogFormatter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PrefixLogFormatter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PrefixLogFormatter",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/prefixlogformatter"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PrefixLogFormatter/init(prefixes:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "prefixes"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+      "text" : "LogLevel"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PrefixLogFormatter\/init(prefixes:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(prefixes:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/prefixlogformatter\/init(prefixes:)"
+},
+"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code": {
+  "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+  "title" : "this Apple Logging Article",
+  "titleInlineContent" : [
+    {
+      "text" : "this Apple Logging Article",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"
+}
+}
+}

@@ -1,1 +1,172 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"bottomToTop"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messageordering\/bottomtotop"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageOrdering\/bottomToTop","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"New messages appear on the bottom of the list."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"bottomToTop"}],"title":"MessageOrdering.bottomToTop","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat15MessageOrderingO11bottomToTopyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageOrdering"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageOrdering":{"role":"symbol","title":"MessageOrdering","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageOrdering"}],"abstract":[{"type":"text","text":"Describes the flow of the messages in the list"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageOrdering","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageOrdering"}],"url":"\/documentation\/streamchat\/messageordering"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageOrdering/bottomToTop":{"role":"symbol","title":"MessageOrdering.bottomToTop","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"bottomToTop"}],"abstract":[{"type":"text","text":"New messages appear on the bottom of the list."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageOrdering\/bottomToTop","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messageordering\/bottomtotop"}}}
+{
+  "abstract" : [
+    {
+      "text" : "New messages appear on the bottom of the list.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageOrdering"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageOrdering\/bottomToTop"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat15MessageOrderingO11bottomToTopyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "bottomToTop"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "MessageOrdering.bottomToTop"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "bottomToTop"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messageordering\/bottomtotop"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageOrdering": {
+  "abstract" : [
+    {
+      "text" : "Describes the flow of the messages in the list",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageOrdering"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageOrdering",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageOrdering"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageOrdering",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messageordering"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageOrdering/bottomToTop": {
+  "abstract" : [
+    {
+      "text" : "New messages appear on the bottom of the list.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bottomToTop"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageOrdering\/bottomToTop",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "MessageOrdering.bottomToTop",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messageordering\/bottomtotop"
+}
+}
+}

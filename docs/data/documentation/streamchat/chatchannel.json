@@ -1,1 +1,1701 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannel"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannel"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyChannel","doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A type representing a chat channel. "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":" is an immutable snapshot of a channel entity at the given time."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannel"}],"title":"ChatChannel","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat0B7ChannelV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatChannel"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cid","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/config","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cooldownDuration","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/createdAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/createdBy","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/currentlyTypingUsers","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/deletedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/extraData","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/imageURL","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isDeleted","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isDirectMessageChannel","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isFrozen","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isHidden","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isMuted","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isUnread","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastActiveMembers","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastActiveWatchers","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastMessageAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/latestMessages","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/memberCount","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/membership","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/muteDetails","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/name","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/pinnedMessages","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/previewMessage","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/reads","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/team","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/truncatedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/type","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/unreadCount","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/updatedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/watcherCount"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/Equatable-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/Hashable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/lastMessageAt":{"role":"symbol","title":"lastMessageAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"lastMessageAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The date of the last message in the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastMessageAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/lastmessageat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/cooldownDuration":{"role":"symbol","title":"cooldownDuration","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cooldownDuration"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"Cooldown duration for the channel, if it’s in slow mode."},{"type":"text","text":" "},{"type":"text","text":"This value will be 0 if the channel is not in slow mode."},{"type":"text","text":" "},{"type":"text","text":"This value is in seconds."},{"type":"text","text":" "},{"type":"text","text":"For more information, please check "},{"type":"reference","isActive":true,"identifier":"https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cooldownDuration","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/cooldownduration"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isUnread":{"role":"symbol","title":"isUnread","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"isUnread"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Returns "},{"type":"codeVoice","code":"true"},{"type":"text","text":" if the channel has one or more unread messages for the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isUnread","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/isunread"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/imageURL":{"role":"symbol","title":"imageURL","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"imageURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Image (avatar) url for this channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/imageURL","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/imageurl"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/config":{"role":"symbol","title":"config","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"config"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelConfig","preciseIdentifier":"s:10StreamChat13ChannelConfigC"}],"abstract":[{"type":"text","text":"A configuration struct of the channel. It contains additional information about the channel settings."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/config","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/config"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/currentlyTypingUsers":{"role":"symbol","title":"currentlyTypingUsers","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentlyTypingUsers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A list of currently typing users."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/currentlyTypingUsers","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/currentlytypingusers"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/deletedAt":{"role":"symbol","title":"deletedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If the channel was deleted, this field contains the date of the deletion."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/deletedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/deletedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel":{"role":"symbol","title":"ChatChannel","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannel"}],"abstract":[{"type":"text","text":"A type representing a chat channel. "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":" is an immutable snapshot of a channel entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannel"}],"url":"\/documentation\/streamchat\/chatchannel"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/createdBy":{"role":"symbol","title":"createdBy","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdBy"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The user which created the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/createdBy","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/createdby"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/previewMessage":{"role":"symbol","title":"previewMessage","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"previewMessage"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The channel message is supposed to be shown in channel preview."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/previewMessage","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/previewmessage"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/lastActiveMembers":{"role":"symbol","title":"lastActiveMembers","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"lastActiveMembers"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatChannelMember","preciseIdentifier":"s:10StreamChat0B13ChannelMemberC"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"A list of members of this channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastActiveMembers","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/lastactivemembers"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isDirectMessageChannel":{"role":"symbol","title":"isDirectMessageChannel","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"isDirectMessageChannel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Returns "},{"type":"codeVoice","code":"true"},{"type":"text","text":" when the channel is a direct-message channel."},{"type":"text","text":" "},{"type":"text","text":"A “direct message” channel is created when client sends only the user id’s for the channel and not an explicit "},{"type":"codeVoice","code":"cid"},{"type":"text","text":","},{"type":"text","text":" "},{"type":"text","text":"so backend creates a "},{"type":"codeVoice","code":"cid"},{"type":"text","text":" based on member’s "},{"type":"codeVoice","code":"id"},{"type":"text","text":"s"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isDirectMessageChannel","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/isdirectmessagechannel"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/reads":{"role":"symbol","title":"reads","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"reads"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatChannelRead","preciseIdentifier":"s:10StreamChat0B11ChannelReadV"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Read states of the users for this channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/reads","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/reads"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/createdAt":{"role":"symbol","title":"createdAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The date when the channel was created."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/createdAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/createdat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/truncatedAt":{"role":"symbol","title":"truncatedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"truncatedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If the channel was truncated, this field contains the date of the truncation."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/truncatedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/truncatedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/type":{"role":"symbol","title":"type","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelType","preciseIdentifier":"s:10StreamChat11ChannelTypeO"}],"abstract":[{"type":"text","text":"The type of the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/type","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/type"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/lastActiveWatchers":{"role":"symbol","title":"lastActiveWatchers","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"lastActiveWatchers"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"A list of users and\/or channel members currently actively watching the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastActiveWatchers","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/lastactivewatchers"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/equatable-implementations"},"https://getstream.io/chat/docs/javascript/slow_mode/?language=swift":{"title":"documentation","titleInlineContent":[{"type":"text","text":"documentation"}],"type":"link","identifier":"https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift","url":"https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/updatedAt":{"role":"symbol","title":"updatedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"updatedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The date when the channel was updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/updatedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/updatedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/Hashable-Implementations":{"role":"collectionGroup","title":"Hashable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/Hashable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/hashable-implementations"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isHidden":{"role":"symbol","title":"isHidden","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"isHidden"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Flag for representing hidden state for the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isHidden","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/ishidden"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isMuted":{"role":"symbol","title":"isMuted","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"isMuted"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Says whether the channel is muted by the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isMuted","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/ismuted"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/muteDetails":{"role":"symbol","title":"muteDetails","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"muteDetails"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MuteDetails","preciseIdentifier":"s:10StreamChat11MuteDetailsV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Channel mute details. If "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" the channel is not muted by the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/muteDetails","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/mutedetails"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/unreadCount":{"role":"symbol","title":"unreadCount","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"unreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelUnreadCount","preciseIdentifier":"s:10StreamChat18ChannelUnreadCountV"}],"abstract":[{"type":"text","text":"The unread counts for the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/unreadCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/unreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/extraData":{"role":"symbol","title":"extraData","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"extraData"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Additional data associated with the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/extraData","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/extradata"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/latestMessages":{"role":"symbol","title":"latestMessages","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"latestMessages"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Latest messages present on the channel. The first item of the array, is the most recent message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/latestMessages","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/latestmessages"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/name":{"role":"symbol","title":"name","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"name"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Name for this channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/name","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/name"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/pinnedMessages":{"role":"symbol","title":"pinnedMessages","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"pinnedMessages"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Pinned messages present on the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/pinnedMessages","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/pinnedmessages"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/memberCount":{"role":"symbol","title":"memberCount","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"The total number of members in the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/memberCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/membercount"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isDeleted":{"role":"symbol","title":"isDeleted","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"isDeleted"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Returns "},{"type":"codeVoice","code":"true"},{"type":"text","text":" if the channel was deleted."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isDeleted","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/isdeleted"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat/AnyChannel":{"role":"symbol","title":"AnyChannel","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"AnyChannel"}],"abstract":[{"type":"text","text":"A type-erased version of "},{"type":"codeVoice","code":"ChannelModel<CustomData>"},{"type":"text","text":". Not intended to be used directly."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyChannel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AnyChannel"}],"url":"\/documentation\/streamchat\/anychannel"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/watcherCount":{"role":"symbol","title":"watcherCount","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"watcherCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"The total number of online members watching this channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/watcherCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/watchercount"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/team":{"role":"symbol","title":"team","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"team"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"TeamId","preciseIdentifier":"s:10StreamChat6TeamIda"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The team the channel belongs to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/team","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/team"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isFrozen":{"role":"symbol","title":"isFrozen","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"isFrozen"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Returns "},{"type":"codeVoice","code":"true"},{"type":"text","text":" if the channel is frozen."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isFrozen","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/isfrozen"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"abstract":[{"type":"text","text":"The "},{"type":"codeVoice","code":"ChannelId"},{"type":"text","text":" of the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cid","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/membership":{"role":"symbol","title":"membership","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"membership"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannelMember","preciseIdentifier":"s:10StreamChat0B13ChannelMemberC"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If the current user is a member of the channel, this variable contains the details about the membership."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/membership","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannel\/membership"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A type representing a chat channel. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a channel entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B7ChannelV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatChannel"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatChannel"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "ChatChannel"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatChannel"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyChannel",
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cid",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/config",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cooldownDuration",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/createdAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/createdBy",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/currentlyTypingUsers",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/deletedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/extraData",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/imageURL",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isDeleted",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isDirectMessageChannel",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isFrozen",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isHidden",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isMuted",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isUnread",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastActiveMembers",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastActiveWatchers",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastMessageAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/latestMessages",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/memberCount",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/membership",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/muteDetails",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/name",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/pinnedMessages",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/previewMessage",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/reads",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/team",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/truncatedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/type",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/unreadCount",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/updatedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/watcherCount"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/Equatable-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/Hashable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannel"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AnyChannel": {
+  "abstract" : [
+    {
+      "text" : "A type-erased version of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelModel<CustomData>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ". Not intended to be used directly.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AnyChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyChannel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AnyChannel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AnyChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/anychannel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat channel. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a channel entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/Hashable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/Hashable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Hashable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/hashable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/cid": {
+  "abstract" : [
+    {
+      "text" : "The ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelId",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " of the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/cid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/config": {
+  "abstract" : [
+    {
+      "text" : "A configuration struct of the channel. It contains additional information about the channel settings.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "config"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat13ChannelConfigC",
+      "text" : "ChannelConfig"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/config",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "config",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/config"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/cooldownDuration": {
+  "abstract" : [
+    {
+      "text" : "Cooldown duration for the channel, if it’s in slow mode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This value will be 0 if the channel is not in slow mode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This value is in seconds.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "For more information, please check ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cooldownDuration"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/cooldownDuration",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cooldownDuration",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/cooldownduration"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/createdAt": {
+  "abstract" : [
+    {
+      "text" : "The date when the channel was created.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createdAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/createdAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createdAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/createdat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/createdBy": {
+  "abstract" : [
+    {
+      "text" : "The user which created the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createdBy"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/createdBy",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createdBy",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/createdby"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/currentlyTypingUsers": {
+  "abstract" : [
+    {
+      "text" : "A list of currently typing users.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentlyTypingUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/currentlyTypingUsers",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentlyTypingUsers",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/currentlytypingusers"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/deletedAt": {
+  "abstract" : [
+    {
+      "text" : "If the channel was deleted, this field contains the date of the deletion.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deletedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/deletedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deletedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/deletedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/extraData": {
+  "abstract" : [
+    {
+      "text" : "Additional data associated with the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extraData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/extraData",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extraData",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/extradata"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/imageURL": {
+  "abstract" : [
+    {
+      "text" : "Image (avatar) url for this channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "imageURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/imageURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "imageURL",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/imageurl"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isDeleted": {
+  "abstract" : [
+    {
+      "text" : "Returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the channel was deleted.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isDeleted"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isDeleted",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isDeleted",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/isdeleted"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isDirectMessageChannel": {
+  "abstract" : [
+    {
+      "text" : "Returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " when the channel is a direct-message channel.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "A “direct message” channel is created when client sends only the user id’s for the channel and not an explicit ",
+      "type" : "text"
+    },
+    {
+      "code" : "cid",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ",",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "so backend creates a ",
+      "type" : "text"
+    },
+    {
+      "code" : "cid",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " based on member’s ",
+      "type" : "text"
+    },
+    {
+      "code" : "id",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "s",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isDirectMessageChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isDirectMessageChannel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isDirectMessageChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/isdirectmessagechannel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isFrozen": {
+  "abstract" : [
+    {
+      "text" : "Returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the channel is frozen.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isFrozen"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isFrozen",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isFrozen",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/isfrozen"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isHidden": {
+  "abstract" : [
+    {
+      "text" : "Flag for representing hidden state for the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isHidden"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isHidden",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isHidden",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/ishidden"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isMuted": {
+  "abstract" : [
+    {
+      "text" : "Says whether the channel is muted by the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isMuted"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isMuted",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isMuted",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/ismuted"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/isUnread": {
+  "abstract" : [
+    {
+      "text" : "Returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the channel has one or more unread messages for the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isUnread"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/isUnread",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isUnread",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/isunread"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/lastActiveMembers": {
+  "abstract" : [
+    {
+      "text" : "A list of members of this channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "lastActiveMembers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B13ChannelMemberC",
+      "text" : "ChatChannelMember"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastActiveMembers",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "lastActiveMembers",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/lastactivemembers"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/lastActiveWatchers": {
+  "abstract" : [
+    {
+      "text" : "A list of users and\/or channel members currently actively watching the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "lastActiveWatchers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastActiveWatchers",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "lastActiveWatchers",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/lastactivewatchers"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/lastMessageAt": {
+  "abstract" : [
+    {
+      "text" : "The date of the last message in the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "lastMessageAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/lastMessageAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "lastMessageAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/lastmessageat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/latestMessages": {
+  "abstract" : [
+    {
+      "text" : "Latest messages present on the channel. The first item of the array, is the most recent message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "latestMessages"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/latestMessages",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "latestMessages",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/latestmessages"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/memberCount": {
+  "abstract" : [
+    {
+      "text" : "The total number of members in the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/memberCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "memberCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/membercount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/membership": {
+  "abstract" : [
+    {
+      "text" : "If the current user is a member of the channel, this variable contains the details about the membership.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "membership"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B13ChannelMemberC",
+      "text" : "ChatChannelMember"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/membership",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "membership",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/membership"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/muteDetails": {
+  "abstract" : [
+    {
+      "text" : "Channel mute details. If ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " the channel is not muted by the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "muteDetails"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11MuteDetailsV",
+      "text" : "MuteDetails"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/muteDetails",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "muteDetails",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/mutedetails"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/name": {
+  "abstract" : [
+    {
+      "text" : "Name for this channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/name",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "name",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/name"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/pinnedMessages": {
+  "abstract" : [
+    {
+      "text" : "Pinned messages present on the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pinnedMessages"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/pinnedMessages",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "pinnedMessages",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/pinnedmessages"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/previewMessage": {
+  "abstract" : [
+    {
+      "text" : "The channel message is supposed to be shown in channel preview.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "previewMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/previewMessage",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "previewMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/previewmessage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/reads": {
+  "abstract" : [
+    {
+      "text" : "Read states of the users for this channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reads"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B11ChannelReadV",
+      "text" : "ChatChannelRead"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/reads",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reads",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/reads"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/team": {
+  "abstract" : [
+    {
+      "text" : "The team the channel belongs to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "team"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6TeamIda",
+      "text" : "TeamId"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/team",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "team",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/team"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/truncatedAt": {
+  "abstract" : [
+    {
+      "text" : "If the channel was truncated, this field contains the date of the truncation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "truncatedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/truncatedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "truncatedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/truncatedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/type": {
+  "abstract" : [
+    {
+      "text" : "The type of the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11ChannelTypeO",
+      "text" : "ChannelType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/type",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "type",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/type"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/unreadCount": {
+  "abstract" : [
+    {
+      "text" : "The unread counts for the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat18ChannelUnreadCountV",
+      "text" : "ChannelUnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/unreadCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/unreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/updatedAt": {
+  "abstract" : [
+    {
+      "text" : "The date when the channel was updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "updatedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/updatedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "updatedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/updatedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannel/watcherCount": {
+  "abstract" : [
+    {
+      "text" : "The total number of online members watching this channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "watcherCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannel\/watcherCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "watcherCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannel\/watchercount"
+},
+"https://getstream.io/chat/docs/javascript/slow_mode/?language=swift": {
+  "identifier" : "https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift",
+  "title" : "documentation",
+  "titleInlineContent" : [
+    {
+      "text" : "documentation",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/getstream.io\/chat\/docs\/javascript\/slow_mode\/?language=swift"
+}
+}
+}

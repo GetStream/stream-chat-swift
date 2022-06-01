@@ -1,1 +1,259 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId","preciseIdentifier":"s:10StreamChat6UserIda","text":"UserId"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/notificationmutesupdatedevent\/currentuserid"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent\/currentUserId","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"modules":[{"name":"StreamChat"}],"role":"symbol","title":"currentUserId","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"}],"symbolKind":"property","externalID":"s:10StreamChat29NotificationMutesUpdatedEventV13currentUserIdSSvp","extendedModule":"StreamChat","platforms":[]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent"]]},"deprecationSummary":[{"type":"paragraph","inlineContent":[{"type":"text","text":"`user: CurrentChatUser` is now accessible. Please, switch to `currentUser.id`"}]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMutesUpdatedEvent":{"role":"symbol","title":"NotificationMutesUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationMutesUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when current user mutes\/unmutes a user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationMutesUpdatedEvent"}],"url":"\/documentation\/streamchat\/notificationmutesupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserId":{"role":"symbol","title":"UserId","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserId"}],"abstract":[{"type":"text","text":"A unique identifier of a user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserId"}],"url":"\/documentation\/streamchat\/userid"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMutesUpdatedEvent/currentUserId":{"role":"symbol","title":"currentUserId","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent\/currentUserId","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/notificationmutesupdatedevent\/currentuserid"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "`user: CurrentChatUser` is now accessible. Please, switch to `currentUser.id`",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent\/currentUserId"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat29NotificationMutesUpdatedEventV13currentUserIdSSvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "currentUserId"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6UserIda",
+        "text" : "UserId"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "platforms" : [
+
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "currentUserId"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "currentUserId"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6UserIda",
+              "text" : "UserId"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/notificationmutesupdatedevent\/currentuserid"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMutesUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when current user mutes\/unmutes a user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMutesUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationMutesUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationMutesUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationmutesupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationMutesUpdatedEvent/currentUserId": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationMutesUpdatedEvent\/currentUserId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentUserId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationmutesupdatedevent\/currentuserid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserId": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of a user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userid"
+}
+}
+}

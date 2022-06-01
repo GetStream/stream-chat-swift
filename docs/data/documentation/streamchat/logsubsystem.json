@@ -1,1 +1,613 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogSubsystem"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/logsubsystem"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/s25ExpressibleByArrayLiteralP","doc:\/\/io.getstream.StreamChat\/s9OptionSetP","doc:\/\/io.getstream.StreamChat\/SY","doc:\/\/io.getstream.StreamChat\/s10SetAlgebraP"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Entity for identifying which subsystem the log message comes from."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogSubsystem"}],"title":"LogSubsystem","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat12LogSubsystemV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"LogSubsystem"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/init(rawValue:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/rawValue"]},{"title":"Type Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/all","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/database","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/httpRequests","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/offlineSupport","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/other","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/webSocket"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/Equatable-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/OptionSet-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/SetAlgebra-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem":{"role":"symbol","title":"LogSubsystem","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogSubsystem"}],"abstract":[{"type":"text","text":"Entity for identifying which subsystem the log message comes from."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogSubsystem"}],"url":"\/documentation\/streamchat\/logsubsystem"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/SetAlgebra-Implementations":{"role":"collectionGroup","title":"SetAlgebra Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/SetAlgebra-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/setalgebra-implementations"},"doc://io.getstream.StreamChat/s10SetAlgebraP":{"type":"unresolvable","title":"Swift.SetAlgebra","identifier":"doc:\/\/io.getstream.StreamChat\/s10SetAlgebraP"},"doc://io.getstream.StreamChat/SY":{"type":"unresolvable","title":"Swift.RawRepresentable","identifier":"doc:\/\/io.getstream.StreamChat\/SY"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/database":{"role":"symbol","title":"database","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"database"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"}],"abstract":[{"type":"text","text":"The subsystem responsible for database operations."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/database","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/database"},"doc://io.getstream.StreamChat/s9OptionSetP":{"type":"unresolvable","title":"Swift.OptionSet","identifier":"doc:\/\/io.getstream.StreamChat\/s9OptionSetP"},"doc://io.getstream.StreamChat/s25ExpressibleByArrayLiteralP":{"type":"unresolvable","title":"Swift.ExpressibleByArrayLiteral","identifier":"doc:\/\/io.getstream.StreamChat\/s25ExpressibleByArrayLiteralP"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/other":{"role":"symbol","title":"other","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"other"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"}],"abstract":[{"type":"text","text":"The subsystem responsible for any other part of the SDK."},{"type":"text","text":" "},{"type":"text","text":"This is the default subsystem value for logging, to be used when "},{"type":"codeVoice","code":"subsystem"},{"type":"text","text":" is not specified."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/other","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/other"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/offlineSupport":{"role":"symbol","title":"offlineSupport","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"offlineSupport"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"}],"abstract":[{"type":"text","text":"The subsystem responsible for offline support."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/offlineSupport","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/offlinesupport"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/rawValue":{"role":"symbol","title":"rawValue","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"rawValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/rawValue","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/rawvalue"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/webSocket":{"role":"symbol","title":"webSocket","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"webSocket"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"}],"abstract":[{"type":"text","text":"The subsystem responsible for websocket operations."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/webSocket","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/websocket"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/OptionSet-Implementations":{"role":"collectionGroup","title":"OptionSet Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/OptionSet-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/optionset-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/all":{"role":"symbol","title":"all","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"all"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"}],"abstract":[{"type":"text","text":"All subsystems within the SDK."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/all","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/all"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/init(rawValue:)":{"role":"symbol","title":"init(rawValue:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"rawValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/init(rawValue:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/init(rawvalue:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/httpRequests":{"role":"symbol","title":"httpRequests","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"httpRequests"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"}],"abstract":[{"type":"text","text":"The subsystem responsible for HTTP operations."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/httpRequests","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logsubsystem\/httprequests"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Entity for identifying which subsystem the log message comes from.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat12LogSubsystemV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "LogSubsystem"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "LogSubsystem"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "LogSubsystem"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "LogSubsystem"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/s25ExpressibleByArrayLiteralP",
+        "doc:\/\/io.getstream.StreamChat\/s9OptionSetP",
+        "doc:\/\/io.getstream.StreamChat\/SY",
+        "doc:\/\/io.getstream.StreamChat\/s10SetAlgebraP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/rawValue"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/all",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/database",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/httpRequests",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/offlineSupport",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/other",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/webSocket"
+      ],
+      "title" : "Type Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/Equatable-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/OptionSet-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/SetAlgebra-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/logsubsystem"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SY": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem": {
+  "abstract" : [
+    {
+      "text" : "Entity for identifying which subsystem the log message comes from.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogSubsystem",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/OptionSet-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/OptionSet-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "OptionSet Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/optionset-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/SetAlgebra-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/SetAlgebra-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "SetAlgebra Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/setalgebra-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/all": {
+  "abstract" : [
+    {
+      "text" : "All subsystems within the SDK.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "all"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/all",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "all",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/all"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/database": {
+  "abstract" : [
+    {
+      "text" : "The subsystem responsible for database operations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "database"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/database",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "database",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/database"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/httpRequests": {
+  "abstract" : [
+    {
+      "text" : "The subsystem responsible for HTTP operations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "httpRequests"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/httpRequests",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "httpRequests",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/httprequests"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/init(rawvalue:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/offlineSupport": {
+  "abstract" : [
+    {
+      "text" : "The subsystem responsible for offline support.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "offlineSupport"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/offlineSupport",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "offlineSupport",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/offlinesupport"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/other": {
+  "abstract" : [
+    {
+      "text" : "The subsystem responsible for any other part of the SDK.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This is the default subsystem value for logging, to be used when ",
+      "type" : "text"
+    },
+    {
+      "code" : "subsystem",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is not specified.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "other"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/other",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "other",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/other"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/rawValue": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/rawValue",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "rawValue",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/rawvalue"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogSubsystem/webSocket": {
+  "abstract" : [
+    {
+      "text" : "The subsystem responsible for websocket operations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "webSocket"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogSubsystem\/webSocket",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "webSocket",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logsubsystem\/websocket"
+},
+"doc://io.getstream.StreamChat/s10SetAlgebraP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s10SetAlgebraP",
+  "title" : "Swift.SetAlgebra",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s25ExpressibleByArrayLiteralP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s25ExpressibleByArrayLiteralP",
+  "title" : "Swift.ExpressibleByArrayLiteral",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s9OptionSetP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s9OptionSetP",
+  "title" : "Swift.OptionSet",
+  "type" : "unresolvable"
+}
+}
+}

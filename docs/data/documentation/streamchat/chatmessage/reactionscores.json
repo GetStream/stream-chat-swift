@@ -1,1 +1,281 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionScores"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV","text":"MessageReactionType"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"]"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessage\/reactionscores"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionScores","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The reactions to the message created by any user."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionScores"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"]"}],"title":"reactionScores","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B7MessageV14reactionScoresSDyAA0C12ReactionTypeVSiGvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/MessageReactionType":{"role":"symbol","title":"MessageReactionType","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageReactionType"}],"abstract":[{"type":"text","text":"The type that describes a message reaction type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReactionType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageReactionType"}],"url":"\/documentation\/streamchat\/messagereactiontype"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage":{"role":"symbol","title":"ChatMessage","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessage"}],"abstract":[{"type":"text","text":"A type representing a chat message. "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":" is an immutable snapshot of a chat message entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessage"}],"url":"\/documentation\/streamchat\/chatmessage"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/reactionScores":{"role":"symbol","title":"reactionScores","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionScores"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"The reactions to the message created by any user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionScores","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/reactionscores"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The reactions to the message created by any user.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionScores"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B7MessageV14reactionScoresSDyAA0C12ReactionTypeVSiGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "reactionScores"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+        "text" : "MessageReactionType"
+      },
+      {
+        "kind" : "text",
+        "text" : " : "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Si",
+        "text" : "Int"
+      },
+      {
+        "kind" : "text",
+        "text" : "]"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "reactionScores"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "reactionScores"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReactionType",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+              "text" : "MessageReactionType"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Si",
+              "text" : "Int"
+            },
+            {
+              "kind" : "text",
+              "text" : "]"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessage\/reactionscores"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat message. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat message entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/reactionScores": {
+  "abstract" : [
+    {
+      "text" : "The reactions to the message created by any user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reactionScores"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+      "text" : "MessageReactionType"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionScores",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reactionScores",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/reactionscores"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageReactionType": {
+  "abstract" : [
+    {
+      "text" : "The type that describes a message reaction type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageReactionType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReactionType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageReactionType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageReactionType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagereactiontype"
+}
+}
+}

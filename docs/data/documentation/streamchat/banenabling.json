@@ -1,1 +1,500 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"BanEnabling"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/banenabling"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"An option to enable ban users."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"BanEnabling"}],"title":"BanEnabling","roleHeading":"Enumeration","role":"symbol","symbolKind":"enum","externalID":"s:10StreamChat11BanEnablingO","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"BanEnabling"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Enumeration Cases","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/disabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/enabled(timeoutInMinutes:reason:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/enabledForModerators(timeoutInMinutes:reason:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/reason","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/timeoutInMinutes"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/isEnabled(for:)"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/disabled":{"role":"symbol","title":"BanEnabling.disabled","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"disabled"}],"abstract":[{"type":"text","text":"Disabled for everyone."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/disabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/banenabling\/disabled"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling":{"role":"symbol","title":"BanEnabling","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"BanEnabling"}],"abstract":[{"type":"text","text":"An option to enable ban users."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"BanEnabling"}],"url":"\/documentation\/streamchat\/banenabling"},"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/isEnabled(for:)":{"role":"symbol","title":"isEnabled(for:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"isEnabled"},{"kind":"text","text":"("},{"kind":"externalParam","text":"for"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Returns true is the ban is enabled for the channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/isEnabled(for:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/banenabling\/isenabled(for:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/reason":{"role":"symbol","title":"reason","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"reason"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The default reason the ban was created."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/reason","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/banenabling\/reason"},"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/enabledForModerators(timeoutInMinutes:reason:)":{"role":"symbol","title":"BanEnabling.enabledForModerators(timeoutInMinutes:reason:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"enabledForModerators"},{"kind":"text","text":"("},{"kind":"externalParam","text":"timeoutInMinutes"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"reason"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?)"}],"abstract":[{"type":"text","text":"Enabled for channel members with a role of moderator or admin."},{"type":"text","text":" "},{"type":"text","text":"The default timeout in minutes until the ban is automatically expired."},{"type":"text","text":" "},{"type":"text","text":"The default reason the ban was created."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/enabledForModerators(timeoutInMinutes:reason:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/banenabling\/enabledformoderators(timeoutinminutes:reason:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/timeoutInMinutes":{"role":"symbol","title":"timeoutInMinutes","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"timeoutInMinutes"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The default timeout in minutes until the ban is automatically expired."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/timeoutInMinutes","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/banenabling\/timeoutinminutes"},"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/enabled(timeoutInMinutes:reason:)":{"role":"symbol","title":"BanEnabling.enabled(timeoutInMinutes:reason:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"enabled"},{"kind":"text","text":"("},{"kind":"externalParam","text":"timeoutInMinutes"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"reason"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?)"}],"abstract":[{"type":"text","text":"Enabled for everyone."},{"type":"text","text":" "},{"type":"text","text":"The default timeout in minutes until the ban is automatically expired."},{"type":"text","text":" "},{"type":"text","text":"The default reason the ban was created."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/enabled(timeoutInMinutes:reason:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/banenabling\/enabled(timeoutinminutes:reason:)"}}}
+{
+  "abstract" : [
+    {
+      "text" : "An option to enable ban users.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat11BanEnablingO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "BanEnabling"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "BanEnabling"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "BanEnabling"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "BanEnabling"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/disabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/enabled(timeoutInMinutes:reason:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/enabledForModerators(timeoutInMinutes:reason:)"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/reason",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/timeoutInMinutes"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/isEnabled(for:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/banenabling"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling": {
+  "abstract" : [
+    {
+      "text" : "An option to enable ban users.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "BanEnabling"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "BanEnabling"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "BanEnabling",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/banenabling"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/disabled": {
+  "abstract" : [
+    {
+      "text" : "Disabled for everyone.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "disabled"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/disabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "BanEnabling.disabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/banenabling\/disabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/enabled(timeoutInMinutes:reason:)": {
+  "abstract" : [
+    {
+      "text" : "Enabled for everyone.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The default timeout in minutes until the ban is automatically expired.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The default reason the ban was created.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "enabled"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "timeoutInMinutes"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "reason"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/enabled(timeoutInMinutes:reason:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "BanEnabling.enabled(timeoutInMinutes:reason:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/banenabling\/enabled(timeoutinminutes:reason:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/enabledForModerators(timeoutInMinutes:reason:)": {
+  "abstract" : [
+    {
+      "text" : "Enabled for channel members with a role of moderator or admin.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The default timeout in minutes until the ban is automatically expired.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The default reason the ban was created.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "enabledForModerators"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "timeoutInMinutes"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "reason"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/enabledForModerators(timeoutInMinutes:reason:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "BanEnabling.enabledForModerators(timeoutInMinutes:reason:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/banenabling\/enabledformoderators(timeoutinminutes:reason:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/isEnabled(for:)": {
+  "abstract" : [
+    {
+      "text" : "Returns true is the ban is enabled for the channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/isEnabled(for:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isEnabled(for:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/banenabling\/isenabled(for:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/reason": {
+  "abstract" : [
+    {
+      "text" : "The default reason the ban was created.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reason"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/reason",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reason",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/banenabling\/reason"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BanEnabling/timeoutInMinutes": {
+  "abstract" : [
+    {
+      "text" : "The default timeout in minutes until the ban is automatically expired.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "timeoutInMinutes"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BanEnabling\/timeoutInMinutes",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "timeoutInMinutes",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/banenabling\/timeoutinminutes"
+}
+}
+}

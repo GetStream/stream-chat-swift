@@ -1,1 +1,254 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"client"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient","preciseIdentifier":"s:10StreamChat0B6ClientC","text":"ChatClient"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessagecontroller\/client"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/client","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance this controller belongs to."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"client"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatClient","preciseIdentifier":"s:10StreamChat0B6ClientC"}],"title":"client","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B17MessageControllerC6clientAA0B6ClientCvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient":{"role":"symbol","title":"ChatClient","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClient"}],"abstract":[{"type":"text","text":"The root object representing a Stream Chat."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClient"}],"url":"\/documentation\/streamchat\/chatclient"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/client":{"role":"symbol","title":"client","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"client"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatClient","preciseIdentifier":"s:10StreamChat0B6ClientC"}],"abstract":[{"type":"text","text":"The "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance this controller belongs to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/client","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/client"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController":{"role":"symbol","title":"ChatMessageController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageController"}],"abstract":[{"type":"codeVoice","code":"ChatMessageController"},{"type":"text","text":" is a controller class which allows observing and mutating a chat message entity."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageController"}],"url":"\/documentation\/streamchat\/chatmessagecontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance this controller belongs to.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/client"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B17MessageControllerC6clientAA0B6ClientCvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "client"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B6ClientC",
+        "text" : "ChatClient"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "client"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "client"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B6ClientC",
+              "text" : "ChatClient"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessagecontroller\/client"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient": {
+  "abstract" : [
+    {
+      "text" : "The root object representing a Stream Chat.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClient",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating a chat message entity.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/client": {
+  "abstract" : [
+    {
+      "text" : "The ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance this controller belongs to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "client"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B6ClientC",
+      "text" : "ChatClient"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/client",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "client",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/client"
+}
+}
+}

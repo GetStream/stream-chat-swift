@@ -1,1 +1,416 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserChangePublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO","text":"EntityChange"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser","preciseIdentifier":"s:10StreamChat07CurrentB4UserC","text":"CurrentChatUser"},{"kind":"text","text":">, "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":"> { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/currentchatusercontroller\/currentuserchangepublisher"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUserChangePublisher","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A publisher emitting a new value every time the current user changes."}],"kind":"symbol","metadata":{"modules":[{"name":"StreamChat"}],"role":"symbol","title":"currentUserChangePublisher","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserChangePublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"CurrentChatUser","preciseIdentifier":"s:10StreamChat07CurrentB4UserC"},{"kind":"text","text":">, "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"symbolKind":"property","externalID":"s:10StreamChat07CurrentB14UserControllerC07currentD15ChangePublisher7Combine03AnyH0VyAA06EntityG0OyAA0cbD0CGs5NeverOGvp","extendedModule":"StreamChat","platforms":[{"beta":false,"unavailable":false,"name":"iOS","introducedAt":"13.0","deprecated":false}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser":{"role":"symbol","title":"CurrentChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUser"}],"abstract":[{"type":"text","text":"A type representing the currently logged-in user. "},{"type":"codeVoice","code":"CurrentChatUser"},{"type":"text","text":" is an immutable snapshot of a current user entity at"},{"type":"text","text":" "},{"type":"text","text":"the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUser"}],"url":"\/documentation\/streamchat\/currentchatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/EntityChange":{"role":"symbol","title":"EntityChange","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"EntityChange"}],"abstract":[{"type":"text","text":"This enum describes the changes to a certain item when observing it."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"EntityChange"}],"url":"\/documentation\/streamchat\/entitychange"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController":{"role":"symbol","title":"CurrentChatUserController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserController"}],"abstract":[{"type":"codeVoice","code":"CurrentChatUserController"},{"type":"text","text":" is a controller class which allows observing and mutating the currently logged-in"},{"type":"text","text":" "},{"type":"text","text":"user of "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUserController"}],"url":"\/documentation\/streamchat\/currentchatusercontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/currentUserChangePublisher":{"role":"symbol","title":"currentUserChangePublisher","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserChangePublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"CurrentChatUser","preciseIdentifier":"s:10StreamChat07CurrentB4UserC"},{"kind":"text","text":">, "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A publisher emitting a new value every time the current user changes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUserChangePublisher","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/currentuserchangepublisher"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time the current user changes.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUserChangePublisher"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat07CurrentB14UserControllerC07currentD15ChangePublisher7Combine03AnyH0VyAA06EntityG0OyAA0cbD0CGs5NeverOGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "currentUserChangePublisher"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+        "text" : "AnyPublisher"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+        "text" : "EntityChange"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat07CurrentB4UserC",
+        "text" : "CurrentChatUser"
+      },
+      {
+        "kind" : "text",
+        "text" : ">, "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5NeverO",
+        "text" : "Never"
+      },
+      {
+        "kind" : "text",
+        "text" : ">"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "platforms" : [
+      {
+        "beta" : false,
+        "deprecated" : false,
+        "introducedAt" : "13.0",
+        "name" : "iOS",
+        "unavailable" : false
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "currentUserChangePublisher"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "currentUserChangePublisher"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+              "text" : "AnyPublisher"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+              "text" : "EntityChange"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat07CurrentB4UserC",
+              "text" : "CurrentChatUser"
+            },
+            {
+              "kind" : "text",
+              "text" : ">, "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5NeverO",
+              "text" : "Never"
+            },
+            {
+              "kind" : "text",
+              "text" : "> { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/currentchatusercontroller\/currentuserchangepublisher"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing the currently logged-in user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a current user entity at",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController": {
+  "abstract" : [
+    {
+      "code" : "CurrentChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating the currently logged-in",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "user of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUserController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/currentUserChangePublisher": {
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time the current user changes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserChangePublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+      "text" : "AnyPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+      "text" : "EntityChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB4UserC",
+      "text" : "CurrentChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUserChangePublisher",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentUserChangePublisher",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/currentuserchangepublisher"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EntityChange": {
+  "abstract" : [
+    {
+      "text" : "This enum describes the changes to a certain item when observing it.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EntityChange"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EntityChange",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EntityChange"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "EntityChange",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/entitychange"
+}
+}
+}

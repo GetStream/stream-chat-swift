@@ -1,1 +1,172 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploaded"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/localattachmentstate\/uploaded"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploaded","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The attachment is successfully uploaded."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploaded"}],"title":"LocalAttachmentState.uploaded","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat20LocalAttachmentStateO8uploadedyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/uploaded":{"role":"symbol","title":"LocalAttachmentState.uploaded","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploaded"}],"abstract":[{"type":"text","text":"The attachment is successfully uploaded."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploaded","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/localattachmentstate\/uploaded"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState":{"role":"symbol","title":"LocalAttachmentState","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalAttachmentState"}],"abstract":[{"type":"text","text":"A local state of the attachment. Applies only for attachments linked to the new messages sent from current device."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LocalAttachmentState"}],"url":"\/documentation\/streamchat\/localattachmentstate"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The attachment is successfully uploaded.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploaded"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat20LocalAttachmentStateO8uploadedyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "uploaded"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "LocalAttachmentState.uploaded"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "uploaded"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/localattachmentstate\/uploaded"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState": {
+  "abstract" : [
+    {
+      "text" : "A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LocalAttachmentState"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LocalAttachmentState"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LocalAttachmentState",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/uploaded": {
+  "abstract" : [
+    {
+      "text" : "The attachment is successfully uploaded.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "uploaded"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/uploaded",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LocalAttachmentState.uploaded",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate\/uploaded"
+}
+}
+}

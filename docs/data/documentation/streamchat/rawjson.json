@@ -1,1 +1,670 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"indirect"},{"kind":"text","text":" "},{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"RawJSON"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/rawjson"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/Se","doc:\/\/io.getstream.StreamChat\/SE","doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A "},{"type":"codeVoice","code":"RawJSON"},{"type":"text","text":" type."},{"type":"text","text":" "},{"type":"text","text":"Used to store and operate objects of unknown structure that’s not possible to decode."},{"type":"text","text":" "},{"type":"text","text":"https:\/\/forums.swift.org\/t\/new-unevaluated-type-for-decoder-to-allow-later-re-encoding-of-data-with-unknown-structure\/11117"}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"RawJSON"}],"title":"RawJSON","roleHeading":"Enumeration","role":"symbol","symbolKind":"enum","externalID":"s:10StreamChat7RawJSONO","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"RawJSON"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Enumeration Cases","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/array(_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/bool(_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/dictionary(_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/nil","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/number(_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/string(_:)"]},{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/init(from:)"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/dictionary(with:forKey:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/encode(to:)"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/Equatable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/bool(_:)":{"role":"symbol","title":"RawJSON.bool(_:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"bool"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/bool(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/rawjson\/bool(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/encode(to:)":{"role":"symbol","title":"encode(to:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"encode"},{"kind":"text","text":"("},{"kind":"externalParam","text":"to"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Encoder","preciseIdentifier":"s:s7EncoderP"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/encode(to:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/rawjson\/encode(to:)"},"doc://io.getstream.StreamChat/SE":{"type":"unresolvable","title":"Swift.Encodable","identifier":"doc:\/\/io.getstream.StreamChat\/SE"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/init(from:)":{"role":"symbol","title":"init(from:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"from"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Decoder","preciseIdentifier":"s:s7DecoderP"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/init(from:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/rawjson\/init(from:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/dictionary(_:)":{"role":"symbol","title":"RawJSON.dictionary(_:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"dictionary"},{"kind":"text","text":"(["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"])"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/dictionary(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/rawjson\/dictionary(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/string(_:)":{"role":"symbol","title":"RawJSON.string(_:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"string"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/string(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/rawjson\/string(_:)"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON":{"role":"symbol","title":"RawJSON","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"RawJSON"}],"abstract":[{"type":"text","text":"A "},{"type":"codeVoice","code":"RawJSON"},{"type":"text","text":" type."},{"type":"text","text":" "},{"type":"text","text":"Used to store and operate objects of unknown structure that’s not possible to decode."},{"type":"text","text":" "},{"type":"text","text":"https:\/\/forums.swift.org\/t\/new-unevaluated-type-for-decoder-to-allow-later-re-encoding-of-data-with-unknown-structure\/11117"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"RawJSON"}],"url":"\/documentation\/streamchat\/rawjson"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/rawjson\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/dictionary(with:forKey:)":{"role":"symbol","title":"dictionary(with:forKey:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"dictionary"},{"kind":"text","text":"("},{"kind":"externalParam","text":"with"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"forKey"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"?"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/dictionary(with:forKey:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/rawjson\/dictionary(with:forkey:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/number(_:)":{"role":"symbol","title":"RawJSON.number(_:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"number"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"Double","preciseIdentifier":"s:Sd"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/number(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/rawjson\/number(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/nil":{"role":"symbol","title":"RawJSON.nil","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"`nil`"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/nil","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/rawjson\/nil"},"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/array(_:)":{"role":"symbol","title":"RawJSON.array(_:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"array"},{"kind":"text","text":"(["},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"])"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/array(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/rawjson\/array(_:)"},"doc://io.getstream.StreamChat/Se":{"type":"unresolvable","title":"Swift.Decodable","identifier":"doc:\/\/io.getstream.StreamChat\/Se"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "code" : "RawJSON",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Used to store and operate objects of unknown structure that’s not possible to decode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "https:\/\/forums.swift.org\/t\/new-unevaluated-type-for-decoder-to-allow-later-re-encoding-of-data-with-unknown-structure\/11117",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat7RawJSONO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "RawJSON"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "RawJSON"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "RawJSON"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "indirect"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "RawJSON"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/Se",
+        "doc:\/\/io.getstream.StreamChat\/SE",
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/array(_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/bool(_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/dictionary(_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/nil",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/number(_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/string(_:)"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/dictionary(with:forKey:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/encode(to:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/rawjson"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SE": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/Se": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "code" : "RawJSON",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Used to store and operate objects of unknown structure that’s not possible to decode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "https:\/\/forums.swift.org\/t\/new-unevaluated-type-for-decoder-to-allow-later-re-encoding-of-data-with-unknown-structure\/11117",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RawJSON"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RawJSON"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RawJSON",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/array(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "array"
+    },
+    {
+      "kind" : "text",
+      "text" : "(["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/array(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RawJSON.array(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/array(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/bool(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bool"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/bool(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RawJSON.bool(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/bool(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/dictionary(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dictionary"
+    },
+    {
+      "kind" : "text",
+      "text" : "(["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/dictionary(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RawJSON.dictionary(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/dictionary(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/dictionary(with:forKey:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dictionary"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "with"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "forKey"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/dictionary(with:forKey:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "dictionary(with:forKey:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/dictionary(with:forkey:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/encode(to:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/init(from:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/nil": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "`nil`"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/nil",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RawJSON.nil",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/nil"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/number(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "number"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sd",
+      "text" : "Double"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/number(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RawJSON.number(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/number(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/RawJSON/string(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "string"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/RawJSON\/string(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RawJSON.string(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/rawjson\/string(_:)"
+}
+}
+}

@@ -1,1 +1,272 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController","preciseIdentifier":"s:10StreamChat0B20ConnectionControllerC","text":"ChatConnectionController"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class\/controller"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/controller","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The underlying controller. You can still access it and call methods on it."}],"kind":"symbol","metadata":{"role":"symbol","title":"controller","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatConnectionController","preciseIdentifier":"s:10StreamChat0B20ConnectionControllerC"}],"symbolKind":"property","externalID":"s:10StreamChat0B20ConnectionControllerC16ObservableObjectC10controllerACvp","modules":[{"name":"StreamChat"}],"platforms":[{"beta":false,"unavailable":false,"name":"iOS","introducedAt":"13.0","deprecated":false}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController/ObservableObject-swift.class/controller":{"role":"symbol","title":"controller","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatConnectionController","preciseIdentifier":"s:10StreamChat0B20ConnectionControllerC"}],"abstract":[{"type":"text","text":"The underlying controller. You can still access it and call methods on it."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/controller","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class\/controller"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController":{"role":"symbol","title":"ChatConnectionController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatConnectionController"}],"abstract":[{"type":"codeVoice","code":"ChatConnectionController"},{"type":"text","text":" is a controller class which allows to explicitly"},{"type":"text","text":" "},{"type":"text","text":"connect\/disconnect the "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" and observe connection events."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatConnectionController"}],"url":"\/documentation\/streamchat\/chatconnectioncontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController/ObservableObject-swift.class":{"role":"symbol","title":"ChatConnectionController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"CurrentUserController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The underlying controller. You can still access it and call methods on it.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/controller"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B20ConnectionControllerC16ObservableObjectC10controllerACvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "controller"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B20ConnectionControllerC",
+        "text" : "ChatConnectionController"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "platforms" : [
+      {
+        "beta" : false,
+        "deprecated" : false,
+        "introducedAt" : "13.0",
+        "name" : "iOS",
+        "unavailable" : false
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "controller"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "controller"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B20ConnectionControllerC",
+              "text" : "ChatConnectionController"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class\/controller"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController": {
+  "abstract" : [
+    {
+      "code" : "ChatConnectionController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows to explicitly",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "connect\/disconnect the ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and observe connection events.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatConnectionController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatConnectionController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatConnectionController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatconnectioncontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatConnectionController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController/ObservableObject-swift.class/controller": {
+  "abstract" : [
+    {
+      "text" : "The underlying controller. You can still access it and call methods on it.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B20ConnectionControllerC",
+      "text" : "ChatConnectionController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/controller",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "controller",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class\/controller"
+}
+}
+}

@@ -1,1 +1,258 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelQuery"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery","preciseIdentifier":"s:10StreamChat12ChannelQueryV","text":"ChannelQuery"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" "},{"kind":"keyword","text":"set"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannelcontroller\/channelquery"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/channelQuery","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The ChannelQuery this controller observes."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelQuery"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelQuery","preciseIdentifier":"s:10StreamChat12ChannelQueryV"}],"title":"channelQuery","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B17ChannelControllerC12channelQueryAA0cF0Vvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery":{"role":"symbol","title":"ChannelQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelQuery"}],"abstract":[{"type":"text","text":"A channel query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelQuery"}],"url":"\/documentation\/streamchat\/channelquery"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/channelQuery":{"role":"symbol","title":"channelQuery","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelQuery"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelQuery","preciseIdentifier":"s:10StreamChat12ChannelQueryV"}],"abstract":[{"type":"text","text":"The ChannelQuery this controller observes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/channelQuery","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontroller\/channelquery"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController":{"role":"symbol","title":"ChatChannelController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelController"}],"url":"\/documentation\/streamchat\/chatchannelcontroller"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The ChannelQuery this controller observes.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/channelQuery"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B17ChannelControllerC12channelQueryAA0cF0Vvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "channelQuery"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat12ChannelQueryV",
+        "text" : "ChannelQuery"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "channelQuery"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "channelQuery"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat12ChannelQueryV",
+              "text" : "ChannelQuery"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelcontroller\/channelquery"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery": {
+  "abstract" : [
+    {
+      "text" : "A channel query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/channelQuery": {
+  "abstract" : [
+    {
+      "text" : "The ChannelQuery this controller observes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12ChannelQueryV",
+      "text" : "ChannelQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/channelQuery",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/channelquery"
+}
+}
+}

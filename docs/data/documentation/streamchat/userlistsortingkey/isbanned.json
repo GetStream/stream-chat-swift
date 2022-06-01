@@ -1,1 +1,176 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"isBanned"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/userlistsortingkey\/isbanned"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/isBanned","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Sort users by ban status."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"isBanned"}],"title":"UserListSortingKey.isBanned","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat18UserListSortingKeyO8isBannedyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/isBanned":{"role":"symbol","title":"UserListSortingKey.isBanned","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"isBanned"}],"abstract":[{"type":"text","text":"Sort users by ban status."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/isBanned","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/isbanned"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey":{"role":"symbol","title":"UserListSortingKey","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserListSortingKey"}],"abstract":[{"type":"codeVoice","code":"UserListSortingKey"},{"type":"text","text":" is keys by which you can get sorted users after query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserListSortingKey"}],"url":"\/documentation\/streamchat\/userlistsortingkey"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Sort users by ban status.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/isBanned"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18UserListSortingKeyO8isBannedyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "isBanned"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "UserListSortingKey.isBanned"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "isBanned"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/userlistsortingkey\/isbanned"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey": {
+  "abstract" : [
+    {
+      "code" : "UserListSortingKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is keys by which you can get sorted users after query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserListSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserListSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserListSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/isBanned": {
+  "abstract" : [
+    {
+      "text" : "Sort users by ban status.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isBanned"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/isBanned",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "UserListSortingKey.isBanned",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/isbanned"
+}
+}
+}

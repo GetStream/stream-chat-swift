@@ -1,1 +1,367 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserControllerDelegate"},{"kind":"text","text":" : AnyObject"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/currentchatusercontrollerdelegate"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/ObservableObject-swift.class"],"kind":"relationships","title":"Conforming Types","type":"conformingTypes"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate","interfaceLanguage":"swift"},"abstract":[{"type":"codeVoice","code":"CurrentChatUserController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserControllerDelegate"}],"title":"CurrentChatUserControllerDelegate","roleHeading":"Protocol","role":"symbol","symbolKind":"protocol","externalID":"s:10StreamChat07CurrentB22UserControllerDelegateP","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"CurrentChatUserControllerDelegate"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUser:)-9y5i0","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe":{"defaultImplementations":1,"role":"symbol","title":"currentUserController(_:didChangeCurrentUserUnreadCount:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"CurrentChatUserController","preciseIdentifier":"s:10StreamChat07CurrentB14UserControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeCurrentUserUnreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"The controller observed a change in the "},{"type":"codeVoice","code":"UnreadCount"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuserunreadcount:)-6khhe"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate/currentUserController(_:didChangeCurrentUser:)-9y5i0":{"defaultImplementations":1,"role":"symbol","title":"currentUserController(_:didChangeCurrentUser:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"CurrentChatUserController","preciseIdentifier":"s:10StreamChat07CurrentB14UserControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeCurrentUser"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"CurrentChatUser","preciseIdentifier":"s:10StreamChat07CurrentB4UserC"},{"kind":"text","text":">)"}],"abstract":[{"type":"text","text":"The controller observed a change in the "},{"type":"codeVoice","code":"CurrentChatUser"},{"type":"text","text":" entity."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUser:)-9y5i0","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuser:)-9y5i0"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate":{"role":"symbol","title":"CurrentChatUserControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"CurrentChatUserController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUserControllerDelegate"}],"url":"\/documentation\/streamchat\/currentchatusercontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/ObservableObject-swift.class":{"role":"symbol","title":"CurrentChatUserController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"CurrentUserController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/currentchatusercontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "code" : "CurrentChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat07CurrentB22UserControllerDelegateP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "CurrentChatUserControllerDelegate"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "CurrentChatUserControllerDelegate"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "CurrentChatUserControllerDelegate"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "CurrentChatUserControllerDelegate"
+            },
+            {
+              "kind" : "text",
+              "text" : " : AnyObject"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/ObservableObject-swift.class"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUser:)-9y5i0",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/currentchatusercontrollerdelegate"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUserController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "CurrentChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUserControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate/currentUserController(_:didChangeCurrentUser:)-9y5i0": {
+  "abstract" : [
+    {
+      "text" : "The controller observed a change in the ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " entity.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB14UserControllerC",
+      "text" : "CurrentChatUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeCurrentUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+      "text" : "EntityChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB4UserC",
+      "text" : "CurrentChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUser:)-9y5i0",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "currentUserController(_:didChangeCurrentUser:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuser:)-9y5i0"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe": {
+  "abstract" : [
+    {
+      "text" : "The controller observed a change in the ",
+      "type" : "text"
+    },
+    {
+      "code" : "UnreadCount",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB14UserControllerC",
+      "text" : "CurrentChatUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeCurrentUserUnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "currentUserController(_:didChangeCurrentUserUnreadCount:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuserunreadcount:)-6khhe"
+}
+}
+}

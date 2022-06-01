@@ -1,1 +1,322 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"extendedGraphemeClusterLiteral"},{"kind":"text","text":" "},{"kind":"internalParam","text":"value"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Self"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"StringLiteralType"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/filterkey\/init(extendedgraphemeclusterliteral:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey\/init(extendedGraphemeClusterLiteral:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Inherited from "},{"type":"codeVoice","code":"ExpressibleByExtendedGraphemeClusterLiteral.init(extendedGraphemeClusterLiteral:)"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"conformance":{"constraints":[{"type":"codeVoice","code":"ExtendedGraphemeClusterLiteralType"},{"type":"text","text":" is "},{"type":"codeVoice","code":"Self.StringLiteralType"},{"type":"text","text":"."}],"availabilityPrefix":[{"type":"text","text":"Available when"}],"conformancePrefix":[{"type":"text","text":"Conforms when"}]},"role":"symbol","title":"init(extendedGraphemeClusterLiteral:)","roleHeading":"Initializer","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"extendedGraphemeClusterLiteral"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Self"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"StringLiteralType"},{"kind":"text","text":")"}],"symbolKind":"init","externalID":"s:s26ExpressibleByStringLiteralPs0cD4TypeQz023ExtendedGraphemeClusterdE0RtzrlE08extendedghD0xAF_tcfc::SYNTHESIZED::s:10StreamChat9FilterKeyV","extendedModule":"Swift","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/FilterKey/init(extendedGraphemeClusterLiteral:)":{"conformance":{"constraints":[{"type":"codeVoice","code":"ExtendedGraphemeClusterLiteralType"},{"type":"text","text":" is "},{"type":"codeVoice","code":"Self.StringLiteralType"},{"type":"text","text":"."}],"availabilityPrefix":[{"type":"text","text":"Available when"}],"conformancePrefix":[{"type":"text","text":"Conforms when"}]},"role":"symbol","title":"init(extendedGraphemeClusterLiteral:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"extendedGraphemeClusterLiteral"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Self"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"StringLiteralType"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey\/init(extendedGraphemeClusterLiteral:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/filterkey\/init(extendedgraphemeclusterliteral:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/FilterKey":{"role":"symbol","title":"FilterKey","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"FilterKey"}],"abstract":[{"type":"text","text":"A helper struct that represents a key of a filter."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"FilterKey"}],"url":"\/documentation\/streamchat\/filterkey"},"doc://io.getstream.StreamChat/documentation/StreamChat/FilterKey/ExpressibleByExtendedGraphemeClusterLiteral-Implementations":{"role":"collectionGroup","title":"ExpressibleByExtendedGraphemeClusterLiteral Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/filterkey\/expressiblebyextendedgraphemeclusterliteral-implementations"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "ExpressibleByExtendedGraphemeClusterLiteral.init(extendedGraphemeClusterLiteral:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey\/init(extendedGraphemeClusterLiteral:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "conformance" : {
+      "availabilityPrefix" : [
+        {
+          "text" : "Available when",
+          "type" : "text"
+        }
+      ],
+      "conformancePrefix" : [
+        {
+          "text" : "Conforms when",
+          "type" : "text"
+        }
+      ],
+      "constraints" : [
+        {
+          "code" : "ExtendedGraphemeClusterLiteralType",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : " is ",
+          "type" : "text"
+        },
+        {
+          "code" : "Self.StringLiteralType",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : ".",
+          "type" : "text"
+        }
+      ]
+    },
+    "extendedModule" : "Swift",
+    "externalID" : "s:s26ExpressibleByStringLiteralPs0cD4TypeQz023ExtendedGraphemeClusterdE0RtzrlE08extendedghD0xAF_tcfc::SYNTHESIZED::s:10StreamChat9FilterKeyV",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "extendedGraphemeClusterLiteral"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "text" : "Self"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "text" : "StringLiteralType"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(extendedGraphemeClusterLiteral:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "extendedGraphemeClusterLiteral"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "value"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "Self"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "StringLiteralType"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/filterkey\/init(extendedgraphemeclusterliteral:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FilterKey": {
+  "abstract" : [
+    {
+      "text" : "A helper struct that represents a key of a filter.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FilterKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FilterKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FilterKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filterkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FilterKey/ExpressibleByExtendedGraphemeClusterLiteral-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ExpressibleByExtendedGraphemeClusterLiteral Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filterkey\/expressiblebyextendedgraphemeclusterliteral-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FilterKey/init(extendedGraphemeClusterLiteral:)": {
+  "abstract" : [
+
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "ExtendedGraphemeClusterLiteralType",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " is ",
+        "type" : "text"
+      },
+      {
+        "code" : "Self.StringLiteralType",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "extendedGraphemeClusterLiteral"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "StringLiteralType"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterKey\/init(extendedGraphemeClusterLiteral:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(extendedGraphemeClusterLiteral:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filterkey\/init(extendedgraphemeclusterliteral:)"
+}
+}
+}

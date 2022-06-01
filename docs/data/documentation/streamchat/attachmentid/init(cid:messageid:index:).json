@@ -1,1 +1,388 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV","text":"ChannelId"},{"kind":"text","text":", "},{"kind":"externalParam","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId","preciseIdentifier":"s:10StreamChat9MessageIda","text":"MessageId"},{"kind":"text","text":", "},{"kind":"externalParam","text":"index"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/attachmentid\/init(cid:messageid:index:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentId\/init(cid:messageId:index:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":", "},{"kind":"externalParam","text":"index"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":")"}],"title":"init(cid:messageId:index:)","roleHeading":"Initializer","role":"symbol","symbolKind":"init","externalID":"s:10StreamChat12AttachmentIdV3cid07messageD05indexAcA07ChannelD0V_SSSitcfc","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentId"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageId":{"role":"symbol","title":"MessageId","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageId"}],"abstract":[{"type":"text","text":"A unique identifier of a message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageId"}],"url":"\/documentation\/streamchat\/messageid"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentId/init(cid:messageId:index:)":{"role":"symbol","title":"init(cid:messageId:index:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":", "},{"kind":"externalParam","text":"index"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentId\/init(cid:messageId:index:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentid\/init(cid:messageid:index:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId":{"role":"symbol","title":"ChannelId","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelId"}],"abstract":[{"type":"text","text":"A type representing a unique identifier of a "},{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelId"}],"url":"\/documentation\/streamchat\/channelid"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentId":{"role":"symbol","title":"AttachmentId","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentId"}],"abstract":[{"type":"text","text":"An object that uniquely identifies a message attachment."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AttachmentId"}],"url":"\/documentation\/streamchat\/attachmentid"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentId"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentId\/init(cid:messageId:index:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat12AttachmentIdV3cid07messageD05indexAcA07ChannelD0V_SSSitcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "cid"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+        "text" : "ChannelId"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "messageId"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9MessageIda",
+        "text" : "MessageId"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "index"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Si",
+        "text" : "Int"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(cid:messageId:index:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "cid"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+              "text" : "ChannelId"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "messageId"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9MessageIda",
+              "text" : "MessageId"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "index"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Si",
+              "text" : "Int"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/attachmentid\/init(cid:messageid:index:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentId": {
+  "abstract" : [
+    {
+      "text" : "An object that uniquely identifies a message attachment.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AttachmentId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentId/init(cid:messageId:index:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "messageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "index"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentId\/init(cid:messageId:index:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(cid:messageId:index:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentid\/init(cid:messageid:index:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelId": {
+  "abstract" : [
+    {
+      "text" : "A type representing a unique identifier of a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageId": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of a message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messageid"
+}
+}
+}

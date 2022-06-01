@@ -1,1 +1,370 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UnreadCount"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/unreadcount"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/Se","doc:\/\/io.getstream.StreamChat\/SQ"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A struct containing information about unread counts of channels and messages."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UnreadCount"}],"title":"UnreadCount","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat11UnreadCountV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"UnreadCount"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/init(from:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/channels","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/messages"]},{"title":"Type Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/noUnread"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/Equatable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount":{"role":"symbol","title":"UnreadCount","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UnreadCount"}],"abstract":[{"type":"text","text":"A struct containing information about unread counts of channels and messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UnreadCount"}],"url":"\/documentation\/streamchat\/unreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/init(from:)":{"role":"symbol","title":"init(from:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"from"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Decoder","preciseIdentifier":"s:s7DecoderP"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/init(from:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/unreadcount\/init(from:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/messages":{"role":"symbol","title":"messages","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"messages"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"The number of unread messages across all channels."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/messages","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/unreadcount\/messages"},"doc://io.getstream.StreamChat/Se":{"type":"unresolvable","title":"Swift.Decodable","identifier":"doc:\/\/io.getstream.StreamChat\/Se"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/unreadcount\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/channels":{"role":"symbol","title":"channels","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"channels"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"The number of channels with unread messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/channels","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/unreadcount\/channels"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/noUnread":{"role":"symbol","title":"noUnread","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"noUnread"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"}],"abstract":[{"type":"text","text":"The default value representing no unread channels and messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/noUnread","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/unreadcount\/nounread"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A struct containing information about unread counts of channels and messages.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat11UnreadCountV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "UnreadCount"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "UnreadCount"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "UnreadCount"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "UnreadCount"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/Se",
+        "doc:\/\/io.getstream.StreamChat\/SQ"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/channels",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/messages"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/noUnread"
+      ],
+      "title" : "Type Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/unreadcount"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/Se": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount": {
+  "abstract" : [
+    {
+      "text" : "A struct containing information about unread counts of channels and messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UnreadCount"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UnreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unreadcount\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/channels": {
+  "abstract" : [
+    {
+      "text" : "The number of channels with unread messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channels"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/channels",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channels",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unreadcount\/channels"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unreadcount\/init(from:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/messages": {
+  "abstract" : [
+    {
+      "text" : "The number of unread messages across all channels.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messages"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/messages",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messages",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unreadcount\/messages"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount/noUnread": {
+  "abstract" : [
+    {
+      "text" : "The default value representing no unread channels and messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "noUnread"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount\/noUnread",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "noUnread",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unreadcount\/nounread"
+}
+}
+}

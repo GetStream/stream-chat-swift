@@ -1,1 +1,311 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploadingState"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentUploadingState","preciseIdentifier":"s:10StreamChat24AttachmentUploadingStateV","text":"AttachmentUploadingState"},{"kind":"text","text":"?"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"type":"paragraph","inlineContent":[{"type":"text","text":"Reflects uploading progress for local attachments that require file uploading."},{"type":"text","text":" "},{"type":"text","text":"Is "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" for local attachments that don’t need to be uploaded."}]},{"type":"paragraph","inlineContent":[{"type":"text","text":"Becomes "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" when the message with the current attachment is sent."}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessageattachment\/uploadingstate"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment\/uploadingState","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The uploading state of the attachment."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploadingState"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentUploadingState","preciseIdentifier":"s:10StreamChat24AttachmentUploadingStateV"},{"kind":"text","text":"?"}],"title":"uploadingState","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat0B17MessageAttachmentV14uploadingStateAA0d9UploadingF0VSgvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageAttachment/uploadingState":{"role":"symbol","title":"uploadingState","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploadingState"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentUploadingState","preciseIdentifier":"s:10StreamChat24AttachmentUploadingStateV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The uploading state of the attachment."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment\/uploadingState","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessageattachment\/uploadingstate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageAttachment":{"role":"symbol","title":"ChatMessageAttachment","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageAttachment"}],"abstract":[{"type":"text","text":"A type representing a chat message attachment."},{"type":"text","text":" "},{"type":"codeVoice","code":"ChatMessageAttachment<Payload>"},{"type":"text","text":" is an immutable snapshot of message attachment at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageAttachment"}],"url":"\/documentation\/streamchat\/chatmessageattachment"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentUploadingState":{"role":"symbol","title":"AttachmentUploadingState","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentUploadingState"}],"abstract":[{"type":"text","text":"A type representing the uploading state for attachments that require prior uploading."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentUploadingState","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AttachmentUploadingState"}],"url":"\/documentation\/streamchat\/attachmentuploadingstate"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The uploading state of the attachment.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment\/uploadingState"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B17MessageAttachmentV14uploadingStateAA0d9UploadingF0VSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "uploadingState"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat24AttachmentUploadingStateV",
+        "text" : "AttachmentUploadingState"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "uploadingState"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "uploadingState"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentUploadingState",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat24AttachmentUploadingStateV",
+              "text" : "AttachmentUploadingState"
+            },
+            {
+              "kind" : "text",
+              "text" : "?"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Reflects uploading progress for local attachments that require file uploading.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Is ",
+              "type" : "text"
+            },
+            {
+              "code" : "nil",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " for local attachments that don’t need to be uploaded.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Becomes ",
+              "type" : "text"
+            },
+            {
+              "code" : "nil",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " when the message with the current attachment is sent.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessageattachment\/uploadingstate"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentUploadingState": {
+  "abstract" : [
+    {
+      "text" : "A type representing the uploading state for attachments that require prior uploading.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentUploadingState"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentUploadingState",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentUploadingState"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AttachmentUploadingState",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentuploadingstate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageAttachment": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat message attachment.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessageAttachment<Payload>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of message attachment at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageAttachment"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageAttachment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageAttachment",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessageattachment"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageAttachment/uploadingState": {
+  "abstract" : [
+    {
+      "text" : "The uploading state of the attachment.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "uploadingState"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat24AttachmentUploadingStateV",
+      "text" : "AttachmentUploadingState"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment\/uploadingState",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "uploadingState",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessageattachment\/uploadingstate"
+}
+}
+}

@@ -1,1 +1,370 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"objectWillChange"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ObservableObjectPublisher","preciseIdentifier":"s:7Combine25ObservableObjectPublisherC"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class\/objectwillchange"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class\/objectWillChange","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Inherited from "},{"type":"codeVoice","code":"ObservableObject.objectWillChange"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"modules":[{"name":"StreamChat"}],"conformance":{"constraints":[{"type":"codeVoice","code":"ObjectWillChangePublisher"},{"type":"text","text":" is "},{"type":"codeVoice","code":"ObservableObjectPublisher"},{"type":"text","text":"."}],"availabilityPrefix":[{"type":"text","text":"Available when"}],"conformancePrefix":[{"type":"text","text":"Conforms when"}]},"role":"symbol","title":"objectWillChange","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"objectWillChange"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ObservableObjectPublisher","preciseIdentifier":"s:7Combine25ObservableObjectPublisherC"}],"symbolKind":"property","externalID":"s:7Combine16ObservableObjectPA2A0bC9PublisherC0c10WillChangeD0RtzrlE06objecteF0AEvp::SYNTHESIZED::s:10StreamChat0B21ChannelListControllerC16ObservableObjectC","extendedModule":"Combine","platforms":[{"beta":false,"unavailable":false,"name":"iOS","introducedAt":"13.0","deprecated":false},{"beta":false,"unavailable":false,"name":"macOS","introducedAt":"10.15","deprecated":false},{"beta":false,"unavailable":false,"name":"tvOS","introducedAt":"13.0","deprecated":false},{"beta":false,"unavailable":false,"name":"watchOS","introducedAt":"6.0","deprecated":false}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class\/ObservableObject-Implementations"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelListController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChannelListController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController":{"role":"symbol","title":"ChatChannelListController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelListController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelListController"},{"type":"text","text":" is a controller class which allows observing a list of chat channels based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelListController"}],"url":"\/documentation\/streamchat\/chatchannellistcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class/objectWillChange":{"conformance":{"constraints":[{"type":"codeVoice","code":"ObjectWillChangePublisher"},{"type":"text","text":" is "},{"type":"codeVoice","code":"ObservableObjectPublisher"},{"type":"text","text":"."}],"availabilityPrefix":[{"type":"text","text":"Available when"}],"conformancePrefix":[{"type":"text","text":"Conforms when"}]},"role":"symbol","title":"objectWillChange","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"objectWillChange"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ObservableObjectPublisher","preciseIdentifier":"s:7Combine25ObservableObjectPublisherC"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class\/objectWillChange","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class\/objectwillchange"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class/ObservableObject-Implementations":{"role":"collectionGroup","title":"ObservableObject Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class\/ObservableObject-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class\/observableobject-implementations"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "ObservableObject.objectWillChange",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class\/ObservableObject-Implementations"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class\/objectWillChange"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "conformance" : {
+      "availabilityPrefix" : [
+        {
+          "text" : "Available when",
+          "type" : "text"
+        }
+      ],
+      "conformancePrefix" : [
+        {
+          "text" : "Conforms when",
+          "type" : "text"
+        }
+      ],
+      "constraints" : [
+        {
+          "code" : "ObjectWillChangePublisher",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : " is ",
+          "type" : "text"
+        },
+        {
+          "code" : "ObservableObjectPublisher",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : ".",
+          "type" : "text"
+        }
+      ]
+    },
+    "extendedModule" : "Combine",
+    "externalID" : "s:7Combine16ObservableObjectPA2A0bC9PublisherC0c10WillChangeD0RtzrlE06objecteF0AEvp::SYNTHESIZED::s:10StreamChat0B21ChannelListControllerC16ObservableObjectC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "objectWillChange"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:7Combine25ObservableObjectPublisherC",
+        "text" : "ObservableObjectPublisher"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "platforms" : [
+      {
+        "beta" : false,
+        "deprecated" : false,
+        "introducedAt" : "13.0",
+        "name" : "iOS",
+        "unavailable" : false
+      },
+      {
+        "beta" : false,
+        "deprecated" : false,
+        "introducedAt" : "10.15",
+        "name" : "macOS",
+        "unavailable" : false
+      },
+      {
+        "beta" : false,
+        "deprecated" : false,
+        "introducedAt" : "13.0",
+        "name" : "tvOS",
+        "unavailable" : false
+      },
+      {
+        "beta" : false,
+        "deprecated" : false,
+        "introducedAt" : "6.0",
+        "name" : "watchOS",
+        "unavailable" : false
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "objectWillChange"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "objectWillChange"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:7Combine25ObservableObjectPublisherC",
+              "text" : "ObservableObjectPublisher"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class\/objectwillchange"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing a list of chat channels based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelListController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelListController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class/ObservableObject-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class\/ObservableObject-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ObservableObject Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class\/observableobject-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController/ObservableObject-swift.class/objectWillChange": {
+  "abstract" : [
+
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "ObjectWillChangePublisher",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " is ",
+        "type" : "text"
+      },
+      {
+        "code" : "ObservableObjectPublisher",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "objectWillChange"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine25ObservableObjectPublisherC",
+      "text" : "ObservableObjectPublisher"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController\/ObservableObject-swift.class\/objectWillChange",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "objectWillChange",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontroller\/observableobject-swift.class\/objectwillchange"
+}
+}
+}

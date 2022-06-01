@@ -1,1 +1,418 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"lazyCachedMap"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"T"},{"kind":"text","text":">("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"transformation"},{"kind":"text","text":": "},{"kind":"attribute","text":"@escaping"},{"kind":"text","text":" ("},{"kind":"typeIdentifier","text":"Element","preciseIdentifier":"s:Sk7ElementQa"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection","preciseIdentifier":"s:10StreamChat23LazyCachedMapCollectionV","text":"LazyCachedMapCollection"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp"},{"kind":"text","text":">"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/lazycachedmapcollection\/lazycachedmap(_:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/lazyCachedMap(_:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Lazily apply transformation to sequence"}],"kind":"symbol","metadata":{"conformance":{"constraints":[{"type":"codeVoice","code":"Index"},{"type":"text","text":" is "},{"type":"codeVoice","code":"Int"},{"type":"text","text":"."}],"availabilityPrefix":[{"type":"text","text":"Available when"}],"conformancePrefix":[{"type":"text","text":"Conforms when"}]},"role":"symbol","title":"lazyCachedMap(_:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"lazyCachedMap"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"T"},{"kind":"text","text":">(("},{"kind":"typeIdentifier","text":"Element","preciseIdentifier":"s:Sk7ElementQa"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"LazyCachedMapCollection","preciseIdentifier":"s:10StreamChat23LazyCachedMapCollectionV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp"},{"kind":"text","text":">"}],"symbolKind":"method","externalID":"s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF::SYNTHESIZED::s:10StreamChat23LazyCachedMapCollectionV","extendedModule":"Swift","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/RandomAccessCollection-Implementations"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection/lazyCachedMap(_:)":{"conformance":{"constraints":[{"type":"codeVoice","code":"Index"},{"type":"text","text":" is "},{"type":"codeVoice","code":"Int"},{"type":"text","text":"."}],"availabilityPrefix":[{"type":"text","text":"Available when"}],"conformancePrefix":[{"type":"text","text":"Conforms when"}]},"role":"symbol","title":"lazyCachedMap(_:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"lazyCachedMap"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"T"},{"kind":"text","text":">(("},{"kind":"typeIdentifier","text":"Element","preciseIdentifier":"s:Sk7ElementQa"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"LazyCachedMapCollection","preciseIdentifier":"s:10StreamChat23LazyCachedMapCollectionV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"Lazily apply transformation to sequence"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/lazyCachedMap(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/lazycachedmapcollection\/lazycachedmap(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection/RandomAccessCollection-Implementations":{"role":"collectionGroup","title":"RandomAccessCollection Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/RandomAccessCollection-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/lazycachedmapcollection\/randomaccesscollection-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection":{"role":"symbol","title":"LazyCachedMapCollection","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LazyCachedMapCollection"}],"abstract":[{"type":"text","text":"Read-only collection that applies transformation to element on first access."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LazyCachedMapCollection"}],"url":"\/documentation\/streamchat\/lazycachedmapcollection"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Lazily apply transformation to sequence",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/RandomAccessCollection-Implementations"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/lazyCachedMap(_:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "conformance" : {
+      "availabilityPrefix" : [
+        {
+          "text" : "Available when",
+          "type" : "text"
+        }
+      ],
+      "conformancePrefix" : [
+        {
+          "text" : "Conforms when",
+          "type" : "text"
+        }
+      ],
+      "constraints" : [
+        {
+          "code" : "Index",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : " is ",
+          "type" : "text"
+        },
+        {
+          "code" : "Int",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : ".",
+          "type" : "text"
+        }
+      ]
+    },
+    "extendedModule" : "Swift",
+    "externalID" : "s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF::SYNTHESIZED::s:10StreamChat23LazyCachedMapCollectionV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "lazyCachedMap"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "genericParameter",
+        "text" : "T"
+      },
+      {
+        "kind" : "text",
+        "text" : ">(("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sk7ElementQa",
+        "text" : "Element"
+      },
+      {
+        "kind" : "text",
+        "text" : ") -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp",
+        "text" : "T"
+      },
+      {
+        "kind" : "text",
+        "text" : ") -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat23LazyCachedMapCollectionV",
+        "text" : "LazyCachedMapCollection"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp",
+        "text" : "T"
+      },
+      {
+        "kind" : "text",
+        "text" : ">"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "lazyCachedMap(_:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "lazyCachedMap"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "kind" : "genericParameter",
+              "text" : "T"
+            },
+            {
+              "kind" : "text",
+              "text" : ">("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "transformation"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "attribute",
+              "text" : "@escaping"
+            },
+            {
+              "kind" : "text",
+              "text" : " ("
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sk7ElementQa",
+              "text" : "Element"
+            },
+            {
+              "kind" : "text",
+              "text" : ") -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp",
+              "text" : "T"
+            },
+            {
+              "kind" : "text",
+              "text" : ") -> "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat23LazyCachedMapCollectionV",
+              "text" : "LazyCachedMapCollection"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp",
+              "text" : "T"
+            },
+            {
+              "kind" : "text",
+              "text" : ">"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/lazycachedmapcollection\/lazycachedmap(_:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection": {
+  "abstract" : [
+    {
+      "text" : "Read-only collection that applies transformation to element on first access.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LazyCachedMapCollection"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LazyCachedMapCollection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LazyCachedMapCollection",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/lazycachedmapcollection"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection/RandomAccessCollection-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/RandomAccessCollection-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RandomAccessCollection Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/lazycachedmapcollection\/randomaccesscollection-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LazyCachedMapCollection/lazyCachedMap(_:)": {
+  "abstract" : [
+    {
+      "text" : "Lazily apply transformation to sequence",
+      "type" : "text"
+    }
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "Index",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " is ",
+        "type" : "text"
+      },
+      {
+        "code" : "Int",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "lazyCachedMap"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ">(("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sk7ElementQa",
+      "text" : "Element"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp",
+      "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat23LazyCachedMapCollectionV",
+      "text" : "LazyCachedMapCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sk10StreamChatSi5IndexRtzrlE13lazyCachedMapyAA04LazyeF10CollectionVyqd__Gqd__7ElementQzclF1TL_qd__mfp",
+      "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LazyCachedMapCollection\/lazyCachedMap(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "lazyCachedMap(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/lazycachedmapcollection\/lazycachedmap(_:)"
+}
+}
+}

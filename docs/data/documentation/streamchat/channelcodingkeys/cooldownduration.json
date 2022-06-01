@@ -1,1 +1,188 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"cooldownDuration"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelcodingkeys\/cooldownduration"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/cooldownDuration","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Cooldown duration for the channel, if it’s in slow mode."},{"type":"text","text":" "},{"type":"text","text":"This value will be 0 if the channel is not in slow mode."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"cooldownDuration"}],"title":"ChannelCodingKeys.cooldownDuration","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat17ChannelCodingKeysO16cooldownDurationyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys":{"role":"symbol","title":"ChannelCodingKeys","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelCodingKeys"}],"abstract":[{"type":"text","text":"Coding keys channel related payloads."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelCodingKeys"}],"url":"\/documentation\/streamchat\/channelcodingkeys"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys/cooldownDuration":{"role":"symbol","title":"ChannelCodingKeys.cooldownDuration","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"cooldownDuration"}],"abstract":[{"type":"text","text":"Cooldown duration for the channel, if it’s in slow mode."},{"type":"text","text":" "},{"type":"text","text":"This value will be 0 if the channel is not in slow mode."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/cooldownDuration","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelcodingkeys\/cooldownduration"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Cooldown duration for the channel, if it’s in slow mode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This value will be 0 if the channel is not in slow mode.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/cooldownDuration"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat17ChannelCodingKeysO16cooldownDurationyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "cooldownDuration"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "ChannelCodingKeys.cooldownDuration"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "cooldownDuration"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelcodingkeys\/cooldownduration"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys": {
+  "abstract" : [
+    {
+      "text" : "Coding keys channel related payloads.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelCodingKeys"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelCodingKeys"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelCodingKeys",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelcodingkeys"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelCodingKeys/cooldownDuration": {
+  "abstract" : [
+    {
+      "text" : "Cooldown duration for the channel, if it’s in slow mode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This value will be 0 if the channel is not in slow mode.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cooldownDuration"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelCodingKeys\/cooldownDuration",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ChannelCodingKeys.cooldownDuration",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelcodingkeys\/cooldownduration"
+}
+}
+}

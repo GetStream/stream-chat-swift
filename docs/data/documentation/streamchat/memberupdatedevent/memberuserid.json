@@ -1,1 +1,279 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberUserId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId","preciseIdentifier":"s:10StreamChat6UserIda","text":"UserId"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/memberupdatedevent\/memberuserid"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent\/memberUserId","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Inherited from "},{"type":"codeVoice","code":"MemberEvent.memberUserId"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"modules":[{"name":"StreamChat"}],"role":"symbol","title":"memberUserId","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberUserId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"}],"symbolKind":"property","externalID":"s:10StreamChat18MemberUpdatedEventV12memberUserIdSSvp","extendedModule":"StreamChat","platforms":[]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent\/MemberEvent-Implementations"]]},"deprecationSummary":[{"type":"paragraph","inlineContent":[{"type":"text","text":"`member: ChatChannelMember` is now accessible. Please, switch to `member.id`"}]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/UserId":{"role":"symbol","title":"UserId","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserId"}],"abstract":[{"type":"text","text":"A unique identifier of a user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserId"}],"url":"\/documentation\/streamchat\/userid"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent":{"role":"symbol","title":"MemberUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel member is updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberUpdatedEvent"}],"url":"\/documentation\/streamchat\/memberupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent/memberUserId":{"role":"symbol","title":"memberUserId","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberUserId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent\/memberUserId","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/memberupdatedevent\/memberuserid"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent/MemberEvent-Implementations":{"role":"collectionGroup","title":"MemberEvent Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent\/MemberEvent-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/memberupdatedevent\/memberevent-implementations"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "MemberEvent.memberUserId",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "`member: ChatChannelMember` is now accessible. Please, switch to `member.id`",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent\/MemberEvent-Implementations"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent\/memberUserId"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat18MemberUpdatedEventV12memberUserIdSSvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "memberUserId"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6UserIda",
+        "text" : "UserId"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "platforms" : [
+
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "memberUserId"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "memberUserId"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6UserIda",
+              "text" : "UserId"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/memberupdatedevent\/memberuserid"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel member is updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent/MemberEvent-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent\/MemberEvent-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "MemberEvent Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberupdatedevent\/memberevent-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent/memberUserId": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberUserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent\/memberUserId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "memberUserId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberupdatedevent\/memberuserid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserId": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of a user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userid"
+}
+}
+}

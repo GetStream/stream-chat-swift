@@ -1,1 +1,664 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelQuery"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelquery"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SE"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A channel query."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelQuery"}],"title":"ChannelQuery","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat12ChannelQueryV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChannelQuery"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/init(cid:pageSize:paginationParameter:membersLimit:watchersLimit:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/cid","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/id","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/membersLimit","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/options","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/pagination","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/type","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/watchersLimit"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/encode(to:)"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/id":{"role":"symbol","title":"id","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"id"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Channel id this query handles."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/id","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/id"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/options":{"role":"symbol","title":"options","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"options"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"QueryOptions","preciseIdentifier":"s:10StreamChat12QueryOptionsV"}],"abstract":[{"type":"text","text":"A query options."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/options","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/options"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/pagination":{"role":"symbol","title":"pagination","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessagesPagination","preciseIdentifier":"s:10StreamChat18MessagesPaginationV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"A pagination for messages (see "},{"type":"codeVoice","code":"MessagesPagination"},{"type":"text","text":")."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/pagination","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/pagination"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":"?"}],"abstract":[{"type":"codeVoice","code":"ChannelId"},{"type":"text","text":" this query handles."},{"type":"text","text":" "},{"type":"text","text":"If "},{"type":"codeVoice","code":"id"},{"type":"text","text":" part is missing then it’s impossible to create valid "},{"type":"codeVoice","code":"ChannelId"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/cid","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/type":{"role":"symbol","title":"type","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelType","preciseIdentifier":"s:10StreamChat11ChannelTypeO"}],"abstract":[{"type":"text","text":"Channel type this query handles."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/type","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/type"},"doc://io.getstream.StreamChat/SE":{"type":"unresolvable","title":"Swift.Encodable","identifier":"doc:\/\/io.getstream.StreamChat\/SE"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/watchersLimit":{"role":"symbol","title":"watchersLimit","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"watchersLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"A number of watchers for the channel to be retrieved."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/watchersLimit","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/watcherslimit"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery":{"role":"symbol","title":"ChannelQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelQuery"}],"abstract":[{"type":"text","text":"A channel query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelQuery"}],"url":"\/documentation\/streamchat\/channelquery"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/init(cid:pageSize:paginationParameter:membersLimit:watchersLimit:)":{"role":"symbol","title":"init(cid:pageSize:paginationParameter:membersLimit:watchersLimit:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"pageSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"paginationParameter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"PaginationParameter","preciseIdentifier":"s:10StreamChat19PaginationParameterO"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"membersLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"watchersLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"?)"}],"abstract":[{"type":"text","text":"Init a channel query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/init(cid:pageSize:paginationParameter:membersLimit:watchersLimit:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/init(cid:pagesize:paginationparameter:memberslimit:watcherslimit:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/membersLimit":{"role":"symbol","title":"membersLimit","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"membersLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"A number of members for the channel to be retrieved."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/membersLimit","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/memberslimit"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/encode(to:)":{"role":"symbol","title":"encode(to:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"encode"},{"kind":"text","text":"("},{"kind":"externalParam","text":"to"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Encoder","preciseIdentifier":"s:s7EncoderP"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/encode(to:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/encode(to:)"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A channel query.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat12ChannelQueryV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChannelQuery"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChannelQuery"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "ChannelQuery"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChannelQuery"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SE"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/init(cid:pageSize:paginationParameter:membersLimit:watchersLimit:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/cid",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/id",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/membersLimit",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/options",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/pagination",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/type",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/watchersLimit"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/encode(to:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelquery"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SE": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery": {
+  "abstract" : [
+    {
+      "text" : "A channel query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/cid": {
+  "abstract" : [
+    {
+      "code" : "ChannelId",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " this query handles.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "If ",
+      "type" : "text"
+    },
+    {
+      "code" : "id",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " part is missing then it’s impossible to create valid ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelId",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/cid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/cid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/encode(to:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/id": {
+  "abstract" : [
+    {
+      "text" : "Channel id this query handles.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/id",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "id",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/id"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/init(cid:pageSize:paginationParameter:membersLimit:watchersLimit:)": {
+  "abstract" : [
+    {
+      "text" : "Init a channel query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pageSize"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "paginationParameter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19PaginationParameterO",
+      "text" : "PaginationParameter"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "membersLimit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "watchersLimit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/init(cid:pageSize:paginationParameter:membersLimit:watchersLimit:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(cid:pageSize:paginationParameter:membersLimit:watchersLimit:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/init(cid:pagesize:paginationparameter:memberslimit:watcherslimit:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/membersLimit": {
+  "abstract" : [
+    {
+      "text" : "A number of members for the channel to be retrieved.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "membersLimit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/membersLimit",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "membersLimit",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/memberslimit"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/options": {
+  "abstract" : [
+    {
+      "text" : "A query options.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12QueryOptionsV",
+      "text" : "QueryOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/options",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "options",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/options"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/pagination": {
+  "abstract" : [
+    {
+      "text" : "A pagination for messages (see ",
+      "type" : "text"
+    },
+    {
+      "code" : "MessagesPagination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ").",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pagination"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat18MessagesPaginationV",
+      "text" : "MessagesPagination"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/pagination",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "pagination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/pagination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/type": {
+  "abstract" : [
+    {
+      "text" : "Channel type this query handles.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11ChannelTypeO",
+      "text" : "ChannelType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/type",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "type",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/type"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/watchersLimit": {
+  "abstract" : [
+    {
+      "text" : "A number of watchers for the channel to be retrieved.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "watchersLimit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/watchersLimit",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "watchersLimit",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/watcherslimit"
+}
+}
+}

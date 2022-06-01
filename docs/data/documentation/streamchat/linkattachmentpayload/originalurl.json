@@ -1,1 +1,223 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"originalURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/linkattachmentpayload\/originalurl"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload\/originalURL","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"An original "},{"type":"codeVoice","code":"URL"},{"type":"text","text":" that was included into the message text and then enriched."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"originalURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"}],"title":"originalURL","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat21LinkAttachmentPayloadV11originalURL10Foundation0G0Vvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LinkAttachmentPayload/originalURL":{"role":"symbol","title":"originalURL","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"originalURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"}],"abstract":[{"type":"text","text":"An original "},{"type":"codeVoice","code":"URL"},{"type":"text","text":" that was included into the message text and then enriched."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload\/originalURL","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/linkattachmentpayload\/originalurl"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LinkAttachmentPayload":{"role":"symbol","title":"LinkAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LinkAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".linkPreview"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LinkAttachmentPayload"}],"url":"\/documentation\/streamchat\/linkattachmentpayload"}}}
+{
+  "abstract" : [
+    {
+      "text" : "An original ",
+      "type" : "text"
+    },
+    {
+      "code" : "URL",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that was included into the message text and then enriched.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload\/originalURL"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat21LinkAttachmentPayloadV11originalURL10Foundation0G0Vvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "originalURL"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10Foundation3URLV",
+        "text" : "URL"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "originalURL"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "originalURL"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10Foundation3URLV",
+              "text" : "URL"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/linkattachmentpayload\/originalurl"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LinkAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".linkPreview",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/linkattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LinkAttachmentPayload/originalURL": {
+  "abstract" : [
+    {
+      "text" : "An original ",
+      "type" : "text"
+    },
+    {
+      "code" : "URL",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that was included into the message text and then enriched.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "originalURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload\/originalURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "originalURL",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/linkattachmentpayload\/originalurl"
+}
+}
+}

@@ -1,1 +1,434 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"init"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"Payload"},{"kind":"text","text":">("},{"kind":"externalParam","text":"payload"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Payload","preciseIdentifier":"s:10StreamChat20AnyAttachmentPayloadV7payloadACx_tcAA0dE0Rzlufc0E0L_xmfp"},{"kind":"text","text":") "},{"kind":"keyword","text":"where"},{"kind":"text","text":" "},{"kind":"typeIdentifier","text":"Payload"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload","preciseIdentifier":"s:10StreamChat17AttachmentPayloadP","text":"AttachmentPayload"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"payload","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The payload to have the message attachment with."}]}]}]},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"type":"aside","style":"important","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"This initializer should only be used for attachments already uploaded or not requiring uploading."},{"type":"text","text":" "},{"type":"text","text":"Please use "},{"type":"codeVoice","code":"init(localFileURL:"},{"type":"text","text":" initializer for attachments requiring uploading."}]}]},{"type":"paragraph","inlineContent":[{"type":"text","text":"If attached to the new message the attachment with the given payload will be immediately"},{"type":"text","text":" "},{"type":"text","text":"available on "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":" with the "},{"type":"codeVoice","code":"uploadingState == nil"},{"type":"text","text":" since it doesn’t require prior"},{"type":"text","text":" "},{"type":"text","text":"uploading."}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/anyattachmentpayload\/init(payload:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload\/init(payload:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Creates an instance of "},{"type":"codeVoice","code":"AnyAttachmentPayload"},{"type":"text","text":" with the given payload."}],"kind":"symbol","metadata":{"role":"symbol","title":"init(payload:)","roleHeading":"Initializer","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"Payload"},{"kind":"text","text":">("},{"kind":"externalParam","text":"payload"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Payload","preciseIdentifier":"s:10StreamChat20AnyAttachmentPayloadV7payloadACx_tcAA0dE0Rzlufc0E0L_xmfp"},{"kind":"text","text":")"}],"symbolKind":"init","externalID":"s:10StreamChat20AnyAttachmentPayloadV7payloadACx_tcAA0dE0Rzlufc","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/AnyAttachmentPayload/init(payload:)":{"role":"symbol","title":"init(payload:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"Payload"},{"kind":"text","text":">("},{"kind":"externalParam","text":"payload"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Payload","preciseIdentifier":"s:10StreamChat20AnyAttachmentPayloadV7payloadACx_tcAA0dE0Rzlufc0E0L_xmfp"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Creates an instance of "},{"type":"codeVoice","code":"AnyAttachmentPayload"},{"type":"text","text":" with the given payload."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload\/init(payload:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/anyattachmentpayload\/init(payload:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentPayload":{"role":"symbol","title":"AttachmentPayload","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentPayload"}],"abstract":[{"type":"text","text":"A protocol an attachment payload type has to conform in order it can be"},{"type":"text","text":" "},{"type":"text","text":"attached to\/exposed on the message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AttachmentPayload"}],"url":"\/documentation\/streamchat\/attachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/AnyAttachmentPayload":{"role":"symbol","title":"AnyAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AnyAttachmentPayload"}],"abstract":[{"type":"text","text":"A type-erased type that wraps either a local file URL that has to be uploaded"},{"type":"text","text":" "},{"type":"text","text":"and attached to the message OR a custom payload which the message attachment"},{"type":"text","text":" "},{"type":"text","text":"should contain."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AnyAttachmentPayload"}],"url":"\/documentation\/streamchat\/anyattachmentpayload"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Creates an instance of ",
+      "type" : "text"
+    },
+    {
+      "code" : "AnyAttachmentPayload",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the given payload.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload\/init(payload:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat20AnyAttachmentPayloadV7payloadACx_tcAA0dE0Rzlufc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "genericParameter",
+        "text" : "Payload"
+      },
+      {
+        "kind" : "text",
+        "text" : ">("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "payload"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat20AnyAttachmentPayloadV7payloadACx_tcAA0dE0Rzlufc0E0L_xmfp",
+        "text" : "Payload"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(payload:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "kind" : "genericParameter",
+              "text" : "Payload"
+            },
+            {
+              "kind" : "text",
+              "text" : ">("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "payload"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat20AnyAttachmentPayloadV7payloadACx_tcAA0dE0Rzlufc0E0L_xmfp",
+              "text" : "Payload"
+            },
+            {
+              "kind" : "text",
+              "text" : ") "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "where"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "Payload"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat17AttachmentPayloadP",
+              "text" : "AttachmentPayload"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The payload to have the message attachment with.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "payload"
+        }
+      ]
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "This initializer should only be used for attachments already uploaded or not requiring uploading.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Please use ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "init(localFileURL:",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " initializer for attachments requiring uploading.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "important",
+          "type" : "aside"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If attached to the new message the attachment with the given payload will be immediately",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "available on ",
+              "type" : "text"
+            },
+            {
+              "code" : "ChatMessage",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " with the ",
+              "type" : "text"
+            },
+            {
+              "code" : "uploadingState == nil",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " since it doesn’t require prior",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "uploading.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/anyattachmentpayload\/init(payload:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AnyAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "A type-erased type that wraps either a local file URL that has to be uploaded",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "and attached to the message OR a custom payload which the message attachment",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "should contain.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AnyAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AnyAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AnyAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/anyattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AnyAttachmentPayload/init(payload:)": {
+  "abstract" : [
+    {
+      "text" : "Creates an instance of ",
+      "type" : "text"
+    },
+    {
+      "code" : "AnyAttachmentPayload",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the given payload.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Payload"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "payload"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat20AnyAttachmentPayloadV7payloadACx_tcAA0dE0Rzlufc0E0L_xmfp",
+      "text" : "Payload"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload\/init(payload:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(payload:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/anyattachmentpayload\/init(payload:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "A protocol an attachment payload type has to conform in order it can be",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "attached to\/exposed on the message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentpayload"
+}
+}
+}

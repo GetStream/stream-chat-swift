@@ -1,1 +1,321 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"imageAttachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageImageAttachment","preciseIdentifier":"s:10StreamChat0B22MessageImageAttachmenta","text":"ChatMessageImageAttachment"},{"kind":"text","text":"] { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"type":"aside","style":"important","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The "},{"type":"codeVoice","code":"imageAttachments"},{"type":"text","text":" are loaded lazily and cached to maintain high performance."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessage\/imageattachments"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/imageAttachments","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Returns the attachments of "},{"type":"codeVoice","code":".image"},{"type":"text","text":" type."}],"kind":"symbol","metadata":{"role":"symbol","title":"imageAttachments","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"imageAttachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessageImageAttachment","preciseIdentifier":"s:10StreamChat0B22MessageImageAttachmenta"},{"kind":"text","text":"]"}],"symbolKind":"property","externalID":"s:10StreamChat0B7MessageV16imageAttachmentsSayAA0bC10AttachmentVyAA05ImageF7PayloadVGGvp","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/imageAttachments":{"role":"symbol","title":"imageAttachments","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"imageAttachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessageImageAttachment","preciseIdentifier":"s:10StreamChat0B22MessageImageAttachmenta"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Returns the attachments of "},{"type":"codeVoice","code":".image"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/imageAttachments","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/imageattachments"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageImageAttachment":{"role":"symbol","title":"ChatMessageImageAttachment","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageImageAttachment"}],"abstract":[{"type":"text","text":"A type alias for attachment with "},{"type":"codeVoice","code":"ImageAttachmentPayload"},{"type":"text","text":" payload type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageImageAttachment","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageImageAttachment"}],"url":"\/documentation\/streamchat\/chatmessageimageattachment"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage":{"role":"symbol","title":"ChatMessage","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessage"}],"abstract":[{"type":"text","text":"A type representing a chat message. "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":" is an immutable snapshot of a chat message entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessage"}],"url":"\/documentation\/streamchat\/chatmessage"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Returns the attachments of ",
+      "type" : "text"
+    },
+    {
+      "code" : ".image",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/imageAttachments"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B7MessageV16imageAttachmentsSayAA0bC10AttachmentVyAA05ImageF7PayloadVGGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "imageAttachments"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B22MessageImageAttachmenta",
+        "text" : "ChatMessageImageAttachment"
+      },
+      {
+        "kind" : "text",
+        "text" : "]"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "imageAttachments"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "imageAttachments"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageImageAttachment",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B22MessageImageAttachmenta",
+              "text" : "ChatMessageImageAttachment"
+            },
+            {
+              "kind" : "text",
+              "text" : "] { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "imageAttachments",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " are loaded lazily and cached to maintain high performance.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "important",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessage\/imageattachments"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat message. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat message entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/imageAttachments": {
+  "abstract" : [
+    {
+      "text" : "Returns the attachments of ",
+      "type" : "text"
+    },
+    {
+      "code" : ".image",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "imageAttachments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B22MessageImageAttachmenta",
+      "text" : "ChatMessageImageAttachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/imageAttachments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "imageAttachments",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/imageattachments"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageImageAttachment": {
+  "abstract" : [
+    {
+      "text" : "A type alias for attachment with ",
+      "type" : "text"
+    },
+    {
+      "code" : "ImageAttachmentPayload",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " payload type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageImageAttachment"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageImageAttachment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageImageAttachment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageImageAttachment",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessageimageattachment"
+}
+}
+}

@@ -1,1 +1,227 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"localFileURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":"?"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/anyattachmentpayload\/localfileurl"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload\/localFileURL","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A URL referencing to the local file that should be uploaded."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"localFileURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":"?"}],"title":"localFileURL","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat20AnyAttachmentPayloadV12localFileURL10Foundation0H0VSgvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/AnyAttachmentPayload":{"role":"symbol","title":"AnyAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AnyAttachmentPayload"}],"abstract":[{"type":"text","text":"A type-erased type that wraps either a local file URL that has to be uploaded"},{"type":"text","text":" "},{"type":"text","text":"and attached to the message OR a custom payload which the message attachment"},{"type":"text","text":" "},{"type":"text","text":"should contain."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AnyAttachmentPayload"}],"url":"\/documentation\/streamchat\/anyattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/AnyAttachmentPayload/localFileURL":{"role":"symbol","title":"localFileURL","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"localFileURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"A URL referencing to the local file that should be uploaded."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload\/localFileURL","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/anyattachmentpayload\/localfileurl"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A URL referencing to the local file that should be uploaded.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload\/localFileURL"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat20AnyAttachmentPayloadV12localFileURL10Foundation0H0VSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "localFileURL"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10Foundation3URLV",
+        "text" : "URL"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "localFileURL"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "localFileURL"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10Foundation3URLV",
+              "text" : "URL"
+            },
+            {
+              "kind" : "text",
+              "text" : "?"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/anyattachmentpayload\/localfileurl"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AnyAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "A type-erased type that wraps either a local file URL that has to be uploaded",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "and attached to the message OR a custom payload which the message attachment",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "should contain.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AnyAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AnyAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AnyAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/anyattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AnyAttachmentPayload/localFileURL": {
+  "abstract" : [
+    {
+      "text" : "A URL referencing to the local file that should be uploaded.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "localFileURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AnyAttachmentPayload\/localFileURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "localFileURL",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/anyattachmentpayload\/localfileurl"
+}
+}
+}

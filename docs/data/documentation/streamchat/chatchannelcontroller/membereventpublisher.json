@@ -1,1 +1,346 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberEventPublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent","preciseIdentifier":"s:10StreamChat11MemberEventP","text":"MemberEvent"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":"> { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannelcontroller\/membereventpublisher"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/memberEventPublisher","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A publisher emitting a new value every time member event received."}],"kind":"symbol","metadata":{"modules":[{"name":"StreamChat"}],"role":"symbol","title":"memberEventPublisher","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberEventPublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"MemberEvent","preciseIdentifier":"s:10StreamChat11MemberEventP"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"symbolKind":"property","externalID":"s:10StreamChat0B17ChannelControllerC20memberEventPublisher7Combine03AnyG0VyAA06MemberF0_ps5NeverOGvp","extendedModule":"StreamChat","platforms":[{"beta":false,"unavailable":false,"name":"iOS","introducedAt":"13.0","deprecated":false}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController":{"role":"symbol","title":"ChatChannelController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelController"}],"url":"\/documentation\/streamchat\/chatchannelcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/memberEventPublisher":{"role":"symbol","title":"memberEventPublisher","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberEventPublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"MemberEvent","preciseIdentifier":"s:10StreamChat11MemberEventP"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A publisher emitting a new value every time member event received."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/memberEventPublisher","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontroller\/membereventpublisher"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent":{"role":"symbol","title":"MemberEvent","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberEvent"}],"abstract":[{"type":"text","text":"A protocol for any "},{"type":"codeVoice","code":"MemberEvent"},{"type":"text","text":" where it has a "},{"type":"codeVoice","code":"member"},{"type":"text","text":", and "},{"type":"codeVoice","code":"channel"},{"type":"text","text":" payload."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberEvent"}],"url":"\/documentation\/streamchat\/memberevent"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time member event received.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/memberEventPublisher"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B17ChannelControllerC20memberEventPublisher7Combine03AnyG0VyAA06MemberF0_ps5NeverOGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "memberEventPublisher"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+        "text" : "AnyPublisher"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat11MemberEventP",
+        "text" : "MemberEvent"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5NeverO",
+        "text" : "Never"
+      },
+      {
+        "kind" : "text",
+        "text" : ">"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "platforms" : [
+      {
+        "beta" : false,
+        "deprecated" : false,
+        "introducedAt" : "13.0",
+        "name" : "iOS",
+        "unavailable" : false
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "memberEventPublisher"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "memberEventPublisher"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+              "text" : "AnyPublisher"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat11MemberEventP",
+              "text" : "MemberEvent"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5NeverO",
+              "text" : "Never"
+            },
+            {
+              "kind" : "text",
+              "text" : "> { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelcontroller\/membereventpublisher"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/memberEventPublisher": {
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time member event received.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberEventPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+      "text" : "AnyPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11MemberEventP",
+      "text" : "MemberEvent"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/memberEventPublisher",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "memberEventPublisher",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/membereventpublisher"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent": {
+  "abstract" : [
+    {
+      "text" : "A protocol for any ",
+      "type" : "text"
+    },
+    {
+      "code" : "MemberEvent",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " where it has a ",
+      "type" : "text"
+    },
+    {
+      "code" : "member",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", and ",
+      "type" : "text"
+    },
+    {
+      "code" : "channel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " payload.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberevent"
+}
+}
+}

@@ -1,1 +1,157 @@
-{"variants":[{"paths":["\/documentation\/streamchat\/baselogdestination\/logdestination-implementations"],"traits":[{"interfaceLanguage":"swift"}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/LogDestination-Implementations","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"article","metadata":{"modules":[{"name":"StreamChat"}],"role":"collectionGroup","title":"LogDestination Implementations"},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/subsystems-x86n"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/BaseLogDestination":{"role":"symbol","title":"BaseLogDestination","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"BaseLogDestination"}],"abstract":[{"type":"text","text":"Base class for log destinations. Already implements basic functionaly to allow easy destination implementation."},{"type":"text","text":" "},{"type":"text","text":"Extending this class, instead of implementing "},{"type":"codeVoice","code":"LogDestination"},{"type":"text","text":" is easier (and recommended) for creating new destinations."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"BaseLogDestination"}],"url":"\/documentation\/streamchat\/baselogdestination"},"doc://io.getstream.StreamChat/documentation/StreamChat/BaseLogDestination/subsystems-x86n":{"role":"symbol","title":"subsystems","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"subsystems"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogSubsystem","preciseIdentifier":"s:10StreamChat12LogSubsystemV"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/subsystems-x86n","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/baselogdestination\/subsystems-x86n"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/LogDestination-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "LogDestination Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/subsystems-x86n"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/baselogdestination\/logdestination-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseLogDestination": {
+  "abstract" : [
+    {
+      "text" : "Base class for log destinations. Already implements basic functionaly to allow easy destination implementation.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Extending this class, instead of implementing ",
+      "type" : "text"
+    },
+    {
+      "code" : "LogDestination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is easier (and recommended) for creating new destinations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "BaseLogDestination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "BaseLogDestination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "BaseLogDestination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baselogdestination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseLogDestination/subsystems-x86n": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "subsystems"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12LogSubsystemV",
+      "text" : "LogSubsystem"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/subsystems-x86n",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "subsystems",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baselogdestination\/subsystems-x86n"
+}
+}
+}

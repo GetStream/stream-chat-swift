@@ -1,1 +1,533 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"PinnedMessagesPagination"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/pinnedmessagespagination"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SE","doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Pagination options available when paginating pinned messages."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"PinnedMessagesPagination"}],"title":"PinnedMessagesPagination","roleHeading":"Enumeration","role":"symbol","symbolKind":"enum","externalID":"s:10StreamChat24PinnedMessagesPaginationO","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"PinnedMessagesPagination"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Enumeration Cases","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/after(_:inclusive:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/aroundMessage(_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/aroundTimestamp(_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/before(_:inclusive:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/earlier(_:inclusive:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/later(_:inclusive:)"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/Encodable-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/Equatable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/aroundTimestamp(_:)":{"role":"symbol","title":"PinnedMessagesPagination.aroundTimestamp(_:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"aroundTimestamp"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"When used, the backend returns messages pinned at around the given timestamp."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/aroundTimestamp(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pinnedmessagespagination\/aroundtimestamp(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/before(_:inclusive:)":{"role":"symbol","title":"PinnedMessagesPagination.before(_:inclusive:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"before"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":", "},{"kind":"externalParam","text":"inclusive"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"When used, the backend returns messages pinned earlier then the message with the given id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/before(_:inclusive:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pinnedmessagespagination\/before(_:inclusive:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/aroundMessage(_:)":{"role":"symbol","title":"PinnedMessagesPagination.aroundMessage(_:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"aroundMessage"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"When used, the backend returns messages around the message with the given id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/aroundMessage(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pinnedmessagespagination\/aroundmessage(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/later(_:inclusive:)":{"role":"symbol","title":"PinnedMessagesPagination.later(_:inclusive:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"later"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"inclusive"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"When used, the backend returns messages pinned later than the given timestamp."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/later(_:inclusive:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pinnedmessagespagination\/later(_:inclusive:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/after(_:inclusive:)":{"role":"symbol","title":"PinnedMessagesPagination.after(_:inclusive:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"after"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":", "},{"kind":"externalParam","text":"inclusive"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"When used, the backend returns messages pinned earlier then the message with the given id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/after(_:inclusive:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pinnedmessagespagination\/after(_:inclusive:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/Encodable-Implementations":{"role":"collectionGroup","title":"Encodable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/Encodable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/pinnedmessagespagination\/encodable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination":{"role":"symbol","title":"PinnedMessagesPagination","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"PinnedMessagesPagination"}],"abstract":[{"type":"text","text":"Pagination options available when paginating pinned messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"PinnedMessagesPagination"}],"url":"\/documentation\/streamchat\/pinnedmessagespagination"},"doc://io.getstream.StreamChat/SE":{"type":"unresolvable","title":"Swift.Encodable","identifier":"doc:\/\/io.getstream.StreamChat\/SE"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/pinnedmessagespagination\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/earlier(_:inclusive:)":{"role":"symbol","title":"PinnedMessagesPagination.earlier(_:inclusive:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"earlier"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"inclusive"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"When used, the backend returns messages pinned earlier than the given timestamp."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/earlier(_:inclusive:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pinnedmessagespagination\/earlier(_:inclusive:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Pagination options available when paginating pinned messages.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat24PinnedMessagesPaginationO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "PinnedMessagesPagination"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "PinnedMessagesPagination"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "PinnedMessagesPagination"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "PinnedMessagesPagination"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SE",
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/after(_:inclusive:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/aroundMessage(_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/aroundTimestamp(_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/before(_:inclusive:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/earlier(_:inclusive:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/later(_:inclusive:)"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/Encodable-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/pinnedmessagespagination"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SE": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination": {
+  "abstract" : [
+    {
+      "text" : "Pagination options available when paginating pinned messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PinnedMessagesPagination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PinnedMessagesPagination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PinnedMessagesPagination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/Encodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/Encodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Encodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination\/encodable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/after(_:inclusive:)": {
+  "abstract" : [
+    {
+      "text" : "When used, the backend returns messages pinned earlier then the message with the given id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "after"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inclusive"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/after(_:inclusive:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PinnedMessagesPagination.after(_:inclusive:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination\/after(_:inclusive:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/aroundMessage(_:)": {
+  "abstract" : [
+    {
+      "text" : "When used, the backend returns messages around the message with the given id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "aroundMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/aroundMessage(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PinnedMessagesPagination.aroundMessage(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination\/aroundmessage(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/aroundTimestamp(_:)": {
+  "abstract" : [
+    {
+      "text" : "When used, the backend returns messages pinned at around the given timestamp.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "aroundTimestamp"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/aroundTimestamp(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PinnedMessagesPagination.aroundTimestamp(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination\/aroundtimestamp(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/before(_:inclusive:)": {
+  "abstract" : [
+    {
+      "text" : "When used, the backend returns messages pinned earlier then the message with the given id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "before"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inclusive"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/before(_:inclusive:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PinnedMessagesPagination.before(_:inclusive:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination\/before(_:inclusive:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/earlier(_:inclusive:)": {
+  "abstract" : [
+    {
+      "text" : "When used, the backend returns messages pinned earlier than the given timestamp.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "earlier"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inclusive"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/earlier(_:inclusive:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PinnedMessagesPagination.earlier(_:inclusive:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination\/earlier(_:inclusive:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination/later(_:inclusive:)": {
+  "abstract" : [
+    {
+      "text" : "When used, the backend returns messages pinned later than the given timestamp.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "later"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inclusive"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination\/later(_:inclusive:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PinnedMessagesPagination.later(_:inclusive:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination\/later(_:inclusive:)"
+}
+}
+}

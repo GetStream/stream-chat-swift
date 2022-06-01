@@ -1,1 +1,523 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentPayload"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"Decodable","preciseIdentifier":"s:Se"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Encodable","preciseIdentifier":"s:SE"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/attachmentpayload"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/Se","doc:\/\/io.getstream.StreamChat\/SE"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AudioAttachmentPayload","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FileAttachmentPayload","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/GiphyAttachmentPayload","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ImageAttachmentPayload","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload"],"kind":"relationships","title":"Conforming Types","type":"conformingTypes"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A protocol an attachment payload type has to conform in order it can be"},{"type":"text","text":" "},{"type":"text","text":"attached to\/exposed on the message."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentPayload"}],"title":"AttachmentPayload","roleHeading":"Protocol","role":"symbol","symbolKind":"protocol","externalID":"s:10StreamChat17AttachmentPayloadP","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"AttachmentPayload"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Type Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload\/type"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/GiphyAttachmentPayload":{"role":"symbol","title":"GiphyAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"GiphyAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".giphy"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/GiphyAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"GiphyAttachmentPayload"}],"url":"\/documentation\/streamchat\/giphyattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/FileAttachmentPayload":{"role":"symbol","title":"FileAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"FileAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".file"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FileAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"FileAttachmentPayload"}],"url":"\/documentation\/streamchat\/fileattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentPayload":{"role":"symbol","title":"AttachmentPayload","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentPayload"}],"abstract":[{"type":"text","text":"A protocol an attachment payload type has to conform in order it can be"},{"type":"text","text":" "},{"type":"text","text":"attached to\/exposed on the message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AttachmentPayload"}],"url":"\/documentation\/streamchat\/attachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/LinkAttachmentPayload":{"role":"symbol","title":"LinkAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LinkAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".linkPreview"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LinkAttachmentPayload"}],"url":"\/documentation\/streamchat\/linkattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/AudioAttachmentPayload":{"role":"symbol","title":"AudioAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AudioAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".media"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AudioAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AudioAttachmentPayload"}],"url":"\/documentation\/streamchat\/audioattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload":{"role":"symbol","title":"VideoAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"VideoAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".media"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"VideoAttachmentPayload"}],"url":"\/documentation\/streamchat\/videoattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/ImageAttachmentPayload":{"role":"symbol","title":"ImageAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ImageAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".image"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ImageAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ImageAttachmentPayload"}],"url":"\/documentation\/streamchat\/imageattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentPayload/type":{"role":"symbol","title":"type","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentType","preciseIdentifier":"s:10StreamChat14AttachmentTypeV"}],"abstract":[{"type":"text","text":"A type of resulting attachment."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload\/type","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/attachmentpayload\/type"},"doc://io.getstream.StreamChat/SE":{"type":"unresolvable","title":"Swift.Encodable","identifier":"doc:\/\/io.getstream.StreamChat\/SE"},"doc://io.getstream.StreamChat/Se":{"type":"unresolvable","title":"Swift.Decodable","identifier":"doc:\/\/io.getstream.StreamChat\/Se"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A protocol an attachment payload type has to conform in order it can be",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "attached to\/exposed on the message.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat17AttachmentPayloadP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "AttachmentPayload"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "AttachmentPayload"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "AttachmentPayload"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "AttachmentPayload"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Se",
+              "text" : "Decodable"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SE",
+              "text" : "Encodable"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/Se",
+        "doc:\/\/io.getstream.StreamChat\/SE"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AudioAttachmentPayload",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FileAttachmentPayload",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/GiphyAttachmentPayload",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ImageAttachmentPayload",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload\/type"
+      ],
+      "title" : "Type Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/attachmentpayload"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SE": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/Se": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "A protocol an attachment payload type has to conform in order it can be",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "attached to\/exposed on the message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentPayload/type": {
+  "abstract" : [
+    {
+      "text" : "A type of resulting attachment.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14AttachmentTypeV",
+      "text" : "AttachmentType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentPayload\/type",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "type",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentpayload\/type"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AudioAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".media",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AudioAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AudioAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AudioAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AudioAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/audioattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FileAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".file",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FileAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/fileattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/GiphyAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".giphy",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "GiphyAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/GiphyAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "GiphyAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "GiphyAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/giphyattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ImageAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".image",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ImageAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ImageAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ImageAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ImageAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/imageattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LinkAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".linkPreview",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LinkAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/linkattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".media",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VideoAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VideoAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VideoAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/videoattachmentpayload"
+}
+}
+}

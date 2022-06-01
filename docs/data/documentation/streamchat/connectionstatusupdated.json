@@ -1,1 +1,282 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionStatusUpdated"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/connectionstatusupdated"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Emitted when "},{"type":"codeVoice","code":"Client"},{"type":"text","text":" changes it’s connection status. You can listen to this event and indicate the different connection"},{"type":"text","text":" "},{"type":"text","text":"states in the UI (banners like “Offline”, “Reconnecting””, etc.)."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionStatusUpdated"}],"title":"ConnectionStatusUpdated","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat23ConnectionStatusUpdatedV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ConnectionStatusUpdated"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated\/connectionStatus"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/Event":{"role":"symbol","title":"Event","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Event"}],"abstract":[{"type":"text","text":"An "},{"type":"codeVoice","code":"Event"},{"type":"text","text":" object representing an event in the chat system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Event"}],"url":"\/documentation\/streamchat\/event"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatusUpdated":{"role":"symbol","title":"ConnectionStatusUpdated","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionStatusUpdated"}],"abstract":[{"type":"text","text":"Emitted when "},{"type":"codeVoice","code":"Client"},{"type":"text","text":" changes it’s connection status. You can listen to this event and indicate the different connection"},{"type":"text","text":" "},{"type":"text","text":"states in the UI (banners like “Offline”, “Reconnecting””, etc.)."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ConnectionStatusUpdated"}],"url":"\/documentation\/streamchat\/connectionstatusupdated"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatusUpdated/connectionStatus":{"role":"symbol","title":"connectionStatus","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectionStatus"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ConnectionStatus","preciseIdentifier":"s:10StreamChat16ConnectionStatusO"}],"abstract":[{"type":"text","text":"The current connection status of "},{"type":"codeVoice","code":"Client"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated\/connectionStatus","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/connectionstatusupdated\/connectionstatus"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Emitted when ",
+      "type" : "text"
+    },
+    {
+      "code" : "Client",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " changes it’s connection status. You can listen to this event and indicate the different connection",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "states in the UI (banners like “Offline”, “Reconnecting””, etc.).",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat23ConnectionStatusUpdatedV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ConnectionStatusUpdated"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ConnectionStatusUpdated"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "ConnectionStatusUpdated"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ConnectionStatusUpdated"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated\/connectionStatus"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/connectionstatusupdated"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatusUpdated": {
+  "abstract" : [
+    {
+      "text" : "Emitted when ",
+      "type" : "text"
+    },
+    {
+      "code" : "Client",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " changes it’s connection status. You can listen to this event and indicate the different connection",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "states in the UI (banners like “Offline”, “Reconnecting””, etc.).",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionStatusUpdated"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionStatusUpdated"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConnectionStatusUpdated",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionstatusupdated"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatusUpdated/connectionStatus": {
+  "abstract" : [
+    {
+      "text" : "The current connection status of ",
+      "type" : "text"
+    },
+    {
+      "code" : "Client",
+      "type" : "codeVoice"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectionStatus"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ConnectionStatusO",
+      "text" : "ConnectionStatus"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatusUpdated\/connectionStatus",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "connectionStatus",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionstatusupdated\/connectionstatus"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Event": {
+  "abstract" : [
+    {
+      "text" : "An ",
+      "type" : "text"
+    },
+    {
+      "code" : "Event",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " object representing an event in the chat system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Event",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/event"
+}
+}
+}

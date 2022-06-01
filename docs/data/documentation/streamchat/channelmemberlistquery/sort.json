@@ -1,1 +1,328 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sort"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting","preciseIdentifier":"s:10StreamChat7SortingV","text":"Sorting"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListSortingKey","preciseIdentifier":"s:10StreamChat27ChannelMemberListSortingKeyO","text":"ChannelMemberListSortingKey"},{"kind":"text","text":">]"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelmemberlistquery\/sort"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListQuery\/sort","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A sorting for the query (see "},{"type":"codeVoice","code":"Sorting"},{"type":"text","text":")."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sort"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Sorting","preciseIdentifier":"s:10StreamChat7SortingV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChannelMemberListSortingKey","preciseIdentifier":"s:10StreamChat27ChannelMemberListSortingKeyO"},{"kind":"text","text":">]"}],"title":"sort","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat22ChannelMemberListQueryV4sortSayAA7SortingVyAA0cdeH3KeyOGGvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListQuery"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelMemberListSortingKey":{"role":"symbol","title":"ChannelMemberListSortingKey","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelMemberListSortingKey"}],"abstract":[{"type":"codeVoice","code":"ChannelMemberListSortingKey"},{"type":"text","text":" describes the keys by which you can get sorted channel members after query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelMemberListSortingKey"}],"url":"\/documentation\/streamchat\/channelmemberlistsortingkey"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelMemberListQuery/sort":{"role":"symbol","title":"sort","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sort"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Sorting","preciseIdentifier":"s:10StreamChat7SortingV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChannelMemberListSortingKey","preciseIdentifier":"s:10StreamChat27ChannelMemberListSortingKeyO"},{"kind":"text","text":">]"}],"abstract":[{"type":"text","text":"A sorting for the query (see "},{"type":"codeVoice","code":"Sorting"},{"type":"text","text":")."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListQuery\/sort","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelmemberlistquery\/sort"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelMemberListQuery":{"role":"symbol","title":"ChannelMemberListQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelMemberListQuery"}],"abstract":[{"type":"text","text":"A query type used for fetching channel members from the backend."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelMemberListQuery"}],"url":"\/documentation\/streamchat\/channelmemberlistquery"},"doc://io.getstream.StreamChat/documentation/StreamChat/Sorting":{"role":"symbol","title":"Sorting","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Sorting"}],"abstract":[{"type":"text","text":"Sorting options."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Sorting"}],"url":"\/documentation\/streamchat\/sorting"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A sorting for the query (see ",
+      "type" : "text"
+    },
+    {
+      "code" : "Sorting",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ").",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListQuery"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListQuery\/sort"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat22ChannelMemberListQueryV4sortSayAA7SortingVyAA0cdeH3KeyOGGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "sort"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat7SortingV",
+        "text" : "Sorting"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat27ChannelMemberListSortingKeyO",
+        "text" : "ChannelMemberListSortingKey"
+      },
+      {
+        "kind" : "text",
+        "text" : ">]"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "sort"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "sort"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat7SortingV",
+              "text" : "Sorting"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListSortingKey",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat27ChannelMemberListSortingKeyO",
+              "text" : "ChannelMemberListSortingKey"
+            },
+            {
+              "kind" : "text",
+              "text" : ">]"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelmemberlistquery\/sort"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelMemberListQuery": {
+  "abstract" : [
+    {
+      "text" : "A query type used for fetching channel members from the backend.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelMemberListQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelMemberListQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelMemberListQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelmemberlistquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelMemberListQuery/sort": {
+  "abstract" : [
+    {
+      "text" : "A sorting for the query (see ",
+      "type" : "text"
+    },
+    {
+      "code" : "Sorting",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ").",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sort"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7SortingV",
+      "text" : "Sorting"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat27ChannelMemberListSortingKeyO",
+      "text" : "ChannelMemberListSortingKey"
+    },
+    {
+      "kind" : "text",
+      "text" : ">]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListQuery\/sort",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sort",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelmemberlistquery\/sort"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelMemberListSortingKey": {
+  "abstract" : [
+    {
+      "code" : "ChannelMemberListSortingKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " describes the keys by which you can get sorted channel members after query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelMemberListSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelMemberListSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelMemberListSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelMemberListSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelmemberlistsortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Sorting": {
+  "abstract" : [
+    {
+      "text" : "Sorting options.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Sorting"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Sorting"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Sorting",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/sorting"
+}
+}
+}

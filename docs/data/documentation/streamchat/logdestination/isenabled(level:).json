@@ -1,1 +1,310 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"isEnabled"},{"kind":"text","text":"("},{"kind":"externalParam","text":"level"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO","text":"LogLevel"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/logdestination\/isenabled(level:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination\/isEnabled(level:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"role":"symbol","title":"isEnabled(level:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"isEnabled"},{"kind":"text","text":"("},{"kind":"externalParam","text":"level"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"symbolKind":"method","externalID":"s:10StreamChat14LogDestinationP9isEnabled5levelSbAA0C5LevelO_tF","required":true,"modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LogDestination/isEnabled(level:)":{"role":"symbol","title":"isEnabled(level:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"isEnabled"},{"kind":"text","text":"("},{"kind":"externalParam","text":"level"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination\/isEnabled(level:)","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/logdestination\/isenabled(level:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogDestination":{"role":"symbol","title":"LogDestination","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogDestination"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogDestination"}],"url":"\/documentation\/streamchat\/logdestination"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel":{"role":"symbol","title":"LogLevel","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogLevel"}],"abstract":[{"type":"text","text":"Log level for any messages to be logged."},{"type":"text","text":" "},{"type":"text","text":"Please check "},{"type":"reference","isActive":true,"identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"},{"type":"text","text":" to understand different logging levels."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogLevel"}],"url":"\/documentation\/streamchat\/loglevel"},"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code":{"title":"this Apple Logging Article","titleInlineContent":[{"type":"text","text":"this Apple Logging Article"}],"type":"link","identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code","url":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination\/isEnabled(level:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat14LogDestinationP9isEnabled5levelSbAA0C5LevelO_tF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "isEnabled"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "level"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+        "text" : "LogLevel"
+      },
+      {
+        "kind" : "text",
+        "text" : ") -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "required" : true,
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "isEnabled(level:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "isEnabled"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "level"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+              "text" : "LogLevel"
+            },
+            {
+              "kind" : "text",
+              "text" : ") -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/logdestination\/isenabled(level:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogDestination": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogDestination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogDestination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogDestination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logdestination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogDestination/isEnabled(level:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "level"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+      "text" : "LogLevel"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination\/isEnabled(level:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "isEnabled(level:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logdestination\/isenabled(level:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel": {
+  "abstract" : [
+    {
+      "text" : "Log level for any messages to be logged.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Please check ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " to understand different logging levels.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogLevel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel"
+},
+"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code": {
+  "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+  "title" : "this Apple Logging Article",
+  "titleInlineContent" : [
+    {
+      "text" : "this Apple Logging Article",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"
+}
+}
+}

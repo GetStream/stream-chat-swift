@@ -1,1 +1,861 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Controller"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"overview","level":2,"type":"heading","text":"Overview"},{"type":"paragraph","inlineContent":[{"type":"text","text":"This protocol is not meant to be adopted by your custom types."}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/controller"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelEventsController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventsController"],"kind":"relationships","title":"Conforming Types","type":"conformingTypes"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A protocol to which all controllers conform to."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Controller"}],"title":"Controller","roleHeading":"Protocol","role":"symbol","symbolKind":"protocol","externalID":"s:10StreamChat10ControllerP","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"Controller"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller\/callbackQueue"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/Controller/callbackQueue":{"role":"symbol","title":"callbackQueue","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"callbackQueue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DispatchQueue","preciseIdentifier":"c:objc(cs)OS_dispatch_queue"}],"abstract":[{"type":"text","text":"The queue which is used to perform callback calls"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller\/callbackQueue","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/controller\/callbackqueue"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelEventsController":{"role":"symbol","title":"ChannelEventsController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelEventsController"}],"abstract":[{"type":"codeVoice","code":"ChannelEventsController"},{"type":"text","text":" is a controller class which allows to observe channel"},{"type":"text","text":" "},{"type":"text","text":"events and send custom events."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelEventsController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelEventsController"}],"url":"\/documentation\/streamchat\/channeleventscontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserController":{"role":"symbol","title":"ChatUserController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserController"}],"abstract":[{"type":"codeVoice","code":"ChatUserController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserController"}],"url":"\/documentation\/streamchat\/chatusercontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController":{"role":"symbol","title":"ChatChannelListController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelListController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelListController"},{"type":"text","text":" is a controller class which allows observing a list of chat channels based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelListController"}],"url":"\/documentation\/streamchat\/chatchannellistcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchController":{"role":"symbol","title":"ChatMessageSearchController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageSearchController"}],"abstract":[{"type":"codeVoice","code":"ChatMessageSearchController"},{"type":"text","text":" is a controller class which allows observing a list of messages based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageSearchController"}],"url":"\/documentation\/streamchat\/chatmessagesearchcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataController":{"role":"symbol","title":"DataController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataController"}],"abstract":[{"type":"text","text":"The base class for controllers which represent and control a data entity. Not meant to be used directly."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataController"}],"url":"\/documentation\/streamchat\/datacontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController":{"role":"symbol","title":"CurrentChatUserController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserController"}],"abstract":[{"type":"codeVoice","code":"CurrentChatUserController"},{"type":"text","text":" is a controller class which allows observing and mutating the currently logged-in"},{"type":"text","text":" "},{"type":"text","text":"user of "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUserController"}],"url":"\/documentation\/streamchat\/currentchatusercontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListController":{"role":"symbol","title":"ChatUserListController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserListController"}],"abstract":[{"type":"codeVoice","code":"ChatUserListController"},{"type":"text","text":" is a controller class which allows observing a list of chat users based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserListController"}],"url":"\/documentation\/streamchat\/chatuserlistcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController":{"role":"symbol","title":"ChatChannelController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelController"}],"url":"\/documentation\/streamchat\/chatchannelcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController":{"role":"symbol","title":"ChatChannelMemberController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMemberController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelMemberController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat member."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelMemberController"}],"url":"\/documentation\/streamchat\/chatchannelmembercontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchController":{"role":"symbol","title":"ChatUserSearchController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserSearchController"}],"abstract":[{"type":"codeVoice","code":"ChatUserSearchController"},{"type":"text","text":" is a controller class which allows observing a list of chat users based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserSearchController"}],"url":"\/documentation\/streamchat\/chatusersearchcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/Controller":{"role":"symbol","title":"Controller","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Controller"}],"abstract":[{"type":"text","text":"A protocol to which all controllers conform to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Controller"}],"url":"\/documentation\/streamchat\/controller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController":{"role":"symbol","title":"ChatConnectionController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatConnectionController"}],"abstract":[{"type":"codeVoice","code":"ChatConnectionController"},{"type":"text","text":" is a controller class which allows to explicitly"},{"type":"text","text":" "},{"type":"text","text":"connect\/disconnect the "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" and observe connection events."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatConnectionController"}],"url":"\/documentation\/streamchat\/chatconnectioncontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController":{"role":"symbol","title":"ChatChannelMemberListController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMemberListController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelMemberListController"},{"type":"text","text":" is a controller class which allows observing"},{"type":"text","text":" "},{"type":"text","text":"a list of chat users based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelMemberListController"}],"url":"\/documentation\/streamchat\/chatchannelmemberlistcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController":{"role":"symbol","title":"ChatChannelWatcherListController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelWatcherListController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelWatcherListController"},{"type":"text","text":" is a controller class which allows observing"},{"type":"text","text":" "},{"type":"text","text":"a list of chat watchers based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelWatcherListController"}],"url":"\/documentation\/streamchat\/chatchannelwatcherlistcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/EventsController":{"role":"symbol","title":"EventsController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"EventsController"}],"abstract":[{"type":"codeVoice","code":"EventsController"},{"type":"text","text":" is a controller class which allows to observe custom and system events."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventsController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"EventsController"}],"url":"\/documentation\/streamchat\/eventscontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController":{"role":"symbol","title":"ChatMessageController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageController"}],"abstract":[{"type":"codeVoice","code":"ChatMessageController"},{"type":"text","text":" is a controller class which allows observing and mutating a chat message entity."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageController"}],"url":"\/documentation\/streamchat\/chatmessagecontroller"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A protocol to which all controllers conform to.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat10ControllerP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Controller"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Controller"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "Controller"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Controller"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "This protocol is not meant to be adopted by your custom types.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelEventsController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventsController"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller\/callbackQueue"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/controller"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelEventsController": {
+  "abstract" : [
+    {
+      "code" : "ChannelEventsController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows to observe channel",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "events and send custom events.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelEventsController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelEventsController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelEventsController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelEventsController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channeleventscontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelListController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing a list of chat channels based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelListController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelListController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelListController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannellistcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelMemberController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat member.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmembercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelMemberListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a list of chat users based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberListController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberListController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmemberlistcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelWatcherListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a list of chat watchers based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelWatcherListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelWatcherListController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelWatcherListController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelwatcherlistcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController": {
+  "abstract" : [
+    {
+      "code" : "ChatConnectionController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows to explicitly",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "connect\/disconnect the ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and observe connection events.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatConnectionController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatConnectionController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatConnectionController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatconnectioncontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating a chat message entity.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchController": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageSearchController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing a list of messages based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageSearchController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageSearchController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageSearchController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagesearchcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserController": {
+  "abstract" : [
+    {
+      "code" : "ChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserListController": {
+  "abstract" : [
+    {
+      "code" : "ChatUserListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing a list of chat users based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserListController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserListController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserListController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuserlistcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchController": {
+  "abstract" : [
+    {
+      "code" : "ChatUserSearchController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing a list of chat users based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserSearchController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserSearchController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserSearchController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusersearchcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Controller": {
+  "abstract" : [
+    {
+      "text" : "A protocol to which all controllers conform to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Controller"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Controller"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Controller",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/controller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Controller/callbackQueue": {
+  "abstract" : [
+    {
+      "text" : "The queue which is used to perform callback calls",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "callbackQueue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+      "text" : "DispatchQueue"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller\/callbackQueue",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "callbackQueue",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/controller\/callbackqueue"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController": {
+  "abstract" : [
+    {
+      "code" : "CurrentChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating the currently logged-in",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "user of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUserController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataController": {
+  "abstract" : [
+    {
+      "text" : "The base class for controllers which represent and control a data entity. Not meant to be used directly.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EventsController": {
+  "abstract" : [
+    {
+      "code" : "EventsController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows to observe custom and system events.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EventsController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventsController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EventsController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "EventsController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/eventscontroller"
+}
+}
+}

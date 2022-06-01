@@ -1,1 +1,339 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"development"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId","preciseIdentifier":"s:10StreamChat6UserIda","text":"UserId"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token","preciseIdentifier":"s:10StreamChat5TokenV","text":"Token"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"type":"paragraph","inlineContent":[{"type":"text","text":"Is used by "},{"type":"codeVoice","code":"development(userId:)"},{"type":"text","text":" token provider."}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/token\/development(userid:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token\/development(userId:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The token which can be used during the development."}],"kind":"symbol","metadata":{"role":"symbol","title":"development(userId:)","roleHeading":"Type Method","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"development"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Token","preciseIdentifier":"s:10StreamChat5TokenV"}],"symbolKind":"method","externalID":"s:10StreamChat5TokenV11development6userIdACSS_tFZ","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/Token":{"role":"symbol","title":"Token","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Token"}],"abstract":[{"type":"text","text":"The type is designed to store the JWT and the user it is related to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Token"}],"url":"\/documentation\/streamchat\/token"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserId":{"role":"symbol","title":"UserId","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserId"}],"abstract":[{"type":"text","text":"A unique identifier of a user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserId"}],"url":"\/documentation\/streamchat\/userid"},"doc://io.getstream.StreamChat/documentation/StreamChat/Token/development(userId:)":{"role":"symbol","title":"development(userId:)","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"development"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Token","preciseIdentifier":"s:10StreamChat5TokenV"}],"abstract":[{"type":"text","text":"The token which can be used during the development."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token\/development(userId:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/token\/development(userid:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The token which can be used during the development.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token\/development(userId:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat5TokenV11development6userIdACSS_tFZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "development"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "userId"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6UserIda",
+        "text" : "UserId"
+      },
+      {
+        "kind" : "text",
+        "text" : ") -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat5TokenV",
+        "text" : "Token"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Method",
+    "symbolKind" : "method",
+    "title" : "development(userId:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "development"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "userId"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6UserIda",
+              "text" : "UserId"
+            },
+            {
+              "kind" : "text",
+              "text" : ") -> "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat5TokenV",
+              "text" : "Token"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Is used by ",
+              "type" : "text"
+            },
+            {
+              "code" : "development(userId:)",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " token provider.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/token\/development(userid:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Token": {
+  "abstract" : [
+    {
+      "text" : "The type is designed to store the JWT and the user it is related to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Token"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Token"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Token",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/token"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Token/development(userId:)": {
+  "abstract" : [
+    {
+      "text" : "The token which can be used during the development.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "development"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "userId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat5TokenV",
+      "text" : "Token"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Token\/development(userId:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "development(userId:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/token\/development(userid:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserId": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of a user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userid"
+}
+}
+}

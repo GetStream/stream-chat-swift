@@ -1,1 +1,345 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"Unknown"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/clienterror\/unknown"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP","doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/s5ErrorP","doc:\/\/io.getstream.StreamChat\/s8SendableP"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"An unknown error."}],"kind":"symbol","metadata":{"navigatorTitle":[{"kind":"identifier","text":"Unknown"}],"role":"symbol","title":"ClientError.Unknown","roleHeading":"Class","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"Unknown"}],"symbolKind":"class","externalID":"s:10StreamChat11ClientErrorC7UnknownC","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown\/init(_:_:_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown\/init(with:_:_:)"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError":{"role":"symbol","title":"ClientError","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ClientError"}],"abstract":[{"type":"text","text":"A Client error."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ClientError"}],"url":"\/documentation\/streamchat\/clienterror"},"doc://io.getstream.StreamChat/s23CustomStringConvertibleP":{"type":"unresolvable","title":"Swift.CustomStringConvertible","identifier":"doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP"},"doc://io.getstream.StreamChat/s5ErrorP":{"type":"unresolvable","title":"Swift.Error","identifier":"doc:\/\/io.getstream.StreamChat\/s5ErrorP"},"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/Unknown/init(with:_:_:)":{"role":"symbol","title":"init(with:_:_:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"with"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?, "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"UInt","preciseIdentifier":"s:Su"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"A client error based on an external general error."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown\/init(with:_:_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/clienterror\/unknown\/init(with:_:_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/Unknown":{"role":"symbol","title":"ClientError.Unknown","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"Unknown"}],"abstract":[{"type":"text","text":"An unknown error."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Unknown"}],"url":"\/documentation\/streamchat\/clienterror\/unknown"},"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/Unknown/init(_:_:_:)":{"role":"symbol","title":"init(_:_:_:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"UInt","preciseIdentifier":"s:Su"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"An error based on a message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown\/init(_:_:_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/clienterror\/unknown\/init(_:_:_:)"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/s8SendableP":{"type":"unresolvable","title":"Swift.Sendable","identifier":"doc:\/\/io.getstream.StreamChat\/s8SendableP"}}}
+{
+  "abstract" : [
+    {
+      "text" : "An unknown error.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat11ClientErrorC7UnknownC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Unknown"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Unknown"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "ClientError.Unknown"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Unknown"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP",
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/s5ErrorP",
+        "doc:\/\/io.getstream.StreamChat\/s8SendableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown\/init(_:_:_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown\/init(with:_:_:)"
+      ],
+      "title" : "Initializers"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/clienterror\/unknown"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError": {
+  "abstract" : [
+    {
+      "text" : "A Client error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ClientError"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ClientError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ClientError",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/Unknown": {
+  "abstract" : [
+    {
+      "text" : "An unknown error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Unknown"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Unknown"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ClientError.Unknown",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror\/unknown"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/Unknown/init(_:_:_:)": {
+  "abstract" : [
+    {
+      "text" : "An error based on a message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s12StaticStringV",
+      "text" : "StaticString"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Su",
+      "text" : "UInt"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown\/init(_:_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(_:_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror\/unknown\/init(_:_:_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/Unknown/init(with:_:_:)": {
+  "abstract" : [
+    {
+      "text" : "A client error based on an external general error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "with"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s12StaticStringV",
+      "text" : "StaticString"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Su",
+      "text" : "UInt"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/Unknown\/init(with:_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(with:_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror\/unknown\/init(with:_:_:)"
+},
+"doc://io.getstream.StreamChat/s23CustomStringConvertibleP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP",
+  "title" : "Swift.CustomStringConvertible",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s5ErrorP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s5ErrorP",
+  "title" : "Swift.Error",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s8SendableP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

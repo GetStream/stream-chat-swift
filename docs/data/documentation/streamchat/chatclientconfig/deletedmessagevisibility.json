@@ -1,1 +1,325 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"DeletedMessageVisibility"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Specifies the visibility of deleted messages."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"DeletedMessageVisibility"}],"title":"ChatClientConfig.DeletedMessageVisibility","roleHeading":"Enumeration","role":"symbol","symbolKind":"enum","externalID":"s:10StreamChat0B12ClientConfigV24DeletedMessageVisibilityO","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"DeletedMessageVisibility"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig"]]},"topicSections":[{"title":"Enumeration Cases","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/alwaysHidden","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/alwaysVisible","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/visibleForCurrentUser"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/Equatable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility\/equatable-implementations"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility/alwaysVisible":{"role":"symbol","title":"ChatClientConfig.DeletedMessageVisibility.alwaysVisible","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"alwaysVisible"}],"abstract":[{"type":"text","text":"Deleted messages are always visible."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/alwaysVisible","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility\/alwaysvisible"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility":{"role":"symbol","title":"ChatClientConfig.DeletedMessageVisibility","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"DeletedMessageVisibility"}],"abstract":[{"type":"text","text":"Specifies the visibility of deleted messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DeletedMessageVisibility"}],"url":"\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility/visibleForCurrentUser":{"role":"symbol","title":"ChatClientConfig.DeletedMessageVisibility.visibleForCurrentUser","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"visibleForCurrentUser"}],"abstract":[{"type":"text","text":"Deleted message by current user are visible, other deleted messages are hidden."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/visibleForCurrentUser","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility\/visibleforcurrentuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility/alwaysHidden":{"role":"symbol","title":"ChatClientConfig.DeletedMessageVisibility.alwaysHidden","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"alwaysHidden"}],"abstract":[{"type":"text","text":"All deleted messages are always hidden."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/alwaysHidden","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility\/alwayshidden"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig":{"role":"symbol","title":"ChatClientConfig","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClientConfig"}],"abstract":[{"type":"text","text":"A configuration object used to configure a "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClientConfig"}],"url":"\/documentation\/streamchat\/chatclientconfig"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Specifies the visibility of deleted messages.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B12ClientConfigV24DeletedMessageVisibilityO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "DeletedMessageVisibility"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "DeletedMessageVisibility"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "ChatClientConfig.DeletedMessageVisibility"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "DeletedMessageVisibility"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/alwaysHidden",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/alwaysVisible",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/visibleForCurrentUser"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig": {
+  "abstract" : [
+    {
+      "text" : "A configuration object used to configure a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClientConfig"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClientConfig"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClientConfig",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility": {
+  "abstract" : [
+    {
+      "text" : "Specifies the visibility of deleted messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeletedMessageVisibility"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeletedMessageVisibility"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClientConfig.DeletedMessageVisibility",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility/alwaysHidden": {
+  "abstract" : [
+    {
+      "text" : "All deleted messages are always hidden.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "alwaysHidden"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/alwaysHidden",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ChatClientConfig.DeletedMessageVisibility.alwaysHidden",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility\/alwayshidden"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility/alwaysVisible": {
+  "abstract" : [
+    {
+      "text" : "Deleted messages are always visible.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "alwaysVisible"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/alwaysVisible",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ChatClientConfig.DeletedMessageVisibility.alwaysVisible",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility\/alwaysvisible"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility/visibleForCurrentUser": {
+  "abstract" : [
+    {
+      "text" : "Deleted message by current user are visible, other deleted messages are hidden.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visibleForCurrentUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility\/visibleForCurrentUser",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ChatClientConfig.DeletedMessageVisibility.visibleForCurrentUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility\/visibleforcurrentuser"
+}
+}
+}

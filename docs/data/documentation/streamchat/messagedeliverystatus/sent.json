@@ -1,1 +1,224 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sent"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus","preciseIdentifier":"s:10StreamChat21MessageDeliveryStatusV","text":"MessageDeliveryStatus"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messagedeliverystatus\/sent"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus\/sent","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The message delivery state for message that is successfully sent."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sent"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageDeliveryStatus","preciseIdentifier":"s:10StreamChat21MessageDeliveryStatusV"}],"title":"sent","roleHeading":"Type Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat21MessageDeliveryStatusV4sentACvpZ","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeliveryStatus/sent":{"role":"symbol","title":"sent","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sent"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageDeliveryStatus","preciseIdentifier":"s:10StreamChat21MessageDeliveryStatusV"}],"abstract":[{"type":"text","text":"The message delivery state for message that is successfully sent."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus\/sent","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagedeliverystatus\/sent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeliveryStatus":{"role":"symbol","title":"MessageDeliveryStatus","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageDeliveryStatus"}],"abstract":[{"type":"text","text":"The type describing message delivery status."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageDeliveryStatus"}],"url":"\/documentation\/streamchat\/messagedeliverystatus"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The message delivery state for message that is successfully sent.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus\/sent"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat21MessageDeliveryStatusV4sentACvpZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "sent"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat21MessageDeliveryStatusV",
+        "text" : "MessageDeliveryStatus"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "sent"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "sent"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat21MessageDeliveryStatusV",
+              "text" : "MessageDeliveryStatus"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messagedeliverystatus\/sent"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeliveryStatus": {
+  "abstract" : [
+    {
+      "text" : "The type describing message delivery status.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageDeliveryStatus"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageDeliveryStatus"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageDeliveryStatus",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeliverystatus"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageDeliveryStatus/sent": {
+  "abstract" : [
+    {
+      "text" : "The message delivery state for message that is successfully sent.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat21MessageDeliveryStatusV",
+      "text" : "MessageDeliveryStatus"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageDeliveryStatus\/sent",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagedeliverystatus\/sent"
+}
+}
+}

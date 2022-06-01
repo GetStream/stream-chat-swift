@@ -1,1 +1,209 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"notificationInviteAccepted"},{"kind":"text","text":": `Self`"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/eventtype\/notificationinviteaccepted"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/notificationInviteAccepted","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"When a user accepted a channel invitation"}],"kind":"symbol","metadata":{"role":"symbol","title":"notificationInviteAccepted","roleHeading":"Type Property","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"notificationInviteAccepted"},{"kind":"text","text":": `Self`"}],"symbolKind":"property","externalID":"s:10StreamChat9EventTypeV26notificationInviteAcceptedACvpZ","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/EventType/notificationInviteAccepted":{"role":"symbol","title":"notificationInviteAccepted","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"notificationInviteAccepted"},{"kind":"text","text":": `Self`"}],"abstract":[{"type":"text","text":"When a user accepted a channel invitation"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/notificationInviteAccepted","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/eventtype\/notificationinviteaccepted"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/EventType":{"role":"symbol","title":"EventType","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"EventType"}],"abstract":[{"type":"text","text":"An event type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"EventType"}],"url":"\/documentation\/streamchat\/eventtype"}}}
+{
+  "abstract" : [
+    {
+      "text" : "When a user accepted a channel invitation",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/notificationInviteAccepted"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat9EventTypeV26notificationInviteAcceptedACvpZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "notificationInviteAccepted"
+      },
+      {
+        "kind" : "text",
+        "text" : ": `Self`"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "notificationInviteAccepted"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "notificationInviteAccepted"
+            },
+            {
+              "kind" : "text",
+              "text" : ": `Self`"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/eventtype\/notificationinviteaccepted"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EventType": {
+  "abstract" : [
+    {
+      "text" : "An event type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EventType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EventType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "EventType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/eventtype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/EventType/notificationInviteAccepted": {
+  "abstract" : [
+    {
+      "text" : "When a user accepted a channel invitation",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "notificationInviteAccepted"
+    },
+    {
+      "kind" : "text",
+      "text" : ": `Self`"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/EventType\/notificationInviteAccepted",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "notificationInviteAccepted",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/eventtype\/notificationinviteaccepted"
+}
+}
+}

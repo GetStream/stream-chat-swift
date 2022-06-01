@@ -1,1 +1,424 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectGuestUser"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userInfo"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserInfo","preciseIdentifier":"s:10StreamChat8UserInfoV","text":"UserInfo"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")? = nil)"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"userInfo","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"User info that is passed to the "},{"type":"codeVoice","code":"connect"},{"type":"text","text":" endpoint for user creation"}]}]},{"name":"extraData","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Extra data for user that is passed to the "},{"type":"codeVoice","code":"connect"},{"type":"text","text":" endpoint for user creation."}]}]},{"name":"completion","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The completion that will be called once the "},{"type":"strong","inlineContent":[{"type":"text","text":"first"}]},{"type":"text","text":" user session for the given token is setup."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatclient\/connectguestuser(userinfo:completion:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectGuestUser(userInfo:completion:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Connects a guest user"}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectGuestUser"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userInfo"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserInfo","preciseIdentifier":"s:10StreamChat8UserInfoV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"title":"connectGuestUser(userInfo:completion:)","roleHeading":"Instance Method","role":"symbol","symbolKind":"method","externalID":"s:10StreamChat0B6ClientC16connectGuestUser8userInfo10completionyAA0fH0V_ys5Error_pSgcSgtF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectGuestUser(userInfo:completion:)":{"role":"symbol","title":"connectGuestUser(userInfo:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectGuestUser"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userInfo"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserInfo","preciseIdentifier":"s:10StreamChat8UserInfoV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Connects a guest user"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectGuestUser(userInfo:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/connectguestuser(userinfo:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserInfo":{"role":"symbol","title":"UserInfo","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserInfo"}],"abstract":[{"type":"text","text":"A model containing user info that’s used to connect to chat’s backend"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserInfo","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserInfo"}],"url":"\/documentation\/streamchat\/userinfo"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient":{"role":"symbol","title":"ChatClient","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClient"}],"abstract":[{"type":"text","text":"The root object representing a Stream Chat."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClient"}],"url":"\/documentation\/streamchat\/chatclient"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Connects a guest user",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectGuestUser(userInfo:completion:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B6ClientC16connectGuestUser8userInfo10completionyAA0fH0V_ys5Error_pSgcSgtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "connectGuestUser"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "userInfo"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat8UserInfoV",
+        "text" : "UserInfo"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "completion"
+      },
+      {
+        "kind" : "text",
+        "text" : ": (("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5ErrorP",
+        "text" : "Error"
+      },
+      {
+        "kind" : "text",
+        "text" : "?) -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s4Voida",
+        "text" : "Void"
+      },
+      {
+        "kind" : "text",
+        "text" : ")?)"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "connectGuestUser(userInfo:completion:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "connectGuestUser"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "userInfo"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserInfo",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat8UserInfoV",
+              "text" : "UserInfo"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "completion"
+            },
+            {
+              "kind" : "text",
+              "text" : ": (("
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5ErrorP",
+              "text" : "Error"
+            },
+            {
+              "kind" : "text",
+              "text" : "?) -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s4Voida",
+              "text" : "Void"
+            },
+            {
+              "kind" : "text",
+              "text" : ")? = nil)"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "User info that is passed to the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "connect",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " endpoint for user creation",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "userInfo"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Extra data for user that is passed to the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "connect",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " endpoint for user creation.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "extraData"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The completion that will be called once the ",
+                  "type" : "text"
+                },
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "first",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " user session for the given token is setup.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "completion"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatclient\/connectguestuser(userinfo:completion:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient": {
+  "abstract" : [
+    {
+      "text" : "The root object representing a Stream Chat.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClient",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectGuestUser(userInfo:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Connects a guest user",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectGuestUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "userInfo"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8UserInfoV",
+      "text" : "UserInfo"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectGuestUser(userInfo:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "connectGuestUser(userInfo:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/connectguestuser(userinfo:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserInfo": {
+  "abstract" : [
+    {
+      "text" : "A model containing user info that’s used to connect to chat’s backend",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserInfo"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserInfo",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserInfo"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserInfo",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userinfo"
+}
+}
+}

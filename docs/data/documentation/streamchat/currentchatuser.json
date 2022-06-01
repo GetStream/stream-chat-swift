@@ -1,1 +1,599 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUser"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/currentchatuser"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH","doc:\/\/io.getstream.StreamChat\/s12IdentifiableP"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A type representing the currently logged-in user. "},{"type":"codeVoice","code":"CurrentChatUser"},{"type":"text","text":" is an immutable snapshot of a current user entity at"},{"type":"text","text":" "},{"type":"text","text":"the given time."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUser"}],"title":"CurrentChatUser","roleHeading":"Class","role":"symbol","symbolKind":"class","externalID":"s:10StreamChat07CurrentB4UserC","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"CurrentChatUser"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/currentDevice","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/devices","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/flaggedMessageIDs","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/flaggedUsers","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/mutedChannels","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/mutedUsers","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/unreadCount"]}],"references":{"doc://io.getstream.StreamChat/s12IdentifiableP":{"type":"unresolvable","title":"Swift.Identifiable","identifier":"doc:\/\/io.getstream.StreamChat\/s12IdentifiableP"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/flaggedUsers":{"role":"symbol","title":"flaggedUsers","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"flaggedUsers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A set of users flagged by the user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/flaggedUsers","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatuser\/flaggedusers"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/unreadCount":{"role":"symbol","title":"unreadCount","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"unreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"}],"abstract":[{"type":"text","text":"The unread counts for the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/unreadCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatuser\/unreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser":{"role":"symbol","title":"CurrentChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUser"}],"abstract":[{"type":"text","text":"A type representing the currently logged-in user. "},{"type":"codeVoice","code":"CurrentChatUser"},{"type":"text","text":" is an immutable snapshot of a current user entity at"},{"type":"text","text":" "},{"type":"text","text":"the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUser"}],"url":"\/documentation\/streamchat\/currentchatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/devices":{"role":"symbol","title":"devices","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"devices"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Device","preciseIdentifier":"s:10StreamChat6DeviceV"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"A list of devices associcated with the user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/devices","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatuser\/devices"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/currentDevice":{"role":"symbol","title":"currentDevice","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentDevice"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Device","preciseIdentifier":"s:10StreamChat6DeviceV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The current device of the user. "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" if no current device is assigned."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/currentDevice","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatuser\/currentdevice"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/mutedChannels":{"role":"symbol","title":"mutedChannels","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"mutedChannels"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A set of channels muted by the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/mutedChannels","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatuser\/mutedchannels"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser":{"role":"symbol","title":"ChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUser"}],"abstract":[{"type":"text","text":"A type representing a chat user. "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" is an immutable snapshot of a chat user entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUser"}],"url":"\/documentation\/streamchat\/chatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/mutedUsers":{"role":"symbol","title":"mutedUsers","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"mutedUsers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A set of users muted by the user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/mutedUsers","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatuser\/mutedusers"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/flaggedMessageIDs":{"role":"symbol","title":"flaggedMessageIDs","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"flaggedMessageIDs"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A set of message ids flagged by the user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/flaggedMessageIDs","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatuser\/flaggedmessageids"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A type representing the currently logged-in user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a current user entity at",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "the given time.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat07CurrentB4UserC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "CurrentChatUser"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "CurrentChatUser"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "CurrentChatUser"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "CurrentChatUser"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH",
+        "doc:\/\/io.getstream.StreamChat\/s12IdentifiableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/currentDevice",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/devices",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/flaggedMessageIDs",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/flaggedUsers",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/mutedChannels",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/mutedUsers",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/unreadCount"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/currentchatuser"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat user entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing the currently logged-in user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a current user entity at",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/currentDevice": {
+  "abstract" : [
+    {
+      "text" : "The current device of the user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if no current device is assigned.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentDevice"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6DeviceV",
+      "text" : "Device"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/currentDevice",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentDevice",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser\/currentdevice"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/devices": {
+  "abstract" : [
+    {
+      "text" : "A list of devices associcated with the user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "devices"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6DeviceV",
+      "text" : "Device"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/devices",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "devices",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser\/devices"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/flaggedMessageIDs": {
+  "abstract" : [
+    {
+      "text" : "A set of message ids flagged by the user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "flaggedMessageIDs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/flaggedMessageIDs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "flaggedMessageIDs",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser\/flaggedmessageids"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/flaggedUsers": {
+  "abstract" : [
+    {
+      "text" : "A set of users flagged by the user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "flaggedUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/flaggedUsers",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "flaggedUsers",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser\/flaggedusers"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/mutedChannels": {
+  "abstract" : [
+    {
+      "text" : "A set of channels muted by the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mutedChannels"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/mutedChannels",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "mutedChannels",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser\/mutedchannels"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/mutedUsers": {
+  "abstract" : [
+    {
+      "text" : "A set of users muted by the user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mutedUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/mutedUsers",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "mutedUsers",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser\/mutedusers"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/unreadCount": {
+  "abstract" : [
+    {
+      "text" : "The unread counts for the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/unreadCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser\/unreadcount"
+},
+"doc://io.getstream.StreamChat/s12IdentifiableP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s12IdentifiableP",
+  "title" : "Swift.Identifiable",
+  "type" : "unresolvable"
+}
+}
+}

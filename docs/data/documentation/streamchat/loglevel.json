@@ -1,1 +1,419 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogLevel"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/loglevel"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH","doc:\/\/io.getstream.StreamChat\/SY"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Log level for any messages to be logged."},{"type":"text","text":" "},{"type":"text","text":"Please check "},{"type":"reference","isActive":true,"identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"},{"type":"text","text":" to understand different logging levels."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogLevel"}],"title":"LogLevel","roleHeading":"Enumeration","role":"symbol","symbolKind":"enum","externalID":"s:10StreamChat8LogLevelO","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"LogLevel"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Enumeration Cases","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/debug","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/error","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/info","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/warning"]},{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/init(rawValue:)"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/Equatable-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/RawRepresentable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/info":{"role":"symbol","title":"LogLevel.info","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"info"}],"abstract":[{"type":"text","text":"Use this log level if you want to see what is happening during the app execution."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/info","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/loglevel\/info"},"doc://io.getstream.StreamChat/SY":{"type":"unresolvable","title":"Swift.RawRepresentable","identifier":"doc:\/\/io.getstream.StreamChat\/SY"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/error":{"role":"symbol","title":"LogLevel.error","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"error"}],"abstract":[{"type":"text","text":"Use this log level if you want to see only errors."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/error","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/loglevel\/error"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/debug":{"role":"symbol","title":"LogLevel.debug","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"debug"}],"abstract":[{"type":"text","text":"Use this log level if you want to see everything that is logged."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/debug","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/loglevel\/debug"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/loglevel\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel":{"role":"symbol","title":"LogLevel","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogLevel"}],"abstract":[{"type":"text","text":"Log level for any messages to be logged."},{"type":"text","text":" "},{"type":"text","text":"Please check "},{"type":"reference","isActive":true,"identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"},{"type":"text","text":" to understand different logging levels."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogLevel"}],"url":"\/documentation\/streamchat\/loglevel"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/init(rawValue:)":{"role":"symbol","title":"init(rawValue:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"?("},{"kind":"externalParam","text":"rawValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/init(rawValue:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/loglevel\/init(rawvalue:)"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code":{"title":"this Apple Logging Article","titleInlineContent":[{"type":"text","text":"this Apple Logging Article"}],"type":"link","identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code","url":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/warning":{"role":"symbol","title":"LogLevel.warning","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"warning"}],"abstract":[{"type":"text","text":"Use this log level if you want to see if something is not 100% right."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/warning","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/loglevel\/warning"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/RawRepresentable-Implementations":{"role":"collectionGroup","title":"RawRepresentable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/RawRepresentable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/loglevel\/rawrepresentable-implementations"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Log level for any messages to be logged.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Please check ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " to understand different logging levels.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat8LogLevelO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "LogLevel"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "LogLevel"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "LogLevel"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "LogLevel"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH",
+        "doc:\/\/io.getstream.StreamChat\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/debug",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/error",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/info",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/warning"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/Equatable-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/loglevel"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SY": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel": {
+  "abstract" : [
+    {
+      "text" : "Log level for any messages to be logged.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Please check ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " to understand different logging levels.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogLevel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel\/rawrepresentable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/debug": {
+  "abstract" : [
+    {
+      "text" : "Use this log level if you want to see everything that is logged.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "debug"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/debug",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LogLevel.debug",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel\/debug"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/error": {
+  "abstract" : [
+    {
+      "text" : "Use this log level if you want to see only errors.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "error"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/error",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LogLevel.error",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel\/error"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/info": {
+  "abstract" : [
+    {
+      "text" : "Use this log level if you want to see what is happening during the app execution.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "info"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/info",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LogLevel.info",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel\/info"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel\/init(rawvalue:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel/warning": {
+  "abstract" : [
+    {
+      "text" : "Use this log level if you want to see if something is not 100% right.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "warning"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel\/warning",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LogLevel.warning",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel\/warning"
+},
+"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code": {
+  "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+  "title" : "this Apple Logging Article",
+  "titleInlineContent" : [
+    {
+      "text" : "this Apple Logging Article",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"
+}
+}
+}

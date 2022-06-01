@@ -1,1 +1,221 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"callbackQueue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DispatchQueue","preciseIdentifier":"c:objc(cs)OS_dispatch_queue"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" "},{"kind":"keyword","text":"set"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/controller\/callbackqueue"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller\/callbackQueue","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The queue which is used to perform callback calls"}],"kind":"symbol","metadata":{"role":"symbol","title":"callbackQueue","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"callbackQueue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DispatchQueue","preciseIdentifier":"c:objc(cs)OS_dispatch_queue"}],"symbolKind":"property","externalID":"s:10StreamChat10ControllerP13callbackQueueSo17OS_dispatch_queueCvp","required":true,"modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/Controller/callbackQueue":{"role":"symbol","title":"callbackQueue","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"callbackQueue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DispatchQueue","preciseIdentifier":"c:objc(cs)OS_dispatch_queue"}],"abstract":[{"type":"text","text":"The queue which is used to perform callback calls"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller\/callbackQueue","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/controller\/callbackqueue"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/Controller":{"role":"symbol","title":"Controller","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Controller"}],"abstract":[{"type":"text","text":"A protocol to which all controllers conform to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Controller"}],"url":"\/documentation\/streamchat\/controller"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The queue which is used to perform callback calls",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller\/callbackQueue"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat10ControllerP13callbackQueueSo17OS_dispatch_queueCvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "callbackQueue"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+        "text" : "DispatchQueue"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "required" : true,
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "callbackQueue"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "callbackQueue"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+              "text" : "DispatchQueue"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/controller\/callbackqueue"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Controller": {
+  "abstract" : [
+    {
+      "text" : "A protocol to which all controllers conform to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Controller"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Controller"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Controller",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/controller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Controller/callbackQueue": {
+  "abstract" : [
+    {
+      "text" : "The queue which is used to perform callback calls",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "callbackQueue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+      "text" : "DispatchQueue"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller\/callbackQueue",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "callbackQueue",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/controller\/callbackqueue"
+}
+}
+}

@@ -1,1 +1,1301 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentFileType"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/attachmentfiletype"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/s12CaseIterableP","doc:\/\/io.getstream.StreamChat\/Se","doc:\/\/io.getstream.StreamChat\/SE","doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH","doc:\/\/io.getstream.StreamChat\/SY"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"An attachment file type."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentFileType"}],"title":"AttachmentFileType","roleHeading":"Enumeration","role":"symbol","symbolKind":"enum","externalID":"s:10StreamChat18AttachmentFileTypeO","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"AttachmentFileType"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Enumeration Cases","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/avi","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/bmp","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/csv","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/doc","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/docx","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/generic","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/gif","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/jpeg","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/m4a","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mov","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mp3","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mp4","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ods","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/odt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ogg","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/pdf","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/png","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ppt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/pptx","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/rtf","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/tar","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/txt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/wav","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/webm","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/webp","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/wmv","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/x7z","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xls","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xlsx","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xz","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/zip"]},{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(ext:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(mimeType:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(rawValue:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mimeType"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/Equatable-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/RawRepresentable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/bmp":{"role":"symbol","title":"AttachmentFileType.bmp","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"bmp"}],"abstract":[{"type":"text","text":"Image"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/bmp","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/bmp"},"doc://io.getstream.StreamChat/s12CaseIterableP":{"type":"unresolvable","title":"Swift.CaseIterable","identifier":"doc:\/\/io.getstream.StreamChat\/s12CaseIterableP"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/mp4":{"role":"symbol","title":"AttachmentFileType.mp4","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"mp4"}],"abstract":[{"type":"text","text":"Audio"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mp4","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/mp4"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/gif":{"role":"symbol","title":"AttachmentFileType.gif","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"gif"}],"abstract":[{"type":"text","text":"Image"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/gif","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/gif"},"doc://io.getstream.StreamChat/Se":{"type":"unresolvable","title":"Swift.Decodable","identifier":"doc:\/\/io.getstream.StreamChat\/Se"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/xls":{"role":"symbol","title":"AttachmentFileType.xls","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"xls"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xls","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/xls"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/ods":{"role":"symbol","title":"AttachmentFileType.ods","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"ods"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ods","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/ods"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/ppt":{"role":"symbol","title":"AttachmentFileType.ppt","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"ppt"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ppt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/ppt"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType":{"role":"symbol","title":"AttachmentFileType","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentFileType"}],"abstract":[{"type":"text","text":"An attachment file type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AttachmentFileType"}],"url":"\/documentation\/streamchat\/attachmentfiletype"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/odt":{"role":"symbol","title":"AttachmentFileType.odt","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"odt"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/odt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/odt"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/generic":{"role":"symbol","title":"AttachmentFileType.generic","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"generic"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/generic","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/generic"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/doc":{"role":"symbol","title":"AttachmentFileType.doc","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"doc"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/doc","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/doc"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/webp":{"role":"symbol","title":"AttachmentFileType.webp","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"webp"}],"abstract":[{"type":"text","text":"Image"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/webp","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/webp"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/init(ext:)":{"role":"symbol","title":"init(ext:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"ext"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Init an attachment file type by a file extension."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(ext:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/init(ext:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/init(rawValue:)":{"role":"symbol","title":"init(rawValue:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"?("},{"kind":"externalParam","text":"rawValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(rawValue:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/init(rawvalue:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/mp3":{"role":"symbol","title":"AttachmentFileType.mp3","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"mp3"}],"abstract":[{"type":"text","text":"Audio"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mp3","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/mp3"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/mimeType":{"role":"symbol","title":"mimeType","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"mimeType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[{"type":"text","text":"Returns a mime type for the file type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mimeType","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/mimetype"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/pdf":{"role":"symbol","title":"AttachmentFileType.pdf","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"pdf"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/pdf","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/pdf"},"doc://io.getstream.StreamChat/SE":{"type":"unresolvable","title":"Swift.Encodable","identifier":"doc:\/\/io.getstream.StreamChat\/SE"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/zip":{"role":"symbol","title":"AttachmentFileType.zip","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"zip"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/zip","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/zip"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/init(mimeType:)":{"role":"symbol","title":"init(mimeType:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"mimeType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Init an attachment file type by mime type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(mimeType:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/init(mimetype:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/pptx":{"role":"symbol","title":"AttachmentFileType.pptx","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"pptx"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/pptx","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/pptx"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/wav":{"role":"symbol","title":"AttachmentFileType.wav","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"wav"}],"abstract":[{"type":"text","text":"Audio"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/wav","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/wav"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/RawRepresentable-Implementations":{"role":"collectionGroup","title":"RawRepresentable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/RawRepresentable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/rawrepresentable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/xlsx":{"role":"symbol","title":"AttachmentFileType.xlsx","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"xlsx"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xlsx","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/xlsx"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/tar":{"role":"symbol","title":"AttachmentFileType.tar","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"tar"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/tar","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/tar"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/rtf":{"role":"symbol","title":"AttachmentFileType.rtf","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"rtf"}],"abstract":[{"type":"text","text":"Text"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/rtf","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/rtf"},"doc://io.getstream.StreamChat/SY":{"type":"unresolvable","title":"Swift.RawRepresentable","identifier":"doc:\/\/io.getstream.StreamChat\/SY"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/docx":{"role":"symbol","title":"AttachmentFileType.docx","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"docx"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/docx","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/docx"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/csv":{"role":"symbol","title":"AttachmentFileType.csv","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"csv"}],"abstract":[{"type":"text","text":"Text"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/csv","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/csv"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/avi":{"role":"symbol","title":"AttachmentFileType.avi","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"avi"}],"abstract":[{"type":"text","text":"Video"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/avi","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/avi"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/mov":{"role":"symbol","title":"AttachmentFileType.mov","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"mov"}],"abstract":[{"type":"text","text":"Video"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mov","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/mov"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/png":{"role":"symbol","title":"AttachmentFileType.png","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"png"}],"abstract":[{"type":"text","text":"Image"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/png","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/png"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/ogg":{"role":"symbol","title":"AttachmentFileType.ogg","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"ogg"}],"abstract":[{"type":"text","text":"Audio"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ogg","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/ogg"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/wmv":{"role":"symbol","title":"AttachmentFileType.wmv","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"wmv"}],"abstract":[{"type":"text","text":"Video"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/wmv","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/wmv"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/x7z":{"role":"symbol","title":"AttachmentFileType.x7z","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"x7z"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/x7z","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/x7z"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/webm":{"role":"symbol","title":"AttachmentFileType.webm","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"webm"}],"abstract":[{"type":"text","text":"Video"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/webm","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/webm"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/jpeg":{"role":"symbol","title":"AttachmentFileType.jpeg","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"jpeg"}],"abstract":[{"type":"text","text":"Image"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/jpeg","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/jpeg"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/xz":{"role":"symbol","title":"AttachmentFileType.xz","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"xz"}],"abstract":[{"type":"text","text":"File"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xz","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/xz"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/m4a":{"role":"symbol","title":"AttachmentFileType.m4a","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"m4a"}],"abstract":[{"type":"text","text":"Audio"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/m4a","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/m4a"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/txt":{"role":"symbol","title":"AttachmentFileType.txt","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"txt"}],"abstract":[{"type":"text","text":"Text"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/txt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfiletype\/txt"}}}
+{
+  "abstract" : [
+    {
+      "text" : "An attachment file type.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18AttachmentFileTypeO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "AttachmentFileType"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "AttachmentFileType"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "AttachmentFileType"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "AttachmentFileType"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/s12CaseIterableP",
+        "doc:\/\/io.getstream.StreamChat\/Se",
+        "doc:\/\/io.getstream.StreamChat\/SE",
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH",
+        "doc:\/\/io.getstream.StreamChat\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/avi",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/bmp",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/csv",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/doc",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/docx",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/generic",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/gif",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/jpeg",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/m4a",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mov",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mp3",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mp4",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ods",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/odt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ogg",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/pdf",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/png",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ppt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/pptx",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/rtf",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/tar",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/txt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/wav",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/webm",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/webp",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/wmv",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/x7z",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xls",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xlsx",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xz",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/zip"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(ext:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(mimeType:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mimeType"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/Equatable-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/attachmentfiletype"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SE": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SY": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/Se": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType": {
+  "abstract" : [
+    {
+      "text" : "An attachment file type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentFileType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentFileType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AttachmentFileType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/rawrepresentable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/avi": {
+  "abstract" : [
+    {
+      "text" : "Video",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "avi"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/avi",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.avi",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/avi"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/bmp": {
+  "abstract" : [
+    {
+      "text" : "Image",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bmp"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/bmp",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.bmp",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/bmp"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/csv": {
+  "abstract" : [
+    {
+      "text" : "Text",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "csv"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/csv",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.csv",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/csv"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/doc": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "doc"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/doc",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.doc",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/doc"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/docx": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "docx"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/docx",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.docx",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/docx"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/generic": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "generic"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/generic",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.generic",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/generic"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/gif": {
+  "abstract" : [
+    {
+      "text" : "Image",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "gif"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/gif",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.gif",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/gif"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/init(ext:)": {
+  "abstract" : [
+    {
+      "text" : "Init an attachment file type by a file extension.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "ext"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(ext:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(ext:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/init(ext:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/init(mimeType:)": {
+  "abstract" : [
+    {
+      "text" : "Init an attachment file type by mime type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "mimeType"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(mimeType:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(mimeType:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/init(mimetype:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/init(rawvalue:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/jpeg": {
+  "abstract" : [
+    {
+      "text" : "Image",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "jpeg"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/jpeg",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.jpeg",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/jpeg"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/m4a": {
+  "abstract" : [
+    {
+      "text" : "Audio",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "m4a"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/m4a",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.m4a",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/m4a"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/mimeType": {
+  "abstract" : [
+    {
+      "text" : "Returns a mime type for the file type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mimeType"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mimeType",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "mimeType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/mimetype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/mov": {
+  "abstract" : [
+    {
+      "text" : "Video",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mov"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mov",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.mov",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/mov"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/mp3": {
+  "abstract" : [
+    {
+      "text" : "Audio",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mp3"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mp3",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.mp3",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/mp3"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/mp4": {
+  "abstract" : [
+    {
+      "text" : "Audio",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mp4"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/mp4",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.mp4",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/mp4"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/ods": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ods"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ods",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.ods",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/ods"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/odt": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "odt"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/odt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.odt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/odt"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/ogg": {
+  "abstract" : [
+    {
+      "text" : "Audio",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ogg"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ogg",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.ogg",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/ogg"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/pdf": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pdf"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/pdf",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.pdf",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/pdf"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/png": {
+  "abstract" : [
+    {
+      "text" : "Image",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "png"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/png",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.png",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/png"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/ppt": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ppt"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/ppt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.ppt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/ppt"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/pptx": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pptx"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/pptx",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.pptx",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/pptx"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/rtf": {
+  "abstract" : [
+    {
+      "text" : "Text",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "rtf"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/rtf",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.rtf",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/rtf"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/tar": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tar"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/tar",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.tar",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/tar"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/txt": {
+  "abstract" : [
+    {
+      "text" : "Text",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "txt"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/txt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.txt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/txt"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/wav": {
+  "abstract" : [
+    {
+      "text" : "Audio",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "wav"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/wav",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.wav",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/wav"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/webm": {
+  "abstract" : [
+    {
+      "text" : "Video",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "webm"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/webm",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.webm",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/webm"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/webp": {
+  "abstract" : [
+    {
+      "text" : "Image",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "webp"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/webp",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.webp",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/webp"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/wmv": {
+  "abstract" : [
+    {
+      "text" : "Video",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "wmv"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/wmv",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.wmv",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/wmv"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/x7z": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "x7z"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/x7z",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.x7z",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/x7z"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/xls": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "xls"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xls",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.xls",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/xls"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/xlsx": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "xlsx"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xlsx",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.xlsx",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/xlsx"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/xz": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "xz"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/xz",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.xz",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/xz"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFileType/zip": {
+  "abstract" : [
+    {
+      "text" : "File",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "zip"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFileType\/zip",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AttachmentFileType.zip",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfiletype\/zip"
+},
+"doc://io.getstream.StreamChat/s12CaseIterableP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s12CaseIterableP",
+  "title" : "Swift.CaseIterable",
+  "type" : "unresolvable"
+}
+}
+}

@@ -1,1 +1,283 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"dataStore"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore","preciseIdentifier":"s:10StreamChat9DataStoreV","text":"DataStore"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannelmemberlistcontroller\/datastore"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/dataStore","interfaceLanguage":"swift"},"abstract":[{"type":"codeVoice","code":"DataStore"},{"type":"text","text":" provide access to all locally available model objects based on their id."}],"kind":"symbol","metadata":{"role":"symbol","title":"dataStore","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"dataStore"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DataStore","preciseIdentifier":"s:10StreamChat9DataStoreV"}],"symbolKind":"property","externalID":"s:10StreamChat17DataStoreProviderPAAE04dataD0AA0cD0Vvp::SYNTHESIZED::s:10StreamChat0B27ChannelMemberListControllerC","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/DataStoreProvider-Implementations"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController/dataStore":{"role":"symbol","title":"dataStore","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"dataStore"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DataStore","preciseIdentifier":"s:10StreamChat9DataStoreV"}],"abstract":[{"type":"codeVoice","code":"DataStore"},{"type":"text","text":" provide access to all locally available model objects based on their id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/dataStore","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmemberlistcontroller\/datastore"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore":{"role":"symbol","title":"DataStore","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataStore"}],"abstract":[{"type":"codeVoice","code":"DataStore"},{"type":"text","text":" provide access to all locally available model objects based on their id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataStore"}],"url":"\/documentation\/streamchat\/datastore"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController/DataStoreProvider-Implementations":{"role":"collectionGroup","title":"DataStoreProvider Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/DataStoreProvider-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatchannelmemberlistcontroller\/datastoreprovider-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController":{"role":"symbol","title":"ChatChannelMemberListController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMemberListController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelMemberListController"},{"type":"text","text":" is a controller class which allows observing"},{"type":"text","text":" "},{"type":"text","text":"a list of chat users based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelMemberListController"}],"url":"\/documentation\/streamchat\/chatchannelmemberlistcontroller"}}}
+{
+  "abstract" : [
+    {
+      "code" : "DataStore",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " provide access to all locally available model objects based on their id.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/DataStoreProvider-Implementations"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/dataStore"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat17DataStoreProviderPAAE04dataD0AA0cD0Vvp::SYNTHESIZED::s:10StreamChat0B27ChannelMemberListControllerC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "dataStore"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9DataStoreV",
+        "text" : "DataStore"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "dataStore"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "dataStore"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9DataStoreV",
+              "text" : "DataStore"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelmemberlistcontroller\/datastore"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelMemberListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a list of chat users based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberListController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberListController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmemberlistcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController/DataStoreProvider-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/DataStoreProvider-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "DataStoreProvider Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmemberlistcontroller\/datastoreprovider-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberListController/dataStore": {
+  "abstract" : [
+    {
+      "code" : "DataStore",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " provide access to all locally available model objects based on their id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dataStore"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9DataStoreV",
+      "text" : "DataStore"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberListController\/dataStore",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "dataStore",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmemberlistcontroller\/datastore"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataStore": {
+  "abstract" : [
+    {
+      "code" : "DataStore",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " provide access to all locally available model objects based on their id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataStore"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStore",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataStore"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataStore",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datastore"
+}
+}
+}

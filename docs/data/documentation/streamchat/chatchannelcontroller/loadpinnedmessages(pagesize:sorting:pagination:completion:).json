@@ -1,1 +1,755 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"loadPinnedMessages"},{"kind":"text","text":"("},{"kind":"externalParam","text":"pageSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":" = .messagesPageSize, "},{"kind":"externalParam","text":"sorting"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting","preciseIdentifier":"s:10StreamChat7SortingV","text":"Sorting"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey","preciseIdentifier":"s:10StreamChat24PinnedMessagesSortingKeyV","text":"PinnedMessagesSortingKey"},{"kind":"text","text":">] = [], "},{"kind":"externalParam","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination","preciseIdentifier":"s:10StreamChat24PinnedMessagesPaginationO","text":"PinnedMessagesPagination"},{"kind":"text","text":"? = nil, "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": "},{"kind":"attribute","text":"@escaping"},{"kind":"text","text":" ("},{"kind":"typeIdentifier","text":"Result","preciseIdentifier":"s:s6ResultO"},{"kind":"text","text":"<["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV","text":"ChatMessage"},{"kind":"text","text":"], "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":">) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"pageSize","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The number of pinned messages to load. Equals to "},{"type":"codeVoice","code":"25"},{"type":"text","text":" by default."}]}]},{"name":"sorting","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The sorting options. By default, results are sorted descending by "},{"type":"codeVoice","code":"pinned_at"},{"type":"text","text":" field."}]}]},{"name":"pagination","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The pagination parameter. If "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" is provided, most recently pinned messages are fetched."}]}]},{"name":"completion","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The completion to be called on "},{"type":"strong","inlineContent":[{"type":"text","text":"callbackQueue"}]},{"type":"text","text":" when request is completed."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannelcontroller\/loadpinnedmessages(pagesize:sorting:pagination:completion:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/loadPinnedMessages(pageSize:sorting:pagination:completion:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Loads the given number of pinned messages based on pagination parameter in the current channel."}],"kind":"symbol","metadata":{"role":"symbol","title":"loadPinnedMessages(pageSize:sorting:pagination:completion:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"loadPinnedMessages"},{"kind":"text","text":"("},{"kind":"externalParam","text":"pageSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"sorting"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Sorting","preciseIdentifier":"s:10StreamChat7SortingV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"PinnedMessagesSortingKey","preciseIdentifier":"s:10StreamChat24PinnedMessagesSortingKeyV"},{"kind":"text","text":">], "},{"kind":"externalParam","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"PinnedMessagesPagination","preciseIdentifier":"s:10StreamChat24PinnedMessagesPaginationO"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": ("},{"kind":"typeIdentifier","text":"Result","preciseIdentifier":"s:s6ResultO"},{"kind":"text","text":"<["},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":"], "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":">) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")"}],"symbolKind":"method","externalID":"s:10StreamChat0B17ChannelControllerC18loadPinnedMessages8pageSize7sorting10pagination10completionySi_SayAA7SortingVyAA0fgM3KeyVGGAA0fG10PaginationOSgys6ResultOySayAA0B7MessageVGs5Error_pGctF","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination":{"role":"symbol","title":"PinnedMessagesPagination","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"PinnedMessagesPagination"}],"abstract":[{"type":"text","text":"Pagination options available when paginating pinned messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"PinnedMessagesPagination"}],"url":"\/documentation\/streamchat\/pinnedmessagespagination"},"doc://io.getstream.StreamChat/documentation/StreamChat/Sorting":{"role":"symbol","title":"Sorting","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Sorting"}],"abstract":[{"type":"text","text":"Sorting options."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Sorting"}],"url":"\/documentation\/streamchat\/sorting"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesSortingKey":{"role":"symbol","title":"PinnedMessagesSortingKey","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"PinnedMessagesSortingKey"}],"abstract":[{"type":"text","text":"The type describing a value that can be used as a sorting when paginating pinned messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"PinnedMessagesSortingKey"}],"url":"\/documentation\/streamchat\/pinnedmessagessortingkey"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/loadPinnedMessages(pageSize:sorting:pagination:completion:)":{"role":"symbol","title":"loadPinnedMessages(pageSize:sorting:pagination:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"loadPinnedMessages"},{"kind":"text","text":"("},{"kind":"externalParam","text":"pageSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"sorting"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Sorting","preciseIdentifier":"s:10StreamChat7SortingV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"PinnedMessagesSortingKey","preciseIdentifier":"s:10StreamChat24PinnedMessagesSortingKeyV"},{"kind":"text","text":">], "},{"kind":"externalParam","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"PinnedMessagesPagination","preciseIdentifier":"s:10StreamChat24PinnedMessagesPaginationO"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": ("},{"kind":"typeIdentifier","text":"Result","preciseIdentifier":"s:s6ResultO"},{"kind":"text","text":"<["},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":"], "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":">) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Loads the given number of pinned messages based on pagination parameter in the current channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/loadPinnedMessages(pageSize:sorting:pagination:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelcontroller\/loadpinnedmessages(pagesize:sorting:pagination:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController":{"role":"symbol","title":"ChatChannelController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelController"}],"url":"\/documentation\/streamchat\/chatchannelcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage":{"role":"symbol","title":"ChatMessage","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessage"}],"abstract":[{"type":"text","text":"A type representing a chat message. "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":" is an immutable snapshot of a chat message entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessage"}],"url":"\/documentation\/streamchat\/chatmessage"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Loads the given number of pinned messages based on pagination parameter in the current channel.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/loadPinnedMessages(pageSize:sorting:pagination:completion:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B17ChannelControllerC18loadPinnedMessages8pageSize7sorting10pagination10completionySi_SayAA7SortingVyAA0fgM3KeyVGGAA0fG10PaginationOSgys6ResultOySayAA0B7MessageVGs5Error_pGctF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "loadPinnedMessages"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "pageSize"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Si",
+        "text" : "Int"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "sorting"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat7SortingV",
+        "text" : "Sorting"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat24PinnedMessagesSortingKeyV",
+        "text" : "PinnedMessagesSortingKey"
+      },
+      {
+        "kind" : "text",
+        "text" : ">], "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "pagination"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat24PinnedMessagesPaginationO",
+        "text" : "PinnedMessagesPagination"
+      },
+      {
+        "kind" : "text",
+        "text" : "?, "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "completion"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s6ResultO",
+        "text" : "Result"
+      },
+      {
+        "kind" : "text",
+        "text" : "<["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+        "text" : "ChatMessage"
+      },
+      {
+        "kind" : "text",
+        "text" : "], "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5ErrorP",
+        "text" : "Error"
+      },
+      {
+        "kind" : "text",
+        "text" : ">) -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s4Voida",
+        "text" : "Void"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "loadPinnedMessages(pageSize:sorting:pagination:completion:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "loadPinnedMessages"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "pageSize"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Si",
+              "text" : "Int"
+            },
+            {
+              "kind" : "text",
+              "text" : " = .messagesPageSize, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "sorting"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat7SortingV",
+              "text" : "Sorting"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat24PinnedMessagesSortingKeyV",
+              "text" : "PinnedMessagesSortingKey"
+            },
+            {
+              "kind" : "text",
+              "text" : ">] = [], "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "pagination"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat24PinnedMessagesPaginationO",
+              "text" : "PinnedMessagesPagination"
+            },
+            {
+              "kind" : "text",
+              "text" : "? = nil, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "completion"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "attribute",
+              "text" : "@escaping"
+            },
+            {
+              "kind" : "text",
+              "text" : " ("
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s6ResultO",
+              "text" : "Result"
+            },
+            {
+              "kind" : "text",
+              "text" : "<["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+              "text" : "ChatMessage"
+            },
+            {
+              "kind" : "text",
+              "text" : "], "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5ErrorP",
+              "text" : "Error"
+            },
+            {
+              "kind" : "text",
+              "text" : ">) -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s4Voida",
+              "text" : "Void"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The number of pinned messages to load. Equals to ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "25",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " by default.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "pageSize"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The sorting options. By default, results are sorted descending by ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "pinned_at",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " field.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "sorting"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The pagination parameter. If ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "nil",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " is provided, most recently pinned messages are fetched.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "pagination"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The completion to be called on ",
+                  "type" : "text"
+                },
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "callbackQueue",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "strong"
+                },
+                {
+                  "text" : " when request is completed.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "completion"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelcontroller\/loadpinnedmessages(pagesize:sorting:pagination:completion:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelController/loadPinnedMessages(pageSize:sorting:pagination:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Loads the given number of pinned messages based on pagination parameter in the current channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "loadPinnedMessages"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pageSize"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "sorting"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7SortingV",
+      "text" : "Sorting"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat24PinnedMessagesSortingKeyV",
+      "text" : "PinnedMessagesSortingKey"
+    },
+    {
+      "kind" : "text",
+      "text" : ">], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pagination"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat24PinnedMessagesPaginationO",
+      "text" : "PinnedMessagesPagination"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s6ResultO",
+      "text" : "Result"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : ">) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelController\/loadPinnedMessages(pageSize:sorting:pagination:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "loadPinnedMessages(pageSize:sorting:pagination:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelcontroller\/loadpinnedmessages(pagesize:sorting:pagination:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat message. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat message entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesPagination": {
+  "abstract" : [
+    {
+      "text" : "Pagination options available when paginating pinned messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PinnedMessagesPagination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesPagination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PinnedMessagesPagination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PinnedMessagesPagination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagespagination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesSortingKey": {
+  "abstract" : [
+    {
+      "text" : "The type describing a value that can be used as a sorting when paginating pinned messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PinnedMessagesSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PinnedMessagesSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PinnedMessagesSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagessortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Sorting": {
+  "abstract" : [
+    {
+      "text" : "Sorting options.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Sorting"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Sorting"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Sorting",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/sorting"
+}
+}
+}

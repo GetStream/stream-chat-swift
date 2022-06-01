@@ -1,1 +1,645 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentFile"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/attachmentfile"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/Se","doc:\/\/io.getstream.StreamChat\/SE","doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"An attachment file description."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentFile"}],"title":"AttachmentFile","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat14AttachmentFileV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"AttachmentFile"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(from:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(type:size:mimeType:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(url:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/mimeType","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/size","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/sizeString","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/type"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/encode(to:)"]},{"title":"Type Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/sizeFormatter"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/Equatable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/Se":{"type":"unresolvable","title":"Swift.Decodable","identifier":"doc:\/\/io.getstream.StreamChat\/Se"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/size":{"role":"symbol","title":"size","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"size"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int64","preciseIdentifier":"s:s5Int64V"}],"abstract":[{"type":"text","text":"A size of the file."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/size","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/size"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/type":{"role":"symbol","title":"type","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentFileType","preciseIdentifier":"s:10StreamChat18AttachmentFileTypeO"}],"abstract":[{"type":"text","text":"An attachment file type (see "},{"type":"codeVoice","code":"AttachmentFileType"},{"type":"text","text":")."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/type","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/type"},"doc://io.getstream.StreamChat/SE":{"type":"unresolvable","title":"Swift.Encodable","identifier":"doc:\/\/io.getstream.StreamChat\/SE"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/mimeType":{"role":"symbol","title":"mimeType","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"mimeType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"A mime type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/mimeType","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/mimetype"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/init(type:size:mimeType:)":{"role":"symbol","title":"init(type:size:mimeType:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentFileType","preciseIdentifier":"s:10StreamChat18AttachmentFileTypeO"},{"kind":"text","text":", "},{"kind":"externalParam","text":"size"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int64","preciseIdentifier":"s:s5Int64V"},{"kind":"text","text":", "},{"kind":"externalParam","text":"mimeType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?)"}],"abstract":[{"type":"text","text":"Init an attachment file."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(type:size:mimeType:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/init(type:size:mimetype:)"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/sizeString":{"role":"symbol","title":"sizeString","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"sizeString"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[{"type":"text","text":"A formatted file size."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/sizeString","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/sizestring"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/init(url:)":{"role":"symbol","title":"init(url:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"url"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(url:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/init(url:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile":{"role":"symbol","title":"AttachmentFile","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentFile"}],"abstract":[{"type":"text","text":"An attachment file description."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AttachmentFile"}],"url":"\/documentation\/streamchat\/attachmentfile"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/encode(to:)":{"role":"symbol","title":"encode(to:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"encode"},{"kind":"text","text":"("},{"kind":"externalParam","text":"to"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Encoder","preciseIdentifier":"s:s7EncoderP"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/encode(to:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/encode(to:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/sizeFormatter":{"role":"symbol","title":"sizeFormatter","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sizeFormatter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ByteCountFormatter","preciseIdentifier":"c:objc(cs)NSByteCountFormatter"}],"abstract":[{"type":"text","text":"A file size formatter."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/sizeFormatter","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/sizeformatter"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/init(from:)":{"role":"symbol","title":"init(from:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"from"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Decoder","preciseIdentifier":"s:s7DecoderP"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(from:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/init(from:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/attachmentfile\/equatable-implementations"}}}
+{
+  "abstract" : [
+    {
+      "text" : "An attachment file description.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat14AttachmentFileV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "AttachmentFile"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "AttachmentFile"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "AttachmentFile"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "AttachmentFile"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/Se",
+        "doc:\/\/io.getstream.StreamChat\/SE",
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(from:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(type:size:mimeType:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(url:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/mimeType",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/size",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/sizeString",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/type"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/encode(to:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/sizeFormatter"
+      ],
+      "title" : "Type Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/attachmentfile"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SE": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/Se": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile": {
+  "abstract" : [
+    {
+      "text" : "An attachment file description.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentFile"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentFile"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AttachmentFile",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/encode(to:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/init(from:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/init(type:size:mimeType:)": {
+  "abstract" : [
+    {
+      "text" : "Init an attachment file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat18AttachmentFileTypeO",
+      "text" : "AttachmentFileType"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "size"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5Int64V",
+      "text" : "Int64"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "mimeType"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(type:size:mimeType:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(type:size:mimeType:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/init(type:size:mimetype:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/init(url:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "url"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/init(url:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(url:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/init(url:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/mimeType": {
+  "abstract" : [
+    {
+      "text" : "A mime type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mimeType"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/mimeType",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "mimeType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/mimetype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/size": {
+  "abstract" : [
+    {
+      "text" : "A size of the file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "size"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5Int64V",
+      "text" : "Int64"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/size",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "size",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/size"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/sizeFormatter": {
+  "abstract" : [
+    {
+      "text" : "A file size formatter.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sizeFormatter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "c:objc(cs)NSByteCountFormatter",
+      "text" : "ByteCountFormatter"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/sizeFormatter",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sizeFormatter",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/sizeformatter"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/sizeString": {
+  "abstract" : [
+    {
+      "text" : "A formatted file size.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sizeString"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/sizeString",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sizeString",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/sizestring"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentFile/type": {
+  "abstract" : [
+    {
+      "text" : "An attachment file type (see ",
+      "type" : "text"
+    },
+    {
+      "code" : "AttachmentFileType",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ").",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat18AttachmentFileTypeO",
+      "text" : "AttachmentFileType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentFile\/type",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "type",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmentfile\/type"
+}
+}
+}

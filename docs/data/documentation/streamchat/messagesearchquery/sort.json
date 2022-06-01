@@ -1,1 +1,302 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sort"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting","preciseIdentifier":"s:10StreamChat7SortingV","text":"Sorting"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey","preciseIdentifier":"s:10StreamChat23MessageSearchSortingKeyO","text":"MessageSearchSortingKey"},{"kind":"text","text":">]"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messagesearchquery\/sort"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery\/sort","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sort"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Sorting","preciseIdentifier":"s:10StreamChat7SortingV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"MessageSearchSortingKey","preciseIdentifier":"s:10StreamChat23MessageSearchSortingKeyO"},{"kind":"text","text":">]"}],"title":"sort","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat18MessageSearchQueryV4sortSayAA7SortingVyAA0cdG3KeyOGGvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/Sorting":{"role":"symbol","title":"Sorting","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Sorting"}],"abstract":[{"type":"text","text":"Sorting options."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Sorting"}],"url":"\/documentation\/streamchat\/sorting"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchQuery":{"role":"symbol","title":"MessageSearchQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageSearchQuery"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageSearchQuery"}],"url":"\/documentation\/streamchat\/messagesearchquery"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchQuery/sort":{"role":"symbol","title":"sort","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sort"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Sorting","preciseIdentifier":"s:10StreamChat7SortingV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"MessageSearchSortingKey","preciseIdentifier":"s:10StreamChat23MessageSearchSortingKeyO"},{"kind":"text","text":">]"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery\/sort","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagesearchquery\/sort"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchSortingKey":{"role":"symbol","title":"MessageSearchSortingKey","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageSearchSortingKey"}],"abstract":[{"type":"text","text":"Keys that you can use to sort Message search results."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageSearchSortingKey"}],"url":"\/documentation\/streamchat\/messagesearchsortingkey"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery\/sort"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18MessageSearchQueryV4sortSayAA7SortingVyAA0cdG3KeyOGGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "sort"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat7SortingV",
+        "text" : "Sorting"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat23MessageSearchSortingKeyO",
+        "text" : "MessageSearchSortingKey"
+      },
+      {
+        "kind" : "text",
+        "text" : ">]"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "sort"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "sort"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat7SortingV",
+              "text" : "Sorting"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat23MessageSearchSortingKeyO",
+              "text" : "MessageSearchSortingKey"
+            },
+            {
+              "kind" : "text",
+              "text" : ">]"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messagesearchquery\/sort"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchQuery": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageSearchQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageSearchQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageSearchQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagesearchquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchQuery/sort": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sort"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7SortingV",
+      "text" : "Sorting"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat23MessageSearchSortingKeyO",
+      "text" : "MessageSearchSortingKey"
+    },
+    {
+      "kind" : "text",
+      "text" : ">]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery\/sort",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sort",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagesearchquery\/sort"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchSortingKey": {
+  "abstract" : [
+    {
+      "text" : "Keys that you can use to sort Message search results.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageSearchSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageSearchSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageSearchSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagesearchsortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Sorting": {
+  "abstract" : [
+    {
+      "text" : "Sorting options.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Sorting"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Sorting"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Sorting",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/sorting"
+}
+}
+}

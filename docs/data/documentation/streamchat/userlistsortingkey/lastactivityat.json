@@ -1,1 +1,176 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"lastActivityAt"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/userlistsortingkey\/lastactivityat"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/lastActivityAt","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Sort users by last activity date."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"lastActivityAt"}],"title":"UserListSortingKey.lastActivityAt","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat18UserListSortingKeyO14lastActivityAtyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey":{"role":"symbol","title":"UserListSortingKey","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"UserListSortingKey"}],"abstract":[{"type":"codeVoice","code":"UserListSortingKey"},{"type":"text","text":" is keys by which you can get sorted users after query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UserListSortingKey"}],"url":"\/documentation\/streamchat\/userlistsortingkey"},"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/lastActivityAt":{"role":"symbol","title":"UserListSortingKey.lastActivityAt","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"lastActivityAt"}],"abstract":[{"type":"text","text":"Sort users by last activity date."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/lastActivityAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/userlistsortingkey\/lastactivityat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Sort users by last activity date.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/lastActivityAt"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18UserListSortingKeyO14lastActivityAtyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "lastActivityAt"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "UserListSortingKey.lastActivityAt"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "lastActivityAt"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/userlistsortingkey\/lastactivityat"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey": {
+  "abstract" : [
+    {
+      "code" : "UserListSortingKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is keys by which you can get sorted users after query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserListSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserListSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserListSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UserListSortingKey/lastActivityAt": {
+  "abstract" : [
+    {
+      "text" : "Sort users by last activity date.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "lastActivityAt"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UserListSortingKey\/lastActivityAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "UserListSortingKey.lastActivityAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/userlistsortingkey\/lastactivityat"
+}
+}
+}

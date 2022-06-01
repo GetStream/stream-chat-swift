@@ -1,1 +1,1289 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClientConfig"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"overview","level":2,"type":"heading","text":"Overview"},{"type":"paragraph","inlineContent":[{"type":"text","text":"The default configuration can be changed the following way:"}]},{"type":"codeListing","syntax":null,"code":["  var config = ChatClientConfig()","  config.isLocalStorageEnabled = false","  config.channel.keystrokeEventTimeout = 15"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatclientconfig"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A configuration object used to configure a "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClientConfig"}],"title":"ChatClientConfig","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat0B12ClientConfigV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatClientConfig"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Structures","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/ChatChannel","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct"]},{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/init(apiKey:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/init(apiKeyString:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/apiKey","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/applicationGroupIdentifier","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/baseURL","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/customCDNClient","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/deletedMessagesVisibility","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/isClientInActiveMode","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/isLocalStorageEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/localCaching-swift.property","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/localStorageFolderURL","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentCountPerMessage","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentSize","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldConnectAutomatically","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldFlushLocalStorageOnStart","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldShowShadowedMessages","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/staysConnectedInBackground"]},{"title":"Enumerations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/ChatChannel":{"role":"symbol","title":"ChatClientConfig.ChatChannel","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannel"}],"abstract":[{"type":"codeVoice","code":"ChatChannel"},{"type":"text","text":" specific local caching and model serialization settings."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/ChatChannel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannel"}],"url":"\/documentation\/streamchat\/chatclientconfig\/chatchannel"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/LocalCaching-swift.struct":{"role":"symbol","title":"ChatClientConfig.LocalCaching","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalCaching"}],"abstract":[{"type":"text","text":"Advanced settings for the local caching and model serialization."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LocalCaching"}],"url":"\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility":{"role":"symbol","title":"ChatClientConfig.DeletedMessageVisibility","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"DeletedMessageVisibility"}],"abstract":[{"type":"text","text":"Specifies the visibility of deleted messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DeletedMessageVisibility"}],"url":"\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/shouldConnectAutomatically":{"role":"symbol","title":"shouldConnectAutomatically","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"shouldConnectAutomatically"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"If set to "},{"type":"codeVoice","code":"true"},{"type":"text","text":" the "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" will automatically establish a web-socket"},{"type":"text","text":" "},{"type":"text","text":"connection to listen to the updates when "},{"type":"codeVoice","code":"reloadUserIfNeeded"},{"type":"text","text":" is called."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldConnectAutomatically","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/chatclientconfig\/shouldconnectautomatically"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/localStorageFolderURL":{"role":"symbol","title":"localStorageFolderURL","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"localStorageFolderURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The folder "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" uses to store its local cache files."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/localStorageFolderURL","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/localstoragefolderurl"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/staysConnectedInBackground":{"role":"symbol","title":"staysConnectedInBackground","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"staysConnectedInBackground"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"If set to "},{"type":"codeVoice","code":"true"},{"type":"text","text":", the "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" will try to stay connected while app is backgrounded."},{"type":"text","text":" "},{"type":"text","text":"If set to "},{"type":"codeVoice","code":"false"},{"type":"text","text":", websocket disconnects immediately when app is backgrounded."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/staysConnectedInBackground","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/staysconnectedinbackground"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/init(apiKey:)":{"role":"symbol","title":"init(apiKey:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"apiKey"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"APIKey","preciseIdentifier":"s:10StreamChat6APIKeyV"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/init(apiKey:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/init(apikey:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/init(apiKeyString:)":{"role":"symbol","title":"init(apiKeyString:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"apiKeyString"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Creates a new instance of "},{"type":"codeVoice","code":"ChatClientConfig"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/init(apiKeyString:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/init(apikeystring:)"},"https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_application-groups":{"title":"here","titleInlineContent":[{"type":"text","text":"here"}],"type":"link","identifier":"https:\/\/developer.apple.com\/documentation\/bundleresources\/entitlements\/com_apple_security_application-groups","url":"https:\/\/developer.apple.com\/documentation\/bundleresources\/entitlements\/com_apple_security_application-groups"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig":{"role":"symbol","title":"ChatClientConfig","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClientConfig"}],"abstract":[{"type":"text","text":"A configuration object used to configure a "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClientConfig"}],"url":"\/documentation\/streamchat\/chatclientconfig"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/maxAttachmentCountPerMessage":{"role":"symbol","title":"maxAttachmentCountPerMessage","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"maxAttachmentCountPerMessage"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"Returns max number of attachments that can be attached to a message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentCountPerMessage","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/maxattachmentcountpermessage"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/customCDNClient":{"role":"symbol","title":"customCDNClient","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"customCDNClient"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"CDNClient","preciseIdentifier":"s:10StreamChat9CDNClientP"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Allows to inject a custom API client for uploading attachments, if not specified "},{"type":"codeVoice","code":"StreamCDNClient"},{"type":"text","text":" is used"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/customCDNClient","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/customcdnclient"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/shouldShowShadowedMessages":{"role":"symbol","title":"shouldShowShadowedMessages","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"shouldShowShadowedMessages"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Specifies whether "},{"type":"codeVoice","code":"shadowed"},{"type":"text","text":" messages should be shown in Message list."},{"type":"text","text":" "},{"type":"text","text":"For more information, please check “Shadow Bans” docs."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldShowShadowedMessages","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/shouldshowshadowedmessages"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/apiKey":{"role":"symbol","title":"apiKey","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"apiKey"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"APIKey","preciseIdentifier":"s:10StreamChat6APIKeyV"}],"abstract":[{"type":"text","text":"The "},{"type":"codeVoice","code":"APIKey"},{"type":"text","text":" unique for your chat app."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/apiKey","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/apikey"},"https://developer.apple.com/library/archive/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW19":{"title":"here","titleInlineContent":[{"type":"text","text":"here"}],"type":"link","identifier":"https:\/\/developer.apple.com\/library\/archive\/documentation\/Miscellaneous\/Reference\/EntitlementKeyReference\/Chapters\/EnablingAppSandbox.html#\/\/apple_ref\/doc\/uid\/TP40011195-CH4-SW19","url":"https:\/\/developer.apple.com\/library\/archive\/documentation\/Miscellaneous\/Reference\/EntitlementKeyReference\/Chapters\/EnablingAppSandbox.html#\/\/apple_ref\/doc\/uid\/TP40011195-CH4-SW19"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/maxAttachmentSize":{"role":"symbol","title":"maxAttachmentSize","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"maxAttachmentSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int64","preciseIdentifier":"s:s5Int64V"}],"abstract":[{"type":"text","text":"Returns max possible attachment size in bytes."},{"type":"text","text":" "},{"type":"text","text":"The value is taken from custom "},{"type":"codeVoice","code":"maxAttachmentSize"},{"type":"text","text":" type custom "},{"type":"codeVoice","code":"CDNClient"},{"type":"text","text":" type."},{"type":"text","text":" "},{"type":"text","text":"The default value is 20 MiB."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentSize","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/maxattachmentsize"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/applicationGroupIdentifier":{"role":"symbol","title":"applicationGroupIdentifier","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"applicationGroupIdentifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The security application group ID to use for the local storage. This is needed if you want to share offline storage between"},{"type":"text","text":" "},{"type":"text","text":"your chat application and extensions. More information is available "},{"type":"reference","isActive":true,"identifier":"https:\/\/developer.apple.com\/documentation\/bundleresources\/entitlements\/com_apple_security_application-groups"},{"type":"text","text":" "},{"type":"text","text":"and "},{"type":"reference","isActive":true,"identifier":"https:\/\/developer.apple.com\/library\/archive\/documentation\/Miscellaneous\/Reference\/EntitlementKeyReference\/Chapters\/EnablingAppSandbox.html#\/\/apple_ref\/doc\/uid\/TP40011195-CH4-SW19"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/applicationGroupIdentifier","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/applicationgroupidentifier"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/isLocalStorageEnabled":{"role":"symbol","title":"isLocalStorageEnabled","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"isLocalStorageEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Determines whether "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" caches the data locally. This makes it possible to browse the existing chat data also"},{"type":"text","text":" "},{"type":"text","text":"when the internet connection is not available."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/isLocalStorageEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/islocalstorageenabled"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/deletedMessagesVisibility":{"role":"symbol","title":"deletedMessagesVisibility","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletedMessagesVisibility"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DeletedMessageVisibility","preciseIdentifier":"s:10StreamChat0B12ClientConfigV24DeletedMessageVisibilityO"}],"abstract":[{"type":"text","text":"Specifies the visibility of deleted messages."},{"type":"text","text":" "},{"type":"text","text":"By default, all deleted messages are visible with their content hidden."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/deletedMessagesVisibility","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/deletedmessagesvisibility"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/baseURL":{"role":"symbol","title":"baseURL","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"baseURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"BaseURL","preciseIdentifier":"s:10StreamChat7BaseURLV"}],"abstract":[{"type":"text","text":"The datacenter "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" uses for connecting."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/baseURL","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/baseurl"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/isClientInActiveMode":{"role":"symbol","title":"isClientInActiveMode","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"isClientInActiveMode"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Flag for setting a ChatClient instance in connection-less mode."},{"type":"text","text":" "},{"type":"text","text":"A connection-less client is not able to connect to websocket and will not"},{"type":"text","text":" "},{"type":"text","text":"receive websocket events. It can still observe and mutate database."},{"type":"text","text":" "},{"type":"text","text":"This flag is automatically set to "},{"type":"codeVoice","code":"false"},{"type":"text","text":" for app extensions"},{"type":"text","text":" "},{"type":"strong","inlineContent":[{"type":"text","text":"Warning"}]},{"type":"text","text":": There should be at max 1 active client at the same time, else it can lead to undefined behavior."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/isClientInActiveMode","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/isclientinactivemode"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/localCaching-swift.property":{"role":"symbol","title":"localCaching","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"localCaching"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatClientConfig","preciseIdentifier":"s:10StreamChat0B12ClientConfigV"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"LocalCaching","preciseIdentifier":"s:10StreamChat0B12ClientConfigV12LocalCachingV"}],"abstract":[{"type":"text","text":"Advanced settings for the local caching and model serialization."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/localCaching-swift.property","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.property"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/shouldFlushLocalStorageOnStart":{"role":"symbol","title":"shouldFlushLocalStorageOnStart","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"shouldFlushLocalStorageOnStart"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"If set to "},{"type":"codeVoice","code":"true"},{"type":"text","text":", "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" resets the local cache on the start."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldFlushLocalStorageOnStart","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclientconfig\/shouldflushlocalstorageonstart"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A configuration object used to configure a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B12ClientConfigV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatClientConfig"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatClientConfig"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "ChatClientConfig"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatClientConfig"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The default configuration can be changed the following way:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "  var config = ChatClientConfig()",
+            "  config.isLocalStorageEnabled = false",
+            "  config.channel.keystrokeEventTimeout = 15"
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/ChatChannel",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/init(apiKey:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/init(apiKeyString:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/apiKey",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/applicationGroupIdentifier",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/baseURL",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/customCDNClient",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/deletedMessagesVisibility",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/isClientInActiveMode",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/isLocalStorageEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/localCaching-swift.property",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/localStorageFolderURL",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentCountPerMessage",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentSize",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldConnectAutomatically",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldFlushLocalStorageOnStart",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldShowShadowedMessages",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/staysConnectedInBackground"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility"
+      ],
+      "title" : "Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatclientconfig"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig": {
+  "abstract" : [
+    {
+      "text" : "A configuration object used to configure a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClientConfig"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClientConfig"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClientConfig",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/ChatChannel": {
+  "abstract" : [
+    {
+      "code" : "ChatChannel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " specific local caching and model serialization settings.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/ChatChannel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClientConfig.ChatChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/chatchannel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/DeletedMessageVisibility": {
+  "abstract" : [
+    {
+      "text" : "Specifies the visibility of deleted messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeletedMessageVisibility"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/DeletedMessageVisibility",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeletedMessageVisibility"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClientConfig.DeletedMessageVisibility",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/deletedmessagevisibility"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/LocalCaching-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "Advanced settings for the local caching and model serialization.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LocalCaching"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/LocalCaching-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LocalCaching"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClientConfig.LocalCaching",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.struct"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/apiKey": {
+  "abstract" : [
+    {
+      "text" : "The ",
+      "type" : "text"
+    },
+    {
+      "code" : "APIKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " unique for your chat app.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "apiKey"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6APIKeyV",
+      "text" : "APIKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/apiKey",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "apiKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/apikey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/applicationGroupIdentifier": {
+  "abstract" : [
+    {
+      "text" : "The security application group ID to use for the local storage. This is needed if you want to share offline storage between",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "your chat application and extensions. More information is available ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/developer.apple.com\/documentation\/bundleresources\/entitlements\/com_apple_security_application-groups",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "and ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/developer.apple.com\/library\/archive\/documentation\/Miscellaneous\/Reference\/EntitlementKeyReference\/Chapters\/EnablingAppSandbox.html#\/\/apple_ref\/doc\/uid\/TP40011195-CH4-SW19",
+      "isActive" : true,
+      "type" : "reference"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "applicationGroupIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/applicationGroupIdentifier",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "applicationGroupIdentifier",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/applicationgroupidentifier"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/baseURL": {
+  "abstract" : [
+    {
+      "text" : "The datacenter ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses for connecting.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "baseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7BaseURLV",
+      "text" : "BaseURL"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/baseURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "baseURL",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/baseurl"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/customCDNClient": {
+  "abstract" : [
+    {
+      "text" : "Allows to inject a custom API client for uploading attachments, if not specified ",
+      "type" : "text"
+    },
+    {
+      "code" : "StreamCDNClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is used",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "customCDNClient"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9CDNClientP",
+      "text" : "CDNClient"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/customCDNClient",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "customCDNClient",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/customcdnclient"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/deletedMessagesVisibility": {
+  "abstract" : [
+    {
+      "text" : "Specifies the visibility of deleted messages.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "By default, all deleted messages are visible with their content hidden.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deletedMessagesVisibility"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B12ClientConfigV24DeletedMessageVisibilityO",
+      "text" : "DeletedMessageVisibility"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/deletedMessagesVisibility",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deletedMessagesVisibility",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/deletedmessagesvisibility"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/init(apiKey:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "apiKey"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6APIKeyV",
+      "text" : "APIKey"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/init(apiKey:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(apiKey:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/init(apikey:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/init(apiKeyString:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new instance of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClientConfig",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "apiKeyString"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/init(apiKeyString:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(apiKeyString:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/init(apikeystring:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/isClientInActiveMode": {
+  "abstract" : [
+    {
+      "text" : "Flag for setting a ChatClient instance in connection-less mode.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "A connection-less client is not able to connect to websocket and will not",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "receive websocket events. It can still observe and mutate database.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This flag is automatically set to ",
+      "type" : "text"
+    },
+    {
+      "code" : "false",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " for app extensions",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "Warning",
+          "type" : "text"
+        }
+      ],
+      "type" : "strong"
+    },
+    {
+      "text" : ": There should be at max 1 active client at the same time, else it can lead to undefined behavior.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isClientInActiveMode"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/isClientInActiveMode",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isClientInActiveMode",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/isclientinactivemode"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/isLocalStorageEnabled": {
+  "abstract" : [
+    {
+      "text" : "Determines whether ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " caches the data locally. This makes it possible to browse the existing chat data also",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "when the internet connection is not available.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isLocalStorageEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/isLocalStorageEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isLocalStorageEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/islocalstorageenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/localCaching-swift.property": {
+  "abstract" : [
+    {
+      "text" : "Advanced settings for the local caching and model serialization.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "localCaching"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B12ClientConfigV",
+      "text" : "ChatClientConfig"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B12ClientConfigV12LocalCachingV",
+      "text" : "LocalCaching"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/localCaching-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "localCaching",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/localcaching-swift.property"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/localStorageFolderURL": {
+  "abstract" : [
+    {
+      "text" : "The folder ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses to store its local cache files.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "localStorageFolderURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/localStorageFolderURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "localStorageFolderURL",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/localstoragefolderurl"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/maxAttachmentCountPerMessage": {
+  "abstract" : [
+    {
+      "text" : "Returns max number of attachments that can be attached to a message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "maxAttachmentCountPerMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentCountPerMessage",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "maxAttachmentCountPerMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/maxattachmentcountpermessage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/maxAttachmentSize": {
+  "abstract" : [
+    {
+      "text" : "Returns max possible attachment size in bytes.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The value is taken from custom ",
+      "type" : "text"
+    },
+    {
+      "code" : "maxAttachmentSize",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type custom ",
+      "type" : "text"
+    },
+    {
+      "code" : "CDNClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The default value is 20 MiB.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "maxAttachmentSize"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5Int64V",
+      "text" : "Int64"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/maxAttachmentSize",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "maxAttachmentSize",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/maxattachmentsize"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/shouldConnectAutomatically": {
+  "abstract" : [
+    {
+      "text" : "If set to ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " the ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " will automatically establish a web-socket",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "connection to listen to the updates when ",
+      "type" : "text"
+    },
+    {
+      "code" : "reloadUserIfNeeded",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is called.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "shouldConnectAutomatically"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldConnectAutomatically",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "shouldConnectAutomatically",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/shouldconnectautomatically"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/shouldFlushLocalStorageOnStart": {
+  "abstract" : [
+    {
+      "text" : "If set to ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " resets the local cache on the start.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "shouldFlushLocalStorageOnStart"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldFlushLocalStorageOnStart",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "shouldFlushLocalStorageOnStart",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/shouldflushlocalstorageonstart"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/shouldShowShadowedMessages": {
+  "abstract" : [
+    {
+      "text" : "Specifies whether ",
+      "type" : "text"
+    },
+    {
+      "code" : "shadowed",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " messages should be shown in Message list.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "For more information, please check “Shadow Bans” docs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "shouldShowShadowedMessages"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/shouldShowShadowedMessages",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "shouldShowShadowedMessages",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/shouldshowshadowedmessages"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClientConfig/staysConnectedInBackground": {
+  "abstract" : [
+    {
+      "text" : "If set to ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", the ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " will try to stay connected while app is backgrounded.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "If set to ",
+      "type" : "text"
+    },
+    {
+      "code" : "false",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", websocket disconnects immediately when app is backgrounded.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "staysConnectedInBackground"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClientConfig\/staysConnectedInBackground",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "staysConnectedInBackground",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclientconfig\/staysconnectedinbackground"
+},
+"https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_application-groups": {
+  "identifier" : "https:\/\/developer.apple.com\/documentation\/bundleresources\/entitlements\/com_apple_security_application-groups",
+  "title" : "here",
+  "titleInlineContent" : [
+    {
+      "text" : "here",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/developer.apple.com\/documentation\/bundleresources\/entitlements\/com_apple_security_application-groups"
+},
+"https://developer.apple.com/library/archive/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW19": {
+  "identifier" : "https:\/\/developer.apple.com\/library\/archive\/documentation\/Miscellaneous\/Reference\/EntitlementKeyReference\/Chapters\/EnablingAppSandbox.html#\/\/apple_ref\/doc\/uid\/TP40011195-CH4-SW19",
+  "title" : "here",
+  "titleInlineContent" : [
+    {
+      "text" : "here",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/developer.apple.com\/library\/archive\/documentation\/Miscellaneous\/Reference\/EntitlementKeyReference\/Chapters\/EnablingAppSandbox.html#\/\/apple_ref\/doc\/uid\/TP40011195-CH4-SW19"
+}
+}
+}

@@ -1,1 +1,538 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"controller"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchController","preciseIdentifier":"s:10StreamChat0B20UserSearchControllerC","text":"ChatUserSearchController"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeUsers"},{"kind":"text","text":" "},{"kind":"internalParam","text":"changes"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO","text":"ListChange"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC","text":"ChatUser"},{"kind":"text","text":">])"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"controller","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The controller emitting the change callback."}]}]},{"name":"changes","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The change to the list of users."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatusersearchcontrollerdelegate\/controller(_:didchangeusers:)-2l2w6"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate\/controller(_:didChangeUsers:)-2l2w6","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The controller changed the list of observed users."}],"kind":"symbol","metadata":{"role":"symbol","title":"controller(_:didChangeUsers:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatUserSearchController","preciseIdentifier":"s:10StreamChat0B20UserSearchControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeUsers"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">])"}],"symbolKind":"method","externalID":"s:10StreamChat0B28UserSearchControllerDelegatePAAE10controller_14didChangeUsersyAA0bcdE0C_SayAA04ListI0OyAA0bC0CGGtF","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate\/controller(_:didChangeUsers:)-8rr6d"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchControllerDelegate/controller(_:didChangeUsers:)-2l2w6":{"role":"symbol","title":"controller(_:didChangeUsers:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatUserSearchController","preciseIdentifier":"s:10StreamChat0B20UserSearchControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeUsers"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">])"}],"abstract":[{"type":"text","text":"The controller changed the list of observed users."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate\/controller(_:didChangeUsers:)-2l2w6","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatusersearchcontrollerdelegate\/controller(_:didchangeusers:)-2l2w6"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser":{"role":"symbol","title":"ChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUser"}],"abstract":[{"type":"text","text":"A type representing a chat user. "},{"type":"codeVoice","code":"ChatUser"},{"type":"text","text":" is an immutable snapshot of a chat user entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUser"}],"url":"\/documentation\/streamchat\/chatuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/ListChange":{"role":"symbol","title":"ListChange","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ListChange"}],"abstract":[{"type":"text","text":"This enum describes the changes of the given collections of items."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ListChange"}],"url":"\/documentation\/streamchat\/listchange"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchControllerDelegate/controller(_:didChangeUsers:)-8rr6d":{"defaultImplementations":1,"role":"symbol","title":"controller(_:didChangeUsers:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatUserSearchController","preciseIdentifier":"s:10StreamChat0B20UserSearchControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeUsers"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">])"}],"abstract":[{"type":"text","text":"The controller changed the list of observed users."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate\/controller(_:didChangeUsers:)-8rr6d","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/chatusersearchcontrollerdelegate\/controller(_:didchangeusers:)-8rr6d"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchControllerDelegate":{"role":"symbol","title":"ChatUserSearchControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserSearchControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatUserSearchController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserSearchControllerDelegate"}],"url":"\/documentation\/streamchat\/chatusersearchcontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchController":{"role":"symbol","title":"ChatUserSearchController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatUserSearchController"}],"abstract":[{"type":"codeVoice","code":"ChatUserSearchController"},{"type":"text","text":" is a controller class which allows observing a list of chat users based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatUserSearchController"}],"url":"\/documentation\/streamchat\/chatusersearchcontroller"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The controller changed the list of observed users.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate\/controller(_:didChangeUsers:)-8rr6d"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate\/controller(_:didChangeUsers:)-2l2w6"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B28UserSearchControllerDelegatePAAE10controller_14didChangeUsersyAA0bcdE0C_SayAA04ListI0OyAA0bC0CGGtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "controller"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B20UserSearchControllerC",
+        "text" : "ChatUserSearchController"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "didChangeUsers"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+        "text" : "ListChange"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B4UserC",
+        "text" : "ChatUser"
+      },
+      {
+        "kind" : "text",
+        "text" : ">])"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "controller(_:didChangeUsers:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "controller"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "controller"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B20UserSearchControllerC",
+              "text" : "ChatUserSearchController"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "didChangeUsers"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "changes"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+              "text" : "ListChange"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B4UserC",
+              "text" : "ChatUser"
+            },
+            {
+              "kind" : "text",
+              "text" : ">])"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The controller emitting the change callback.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "controller"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The change to the list of users.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "changes"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatusersearchcontrollerdelegate\/controller(_:didchangeusers:)-2l2w6"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat user entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchController": {
+  "abstract" : [
+    {
+      "code" : "ChatUserSearchController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing a list of chat users based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserSearchController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserSearchController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserSearchController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusersearchcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatUserSearchController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserSearchControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatUserSearchControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatUserSearchControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusersearchcontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchControllerDelegate/controller(_:didChangeUsers:)-2l2w6": {
+  "abstract" : [
+    {
+      "text" : "The controller changed the list of observed users.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B20UserSearchControllerC",
+      "text" : "ChatUserSearchController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+      "text" : "ListChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate\/controller(_:didChangeUsers:)-2l2w6",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "controller(_:didChangeUsers:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusersearchcontrollerdelegate\/controller(_:didchangeusers:)-2l2w6"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatUserSearchControllerDelegate/controller(_:didChangeUsers:)-8rr6d": {
+  "abstract" : [
+    {
+      "text" : "The controller changed the list of observed users.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B20UserSearchControllerC",
+      "text" : "ChatUserSearchController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+      "text" : "ListChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatUserSearchControllerDelegate\/controller(_:didChangeUsers:)-8rr6d",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "controller(_:didChangeUsers:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatusersearchcontrollerdelegate\/controller(_:didchangeusers:)-8rr6d"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ListChange": {
+  "abstract" : [
+    {
+      "text" : "This enum describes the changes of the given collections of items.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ListChange"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ListChange"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ListChange",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/listchange"
+}
+}
+}

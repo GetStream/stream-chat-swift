@@ -1,1 +1,536 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"controller"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController","preciseIdentifier":"s:10StreamChat0B17MessageControllerC","text":"ChatMessageController"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeReplies"},{"kind":"text","text":" "},{"kind":"internalParam","text":"changes"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO","text":"ListChange"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV","text":"ChatMessage"},{"kind":"text","text":">])"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessagecontrollerdelegate\/messagecontroller(_:didchangereplies:)-uv4a"],"traits":[{"interfaceLanguage":"swift"}]}],"defaultImplementationsSections":[{"title":"ChatMessageControllerDelegate Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate\/messageController(_:didChangeReplies:)-2i4aw"]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate\/messageController(_:didChangeReplies:)-uv4a","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The controller observed changes in the replies of the observed "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"role":"symbol","title":"messageController(_:didChangeReplies:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatMessageController","preciseIdentifier":"s:10StreamChat0B17MessageControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeReplies"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":">])"}],"symbolKind":"method","externalID":"s:10StreamChat0B25MessageControllerDelegateP07messageD0_16didChangeRepliesyAA0bcD0C_SayAA04ListH0OyAA0bC0VGGtF","required":true,"modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ListChange":{"role":"symbol","title":"ListChange","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ListChange"}],"abstract":[{"type":"text","text":"This enum describes the changes of the given collections of items."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ListChange"}],"url":"\/documentation\/streamchat\/listchange"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageControllerDelegate":{"role":"symbol","title":"ChatMessageControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"ChatMessageController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageControllerDelegate"}],"url":"\/documentation\/streamchat\/chatmessagecontrollerdelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage":{"role":"symbol","title":"ChatMessage","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessage"}],"abstract":[{"type":"text","text":"A type representing a chat message. "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":" is an immutable snapshot of a chat message entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessage"}],"url":"\/documentation\/streamchat\/chatmessage"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageControllerDelegate/messageController(_:didChangeReplies:)-2i4aw":{"role":"symbol","title":"messageController(_:didChangeReplies:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatMessageController","preciseIdentifier":"s:10StreamChat0B17MessageControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeReplies"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":">])"}],"abstract":[{"type":"text","text":"The controller observed changes in the replies of the observed "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate\/messageController(_:didChangeReplies:)-2i4aw","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontrollerdelegate\/messagecontroller(_:didchangereplies:)-2i4aw"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageControllerDelegate/messageController(_:didChangeReplies:)-uv4a":{"defaultImplementations":1,"role":"symbol","title":"messageController(_:didChangeReplies:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatMessageController","preciseIdentifier":"s:10StreamChat0B17MessageControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeReplies"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":">])"}],"abstract":[{"type":"text","text":"The controller observed changes in the replies of the observed "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate\/messageController(_:didChangeReplies:)-uv4a","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/chatmessagecontrollerdelegate\/messagecontroller(_:didchangereplies:)-uv4a"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController":{"role":"symbol","title":"ChatMessageController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageController"}],"abstract":[{"type":"codeVoice","code":"ChatMessageController"},{"type":"text","text":" is a controller class which allows observing and mutating a chat message entity."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageController"}],"url":"\/documentation\/streamchat\/chatmessagecontroller"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The controller observed changes in the replies of the observed ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementationsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate\/messageController(_:didChangeReplies:)-2i4aw"
+      ],
+      "title" : "ChatMessageControllerDelegate Implementations"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate\/messageController(_:didChangeReplies:)-uv4a"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B25MessageControllerDelegateP07messageD0_16didChangeRepliesyAA0bcD0C_SayAA04ListH0OyAA0bC0VGGtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "messageController"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B17MessageControllerC",
+        "text" : "ChatMessageController"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "didChangeReplies"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+        "text" : "ListChange"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+        "text" : "ChatMessage"
+      },
+      {
+        "kind" : "text",
+        "text" : ">])"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "required" : true,
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "messageController(_:didChangeReplies:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "messageController"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "controller"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B17MessageControllerC",
+              "text" : "ChatMessageController"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "didChangeReplies"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "changes"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+              "text" : "ListChange"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+              "text" : "ChatMessage"
+            },
+            {
+              "kind" : "text",
+              "text" : ">])"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessagecontrollerdelegate\/messagecontroller(_:didchangereplies:)-uv4a"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat message. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat message entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating a chat message entity.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageControllerDelegate/messageController(_:didChangeReplies:)-2i4aw": {
+  "abstract" : [
+    {
+      "text" : "The controller observed changes in the replies of the observed ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17MessageControllerC",
+      "text" : "ChatMessageController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeReplies"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+      "text" : "ListChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ">])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate\/messageController(_:didChangeReplies:)-2i4aw",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messageController(_:didChangeReplies:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontrollerdelegate\/messagecontroller(_:didchangereplies:)-2i4aw"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageControllerDelegate/messageController(_:didChangeReplies:)-uv4a": {
+  "abstract" : [
+    {
+      "text" : "The controller observed changes in the replies of the observed ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17MessageControllerC",
+      "text" : "ChatMessageController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeReplies"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+      "text" : "ListChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ">])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageControllerDelegate\/messageController(_:didChangeReplies:)-uv4a",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "messageController(_:didChangeReplies:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontrollerdelegate\/messagecontroller(_:didchangereplies:)-uv4a"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ListChange": {
+  "abstract" : [
+    {
+      "text" : "This enum describes the changes of the given collections of items.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ListChange"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ListChange",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ListChange"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ListChange",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/listchange"
+}
+}
+}

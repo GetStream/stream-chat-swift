@@ -1,1 +1,237 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"message"},{"kind":"text","text":"("},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNotificationContent","preciseIdentifier":"s:10StreamChat26MessageNotificationContentC","text":"MessageNotificationContent"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatpushnotificationcontent\/message(_:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationContent\/message(_:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"message"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"MessageNotificationContent","preciseIdentifier":"s:10StreamChat26MessageNotificationContentC"},{"kind":"text","text":")"}],"title":"ChatPushNotificationContent.message(_:)","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat0B23PushNotificationContentO7messageyAcA07MessagedE0CcACmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationContent"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatPushNotificationContent":{"role":"symbol","title":"ChatPushNotificationContent","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatPushNotificationContent"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationContent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatPushNotificationContent"}],"url":"\/documentation\/streamchat\/chatpushnotificationcontent"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNotificationContent":{"role":"symbol","title":"MessageNotificationContent","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageNotificationContent"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNotificationContent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageNotificationContent"}],"url":"\/documentation\/streamchat\/messagenotificationcontent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatPushNotificationContent/message(_:)":{"role":"symbol","title":"ChatPushNotificationContent.message(_:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"message"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"MessageNotificationContent","preciseIdentifier":"s:10StreamChat26MessageNotificationContentC"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationContent\/message(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatpushnotificationcontent\/message(_:)"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationContent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationContent\/message(_:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B23PushNotificationContentO7messageyAcA07MessagedE0CcACmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "message"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat26MessageNotificationContentC",
+        "text" : "MessageNotificationContent"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "ChatPushNotificationContent.message(_:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "message"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNotificationContent",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat26MessageNotificationContentC",
+              "text" : "MessageNotificationContent"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatpushnotificationcontent\/message(_:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatPushNotificationContent": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatPushNotificationContent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationContent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatPushNotificationContent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatPushNotificationContent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatpushnotificationcontent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatPushNotificationContent/message(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "message"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat26MessageNotificationContentC",
+      "text" : "MessageNotificationContent"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatPushNotificationContent\/message(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ChatPushNotificationContent.message(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatpushnotificationcontent\/message(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageNotificationContent": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageNotificationContent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageNotificationContent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageNotificationContent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageNotificationContent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagenotificationcontent"
+}
+}
+}

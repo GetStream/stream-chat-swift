@@ -1,1 +1,237 @@
-{"variants":[{"paths":["\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class\/datacontrollerstatedelegate-implementations"],"traits":[{"interfaceLanguage":"swift"}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/DataControllerStateDelegate-Implementations","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"article","metadata":{"modules":[{"name":"StreamChat"}],"role":"collectionGroup","title":"DataControllerStateDelegate Implementations"},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class"]]},"topicSections":[{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/controller(_:didChangeState:)"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class":{"role":"symbol","title":"ChatChannelWatcherListController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"ChatChannelWatcherListController"},{"type":"text","text":" type which makes it possible to use the controller"},{"type":"text","text":" "},{"type":"text","text":"comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController":{"role":"symbol","title":"ChatChannelWatcherListController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelWatcherListController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelWatcherListController"},{"type":"text","text":" is a controller class which allows observing"},{"type":"text","text":" "},{"type":"text","text":"a list of chat watchers based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelWatcherListController"}],"url":"\/documentation\/streamchat\/chatchannelwatcherlistcontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class/controller(_:didChangeState:)":{"role":"symbol","title":"controller(_:didChangeState:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeState"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"State","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Called when the observed controller changed it’s state."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/controller(_:didChangeState:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class\/controller(_:didchangestate:)"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/DataControllerStateDelegate-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "DataControllerStateDelegate Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/controller(_:didChangeState:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class\/datacontrollerstatedelegate-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelWatcherListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a list of chat watchers based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelWatcherListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelWatcherListController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelWatcherListController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelwatcherlistcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelWatcherListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelWatcherListController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelWatcherListController/ObservableObject-swift.class/controller(_:didChangeState:)": {
+  "abstract" : [
+    {
+      "text" : "Called when the observed controller changed it’s state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeState"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+      "text" : "State"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelWatcherListController\/ObservableObject-swift.class\/controller(_:didChangeState:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "controller(_:didChangeState:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelwatcherlistcontroller\/observableobject-swift.class\/controller(_:didchangestate:)"
+}
+}
+}

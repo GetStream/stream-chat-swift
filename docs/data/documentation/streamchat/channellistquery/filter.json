@@ -1,1 +1,348 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"filter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter","preciseIdentifier":"s:10StreamChat6FilterV","text":"Filter"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListFilterScope","preciseIdentifier":"s:10StreamChat22ChannelListFilterScopeV","text":"ChannelListFilterScope"},{"kind":"text","text":">"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channellistquery\/filter"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery\/filter","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A filter for the query (see "},{"type":"codeVoice","code":"Filter"},{"type":"text","text":")."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"filter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Filter","preciseIdentifier":"s:10StreamChat6FilterV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChannelListFilterScope","preciseIdentifier":"s:10StreamChat22ChannelListFilterScopeV"},{"kind":"text","text":">"}],"title":"filter","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat16ChannelListQueryV6filterAA6FilterVyAA0cdG5ScopeVGvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery":{"role":"symbol","title":"ChannelListQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelListQuery"}],"abstract":[{"type":"text","text":"A query is used for querying specific channels from backend."},{"type":"text","text":" "},{"type":"text","text":"You can specify filter, sorting, pagination, limit for fetched messages in channel and other options."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelListQuery"}],"url":"\/documentation\/streamchat\/channellistquery"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListFilterScope":{"role":"symbol","title":"ChannelListFilterScope","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelListFilterScope"}],"abstract":[{"type":"text","text":"An extra-data-specific namespace for the "},{"type":"codeVoice","code":"FilterKey"},{"type":"text","text":"s suitable to be used for "},{"type":"codeVoice","code":"ChannelListQuery"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListFilterScope","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelListFilterScope"}],"url":"\/documentation\/streamchat\/channellistfilterscope"},"doc://io.getstream.StreamChat/documentation/StreamChat/Filter":{"role":"symbol","title":"Filter","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Filter"}],"abstract":[{"type":"text","text":"Filter is used to specify the details about which elements should be returned from a specific query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Filter"}],"url":"\/documentation\/streamchat\/filter"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery/filter":{"role":"symbol","title":"filter","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"filter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Filter","preciseIdentifier":"s:10StreamChat6FilterV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChannelListFilterScope","preciseIdentifier":"s:10StreamChat22ChannelListFilterScopeV"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A filter for the query (see "},{"type":"codeVoice","code":"Filter"},{"type":"text","text":")."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery\/filter","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channellistquery\/filter"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A filter for the query (see ",
+      "type" : "text"
+    },
+    {
+      "code" : "Filter",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ").",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery\/filter"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat16ChannelListQueryV6filterAA6FilterVyAA0cdG5ScopeVGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "filter"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6FilterV",
+        "text" : "Filter"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat22ChannelListFilterScopeV",
+        "text" : "ChannelListFilterScope"
+      },
+      {
+        "kind" : "text",
+        "text" : ">"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "filter"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "filter"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6FilterV",
+              "text" : "Filter"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListFilterScope",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat22ChannelListFilterScopeV",
+              "text" : "ChannelListFilterScope"
+            },
+            {
+              "kind" : "text",
+              "text" : ">"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channellistquery\/filter"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListFilterScope": {
+  "abstract" : [
+    {
+      "text" : "An extra-data-specific namespace for the ",
+      "type" : "text"
+    },
+    {
+      "code" : "FilterKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "s suitable to be used for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListQuery",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListFilterScope"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListFilterScope",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListFilterScope"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelListFilterScope",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistfilterscope"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery": {
+  "abstract" : [
+    {
+      "text" : "A query is used for querying specific channels from backend.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelListQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery/filter": {
+  "abstract" : [
+    {
+      "text" : "A filter for the query (see ",
+      "type" : "text"
+    },
+    {
+      "code" : "Filter",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ").",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "filter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6FilterV",
+      "text" : "Filter"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat22ChannelListFilterScopeV",
+      "text" : "ChannelListFilterScope"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery\/filter",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "filter",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistquery\/filter"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Filter": {
+  "abstract" : [
+    {
+      "text" : "Filter is used to specify the details about which elements should be returned from a specific query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Filter"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Filter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Filter",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filter"
+}
+}
+}

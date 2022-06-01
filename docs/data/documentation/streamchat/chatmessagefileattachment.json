@@ -1,1 +1,337 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageFileAttachment"},{"kind":"text","text":" = "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment","preciseIdentifier":"s:10StreamChat0B17MessageAttachmentV","text":"ChatMessageAttachment"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FileAttachmentPayload","preciseIdentifier":"s:10StreamChat21FileAttachmentPayloadV","text":"FileAttachmentPayload"},{"kind":"text","text":">"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"type":"paragraph","inlineContent":[{"type":"text","text":"The "},{"type":"codeVoice","code":"ChatMessageFileAttachment"},{"type":"text","text":" attachment will be added to the message automatically"},{"type":"text","text":" "},{"type":"text","text":"if the message was sent with attached "},{"type":"codeVoice","code":"AnyAttachmentPayload"},{"type":"text","text":" created with"},{"type":"text","text":" "},{"type":"text","text":"local URL and "},{"type":"codeVoice","code":".file"},{"type":"text","text":" attachment type."}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessagefileattachment"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageFileAttachment","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A type alias for attachment with "},{"type":"codeVoice","code":"FileAttachmentPayload"},{"type":"text","text":" payload type."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageFileAttachment"}],"title":"ChatMessageFileAttachment","roleHeading":"Type Alias","role":"symbol","symbolKind":"typealias","externalID":"s:10StreamChat0B21MessageFileAttachmenta","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatMessageFileAttachment"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageFileAttachment":{"role":"symbol","title":"ChatMessageFileAttachment","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageFileAttachment"}],"abstract":[{"type":"text","text":"A type alias for attachment with "},{"type":"codeVoice","code":"FileAttachmentPayload"},{"type":"text","text":" payload type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageFileAttachment","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageFileAttachment"}],"url":"\/documentation\/streamchat\/chatmessagefileattachment"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageAttachment":{"role":"symbol","title":"ChatMessageAttachment","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageAttachment"}],"abstract":[{"type":"text","text":"A type representing a chat message attachment."},{"type":"text","text":" "},{"type":"codeVoice","code":"ChatMessageAttachment<Payload>"},{"type":"text","text":" is an immutable snapshot of message attachment at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageAttachment"}],"url":"\/documentation\/streamchat\/chatmessageattachment"},"doc://io.getstream.StreamChat/documentation/StreamChat/FileAttachmentPayload":{"role":"symbol","title":"FileAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"FileAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".file"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FileAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"FileAttachmentPayload"}],"url":"\/documentation\/streamchat\/fileattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A type alias for attachment with ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileAttachmentPayload",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " payload type.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageFileAttachment"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B21MessageFileAttachmenta",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "typealias"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatMessageFileAttachment"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatMessageFileAttachment"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Alias",
+    "symbolKind" : "typealias",
+    "title" : "ChatMessageFileAttachment"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "typealias"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatMessageFileAttachment"
+            },
+            {
+              "kind" : "text",
+              "text" : " = "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat0B17MessageAttachmentV",
+              "text" : "ChatMessageAttachment"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FileAttachmentPayload",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat21FileAttachmentPayloadV",
+              "text" : "FileAttachmentPayload"
+            },
+            {
+              "kind" : "text",
+              "text" : ">"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The ",
+              "type" : "text"
+            },
+            {
+              "code" : "ChatMessageFileAttachment",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " attachment will be added to the message automatically",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "if the message was sent with attached ",
+              "type" : "text"
+            },
+            {
+              "code" : "AnyAttachmentPayload",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " created with",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "local URL and ",
+              "type" : "text"
+            },
+            {
+              "code" : ".file",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " attachment type.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessagefileattachment"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageAttachment": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat message attachment.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessageAttachment<Payload>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of message attachment at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageAttachment"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageAttachment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageAttachment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageAttachment",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessageattachment"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageFileAttachment": {
+  "abstract" : [
+    {
+      "text" : "A type alias for attachment with ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileAttachmentPayload",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " payload type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageFileAttachment"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageFileAttachment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageFileAttachment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageFileAttachment",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagefileattachment"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FileAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".file",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FileAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/fileattachmentpayload"
+}
+}
+}

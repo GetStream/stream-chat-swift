@@ -1,1 +1,286 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"disconnected"},{"kind":"text","text":"("},{"kind":"externalParam","text":"error"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError","preciseIdentifier":"s:10StreamChat11ClientErrorC","text":"ClientError"},{"kind":"text","text":"? = nil)"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/connectionstatus\/disconnected(error:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus\/disconnected(error:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The client is disconnected. This is an initial state. Optionally contains an error, if the connection was disconnected"},{"type":"text","text":" "},{"type":"text","text":"due to an error."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"disconnected"},{"kind":"text","text":"("},{"kind":"externalParam","text":"error"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ClientError","preciseIdentifier":"s:10StreamChat11ClientErrorC"},{"kind":"text","text":"?)"}],"title":"ConnectionStatus.disconnected(error:)","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat16ConnectionStatusO12disconnectedyAcA11ClientErrorCSg_tcACmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatus":{"role":"symbol","title":"ConnectionStatus","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ConnectionStatus"}],"abstract":[{"type":"text","text":"Describes the possible states of the client connection to the servers."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ConnectionStatus"}],"url":"\/documentation\/streamchat\/connectionstatus"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatus/disconnected(error:)":{"role":"symbol","title":"ConnectionStatus.disconnected(error:)","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"disconnected"},{"kind":"text","text":"("},{"kind":"externalParam","text":"error"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ClientError","preciseIdentifier":"s:10StreamChat11ClientErrorC"},{"kind":"text","text":"?)"}],"abstract":[{"type":"text","text":"The client is disconnected. This is an initial state. Optionally contains an error, if the connection was disconnected"},{"type":"text","text":" "},{"type":"text","text":"due to an error."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus\/disconnected(error:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/connectionstatus\/disconnected(error:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError":{"role":"symbol","title":"ClientError","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ClientError"}],"abstract":[{"type":"text","text":"A Client error."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ClientError"}],"url":"\/documentation\/streamchat\/clienterror"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The client is disconnected. This is an initial state. Optionally contains an error, if the connection was disconnected",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "due to an error.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus\/disconnected(error:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat16ConnectionStatusO12disconnectedyAcA11ClientErrorCSg_tcACmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "disconnected"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "error"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat11ClientErrorC",
+        "text" : "ClientError"
+      },
+      {
+        "kind" : "text",
+        "text" : "?)"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "ConnectionStatus.disconnected(error:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "disconnected"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "error"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat11ClientErrorC",
+              "text" : "ClientError"
+            },
+            {
+              "kind" : "text",
+              "text" : "? = nil)"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/connectionstatus\/disconnected(error:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError": {
+  "abstract" : [
+    {
+      "text" : "A Client error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ClientError"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ClientError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ClientError",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatus": {
+  "abstract" : [
+    {
+      "text" : "Describes the possible states of the client connection to the servers.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionStatus"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConnectionStatus"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConnectionStatus",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionstatus"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ConnectionStatus/disconnected(error:)": {
+  "abstract" : [
+    {
+      "text" : "The client is disconnected. This is an initial state. Optionally contains an error, if the connection was disconnected",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "due to an error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "disconnected"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "error"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11ClientErrorC",
+      "text" : "ClientError"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ConnectionStatus\/disconnected(error:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ConnectionStatus.disconnected(error:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/connectionstatus\/disconnected(error:)"
+}
+}
+}

@@ -1,1 +1,284 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"level"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO","text":"LogLevel"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/baselogdestination\/level"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/level","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Inherited from "},{"type":"codeVoice","code":"LogDestination.level"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"level"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO"}],"title":"level","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat18BaseLogDestinationC5levelAA0D5LevelOvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/BaseLogDestination/level":{"role":"symbol","title":"level","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"level"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LogLevel","preciseIdentifier":"s:10StreamChat8LogLevelO"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/level","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/baselogdestination\/level"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel":{"role":"symbol","title":"LogLevel","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogLevel"}],"abstract":[{"type":"text","text":"Log level for any messages to be logged."},{"type":"text","text":" "},{"type":"text","text":"Please check "},{"type":"reference","isActive":true,"identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"},{"type":"text","text":" to understand different logging levels."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogLevel"}],"url":"\/documentation\/streamchat\/loglevel"},"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code":{"title":"this Apple Logging Article","titleInlineContent":[{"type":"text","text":"this Apple Logging Article"}],"type":"link","identifier":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code","url":"https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"},"doc://io.getstream.StreamChat/documentation/StreamChat/BaseLogDestination":{"role":"symbol","title":"BaseLogDestination","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"BaseLogDestination"}],"abstract":[{"type":"text","text":"Base class for log destinations. Already implements basic functionaly to allow easy destination implementation."},{"type":"text","text":" "},{"type":"text","text":"Extending this class, instead of implementing "},{"type":"codeVoice","code":"LogDestination"},{"type":"text","text":" is easier (and recommended) for creating new destinations."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"BaseLogDestination"}],"url":"\/documentation\/streamchat\/baselogdestination"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "LogDestination.level",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/level"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat18BaseLogDestinationC5levelAA0D5LevelOvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "level"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+        "text" : "LogLevel"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "level"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "level"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+              "text" : "LogLevel"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/baselogdestination\/level"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseLogDestination": {
+  "abstract" : [
+    {
+      "text" : "Base class for log destinations. Already implements basic functionaly to allow easy destination implementation.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Extending this class, instead of implementing ",
+      "type" : "text"
+    },
+    {
+      "code" : "LogDestination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is easier (and recommended) for creating new destinations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "BaseLogDestination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "BaseLogDestination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "BaseLogDestination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baselogdestination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseLogDestination/level": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "level"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8LogLevelO",
+      "text" : "LogLevel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseLogDestination\/level",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "level",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baselogdestination\/level"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogLevel": {
+  "abstract" : [
+    {
+      "text" : "Log level for any messages to be logged.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Please check ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " to understand different logging levels.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogLevel",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogLevel"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogLevel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/loglevel"
+},
+"https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code": {
+  "identifier" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code",
+  "title" : "this Apple Logging Article",
+  "titleInlineContent" : [
+    {
+      "text" : "this Apple Logging Article",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/developer.apple.com\/documentation\/os\/logging\/generating_log_messages_from_your_code"
+}
+}
+}

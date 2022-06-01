@@ -1,1 +1,817 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentType"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/attachmenttype"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterValue","doc:\/\/io.getstream.StreamChat\/Se","doc:\/\/io.getstream.StreamChat\/SE","doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/s43ExpressibleByExtendedGraphemeClusterLiteralP","doc:\/\/io.getstream.StreamChat\/s26ExpressibleByStringLiteralP","doc:\/\/io.getstream.StreamChat\/s33ExpressibleByUnicodeScalarLiteralP","doc:\/\/io.getstream.StreamChat\/SH","doc:\/\/io.getstream.StreamChat\/SY"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"An attachment type."},{"type":"text","text":" "},{"type":"text","text":"There are some predefined types on backend but any type can be introduced and sent to backend."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentType"}],"title":"AttachmentType","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat14AttachmentTypeV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"AttachmentType"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(fileExtension:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(rawValue:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(stringLiteral:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/rawValue"]},{"title":"Type Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/audio","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/file","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/giphy","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/image","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/linkPreview","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/unknown","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/video"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/Equatable-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/ExpressibleByUnicodeScalarLiteral-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/RawRepresentable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/Se":{"type":"unresolvable","title":"Swift.Decodable","identifier":"doc:\/\/io.getstream.StreamChat\/Se"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/linkPreview":{"role":"symbol","title":"linkPreview","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"linkPreview"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentType","preciseIdentifier":"s:10StreamChat14AttachmentTypeV"}],"abstract":[{"type":"text","text":"Application custom types."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/linkPreview","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/linkpreview"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/file":{"role":"symbol","title":"file","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"file"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentType","preciseIdentifier":"s:10StreamChat14AttachmentTypeV"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/file","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/file"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/unknown":{"role":"symbol","title":"unknown","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"unknown"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentType","preciseIdentifier":"s:10StreamChat14AttachmentTypeV"}],"abstract":[{"type":"text","text":"Is used when attachment with missing "},{"type":"codeVoice","code":"type"},{"type":"text","text":" comes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/unknown","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/unknown"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/init(fileExtension:)":{"role":"symbol","title":"init(fileExtension:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"fileExtension"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Create an "},{"type":"codeVoice","code":"AttachmentType"},{"type":"text","text":" from a file extension."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(fileExtension:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/init(fileextension:)"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/video":{"role":"symbol","title":"video","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"video"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentType","preciseIdentifier":"s:10StreamChat14AttachmentTypeV"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/video","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/video"},"doc://io.getstream.StreamChat/s33ExpressibleByUnicodeScalarLiteralP":{"type":"unresolvable","title":"Swift.ExpressibleByUnicodeScalarLiteral","identifier":"doc:\/\/io.getstream.StreamChat\/s33ExpressibleByUnicodeScalarLiteralP"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/rawValue":{"role":"symbol","title":"rawValue","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"rawValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/rawValue","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/rawvalue"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/image":{"role":"symbol","title":"image","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"image"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentType","preciseIdentifier":"s:10StreamChat14AttachmentTypeV"}],"abstract":[{"type":"text","text":"Backend specified types."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/image","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/image"},"doc://io.getstream.StreamChat/SE":{"type":"unresolvable","title":"Swift.Encodable","identifier":"doc:\/\/io.getstream.StreamChat\/SE"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/ExpressibleByUnicodeScalarLiteral-Implementations":{"role":"collectionGroup","title":"ExpressibleByUnicodeScalarLiteral Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/ExpressibleByUnicodeScalarLiteral-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/expressiblebyunicodescalarliteral-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/init(rawValue:)":{"role":"symbol","title":"init(rawValue:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"rawValue"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(rawValue:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/init(rawvalue:)"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/init(stringLiteral:)":{"role":"symbol","title":"init(stringLiteral:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"stringLiteral"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":")"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(stringLiteral:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/init(stringliteral:)"},"doc://io.getstream.StreamChat/s43ExpressibleByExtendedGraphemeClusterLiteralP":{"type":"unresolvable","title":"Swift.ExpressibleByExtendedGraphemeClusterLiteral","identifier":"doc:\/\/io.getstream.StreamChat\/s43ExpressibleByExtendedGraphemeClusterLiteralP"},"doc://io.getstream.StreamChat/documentation/StreamChat/FilterValue":{"role":"symbol","title":"FilterValue","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"FilterValue"}],"abstract":[{"type":"text","text":"A protocol to which all values that can be used as "},{"type":"codeVoice","code":"Filter"},{"type":"text","text":" values conform."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterValue","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"FilterValue"}],"url":"\/documentation\/streamchat\/filtervalue"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/ExpressibleByExtendedGraphemeClusterLiteral-Implementations":{"role":"collectionGroup","title":"ExpressibleByExtendedGraphemeClusterLiteral Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/expressiblebyextendedgraphemeclusterliteral-implementations"},"doc://io.getstream.StreamChat/SY":{"type":"unresolvable","title":"Swift.RawRepresentable","identifier":"doc:\/\/io.getstream.StreamChat\/SY"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/equatable-implementations"},"doc://io.getstream.StreamChat/s26ExpressibleByStringLiteralP":{"type":"unresolvable","title":"Swift.ExpressibleByStringLiteral","identifier":"doc:\/\/io.getstream.StreamChat\/s26ExpressibleByStringLiteralP"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/audio":{"role":"symbol","title":"audio","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"audio"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentType","preciseIdentifier":"s:10StreamChat14AttachmentTypeV"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/audio","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/audio"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/RawRepresentable-Implementations":{"role":"collectionGroup","title":"RawRepresentable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/RawRepresentable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/rawrepresentable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType":{"role":"symbol","title":"AttachmentType","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"AttachmentType"}],"abstract":[{"type":"text","text":"An attachment type."},{"type":"text","text":" "},{"type":"text","text":"There are some predefined types on backend but any type can be introduced and sent to backend."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"AttachmentType"}],"url":"\/documentation\/streamchat\/attachmenttype"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/giphy":{"role":"symbol","title":"giphy","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"giphy"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentType","preciseIdentifier":"s:10StreamChat14AttachmentTypeV"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/giphy","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/attachmenttype\/giphy"}}}
+{
+  "abstract" : [
+    {
+      "text" : "An attachment type.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "There are some predefined types on backend but any type can be introduced and sent to backend.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat14AttachmentTypeV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "AttachmentType"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "AttachmentType"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "AttachmentType"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "AttachmentType"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterValue",
+        "doc:\/\/io.getstream.StreamChat\/Se",
+        "doc:\/\/io.getstream.StreamChat\/SE",
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/s43ExpressibleByExtendedGraphemeClusterLiteralP",
+        "doc:\/\/io.getstream.StreamChat\/s26ExpressibleByStringLiteralP",
+        "doc:\/\/io.getstream.StreamChat\/s33ExpressibleByUnicodeScalarLiteralP",
+        "doc:\/\/io.getstream.StreamChat\/SH",
+        "doc:\/\/io.getstream.StreamChat\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(fileExtension:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(rawValue:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(stringLiteral:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/rawValue"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/audio",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/file",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/giphy",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/image",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/linkPreview",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/unknown",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/video"
+      ],
+      "title" : "Type Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/Equatable-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/ExpressibleByUnicodeScalarLiteral-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/attachmenttype"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SE": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SY": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/Se": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType": {
+  "abstract" : [
+    {
+      "text" : "An attachment type.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "There are some predefined types on backend but any type can be introduced and sent to backend.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AttachmentType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AttachmentType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/ExpressibleByExtendedGraphemeClusterLiteral-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ExpressibleByExtendedGraphemeClusterLiteral Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/expressiblebyextendedgraphemeclusterliteral-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/ExpressibleByUnicodeScalarLiteral-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/ExpressibleByUnicodeScalarLiteral-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ExpressibleByUnicodeScalarLiteral Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/expressiblebyunicodescalarliteral-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/rawrepresentable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/audio": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "audio"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14AttachmentTypeV",
+      "text" : "AttachmentType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/audio",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "audio",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/audio"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/file": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "file"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14AttachmentTypeV",
+      "text" : "AttachmentType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/file",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "file",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/file"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/giphy": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "giphy"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14AttachmentTypeV",
+      "text" : "AttachmentType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/giphy",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "giphy",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/giphy"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/image": {
+  "abstract" : [
+    {
+      "text" : "Backend specified types.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "image"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14AttachmentTypeV",
+      "text" : "AttachmentType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/image",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "image",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/image"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/init(fileExtension:)": {
+  "abstract" : [
+    {
+      "text" : "Create an ",
+      "type" : "text"
+    },
+    {
+      "code" : "AttachmentType",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " from a file extension.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fileExtension"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(fileExtension:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(fileExtension:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/init(fileextension:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/init(rawvalue:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/init(stringLiteral:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "stringLiteral"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/init(stringLiteral:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(stringLiteral:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/init(stringliteral:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/linkPreview": {
+  "abstract" : [
+    {
+      "text" : "Application custom types.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "linkPreview"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14AttachmentTypeV",
+      "text" : "AttachmentType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/linkPreview",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "linkPreview",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/linkpreview"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/rawValue": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/rawValue",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "rawValue",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/rawvalue"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/unknown": {
+  "abstract" : [
+    {
+      "text" : "Is used when attachment with missing ",
+      "type" : "text"
+    },
+    {
+      "code" : "type",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " comes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unknown"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14AttachmentTypeV",
+      "text" : "AttachmentType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/unknown",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unknown",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/unknown"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/AttachmentType/video": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "video"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14AttachmentTypeV",
+      "text" : "AttachmentType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/AttachmentType\/video",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "video",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/attachmenttype\/video"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/FilterValue": {
+  "abstract" : [
+    {
+      "text" : "A protocol to which all values that can be used as ",
+      "type" : "text"
+    },
+    {
+      "code" : "Filter",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " values conform.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FilterValue"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/FilterValue",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FilterValue"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FilterValue",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filtervalue"
+},
+"doc://io.getstream.StreamChat/s26ExpressibleByStringLiteralP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s26ExpressibleByStringLiteralP",
+  "title" : "Swift.ExpressibleByStringLiteral",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s33ExpressibleByUnicodeScalarLiteralP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s33ExpressibleByUnicodeScalarLiteralP",
+  "title" : "Swift.ExpressibleByUnicodeScalarLiteral",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s43ExpressibleByExtendedGraphemeClusterLiteralP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s43ExpressibleByExtendedGraphemeClusterLiteralP",
+  "title" : "Swift.ExpressibleByExtendedGraphemeClusterLiteral",
+  "type" : "unresolvable"
+}
+}
+}

@@ -1,1 +1,259 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV","text":"MessageReactionType"},{"kind":"text","text":" { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/reactionupdatedevent\/reactiontype"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent\/reactionType","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"modules":[{"name":"StreamChat"}],"role":"symbol","title":"reactionType","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV"}],"symbolKind":"property","externalID":"s:10StreamChat20ReactionUpdatedEventV12reactionTypeAA07MessagecG0Vvp","extendedModule":"StreamChat","platforms":[]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent"]]},"deprecationSummary":[{"type":"paragraph","inlineContent":[{"type":"text","text":"`reaction: ChatMessageReaction` is now accessible. Please, switch to `reaction.type`"}]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/MessageReactionType":{"role":"symbol","title":"MessageReactionType","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageReactionType"}],"abstract":[{"type":"text","text":"The type that describes a message reaction type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReactionType","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageReactionType"}],"url":"\/documentation\/streamchat\/messagereactiontype"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionUpdatedEvent/reactionType":{"role":"symbol","title":"reactionType","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent\/reactionType","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/reactionupdatedevent\/reactiontype"},"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionUpdatedEvent":{"role":"symbol","title":"ReactionUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ReactionUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when a reaction is updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ReactionUpdatedEvent"}],"url":"\/documentation\/streamchat\/reactionupdatedevent"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "`reaction: ChatMessageReaction` is now accessible. Please, switch to `reaction.type`",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent\/reactionType"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat20ReactionUpdatedEventV12reactionTypeAA07MessagecG0Vvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "reactionType"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+        "text" : "MessageReactionType"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "platforms" : [
+
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "reactionType"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "reactionType"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReactionType",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+              "text" : "MessageReactionType"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/reactionupdatedevent\/reactiontype"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageReactionType": {
+  "abstract" : [
+    {
+      "text" : "The type that describes a message reaction type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageReactionType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageReactionType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageReactionType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageReactionType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagereactiontype"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a reaction is updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReactionUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReactionUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReactionUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/reactionupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ReactionUpdatedEvent/reactionType": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reactionType"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+      "text" : "MessageReactionType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ReactionUpdatedEvent\/reactionType",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reactionType",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/reactionupdatedevent\/reactiontype"
+}
+}
+}

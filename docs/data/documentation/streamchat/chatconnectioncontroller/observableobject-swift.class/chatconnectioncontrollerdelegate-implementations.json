@@ -1,1 +1,228 @@
-{"variants":[{"paths":["\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class\/chatconnectioncontrollerdelegate-implementations"],"traits":[{"interfaceLanguage":"swift"}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/ChatConnectionControllerDelegate-Implementations","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"article","metadata":{"modules":[{"name":"StreamChat"}],"role":"collectionGroup","title":"ChatConnectionControllerDelegate Implementations"},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class"]]},"topicSections":[{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/connectionController(_:didUpdateConnectionStatus:)"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController":{"role":"symbol","title":"ChatConnectionController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatConnectionController"}],"abstract":[{"type":"codeVoice","code":"ChatConnectionController"},{"type":"text","text":" is a controller class which allows to explicitly"},{"type":"text","text":" "},{"type":"text","text":"connect\/disconnect the "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" and observe connection events."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatConnectionController"}],"url":"\/documentation\/streamchat\/chatconnectioncontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController/ObservableObject-swift.class":{"role":"symbol","title":"ChatConnectionController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"CurrentUserController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController/ObservableObject-swift.class/connectionController(_:didUpdateConnectionStatus:)":{"role":"symbol","title":"connectionController(_:didUpdateConnectionStatus:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectionController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"ChatConnectionController","preciseIdentifier":"s:10StreamChat0B20ConnectionControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didUpdateConnectionStatus"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ConnectionStatus","preciseIdentifier":"s:10StreamChat16ConnectionStatusO"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"The controller observed a change in connection status."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/connectionController(_:didUpdateConnectionStatus:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class\/connectioncontroller(_:didupdateconnectionstatus:)"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/ChatConnectionControllerDelegate-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "ChatConnectionControllerDelegate Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/connectionController(_:didUpdateConnectionStatus:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class\/chatconnectioncontrollerdelegate-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController": {
+  "abstract" : [
+    {
+      "code" : "ChatConnectionController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows to explicitly",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "connect\/disconnect the ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and observe connection events.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatConnectionController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatConnectionController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatConnectionController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatconnectioncontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatConnectionController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatConnectionController/ObservableObject-swift.class/connectionController(_:didUpdateConnectionStatus:)": {
+  "abstract" : [
+    {
+      "text" : "The controller observed a change in connection status.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectionController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B20ConnectionControllerC",
+      "text" : "ChatConnectionController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didUpdateConnectionStatus"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ConnectionStatusO",
+      "text" : "ConnectionStatus"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatConnectionController\/ObservableObject-swift.class\/connectionController(_:didUpdateConnectionStatus:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "connectionController(_:didUpdateConnectionStatus:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatconnectioncontroller\/observableobject-swift.class\/connectioncontroller(_:didupdateconnectionstatus:)"
+}
+}
+}

@@ -1,1 +1,458 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"BaseURL"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/baseurl"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A struct representing base URL for "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"BaseURL"}],"title":"BaseURL","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat7BaseURLV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"BaseURL"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/init(url:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/description"]},{"title":"Type Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/dublin","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/singapore","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/sydney","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/usEast"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/usEast":{"role":"symbol","title":"usEast","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"usEast"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"BaseURL","preciseIdentifier":"s:10StreamChat7BaseURLV"}],"abstract":[{"type":"text","text":"The base url for StreamChat data center located in the US East Cost."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/usEast","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/baseurl\/useast"},"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL":{"role":"symbol","title":"BaseURL","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"BaseURL"}],"abstract":[{"type":"text","text":"A struct representing base URL for "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"BaseURL"}],"url":"\/documentation\/streamchat\/baseurl"},"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/dublin":{"role":"symbol","title":"dublin","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"dublin"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"BaseURL","preciseIdentifier":"s:10StreamChat7BaseURLV"}],"abstract":[{"type":"text","text":"The base url for StreamChat data center located in Dublin."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/dublin","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/baseurl\/dublin"},"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/init(url:)":{"role":"symbol","title":"init(url:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"url"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Init with a custom server URL."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/init(url:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/baseurl\/init(url:)"},"doc://io.getstream.StreamChat/s23CustomStringConvertibleP":{"type":"unresolvable","title":"Swift.CustomStringConvertible","identifier":"doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/singapore":{"role":"symbol","title":"singapore","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"singapore"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"BaseURL","preciseIdentifier":"s:10StreamChat7BaseURLV"}],"abstract":[{"type":"text","text":"The base url for StreamChat data center located in Singapore."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/singapore","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/baseurl\/singapore"},"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/sydney":{"role":"symbol","title":"sydney","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"sydney"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"BaseURL","preciseIdentifier":"s:10StreamChat7BaseURLV"}],"abstract":[{"type":"text","text":"The base url for StreamChat data center located in Sydney."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/sydney","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/baseurl\/sydney"},"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/description":{"role":"symbol","title":"description","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"description"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/description","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/baseurl\/description"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A struct representing base URL for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat7BaseURLV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "BaseURL"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "BaseURL"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "BaseURL"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "BaseURL"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/init(url:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/description"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/dublin",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/singapore",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/sydney",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/usEast"
+      ],
+      "title" : "Type Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/baseurl"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL": {
+  "abstract" : [
+    {
+      "text" : "A struct representing base URL for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "BaseURL"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "BaseURL"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "BaseURL",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baseurl"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/description": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "description"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/description",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "description",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baseurl\/description"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/dublin": {
+  "abstract" : [
+    {
+      "text" : "The base url for StreamChat data center located in Dublin.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dublin"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7BaseURLV",
+      "text" : "BaseURL"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/dublin",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "dublin",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baseurl\/dublin"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/init(url:)": {
+  "abstract" : [
+    {
+      "text" : "Init with a custom server URL.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "url"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/init(url:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(url:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baseurl\/init(url:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/singapore": {
+  "abstract" : [
+    {
+      "text" : "The base url for StreamChat data center located in Singapore.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "singapore"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7BaseURLV",
+      "text" : "BaseURL"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/singapore",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "singapore",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baseurl\/singapore"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/sydney": {
+  "abstract" : [
+    {
+      "text" : "The base url for StreamChat data center located in Sydney.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sydney"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7BaseURLV",
+      "text" : "BaseURL"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/sydney",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sydney",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baseurl\/sydney"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/BaseURL/usEast": {
+  "abstract" : [
+    {
+      "text" : "The base url for StreamChat data center located in the US East Cost.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "usEast"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7BaseURLV",
+      "text" : "BaseURL"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/BaseURL\/usEast",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "usEast",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/baseurl\/useast"
+},
+"doc://io.getstream.StreamChat/s23CustomStringConvertibleP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP",
+  "title" : "Swift.CustomStringConvertible",
+  "type" : "unresolvable"
+}
+}
+}

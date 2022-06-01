@@ -1,1 +1,294 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"identifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" = \"\", "},{"kind":"externalParam","text":"destinations"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination","preciseIdentifier":"s:10StreamChat14LogDestinationP","text":"LogDestination"},{"kind":"text","text":"] = [])"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/logger\/init(identifier:destinations:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger\/init(identifier:destinations:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Init a logger with a given identifier and destinations."}],"kind":"symbol","metadata":{"fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"identifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":", "},{"kind":"externalParam","text":"destinations"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"LogDestination","preciseIdentifier":"s:10StreamChat14LogDestinationP"},{"kind":"text","text":"])"}],"title":"init(identifier:destinations:)","roleHeading":"Initializer","role":"symbol","symbolKind":"init","externalID":"s:10StreamChat6LoggerC10identifier12destinationsACSS_SayAA14LogDestination_pGtcfc","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/Logger":{"role":"symbol","title":"Logger","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"Logger"}],"abstract":[{"type":"text","text":"Entity used for logging messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Logger"}],"url":"\/documentation\/streamchat\/logger"},"doc://io.getstream.StreamChat/documentation/StreamChat/Logger/init(identifier:destinations:)":{"role":"symbol","title":"init(identifier:destinations:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"identifier"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":", "},{"kind":"externalParam","text":"destinations"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"LogDestination","preciseIdentifier":"s:10StreamChat14LogDestinationP"},{"kind":"text","text":"])"}],"abstract":[{"type":"text","text":"Init a logger with a given identifier and destinations."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger\/init(identifier:destinations:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/logger\/init(identifier:destinations:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/LogDestination":{"role":"symbol","title":"LogDestination","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"LogDestination"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LogDestination"}],"url":"\/documentation\/streamchat\/logdestination"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Init a logger with a given identifier and destinations.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger\/init(identifier:destinations:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat6LoggerC10identifier12destinationsACSS_SayAA14LogDestination_pGtcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "identifier"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "destinations"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat14LogDestinationP",
+        "text" : "LogDestination"
+      },
+      {
+        "kind" : "text",
+        "text" : "])"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(identifier:destinations:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "identifier"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : " = \"\", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "destinations"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat14LogDestinationP",
+              "text" : "LogDestination"
+            },
+            {
+              "kind" : "text",
+              "text" : "] = [])"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/logger\/init(identifier:destinations:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LogDestination": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogDestination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LogDestination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogDestination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogDestination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logdestination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Logger": {
+  "abstract" : [
+    {
+      "text" : "Entity used for logging messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Logger"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Logger"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Logger",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logger"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Logger/init(identifier:destinations:)": {
+  "abstract" : [
+    {
+      "text" : "Init a logger with a given identifier and destinations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "destinations"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14LogDestinationP",
+      "text" : "LogDestination"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Logger\/init(identifier:destinations:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(identifier:destinations:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/logger\/init(identifier:destinations:)"
+}
+}
+}

@@ -1,1 +1,2344 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessage"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessage"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A type representing a chat message. "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":" is an immutable snapshot of a chat message entity at the given time."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessage"}],"title":"ChatMessage","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat0B7MessageV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatMessage"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/arguments","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachmentCounts","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/audioAttachments","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/author","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/cid","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/command","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/createdAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/currentUserReactions","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/deletedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/deliveryStatus","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/extraData","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/fileAttachments","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/giphyAttachments","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/id","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/imageAttachments","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isFlaggedByCurrentUser","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isPinned","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isSentByCurrentUser","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isShadowed","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isSilent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/latestReactions","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/latestReplies","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/linkAttachments","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/localState","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/locallyCreatedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/mentionedUsers","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/parentMessageId","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/pinDetails","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/quotedMessage","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionCounts","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionScores","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/readBy","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/readByCount","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/replyCount","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/showReplyInChannel","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/text","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/threadParticipants","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/totalReactionsCount","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/translations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/type","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/updatedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/videoAttachments"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachment(with:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachments(payloadType:)"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Equatable-Implementations","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Hashable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/text":{"role":"symbol","title":"text","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"text"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[{"type":"text","text":"The text of the message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/text","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/text"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/readByCount":{"role":"symbol","title":"readByCount","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"readByCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"For the message authored by the current user this field contains number of channel members"},{"type":"text","text":" "},{"type":"text","text":"who has read this message (excluding the current user)."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/readByCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/readbycount"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The ChannelId this message belongs to. This value can be temporarily "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" for messages that are being removed from"},{"type":"text","text":" "},{"type":"text","text":"the local cache, or when the local cache is in the process of invalidating."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/cid","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/deletedAt":{"role":"symbol","title":"deletedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"deletedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If the message was deleted, this variable contains a timestamp of that event, otherwise "},{"type":"codeVoice","code":"nil"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/deletedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/deletedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/type":{"role":"symbol","title":"type","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageType","preciseIdentifier":"s:10StreamChat11MessageTypeO"}],"abstract":[{"type":"text","text":"A type of the message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/type","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/type"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/attachments(payloadType:)":{"role":"symbol","title":"attachments(payloadType:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"attachments"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"Payload"},{"kind":"text","text":">("},{"kind":"externalParam","text":"payloadType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Payload","preciseIdentifier":"s:10StreamChat0B7MessageV11attachments11payloadTypeSayAA0bC10AttachmentVyxGGxm_tAA0G7PayloadRzlF0H0L_xmfp"},{"kind":"text","text":".Type) -> ["},{"kind":"typeIdentifier","text":"ChatMessageAttachment","preciseIdentifier":"s:10StreamChat0B17MessageAttachmentV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"Payload","preciseIdentifier":"s:10StreamChat0B7MessageV11attachments11payloadTypeSayAA0bC10AttachmentVyxGGxm_tAA0G7PayloadRzlF0H0L_xmfp"},{"kind":"text","text":">]"}],"abstract":[{"type":"text","text":"Returns all the attachments with the payload of the provided type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachments(payloadType:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/attachments(payloadtype:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/parentMessageId":{"role":"symbol","title":"parentMessageId","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"parentMessageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The ID of the parent message, if the message is a reply, otherwise "},{"type":"codeVoice","code":"nil"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/parentMessageId","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/parentmessageid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/currentUserReactions":{"role":"symbol","title":"currentUserReactions","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserReactions"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatMessageReaction","preciseIdentifier":"s:10StreamChat0B15MessageReactionV"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"The entire list of reactions to the message left by the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/currentUserReactions","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/currentuserreactions"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/createdAt":{"role":"symbol","title":"createdAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"Date when the message was created on the server. This date can differ from "},{"type":"codeVoice","code":"locallyCreatedAt"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/createdAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/createdat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/localState":{"role":"symbol","title":"localState","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"localState"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LocalMessageState","preciseIdentifier":"s:10StreamChat17LocalMessageStateO"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"A possible additional local state of the message. Applies only for the messages of the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/localState","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/localstate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isPinned":{"role":"symbol","title":"isPinned","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"isPinned"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Indicates whether the message is pinned or not."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isPinned","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/ispinned"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/reactionCounts":{"role":"symbol","title":"reactionCounts","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionCounts"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"The number of reactions per reaction type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionCounts","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/reactioncounts"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/deliveryStatus":{"role":"symbol","title":"deliveryStatus","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"deliveryStatus"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageDeliveryStatus","preciseIdentifier":"s:10StreamChat21MessageDeliveryStatusV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The message delivery status."},{"type":"text","text":" "},{"type":"text","text":"Always returns "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" when the message is authored by another user."},{"type":"text","text":" "},{"type":"text","text":"Always returns "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" when the message is "},{"type":"codeVoice","code":"system\/error\/ephemeral\/deleted"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/deliveryStatus","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/deliverystatus"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isShadowed":{"role":"symbol","title":"isShadowed","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"isShadowed"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"A flag indicating whether the message is a shadowed message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isShadowed","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/isshadowed"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/latestReplies":{"role":"symbol","title":"latestReplies","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"latestReplies"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"A list of latest 25 replies to this message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/latestReplies","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/latestreplies"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isFlaggedByCurrentUser":{"role":"symbol","title":"isFlaggedByCurrentUser","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"isFlaggedByCurrentUser"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"An indicator whether the message is flagged by the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isFlaggedByCurrentUser","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/isflaggedbycurrentuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isSilent":{"role":"symbol","title":"isSilent","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"isSilent"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"A flag indicating whether the message is a silent message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isSilent","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/issilent"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/extraData":{"role":"symbol","title":"extraData","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"extraData"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Additional data associated with the message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/extraData","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/extradata"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/equatable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/reactionScores":{"role":"symbol","title":"reactionScores","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionScores"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"The reactions to the message created by any user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionScores","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/reactionscores"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/replyCount":{"role":"symbol","title":"replyCount","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"replyCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"Contains the number of replies for this message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/replyCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/replycount"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/threadParticipants":{"role":"symbol","title":"threadParticipants","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"threadParticipants"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"A list of users that participated in this message thread."},{"type":"text","text":" "},{"type":"text","text":"The last user in the list is the author of the most recent reply."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/threadParticipants","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/threadparticipants"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/pinDetails":{"role":"symbol","title":"pinDetails","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"pinDetails"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessagePinDetails","preciseIdentifier":"s:10StreamChat17MessagePinDetailsV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The message pinning information. Is "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" if the message is not pinned."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/pinDetails","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/pindetails"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/author":{"role":"symbol","title":"author","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"author"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"}],"abstract":[{"type":"text","text":"The user which is the author of the message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/author","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/author"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/latestReactions":{"role":"symbol","title":"latestReactions","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"latestReactions"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatMessageReaction","preciseIdentifier":"s:10StreamChat0B15MessageReactionV"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"The latest reactions to the message created by any user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/latestReactions","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/latestreactions"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/translations":{"role":"symbol","title":"translations","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"translations"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"TranslationLanguage","preciseIdentifier":"s:10StreamChat19TranslationLanguageV"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"]?"}],"abstract":[{"type":"text","text":"Internationalization and localization for the message. Only available for translated messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/translations","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/translations"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/audioAttachments":{"role":"symbol","title":"audioAttachments","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"audioAttachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessageAudioAttachment","preciseIdentifier":"s:10StreamChat0B22MessageAudioAttachmenta"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Returns the attachments of "},{"type":"codeVoice","code":".audio"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/audioAttachments","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/audioattachments"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/command":{"role":"symbol","title":"command","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"command"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If the message was created by a specific "},{"type":"codeVoice","code":"\/"},{"type":"text","text":" command, the command is saved in this variable."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/command","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/command"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/linkAttachments":{"role":"symbol","title":"linkAttachments","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"linkAttachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessageLinkAttachment","preciseIdentifier":"s:10StreamChat0B21MessageLinkAttachmenta"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Returns the attachments of "},{"type":"codeVoice","code":".linkPreview"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/linkAttachments","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/linkattachments"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/arguments":{"role":"symbol","title":"arguments","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"arguments"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If the message was created by a specific "},{"type":"codeVoice","code":"\/"},{"type":"text","text":" command, the arguments of the command are stored in this variable."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/arguments","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/arguments"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/imageAttachments":{"role":"symbol","title":"imageAttachments","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"imageAttachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessageImageAttachment","preciseIdentifier":"s:10StreamChat0B22MessageImageAttachmenta"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Returns the attachments of "},{"type":"codeVoice","code":".image"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/imageAttachments","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/imageattachments"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/readBy":{"role":"symbol","title":"readBy","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"readBy"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"If the message is authored by the current user this field contains the list of channel members"},{"type":"text","text":" "},{"type":"text","text":"who read this message (excluding the current user)."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/readBy","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/readby"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/id":{"role":"symbol","title":"id","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"id"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"}],"abstract":[{"type":"text","text":"A unique identifier of the message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/id","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/id"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/videoAttachments":{"role":"symbol","title":"videoAttachments","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"videoAttachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessageVideoAttachment","preciseIdentifier":"s:10StreamChat0B22MessageVideoAttachmenta"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Returns the attachments of "},{"type":"codeVoice","code":".video"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/videoAttachments","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/videoattachments"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/quotedMessage":{"role":"symbol","title":"quotedMessage","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"quotedMessage"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Quoted message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/quotedMessage","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/quotedmessage"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/attachmentCounts":{"role":"symbol","title":"attachmentCounts","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"attachmentCounts"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"AttachmentType","preciseIdentifier":"s:10StreamChat14AttachmentTypeV"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"The overall attachment count by attachment type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachmentCounts","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/attachmentcounts"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/locallyCreatedAt":{"role":"symbol","title":"locallyCreatedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"locallyCreatedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Date when the message was created locally and scheduled to be send. Applies only for the messages of the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/locallyCreatedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/locallycreatedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/mentionedUsers":{"role":"symbol","title":"mentionedUsers","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"mentionedUsers"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A list of users that are mentioned in this message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/mentionedUsers","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/mentionedusers"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/fileAttachments":{"role":"symbol","title":"fileAttachments","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"fileAttachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessageFileAttachment","preciseIdentifier":"s:10StreamChat0B21MessageFileAttachmenta"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Returns the attachments of "},{"type":"codeVoice","code":".file"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/fileAttachments","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/fileattachments"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/attachment(with:)":{"role":"symbol","title":"attachment(with:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"attachment"},{"kind":"text","text":"("},{"kind":"externalParam","text":"with"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentId","preciseIdentifier":"s:10StreamChat12AttachmentIdV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"AnyChatMessageAttachment","preciseIdentifier":"s:10StreamChat03AnyB17MessageAttachmenta"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Returns attachment for the given identifier."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachment(with:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/attachment(with:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/giphyAttachments":{"role":"symbol","title":"giphyAttachments","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"giphyAttachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessageGiphyAttachment","preciseIdentifier":"s:10StreamChat0B22MessageGiphyAttachmenta"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Returns the attachments of "},{"type":"codeVoice","code":".giphy"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/giphyAttachments","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/giphyattachments"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/totalReactionsCount":{"role":"symbol","title":"totalReactionsCount","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"totalReactionsCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"The total number of reactions."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/totalReactionsCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/totalreactionscount"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/Hashable-Implementations":{"role":"collectionGroup","title":"Hashable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Hashable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/hashable-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/showReplyInChannel":{"role":"symbol","title":"showReplyInChannel","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"showReplyInChannel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"If the message is a reply and this flag is "},{"type":"codeVoice","code":"true"},{"type":"text","text":", the message should be also shown in the channel, not only in the"},{"type":"text","text":" "},{"type":"text","text":"reply thread."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/showReplyInChannel","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/showreplyinchannel"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/updatedAt":{"role":"symbol","title":"updatedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"updatedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"A date when the message was updated last time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/updatedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/updatedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage":{"role":"symbol","title":"ChatMessage","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessage"}],"abstract":[{"type":"text","text":"A type representing a chat message. "},{"type":"codeVoice","code":"ChatMessage"},{"type":"text","text":" is an immutable snapshot of a chat message entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessage"}],"url":"\/documentation\/streamchat\/chatmessage"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isSentByCurrentUser":{"role":"symbol","title":"isSentByCurrentUser","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"isSentByCurrentUser"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"codeVoice","code":"true"},{"type":"text","text":" if the author of the message is the currently logged-in user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isSentByCurrentUser","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessage\/issentbycurrentuser"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A type representing a chat message. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat message entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B7MessageV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatMessage"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatMessage"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "ChatMessage"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatMessage"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/arguments",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachmentCounts",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/audioAttachments",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/author",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/cid",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/command",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/createdAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/currentUserReactions",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/deletedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/deliveryStatus",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/extraData",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/fileAttachments",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/giphyAttachments",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/id",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/imageAttachments",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isFlaggedByCurrentUser",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isPinned",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isSentByCurrentUser",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isShadowed",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isSilent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/latestReactions",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/latestReplies",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/linkAttachments",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/localState",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/locallyCreatedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/mentionedUsers",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/parentMessageId",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/pinDetails",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/quotedMessage",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionCounts",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionScores",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/readBy",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/readByCount",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/replyCount",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/showReplyInChannel",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/text",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/threadParticipants",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/totalReactionsCount",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/translations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/type",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/updatedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/videoAttachments"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachment(with:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachments(payloadType:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Equatable-Implementations",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Hashable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessage"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage": {
+  "abstract" : [
+    {
+      "text" : "A type representing a chat message. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a chat message entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/Hashable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/Hashable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Hashable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/hashable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/arguments": {
+  "abstract" : [
+    {
+      "text" : "If the message was created by a specific ",
+      "type" : "text"
+    },
+    {
+      "code" : "\/",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " command, the arguments of the command are stored in this variable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "arguments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/arguments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "arguments",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/arguments"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/attachment(with:)": {
+  "abstract" : [
+    {
+      "text" : "Returns attachment for the given identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "attachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "with"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12AttachmentIdV",
+      "text" : "AttachmentId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat03AnyB17MessageAttachmenta",
+      "text" : "AnyChatMessageAttachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachment(with:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "attachment(with:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/attachment(with:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/attachmentCounts": {
+  "abstract" : [
+    {
+      "text" : "The overall attachment count by attachment type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "attachmentCounts"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14AttachmentTypeV",
+      "text" : "AttachmentType"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachmentCounts",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "attachmentCounts",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/attachmentcounts"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/attachments(payloadType:)": {
+  "abstract" : [
+    {
+      "text" : "Returns all the attachments with the payload of the provided type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "attachments"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Payload"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "payloadType"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV11attachments11payloadTypeSayAA0bC10AttachmentVyxGGxm_tAA0G7PayloadRzlF0H0L_xmfp",
+      "text" : "Payload"
+    },
+    {
+      "kind" : "text",
+      "text" : ".Type) -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17MessageAttachmentV",
+      "text" : "ChatMessageAttachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV11attachments11payloadTypeSayAA0bC10AttachmentVyxGGxm_tAA0G7PayloadRzlF0H0L_xmfp",
+      "text" : "Payload"
+    },
+    {
+      "kind" : "text",
+      "text" : ">]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/attachments(payloadType:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "attachments(payloadType:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/attachments(payloadtype:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/audioAttachments": {
+  "abstract" : [
+    {
+      "text" : "Returns the attachments of ",
+      "type" : "text"
+    },
+    {
+      "code" : ".audio",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "audioAttachments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B22MessageAudioAttachmenta",
+      "text" : "ChatMessageAudioAttachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/audioAttachments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "audioAttachments",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/audioattachments"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/author": {
+  "abstract" : [
+    {
+      "text" : "The user which is the author of the message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "author"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/author",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "author",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/author"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/cid": {
+  "abstract" : [
+    {
+      "text" : "The ChannelId this message belongs to. This value can be temporarily ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " for messages that are being removed from",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "the local cache, or when the local cache is in the process of invalidating.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/cid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/cid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/command": {
+  "abstract" : [
+    {
+      "text" : "If the message was created by a specific ",
+      "type" : "text"
+    },
+    {
+      "code" : "\/",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " command, the command is saved in this variable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "command"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/command",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "command",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/command"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/createdAt": {
+  "abstract" : [
+    {
+      "text" : "Date when the message was created on the server. This date can differ from ",
+      "type" : "text"
+    },
+    {
+      "code" : "locallyCreatedAt",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createdAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/createdAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createdAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/createdat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/currentUserReactions": {
+  "abstract" : [
+    {
+      "text" : "The entire list of reactions to the message left by the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserReactions"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B15MessageReactionV",
+      "text" : "ChatMessageReaction"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/currentUserReactions",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentUserReactions",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/currentuserreactions"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/deletedAt": {
+  "abstract" : [
+    {
+      "text" : "If the message was deleted, this variable contains a timestamp of that event, otherwise ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deletedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/deletedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deletedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/deletedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/deliveryStatus": {
+  "abstract" : [
+    {
+      "text" : "The message delivery status.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Always returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " when the message is authored by another user.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Always returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " when the message is ",
+      "type" : "text"
+    },
+    {
+      "code" : "system\/error\/ephemeral\/deleted",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deliveryStatus"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat21MessageDeliveryStatusV",
+      "text" : "MessageDeliveryStatus"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/deliveryStatus",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deliveryStatus",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/deliverystatus"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/extraData": {
+  "abstract" : [
+    {
+      "text" : "Additional data associated with the message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extraData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/extraData",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extraData",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/extradata"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/fileAttachments": {
+  "abstract" : [
+    {
+      "text" : "Returns the attachments of ",
+      "type" : "text"
+    },
+    {
+      "code" : ".file",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "fileAttachments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B21MessageFileAttachmenta",
+      "text" : "ChatMessageFileAttachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/fileAttachments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "fileAttachments",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/fileattachments"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/giphyAttachments": {
+  "abstract" : [
+    {
+      "text" : "Returns the attachments of ",
+      "type" : "text"
+    },
+    {
+      "code" : ".giphy",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "giphyAttachments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B22MessageGiphyAttachmenta",
+      "text" : "ChatMessageGiphyAttachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/giphyAttachments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "giphyAttachments",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/giphyattachments"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/id": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of the message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/id",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "id",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/id"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/imageAttachments": {
+  "abstract" : [
+    {
+      "text" : "Returns the attachments of ",
+      "type" : "text"
+    },
+    {
+      "code" : ".image",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "imageAttachments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B22MessageImageAttachmenta",
+      "text" : "ChatMessageImageAttachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/imageAttachments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "imageAttachments",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/imageattachments"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isFlaggedByCurrentUser": {
+  "abstract" : [
+    {
+      "text" : "An indicator whether the message is flagged by the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isFlaggedByCurrentUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isFlaggedByCurrentUser",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isFlaggedByCurrentUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/isflaggedbycurrentuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isPinned": {
+  "abstract" : [
+    {
+      "text" : "Indicates whether the message is pinned or not.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isPinned"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isPinned",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isPinned",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/ispinned"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isSentByCurrentUser": {
+  "abstract" : [
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the author of the message is the currently logged-in user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isSentByCurrentUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isSentByCurrentUser",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isSentByCurrentUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/issentbycurrentuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isShadowed": {
+  "abstract" : [
+    {
+      "text" : "A flag indicating whether the message is a shadowed message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isShadowed"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isShadowed",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isShadowed",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/isshadowed"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/isSilent": {
+  "abstract" : [
+    {
+      "text" : "A flag indicating whether the message is a silent message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isSilent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/isSilent",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isSilent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/issilent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/latestReactions": {
+  "abstract" : [
+    {
+      "text" : "The latest reactions to the message created by any user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "latestReactions"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B15MessageReactionV",
+      "text" : "ChatMessageReaction"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/latestReactions",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "latestReactions",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/latestreactions"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/latestReplies": {
+  "abstract" : [
+    {
+      "text" : "A list of latest 25 replies to this message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "latestReplies"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/latestReplies",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "latestReplies",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/latestreplies"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/linkAttachments": {
+  "abstract" : [
+    {
+      "text" : "Returns the attachments of ",
+      "type" : "text"
+    },
+    {
+      "code" : ".linkPreview",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "linkAttachments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B21MessageLinkAttachmenta",
+      "text" : "ChatMessageLinkAttachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/linkAttachments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "linkAttachments",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/linkattachments"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/localState": {
+  "abstract" : [
+    {
+      "text" : "A possible additional local state of the message. Applies only for the messages of the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "localState"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat17LocalMessageStateO",
+      "text" : "LocalMessageState"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/localState",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "localState",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/localstate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/locallyCreatedAt": {
+  "abstract" : [
+    {
+      "text" : "Date when the message was created locally and scheduled to be send. Applies only for the messages of the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "locallyCreatedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/locallyCreatedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "locallyCreatedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/locallycreatedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/mentionedUsers": {
+  "abstract" : [
+    {
+      "text" : "A list of users that are mentioned in this message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mentionedUsers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/mentionedUsers",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "mentionedUsers",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/mentionedusers"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/parentMessageId": {
+  "abstract" : [
+    {
+      "text" : "The ID of the parent message, if the message is a reply, otherwise ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "parentMessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/parentMessageId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "parentMessageId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/parentmessageid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/pinDetails": {
+  "abstract" : [
+    {
+      "text" : "The message pinning information. Is ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the message is not pinned.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pinDetails"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat17MessagePinDetailsV",
+      "text" : "MessagePinDetails"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/pinDetails",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "pinDetails",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/pindetails"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/quotedMessage": {
+  "abstract" : [
+    {
+      "text" : "Quoted message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "quotedMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/quotedMessage",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "quotedMessage",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/quotedmessage"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/reactionCounts": {
+  "abstract" : [
+    {
+      "text" : "The number of reactions per reaction type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reactionCounts"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+      "text" : "MessageReactionType"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionCounts",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reactionCounts",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/reactioncounts"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/reactionScores": {
+  "abstract" : [
+    {
+      "text" : "The reactions to the message created by any user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reactionScores"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+      "text" : "MessageReactionType"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/reactionScores",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reactionScores",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/reactionscores"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/readBy": {
+  "abstract" : [
+    {
+      "text" : "If the message is authored by the current user this field contains the list of channel members",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "who read this message (excluding the current user).",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "readBy"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/readBy",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "readBy",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/readby"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/readByCount": {
+  "abstract" : [
+    {
+      "text" : "For the message authored by the current user this field contains number of channel members",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "who has read this message (excluding the current user).",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "readByCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/readByCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "readByCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/readbycount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/replyCount": {
+  "abstract" : [
+    {
+      "text" : "Contains the number of replies for this message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "replyCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/replyCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "replyCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/replycount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/showReplyInChannel": {
+  "abstract" : [
+    {
+      "text" : "If the message is a reply and this flag is ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", the message should be also shown in the channel, not only in the",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "reply thread.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "showReplyInChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/showReplyInChannel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "showReplyInChannel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/showreplyinchannel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/text": {
+  "abstract" : [
+    {
+      "text" : "The text of the message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "text"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/text",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "text",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/text"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/threadParticipants": {
+  "abstract" : [
+    {
+      "text" : "A list of users that participated in this message thread.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The last user in the list is the author of the most recent reply.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "threadParticipants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/threadParticipants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "threadParticipants",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/threadparticipants"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/totalReactionsCount": {
+  "abstract" : [
+    {
+      "text" : "The total number of reactions.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "totalReactionsCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/totalReactionsCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "totalReactionsCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/totalreactionscount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/translations": {
+  "abstract" : [
+    {
+      "text" : "Internationalization and localization for the message. Only available for translated messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "translations"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19TranslationLanguageV",
+      "text" : "TranslationLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/translations",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "translations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/translations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/type": {
+  "abstract" : [
+    {
+      "text" : "A type of the message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11MessageTypeO",
+      "text" : "MessageType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/type",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "type",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/type"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/updatedAt": {
+  "abstract" : [
+    {
+      "text" : "A date when the message was updated last time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "updatedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/updatedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "updatedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/updatedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessage/videoAttachments": {
+  "abstract" : [
+    {
+      "text" : "Returns the attachments of ",
+      "type" : "text"
+    },
+    {
+      "code" : ".video",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "videoAttachments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B22MessageVideoAttachmenta",
+      "text" : "ChatMessageVideoAttachment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessage\/videoAttachments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "videoAttachments",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessage\/videoattachments"
+}
+}
+}

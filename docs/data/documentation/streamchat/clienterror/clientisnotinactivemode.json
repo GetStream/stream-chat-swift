@@ -1,1 +1,385 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ClientIsNotInActiveMode"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/clienterror\/clientisnotinactivemode"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP","doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/s5ErrorP","doc:\/\/io.getstream.StreamChat\/s8SendableP"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"navigatorTitle":[{"kind":"identifier","text":"ClientIsNotInActiveMode"}],"role":"symbol","title":"ClientError.ClientIsNotInActiveMode","roleHeading":"Class","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ClientIsNotInActiveMode"}],"symbolKind":"class","externalID":"s:10StreamChat11ClientErrorC0C17IsNotInActiveModeC","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/init(_:_:_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/init(with:_:_:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/localizedDescription"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError":{"role":"symbol","title":"ClientError","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ClientError"}],"abstract":[{"type":"text","text":"A Client error."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ClientError"}],"url":"\/documentation\/streamchat\/clienterror"},"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/ClientIsNotInActiveMode/localizedDescription":{"role":"symbol","title":"localizedDescription","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"localizedDescription"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[{"type":"text","text":"Retrieve the localized description for this error."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/localizedDescription","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/clienterror\/clientisnotinactivemode\/localizeddescription"},"doc://io.getstream.StreamChat/s5ErrorP":{"type":"unresolvable","title":"Swift.Error","identifier":"doc:\/\/io.getstream.StreamChat\/s5ErrorP"},"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/ClientIsNotInActiveMode/init(with:_:_:)":{"role":"symbol","title":"init(with:_:_:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"with"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?, "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"UInt","preciseIdentifier":"s:Su"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"A client error based on an external general error."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/init(with:_:_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/clienterror\/clientisnotinactivemode\/init(with:_:_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/s23CustomStringConvertibleP":{"type":"unresolvable","title":"Swift.CustomStringConvertible","identifier":"doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP"},"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/ClientIsNotInActiveMode":{"role":"symbol","title":"ClientError.ClientIsNotInActiveMode","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ClientIsNotInActiveMode"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ClientIsNotInActiveMode"}],"url":"\/documentation\/streamchat\/clienterror\/clientisnotinactivemode"},"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/ClientIsNotInActiveMode/init(_:_:_:)":{"role":"symbol","title":"init(_:_:_:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"UInt","preciseIdentifier":"s:Su"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"An error based on a message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/init(_:_:_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/clienterror\/clientisnotinactivemode\/init(_:_:_:)"},"doc://io.getstream.StreamChat/s8SendableP":{"type":"unresolvable","title":"Swift.Sendable","identifier":"doc:\/\/io.getstream.StreamChat\/s8SendableP"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat11ClientErrorC0C17IsNotInActiveModeC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ClientIsNotInActiveMode"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ClientIsNotInActiveMode"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "ClientError.ClientIsNotInActiveMode"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ClientIsNotInActiveMode"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP",
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/s5ErrorP",
+        "doc:\/\/io.getstream.StreamChat\/s8SendableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/init(_:_:_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/init(with:_:_:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/localizedDescription"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/clienterror\/clientisnotinactivemode"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError": {
+  "abstract" : [
+    {
+      "text" : "A Client error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ClientError"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ClientError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ClientError",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/ClientIsNotInActiveMode": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ClientIsNotInActiveMode"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ClientIsNotInActiveMode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ClientError.ClientIsNotInActiveMode",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror\/clientisnotinactivemode"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/ClientIsNotInActiveMode/init(_:_:_:)": {
+  "abstract" : [
+    {
+      "text" : "An error based on a message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s12StaticStringV",
+      "text" : "StaticString"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Su",
+      "text" : "UInt"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/init(_:_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(_:_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror\/clientisnotinactivemode\/init(_:_:_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/ClientIsNotInActiveMode/init(with:_:_:)": {
+  "abstract" : [
+    {
+      "text" : "A client error based on an external general error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "with"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s12StaticStringV",
+      "text" : "StaticString"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Su",
+      "text" : "UInt"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/init(with:_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(with:_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror\/clientisnotinactivemode\/init(with:_:_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ClientError/ClientIsNotInActiveMode/localizedDescription": {
+  "abstract" : [
+    {
+      "text" : "Retrieve the localized description for this error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "localizedDescription"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ClientError\/ClientIsNotInActiveMode\/localizedDescription",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "localizedDescription",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/clienterror\/clientisnotinactivemode\/localizeddescription"
+},
+"doc://io.getstream.StreamChat/s23CustomStringConvertibleP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s23CustomStringConvertibleP",
+  "title" : "Swift.CustomStringConvertible",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s5ErrorP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s5ErrorP",
+  "title" : "Swift.Error",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/s8SendableP": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

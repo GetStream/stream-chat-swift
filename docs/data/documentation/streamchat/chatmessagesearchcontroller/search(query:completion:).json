@@ -1,1 +1,529 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"search"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery","preciseIdentifier":"s:10StreamChat18MessageSearchQueryV","text":"MessageSearchQuery"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"error"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")? = nil)"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"query","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Search query."}]}]},{"name":"completion","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Called when the controller has finished fetching remote data."},{"type":"text","text":" "},{"type":"text","text":"If the data fetching fails, the error variable contains more details about the problem."}]}]}]},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"type":"paragraph","inlineContent":[{"type":"text","text":"When this function is called, "},{"type":"codeVoice","code":"messages"},{"type":"text","text":" property of this"},{"type":"text","text":" "},{"type":"text","text":"controller will refresh with new messages matching the text."}]},{"type":"paragraph","inlineContent":[{"type":"text","text":"The delegate function "},{"type":"codeVoice","code":"didChangeMessages"},{"type":"text","text":" will also be called."}]},{"type":"aside","style":"note","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Currently, no local data will be searched, only remote data will be queried."}]}]},{"type":"aside","style":"warning","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"Make sure the "},{"type":"codeVoice","code":"query"},{"type":"text","text":" text is not empty. Empty queries will result in 400 errors from backend."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessagesearchcontroller\/search(query:completion:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController\/search(query:completion:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Searches messages for the given query."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"search"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageSearchQuery","preciseIdentifier":"s:10StreamChat18MessageSearchQueryV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"error"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"title":"search(query:completion:)","roleHeading":"Instance Method","role":"symbol","symbolKind":"method","externalID":"s:10StreamChat0B23MessageSearchControllerC6search5query10completionyAA0cD5QueryV_ys5Error_pSgcSgtF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchController/search(query:completion:)":{"role":"symbol","title":"search(query:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"search"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageSearchQuery","preciseIdentifier":"s:10StreamChat18MessageSearchQueryV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"error"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Searches messages for the given query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController\/search(query:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagesearchcontroller\/search(query:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchQuery":{"role":"symbol","title":"MessageSearchQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageSearchQuery"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageSearchQuery"}],"url":"\/documentation\/streamchat\/messagesearchquery"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchController":{"role":"symbol","title":"ChatMessageSearchController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageSearchController"}],"abstract":[{"type":"codeVoice","code":"ChatMessageSearchController"},{"type":"text","text":" is a controller class which allows observing a list of messages based on the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageSearchController"}],"url":"\/documentation\/streamchat\/chatmessagesearchcontroller"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Searches messages for the given query.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController\/search(query:completion:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B23MessageSearchControllerC6search5query10completionyAA0cD5QueryV_ys5Error_pSgcSgtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "search"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "query"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat18MessageSearchQueryV",
+        "text" : "MessageSearchQuery"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "completion"
+      },
+      {
+        "kind" : "text",
+        "text" : ": (("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "_"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "internalParam",
+        "text" : "error"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5ErrorP",
+        "text" : "Error"
+      },
+      {
+        "kind" : "text",
+        "text" : "?) -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s4Voida",
+        "text" : "Void"
+      },
+      {
+        "kind" : "text",
+        "text" : ")?)"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "search(query:completion:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "search"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "query"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat18MessageSearchQueryV",
+              "text" : "MessageSearchQuery"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "completion"
+            },
+            {
+              "kind" : "text",
+              "text" : ": (("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "error"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5ErrorP",
+              "text" : "Error"
+            },
+            {
+              "kind" : "text",
+              "text" : "?) -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s4Voida",
+              "text" : "Void"
+            },
+            {
+              "kind" : "text",
+              "text" : ")? = nil)"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Search query.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "query"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Called when the controller has finished fetching remote data.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "If the data fetching fails, the error variable contains more details about the problem.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "completion"
+        }
+      ]
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "When this function is called, ",
+              "type" : "text"
+            },
+            {
+              "code" : "messages",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " property of this",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "controller will refresh with new messages matching the text.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The delegate function ",
+              "type" : "text"
+            },
+            {
+              "code" : "didChangeMessages",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " will also be called.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Currently, no local data will be searched, only remote data will be queried.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Make sure the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "query",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " text is not empty. Empty queries will result in 400 errors from backend.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "warning",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessagesearchcontroller\/search(query:completion:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchController": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageSearchController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing a list of messages based on the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageSearchController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageSearchController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageSearchController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagesearchcontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageSearchController/search(query:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Searches messages for the given query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "search"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "query"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat18MessageSearchQueryV",
+      "text" : "MessageSearchQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "_"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "internalParam",
+      "text" : "error"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageSearchController\/search(query:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "search(query:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagesearchcontroller\/search(query:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchQuery": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageSearchQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageSearchQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageSearchQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagesearchquery"
+}
+}
+}

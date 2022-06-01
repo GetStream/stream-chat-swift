@@ -1,1 +1,246 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"parentId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId","preciseIdentifier":"s:10StreamChat9MessageIda","text":"MessageId"},{"kind":"text","text":"?"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/typingevent\/parentid"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent\/parentId","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"If typing event happened in the message thread, this field contains thread root message identifier."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"parentId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":"?"}],"title":"parentId","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat11TypingEventV8parentIdSSSgvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/TypingEvent/parentId":{"role":"symbol","title":"parentId","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"parentId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If typing event happened in the message thread, this field contains thread root message identifier."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent\/parentId","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/typingevent\/parentid"},"doc://io.getstream.StreamChat/documentation/StreamChat/TypingEvent":{"role":"symbol","title":"TypingEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"TypingEvent"}],"abstract":[{"type":"text","text":"Triggered when user starts\/stops typing in a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"TypingEvent"}],"url":"\/documentation\/streamchat\/typingevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageId":{"role":"symbol","title":"MessageId","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageId"}],"abstract":[{"type":"text","text":"A unique identifier of a message."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageId"}],"url":"\/documentation\/streamchat\/messageid"}}}
+{
+  "abstract" : [
+    {
+      "text" : "If typing event happened in the message thread, this field contains thread root message identifier.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent\/parentId"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat11TypingEventV8parentIdSSSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "parentId"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat9MessageIda",
+        "text" : "MessageId"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "parentId"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "parentId"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat9MessageIda",
+              "text" : "MessageId"
+            },
+            {
+              "kind" : "text",
+              "text" : "?"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/typingevent\/parentid"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageId": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of a message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messageid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/TypingEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when user starts\/stops typing in a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TypingEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TypingEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TypingEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/typingevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/TypingEvent/parentId": {
+  "abstract" : [
+    {
+      "text" : "If typing event happened in the message thread, this field contains thread root message identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "parentId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/TypingEvent\/parentId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "parentId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/typingevent\/parentid"
+}
+}
+}

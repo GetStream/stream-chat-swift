@@ -1,1 +1,799 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelConfig"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelconfig"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/Se","doc:\/\/io.getstream.StreamChat\/SE"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A channel config."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelConfig"}],"title":"ChannelConfig","roleHeading":"Class","role":"symbol","symbolKind":"class","externalID":"s:10StreamChat13ChannelConfigC","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChannelConfig"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/init(from:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/commands","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/connectEventsEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/createdAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/maxMessageLength","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/messageRetention","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/mutesEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/quotesEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/reactionsEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/readEventsEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/repliesEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/searchEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/typingEventsEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/updatedAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/uploadsEnabled","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/urlEnrichmentEnabled"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/searchEnabled":{"role":"symbol","title":"searchEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"searchEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Controls if messages should be searchable (this is a premium feature). Disabled by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/searchEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/searchenabled"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/urlEnrichmentEnabled":{"role":"symbol","title":"urlEnrichmentEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"urlEnrichmentEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Determines if URL enrichment enabled to show they as attachments. Enabled by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/urlEnrichmentEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/urlenrichmentenabled"},"doc://io.getstream.StreamChat/SE":{"type":"unresolvable","title":"Swift.Encodable","identifier":"doc:\/\/io.getstream.StreamChat\/SE"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/maxMessageLength":{"role":"symbol","title":"maxMessageLength","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"maxMessageLength"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"The max message length. 5000 by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/maxMessageLength","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/maxmessagelength"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/reactionsEnabled":{"role":"symbol","title":"reactionsEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionsEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"If users are allowed to add reactions to messages. Enabled by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/reactionsEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/reactionsenabled"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/quotesEnabled":{"role":"symbol","title":"quotesEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"quotesEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Enables quoting of messages. Enabled by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/quotesEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/quotesenabled"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/mutesEnabled":{"role":"symbol","title":"mutesEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"mutesEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Determines if users are able to mute other users. Enabled by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/mutesEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/mutesenabled"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig":{"role":"symbol","title":"ChannelConfig","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelConfig"}],"abstract":[{"type":"text","text":"A channel config."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelConfig"}],"url":"\/documentation\/streamchat\/channelconfig"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/createdAt":{"role":"symbol","title":"createdAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"A channel created date."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/createdAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/createdat"},"doc://io.getstream.StreamChat/Se":{"type":"unresolvable","title":"Swift.Decodable","identifier":"doc:\/\/io.getstream.StreamChat\/Se"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/init(from:)":{"role":"symbol","title":"init(from:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"from"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Decoder","preciseIdentifier":"s:s7DecoderP"},{"kind":"text","text":") "},{"kind":"keyword","text":"throws"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/init(from:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/init(from:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/commands":{"role":"symbol","title":"commands","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"commands"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Command","preciseIdentifier":"s:10StreamChat7CommandV"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"An array of commands, e.g. \/giphy."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/commands","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/commands"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/readEventsEnabled":{"role":"symbol","title":"readEventsEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"readEventsEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Controls whether the chat shows how far you’ve read. Enabled by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/readEventsEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/readeventsenabled"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/connectEventsEnabled":{"role":"symbol","title":"connectEventsEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectEventsEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Determines if events are fired for connecting and disconnecting to a chat. Enabled by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/connectEventsEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/connecteventsenabled"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/uploadsEnabled":{"role":"symbol","title":"uploadsEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"uploadsEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Enables uploads."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/uploadsEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/uploadsenabled"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/repliesEnabled":{"role":"symbol","title":"repliesEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"repliesEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Enables message thread replies. Enabled by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/repliesEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/repliesenabled"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/updatedAt":{"role":"symbol","title":"updatedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"updatedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"A channel updated date."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/updatedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/updatedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/messageRetention":{"role":"symbol","title":"messageRetention","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageRetention"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"}],"abstract":[{"type":"text","text":"A number of days or infinite. Infinite by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/messageRetention","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/messageretention"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/typingEventsEnabled":{"role":"symbol","title":"typingEventsEnabled","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"typingEventsEnabled"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"Controls if typing indicators are shown. Enabled by default."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/typingEventsEnabled","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelconfig\/typingeventsenabled"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A channel config.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat13ChannelConfigC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChannelConfig"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChannelConfig"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "ChannelConfig"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChannelConfig"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/Se",
+        "doc:\/\/io.getstream.StreamChat\/SE"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/commands",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/connectEventsEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/createdAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/maxMessageLength",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/messageRetention",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/mutesEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/quotesEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/reactionsEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/readEventsEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/repliesEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/searchEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/typingEventsEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/updatedAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/uploadsEnabled",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/urlEnrichmentEnabled"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelconfig"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SE": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/Se": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig": {
+  "abstract" : [
+    {
+      "text" : "A channel config.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelConfig"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelConfig"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelConfig",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/commands": {
+  "abstract" : [
+    {
+      "text" : "An array of commands, e.g. \/giphy.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "commands"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7CommandV",
+      "text" : "Command"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/commands",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "commands",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/commands"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/connectEventsEnabled": {
+  "abstract" : [
+    {
+      "text" : "Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectEventsEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/connectEventsEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "connectEventsEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/connecteventsenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/createdAt": {
+  "abstract" : [
+    {
+      "text" : "A channel created date.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createdAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/createdAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createdAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/createdat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/init(from:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/maxMessageLength": {
+  "abstract" : [
+    {
+      "text" : "The max message length. 5000 by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "maxMessageLength"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/maxMessageLength",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "maxMessageLength",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/maxmessagelength"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/messageRetention": {
+  "abstract" : [
+    {
+      "text" : "A number of days or infinite. Infinite by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageRetention"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/messageRetention",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messageRetention",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/messageretention"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/mutesEnabled": {
+  "abstract" : [
+    {
+      "text" : "Determines if users are able to mute other users. Enabled by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mutesEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/mutesEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "mutesEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/mutesenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/quotesEnabled": {
+  "abstract" : [
+    {
+      "text" : "Enables quoting of messages. Enabled by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "quotesEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/quotesEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "quotesEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/quotesenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/reactionsEnabled": {
+  "abstract" : [
+    {
+      "text" : "If users are allowed to add reactions to messages. Enabled by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reactionsEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/reactionsEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reactionsEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/reactionsenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/readEventsEnabled": {
+  "abstract" : [
+    {
+      "text" : "Controls whether the chat shows how far you’ve read. Enabled by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "readEventsEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/readEventsEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "readEventsEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/readeventsenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/repliesEnabled": {
+  "abstract" : [
+    {
+      "text" : "Enables message thread replies. Enabled by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "repliesEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/repliesEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "repliesEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/repliesenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/searchEnabled": {
+  "abstract" : [
+    {
+      "text" : "Controls if messages should be searchable (this is a premium feature). Disabled by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "searchEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/searchEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "searchEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/searchenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/typingEventsEnabled": {
+  "abstract" : [
+    {
+      "text" : "Controls if typing indicators are shown. Enabled by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "typingEventsEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/typingEventsEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "typingEventsEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/typingeventsenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/updatedAt": {
+  "abstract" : [
+    {
+      "text" : "A channel updated date.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "updatedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/updatedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "updatedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/updatedat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/uploadsEnabled": {
+  "abstract" : [
+    {
+      "text" : "Enables uploads.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "uploadsEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/uploadsEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "uploadsEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/uploadsenabled"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelConfig/urlEnrichmentEnabled": {
+  "abstract" : [
+    {
+      "text" : "Determines if URL enrichment enabled to show they as attachments. Enabled by default.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "urlEnrichmentEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelConfig\/urlEnrichmentEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "urlEnrichmentEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelconfig\/urlenrichmentenabled"
+}
+}
+}

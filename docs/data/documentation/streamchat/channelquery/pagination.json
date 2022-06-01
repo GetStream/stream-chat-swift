@@ -1,1 +1,259 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagesPagination","preciseIdentifier":"s:10StreamChat18MessagesPaginationV","text":"MessagesPagination"},{"kind":"text","text":"?"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channelquery\/pagination"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/pagination","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A pagination for messages (see "},{"type":"codeVoice","code":"MessagesPagination"},{"type":"text","text":")."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessagesPagination","preciseIdentifier":"s:10StreamChat18MessagesPaginationV"},{"kind":"text","text":"?"}],"title":"pagination","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat12ChannelQueryV10paginationAA18MessagesPaginationVSgvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/MessagesPagination":{"role":"symbol","title":"MessagesPagination","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessagesPagination"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagesPagination","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessagesPagination"}],"url":"\/documentation\/streamchat\/messagespagination"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/pagination":{"role":"symbol","title":"pagination","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"pagination"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessagesPagination","preciseIdentifier":"s:10StreamChat18MessagesPaginationV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"A pagination for messages (see "},{"type":"codeVoice","code":"MessagesPagination"},{"type":"text","text":")."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/pagination","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channelquery\/pagination"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery":{"role":"symbol","title":"ChannelQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelQuery"}],"abstract":[{"type":"text","text":"A channel query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelQuery"}],"url":"\/documentation\/streamchat\/channelquery"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A pagination for messages (see ",
+      "type" : "text"
+    },
+    {
+      "code" : "MessagesPagination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ").",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/pagination"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat12ChannelQueryV10paginationAA18MessagesPaginationVSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "pagination"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat18MessagesPaginationV",
+        "text" : "MessagesPagination"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "pagination"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "pagination"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagesPagination",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat18MessagesPaginationV",
+              "text" : "MessagesPagination"
+            },
+            {
+              "kind" : "text",
+              "text" : "?"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channelquery\/pagination"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery": {
+  "abstract" : [
+    {
+      "text" : "A channel query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelQuery/pagination": {
+  "abstract" : [
+    {
+      "text" : "A pagination for messages (see ",
+      "type" : "text"
+    },
+    {
+      "code" : "MessagesPagination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ").",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pagination"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat18MessagesPaginationV",
+      "text" : "MessagesPagination"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelQuery\/pagination",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "pagination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channelquery\/pagination"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessagesPagination": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessagesPagination"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessagesPagination",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessagesPagination"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessagesPagination",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagespagination"
+}
+}
+}

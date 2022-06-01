@@ -1,1 +1,468 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageReaction"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessagereaction"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/SQ","doc:\/\/io.getstream.StreamChat\/SH"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A type representing a message reaction. "},{"type":"codeVoice","code":"ChatMessageReaction"},{"type":"text","text":" is an immutable snapshot"},{"type":"text","text":" "},{"type":"text","text":"of a message reaction entity at the given time."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageReaction"}],"title":"ChatMessageReaction","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat0B15MessageReactionV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatMessageReaction"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/author","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/createdAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/extraData","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/score","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/type","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/updatedAt"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/Equatable-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/updatedAt":{"role":"symbol","title":"updatedAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"updatedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The date the reaction was last updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/updatedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagereaction\/updatedat"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/score":{"role":"symbol","title":"score","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"score"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"}],"abstract":[{"type":"text","text":"The reaction score."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/score","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagereaction\/score"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction":{"role":"symbol","title":"ChatMessageReaction","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageReaction"}],"abstract":[{"type":"text","text":"A type representing a message reaction. "},{"type":"codeVoice","code":"ChatMessageReaction"},{"type":"text","text":" is an immutable snapshot"},{"type":"text","text":" "},{"type":"text","text":"of a message reaction entity at the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageReaction"}],"url":"\/documentation\/streamchat\/chatmessagereaction"},"doc://io.getstream.StreamChat/SH":{"type":"unresolvable","title":"Swift.Hashable","identifier":"doc:\/\/io.getstream.StreamChat\/SH"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/type":{"role":"symbol","title":"type","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV"}],"abstract":[{"type":"text","text":"The reaction type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/type","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagereaction\/type"},"doc://io.getstream.StreamChat/SQ":{"type":"unresolvable","title":"Swift.Equatable","identifier":"doc:\/\/io.getstream.StreamChat\/SQ"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/createdAt":{"role":"symbol","title":"createdAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The date the reaction was created."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/createdAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagereaction\/createdat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/author":{"role":"symbol","title":"author","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"author"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatUser","preciseIdentifier":"s:10StreamChat0B4UserC"}],"abstract":[{"type":"text","text":"The author."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/author","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagereaction\/author"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/extraData":{"role":"symbol","title":"extraData","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"extraData"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"Custom data"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/extraData","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagereaction\/extradata"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/Equatable-Implementations":{"role":"collectionGroup","title":"Equatable Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/Equatable-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatmessagereaction\/equatable-implementations"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A type representing a message reaction. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessageReaction",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "of a message reaction entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B15MessageReactionV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatMessageReaction"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatMessageReaction"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "ChatMessageReaction"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatMessageReaction"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/SQ",
+        "doc:\/\/io.getstream.StreamChat\/SH"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/author",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/createdAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/extraData",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/score",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/type",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/updatedAt"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessagereaction"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/SH": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/SQ": {
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction": {
+  "abstract" : [
+    {
+      "text" : "A type representing a message reaction. ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessageReaction",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "of a message reaction entity at the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageReaction"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageReaction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageReaction",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagereaction"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagereaction\/equatable-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/author": {
+  "abstract" : [
+    {
+      "text" : "The author.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "author"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B4UserC",
+      "text" : "ChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/author",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "author",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagereaction\/author"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/createdAt": {
+  "abstract" : [
+    {
+      "text" : "The date the reaction was created.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createdAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/createdAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createdAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagereaction\/createdat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/extraData": {
+  "abstract" : [
+    {
+      "text" : "Custom data",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extraData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/extraData",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extraData",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagereaction\/extradata"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/score": {
+  "abstract" : [
+    {
+      "text" : "The reaction score.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "score"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/score",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "score",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagereaction\/score"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/type": {
+  "abstract" : [
+    {
+      "text" : "The reaction type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+      "text" : "MessageReactionType"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/type",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "type",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagereaction\/type"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageReaction/updatedAt": {
+  "abstract" : [
+    {
+      "text" : "The date the reaction was last updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "updatedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageReaction\/updatedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "updatedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagereaction\/updatedat"
+}
+}
+}

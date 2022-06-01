@@ -1,1 +1,1405 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserController"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/currentchatusercontroller"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStoreProvider"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController","interfaceLanguage":"swift"},"abstract":[{"type":"codeVoice","code":"CurrentChatUserController"},{"type":"text","text":" is a controller class which allows observing and mutating the currently logged-in"},{"type":"text","text":" "},{"type":"text","text":"user of "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserController"}],"title":"CurrentChatUserController","roleHeading":"Class","role":"symbol","symbolKind":"class","externalID":"s:10StreamChat07CurrentB14UserControllerC","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"CurrentChatUserController"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Classes","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/ObservableObject-swift.class"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/client","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUser","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUserChangePublisher","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/delegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/observableObject-swift.property","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/unreadCount","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/unreadCountPublisher"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/addDevice(_:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/addDevice(token:pushProvider:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/markAllRead(completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/reloadUserIfNeeded(completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/removeDevice(id:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/synchronize(_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/synchronizeDevices(completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/updateUserData(name:imageURL:userExtraData:completion:)"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/DataStoreProvider-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/currentUserChangePublisher":{"role":"symbol","title":"currentUserChangePublisher","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserChangePublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"CurrentChatUser","preciseIdentifier":"s:10StreamChat07CurrentB4UserC"},{"kind":"text","text":">, "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A publisher emitting a new value every time the current user changes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUserChangePublisher","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/currentuserchangepublisher"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/removeDevice(id:completion:)":{"role":"symbol","title":"removeDevice(id:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"removeDevice"},{"kind":"text","text":"("},{"kind":"externalParam","text":"id"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DeviceId","preciseIdentifier":"s:10StreamChat8DeviceIda"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Removes a registered device from the current user."},{"type":"text","text":" "},{"type":"codeVoice","code":"connectUser"},{"type":"text","text":" must be called before calling this."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/removeDevice(id:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/removedevice(id:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/Controller":{"role":"symbol","title":"Controller","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Controller"}],"abstract":[{"type":"text","text":"A protocol to which all controllers conform to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Controller"}],"url":"\/documentation\/streamchat\/controller"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/delegate":{"role":"symbol","title":"delegate","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"delegate"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"CurrentChatUserControllerDelegate","preciseIdentifier":"s:10StreamChat07CurrentB22UserControllerDelegateP"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Set the delegate of "},{"type":"codeVoice","code":"CurrentUserController"},{"type":"text","text":" to observe the changes in the system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/delegate","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/delegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/unreadCountPublisher":{"role":"symbol","title":"unreadCountPublisher","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"unreadCountPublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A publisher emitting a new value every time the unread count changes.."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/unreadCountPublisher","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/unreadcountpublisher"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController":{"role":"symbol","title":"CurrentChatUserController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserController"}],"abstract":[{"type":"codeVoice","code":"CurrentChatUserController"},{"type":"text","text":" is a controller class which allows observing and mutating the currently logged-in"},{"type":"text","text":" "},{"type":"text","text":"user of "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUserController"}],"url":"\/documentation\/streamchat\/currentchatusercontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/unreadCount":{"role":"symbol","title":"unreadCount","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"unreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"}],"abstract":[{"type":"text","text":"The unread messages and channels count for the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/unreadCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/unreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/markAllRead(completion:)":{"role":"symbol","title":"markAllRead(completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"markAllRead"},{"kind":"text","text":"("},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Marks all channels for a user as read."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/markAllRead(completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/markallread(completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/client":{"role":"symbol","title":"client","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"client"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatClient","preciseIdentifier":"s:10StreamChat0B6ClientC"}],"abstract":[{"type":"text","text":"The "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance this controller belongs to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/client","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/client"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/reloadUserIfNeeded(completion:)":{"role":"symbol","title":"reloadUserIfNeeded(completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"reloadUserIfNeeded"},{"kind":"text","text":"("},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Fetches the token from "},{"type":"codeVoice","code":"tokenProvider"},{"type":"text","text":" and prepares the current "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" variables"},{"type":"text","text":" "},{"type":"text","text":"for the new user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/reloadUserIfNeeded(completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/reloaduserifneeded(completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/DataStoreProvider-Implementations":{"role":"collectionGroup","title":"DataStoreProvider Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/DataStoreProvider-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/datastoreprovider-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/observableObject-swift.property":{"role":"symbol","title":"observableObject","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"observableObject"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ObservableObject","preciseIdentifier":"s:10StreamChat07CurrentB14UserControllerC16ObservableObjectC"}],"abstract":[{"type":"text","text":"A wrapper object that exposes the controller variables in the form of "},{"type":"codeVoice","code":"ObservableObject"},{"type":"text","text":" to be used in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/observableObject-swift.property","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/observableobject-swift.property"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/addDevice(_:completion:)":{"role":"symbol","title":"addDevice(_:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"addDevice"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"PushDevice","preciseIdentifier":"s:10StreamChat10PushDeviceV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Registers the current user’s device for push notifications."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/addDevice(_:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/adddevice(_:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/currentUser":{"role":"symbol","title":"currentUser","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUser"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"CurrentChatUser","preciseIdentifier":"s:10StreamChat07CurrentB4UserC"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The currently logged-in user. "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" if the connection hasn’t been fully established yet, or the connection"},{"type":"text","text":" "},{"type":"text","text":"wasn’t successful."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUser","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/currentuser"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataStoreProvider":{"role":"symbol","title":"DataStoreProvider","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataStoreProvider"}],"abstract":[{"type":"text","text":"Types conforming to this protocol automatically exposes public "},{"type":"codeVoice","code":"dataStore"},{"type":"text","text":" variable."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStoreProvider","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataStoreProvider"}],"url":"\/documentation\/streamchat\/datastoreprovider"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/ObservableObject-swift.class":{"role":"symbol","title":"CurrentChatUserController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"CurrentUserController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/currentchatusercontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/synchronize(_:)":{"role":"symbol","title":"synchronize(_:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"synchronize"},{"kind":"text","text":"((("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"error"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Synchronize local data with remote. Waits for the client to connect but doesn’t initiate the connection itself."},{"type":"text","text":" "},{"type":"text","text":"This is to make sure the fetched local data is up-to-date, since the current user data is updated through WebSocket events."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/synchronize(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/synchronize(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/addDevice(token:pushProvider:completion:)":{"role":"symbol","title":"addDevice(token:pushProvider:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"addDevice"},{"kind":"text","text":"("},{"kind":"externalParam","text":"token"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Data","preciseIdentifier":"s:10Foundation4DataV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"pushProvider"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"PushProvider","preciseIdentifier":"s:10StreamChat12PushProviderV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/addDevice(token:pushProvider:completion:)","kind":"symbol","type":"topic","deprecated":true,"url":"\/documentation\/streamchat\/currentchatusercontroller\/adddevice(token:pushprovider:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataController":{"role":"symbol","title":"DataController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataController"}],"abstract":[{"type":"text","text":"The base class for controllers which represent and control a data entity. Not meant to be used directly."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataController"}],"url":"\/documentation\/streamchat\/datacontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/synchronizeDevices(completion:)":{"role":"symbol","title":"synchronizeDevices(completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"synchronizeDevices"},{"kind":"text","text":"("},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Fetches the most updated devices and syncs with the local database."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/synchronizeDevices(completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/synchronizedevices(completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/updateUserData(name:imageURL:userExtraData:completion:)":{"role":"symbol","title":"updateUserData(name:imageURL:userExtraData:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"updateUserData"},{"kind":"text","text":"("},{"kind":"externalParam","text":"name"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"imageURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"userExtraData"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Updates the current user data."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/updateUserData(name:imageURL:userExtraData:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontroller\/updateuserdata(name:imageurl:userextradata:completion:)"}}}
+{
+  "abstract" : [
+    {
+      "code" : "CurrentChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating the currently logged-in",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "user of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat07CurrentB14UserControllerC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "CurrentChatUserController"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "CurrentChatUserController"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "CurrentChatUserController"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "CurrentChatUserController"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStoreProvider"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/ObservableObject-swift.class"
+      ],
+      "title" : "Classes"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/client",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUser",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUserChangePublisher",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/delegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/observableObject-swift.property",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/unreadCount",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/unreadCountPublisher"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/addDevice(_:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/addDevice(token:pushProvider:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/markAllRead(completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/reloadUserIfNeeded(completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/removeDevice(id:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/synchronize(_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/synchronizeDevices(completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/updateUserData(name:imageURL:userExtraData:completion:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/DataStoreProvider-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/currentchatusercontroller"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Controller": {
+  "abstract" : [
+    {
+      "text" : "A protocol to which all controllers conform to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Controller"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Controller"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Controller",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/controller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController": {
+  "abstract" : [
+    {
+      "code" : "CurrentChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating the currently logged-in",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "user of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUserController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/DataStoreProvider-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/DataStoreProvider-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "DataStoreProvider Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/datastoreprovider-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUserController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/addDevice(_:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Registers the current user’s device for push notifications.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "addDevice"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10PushDeviceV",
+      "text" : "PushDevice"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/addDevice(_:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "addDevice(_:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/adddevice(_:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/addDevice(token:pushProvider:completion:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "addDevice"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "token"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pushProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12PushProviderV",
+      "text" : "PushProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/addDevice(token:pushProvider:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "addDevice(token:pushProvider:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/adddevice(token:pushprovider:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/client": {
+  "abstract" : [
+    {
+      "text" : "The ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance this controller belongs to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "client"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B6ClientC",
+      "text" : "ChatClient"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/client",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "client",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/client"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/currentUser": {
+  "abstract" : [
+    {
+      "text" : "The currently logged-in user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the connection hasn’t been fully established yet, or the connection",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "wasn’t successful.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB4UserC",
+      "text" : "CurrentChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUser",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/currentuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/currentUserChangePublisher": {
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time the current user changes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserChangePublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+      "text" : "AnyPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+      "text" : "EntityChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB4UserC",
+      "text" : "CurrentChatUser"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/currentUserChangePublisher",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentUserChangePublisher",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/currentuserchangepublisher"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/delegate": {
+  "abstract" : [
+    {
+      "text" : "Set the delegate of ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to observe the changes in the system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "delegate"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB22UserControllerDelegateP",
+      "text" : "CurrentChatUserControllerDelegate"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/delegate",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "delegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/delegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/markAllRead(completion:)": {
+  "abstract" : [
+    {
+      "text" : "Marks all channels for a user as read.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "markAllRead"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/markAllRead(completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "markAllRead(completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/markallread(completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/observableObject-swift.property": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object that exposes the controller variables in the form of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ObservableObject",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to be used in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "observableObject"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB14UserControllerC16ObservableObjectC",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/observableObject-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "observableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/observableobject-swift.property"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/reloadUserIfNeeded(completion:)": {
+  "abstract" : [
+    {
+      "text" : "Fetches the token from ",
+      "type" : "text"
+    },
+    {
+      "code" : "tokenProvider",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and prepares the current ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " variables",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "for the new user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reloadUserIfNeeded"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/reloadUserIfNeeded(completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reloadUserIfNeeded(completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/reloaduserifneeded(completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/removeDevice(id:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Removes a registered device from the current user.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "code" : "connectUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " must be called before calling this.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "removeDevice"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8DeviceIda",
+      "text" : "DeviceId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/removeDevice(id:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "removeDevice(id:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/removedevice(id:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/synchronize(_:)": {
+  "abstract" : [
+    {
+      "text" : "Synchronize local data with remote. Waits for the client to connect but doesn’t initiate the connection itself.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "This is to make sure the fetched local data is up-to-date, since the current user data is updated through WebSocket events.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "synchronize"
+    },
+    {
+      "kind" : "text",
+      "text" : "((("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "_"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "internalParam",
+      "text" : "error"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/synchronize(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "synchronize(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/synchronize(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/synchronizeDevices(completion:)": {
+  "abstract" : [
+    {
+      "text" : "Fetches the most updated devices and syncs with the local database.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "synchronizeDevices"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/synchronizeDevices(completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "synchronizeDevices(completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/synchronizedevices(completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/unreadCount": {
+  "abstract" : [
+    {
+      "text" : "The unread messages and channels count for the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/unreadCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/unreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/unreadCountPublisher": {
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time the unread count changes..",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unreadCountPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+      "text" : "AnyPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/unreadCountPublisher",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unreadCountPublisher",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/unreadcountpublisher"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController/updateUserData(name:imageURL:userExtraData:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Updates the current user data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "updateUserData"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "imageURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "userExtraData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController\/updateUserData(name:imageURL:userExtraData:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "updateUserData(name:imageURL:userExtraData:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller\/updateuserdata(name:imageurl:userextradata:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataController": {
+  "abstract" : [
+    {
+      "text" : "The base class for controllers which represent and control a data entity. Not meant to be used directly.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataStoreProvider": {
+  "abstract" : [
+    {
+      "text" : "Types conforming to this protocol automatically exposes public ",
+      "type" : "text"
+    },
+    {
+      "code" : "dataStore",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " variable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataStoreProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStoreProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataStoreProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataStoreProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datastoreprovider"
+}
+}
+}

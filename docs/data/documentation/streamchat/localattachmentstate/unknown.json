@@ -1,1 +1,172 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"unknown"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/localattachmentstate\/unknown"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/unknown","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The current state is unknown"}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"unknown"}],"title":"LocalAttachmentState.unknown","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat20LocalAttachmentStateO7unknownyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/unknown":{"role":"symbol","title":"LocalAttachmentState.unknown","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"unknown"}],"abstract":[{"type":"text","text":"The current state is unknown"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/unknown","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/localattachmentstate\/unknown"},"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState":{"role":"symbol","title":"LocalAttachmentState","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"LocalAttachmentState"}],"abstract":[{"type":"text","text":"A local state of the attachment. Applies only for attachments linked to the new messages sent from current device."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"LocalAttachmentState"}],"url":"\/documentation\/streamchat\/localattachmentstate"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The current state is unknown",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/unknown"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat20LocalAttachmentStateO7unknownyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "unknown"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "LocalAttachmentState.unknown"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "unknown"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/localattachmentstate\/unknown"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState": {
+  "abstract" : [
+    {
+      "text" : "A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LocalAttachmentState"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LocalAttachmentState"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LocalAttachmentState",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/LocalAttachmentState/unknown": {
+  "abstract" : [
+    {
+      "text" : "The current state is unknown",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unknown"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/LocalAttachmentState\/unknown",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LocalAttachmentState.unknown",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/localattachmentstate\/unknown"
+}
+}
+}

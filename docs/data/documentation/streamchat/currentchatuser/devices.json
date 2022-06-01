@@ -1,1 +1,262 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"devices"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Device","preciseIdentifier":"s:10StreamChat6DeviceV","text":"Device"},{"kind":"text","text":"]"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/currentchatuser\/devices"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/devices","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A list of devices associcated with the user."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"devices"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Device","preciseIdentifier":"s:10StreamChat6DeviceV"},{"kind":"text","text":"]"}],"title":"devices","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat07CurrentB4UserC7devicesSayAA6DeviceVGvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/devices":{"role":"symbol","title":"devices","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"devices"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Device","preciseIdentifier":"s:10StreamChat6DeviceV"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"A list of devices associcated with the user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/devices","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatuser\/devices"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/Device":{"role":"symbol","title":"Device","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Device"}],"abstract":[{"type":"text","text":"An object representing a device which can receive push notifications."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Device","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Device"}],"url":"\/documentation\/streamchat\/device"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser":{"role":"symbol","title":"CurrentChatUser","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUser"}],"abstract":[{"type":"text","text":"A type representing the currently logged-in user. "},{"type":"codeVoice","code":"CurrentChatUser"},{"type":"text","text":" is an immutable snapshot of a current user entity at"},{"type":"text","text":" "},{"type":"text","text":"the given time."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUser"}],"url":"\/documentation\/streamchat\/currentchatuser"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A list of devices associcated with the user.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/devices"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat07CurrentB4UserC7devicesSayAA6DeviceVGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "devices"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6DeviceV",
+        "text" : "Device"
+      },
+      {
+        "kind" : "text",
+        "text" : "]"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "devices"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "devices"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Device",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6DeviceV",
+              "text" : "Device"
+            },
+            {
+              "kind" : "text",
+              "text" : "]"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/currentchatuser\/devices"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser": {
+  "abstract" : [
+    {
+      "text" : "A type representing the currently logged-in user. ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentChatUser",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is an immutable snapshot of a current user entity at",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "the given time.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUser"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUser",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUser/devices": {
+  "abstract" : [
+    {
+      "text" : "A list of devices associcated with the user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "devices"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6DeviceV",
+      "text" : "Device"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUser\/devices",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "devices",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatuser\/devices"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Device": {
+  "abstract" : [
+    {
+      "text" : "An object representing a device which can receive push notifications.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Device"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Device",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Device"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Device",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/device"
+}
+}
+}

@@ -1,1 +1,515 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"controller"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController","preciseIdentifier":"s:10StreamChat14DataControllerC","text":"DataController"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeState"},{"kind":"text","text":" "},{"kind":"internalParam","text":"state"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController","preciseIdentifier":"s:10StreamChat14DataControllerC","text":"DataController"},{"kind":"text","text":"."},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController\/State-swift.enum","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO","text":"State"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"controller","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The controller the change is related to."}]}]},{"name":"state","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The new state of the controller."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/datacontrollerstatedelegate\/controller(_:didchangestate:)-6kgca"],"traits":[{"interfaceLanguage":"swift"}]}],"defaultImplementationsSections":[{"title":"DataControllerStateDelegate Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-68bgx"]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-6kgca","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Called when the observed controller changed it’s state."}],"kind":"symbol","metadata":{"role":"symbol","title":"controller(_:didChangeState:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeState"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"State","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO"},{"kind":"text","text":")"}],"symbolKind":"method","externalID":"s:10StreamChat27DataControllerStateDelegateP10controller_09didChangeE0yAA0cD0C_AG0E0OtF","required":true,"modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate/controller(_:didChangeState:)-6kgca":{"defaultImplementations":1,"role":"symbol","title":"controller(_:didChangeState:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeState"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"State","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Called when the observed controller changed it’s state."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-6kgca","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/datacontrollerstatedelegate\/controller(_:didchangestate:)-6kgca"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate":{"role":"symbol","title":"DataControllerStateDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataControllerStateDelegate"}],"abstract":[{"type":"text","text":"A delegate protocol some Controllers use to propagate the information about controller "},{"type":"codeVoice","code":"state"},{"type":"text","text":" changes. You can use it to let"},{"type":"text","text":" "},{"type":"text","text":"users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataControllerStateDelegate"}],"url":"\/documentation\/streamchat\/datacontrollerstatedelegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataController/State-swift.enum":{"role":"symbol","title":"DataController.State","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"State"}],"abstract":[{"type":"text","text":"Describes the possible states of "},{"type":"codeVoice","code":"DataController"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController\/State-swift.enum","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"State"}],"url":"\/documentation\/streamchat\/datacontroller\/state-swift.enum"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataController":{"role":"symbol","title":"DataController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataController"}],"abstract":[{"type":"text","text":"The base class for controllers which represent and control a data entity. Not meant to be used directly."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataController"}],"url":"\/documentation\/streamchat\/datacontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate/controller(_:didChangeState:)-68bgx":{"role":"symbol","title":"controller(_:didChangeState:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"controller"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeState"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"State","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Called when the observed controller changed it’s state."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-68bgx","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/datacontrollerstatedelegate\/controller(_:didchangestate:)-68bgx"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Called when the observed controller changed it’s state.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementationsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-68bgx"
+      ],
+      "title" : "DataControllerStateDelegate Implementations"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-6kgca"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat27DataControllerStateDelegateP10controller_09didChangeE0yAA0cD0C_AG0E0OtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "controller"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+        "text" : "DataController"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "didChangeState"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+        "text" : "DataController"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+        "text" : "State"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "required" : true,
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "controller(_:didChangeState:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "controller"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "controller"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+              "text" : "DataController"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "didChangeState"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "state"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+              "text" : "DataController"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController\/State-swift.enum",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+              "text" : "State"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The controller the change is related to.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "controller"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The new state of the controller.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "state"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/datacontrollerstatedelegate\/controller(_:didchangestate:)-6kgca"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataController": {
+  "abstract" : [
+    {
+      "text" : "The base class for controllers which represent and control a data entity. Not meant to be used directly.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataController/State-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "Describes the possible states of ",
+      "type" : "text"
+    },
+    {
+      "code" : "DataController",
+      "type" : "codeVoice"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "State"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController\/State-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "State"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataController.State",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontroller\/state-swift.enum"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate": {
+  "abstract" : [
+    {
+      "text" : "A delegate protocol some Controllers use to propagate the information about controller ",
+      "type" : "text"
+    },
+    {
+      "code" : "state",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " changes. You can use it to let",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataControllerStateDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataControllerStateDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataControllerStateDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontrollerstatedelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate/controller(_:didChangeState:)-68bgx": {
+  "abstract" : [
+    {
+      "text" : "Called when the observed controller changed it’s state.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeState"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+      "text" : "State"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-68bgx",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "controller(_:didChangeState:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontrollerstatedelegate\/controller(_:didchangestate:)-68bgx"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataControllerStateDelegate/controller(_:didChangeState:)-6kgca": {
+  "abstract" : [
+    {
+      "text" : "Called when the observed controller changed it’s state.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controller"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeState"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+      "text" : "State"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataControllerStateDelegate\/controller(_:didChangeState:)-6kgca",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "controller(_:didChangeState:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontrollerstatedelegate\/controller(_:didchangestate:)-6kgca"
+}
+}
+}

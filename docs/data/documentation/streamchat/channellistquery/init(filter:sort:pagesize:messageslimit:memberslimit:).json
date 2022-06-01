@@ -1,1 +1,698 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"filter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter","preciseIdentifier":"s:10StreamChat6FilterV","text":"Filter"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListFilterScope","preciseIdentifier":"s:10StreamChat22ChannelListFilterScopeV","text":"ChannelListFilterScope"},{"kind":"text","text":">, "},{"kind":"externalParam","text":"sort"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting","preciseIdentifier":"s:10StreamChat7SortingV","text":"Sorting"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey","preciseIdentifier":"s:10StreamChat21ChannelListSortingKeyO","text":"ChannelListSortingKey"},{"kind":"text","text":">] = [], "},{"kind":"externalParam","text":"pageSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":" = .channelsPageSize, "},{"kind":"externalParam","text":"messagesLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":" = .messagesPageSize, "},{"kind":"externalParam","text":"membersLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":" = .channelMembersPageSize)"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"parameters","parameters":[{"name":"filter","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"a channels filter."}]}]},{"name":"sort","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"a sorting list for channels."}]}]},{"name":"pageSize","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"a page size for pagination."}]}]},{"name":"messagesLimit","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"a number of messages for the channel to be retrieved."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/channellistquery\/init(filter:sort:pagesize:messageslimit:memberslimit:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery\/init(filter:sort:pageSize:messagesLimit:membersLimit:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Init a channels query."}],"kind":"symbol","metadata":{"fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"filter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Filter","preciseIdentifier":"s:10StreamChat6FilterV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChannelListFilterScope","preciseIdentifier":"s:10StreamChat22ChannelListFilterScopeV"},{"kind":"text","text":">, "},{"kind":"externalParam","text":"sort"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Sorting","preciseIdentifier":"s:10StreamChat7SortingV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChannelListSortingKey","preciseIdentifier":"s:10StreamChat21ChannelListSortingKeyO"},{"kind":"text","text":">], "},{"kind":"externalParam","text":"pageSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"messagesLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"membersLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":")"}],"title":"init(filter:sort:pageSize:messagesLimit:membersLimit:)","roleHeading":"Initializer","role":"symbol","symbolKind":"init","externalID":"s:10StreamChat16ChannelListQueryV6filter4sort8pageSize13messagesLimit07membersK0AcA6FilterVyAA0cdM5ScopeVG_SayAA7SortingVyAA0cdO3KeyOGGS3itcfc","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery/init(filter:sort:pageSize:messagesLimit:membersLimit:)":{"role":"symbol","title":"init(filter:sort:pageSize:messagesLimit:membersLimit:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"filter"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Filter","preciseIdentifier":"s:10StreamChat6FilterV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChannelListFilterScope","preciseIdentifier":"s:10StreamChat22ChannelListFilterScopeV"},{"kind":"text","text":">, "},{"kind":"externalParam","text":"sort"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"Sorting","preciseIdentifier":"s:10StreamChat7SortingV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChannelListSortingKey","preciseIdentifier":"s:10StreamChat21ChannelListSortingKeyO"},{"kind":"text","text":">], "},{"kind":"externalParam","text":"pageSize"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"messagesLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"membersLimit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Init a channels query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery\/init(filter:sort:pageSize:messagesLimit:membersLimit:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/channellistquery\/init(filter:sort:pagesize:messageslimit:memberslimit:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/Sorting":{"role":"symbol","title":"Sorting","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Sorting"}],"abstract":[{"type":"text","text":"Sorting options."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Sorting"}],"url":"\/documentation\/streamchat\/sorting"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListFilterScope":{"role":"symbol","title":"ChannelListFilterScope","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelListFilterScope"}],"abstract":[{"type":"text","text":"An extra-data-specific namespace for the "},{"type":"codeVoice","code":"FilterKey"},{"type":"text","text":"s suitable to be used for "},{"type":"codeVoice","code":"ChannelListQuery"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListFilterScope","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelListFilterScope"}],"url":"\/documentation\/streamchat\/channellistfilterscope"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery":{"role":"symbol","title":"ChannelListQuery","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelListQuery"}],"abstract":[{"type":"text","text":"A query is used for querying specific channels from backend."},{"type":"text","text":" "},{"type":"text","text":"You can specify filter, sorting, pagination, limit for fetched messages in channel and other options."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelListQuery"}],"url":"\/documentation\/streamchat\/channellistquery"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListSortingKey":{"role":"symbol","title":"ChannelListSortingKey","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChannelListSortingKey"}],"abstract":[{"type":"codeVoice","code":"ChannelListSortingKey"},{"type":"text","text":" is keys by which you can get sorted channels after query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChannelListSortingKey"}],"url":"\/documentation\/streamchat\/channellistsortingkey"},"doc://io.getstream.StreamChat/documentation/StreamChat/Filter":{"role":"symbol","title":"Filter","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"Filter"}],"abstract":[{"type":"text","text":"Filter is used to specify the details about which elements should be returned from a specific query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Filter"}],"url":"\/documentation\/streamchat\/filter"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Init a channels query.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery\/init(filter:sort:pageSize:messagesLimit:membersLimit:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat16ChannelListQueryV6filter4sort8pageSize13messagesLimit07membersK0AcA6FilterVyAA0cdM5ScopeVG_SayAA7SortingVyAA0cdO3KeyOGGS3itcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "filter"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat6FilterV",
+        "text" : "Filter"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat22ChannelListFilterScopeV",
+        "text" : "ChannelListFilterScope"
+      },
+      {
+        "kind" : "text",
+        "text" : ">, "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "sort"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat7SortingV",
+        "text" : "Sorting"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat21ChannelListSortingKeyO",
+        "text" : "ChannelListSortingKey"
+      },
+      {
+        "kind" : "text",
+        "text" : ">], "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "pageSize"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Si",
+        "text" : "Int"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "messagesLimit"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Si",
+        "text" : "Int"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "membersLimit"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Si",
+        "text" : "Int"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(filter:sort:pageSize:messagesLimit:membersLimit:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "filter"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat6FilterV",
+              "text" : "Filter"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListFilterScope",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat22ChannelListFilterScopeV",
+              "text" : "ChannelListFilterScope"
+            },
+            {
+              "kind" : "text",
+              "text" : ">, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "sort"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat7SortingV",
+              "text" : "Sorting"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat21ChannelListSortingKeyO",
+              "text" : "ChannelListSortingKey"
+            },
+            {
+              "kind" : "text",
+              "text" : ">] = [], "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "pageSize"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Si",
+              "text" : "Int"
+            },
+            {
+              "kind" : "text",
+              "text" : " = .channelsPageSize, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "messagesLimit"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Si",
+              "text" : "Int"
+            },
+            {
+              "kind" : "text",
+              "text" : " = .messagesPageSize, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "membersLimit"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Si",
+              "text" : "Int"
+            },
+            {
+              "kind" : "text",
+              "text" : " = .channelMembersPageSize)"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "a channels filter.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "filter"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "a sorting list for channels.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "sort"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "a page size for pagination.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "pageSize"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "a number of messages for the channel to be retrieved.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "messagesLimit"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/channellistquery\/init(filter:sort:pagesize:messageslimit:memberslimit:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListFilterScope": {
+  "abstract" : [
+    {
+      "text" : "An extra-data-specific namespace for the ",
+      "type" : "text"
+    },
+    {
+      "code" : "FilterKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "s suitable to be used for ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListQuery",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListFilterScope"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListFilterScope",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListFilterScope"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelListFilterScope",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistfilterscope"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery": {
+  "abstract" : [
+    {
+      "text" : "A query is used for querying specific channels from backend.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListQuery"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListQuery"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelListQuery",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistquery"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListQuery/init(filter:sort:pageSize:messagesLimit:membersLimit:)": {
+  "abstract" : [
+    {
+      "text" : "Init a channels query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "filter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6FilterV",
+      "text" : "Filter"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat22ChannelListFilterScopeV",
+      "text" : "ChannelListFilterScope"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "sort"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7SortingV",
+      "text" : "Sorting"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat21ChannelListSortingKeyO",
+      "text" : "ChannelListSortingKey"
+    },
+    {
+      "kind" : "text",
+      "text" : ">], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pageSize"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "messagesLimit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "membersLimit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListQuery\/init(filter:sort:pageSize:messagesLimit:membersLimit:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(filter:sort:pageSize:messagesLimit:membersLimit:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistquery\/init(filter:sort:pagesize:messageslimit:memberslimit:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChannelListSortingKey": {
+  "abstract" : [
+    {
+      "code" : "ChannelListSortingKey",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is keys by which you can get sorted channels after query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChannelListSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChannelListSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChannelListSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/channellistsortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Filter": {
+  "abstract" : [
+    {
+      "text" : "Filter is used to specify the details about which elements should be returned from a specific query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Filter"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Filter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Filter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Filter",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/filter"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Sorting": {
+  "abstract" : [
+    {
+      "text" : "Sorting options.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Sorting"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Sorting",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Sorting"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Sorting",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/sorting"
+}
+}
+}

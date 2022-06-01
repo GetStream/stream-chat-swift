@@ -1,1 +1,555 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberEvent"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","preciseIdentifier":"s:10StreamChat5EventP","text":"Event"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/memberevent"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberAddedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberRemovedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteAcceptedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteRejectedEvent","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent"],"kind":"relationships","title":"Conforming Types","type":"conformingTypes"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A protocol for any "},{"type":"codeVoice","code":"MemberEvent"},{"type":"text","text":" where it has a "},{"type":"codeVoice","code":"member"},{"type":"text","text":", and "},{"type":"codeVoice","code":"channel"},{"type":"text","text":" payload."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberEvent"}],"title":"MemberEvent","roleHeading":"Protocol","role":"symbol","symbolKind":"protocol","externalID":"s:10StreamChat11MemberEventP","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"MemberEvent"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent\/cid","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent\/memberUserId"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInvitedEvent":{"role":"symbol","title":"NotificationInvitedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationInvitedEvent"}],"abstract":[{"type":"text","text":"Triggered when current user is invited to a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationInvitedEvent"}],"url":"\/documentation\/streamchat\/notificationinvitedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInviteAcceptedEvent":{"role":"symbol","title":"NotificationInviteAcceptedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationInviteAcceptedEvent"}],"abstract":[{"type":"text","text":"Triggered when the current user accepts an invite to a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteAcceptedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationInviteAcceptedEvent"}],"url":"\/documentation\/streamchat\/notificationinviteacceptedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent":{"role":"symbol","title":"MemberEvent","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberEvent"}],"abstract":[{"type":"text","text":"A protocol for any "},{"type":"codeVoice","code":"MemberEvent"},{"type":"text","text":" where it has a "},{"type":"codeVoice","code":"member"},{"type":"text","text":", and "},{"type":"codeVoice","code":"channel"},{"type":"text","text":" payload."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberEvent"}],"url":"\/documentation\/streamchat\/memberevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInviteRejectedEvent":{"role":"symbol","title":"NotificationInviteRejectedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationInviteRejectedEvent"}],"abstract":[{"type":"text","text":"Triggered when the current user rejects an invite to a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteRejectedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationInviteRejectedEvent"}],"url":"\/documentation\/streamchat\/notificationinviterejectedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent\/cid","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/memberevent\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberAddedEvent":{"role":"symbol","title":"MemberAddedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberAddedEvent"}],"abstract":[{"type":"text","text":"Triggered when a new member is added to a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberAddedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberAddedEvent"}],"url":"\/documentation\/streamchat\/memberaddedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent":{"role":"symbol","title":"MemberUpdatedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberUpdatedEvent"}],"abstract":[{"type":"text","text":"Triggered when a channel member is updated."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberUpdatedEvent"}],"url":"\/documentation\/streamchat\/memberupdatedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent/memberUserId":{"role":"symbol","title":"memberUserId","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberUserId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent\/memberUserId","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/memberevent\/memberuserid"},"doc://io.getstream.StreamChat/documentation/StreamChat/MemberRemovedEvent":{"role":"symbol","title":"MemberRemovedEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"MemberRemovedEvent"}],"abstract":[{"type":"text","text":"Triggered when a member is removed from a channel."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberRemovedEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MemberRemovedEvent"}],"url":"\/documentation\/streamchat\/memberremovedevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/Event":{"role":"symbol","title":"Event","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Event"}],"abstract":[{"type":"text","text":"An "},{"type":"codeVoice","code":"Event"},{"type":"text","text":" object representing an event in the chat system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Event"}],"url":"\/documentation\/streamchat\/event"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A protocol for any ",
+      "type" : "text"
+    },
+    {
+      "code" : "MemberEvent",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " where it has a ",
+      "type" : "text"
+    },
+    {
+      "code" : "member",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", and ",
+      "type" : "text"
+    },
+    {
+      "code" : "channel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " payload.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat11MemberEventP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "MemberEvent"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "MemberEvent"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "MemberEvent"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "MemberEvent"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat5EventP",
+              "text" : "Event"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberAddedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberRemovedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteAcceptedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteRejectedEvent",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent\/cid",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent\/memberUserId"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/memberevent"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Event": {
+  "abstract" : [
+    {
+      "text" : "An ",
+      "type" : "text"
+    },
+    {
+      "code" : "Event",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " object representing an event in the chat system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Event",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/event"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberAddedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a new member is added to a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberAddedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberAddedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberAddedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberAddedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberaddedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent": {
+  "abstract" : [
+    {
+      "text" : "A protocol for any ",
+      "type" : "text"
+    },
+    {
+      "code" : "MemberEvent",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " where it has a ",
+      "type" : "text"
+    },
+    {
+      "code" : "member",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", and ",
+      "type" : "text"
+    },
+    {
+      "code" : "channel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " payload.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent/cid": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent\/cid",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberevent\/cid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberEvent/memberUserId": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberUserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberEvent\/memberUserId",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "memberUserId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberevent\/memberuserid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberRemovedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a member is removed from a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberRemovedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberRemovedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberRemovedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberRemovedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberremovedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MemberUpdatedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when a channel member is updated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemberUpdatedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MemberUpdatedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemberUpdatedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemberUpdatedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/memberupdatedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInviteAcceptedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when the current user accepts an invite to a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInviteAcceptedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteAcceptedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInviteAcceptedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationInviteAcceptedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationinviteacceptedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInviteRejectedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when the current user rejects an invite to a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInviteRejectedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInviteRejectedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInviteRejectedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationInviteRejectedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationinviterejectedevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationInvitedEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when current user is invited to a channel.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInvitedEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationInvitedEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationInvitedEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationInvitedEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationinvitedevent"
+}
+}
+}

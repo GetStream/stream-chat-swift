@@ -1,1 +1,458 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"controller"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController","preciseIdentifier":"s:10StreamChat07CurrentB14UserControllerC","text":"CurrentChatUserController"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeCurrentUserUnreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV","text":"UnreadCount"},{"kind":"text","text":")"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuserunreadcount:)-3db5d"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-3db5d","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The controller observed a change in the "},{"type":"codeVoice","code":"UnreadCount"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"role":"symbol","title":"currentUserController(_:didChangeCurrentUserUnreadCount:)","roleHeading":"Instance Method","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"CurrentChatUserController","preciseIdentifier":"s:10StreamChat07CurrentB14UserControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeCurrentUserUnreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"},{"kind":"text","text":")"}],"symbolKind":"method","externalID":"s:10StreamChat07CurrentB22UserControllerDelegatePAAE07currentdE0_09didChangecD11UnreadCountyAA0cbdE0C_AA0jK0VtF","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe":{"defaultImplementations":1,"role":"symbol","title":"currentUserController(_:didChangeCurrentUserUnreadCount:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"CurrentChatUserController","preciseIdentifier":"s:10StreamChat07CurrentB14UserControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeCurrentUserUnreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"The controller observed a change in the "},{"type":"codeVoice","code":"UnreadCount"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuserunreadcount:)-6khhe"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate/currentUserController(_:didChangeCurrentUserUnreadCount:)-3db5d":{"role":"symbol","title":"currentUserController(_:didChangeCurrentUserUnreadCount:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserController"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"CurrentChatUserController","preciseIdentifier":"s:10StreamChat07CurrentB14UserControllerC"},{"kind":"text","text":", "},{"kind":"externalParam","text":"didChangeCurrentUserUnreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"The controller observed a change in the "},{"type":"codeVoice","code":"UnreadCount"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-3db5d","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuserunreadcount:)-3db5d"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController":{"role":"symbol","title":"CurrentChatUserController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserController"}],"abstract":[{"type":"codeVoice","code":"CurrentChatUserController"},{"type":"text","text":" is a controller class which allows observing and mutating the currently logged-in"},{"type":"text","text":" "},{"type":"text","text":"user of "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUserController"}],"url":"\/documentation\/streamchat\/currentchatusercontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount":{"role":"symbol","title":"UnreadCount","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UnreadCount"}],"abstract":[{"type":"text","text":"A struct containing information about unread counts of channels and messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UnreadCount"}],"url":"\/documentation\/streamchat\/unreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate":{"role":"symbol","title":"CurrentChatUserControllerDelegate","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"CurrentChatUserControllerDelegate"}],"abstract":[{"type":"codeVoice","code":"CurrentChatUserController"},{"type":"text","text":" uses this protocol to communicate changes to its delegate."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"CurrentChatUserControllerDelegate"}],"url":"\/documentation\/streamchat\/currentchatusercontrollerdelegate"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The controller observed a change in the ",
+      "type" : "text"
+    },
+    {
+      "code" : "UnreadCount",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-3db5d"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat07CurrentB22UserControllerDelegatePAAE07currentdE0_09didChangecD11UnreadCountyAA0cbdE0C_AA0jK0VtF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "currentUserController"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat07CurrentB14UserControllerC",
+        "text" : "CurrentChatUserController"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "didChangeCurrentUserUnreadCount"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+        "text" : "UnreadCount"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "currentUserController(_:didChangeCurrentUserUnreadCount:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "currentUserController"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "controller"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat07CurrentB14UserControllerC",
+              "text" : "CurrentChatUserController"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "didChangeCurrentUserUnreadCount"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+              "text" : "UnreadCount"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuserunreadcount:)-3db5d"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserController": {
+  "abstract" : [
+    {
+      "code" : "CurrentChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating the currently logged-in",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "user of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUserController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate": {
+  "abstract" : [
+    {
+      "code" : "CurrentChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " uses this protocol to communicate changes to its delegate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserControllerDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CurrentChatUserControllerDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CurrentChatUserControllerDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontrollerdelegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate/currentUserController(_:didChangeCurrentUserUnreadCount:)-3db5d": {
+  "abstract" : [
+    {
+      "text" : "The controller observed a change in the ",
+      "type" : "text"
+    },
+    {
+      "code" : "UnreadCount",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB14UserControllerC",
+      "text" : "CurrentChatUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeCurrentUserUnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-3db5d",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentUserController(_:didChangeCurrentUserUnreadCount:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuserunreadcount:)-3db5d"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/CurrentChatUserControllerDelegate/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe": {
+  "abstract" : [
+    {
+      "text" : "The controller observed a change in the ",
+      "type" : "text"
+    },
+    {
+      "code" : "UnreadCount",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB14UserControllerC",
+      "text" : "CurrentChatUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "didChangeCurrentUserUnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/CurrentChatUserControllerDelegate\/currentUserController(_:didChangeCurrentUserUnreadCount:)-6khhe",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "currentUserController(_:didChangeCurrentUserUnreadCount:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/currentchatusercontrollerdelegate\/currentusercontroller(_:didchangecurrentuserunreadcount:)-6khhe"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount": {
+  "abstract" : [
+    {
+      "text" : "A struct containing information about unread counts of channels and messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UnreadCount"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UnreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unreadcount"
+}
+}
+}

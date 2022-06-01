@@ -1,1 +1,198 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"relevance"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"type":"aside","style":"warning","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"This sorting key will not take effect on iOS SDK. We suggest using other sorting keys for now."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/messagesearchsortingkey\/relevance"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey\/relevance","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Sort messages by their relevance to the query."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"relevance"}],"title":"MessageSearchSortingKey.relevance","roleHeading":"Case","role":"symbol","symbolKind":"case","externalID":"s:10StreamChat23MessageSearchSortingKeyO9relevanceyA2CmF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchSortingKey":{"role":"symbol","title":"MessageSearchSortingKey","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"MessageSearchSortingKey"}],"abstract":[{"type":"text","text":"Keys that you can use to sort Message search results."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"MessageSearchSortingKey"}],"url":"\/documentation\/streamchat\/messagesearchsortingkey"},"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchSortingKey/relevance":{"role":"symbol","title":"MessageSearchSortingKey.relevance","fragments":[{"kind":"keyword","text":"case"},{"kind":"text","text":" "},{"kind":"identifier","text":"relevance"}],"abstract":[{"type":"text","text":"Sort messages by their relevance to the query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey\/relevance","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/messagesearchsortingkey\/relevance"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Sort messages by their relevance to the query.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey\/relevance"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat23MessageSearchSortingKeyO9relevanceyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "relevance"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "MessageSearchSortingKey.relevance"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "relevance"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "This sorting key will not take effect on iOS SDK. We suggest using other sorting keys for now.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "warning",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/messagesearchsortingkey\/relevance"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchSortingKey": {
+  "abstract" : [
+    {
+      "text" : "Keys that you can use to sort Message search results.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageSearchSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageSearchSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageSearchSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagesearchsortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/MessageSearchSortingKey/relevance": {
+  "abstract" : [
+    {
+      "text" : "Sort messages by their relevance to the query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "relevance"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/MessageSearchSortingKey\/relevance",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "MessageSearchSortingKey.relevance",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/messagesearchsortingkey\/relevance"
+}
+}
+}

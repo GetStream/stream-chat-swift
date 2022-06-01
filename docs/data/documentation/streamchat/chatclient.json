@@ -1,1 +1,2363 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClient"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"overview","level":2,"type":"heading","text":"Overview"},{"type":"paragraph","inlineContent":[{"type":"text","text":"Typically, an app contains just one instance of "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":". However, it’s possible to have multiple instances if your use"},{"type":"text","text":" "},{"type":"text","text":"case requires it (i.e. more than one window with different workspaces in a Slack-like app)."}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatclient"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"The root object representing a Stream Chat."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClient"}],"title":"ChatClient","roleHeading":"Class","role":"symbol","symbolKind":"class","externalID":"s:10StreamChat0B6ClientC","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatClient"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Initializers","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/init(config:tokenProvider:)"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/config","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectionStatus","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/currentUserId","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/tokenProvider"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:messageOrdering:invites:extraData:channelListQuery:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(createDirectMessageChannelWith:type:isCurrentUserMember:messageOrdering:name:imageURL:team:extraData:channelListQuery:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(for:channelListQuery:messageOrdering:)-5scph","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(for:channelListQuery:messageOrdering:)-97hq4","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelEventsController(for:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:filter:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectAnonymousUser(completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectGuestUser(userInfo:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectUser(userInfo:token:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectionController()","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/currentUserController()","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/disconnect()","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/eventsController()","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/memberController(userId:in:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/memberListController(query:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/messageController(cid:messageId:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/messageSearchController()","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/setToken(token:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userController(userId:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userListController(query:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userSearchController()","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/watcherListController(query:)"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectUser(userInfo:token:completion:)":{"role":"symbol","title":"connectUser(userInfo:token:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectUser"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userInfo"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserInfo","preciseIdentifier":"s:10StreamChat8UserInfoV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"token"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Token","preciseIdentifier":"s:10StreamChat5TokenV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Connects authorized user"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectUser(userInfo:token:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/connectuser(userinfo:token:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/userController(userId:)":{"role":"symbol","title":"userController(userId:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"userController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatUserController","preciseIdentifier":"s:10StreamChat0B14UserControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChatUserController"},{"type":"text","text":" for the user with the provided "},{"type":"codeVoice","code":"userId"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userController(userId:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/usercontroller(userid:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/eventsController()":{"role":"symbol","title":"eventsController()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"eventsController"},{"kind":"text","text":"() -> "},{"kind":"typeIdentifier","text":"EventsController","preciseIdentifier":"s:10StreamChat16EventsControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"EventsController"},{"type":"text","text":" that can be used for event listening."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/eventsController()","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/eventscontroller()"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/setToken(token:)":{"role":"symbol","title":"setToken(token:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"setToken"},{"kind":"text","text":"("},{"kind":"externalParam","text":"token"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Token","preciseIdentifier":"s:10StreamChat5TokenV"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Sets the user token to the client, this method is only needed to perform API calls"},{"type":"text","text":" "},{"type":"text","text":"without connecting as a user."},{"type":"text","text":" "},{"type":"text","text":"You should only use this in special cases like a notification service or other background process"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/setToken(token:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/settoken(token:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:messageOrdering:invites:extraData:channelListQuery:)":{"role":"symbol","title":"channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:messageOrdering:invites:extraData:channelListQuery:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"createChannelWithId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"name"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"imageURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"team"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"members"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":">, "},{"kind":"externalParam","text":"isCurrentUserMember"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"messageOrdering"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageOrdering","preciseIdentifier":"s:10StreamChat15MessageOrderingO"},{"kind":"text","text":", "},{"kind":"externalParam","text":"invites"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":">, "},{"kind":"externalParam","text":"extraData"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"channelListQuery"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelListQuery","preciseIdentifier":"s:10StreamChat16ChannelListQueryV"},{"kind":"text","text":"?) "},{"kind":"keyword","text":"throws"},{"kind":"text","text":" -> "},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"}],"abstract":[{"type":"text","text":"Creates a "},{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" that will create a new channel, if the channel doesn’t exist already."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:messageOrdering:invites:extraData:channelListQuery:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/channelcontroller(createchannelwithid:name:imageurl:team:members:iscurrentusermember:messageordering:invites:extradata:channellistquery:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/userSearchController()":{"role":"symbol","title":"userSearchController()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"userSearchController"},{"kind":"text","text":"() -> "},{"kind":"typeIdentifier","text":"ChatUserSearchController","preciseIdentifier":"s:10StreamChat0B20UserSearchControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChatUserSearchController"},{"type":"text","text":" with the provided user query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userSearchController()","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/usersearchcontroller()"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient":{"role":"symbol","title":"ChatClient","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatClient"}],"abstract":[{"type":"text","text":"The root object representing a Stream Chat."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatClient"}],"url":"\/documentation\/streamchat\/chatclient"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelListController(query:)":{"role":"symbol","title":"channelListController(query:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelListController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelListQuery","preciseIdentifier":"s:10StreamChat16ChannelListQueryV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatChannelListController","preciseIdentifier":"s:10StreamChat0B21ChannelListControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChannelListController"},{"type":"text","text":" with the provided channel query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/channellistcontroller(query:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelController(for:channelListQuery:messageOrdering:)-5scph":{"role":"symbol","title":"channelController(for:channelListQuery:messageOrdering:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"for"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelQuery","preciseIdentifier":"s:10StreamChat12ChannelQueryV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"channelListQuery"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelListQuery","preciseIdentifier":"s:10StreamChat16ChannelListQueryV"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"messageOrdering"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageOrdering","preciseIdentifier":"s:10StreamChat15MessageOrderingO"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" for the channel with the provided channel query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(for:channelListQuery:messageOrdering:)-5scph","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/channelcontroller(for:channellistquery:messageordering:)-5scph"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelController(createDirectMessageChannelWith:type:isCurrentUserMember:messageOrdering:name:imageURL:team:extraData:channelListQuery:)":{"role":"symbol","title":"channelController(createDirectMessageChannelWith:type:isCurrentUserMember:messageOrdering:name:imageURL:team:extraData:channelListQuery:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"createDirectMessageChannelWith"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Set","preciseIdentifier":"s:Sh"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":">, "},{"kind":"externalParam","text":"type"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelType","preciseIdentifier":"s:10StreamChat11ChannelTypeO"},{"kind":"text","text":", "},{"kind":"externalParam","text":"isCurrentUserMember"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"messageOrdering"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageOrdering","preciseIdentifier":"s:10StreamChat15MessageOrderingO"},{"kind":"text","text":", "},{"kind":"externalParam","text":"name"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"imageURL"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"URL","preciseIdentifier":"s:10Foundation3URLV"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"team"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"extraData"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"channelListQuery"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelListQuery","preciseIdentifier":"s:10StreamChat16ChannelListQueryV"},{"kind":"text","text":"?) "},{"kind":"keyword","text":"throws"},{"kind":"text","text":" -> "},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"}],"abstract":[{"type":"text","text":"Creates a "},{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" that will create a new channel with the provided members without having to specify"},{"type":"text","text":" "},{"type":"text","text":"the channel id explicitly. This is great for direct message channels because the channel should be uniquely identified by"},{"type":"text","text":" "},{"type":"text","text":"its members. If the channel for these members already exist, it will be reused."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(createDirectMessageChannelWith:type:isCurrentUserMember:messageOrdering:name:imageURL:team:extraData:channelListQuery:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/channelcontroller(createdirectmessagechannelwith:type:iscurrentusermember:messageordering:name:imageurl:team:extradata:channellistquery:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/tokenProvider":{"role":"symbol","title":"tokenProvider","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"tokenProvider"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"TokenProvider","preciseIdentifier":"s:10StreamChat13TokenProvidera"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"In case of token expiration this property is used to obtain a new token"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/tokenProvider","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/tokenprovider"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/messageSearchController()":{"role":"symbol","title":"messageSearchController()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageSearchController"},{"kind":"text","text":"() -> "},{"kind":"typeIdentifier","text":"ChatMessageSearchController","preciseIdentifier":"s:10StreamChat0B23MessageSearchControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"MessageSearchController"},{"type":"text","text":" with the provided message query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/messageSearchController()","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/messagesearchcontroller()"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/init(config:tokenProvider:)":{"role":"symbol","title":"init(config:tokenProvider:)","fragments":[{"kind":"identifier","text":"init"},{"kind":"text","text":"("},{"kind":"externalParam","text":"config"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatClientConfig","preciseIdentifier":"s:10StreamChat0B12ClientConfigV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"tokenProvider"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"TokenProvider","preciseIdentifier":"s:10StreamChat13TokenProvidera"},{"kind":"text","text":"?)"}],"abstract":[{"type":"text","text":"Creates a new instance of "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/init(config:tokenProvider:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/init(config:tokenprovider:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/watcherListController(query:)":{"role":"symbol","title":"watcherListController(query:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"watcherListController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelWatcherListQuery","preciseIdentifier":"s:10StreamChat23ChannelWatcherListQueryV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatChannelWatcherListController","preciseIdentifier":"s:10StreamChat0B28ChannelWatcherListControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChatChannelWatcherListController"},{"type":"text","text":" with the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/watcherListController(query:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/watcherlistcontroller(query:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelController(for:channelListQuery:messageOrdering:)-97hq4":{"role":"symbol","title":"channelController(for:channelListQuery:messageOrdering:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"for"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"channelListQuery"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelListQuery","preciseIdentifier":"s:10StreamChat16ChannelListQueryV"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"messageOrdering"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageOrdering","preciseIdentifier":"s:10StreamChat15MessageOrderingO"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatChannelController","preciseIdentifier":"s:10StreamChat0B17ChannelControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChatChannelController"},{"type":"text","text":" for the channel with the provided id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(for:channelListQuery:messageOrdering:)-97hq4","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/channelcontroller(for:channellistquery:messageordering:)-97hq4"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectionController()":{"role":"symbol","title":"connectionController()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectionController"},{"kind":"text","text":"() -> "},{"kind":"typeIdentifier","text":"ChatConnectionController","preciseIdentifier":"s:10StreamChat0B20ConnectionControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChatConnectionController"},{"type":"text","text":" instance."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectionController()","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/connectioncontroller()"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelListController(query:filter:)":{"role":"symbol","title":"channelListController(query:filter:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelListController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelListQuery","preciseIdentifier":"s:10StreamChat16ChannelListQueryV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"filter"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":")?) -> "},{"kind":"typeIdentifier","text":"ChatChannelListController","preciseIdentifier":"s:10StreamChat0B21ChannelListControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChannelListController"},{"type":"text","text":" with the provided channel query and filter block."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:filter:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/channellistcontroller(query:filter:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/config":{"role":"symbol","title":"config","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"config"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatClientConfig","preciseIdentifier":"s:10StreamChat0B12ClientConfigV"}],"abstract":[{"type":"text","text":"The config object of the "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/config","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/config"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectionStatus":{"role":"symbol","title":"connectionStatus","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectionStatus"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ConnectionStatus","preciseIdentifier":"s:10StreamChat16ConnectionStatusO"}],"abstract":[{"type":"text","text":"The current connection status of the client."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectionStatus","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/connectionstatus"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/messageController(cid:messageId:)":{"role":"symbol","title":"messageController(cid:messageId:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatMessageController","preciseIdentifier":"s:10StreamChat0B17MessageControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"MessageController"},{"type":"text","text":" for the message with the provided id."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/messageController(cid:messageId:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/messagecontroller(cid:messageid:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/currentUserController()":{"role":"symbol","title":"currentUserController()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserController"},{"kind":"text","text":"() -> "},{"kind":"typeIdentifier","text":"CurrentChatUserController","preciseIdentifier":"s:10StreamChat07CurrentB14UserControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"CurrentUserController"},{"type":"text","text":" instance."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/currentUserController()","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/currentusercontroller()"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/currentUserId":{"role":"symbol","title":"currentUserId","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"currentUserId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The "},{"type":"codeVoice","code":"UserId"},{"type":"text","text":" of the currently logged in user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/currentUserId","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/currentuserid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/memberController(userId:in:)":{"role":"symbol","title":"memberController(userId:in:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":", "},{"kind":"externalParam","text":"in"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatChannelMemberController","preciseIdentifier":"s:10StreamChat0B23ChannelMemberControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChatChannelMemberController"},{"type":"text","text":" for the user with the provided "},{"type":"codeVoice","code":"userId"},{"type":"text","text":" and "},{"type":"codeVoice","code":"cid"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/memberController(userId:in:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/membercontroller(userid:in:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectGuestUser(userInfo:completion:)":{"role":"symbol","title":"connectGuestUser(userInfo:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectGuestUser"},{"kind":"text","text":"("},{"kind":"externalParam","text":"userInfo"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserInfo","preciseIdentifier":"s:10StreamChat8UserInfoV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Connects a guest user"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectGuestUser(userInfo:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/connectguestuser(userinfo:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/userListController(query:)":{"role":"symbol","title":"userListController(query:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"userListController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UserListQuery","preciseIdentifier":"s:10StreamChat13UserListQueryV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatUserListController","preciseIdentifier":"s:10StreamChat0B18UserListControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChatUserListController"},{"type":"text","text":" with the provided user query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userListController(query:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/userlistcontroller(query:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelEventsController(for:)":{"role":"symbol","title":"channelEventsController(for:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"channelEventsController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"for"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChannelEventsController","preciseIdentifier":"s:10StreamChat23ChannelEventsControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChannelEventsController"},{"type":"text","text":" that can be used to listen to system events"},{"type":"text","text":" "},{"type":"text","text":"related to the channel with "},{"type":"codeVoice","code":"cid"},{"type":"text","text":" and to send custom events."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelEventsController(for:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/channeleventscontroller(for:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectAnonymousUser(completion:)":{"role":"symbol","title":"connectAnonymousUser(completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"connectAnonymousUser"},{"kind":"text","text":"("},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Connects anonymous user"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectAnonymousUser(completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/connectanonymoususer(completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/disconnect()":{"role":"symbol","title":"disconnect()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"disconnect"},{"kind":"text","text":"()"}],"abstract":[{"type":"text","text":"Disconnects the chat client from the chat servers. No further updates from the servers"},{"type":"text","text":" "},{"type":"text","text":"are received."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/disconnect()","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/disconnect()"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/memberListController(query:)":{"role":"symbol","title":"memberListController(query:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"memberListController"},{"kind":"text","text":"("},{"kind":"externalParam","text":"query"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelMemberListQuery","preciseIdentifier":"s:10StreamChat22ChannelMemberListQueryV"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"ChatChannelMemberListController","preciseIdentifier":"s:10StreamChat0B27ChannelMemberListControllerC"}],"abstract":[{"type":"text","text":"Creates a new "},{"type":"codeVoice","code":"ChatChannelMemberListController"},{"type":"text","text":" with the provided query."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/memberListController(query:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatclient\/memberlistcontroller(query:)"}}}
+{
+  "abstract" : [
+    {
+      "text" : "The root object representing a Stream Chat.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B6ClientC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatClient"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatClient"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "ChatClient"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatClient"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Typically, an app contains just one instance of ",
+              "type" : "text"
+            },
+            {
+              "code" : "ChatClient",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ". However, it’s possible to have multiple instances if your use",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "case requires it (i.e. more than one window with different workspaces in a Slack-like app).",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/init(config:tokenProvider:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/config",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectionStatus",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/currentUserId",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/tokenProvider"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:messageOrdering:invites:extraData:channelListQuery:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(createDirectMessageChannelWith:type:isCurrentUserMember:messageOrdering:name:imageURL:team:extraData:channelListQuery:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(for:channelListQuery:messageOrdering:)-5scph",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(for:channelListQuery:messageOrdering:)-97hq4",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelEventsController(for:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:filter:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectAnonymousUser(completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectGuestUser(userInfo:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectUser(userInfo:token:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectionController()",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/currentUserController()",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/disconnect()",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/eventsController()",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/memberController(userId:in:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/memberListController(query:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/messageController(cid:messageId:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/messageSearchController()",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/setToken(token:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userController(userId:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userListController(query:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userSearchController()",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/watcherListController(query:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatclient"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient": {
+  "abstract" : [
+    {
+      "text" : "The root object representing a Stream Chat.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatClient"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatClient",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:messageOrdering:invites:extraData:channelListQuery:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that will create a new channel, if the channel doesn’t exist already.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "createChannelWithId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "imageURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "team"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "members"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isCurrentUserMember"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "messageOrdering"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat15MessageOrderingO",
+      "text" : "MessageOrdering"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "invites"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "extraData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "channelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ChannelListQueryV",
+      "text" : "ChannelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:messageOrdering:invites:extraData:channelListQuery:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:messageOrdering:invites:extraData:channelListQuery:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/channelcontroller(createchannelwithid:name:imageurl:team:members:iscurrentusermember:messageordering:invites:extradata:channellistquery:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelController(createDirectMessageChannelWith:type:isCurrentUserMember:messageOrdering:name:imageURL:team:extraData:channelListQuery:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that will create a new channel with the provided members without having to specify",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "the channel id explicitly. This is great for direct message channels because the channel should be uniquely identified by",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "its members. If the channel for these members already exist, it will be reused.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "createDirectMessageChannelWith"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11ChannelTypeO",
+      "text" : "ChannelType"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isCurrentUserMember"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "messageOrdering"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat15MessageOrderingO",
+      "text" : "MessageOrdering"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "imageURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "team"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "extraData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "channelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ChannelListQueryV",
+      "text" : "ChannelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(createDirectMessageChannelWith:type:isCurrentUserMember:messageOrdering:name:imageURL:team:extraData:channelListQuery:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelController(createDirectMessageChannelWith:type:isCurrentUserMember:messageOrdering:name:imageURL:team:extraData:channelListQuery:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/channelcontroller(createdirectmessagechannelwith:type:iscurrentusermember:messageordering:name:imageurl:team:extradata:channellistquery:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelController(for:channelListQuery:messageOrdering:)-5scph": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " for the channel with the provided channel query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12ChannelQueryV",
+      "text" : "ChannelQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "channelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ChannelListQueryV",
+      "text" : "ChannelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "messageOrdering"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat15MessageOrderingO",
+      "text" : "MessageOrdering"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(for:channelListQuery:messageOrdering:)-5scph",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelController(for:channelListQuery:messageOrdering:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/channelcontroller(for:channellistquery:messageordering:)-5scph"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelController(for:channelListQuery:messageOrdering:)-97hq4": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " for the channel with the provided id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "channelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ChannelListQueryV",
+      "text" : "ChannelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "messageOrdering"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat15MessageOrderingO",
+      "text" : "MessageOrdering"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17ChannelControllerC",
+      "text" : "ChatChannelController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelController(for:channelListQuery:messageOrdering:)-97hq4",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelController(for:channelListQuery:messageOrdering:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/channelcontroller(for:channellistquery:messageordering:)-97hq4"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelEventsController(for:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelEventsController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that can be used to listen to system events",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "related to the channel with ",
+      "type" : "text"
+    },
+    {
+      "code" : "cid",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and to send custom events.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelEventsController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat23ChannelEventsControllerC",
+      "text" : "ChannelEventsController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelEventsController(for:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelEventsController(for:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/channeleventscontroller(for:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelListController(query:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the provided channel query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelListController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "query"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ChannelListQueryV",
+      "text" : "ChannelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B21ChannelListControllerC",
+      "text" : "ChatChannelListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelListController(query:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/channellistcontroller(query:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/channelListController(query:filter:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChannelListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the provided channel query and filter block.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channelListController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "query"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ChannelListQueryV",
+      "text" : "ChannelListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "filter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B21ChannelListControllerC",
+      "text" : "ChatChannelListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/channelListController(query:filter:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channelListController(query:filter:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/channellistcontroller(query:filter:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/config": {
+  "abstract" : [
+    {
+      "text" : "The config object of the ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "config"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B12ClientConfigV",
+      "text" : "ChatClientConfig"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/config",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "config",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/config"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectAnonymousUser(completion:)": {
+  "abstract" : [
+    {
+      "text" : "Connects anonymous user",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectAnonymousUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectAnonymousUser(completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "connectAnonymousUser(completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/connectanonymoususer(completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectGuestUser(userInfo:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Connects a guest user",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectGuestUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "userInfo"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8UserInfoV",
+      "text" : "UserInfo"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectGuestUser(userInfo:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "connectGuestUser(userInfo:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/connectguestuser(userinfo:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectUser(userInfo:token:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Connects authorized user",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectUser"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "userInfo"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8UserInfoV",
+      "text" : "UserInfo"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "token"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat5TokenV",
+      "text" : "Token"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectUser(userInfo:token:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "connectUser(userInfo:token:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/connectuser(userinfo:token:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectionController()": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatConnectionController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectionController"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B20ConnectionControllerC",
+      "text" : "ChatConnectionController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectionController()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "connectionController()",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/connectioncontroller()"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/connectionStatus": {
+  "abstract" : [
+    {
+      "text" : "The current connection status of the client.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "connectionStatus"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16ConnectionStatusO",
+      "text" : "ConnectionStatus"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/connectionStatus",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "connectionStatus",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/connectionstatus"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/currentUserController()": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserController"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat07CurrentB14UserControllerC",
+      "text" : "CurrentChatUserController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/currentUserController()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentUserController()",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/currentusercontroller()"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/currentUserId": {
+  "abstract" : [
+    {
+      "text" : "The ",
+      "type" : "text"
+    },
+    {
+      "code" : "UserId",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " of the currently logged in user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentUserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/currentUserId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentUserId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/currentuserid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/disconnect()": {
+  "abstract" : [
+    {
+      "text" : "Disconnects the chat client from the chat servers. No further updates from the servers",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "are received.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "disconnect"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/disconnect()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "disconnect()",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/disconnect()"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/eventsController()": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "EventsController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that can be used for event listening.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "eventsController"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16EventsControllerC",
+      "text" : "EventsController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/eventsController()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "eventsController()",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/eventscontroller()"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/init(config:tokenProvider:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new instance of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "config"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B12ClientConfigV",
+      "text" : "ChatClientConfig"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "tokenProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat13TokenProvidera",
+      "text" : "TokenProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/init(config:tokenProvider:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(config:tokenProvider:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/init(config:tokenprovider:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/memberController(userId:in:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelMemberController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " for the user with the provided ",
+      "type" : "text"
+    },
+    {
+      "code" : "userId",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and ",
+      "type" : "text"
+    },
+    {
+      "code" : "cid",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "userId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "in"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B23ChannelMemberControllerC",
+      "text" : "ChatChannelMemberController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/memberController(userId:in:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "memberController(userId:in:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/membercontroller(userid:in:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/memberListController(query:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelMemberListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memberListController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "query"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat22ChannelMemberListQueryV",
+      "text" : "ChannelMemberListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B27ChannelMemberListControllerC",
+      "text" : "ChatChannelMemberListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/memberListController(query:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "memberListController(query:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/memberlistcontroller(query:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/messageController(cid:messageId:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "MessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " for the message with the provided id.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "messageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17MessageControllerC",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/messageController(cid:messageId:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messageController(cid:messageId:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/messagecontroller(cid:messageid:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/messageSearchController()": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "MessageSearchController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the provided message query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageSearchController"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B23MessageSearchControllerC",
+      "text" : "ChatMessageSearchController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/messageSearchController()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messageSearchController()",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/messagesearchcontroller()"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/setToken(token:)": {
+  "abstract" : [
+    {
+      "text" : "Sets the user token to the client, this method is only needed to perform API calls",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "without connecting as a user.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "You should only use this in special cases like a notification service or other background process",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "setToken"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "token"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat5TokenV",
+      "text" : "Token"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/setToken(token:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "setToken(token:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/settoken(token:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/tokenProvider": {
+  "abstract" : [
+    {
+      "text" : "In case of token expiration this property is used to obtain a new token",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tokenProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat13TokenProvidera",
+      "text" : "TokenProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/tokenProvider",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "tokenProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/tokenprovider"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/userController(userId:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " for the user with the provided ",
+      "type" : "text"
+    },
+    {
+      "code" : "userId",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "userController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "userId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B14UserControllerC",
+      "text" : "ChatUserController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userController(userId:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "userController(userId:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/usercontroller(userid:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/userListController(query:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUserListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the provided user query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "userListController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "query"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat13UserListQueryV",
+      "text" : "UserListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B18UserListControllerC",
+      "text" : "ChatUserListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userListController(query:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "userListController(query:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/userlistcontroller(query:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/userSearchController()": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatUserSearchController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the provided user query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "userSearchController"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B20UserSearchControllerC",
+      "text" : "ChatUserSearchController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/userSearchController()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "userSearchController()",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/usersearchcontroller()"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatClient/watcherListController(query:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatChannelWatcherListController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " with the provided query.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "watcherListController"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "query"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat23ChannelWatcherListQueryV",
+      "text" : "ChannelWatcherListQuery"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B28ChannelWatcherListControllerC",
+      "text" : "ChatChannelWatcherListController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatClient\/watcherListController(query:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "watcherListController(query:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatclient\/watcherlistcontroller(query:)"
+}
+}
+}

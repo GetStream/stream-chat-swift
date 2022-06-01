@@ -1,1 +1,388 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"statePublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController","preciseIdentifier":"s:10StreamChat14DataControllerC","text":"DataController"},{"kind":"text","text":"."},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController\/State-swift.enum","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO","text":"State"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":"> { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatchannelmembercontroller\/statepublisher"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/statePublisher","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"A publisher emitting a new value every time the state of the controller changes."}],"kind":"symbol","metadata":{"modules":[{"name":"StreamChat"}],"role":"symbol","title":"statePublisher","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"statePublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"State","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"symbolKind":"property","externalID":"s:10StreamChat0B23ChannelMemberControllerC14statePublisher7Combine03AnyG0VyAA04DataE0C5StateOs5NeverOGvp","extendedModule":"StreamChat","platforms":[{"beta":false,"unavailable":false,"name":"iOS","introducedAt":"13.0","deprecated":false}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController/statePublisher":{"role":"symbol","title":"statePublisher","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"statePublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"State","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A publisher emitting a new value every time the state of the controller changes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/statePublisher","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatchannelmembercontroller\/statepublisher"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController":{"role":"symbol","title":"ChatChannelMemberController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatChannelMemberController"}],"abstract":[{"type":"codeVoice","code":"ChatChannelMemberController"},{"type":"text","text":" is a controller class which allows mutating and observing changes of a specific chat member."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatChannelMemberController"}],"url":"\/documentation\/streamchat\/chatchannelmembercontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataController/State-swift.enum":{"role":"symbol","title":"DataController.State","fragments":[{"kind":"keyword","text":"enum"},{"kind":"text","text":" "},{"kind":"identifier","text":"State"}],"abstract":[{"type":"text","text":"Describes the possible states of "},{"type":"codeVoice","code":"DataController"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController\/State-swift.enum","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"State"}],"url":"\/documentation\/streamchat\/datacontroller\/state-swift.enum"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataController":{"role":"symbol","title":"DataController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataController"}],"abstract":[{"type":"text","text":"The base class for controllers which represent and control a data entity. Not meant to be used directly."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataController"}],"url":"\/documentation\/streamchat\/datacontroller"}}}
+{
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time the state of the controller changes.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/statePublisher"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat0B23ChannelMemberControllerC14statePublisher7Combine03AnyG0VyAA04DataE0C5StateOs5NeverOGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "statePublisher"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+        "text" : "AnyPublisher"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+        "text" : "DataController"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+        "text" : "State"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5NeverO",
+        "text" : "Never"
+      },
+      {
+        "kind" : "text",
+        "text" : ">"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "platforms" : [
+      {
+        "beta" : false,
+        "deprecated" : false,
+        "introducedAt" : "13.0",
+        "name" : "iOS",
+        "unavailable" : false
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "statePublisher"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "statePublisher"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+              "text" : "AnyPublisher"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+              "text" : "DataController"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController\/State-swift.enum",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+              "text" : "State"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5NeverO",
+              "text" : "Never"
+            },
+            {
+              "kind" : "text",
+              "text" : "> { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatchannelmembercontroller\/statepublisher"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController": {
+  "abstract" : [
+    {
+      "code" : "ChatChannelMemberController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows mutating and observing changes of a specific chat member.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatChannelMemberController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatChannelMemberController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmembercontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatChannelMemberController/statePublisher": {
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time the state of the controller changes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "statePublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+      "text" : "AnyPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+      "text" : "State"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatChannelMemberController\/statePublisher",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "statePublisher",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatchannelmembercontroller\/statepublisher"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataController": {
+  "abstract" : [
+    {
+      "text" : "The base class for controllers which represent and control a data entity. Not meant to be used directly.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataController/State-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "Describes the possible states of ",
+      "type" : "text"
+    },
+    {
+      "code" : "DataController",
+      "type" : "codeVoice"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "State"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController\/State-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "State"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataController.State",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontroller\/state-swift.enum"
+}
+}
+}

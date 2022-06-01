@@ -1,1 +1,362 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"extraData"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"T"},{"kind":"text","text":">("},{"kind":"externalParam","text":"ofType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp"},{"kind":"text","text":".Type = T.self) -> "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp"},{"kind":"text","text":"? "},{"kind":"keyword","text":"where"},{"kind":"text","text":" "},{"kind":"typeIdentifier","text":"T"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"Decodable","preciseIdentifier":"s:Se"}],"languages":["swift"],"platforms":["iOS"]}]},{"kind":"content","content":[{"anchor":"return-value","level":2,"type":"heading","text":"Return Value"},{"type":"paragraph","inlineContent":[{"type":"text","text":"Extra data of the given type or "},{"type":"codeVoice","code":"nil"},{"type":"text","text":" if decoding fails."}]}]},{"kind":"parameters","parameters":[{"name":"ofType","content":[{"type":"paragraph","inlineContent":[{"type":"text","text":"The type an extra data should be decoded as."}]}]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/videoattachmentpayload\/extradata(oftype:)"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload\/extraData(ofType:)","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Decodes extra data as an instance of the given type."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"extraData"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"T"},{"kind":"text","text":">("},{"kind":"externalParam","text":"ofType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp"},{"kind":"text","text":".Type) -> "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp"},{"kind":"text","text":"?"}],"title":"extraData(ofType:)","roleHeading":"Instance Method","role":"symbol","symbolKind":"method","externalID":"s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload":{"role":"symbol","title":"VideoAttachmentPayload","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"VideoAttachmentPayload"}],"abstract":[{"type":"text","text":"Represents a payload for attachments with "},{"type":"codeVoice","code":".media"},{"type":"text","text":" type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"VideoAttachmentPayload"}],"url":"\/documentation\/streamchat\/videoattachmentpayload"},"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload/extraData(ofType:)":{"role":"symbol","title":"extraData(ofType:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"extraData"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"T"},{"kind":"text","text":">("},{"kind":"externalParam","text":"ofType"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp"},{"kind":"text","text":".Type) -> "},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Decodes extra data as an instance of the given type."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload\/extraData(ofType:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/videoattachmentpayload\/extradata(oftype:)"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Decodes extra data as an instance of the given type.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload\/extraData(ofType:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "extraData"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "genericParameter",
+        "text" : "T"
+      },
+      {
+        "kind" : "text",
+        "text" : ">("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "ofType"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp",
+        "text" : "T"
+      },
+      {
+        "kind" : "text",
+        "text" : ".Type) -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp",
+        "text" : "T"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "extraData(ofType:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "extraData"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "kind" : "genericParameter",
+              "text" : "T"
+            },
+            {
+              "kind" : "text",
+              "text" : ">("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "ofType"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp",
+              "text" : "T"
+            },
+            {
+              "kind" : "text",
+              "text" : ".Type = T.self) -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp",
+              "text" : "T"
+            },
+            {
+              "kind" : "text",
+              "text" : "? "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "where"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "T"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Se",
+              "text" : "Decodable"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "return-value",
+          "level" : 2,
+          "text" : "Return Value",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Extra data of the given type or ",
+              "type" : "text"
+            },
+            {
+              "code" : "nil",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " if decoding fails.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The type an extra data should be decoded as.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "ofType"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/videoattachmentpayload\/extradata(oftype:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload": {
+  "abstract" : [
+    {
+      "text" : "Represents a payload for attachments with ",
+      "type" : "text"
+    },
+    {
+      "code" : ".media",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VideoAttachmentPayload"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VideoAttachmentPayload"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VideoAttachmentPayload",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/videoattachmentpayload"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/VideoAttachmentPayload/extraData(ofType:)": {
+  "abstract" : [
+    {
+      "text" : "Decodes extra data as an instance of the given type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extraData"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "ofType"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp",
+      "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ".Type) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat22VideoAttachmentPayloadV9extraData6ofTypexSgxm_tSeRzlF1TL_xmfp",
+      "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/VideoAttachmentPayload\/extraData(ofType:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extraData(ofType:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/videoattachmentpayload\/extradata(oftype:)"
+}
+}
+}

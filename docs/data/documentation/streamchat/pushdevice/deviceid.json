@@ -1,1 +1,231 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"deviceId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DeviceId","preciseIdentifier":"s:10StreamChat8DeviceIda","text":"DeviceId"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/pushdevice\/deviceid"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushDevice\/deviceId","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"No overview available."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"deviceId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DeviceId","preciseIdentifier":"s:10StreamChat8DeviceIda"}],"title":"deviceId","roleHeading":"Instance Property","role":"symbol","symbolKind":"property","externalID":"s:10StreamChat10PushDeviceV8deviceIdSSvp","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushDevice"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushDevice/deviceId":{"role":"symbol","title":"deviceId","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"deviceId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"DeviceId","preciseIdentifier":"s:10StreamChat8DeviceIda"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushDevice\/deviceId","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pushdevice\/deviceid"},"doc://io.getstream.StreamChat/documentation/StreamChat/PushDevice":{"role":"symbol","title":"PushDevice","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"PushDevice"}],"abstract":[{"type":"text","text":"The information required to register a device for push notifications."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushDevice","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"PushDevice"}],"url":"\/documentation\/streamchat\/pushdevice"},"doc://io.getstream.StreamChat/documentation/StreamChat/DeviceId":{"role":"symbol","title":"DeviceId","fragments":[{"kind":"keyword","text":"typealias"},{"kind":"text","text":" "},{"kind":"identifier","text":"DeviceId"}],"abstract":[{"type":"text","text":"A unique identifier of a device."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DeviceId","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DeviceId"}],"url":"\/documentation\/streamchat\/deviceid"}}}
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushDevice"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushDevice\/deviceId"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat10PushDeviceV8deviceIdSSvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "deviceId"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat8DeviceIda",
+        "text" : "DeviceId"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "deviceId"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "deviceId"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DeviceId",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat8DeviceIda",
+              "text" : "DeviceId"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/pushdevice\/deviceid"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DeviceId": {
+  "abstract" : [
+    {
+      "text" : "A unique identifier of a device.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeviceId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DeviceId",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeviceId"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeviceId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/deviceid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushDevice": {
+  "abstract" : [
+    {
+      "text" : "The information required to register a device for push notifications.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PushDevice"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushDevice",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PushDevice"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PushDevice",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushdevice"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PushDevice/deviceId": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deviceId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat8DeviceIda",
+      "text" : "DeviceId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PushDevice\/deviceId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deviceId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pushdevice\/deviceid"
+}
+}
+}

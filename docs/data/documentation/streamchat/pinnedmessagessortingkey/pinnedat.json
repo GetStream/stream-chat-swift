@@ -1,1 +1,241 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"pinnedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey","preciseIdentifier":"s:10StreamChat24PinnedMessagesSortingKeyV","text":"PinnedMessagesSortingKey"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/pinnedmessagessortingkey\/pinnedat"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey\/pinnedAt","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"When provided sorts pinned messages by "},{"type":"codeVoice","code":"pinned_at"},{"type":"text","text":" field."}],"kind":"symbol","metadata":{"role":"symbol","title":"pinnedAt","roleHeading":"Type Property","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"pinnedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"PinnedMessagesSortingKey","preciseIdentifier":"s:10StreamChat24PinnedMessagesSortingKeyV"}],"symbolKind":"property","externalID":"s:10StreamChat24PinnedMessagesSortingKeyV8pinnedAtACvpZ","extendedModule":"StreamChat","modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesSortingKey/pinnedAt":{"role":"symbol","title":"pinnedAt","fragments":[{"kind":"keyword","text":"static"},{"kind":"text","text":" "},{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"pinnedAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"PinnedMessagesSortingKey","preciseIdentifier":"s:10StreamChat24PinnedMessagesSortingKeyV"}],"abstract":[{"type":"text","text":"When provided sorts pinned messages by "},{"type":"codeVoice","code":"pinned_at"},{"type":"text","text":" field."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey\/pinnedAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/pinnedmessagessortingkey\/pinnedat"},"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesSortingKey":{"role":"symbol","title":"PinnedMessagesSortingKey","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"PinnedMessagesSortingKey"}],"abstract":[{"type":"text","text":"The type describing a value that can be used as a sorting when paginating pinned messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"PinnedMessagesSortingKey"}],"url":"\/documentation\/streamchat\/pinnedmessagessortingkey"}}}
+{
+  "abstract" : [
+    {
+      "text" : "When provided sorts pinned messages by ",
+      "type" : "text"
+    },
+    {
+      "code" : "pinned_at",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " field.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey\/pinnedAt"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "StreamChat",
+    "externalID" : "s:10StreamChat24PinnedMessagesSortingKeyV8pinnedAtACvpZ",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "pinnedAt"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat24PinnedMessagesSortingKeyV",
+        "text" : "PinnedMessagesSortingKey"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "pinnedAt"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "pinnedAt"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat24PinnedMessagesSortingKeyV",
+              "text" : "PinnedMessagesSortingKey"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/pinnedmessagessortingkey\/pinnedat"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesSortingKey": {
+  "abstract" : [
+    {
+      "text" : "The type describing a value that can be used as a sorting when paginating pinned messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PinnedMessagesSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PinnedMessagesSortingKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PinnedMessagesSortingKey",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagessortingkey"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/PinnedMessagesSortingKey/pinnedAt": {
+  "abstract" : [
+    {
+      "text" : "When provided sorts pinned messages by ",
+      "type" : "text"
+    },
+    {
+      "code" : "pinned_at",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " field.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pinnedAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat24PinnedMessagesSortingKeyV",
+      "text" : "PinnedMessagesSortingKey"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/PinnedMessagesSortingKey\/pinnedAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "pinnedAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/pinnedmessagessortingkey\/pinnedat"
+}
+}
+}

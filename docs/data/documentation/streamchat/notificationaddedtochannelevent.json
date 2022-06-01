@@ -1,1 +1,437 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationAddedToChannelEvent"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/notificationaddedtochannelevent"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"Triggered when the current user is added to the channel member list."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationAddedToChannelEvent"}],"title":"NotificationAddedToChannelEvent","roleHeading":"Structure","role":"symbol","symbolKind":"struct","externalID":"s:10StreamChat31NotificationAddedToChannelEventV","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"NotificationAddedToChannelEvent"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/channel","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/cid","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/createdAt","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/member","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/unreadCount"]}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/Event":{"role":"symbol","title":"Event","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Event"}],"abstract":[{"type":"text","text":"An "},{"type":"codeVoice","code":"Event"},{"type":"text","text":" object representing an event in the chat system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Event"}],"url":"\/documentation\/streamchat\/event"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"abstract":[{"type":"text","text":"The identifier of a channel a message is sent to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/cid","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/notificationaddedtochannelevent\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/member":{"role":"symbol","title":"member","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"member"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannelMember","preciseIdentifier":"s:10StreamChat0B13ChannelMemberC"}],"abstract":[{"type":"text","text":"The membership information of the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/member","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/notificationaddedtochannelevent\/member"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent":{"role":"symbol","title":"NotificationAddedToChannelEvent","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"NotificationAddedToChannelEvent"}],"abstract":[{"type":"text","text":"Triggered when the current user is added to the channel member list."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"NotificationAddedToChannelEvent"}],"url":"\/documentation\/streamchat\/notificationaddedtochannelevent"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/createdAt":{"role":"symbol","title":"createdAt","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"createdAt"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Date","preciseIdentifier":"s:10Foundation4DateV"}],"abstract":[{"type":"text","text":"The event timestamp."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/createdAt","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/notificationaddedtochannelevent\/createdat"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/unreadCount":{"role":"symbol","title":"unreadCount","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"unreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The unread counts of the current user."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/unreadCount","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/notificationaddedtochannelevent\/unreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/channel":{"role":"symbol","title":"channel","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"channel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatChannel","preciseIdentifier":"s:10StreamChat0B7ChannelV"}],"abstract":[{"type":"text","text":"The channel the current user was added to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/channel","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/notificationaddedtochannelevent\/channel"},"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount":{"role":"symbol","title":"HasUnreadCount","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"HasUnreadCount"}],"abstract":[{"type":"text","text":"A bounding protocol for all events that have unread counts."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"HasUnreadCount"}],"url":"\/documentation\/streamchat\/hasunreadcount"}}}
+{
+  "abstract" : [
+    {
+      "text" : "Triggered when the current user is added to the channel member list.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat31NotificationAddedToChannelEventV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "NotificationAddedToChannelEvent"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "NotificationAddedToChannelEvent"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "NotificationAddedToChannelEvent"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "NotificationAddedToChannelEvent"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/channel",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/cid",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/createdAt",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/member",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/unreadCount"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/notificationaddedtochannelevent"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Event": {
+  "abstract" : [
+    {
+      "text" : "An ",
+      "type" : "text"
+    },
+    {
+      "code" : "Event",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " object representing an event in the chat system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Event",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Event"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Event",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/event"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount": {
+  "abstract" : [
+    {
+      "text" : "A bounding protocol for all events that have unread counts.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasUnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasUnreadCount"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HasUnreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/hasunreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent": {
+  "abstract" : [
+    {
+      "text" : "Triggered when the current user is added to the channel member list.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NotificationAddedToChannelEvent"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NotificationAddedToChannelEvent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NotificationAddedToChannelEvent",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationaddedtochannelevent"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/channel": {
+  "abstract" : [
+    {
+      "text" : "The channel the current user was added to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "channel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7ChannelV",
+      "text" : "ChatChannel"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/channel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "channel",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationaddedtochannelevent\/channel"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/cid": {
+  "abstract" : [
+    {
+      "text" : "The identifier of a channel a message is sent to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/cid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationaddedtochannelevent\/cid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/createdAt": {
+  "abstract" : [
+    {
+      "text" : "The event timestamp.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createdAt"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DateV",
+      "text" : "Date"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/createdAt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createdAt",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationaddedtochannelevent\/createdat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/member": {
+  "abstract" : [
+    {
+      "text" : "The membership information of the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "member"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B13ChannelMemberC",
+      "text" : "ChatChannelMember"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/member",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "member",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationaddedtochannelevent\/member"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/NotificationAddedToChannelEvent/unreadCount": {
+  "abstract" : [
+    {
+      "text" : "The unread counts of the current user.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/NotificationAddedToChannelEvent\/unreadCount",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/notificationaddedtochannelevent\/unreadcount"
+}
+}
+}

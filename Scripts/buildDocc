@@ -8,6 +8,8 @@ BUNDLE_IDENTIFIER="getstream.github.io"
 HOSTING_BASE_PATH="stream-chat-swift"
 BUNDLE_VERSION="4.15.0"
 
+export DOCC_JSON_PRETTYPRINT=YES
+
 while [[ $# -gt 0 ]]
 do
   case $1 in
@@ -29,10 +31,21 @@ build() {
   rm -rf .build
   mkdir -p .build/symbol-graphs
 
-  xcodebuild docbuild -scheme "${TARGET}" \
-  -destination generic/platform=iOS \
-  OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path
-${HOSTING_BASE_PATH} --output-path docs --emit-digest"
+  xcodebuild docbuild \
+-scheme "${TARGET}" \
+-derivedDataPath ./derivedData \
+-destination 'platform=iOS Simulator,name=iPhone 12'
+
+$(xcrun --find docc) process-archive \
+transform-for-static-hosting "derivedData/Build/Products/Debug-iphonesimulator/${TARGET}.doccarchive" \
+--output-path ./docs \
+--hosting-base-path "${HOSTING_BASE_PATH}"
+
+#   xcodebuild docbuild -scheme "${TARGET}" \
+#   -destination generic/platform=iOS \
+#   OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path
+# ${HOSTING_BASE_PATH} --output-path ./docs --emit-digest"
+# DOCC_OUTPUT_DIR=./docs
   #
   # $(xcrun --find swift) build --target "${TARGET}" \
   #     --destination "generic/platform=iOS" \
@@ -40,27 +53,27 @@ ${HOSTING_BASE_PATH} --output-path docs --emit-digest"
   #     -Xswiftc -emit-symbol-graph-dir -Xswiftc .build/symbol-graphs
 }
 
-convert() {
-  $(xcrun --find docc) convert "${DOCC_PATH}" \
-      --analyze \
-      --fallback-display-name "${TARGET}" \
-      --fallback-bundle-identifier "${BUNDLE_IDENTIFIER}" \
-      --fallback-bundle-version "${BUNDLE_VERSION}" \
-      --experimental-documentation-coverage \
-      --transform-for-static-hosting \
-      --hosting-base-path ${HOSTING_BASE_PATH} \
-      --output-path ./docs \
-      --emit-digest \
-      --level brief
-}
+# convert() {
+#   $(xcrun --find docc) convert "${DOCC_PATH}" \
+#       --analyze \
+#       --fallback-display-name "${TARGET}" \
+#       --fallback-bundle-identifier "${BUNDLE_IDENTIFIER}" \
+#       --fallback-bundle-version "${BUNDLE_VERSION}" \
+#       --experimental-documentation-coverage \
+#       --transform-for-static-hosting \
+#       --hosting-base-path ${HOSTING_BASE_PATH} \
+#       --output-path ./docs \
+#       --emit-digest \
+#       --level brief
+# }
 
-preview() {
-  $(xcrun --find docc) preview "${DOCC_PATH}" \
-      --fallback-display-name "${TARGET}" \
-      --fallback-bundle-identifier "${BUNDLE_IDENTIFIER}" \
-      --fallback-bundle-version "${BUNDLE_VERSION}" \
-      --additional-symbol-graph-dir .build/symbol-graphs
-}
+# preview() {
+#   $(xcrun --find docc) preview "${DOCC_PATH}" \
+#       --fallback-display-name "${TARGET}" \
+#       --fallback-bundle-identifier "${BUNDLE_IDENTIFIER}" \
+#       --fallback-bundle-version "${BUNDLE_VERSION}" \
+#       --additional-symbol-graph-dir .build/symbol-graphs
+# }
 
 build
 # convert

@@ -1,1 +1,288 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"unreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV","text":"UnreadCount"},{"kind":"text","text":"? { "},{"kind":"keyword","text":"get"},{"kind":"text","text":" }"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/hasunreadcount\/unreadcount"],"traits":[{"interfaceLanguage":"swift"}]}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount\/unreadCount","interfaceLanguage":"swift"},"abstract":[{"type":"text","text":"If "},{"type":"codeVoice","code":"ReadEvents"},{"type":"text","text":" options is disabled the value is always "},{"type":"codeVoice","code":"nil"},{"type":"text","text":"."}],"kind":"symbol","metadata":{"role":"symbol","title":"unreadCount","roleHeading":"Instance Property","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"unreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"},{"kind":"text","text":"?"}],"symbolKind":"property","externalID":"s:10StreamChat14HasUnreadCountP06unreadE0AA0dE0VSgvp","required":true,"modules":[{"name":"StreamChat"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount"]]},"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount":{"role":"symbol","title":"HasUnreadCount","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"HasUnreadCount"}],"abstract":[{"type":"text","text":"A bounding protocol for all events that have unread counts."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"HasUnreadCount"}],"url":"\/documentation\/streamchat\/hasunreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount/unreadCount":{"role":"symbol","title":"unreadCount","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"unreadCount"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"UnreadCount","preciseIdentifier":"s:10StreamChat11UnreadCountV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"If "},{"type":"codeVoice","code":"ReadEvents"},{"type":"text","text":" options is disabled the value is always "},{"type":"codeVoice","code":"nil"},{"type":"text","text":"."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount\/unreadCount","kind":"symbol","required":true,"type":"topic","url":"\/documentation\/streamchat\/hasunreadcount\/unreadcount"},"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount":{"role":"symbol","title":"UnreadCount","fragments":[{"kind":"keyword","text":"struct"},{"kind":"text","text":" "},{"kind":"identifier","text":"UnreadCount"}],"abstract":[{"type":"text","text":"A struct containing information about unread counts of channels and messages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"UnreadCount"}],"url":"\/documentation\/streamchat\/unreadcount"}}}
+{
+  "abstract" : [
+    {
+      "text" : "If ",
+      "type" : "text"
+    },
+    {
+      "code" : "ReadEvents",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " options is disabled the value is always ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount\/unreadCount"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat14HasUnreadCountP06unreadE0AA0dE0VSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "unreadCount"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+        "text" : "UnreadCount"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "required" : true,
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "unreadCount"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "unreadCount"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+              "text" : "UnreadCount"
+            },
+            {
+              "kind" : "text",
+              "text" : "? { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/hasunreadcount\/unreadcount"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount": {
+  "abstract" : [
+    {
+      "text" : "A bounding protocol for all events that have unread counts.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasUnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasUnreadCount"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "HasUnreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/hasunreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/HasUnreadCount/unreadCount": {
+  "abstract" : [
+    {
+      "text" : "If ",
+      "type" : "text"
+    },
+    {
+      "code" : "ReadEvents",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " options is disabled the value is always ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat11UnreadCountV",
+      "text" : "UnreadCount"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/HasUnreadCount\/unreadCount",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "unreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/hasunreadcount\/unreadcount"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/UnreadCount": {
+  "abstract" : [
+    {
+      "text" : "A struct containing information about unread counts of channels and messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UnreadCount"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/UnreadCount",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UnreadCount"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UnreadCount",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/unreadcount"
+}
+}
+}

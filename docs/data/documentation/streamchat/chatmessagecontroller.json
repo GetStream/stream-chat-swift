@@ -1,1 +1,2691 @@
-{"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageController"}],"languages":["swift"],"platforms":["iOS"]}]}],"schemaVersion":{"major":0,"minor":2,"patch":0},"sections":[],"variants":[{"paths":["\/documentation\/streamchat\/chatmessagecontroller"],"traits":[{"interfaceLanguage":"swift"}]}],"relationshipsSections":[{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController"],"kind":"relationships","title":"Inherits From","type":"inheritsFrom"},{"identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStoreProvider"],"kind":"relationships","title":"Conforms To","type":"conformsTo"}],"identifier":{"url":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController","interfaceLanguage":"swift"},"abstract":[{"type":"codeVoice","code":"ChatMessageController"},{"type":"text","text":" is a controller class which allows observing and mutating a chat message entity."}],"kind":"symbol","metadata":{"fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageController"}],"title":"ChatMessageController","roleHeading":"Class","role":"symbol","symbolKind":"class","externalID":"s:10StreamChat0B17MessageControllerC","modules":[{"name":"StreamChat"}],"navigatorTitle":[{"kind":"identifier","text":"ChatMessageController"}]},"hierarchy":{"paths":[["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"]]},"topicSections":[{"title":"Classes","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/ObservableObject-swift.class"]},{"title":"Instance Properties","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/cid","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/client","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/delegate","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/hasLoadedAllPreviousReplies","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/hasLoadedAllReactions","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/listOrdering","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/message","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageChangePublisher","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageId","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/observableObject-swift.property","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/reactions","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/reactionsPublisher","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/replies","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/repliesChangesPublisher","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/statePublisher"]},{"title":"Instance Methods","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/addReaction(_:score:enforceUnique:extraData:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/deleteMessage(hard:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/deleteReaction(_:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/dispatchEphemeralMessageAction(_:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/editMessage(text:extraData:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/flag(completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadNextReactions(limit:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadNextReplies(after:limit:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadPreviousReplies(before:limit:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadReactions(limit:offset:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/pin(_:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/resendMessage(completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/restartFailedAttachmentUploading(with:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/synchronize(_:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/translate(to:completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/unflag(completion:)","doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/unpin(completion:)"]},{"title":"Default Implementations","identifiers":["doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/DataStoreProvider-Implementations"],"generated":true}],"references":{"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/messageId":{"role":"symbol","title":"messageId","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"}],"abstract":[{"type":"text","text":"The identified of the message this controllers represents."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageId","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/messageid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/resendMessage(completion:)":{"role":"symbol","title":"resendMessage(completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"resendMessage"},{"kind":"text","text":"("},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Changes local message from "},{"type":"codeVoice","code":".sendingFailed"},{"type":"text","text":" to "},{"type":"codeVoice","code":".pendingSend"},{"type":"text","text":" so it is enqueued by message sender worker."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/resendMessage(completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/resendmessage(completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/Controller":{"role":"symbol","title":"Controller","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"Controller"}],"abstract":[{"type":"text","text":"A protocol to which all controllers conform to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"Controller"}],"url":"\/documentation\/streamchat\/controller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/synchronize(_:)":{"role":"symbol","title":"synchronize(_:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"synchronize"},{"kind":"text","text":"((("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/synchronize(_:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/synchronize(_:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/loadNextReplies(after:limit:completion:)":{"role":"symbol","title":"loadNextReplies(after:limit:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"loadNextReplies"},{"kind":"text","text":"("},{"kind":"externalParam","text":"after"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"limit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Loads new messages from the backend."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadNextReplies(after:limit:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/loadnextreplies(after:limit:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/delegate":{"role":"symbol","title":"delegate","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"delegate"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatMessageControllerDelegate","preciseIdentifier":"s:10StreamChat0B25MessageControllerDelegateP"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"Set the delegate of "},{"type":"codeVoice","code":"ChatMessageController"},{"type":"text","text":" to observe the changes in the system."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/delegate","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/delegate"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/restartFailedAttachmentUploading(with:completion:)":{"role":"symbol","title":"restartFailedAttachmentUploading(with:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"restartFailedAttachmentUploading"},{"kind":"text","text":"("},{"kind":"externalParam","text":"with"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AttachmentId","preciseIdentifier":"s:10StreamChat12AttachmentIdV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Updates local state of attachment with provided "},{"type":"codeVoice","code":"id"},{"type":"text","text":" to be enqueued by attachment uploader."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/restartFailedAttachmentUploading(with:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/restartfailedattachmentuploading(with:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/reactionsPublisher":{"role":"symbol","title":"reactionsPublisher","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactionsPublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<["},{"kind":"typeIdentifier","text":"ChatMessageReaction","preciseIdentifier":"s:10StreamChat0B15MessageReactionV"},{"kind":"text","text":"], "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A publisher emitting a new value every time a reaction changes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/reactionsPublisher","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/reactionspublisher"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)":{"role":"symbol","title":"createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"createNewReply"},{"kind":"text","text":"("},{"kind":"externalParam","text":"text"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":", "},{"kind":"externalParam","text":"pinning"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessagePinning","preciseIdentifier":"s:10StreamChat14MessagePinningV"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"attachments"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"AnyAttachmentPayload","preciseIdentifier":"s:10StreamChat20AnyAttachmentPayloadV"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"mentionedUserIds"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"UserId","preciseIdentifier":"s:10StreamChat6UserIda"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"showReplyInChannel"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"isSilent"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"quotedMessageId"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"extraData"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Result","preciseIdentifier":"s:s6ResultO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":">) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Creates a new reply message locally and schedules it for send."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/createnewreply(text:pinning:attachments:mentioneduserids:showreplyinchannel:issilent:quotedmessageid:extradata:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataStoreProvider":{"role":"symbol","title":"DataStoreProvider","fragments":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataStoreProvider"}],"abstract":[{"type":"text","text":"Types conforming to this protocol automatically exposes public "},{"type":"codeVoice","code":"dataStore"},{"type":"text","text":" variable."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStoreProvider","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataStoreProvider"}],"url":"\/documentation\/streamchat\/datastoreprovider"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/editMessage(text:extraData:completion:)":{"role":"symbol","title":"editMessage(text:extraData:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"editMessage"},{"kind":"text","text":"("},{"kind":"externalParam","text":"text"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":", "},{"kind":"externalParam","text":"extraData"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"]?, "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Edits the message this controller manages with the provided values."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/editMessage(text:extraData:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/editmessage(text:extradata:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/flag(completion:)":{"role":"symbol","title":"flag(completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"flag"},{"kind":"text","text":"("},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Flags the message this controller manages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/flag(completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/flag(completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/pin(_:completion:)":{"role":"symbol","title":"pin(_:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"pin"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"MessagePinning","preciseIdentifier":"s:10StreamChat14MessagePinningV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Pin the message this controller manages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/pin(_:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/pin(_:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/translate(to:completion:)":{"role":"symbol","title":"translate(to:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"translate"},{"kind":"text","text":"("},{"kind":"externalParam","text":"to"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"TranslationLanguage","preciseIdentifier":"s:10StreamChat19TranslationLanguageV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Translates the message to the given language."},{"type":"text","text":" "},{"type":"text","text":"The translated message will be returned via "},{"type":"codeVoice","code":"didChangeMessage"},{"type":"text","text":" delegate callback."},{"type":"text","text":" "},{"type":"text","text":"Translation will be in "},{"type":"codeVoice","code":"message.translations[language]"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/translate(to:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/translate(to:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/unflag(completion:)":{"role":"symbol","title":"unflag(completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"unflag"},{"kind":"text","text":"("},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Unflags the message this controller manages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/unflag(completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/unflag(completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/hasLoadedAllPreviousReplies":{"role":"symbol","title":"hasLoadedAllPreviousReplies","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"hasLoadedAllPreviousReplies"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"A Boolean value that returns wether pagination is finished"}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/hasLoadedAllPreviousReplies","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/hasloadedallpreviousreplies"},"doc://io.getstream.StreamChat/documentation/StreamChat/DataController":{"role":"symbol","title":"DataController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"DataController"}],"abstract":[{"type":"text","text":"The base class for controllers which represent and control a data entity. Not meant to be used directly."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"DataController"}],"url":"\/documentation\/streamchat\/datacontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/dispatchEphemeralMessageAction(_:completion:)":{"role":"symbol","title":"dispatchEphemeralMessageAction(_:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"dispatchEphemeralMessageAction"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"AttachmentAction","preciseIdentifier":"s:10StreamChat16AttachmentActionV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Executes the provided action on the message this controller manages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/dispatchEphemeralMessageAction(_:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/dispatchephemeralmessageaction(_:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/repliesChangesPublisher":{"role":"symbol","title":"repliesChangesPublisher","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"repliesChangesPublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<["},{"kind":"typeIdentifier","text":"ListChange","preciseIdentifier":"s:10StreamChat10ListChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":">], "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A publisher emitting a new value every time the list of the replies of the message has changes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/repliesChangesPublisher","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/replieschangespublisher"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/messageChangePublisher":{"role":"symbol","title":"messageChangePublisher","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"messageChangePublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"EntityChange","preciseIdentifier":"s:10StreamChat12EntityChangeO"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":">, "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A publisher emitting a new value every time the message changes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageChangePublisher","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/messagechangepublisher"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/deleteReaction(_:completion:)":{"role":"symbol","title":"deleteReaction(_:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"deleteReaction"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Deletes the reaction from the message this controller manages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/deleteReaction(_:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/deletereaction(_:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/loadNextReactions(limit:completion:)":{"role":"symbol","title":"loadNextReactions(limit:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"loadNextReactions"},{"kind":"text","text":"("},{"kind":"externalParam","text":"limit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Loads the next page of reactions starting from the current fetched reactions."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadNextReactions(limit:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/loadnextreactions(limit:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/ObservableObject-swift.class":{"role":"symbol","title":"ChatMessageController.ObservableObject","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ObservableObject"}],"abstract":[{"type":"text","text":"A wrapper object for "},{"type":"codeVoice","code":"CurrentUserController"},{"type":"text","text":" type which makes it possible to use the controller comfortably in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/ObservableObject-swift.class","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ObservableObject"}],"url":"\/documentation\/streamchat\/chatmessagecontroller\/observableobject-swift.class"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/loadReactions(limit:offset:completion:)":{"role":"symbol","title":"loadReactions(limit:offset:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"loadReactions"},{"kind":"text","text":"("},{"kind":"externalParam","text":"limit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"offset"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": ("},{"kind":"typeIdentifier","text":"Result","preciseIdentifier":"s:s6ResultO"},{"kind":"text","text":"<["},{"kind":"typeIdentifier","text":"ChatMessageReaction","preciseIdentifier":"s:10StreamChat0B15MessageReactionV"},{"kind":"text","text":"], "},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":">) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")"}],"abstract":[{"type":"text","text":"Loads reactions from the backend given an offset and a limit."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadReactions(limit:offset:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/loadreactions(limit:offset:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController":{"role":"symbol","title":"ChatMessageController","fragments":[{"kind":"keyword","text":"class"},{"kind":"text","text":" "},{"kind":"identifier","text":"ChatMessageController"}],"abstract":[{"type":"codeVoice","code":"ChatMessageController"},{"type":"text","text":" is a controller class which allows observing and mutating a chat message entity."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController","kind":"symbol","type":"topic","navigatorTitle":[{"kind":"identifier","text":"ChatMessageController"}],"url":"\/documentation\/streamchat\/chatmessagecontroller"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/DataStoreProvider-Implementations":{"role":"collectionGroup","title":"DataStoreProvider Implementations","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/DataStoreProvider-Implementations","kind":"article","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/datastoreprovider-implementations"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/deleteMessage(hard:completion:)":{"role":"symbol","title":"deleteMessage(hard:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"deleteMessage"},{"kind":"text","text":"("},{"kind":"externalParam","text":"hard"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Deletes the message this controller manages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/deleteMessage(hard:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/deletemessage(hard:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/client":{"role":"symbol","title":"client","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"client"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatClient","preciseIdentifier":"s:10StreamChat0B6ClientC"}],"abstract":[{"type":"text","text":"The "},{"type":"codeVoice","code":"ChatClient"},{"type":"text","text":" instance this controller belongs to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/client","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/client"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/unpin(completion:)":{"role":"symbol","title":"unpin(completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"unpin"},{"kind":"text","text":"("},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Unpins the message this controller manages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/unpin(completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/unpin(completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/message":{"role":"symbol","title":"message","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"message"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":"?"}],"abstract":[{"type":"text","text":"The message object this controller represents."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/message","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/message"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/cid":{"role":"symbol","title":"cid","fragments":[{"kind":"keyword","text":"let"},{"kind":"text","text":" "},{"kind":"identifier","text":"cid"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ChannelId","preciseIdentifier":"s:10StreamChat9ChannelIdV"}],"abstract":[{"type":"text","text":"The identified of the channel the message belongs to."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/cid","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/cid"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/observableObject-swift.property":{"role":"symbol","title":"observableObject","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"observableObject"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"ObservableObject","preciseIdentifier":"s:10StreamChat0B17MessageControllerC16ObservableObjectC"}],"abstract":[{"type":"text","text":"A wrapper object that exposes the controller variables in the form of "},{"type":"codeVoice","code":"ObservableObject"},{"type":"text","text":" to be used in SwiftUI."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/observableObject-swift.property","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/observableobject-swift.property"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/statePublisher":{"role":"symbol","title":"statePublisher","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"statePublisher"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"AnyPublisher","preciseIdentifier":"s:7Combine12AnyPublisherV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"DataController","preciseIdentifier":"s:10StreamChat14DataControllerC"},{"kind":"text","text":"."},{"kind":"typeIdentifier","text":"State","preciseIdentifier":"s:10StreamChat14DataControllerC5StateO"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"Never","preciseIdentifier":"s:s5NeverO"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"A publisher emitting a new value every time the state of the controller changes."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/statePublisher","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/statepublisher"},"doc://io.getstream.StreamChat/documentation/StreamChat":{"role":"collection","title":"StreamChat","abstract":[],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat","kind":"symbol","type":"topic","url":"\/documentation\/streamchat"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/loadPreviousReplies(before:limit:completion:)":{"role":"symbol","title":"loadPreviousReplies(before:limit:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"loadPreviousReplies"},{"kind":"text","text":"("},{"kind":"externalParam","text":"before"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageId","preciseIdentifier":"s:10StreamChat9MessageIda"},{"kind":"text","text":"?, "},{"kind":"externalParam","text":"limit"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Loads previous messages from the backend."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadPreviousReplies(before:limit:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/loadpreviousreplies(before:limit:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/listOrdering":{"role":"symbol","title":"listOrdering","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"listOrdering"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"MessageOrdering","preciseIdentifier":"s:10StreamChat15MessageOrderingO"}],"abstract":[{"type":"text","text":"Describes the ordering the replies are presented."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/listOrdering","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/listordering"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/addReaction(_:score:enforceUnique:extraData:completion:)":{"role":"symbol","title":"addReaction(_:score:enforceUnique:extraData:completion:)","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"addReaction"},{"kind":"text","text":"("},{"kind":"typeIdentifier","text":"MessageReactionType","preciseIdentifier":"s:10StreamChat19MessageReactionTypeV"},{"kind":"text","text":", "},{"kind":"externalParam","text":"score"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Int","preciseIdentifier":"s:Si"},{"kind":"text","text":", "},{"kind":"externalParam","text":"enforceUnique"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"},{"kind":"text","text":", "},{"kind":"externalParam","text":"extraData"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"String","preciseIdentifier":"s:SS"},{"kind":"text","text":" : "},{"kind":"typeIdentifier","text":"RawJSON","preciseIdentifier":"s:10StreamChat7RawJSONO"},{"kind":"text","text":"], "},{"kind":"externalParam","text":"completion"},{"kind":"text","text":": (("},{"kind":"typeIdentifier","text":"Error","preciseIdentifier":"s:s5ErrorP"},{"kind":"text","text":"?) -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":")?)"}],"abstract":[{"type":"text","text":"Adds new reaction to the message this controller manages."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/addReaction(_:score:enforceUnique:extraData:completion:)","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/addreaction(_:score:enforceunique:extradata:completion:)"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/reactions":{"role":"symbol","title":"reactions","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"reactions"},{"kind":"text","text":": ["},{"kind":"typeIdentifier","text":"ChatMessageReaction","preciseIdentifier":"s:10StreamChat0B15MessageReactionV"},{"kind":"text","text":"]"}],"abstract":[{"type":"text","text":"The total reactions of the message the controller represents."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/reactions","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/reactions"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/hasLoadedAllReactions":{"role":"symbol","title":"hasLoadedAllReactions","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"hasLoadedAllReactions"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"Bool","preciseIdentifier":"s:Sb"}],"abstract":[{"type":"text","text":"A Boolean value that returns wether the reactions have all been loaded or not."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/hasLoadedAllReactions","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/hasloadedallreactions"},"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/replies":{"role":"symbol","title":"replies","fragments":[{"kind":"keyword","text":"var"},{"kind":"text","text":" "},{"kind":"identifier","text":"replies"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"LazyCachedMapCollection","preciseIdentifier":"s:10StreamChat23LazyCachedMapCollectionV"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"ChatMessage","preciseIdentifier":"s:10StreamChat0B7MessageV"},{"kind":"text","text":">"}],"abstract":[{"type":"text","text":"The replies to the message the controller represents."}],"identifier":"doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/replies","kind":"symbol","type":"topic","url":"\/documentation\/streamchat\/chatmessagecontroller\/replies"}}}
+{
+  "abstract" : [
+    {
+      "code" : "ChatMessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating a chat message entity.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:10StreamChat0B17MessageControllerC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ChatMessageController"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "StreamChat"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ChatMessageController"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "ChatMessageController"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "iOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ChatMessageController"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStoreProvider"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/ObservableObject-swift.class"
+      ],
+      "title" : "Classes"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/cid",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/client",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/delegate",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/hasLoadedAllPreviousReplies",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/hasLoadedAllReactions",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/listOrdering",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/message",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageChangePublisher",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageId",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/observableObject-swift.property",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/reactions",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/reactionsPublisher",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/replies",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/repliesChangesPublisher",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/statePublisher"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/addReaction(_:score:enforceUnique:extraData:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/deleteMessage(hard:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/deleteReaction(_:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/dispatchEphemeralMessageAction(_:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/editMessage(text:extraData:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/flag(completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadNextReactions(limit:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadNextReplies(after:limit:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadPreviousReplies(before:limit:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadReactions(limit:offset:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/pin(_:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/resendMessage(completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/restartFailedAttachmentUploading(with:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/synchronize(_:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/translate(to:completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/unflag(completion:)",
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/unpin(completion:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/DataStoreProvider-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/streamchat\/chatmessagecontroller"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://io.getstream.StreamChat/documentation/StreamChat": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "StreamChat",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController": {
+  "abstract" : [
+    {
+      "code" : "ChatMessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a controller class which allows observing and mutating a chat message entity.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ChatMessageController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/DataStoreProvider-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/DataStoreProvider-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "DataStoreProvider Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/datastoreprovider-implementations"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/ObservableObject-swift.class": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object for ",
+      "type" : "text"
+    },
+    {
+      "code" : "CurrentUserController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type which makes it possible to use the controller comfortably in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/ObservableObject-swift.class",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ObservableObject"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ChatMessageController.ObservableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/observableobject-swift.class"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/addReaction(_:score:enforceUnique:extraData:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Adds new reaction to the message this controller manages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "addReaction"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+      "text" : "MessageReactionType"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "score"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "enforceUnique"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "extraData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/addReaction(_:score:enforceUnique:extraData:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "addReaction(_:score:enforceUnique:extraData:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/addreaction(_:score:enforceunique:extradata:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/cid": {
+  "abstract" : [
+    {
+      "text" : "The identified of the channel the message belongs to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cid"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9ChannelIdV",
+      "text" : "ChannelId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/cid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cid",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/cid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/client": {
+  "abstract" : [
+    {
+      "text" : "The ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatClient",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " instance this controller belongs to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "client"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B6ClientC",
+      "text" : "ChatClient"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/client",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "client",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/client"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new reply message locally and schedules it for send.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "createNewReply"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "text"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pinning"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14MessagePinningV",
+      "text" : "MessagePinning"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "attachments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat20AnyAttachmentPayloadV",
+      "text" : "AnyAttachmentPayload"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "mentionedUserIds"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat6UserIda",
+      "text" : "UserId"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "showReplyInChannel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isSilent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "quotedMessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "extraData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s6ResultO",
+      "text" : "Result"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : ">) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/createnewreply(text:pinning:attachments:mentioneduserids:showreplyinchannel:issilent:quotedmessageid:extradata:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/delegate": {
+  "abstract" : [
+    {
+      "text" : "Set the delegate of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ChatMessageController",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to observe the changes in the system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "delegate"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B25MessageControllerDelegateP",
+      "text" : "ChatMessageControllerDelegate"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/delegate",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "delegate",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/delegate"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/deleteMessage(hard:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Deletes the message this controller manages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deleteMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "hard"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/deleteMessage(hard:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deleteMessage(hard:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/deletemessage(hard:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/deleteReaction(_:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Deletes the reaction from the message this controller manages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deleteReaction"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19MessageReactionTypeV",
+      "text" : "MessageReactionType"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/deleteReaction(_:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deleteReaction(_:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/deletereaction(_:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/dispatchEphemeralMessageAction(_:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Executes the provided action on the message this controller manages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dispatchEphemeralMessageAction"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat16AttachmentActionV",
+      "text" : "AttachmentAction"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/dispatchEphemeralMessageAction(_:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "dispatchEphemeralMessageAction(_:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/dispatchephemeralmessageaction(_:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/editMessage(text:extraData:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Edits the message this controller manages with the provided values.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "editMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "text"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "extraData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat7RawJSONO",
+      "text" : "RawJSON"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/editMessage(text:extraData:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "editMessage(text:extraData:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/editmessage(text:extradata:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/flag(completion:)": {
+  "abstract" : [
+    {
+      "text" : "Flags the message this controller manages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "flag"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/flag(completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "flag(completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/flag(completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/hasLoadedAllPreviousReplies": {
+  "abstract" : [
+    {
+      "text" : "A Boolean value that returns wether pagination is finished",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hasLoadedAllPreviousReplies"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/hasLoadedAllPreviousReplies",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "hasLoadedAllPreviousReplies",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/hasloadedallpreviousreplies"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/hasLoadedAllReactions": {
+  "abstract" : [
+    {
+      "text" : "A Boolean value that returns wether the reactions have all been loaded or not.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hasLoadedAllReactions"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/hasLoadedAllReactions",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "hasLoadedAllReactions",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/hasloadedallreactions"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/listOrdering": {
+  "abstract" : [
+    {
+      "text" : "Describes the ordering the replies are presented.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "listOrdering"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat15MessageOrderingO",
+      "text" : "MessageOrdering"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/listOrdering",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "listOrdering",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/listordering"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/loadNextReactions(limit:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Loads the next page of reactions starting from the current fetched reactions.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "loadNextReactions"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "limit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadNextReactions(limit:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "loadNextReactions(limit:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/loadnextreactions(limit:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/loadNextReplies(after:limit:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Loads new messages from the backend.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "loadNextReplies"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "after"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "limit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadNextReplies(after:limit:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "loadNextReplies(after:limit:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/loadnextreplies(after:limit:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/loadPreviousReplies(before:limit:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Loads previous messages from the backend.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "loadPreviousReplies"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "before"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "limit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadPreviousReplies(before:limit:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "loadPreviousReplies(before:limit:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/loadpreviousreplies(before:limit:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/loadReactions(limit:offset:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Loads reactions from the backend given an offset and a limit.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "loadReactions"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "limit"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "offset"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s6ResultO",
+      "text" : "Result"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B15MessageReactionV",
+      "text" : "ChatMessageReaction"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : ">) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/loadReactions(limit:offset:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "loadReactions(limit:offset:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/loadreactions(limit:offset:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/message": {
+  "abstract" : [
+    {
+      "text" : "The message object this controller represents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "message"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/message",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "message",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/message"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/messageChangePublisher": {
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time the message changes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageChangePublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+      "text" : "AnyPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12EntityChangeO",
+      "text" : "EntityChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageChangePublisher",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messageChangePublisher",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/messagechangepublisher"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/messageId": {
+  "abstract" : [
+    {
+      "text" : "The identified of the message this controllers represents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "messageId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat9MessageIda",
+      "text" : "MessageId"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/messageId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "messageId",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/messageid"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/observableObject-swift.property": {
+  "abstract" : [
+    {
+      "text" : "A wrapper object that exposes the controller variables in the form of ",
+      "type" : "text"
+    },
+    {
+      "code" : "ObservableObject",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to be used in SwiftUI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "observableObject"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B17MessageControllerC16ObservableObjectC",
+      "text" : "ObservableObject"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/observableObject-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "observableObject",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/observableobject-swift.property"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/pin(_:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Pin the message this controller manages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pin"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14MessagePinningV",
+      "text" : "MessagePinning"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/pin(_:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "pin(_:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/pin(_:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/reactions": {
+  "abstract" : [
+    {
+      "text" : "The total reactions of the message the controller represents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reactions"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B15MessageReactionV",
+      "text" : "ChatMessageReaction"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/reactions",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reactions",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/reactions"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/reactionsPublisher": {
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time a reaction changes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reactionsPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+      "text" : "AnyPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B15MessageReactionV",
+      "text" : "ChatMessageReaction"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/reactionsPublisher",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "reactionsPublisher",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/reactionspublisher"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/replies": {
+  "abstract" : [
+    {
+      "text" : "The replies to the message the controller represents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "replies"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat23LazyCachedMapCollectionV",
+      "text" : "LazyCachedMapCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/replies",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "replies",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/replies"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/repliesChangesPublisher": {
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time the list of the replies of the message has changes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "repliesChangesPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+      "text" : "AnyPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat10ListChangeO",
+      "text" : "ListChange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat0B7MessageV",
+      "text" : "ChatMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : ">], "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/repliesChangesPublisher",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "repliesChangesPublisher",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/replieschangespublisher"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/resendMessage(completion:)": {
+  "abstract" : [
+    {
+      "text" : "Changes local message from ",
+      "type" : "text"
+    },
+    {
+      "code" : ".sendingFailed",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to ",
+      "type" : "text"
+    },
+    {
+      "code" : ".pendingSend",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " so it is enqueued by message sender worker.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "resendMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/resendMessage(completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "resendMessage(completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/resendmessage(completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/restartFailedAttachmentUploading(with:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Updates local state of attachment with provided ",
+      "type" : "text"
+    },
+    {
+      "code" : "id",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to be enqueued by attachment uploader.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "restartFailedAttachmentUploading"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "with"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat12AttachmentIdV",
+      "text" : "AttachmentId"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/restartFailedAttachmentUploading(with:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "restartFailedAttachmentUploading(with:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/restartfailedattachmentuploading(with:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/statePublisher": {
+  "abstract" : [
+    {
+      "text" : "A publisher emitting a new value every time the state of the controller changes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "statePublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:7Combine12AnyPublisherV",
+      "text" : "AnyPublisher"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC",
+      "text" : "DataController"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat14DataControllerC5StateO",
+      "text" : "State"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/statePublisher",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "statePublisher",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/statepublisher"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/synchronize(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "synchronize"
+    },
+    {
+      "kind" : "text",
+      "text" : "((("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/synchronize(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "synchronize(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/synchronize(_:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/translate(to:completion:)": {
+  "abstract" : [
+    {
+      "text" : "Translates the message to the given language.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The translated message will be returned via ",
+      "type" : "text"
+    },
+    {
+      "code" : "didChangeMessage",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " delegate callback.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Translation will be in ",
+      "type" : "text"
+    },
+    {
+      "code" : "message.translations[language]",
+      "type" : "codeVoice"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "translate"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10StreamChat19TranslationLanguageV",
+      "text" : "TranslationLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/translate(to:completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "translate(to:completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/translate(to:completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/unflag(completion:)": {
+  "abstract" : [
+    {
+      "text" : "Unflags the message this controller manages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unflag"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/unflag(completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unflag(completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/unflag(completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/ChatMessageController/unpin(completion:)": {
+  "abstract" : [
+    {
+      "text" : "Unpins the message this controller manages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unpin"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "completion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s4Voida",
+      "text" : "Void"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?)"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/ChatMessageController\/unpin(completion:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unpin(completion:)",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/chatmessagecontroller\/unpin(completion:)"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/Controller": {
+  "abstract" : [
+    {
+      "text" : "A protocol to which all controllers conform to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Controller"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/Controller",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Controller"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Controller",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/controller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataController": {
+  "abstract" : [
+    {
+      "text" : "The base class for controllers which represent and control a data entity. Not meant to be used directly.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataController",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataController"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataController",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datacontroller"
+},
+"doc://io.getstream.StreamChat/documentation/StreamChat/DataStoreProvider": {
+  "abstract" : [
+    {
+      "text" : "Types conforming to this protocol automatically exposes public ",
+      "type" : "text"
+    },
+    {
+      "code" : "dataStore",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " variable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataStoreProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/io.getstream.StreamChat\/documentation\/StreamChat\/DataStoreProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataStoreProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataStoreProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/streamchat\/datastoreprovider"
+}
+}
+}
