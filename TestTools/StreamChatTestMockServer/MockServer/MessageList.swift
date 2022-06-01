@@ -92,4 +92,22 @@ public extension StreamMockServer {
         }
         return newMessageList.first
     }
+    
+    func waitForWebsocketMessage(withText text: String,
+                                 timeout: Double = XCUIElement.waitTimeout) {
+        let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
+        while latestWebsocketMessage != text
+                && endTime > Date().timeIntervalSince1970 * 1000 {
+            print("Waiting for websocket message with text: '\(text)'")
+        }
+    }
+    
+    func waitForHttpMessage(withText text: String,
+                            timeout: Double = XCUIElement.waitTimeout) {
+        let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
+        while latestHttpMessage != text
+                && endTime > Date().timeIntervalSince1970 * 1000 {
+            print("Waiting for http message with text: '\(text)'")
+        }
+    }
 }

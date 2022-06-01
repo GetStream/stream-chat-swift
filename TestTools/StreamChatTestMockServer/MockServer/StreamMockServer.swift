@@ -18,6 +18,8 @@ public final class StreamMockServer {
     public var channelList = TestData.toJson(.httpChannels)
     public var currentChannelId = ""
     public var channelQueryEndpointWasCalled = false
+    public var latestWebsocketMessage = ""
+    public var latestHttpMessage = ""
 
     public init() {}
 

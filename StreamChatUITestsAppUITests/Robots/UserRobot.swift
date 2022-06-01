@@ -12,6 +12,11 @@ final class UserRobot: Robot {
     let composer = MessageListPage.Composer.self
     let contextMenu = MessageListPage.ContextMenu.self
     let debugAlert = MessageListPage.Alert.Debug.self
+    private var server: StreamMockServer
+    
+    init(_ server: StreamMockServer) {
+        self.server = server
+    }
     
     @discardableResult
     func login() -> Self {
@@ -56,14 +61,6 @@ extension UserRobot {
             "Message cell is not found at index #\(messageCellIndex)"
         )
         cells.allElementsBoundByIndex[messageCellIndex].press(forDuration: 0.5)
-        
-        // TODO: CIS-1735
-        let replyButton = contextMenu.reply.element
-        if !replyButton.wait().exists {
-            sleep(3)
-            cells.allElementsBoundByIndex[messageCellIndex].press(forDuration: 0.5)
-            replyButton.wait()
-        }
         return self
     }
     
@@ -78,9 +75,23 @@ extension UserRobot {
     }
     
     @discardableResult
-    func sendMessage(_ text: String) -> Self {
+    func sendMessage(_ text: String,
+                     at messageCellIndex: Int? = nil,
+                     waitForAppearance: Bool = true,
+                     file: StaticString = #filePath,
+                     line: UInt = #line) -> Self {
         typeText(text)
         composer.sendButton.tap()
+        
+        if waitForAppearance {
+            server.waitForWebsocketMessage(withText: text)
+            server.waitForHttpMessage(withText: text)
+            
+            let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
+            let textView = attributes.text(in: cell)
+            _ = textView.waitForText(text)
+        }
+        
         return self
     }
     
@@ -163,10 +174,17 @@ extension UserRobot {
     }
     
     @discardableResult
-    func replyToMessage(_ text: String, messageCellIndex: Int = 0) -> Self {
+    func replyToMessage(_ text: String,
+                        messageCellIndex: Int = 0,
+                        waitForAppearance: Bool = true,
+                        file: StaticString = #filePath,
+                        line: UInt = #line) -> Self {
         selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
-        typeText(text)
-        composer.sendButton.tap()
+        sendMessage(text,
+                    at: messageCellIndex,
+                    waitForAppearance: waitForAppearance,
+                    file: file,
+                    line: line)
         return self
     }
 
@@ -179,7 +197,10 @@ extension UserRobot {
     func replyToMessageInThread(
         _ text: String,
         alsoSendInChannel: Bool = false,
-        messageCellIndex: Int = 0
+        messageCellIndex: Int = 0,
+        waitForAppearance: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) -> Self {
         let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
         if !threadCheckbox.exists {
@@ -188,8 +209,11 @@ extension UserRobot {
         if alsoSendInChannel {
             threadCheckbox.wait().tap()
         }
-        typeText(text)
-        composer.sendButton.tap()
+        sendMessage(text,
+                    at: messageCellIndex,
+                    waitForAppearance: waitForAppearance,
+                    file: file,
+                    line: line)
         return self
     }
     
@@ -233,9 +257,9 @@ extension UserRobot {
         if useComposerCommand {
             openComposerCommands()
             MessageListPage.ComposerCommands.giphyImage.wait().tap()
-            sendMessage("\(giphyText)")
+            sendMessage("\(giphyText)", waitForAppearance: false)
         } else {
-            sendMessage("/giphy\(giphyText)")
+            sendMessage("/giphy\(giphyText)", waitForAppearance: false)
         }
         if shuffle { tapOnShuffleGiphyButton() }
         return tapOnSendGiphyButton()

@@ -22,9 +22,7 @@ final class ChannelList_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("participant sends a new message") {
-            participantRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            participantRobot.sendMessage(message)
         }
         AND("user goes back to channel list") {
             userRobot.tapOnBackButton()
@@ -74,10 +72,7 @@ final class ChannelList_Tests: StreamTestCase {
         AND("user sends a message with invalid command") {
             userRobot
                 .sendMessage(message)
-                .sendMessage("/\(invalidCommand)")
-        }
-        AND("error message is shown") {
-            userRobot.waitForNewMessage(withText: Message.message(withInvalidCommand: invalidCommand))
+                .sendMessage("/\(invalidCommand)", waitForAppearance: false)
         }
         WHEN("user goes back to the channel list") {
             userRobot.tapOnBackButton()

@@ -70,7 +70,6 @@ final class Reactions_Tests: StreamTestCase {
         }
         AND("user adds the reaction") {
             userRobot
-                .waitForNewMessage(withText: message)
                 .addReaction(type: .love)
                 .waitForNewReaction()
         }
@@ -95,7 +94,6 @@ final class Reactions_Tests: StreamTestCase {
         }
         AND("user adds the reaction") {
             userRobot
-                .waitForNewMessage(withText: message)
                 .addReaction(type: .lol)
                 .waitForNewReaction()
         }
@@ -120,7 +118,6 @@ final class Reactions_Tests: StreamTestCase {
         }
         AND("participant adds the reaction") {
             participantRobot
-                .waitForNewMessage(withText: message)
                 .readMessage()
                 .addReaction(type: .like)
         }
@@ -142,7 +139,6 @@ final class Reactions_Tests: StreamTestCase {
         }
         AND("participant adds the reaction") {
             participantRobot
-                .waitForNewMessage(withText: message)
                 .readMessage()
                 .addReaction(type: .lol)
                 .waitForNewReaction()
@@ -164,9 +160,7 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant sends the message: '\(message)'") {
-            participantRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            participantRobot.sendMessage(message)
         }
         AND("participant adds the reaction") {
             participantRobot.addReaction(type: .wow)
@@ -189,7 +183,6 @@ final class Reactions_Tests: StreamTestCase {
         }
         AND("participant adds the reaction") {
             participantRobot
-                .waitForNewMessage(withText: message)
                 .addReaction(type: .sad)
                 .waitForNewReaction()
         }

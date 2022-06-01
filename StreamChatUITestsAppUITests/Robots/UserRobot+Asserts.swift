@@ -77,7 +77,8 @@ extension UserRobot {
         if readBy == 0 {
             XCTAssertFalse(readByCount.isHittable, file: file, line: line)
         } else {
-            XCTAssertEqual(readByCount.wait().text, "\(readBy)", file: file, line: line)
+            let actualText = readByCount.waitForText("\(readBy)").text
+            XCTAssertEqual("\(readBy)", actualText, file: file, line: line)
         }
         return self
     }
@@ -139,7 +140,8 @@ extension UserRobot {
         if readBy == 0 {
             XCTAssertFalse(readByCount.isHittable, file: file, line: line)
         } else {
-            XCTAssertEqual(readByCount.wait().text, "\(readBy)", file: file, line: line)
+            let actualText = readByCount.waitForText("\(readBy)").text
+            XCTAssertEqual("\(readBy)", actualText, file: file, line: line)
         }
         return self
     }

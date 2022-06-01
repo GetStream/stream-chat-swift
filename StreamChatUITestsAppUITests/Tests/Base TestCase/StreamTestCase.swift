@@ -10,7 +10,7 @@ let app = XCUIApplication()
 class StreamTestCase: XCTestCase {
 
     let deviceRobot = DeviceRobot()
-    let userRobot = UserRobot()
+    var userRobot: UserRobot!
     var backendRobot: BackendRobot!
     var participantRobot: ParticipantRobot!
     var server: StreamMockServer!
@@ -22,6 +22,7 @@ class StreamTestCase: XCTestCase {
         server.start(port: in_port_t(MockServerConfiguration.port))
         participantRobot = ParticipantRobot(server)
         backendRobot = BackendRobot(server)
+        userRobot = UserRobot(server)
 
         try super.setUpWithError()
 

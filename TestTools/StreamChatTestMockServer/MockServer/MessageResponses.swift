@@ -33,6 +33,14 @@ public extension StreamMockServer {
         }
     }
     
+    private func trackMessage(_ text: String,
+                              messageType: MessageType,
+                              eventType: EventType) {
+        if eventType == .messageNew && messageType != .ephemeral {
+            latestHttpMessage = text
+        }
+    }
+    
     func mockDeletedMessage(_ message: [String: Any]?, user: [String: Any]?) -> [String: Any]? {
         var mockedMessage = message
         mockedMessage?[messageKey.deletedAt.rawValue] = TestData.currentDate
@@ -229,6 +237,7 @@ public extension StreamMockServer {
         }
         
         responseJson[JSONKey.message] = mockedMessage
+        trackMessage(text, messageType: messageType, eventType: eventType)
         return .ok(.json(responseJson))
     }
     
@@ -277,6 +286,7 @@ public extension StreamMockServer {
         }
         
         responseJson[JSONKey.message] = mockedMessage
+        trackMessage(text, messageType: messageType, eventType: eventType)
         return .ok(.json(responseJson))
     }
 
@@ -326,6 +336,7 @@ public extension StreamMockServer {
         }
         
         responseJson[JSONKey.message] = mockedMessage
+        trackMessage(text, messageType: messageType, eventType: eventType)
         return .ok(.json(responseJson))
     }
     
@@ -380,6 +391,7 @@ public extension StreamMockServer {
         }
         
         responseJson[JSONKey.message] = mockedMessage
+        trackMessage(text, messageType: messageType, eventType: eventType)
         return .ok(.json(responseJson))
     }
     
