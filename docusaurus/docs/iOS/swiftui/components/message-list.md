@@ -54,10 +54,11 @@ For link attachments, you can control the link text attributes (font, font weigh
 ```swift
 let messageDisplayOptions = MessageDisplayOptions(messageLinkDisplayResolver: { message in
     let color = message.isSentByCurrentUser ? UIColor.red : UIColor.green
-        return [
-            NSAttributedString.Key.foregroundColor: color
-        ]
-    })
+    
+    return [
+        NSAttributedString.Key.foregroundColor: color
+    ]
+})
 let messageListConfig = MessageListConfig(messageDisplayOptions: messageDisplayOptions)
 let utils = Utils(messageListConfig: messageListConfig)
         
