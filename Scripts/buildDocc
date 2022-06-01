@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -e  # exit on a non-zero return code from a command
+set -x  # print a trace of commands as they execute
+
+TARGET=""
+BUNDLE_IDENTIFIER="getstream.github.io"
+HOSTING_BASE_PATH="stream-chat-swift"
+BUNDLE_VERSION="4.15.0"
+
+while [[ $# -gt 0 ]]
+do
+  case $1 in
+    -t|--target)
+    TARGET="$2"
+    echo "> Following target was provided to the script: $TARGET"
+    # shift 2;; # past argument
+    shift # past argument
+    continue;;
+    *)
+    break;;
+  esac
+done
+
+DOCC_PATH="Sources/${TARGET}/${TARGET}.docc"
+DOCS_DIR="docs"
+
+build() {
+  rm -rf .build
+  mkdir -p .build/symbol-graphs
+
+  xcodebuild docbuild -scheme "${TARGET}" \
+  -destination generic/platform=iOS \
+  OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path
+${HOSTING_BASE_PATH} --output-path ./docs --emit-digest"
+  #
+  # $(xcrun --find swift) build --target "${TARGET}" \
+  #     --destination "generic/platform=iOS" \
+  #     -Xswiftc -emit-symbol-graph \
+  #     -Xswiftc -emit-symbol-graph-dir -Xswiftc .build/symbol-graphs
+}
+
+convert() {
+  $(xcrun --find docc) convert "${DOCC_PATH}" \
+      --analyze \
+      --fallback-display-name "${TARGET}" \
+      --fallback-bundle-identifier "${BUNDLE_IDENTIFIER}" \
+      --fallback-bundle-version "${BUNDLE_VERSION}" \
+      --additional-symbol-graph-dir .build/symbol-graphs \
+      --experimental-documentation-coverage \
+      --level brief
+}
+
+preview() {
+  $(xcrun --find docc) preview "${DOCC_PATH}" \
+      --fallback-display-name "${TARGET}" \
+      --fallback-bundle-identifier "${BUNDLE_IDENTIFIER}" \
+      --fallback-bundle-version "${BUNDLE_VERSION}" \
+      --additional-symbol-graph-dir .build/symbol-graphs
+}
+
+build
+
+# convert
+# host_on_GH_pages
