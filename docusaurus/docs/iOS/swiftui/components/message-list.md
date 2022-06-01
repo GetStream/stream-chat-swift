@@ -49,7 +49,7 @@ let messageDisplayOptions = MessageDisplayOptions(
 )
 ```
 
-For link attachments, you can control the link text attributes (font, font weight, color) based on the message. Here's an example how to change the link color based on the message sender, with the `messageLinkDisplayResolver`:
+For link attachments, you can control the link text attributes (font, font weight, color) based on the message. Here's an example of how to change the link color based on the message sender, with the `messageLinkDisplayResolver`:
 
 ```swift
 let messageDisplayOptions = MessageDisplayOptions(messageLinkDisplayResolver: { message in
