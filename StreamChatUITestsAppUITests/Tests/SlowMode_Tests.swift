@@ -27,9 +27,7 @@ final class SlowMode_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("user sends a new text message") {
-            userRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            userRobot.sendMessage(message)
         }
         THEN("slow mode is active and cooldown is shown") {
             userRobot.assertCooldownIsShown()
@@ -46,9 +44,7 @@ final class SlowMode_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("user sends a new text message") {
-            participantRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            participantRobot.sendMessage(message)
         }
         AND("user selects reply to a message from context menu") {
             userRobot.selectOptionFromContextMenu(option: .reply)
@@ -74,9 +70,7 @@ final class SlowMode_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("user sends a new text message") {
-            userRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            userRobot.sendMessage(message)
         }
         AND("slow mode is active and cooldown is shown") {
             userRobot.assertCooldownIsShown()
@@ -99,9 +93,7 @@ final class SlowMode_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("user sends a new text message") {
-            userRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            userRobot.sendMessage(message)
         }
         AND("user selects reply to a message from context menu") {
             userRobot.selectOptionFromContextMenu(option: .reply)
@@ -124,9 +116,7 @@ final class SlowMode_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("user sends a new text message") {
-            userRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            userRobot.sendMessage(message)
         }
         AND("user selects thread to message from context menu") {
             userRobot.selectOptionFromContextMenu(option: .threadReply)

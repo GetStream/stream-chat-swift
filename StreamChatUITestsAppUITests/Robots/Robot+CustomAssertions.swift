@@ -113,20 +113,6 @@ extension Robot {
         XCTAssertEqual(author, actualAuthor, file: file, line: line)
         return self
     }
-
-    /// Waits for a new message from the user or participant
-    ///
-    /// - Returns: Self
-    @discardableResult
-    func waitForNewMessage(withText text: String,
-                           at messageCellIndex: Int? = nil,
-                           file: StaticString = #filePath,
-                           line: UInt = #line) -> Self {
-        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
-        let textView = attributes.text(in: cell)
-        _ = textView.waitForText(text)
-        return self
-    }
     
     @discardableResult
     func assertTypingIndicatorShown(
