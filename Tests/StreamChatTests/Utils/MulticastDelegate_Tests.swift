@@ -136,7 +136,7 @@ final class MulticastDelegate_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 0.2)
+        wait(for: [exp], timeout: 0.5)
 
         XCTAssertNil(multicastDelegate.mainDelegate)
         XCTAssertTrue(multicastDelegate.additionalDelegates.isEmpty)

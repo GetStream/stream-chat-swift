@@ -3584,7 +3584,7 @@ final class ChannelController_Tests: XCTestCase {
 
         requestBlock(env.channelUpdater)
 
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         return receivedError
     }
     

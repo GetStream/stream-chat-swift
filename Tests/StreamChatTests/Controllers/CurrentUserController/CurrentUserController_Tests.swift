@@ -85,7 +85,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Assert unread-count is correct
         XCTAssertEqual(controller.unreadCount, expectedUnreadCount)
         
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
     }
     
     func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {

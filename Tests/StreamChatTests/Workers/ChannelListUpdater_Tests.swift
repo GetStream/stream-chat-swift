@@ -146,7 +146,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
@@ -184,7 +184,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         )
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
@@ -243,7 +243,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         })
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // EXPECTED RESULTS:
         // syncedId1 -> Not present in remote query, but synched:               Unwanted    -

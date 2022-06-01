@@ -51,7 +51,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             })
         }
 
-        wait(for: [goldenPathExpectation], timeout: 0.2)
+        wait(for: [goldenPathExpectation], timeout: 0.5)
         let errorPathExpectation = expectation(description: "error")
 
         // Write an invalid entity to DB and wait for the completion block to be called with error
@@ -64,7 +64,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             errorPathExpectation.fulfill()
         })
 
-        wait(for: [errorPathExpectation], timeout: 0.2)
+        wait(for: [errorPathExpectation], timeout: 0.5)
     }
 
     func test_removingAllData() throws {

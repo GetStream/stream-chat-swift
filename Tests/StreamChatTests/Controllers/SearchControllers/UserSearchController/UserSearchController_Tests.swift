@@ -269,7 +269,7 @@ final class UserSearchController_Tests: XCTestCase {
         let expectation = self.expectation(description: "Search completes")
         controller.search(term: .unique) { _ in expectation.fulfill() }
         env.userListUpdater?.fetch_completion?(.success(.init(users: [])))
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // Create a weak ref and release a controller.
         weak var weakController = controller
@@ -468,7 +468,7 @@ final class UserSearchController_Tests: XCTestCase {
         let expectation = self.expectation(description: "Search completes")
         controller.search(query: query) { _ in expectation.fulfill() }
         env.userListUpdater?.fetch_completion?(.success(.init(users: [])))
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         
         // Create a weak ref and release a controller.
         weak var weakController = controller
