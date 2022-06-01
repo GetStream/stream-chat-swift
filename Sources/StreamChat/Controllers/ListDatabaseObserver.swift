@@ -307,7 +307,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         newIndexPath: IndexPath?
     ) {
         guard let dto = anObject as? DTO, let item = try? itemCreator(dto) else {
-            log.warning("Skipping the update from DB because the DTO can't be converted to the model object.")
+            log.debug("Skipping the update from DB because the DTO can't be converted to the model object.")
             return
         }
         
@@ -346,23 +346,6 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        // All destination indices of `move` changes
-        let moveToIndexChanges: [IndexPath] = currentChanges.compactMap {
-            if case let .move(_, _, toIndex) = $0 {
-                return toIndex
-            }
-            return nil
-        }
-
-        // Remove `update` operations with the same index path as move's `toIndex`changes.
-        currentChanges = currentChanges.filter {
-            if case let .update(_, index) = $0 {
-                // Include only if the update `index` is not a `move` change destination index.
-                return moveToIndexChanges.contains(index) == false
-            }
-            return true
-        }
-        
         onDidChange?(currentChanges)
     }
 }

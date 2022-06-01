@@ -20,21 +20,21 @@ final class ChannelEvents_Tests: XCTestCase {
     }
     
     func test_updated() throws {
-        let json = XCTestCase.mockData(fromFile: "ChannelUpdated")
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelUpdated")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         XCTAssertEqual(event?.payload.user?.id, "broken-waterfall-5")
     }
     
     func test_updated_usingServerSideAuth() throws {
-        let json = XCTestCase.mockData(fromFile: "ChannelUpdated_ServerSide")
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelUpdated_ServerSide")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         XCTAssertNil(event?.payload.user?.id)
     }
     
     func test_deleted() throws {
-        let json = XCTestCase.mockData(fromFile: "ChannelDeleted")
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelDeleted")
         let event = try eventDecoder.decode(from: json) as? ChannelDeletedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "default-channel-1"))
         XCTAssertEqual(event?.createdAt.description, "2021-04-23 09:38:47 +0000")
@@ -45,13 +45,13 @@ final class ChannelEvents_Tests: XCTestCase {
     }
     
     func test_ChannelHiddenEvent_decoding() throws {
-        var json = XCTestCase.mockData(fromFile: "ChannelHidden")
+        var json = XCTestCase.mockData(fromJSONFile: "ChannelHidden")
         var event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO)
         XCTAssertEqual(event.cid, ChannelId(type: .messaging, id: "default-channel-6"))
         XCTAssertEqual(event.createdAt.description, "2021-04-23 07:03:54 +0000")
         XCTAssertEqual(event.isHistoryCleared, false)
 
-        json = XCTestCase.mockData(fromFile: "ChannelHidden+HistoryCleared")
+        json = XCTestCase.mockData(fromJSONFile: "ChannelHidden+HistoryCleared")
         event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO)
         XCTAssertEqual(event.cid, ChannelId(type: .messaging, id: "default-channel-6"))
         XCTAssertEqual(event.createdAt.description, "2021-04-23 07:03:54 +0000")
@@ -59,20 +59,20 @@ final class ChannelEvents_Tests: XCTestCase {
     }
     
     func test_ChannelVisibleEvent_decoding() throws {
-        let json = XCTestCase.mockData(fromFile: "ChannelVisible")
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelVisible")
         let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-6"))
     }
     
     func test_visible() throws {
         // Channel is visible again.
-        let json = XCTestCase.mockData(fromFile: "ChannelVisible")
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelVisible")
         let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-6"))
     }
 
     func test_channelTruncatedEvent() throws {
-        let mockData = XCTestCase.mockData(fromFile: "ChannelTruncated")
+        let mockData = XCTestCase.mockData(fromJSONFile: "ChannelTruncated")
 
         let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
@@ -83,7 +83,7 @@ final class ChannelEvents_Tests: XCTestCase {
     }
     
     func test_channelTruncatedEventWithMessage() throws {
-        let mockData = XCTestCase.mockData(fromFile: "ChannelTruncated_with_message")
+        let mockData = XCTestCase.mockData(fromJSONFile: "ChannelTruncated_with_message")
 
         let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "8372DE11-E"))

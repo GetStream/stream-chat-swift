@@ -14,21 +14,21 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var extraData: Data
     @NSManaged var config: ChannelConfigDTO
     
-    @NSManaged var createdAt: Date
-    @NSManaged var deletedAt: Date?
-    @NSManaged var defaultSortingAt: Date
-    @NSManaged var updatedAt: Date
-    @NSManaged var lastMessageAt: Date?
+    @NSManaged var createdAt: DBDate
+    @NSManaged var deletedAt: DBDate?
+    @NSManaged var defaultSortingAt: DBDate
+    @NSManaged var updatedAt: DBDate
+    @NSManaged var lastMessageAt: DBDate?
 
     // The oldest message of the channel we have locally coming from a regular channel query.
     // This property only lives locally, and it is useful to filter out older pinned messages
     // that do not belong to the regular channel query.
-    @NSManaged var oldestMessageAt: Date?
+    @NSManaged var oldestMessageAt: DBDate?
 
     //
     // This field is also used to implement the `clearHistory` option when hiding the channel.
     //
-    @NSManaged var truncatedAt: Date?
+    @NSManaged var truncatedAt: DBDate?
 
     @NSManaged var isHidden: Bool
 
@@ -112,11 +112,12 @@ class ChannelDTO: NSManagedObject {
     }
     
     static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
-        if let existing = Self.load(cid: cid, context: context) {
+        let request = fetchRequest(for: cid)
+        if let existing = load(by: request, context: context).first {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelDTO
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.cid = cid.rawValue
         return new
     }
@@ -167,16 +168,15 @@ extension NSManagedObjectContext {
             )
             dto.extraData = Data()
         }
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
-        dto.createdAt = payload.createdAt
-        dto.deletedAt = payload.deletedAt
-        dto.updatedAt = payload.updatedAt
-        dto.defaultSortingAt = payload.lastMessageAt ?? payload.createdAt
-        dto.lastMessageAt = payload.lastMessageAt
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.deletedAt = payload.deletedAt?.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
+        dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
+        dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount)
-        dto.truncatedAt = payload.truncatedAt
+        dto.truncatedAt = payload.truncatedAt?.bridgeDate
 
         dto.isFrozen = payload.isFrozen
         
@@ -374,7 +374,7 @@ extension ChatChannel {
                     deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
                     shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
                 ),
-                NSPredicate(format: "createdAt > %@", currentUserRead?.lastReadAt as NSDate? ?? NSDate(timeIntervalSince1970: 0)),
+                NSPredicate(format: "createdAt > %@", currentUserRead?.lastReadAt.bridgeDate ?? DBDate(timeIntervalSince1970: 0)),
                 NSPredicate(format: "%@ IN mentionedUsers", currentUser.user)
             ])
             
@@ -401,6 +401,18 @@ extension ChatChannel {
                 .compactMap { try? $0.asModel() }
         }
         
+        let fetchLatestMessageFromUser: () -> ChatMessage? = {
+            guard let currentUser = context.currentUser else { return nil }
+            
+            return try? MessageDTO
+                .loadLastMessage(
+                    from: currentUser.user.id,
+                    in: dto.cid,
+                    context: context
+                )?
+                .asModel()
+        }
+        
         let fetchWatchers: () -> [ChatUser] = {
             UserDTO
                 .loadLastActiveWatchers(cid: cid, context: context)
@@ -417,8 +429,8 @@ extension ChatChannel {
             guard let mute = dto.mute else { return nil }
             
             return .init(
-                createdAt: mute.createdAt,
-                updatedAt: mute.updatedAt
+                createdAt: mute.createdAt.bridgeDate,
+                updatedAt: mute.updatedAt.bridgeDate
             )
         }
         
@@ -426,11 +438,11 @@ extension ChatChannel {
             cid: cid,
             name: dto.name,
             imageURL: dto.imageURL,
-            lastMessageAt: dto.lastMessageAt,
-            createdAt: dto.createdAt,
-            updatedAt: dto.updatedAt,
-            deletedAt: dto.deletedAt,
-            truncatedAt: dto.truncatedAt,
+            lastMessageAt: dto.lastMessageAt?.bridgeDate,
+            createdAt: dto.createdAt.bridgeDate,
+            updatedAt: dto.updatedAt.bridgeDate,
+            deletedAt: dto.deletedAt?.bridgeDate,
+            truncatedAt: dto.truncatedAt?.bridgeDate,
             isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
             config: dto.config.asModel(),
@@ -448,6 +460,7 @@ extension ChatChannel {
             extraData: extraData,
             //            invitedMembers: [],
             latestMessages: { fetchMessages() },
+            lastMessageFromCurrentUser: { fetchLatestMessageFromUser() },
             pinnedMessages: { dto.pinnedMessages.compactMap { try? $0.asModel() } },
             muteDetails: fetchMuteDetails,
             previewMessage: { try? dto.previewMessage?.asModel() },
@@ -463,9 +476,9 @@ private extension ChannelDTO {
     /// is the default one, which is by default a very old date, so are sure the first messages are always fetched.
     func updateOldestMessageAt(payload: ChannelPayload) {
         if let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() {
-            let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt ?? Date.distantFuture)
+            let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
             if isOlderThanCurrentOldestMessage {
-                oldestMessageAt = payloadOldestMessageAt
+                oldestMessageAt = payloadOldestMessageAt.bridgeDate
             }
         }
     }
@@ -480,6 +493,6 @@ private extension ChannelDTO {
             return false
         }
         
-        return newestMessage.createdAt > preview.createdAt
+        return newestMessage.createdAt > preview.createdAt.bridgeDate
     }
 }

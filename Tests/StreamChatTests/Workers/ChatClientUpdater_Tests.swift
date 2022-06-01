@@ -17,7 +17,10 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let updater = ChatClientUpdater(client: client)
 
         // Simulate `disconnect` call.
-        updater.disconnect()
+        let expectation = expectation(description: "`disconnect` completion")
+        updater.disconnect {
+            expectation.fulfill()
+        }
 
         // Assert `disconnect` was not called on `webSocketClient`.
         XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 0)
@@ -26,6 +29,9 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
         // Assert recovery flow is cancelled.
         XCTAssertCall("cancelRecoveryFlow()", on: client.mockSyncRepository, times: 1)
+        
+        // Assert completion called
+        wait(for: [expectation], timeout: 0)
     }
 
     func test_disconnect_closesTheConnection_ifClientIsActive() {
@@ -36,19 +42,28 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let updater = ChatClientUpdater(client: client)
 
         // Simulate `disconnect` call.
-        updater.disconnect()
+        let expectation = expectation(description: "`disconnect` completion")
+        updater.disconnect {
+            expectation.fulfill()
+        }
 
         // Assert `webSocketClient` was disconnected.
         XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 1)
+        // Assert `flushRequestsQueue` is called on API client.
+        XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
+        // Assert recovery flow is cancelled.
+        XCTAssertCall("cancelRecoveryFlow()", on: client.mockSyncRepository, times: 1)
+        
+        // Simulate completed disconnection
+        client.mockWebSocketClient.disconnect_completion!()
+        
+        // Assert completion is called
+        wait(for: [expectation], timeout: 0)
         // Assert connection id is `nil`.
         XCTAssertNil(client.connectionId)
         // Assert all requests waiting for the connection-id were canceled.
         XCTAssertTrue(client.completeConnectionIdWaiters_called)
         XCTAssertNil(client.completeConnectionIdWaiters_connectionId)
-        // Assert `flushRequestsQueue` is called on API client.
-        XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
-        // Assert recovery flow is cancelled.
-        XCTAssertCall("cancelRecoveryFlow()", on: client.mockSyncRepository, times: 1)
     }
 
     func test_disconnect_whenWebSocketIsNotConnected() throws {
@@ -59,15 +74,19 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let updater = ChatClientUpdater(client: client)
 
         // Simulate `disconnect` call.
-        updater.disconnect()
-
+        updater.disconnect {}
+        client.mockWebSocketClient.disconnect_completion!()
+        
         // Reset state.
         client.mockWebSocketClient.disconnect_calledCounter = 0
         client.mockAPIClient.recordedFunctions.removeAll()
         client.mockSyncRepository.recordedFunctions.removeAll()
 
         // Simulate `disconnect` one more time.
-        updater.disconnect()
+        let expectation = expectation(description: "`disconnect` completion")
+        updater.disconnect {
+            expectation.fulfill()
+        }
 
         // Assert `connect` was not called on `webSocketClient`.
         XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 0)
@@ -75,6 +94,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertCall("flushRequestsQueue()", on: client.mockAPIClient, times: 1)
         // Assert recovery flow is cancelled.
         XCTAssertCall("cancelRecoveryFlow()", on: client.mockSyncRepository, times: 1)
+        // Assert completion is called
+        wait(for: [expectation], timeout: 0)
     }
 
     // MARK: Connect
@@ -123,7 +144,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let updater = ChatClientUpdater(client: client)
 
         // Disconnect client from web-socket.
-        updater.disconnect()
+        updater.disconnect {}
+        client.mockWebSocketClient.disconnect_completion!()
 
         // Simulate `connect` call and catch the result.
         var connectCompletionCalled = false
@@ -158,7 +180,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
             let updater = ChatClientUpdater(client: client)
 
             // Disconnect client from web-socket.
-            updater.disconnect()
+            updater.disconnect {}
+            client.mockWebSocketClient.disconnect_completion!()
 
             // Simulate `connect` call and catch the result.
             var connectCompletionCalled = false
@@ -204,7 +227,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
             var updater: ChatClientUpdater? = .init(client: client)
 
             // Disconnect client from web-socket.
-            updater?.disconnect()
+            updater?.disconnect {}
+            client.mockWebSocketClient.disconnect_completion!()
 
             // Simulate `connect` call and catch the result.
             var connectCompletionCalled = false
@@ -356,10 +380,16 @@ final class ChatClientUpdater_Tests: XCTestCase {
             reloadUserIfNeededCompletionError = $0
         }
         
+        // Assert `completeTokenWaiters` was called.
+        XCTAssertTrue(client.completeTokenWaiters_called)
+        // Assert `completeTokenWaiters` was called with `nil` token which means all
+        // pending requests were cancelled.
+        XCTAssertNil(client.completeTokenWaiters_token)
         // Assert current user id is valid.
         XCTAssertEqual(client.currentUserId, updatedToken.userId)
         // Assert token is valid.
         XCTAssertEqual(client.currentToken, updatedToken)
+        
         // Assert web-socket is disconnected
         XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 1)
         XCTAssertEqual(client.mockWebSocketClient.disconnect_source, .userInitiated)
@@ -372,12 +402,10 @@ final class ChatClientUpdater_Tests: XCTestCase {
                 )
             )
         )
-        // Assert `completeTokenWaiters` was called.
-        XCTAssertTrue(client.completeTokenWaiters_called)
         
-        // Assert `completeTokenWaiters` was called with `nil` token which means all
-        // pending requests were cancelled.
-        XCTAssertNil(client.completeTokenWaiters_token)
+        // Simulate disconnection completed
+        client.mockWebSocketClient.disconnect_completion!()
+        
         // Assert background workers are recreated since the user has changed.
         XCTAssertNotEqual(client.testBackgroundWorkerId, oldWorkerIDs)
         // Assert database was flushed.
@@ -409,12 +437,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
     }
 
     func test_reloadUserIfNeeded_newUser_propagatesClientIsPassiveError() throws {
-        // Create config for `passive` client.
-        var config = ChatClientConfig(apiKeyString: .unique)
-        config.isClientInActiveMode = false
-
-        // Create `passive` client.
-        let client = ChatClient_Mock(config: config)
+        // Create `passive` client with user set.
+        let client = mockClientWithUserSession(isActive: false)
 
         // Create `ChatClientUpdater` instance.
         let updater = ChatClientUpdater(client: client)
@@ -426,6 +450,30 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         // Assert `ClientError.ClientIsNotInActiveMode` is propagated.
         XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
+    }
+    
+    func test_reloadUserIfNeeded_newUser_propagatesClientHasBeenDeallocatedError() throws {
+        // Create `passive` client with user set.
+        var client: ChatClient_Mock? = mockClientWithUserSession()
+        let webSocketClient = client!.mockWebSocketClient
+        
+        // Create `ChatClientUpdater` instance.
+        let updater = ChatClientUpdater(client: client!)
+
+        // Simulate `reloadUserIfNeeded` call and catch the result.
+        var error: Error?
+        updater.reloadUserIfNeeded(userConnectionProvider: .static(.unique())) {
+            error = $0
+        }
+        
+        // Deallocate the chat client
+        client = nil
+        
+        // Simulate disconnection completed
+        webSocketClient.disconnect_completion?()
+
+        // Assert `ClientError.ClientHasBeenDeallocated` is propagated.
+        XCTAssertTrue(error is ClientError.ClientHasBeenDeallocated)
     }
 
     func test_reloadUserIfNeeded_newUser_propagatesDatabaseFlushError() throws {
@@ -440,11 +488,13 @@ final class ChatClientUpdater_Tests: XCTestCase {
         client.mockDatabaseContainer.removeAllData_errorResponse = databaseFlushError
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
-        let error = try waitFor { completion in
+        let error: Error? = try waitFor { completion in
             updater.reloadUserIfNeeded(
                 userConnectionProvider: .static(.unique()),
                 completion: completion
             )
+            
+            client.mockWebSocketClient.disconnect_completion!()
         }
 
         // Assert database error is propagated.

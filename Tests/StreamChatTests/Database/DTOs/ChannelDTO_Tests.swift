@@ -449,7 +449,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
-        XCTAssertEqual(channel?.oldestMessageAt, payload.messages.map(\.createdAt).min())
+        XCTAssertNearlySameDate(channel?.oldestMessageAt?.bridgeDate, payload.messages.map(\.createdAt).min())
     }
 
     func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_oldestMessageAtIsNotUpdated() throws {
@@ -473,7 +473,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
-        XCTAssertEqual(channel?.oldestMessageAt, oldMessageCreatedAt)
+        XCTAssertEqual(channel?.oldestMessageAt?.bridgeDate, oldMessageCreatedAt)
     }
     
     func test_channelPayload_truncatedMessagesAreIgnored() throws {
@@ -487,7 +487,7 @@ final class ChannelDTO_Tests: XCTestCase {
             // Truncate the channel to leave only 10 newest messages
             // We're dropping 9 messages to fullfil the predicate: createdAt >= channel.truncatedAt"
             let truncateDate = channelDTO.messages
-                .sorted(by: { $0.createdAt < $1.createdAt })
+                .sorted(by: { $0.createdAt.bridgeDate < $1.createdAt.bridgeDate })
                 .dropLast(9)
                 .last?
                 .createdAt
@@ -614,6 +614,114 @@ final class ChannelDTO_Tests: XCTestCase {
                 .map(\.user.id)
         )
     }
+    
+    func test_lastMessageFromCurrentUser() throws {
+        let user: UserPayload = dummyCurrentUser
+        let channelId: ChannelId = .unique
+        let message1: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: user.id,
+            createdAt: Date.distantPast
+        )
+        
+        let message2: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: user.id,
+            createdAt: Date()
+        )
+        
+        let message3: MessagePayload = .dummy(
+            type: .ephemeral,
+            messageId: .unique,
+            authorUserId: user.id,
+            createdAt: Date()
+        )
+        
+        let channel = dummyPayload(with: channelId, messages: [message1, message2, message3])
+        
+        try! database.createCurrentUser(id: user.id)
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        
+        guard let channel: ChatChannel = try? database.viewContext.channel(cid: channelId)?.asModel(),
+              let lastMessageFromCurrentUser = channel.lastMessageFromCurrentUser else {
+            XCTFail("\(#file), \(#function), \(#line) There should be a valid channel")
+            return
+        }
+        
+        XCTAssertEqual(lastMessageFromCurrentUser.text, message2.text)
+    }
+    
+    func test_lastMessageFromCurrentUser_whenLastMessageIsThreadReply() throws {
+        let user: UserPayload = dummyCurrentUser
+        let channelId: ChannelId = .unique
+        let mainMessageId: String = .unique
+        let mainMessage = MessagePayload(
+            id: mainMessageId,
+            type: .regular,
+            user: user,
+            createdAt: Date.distantPast,
+            updatedAt: .unique,
+            deletedAt: nil,
+            text: .unique,
+            command: nil,
+            args: nil,
+            parentId: nil,
+            showReplyInChannel: true,
+            mentionedUsers: [dummyCurrentUser],
+            replyCount: 1,
+            extraData: [:],
+            reactionScores: ["like": 1],
+            reactionCounts: ["like": 1],
+            isSilent: false,
+            isShadowed: false,
+            attachments: [],
+            pinned: false
+        )
+        
+        let threadMessage = MessagePayload(
+            id: .unique,
+            type: .regular,
+            user: user,
+            createdAt: Date(),
+            updatedAt: .unique,
+            deletedAt: nil,
+            text: .unique,
+            command: nil,
+            args: nil,
+            parentId: mainMessageId,
+            showReplyInChannel: false,
+            mentionedUsers: [dummyCurrentUser],
+            replyCount: 0,
+            extraData: [:],
+            reactionScores: ["like": 1],
+            reactionCounts: ["like": 1],
+            isSilent: false,
+            isShadowed: false,
+            attachments: [],
+            pinned: false
+        )
+        
+        let channel = dummyPayload(with: channelId, messages: [mainMessage, threadMessage])
+        
+        try! database.createCurrentUser(id: user.id)
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        
+        guard let channel: ChatChannel = try? database.viewContext.channel(cid: channelId)?.asModel(),
+              let lastMessageFromCurrentUser = channel.lastMessageFromCurrentUser else {
+            XCTFail("\(#file), \(#function), \(#line) There should be a valid channel")
+            return
+        }
+        
+        XCTAssertEqual(lastMessageFromCurrentUser.text, threadMessage.text)
+    }
 
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random channel payload to db
@@ -716,11 +824,11 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // Check the default sorting.
         XCTAssertEqual(channelsWithDefaultSorting.count, 4)
-        XCTAssertEqual(channelsWithDefaultSorting.map { $0.lastMessageAt ?? $0.createdAt }, createdAndLastMessageDates)
+        XCTAssertEqual(channelsWithDefaultSorting.map { ($0.lastMessageAt ?? $0.createdAt).bridgeDate }, createdAndLastMessageDates)
 
         // Check the sorting by `updatedAt`.
         XCTAssertEqual(channelsWithUpdatedAtSorting.count, 4)
-        XCTAssertEqual(channelsWithUpdatedAtSorting.map(\.updatedAt), updatedAtDates)
+        XCTAssertEqual(channelsWithUpdatedAtSorting.map(\.updatedAt.bridgeDate), updatedAtDates)
     }
 
     /// `ChannelListSortingKey` test for sort descriptor and encoded value.

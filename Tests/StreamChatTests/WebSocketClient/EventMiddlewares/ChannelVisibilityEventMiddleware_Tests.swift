@@ -143,7 +143,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         // Assert the `truncatedAt` value is not touched
-        XCTAssertEqual(channelDTO.truncatedAt, event.createdAt)
+        XCTAssertEqual(channelDTO.truncatedAt?.bridgeDate, event.createdAt)
         XCTAssert(forwardedEvent is ChannelHiddenEventDTO)
     }
 
@@ -163,7 +163,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
             dto.isHidden = true
-            dto.truncatedAt = originalTruncatedAt
+            dto.truncatedAt = originalTruncatedAt.bridgeDate
         }
 
         // Simulate incoming event
@@ -175,7 +175,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         XCTAssertFalse(channelDTO.isHidden)
 
         // Assert the `truncatedAt` value is not touched
-        XCTAssertEqual(channelDTO.truncatedAt, originalTruncatedAt)
+        XCTAssertEqual(channelDTO.truncatedAt?.bridgeDate, originalTruncatedAt)
         XCTAssert(forwardedEvent is ChannelVisibleEventDTO)
     }
     

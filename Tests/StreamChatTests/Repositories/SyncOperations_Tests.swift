@@ -54,7 +54,7 @@ final class SyncOperations_Tests: XCTestCase {
         try database.createCurrentUser()
         let originalDate = Date().addingTimeInterval(-3600)
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = originalDate
+            session.currentUser?.lastSynchedEventDate = originalDate.bridgeDate
         }
         let operation = SyncEventsOperation(syncRepository: syncRepository, context: context)
         syncRepository.syncMissingEventsResult = .failure(.syncEndpointFailed(ClientError("")))
@@ -62,7 +62,7 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.synchedChannelIds.count, 0)
-        XCTAssertEqual(database.viewContext.currentUser?.lastSynchedEventDate, originalDate)
+        XCTAssertNearlySameDate(database.viewContext.currentUser?.lastSynchedEventDate?.bridgeDate, originalDate)
         XCTAssertCall(
             "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:completion:)",
             on: syncRepository,
@@ -74,7 +74,7 @@ final class SyncOperations_Tests: XCTestCase {
         let context = SyncContext(lastSyncAt: .init())
         try database.createCurrentUser()
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = Date().addingTimeInterval(-3600)
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
         }
 
         let operation = SyncEventsOperation(syncRepository: syncRepository, context: context)

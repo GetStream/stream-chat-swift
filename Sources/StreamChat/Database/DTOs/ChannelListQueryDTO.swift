@@ -17,9 +17,11 @@ class ChannelListQueryDTO: NSManagedObject {
     @NSManaged var channels: Set<ChannelDTO>
     
     static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
-        let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
-        return try? context.fetch(request).first
+        load(
+            keyPath: #keyPath(ChannelListQueryDTO.filterHash),
+            equalTo: filterHash,
+            context: context
+        ).first
     }
     
     /// The fetch request that returns all existed queries from the database.
@@ -38,12 +40,15 @@ extension NSManagedObjectContext {
     }
     
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        if let existingDTO = ChannelListQueryDTO.load(filterHash: query.filter.filterHash, context: self) {
+        if let existingDTO = channelListQuery(filterHash: query.filter.filterHash) {
             return existingDTO
         }
         
-        let newDTO = NSEntityDescription
-            .insertNewObject(forEntityName: ChannelListQueryDTO.entityName, into: self) as! ChannelListQueryDTO
+        let request = ChannelListQueryDTO.fetchRequest(
+            keyPath: #keyPath(ChannelListQueryDTO.filterHash),
+            equalTo: query.filter.filterHash
+        )
+        let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
         newDTO.filterHash = query.filter.filterHash
         
         let jsonData: Data

@@ -103,7 +103,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let errorButton = attributes.errorButton(in: messageCell).wait()
         XCTAssertTrue(errorButton.exists, file: file, line: line)
         return self
@@ -116,7 +116,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let checkmark = attributes.statusCheckmark(for: deliveryStatus, in: messageCell)
         if deliveryStatus == .failed || deliveryStatus == nil {
             XCTAssertFalse(checkmark.exists, file: file, line: line)
@@ -134,7 +134,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = mesageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let readByCount = attributes.readCount(in: messageCell)
         if readBy == 0 {
             XCTAssertFalse(readByCount.isHittable, file: file, line: line)
@@ -142,6 +142,22 @@ extension UserRobot {
             XCTAssertEqual(readByCount.wait().text, "\(readBy)", file: file, line: line)
         }
         return self
+    }
+    
+    func assertComposerLimits(toNumberOfLines limit: Int,
+                              file: StaticString = #filePath,
+                              line: UInt = #line) {
+        let composer = MessageListPage.Composer.inputField
+        var composerHeight = composer.height
+        for i in 1..<limit {
+            let obtainKeyboardFocus = (i == 1) ? true : false
+            typeText("\(i)\n", obtainKeyboardFocus: obtainKeyboardFocus)
+            let updatedComposerHeight = composer.height
+            XCTAssertGreaterThan(updatedComposerHeight, composerHeight, file: file, line: line)
+            composerHeight = updatedComposerHeight
+        }
+        typeText("\(limit)\n\(limit+1)", obtainKeyboardFocus: false)
+        XCTAssertEqual(composerHeight, composer.height, file: file, line: line)
     }
 }
 
@@ -182,5 +198,23 @@ extension UserRobot {
         let isThreadPageOpen = ThreadPage.alsoSendInChannelCheckbox.exists
         XCTAssertTrue(isThreadPageOpen, file: file, line: line)
         return assertMessageFailedToBeSent(at: messageCellIndex, file: file, line: line)
+    }
+
+    @discardableResult
+    func assertCooldownIsShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
+        XCTAssertTrue(MessageListPage.Composer.cooldown.wait().exists)
+        return self
+    }
+    
+    @discardableResult
+    func assertCooldownIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
+        XCTAssertFalse(MessageListPage.Composer.cooldown.exists)
+        return self
+    }
+
+    @discardableResult
+    func assertSendButtonIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
+        XCTAssertFalse(MessageListPage.Composer.sendButton.waitForLoss().exists)
+        return self
     }
 }

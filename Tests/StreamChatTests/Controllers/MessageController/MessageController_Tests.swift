@@ -314,7 +314,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
 
         // Insert parent message
@@ -363,7 +363,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
 
         // Insert parent message
@@ -412,7 +412,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
 
         // Insert parent message
@@ -461,7 +461,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
         
         // Insert parent message
@@ -509,7 +509,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
         
         // Insert parent message

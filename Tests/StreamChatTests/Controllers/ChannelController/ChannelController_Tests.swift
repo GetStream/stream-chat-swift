@@ -424,8 +424,8 @@ final class ChannelController_Tests: XCTestCase {
             oldMessageId = dto.id
         }
         var channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt, originalLastMessageAt)
-        
+        XCTAssertNearlySameDate(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
+
         // Create a new message payload that's newer than `channel.lastMessageAt`
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: .unique,
@@ -437,7 +437,7 @@ final class ChannelController_Tests: XCTestCase {
             try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true)
         }
         channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt, newerMessagePayload.createdAt)
+        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
         
         // Check if the message ordering is correct
         // First message should be the newest message
@@ -944,7 +944,7 @@ final class ChannelController_Tests: XCTestCase {
         // Set channel `truncatedAt` date before the 5th message
         let truncatedAtDate = controller.messages[4].createdAt.addingTimeInterval(-0.1)
         try client.databaseContainer.writeSynchronously {
-            $0.channel(cid: self.channelId)?.truncatedAt = truncatedAtDate
+            $0.channel(cid: self.channelId)?.truncatedAt = truncatedAtDate.bridgeDate
         }
 
         // Check only the 5 messages after the truncatedAt date are visible
@@ -1222,7 +1222,7 @@ final class ChannelController_Tests: XCTestCase {
         // Update the read
         try client.databaseContainer.writeSynchronously {
             let read = try XCTUnwrap($0.loadChannelRead(cid: self.channelId, userId: userId))
-            read.lastReadAt = newReadDate
+            read.lastReadAt = newReadDate.bridgeDate
         }
 
         // Assert the value is updated and the delegate is called
@@ -3396,6 +3396,44 @@ final class ChannelController_Tests: XCTestCase {
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_currentCooldownTime_whenSlowModeIsActive_andLastMessageFromCurrentUserExists_thenCooldownTimeIsGreaterThanZero(
+    ) throws {
+        // GIVEN
+        let user: UserPayload = dummyCurrentUser
+        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: user.id, createdAt: Date())
+        let channelPayload = dummyPayload(with: channelId, messages: [message], cooldownDuration: 5)
+        
+        try client.databaseContainer.createCurrentUser(id: user.id)
+        
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        // WHEN
+        let currentCooldownTime = controller.currentCooldownTime()
+        
+        // THEN
+        XCTAssertGreaterThan(currentCooldownTime, 0)
+    }
+    
+    func test_currentCooldownTime_whenSlowModeIsNotActive_thenCooldownTimeIsZero() throws {
+        // GIVEN
+        let user: UserPayload = dummyCurrentUser
+        let channelPayload = dummyPayload(with: channelId, cooldownDuration: 0)
+        
+        try client.databaseContainer.createCurrentUser(id: user.id)
+        
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        // WHEN
+        let currentCooldownTime = controller.currentCooldownTime()
+        
+        // THEN
+        XCTAssertEqual(currentCooldownTime, 0)
     }
     
     // MARK: - Start watching

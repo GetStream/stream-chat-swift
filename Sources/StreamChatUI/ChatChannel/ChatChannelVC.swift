@@ -72,7 +72,7 @@ open class ChatChannelVC: _ViewController,
         messageListVC.dataSource = self
         messageListVC.client = client
 
-        messageComposerVC.channelController = channelController
+        messageComposerVC.channelController = client.channelController(for: channelController.cid!)
         messageComposerVC.userSearchController = userSuggestionSearchController
 
         channelController.delegate = self

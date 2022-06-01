@@ -80,8 +80,9 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert the `truncatedAt` value is updated
-        XCTAssertEqual(database.viewContext.channel(cid: cid)?.truncatedAt, eventPayload.channel?.truncatedAt)
-        XCTAssertEqual(database.viewContext.channel(cid: cid)?.truncatedAt, date)
+        let truncatedAt = database.viewContext.channel(cid: cid)?.truncatedAt as? Date
+        XCTAssertNearlySameDate(truncatedAt, eventPayload.channel?.truncatedAt)
+        XCTAssertNearlySameDate(truncatedAt, date)
         XCTAssert(forwardedEvent is ChannelTruncatedEventDTO)
     }
 }

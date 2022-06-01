@@ -45,7 +45,7 @@ final class QueuedRequestDTO_Tests: XCTestCase {
         // We check the stored request has all the expected fields
         let request = allRequests.first
         XCTAssertEqual(request?.id, id)
-        XCTAssertEqual(request?.date, date)
+        XCTAssertNearlySameDate(request?.date.bridgeDate, date)
         let databaseEndpointData = try XCTUnwrap(request?.endpoint)
         XCTAssertEqual(databaseEndpointData, endpointData)
         let databaseEndpoint = try JSONDecoder.stream.decode(Endpoint<EmptyResponse>.self, from: databaseEndpointData)

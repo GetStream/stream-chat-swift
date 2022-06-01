@@ -12,15 +12,15 @@ class MemberDTO: NSManagedObject {
     
     // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
     @NSManaged var channelRoleRaw: String?
-    @NSManaged var memberCreatedAt: Date
-    @NSManaged var memberUpdatedAt: Date
+    @NSManaged var memberCreatedAt: DBDate
+    @NSManaged var memberUpdatedAt: DBDate
 
-    @NSManaged var banExpiresAt: Date?
+    @NSManaged var banExpiresAt: DBDate?
     @NSManaged var isBanned: Bool
     @NSManaged var isShadowBanned: Bool
     
-    @NSManaged var inviteAcceptedAt: Date?
-    @NSManaged var inviteRejectedAt: Date?
+    @NSManaged var inviteAcceptedAt: DBDate?
+    @NSManaged var inviteRejectedAt: DBDate?
     @NSManaged var isInvited: Bool
     
     // MARK: - Relationships
@@ -56,9 +56,7 @@ extension MemberDTO {
 extension MemberDTO {
     static func load(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
         let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
-        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", memberId)
-        return try? context.fetch(request).first
+        return load(by: memberId, context: context).first
     }
     
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise create a new
@@ -69,12 +67,14 @@ extension MemberDTO {
     ///   - context: The context used to fetch/create `UserDTO`
     ///
     static func loadOrCreate(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO {
-        if let existing = Self.load(userId: userId, channelId: channelId, context: context) {
+        if let existing = load(userId: userId, channelId: channelId, context: context) {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MemberDTO
-        new.id = Self.createId(userId: userId, channeldId: channelId)
+        let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
+        let request = fetchRequest(id: memberId)
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
+        new.id = memberId
         return new
     }
     
@@ -106,14 +106,14 @@ extension NSManagedObjectContext {
             dto.channelRoleRaw = role.rawValue
         }
         
-        dto.memberCreatedAt = payload.createdAt
-        dto.memberUpdatedAt = payload.updatedAt
+        dto.memberCreatedAt = payload.createdAt.bridgeDate
+        dto.memberUpdatedAt = payload.updatedAt.bridgeDate
         dto.isBanned = payload.isBanned ?? false
         dto.isShadowBanned = payload.isShadowBanned ?? false
-        dto.banExpiresAt = payload.banExpiresAt
+        dto.banExpiresAt = payload.banExpiresAt?.bridgeDate
         dto.isInvited = payload.isInvited ?? false
-        dto.inviteAcceptedAt = payload.inviteAcceptedAt
-        dto.inviteRejectedAt = payload.inviteRejectedAt
+        dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
+        dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
         
         if let query = query {
             let queryDTO = try saveQuery(query)
@@ -160,19 +160,19 @@ extension ChatChannelMember {
             isBanned: dto.user.isBanned,
             isFlaggedByCurrentUser: dto.user.flaggedBy != nil,
             userRole: UserRole(rawValue: dto.user.userRoleRaw),
-            userCreatedAt: dto.user.userCreatedAt,
-            userUpdatedAt: dto.user.userUpdatedAt,
-            lastActiveAt: dto.user.lastActivityAt,
+            userCreatedAt: dto.user.userCreatedAt.bridgeDate,
+            userUpdatedAt: dto.user.userUpdatedAt.bridgeDate,
+            lastActiveAt: dto.user.lastActivityAt?.bridgeDate,
             teams: Set(dto.user.teams),
             extraData: extraData,
             memberRole: role,
-            memberCreatedAt: dto.memberCreatedAt,
-            memberUpdatedAt: dto.memberUpdatedAt,
+            memberCreatedAt: dto.memberCreatedAt.bridgeDate,
+            memberUpdatedAt: dto.memberUpdatedAt.bridgeDate,
             isInvited: dto.isInvited,
-            inviteAcceptedAt: dto.inviteAcceptedAt,
-            inviteRejectedAt: dto.inviteRejectedAt,
+            inviteAcceptedAt: dto.inviteAcceptedAt?.bridgeDate,
+            inviteRejectedAt: dto.inviteRejectedAt?.bridgeDate,
             isBannedFromChannel: dto.isBanned,
-            banExpiresAt: dto.banExpiresAt,
+            banExpiresAt: dto.banExpiresAt?.bridgeDate,
             isShadowBannedFromChannel: dto.isShadowBanned
         )
     }

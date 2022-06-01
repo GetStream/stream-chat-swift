@@ -35,6 +35,13 @@ final class BackendRobot: Robot {
         server.updateConfig(config: config, forChannelWithId: id)
         return self
     }
+
+    @discardableResult
+    func setCooldown(enabled value: Bool, duration: Int) -> Self {
+        let id = server.currentChannelId.isEmpty ? "general" : server.currentChannelId
+        server.setCooldown(enabled: value, duration: duration, inChannelWithId: id)
+        return self
+    }
 }
 
 // MARK: Config

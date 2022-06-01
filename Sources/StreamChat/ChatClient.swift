@@ -33,8 +33,8 @@ public class ChatClient {
     private(set) var backgroundWorkers: [Worker] = []
 
     /// Keeps a weak reference to the active channel list controllers to ensure a proper recovery when coming back online
-    private(set) var activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
-    private(set) var activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
+    private(set) var activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
+    private(set) var activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
 
     /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
     private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
@@ -351,7 +351,9 @@ public class ChatClient {
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     public func disconnect() {
-        clientUpdater.disconnect()
+        clientUpdater.disconnect(source: .userInitiated) {
+            log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
+        }
         userConnectionProvider = nil
     }
 
@@ -536,8 +538,8 @@ extension ChatClient {
         
         var syncRepositoryBuilder: (
             _ config: ChatClientConfig,
-            _ activeChannelControllers: NSHashTable<ChatChannelController>,
-            _ activeChannelListControllers: NSHashTable<ChatChannelListController>,
+            _ activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>,
+            _ activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>,
             _ offlineRequestsRepository: OfflineRequestsRepository,
             _ eventNotificationCenter: EventNotificationCenter,
             _ database: DatabaseContainer,
@@ -609,6 +611,12 @@ extension ClientError {
                 Before performing any other actions on chat client it's required to connect by using \
                 one of the available `connect` methods e.g. `connectUser`.
             """
+        }
+    }
+    
+    public class ClientHasBeenDeallocated: ClientError {
+        override public var localizedDescription: String {
+            "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
         }
     }
 }

@@ -7,8 +7,8 @@ import Foundation
 
 @objc(ChannelMuteDTO)
 final class ChannelMuteDTO: NSManagedObject {
-    @NSManaged var createdAt: Date
-    @NSManaged var updatedAt: Date
+    @NSManaged var createdAt: DBDate
+    @NSManaged var updatedAt: DBDate
     @NSManaged var channel: ChannelDTO
     @NSManaged var currentUser: CurrentUserDTO
     
@@ -21,6 +21,19 @@ final class ChannelMuteDTO: NSManagedObject {
     static func load(cid: ChannelId, context: NSManagedObjectContext) -> ChannelMuteDTO? {
         load(by: fetchRequest(for: cid), context: context).first
     }
+    
+    static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelMuteDTO {
+        let request = fetchRequest(for: cid)
+        if let existing = load(by: request, context: context).first {
+            return existing
+        }
+        
+        let new = NSEntityDescription.insertNewObject(
+            into: context,
+            for: request
+        )
+        return new
+    }
 }
 
 extension NSManagedObjectContext {
@@ -32,16 +45,11 @@ extension NSManagedObjectContext {
         
         let channel = try saveChannel(payload: payload.mutedChannel, query: nil)
         
-        let dto: ChannelMuteDTO
-        if let existing = ChannelMuteDTO.load(cid: payload.mutedChannel.cid, context: self) {
-            dto = existing
-        } else {
-            dto = NSEntityDescription.insertNewObject(forEntityName: ChannelMuteDTO.entityName, into: self) as! ChannelMuteDTO
-        }
+        let dto = ChannelMuteDTO.loadOrCreate(cid: payload.mutedChannel.cid, context: self)
         dto.channel = channel
         dto.currentUser = currentUser
-        dto.createdAt = payload.createdAt
-        dto.updatedAt = payload.updatedAt
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
 
         return dto
     }

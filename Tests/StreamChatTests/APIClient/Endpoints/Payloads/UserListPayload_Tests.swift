@@ -9,7 +9,7 @@ import XCTest
 final class UserListPayload_Tests: XCTestCase {
     func test_usersQueryJSON_isSerialized_withDefaultExtraData() throws {
         // GIVEN
-        let url = XCTestCase.mockData(fromFile: "UsersQuery")
+        let url = XCTestCase.mockData(fromJSONFile: "UsersQuery")
 
         // WHEN
         let payload = try JSONDecoder.default.decode(UserListPayload.self, from: url)

@@ -32,9 +32,8 @@ class ChannelUpdater: Worker {
                 let payload = try result.get()
                 channelCreatedCallback?(payload.channel.cid)
                 database?.write { session in
-                    if clearMessageHistory {
-                        let channelDTO = session.channel(cid: payload.channel.cid)
-                        channelDTO?.messages.removeAll()
+                    if clearMessageHistory, let channelDTO = session.channel(cid: payload.channel.cid) {
+                        channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
                     }
 
                     try session.saveChannel(payload: payload)
@@ -186,7 +185,7 @@ class ChannelUpdater: Worker {
                     if let channel = $0.channel(cid: cid) {
                         channel.isHidden = true
                         if clearHistory {
-                            channel.truncatedAt = Date()
+                            channel.truncatedAt = DBDate()
                         }
                     }
                 } completion: {

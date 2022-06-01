@@ -59,6 +59,12 @@ open class ComposerView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "sendButton")
 
+    /// A view for showing a cooldown when Slow Mode is active.
+    public private(set) lazy var cooldownView: CooldownView = components
+        .cooldownView.init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "cooldownView")
+    
     /// A button to confirm when editing a message.
     public private(set) lazy var confirmButton: UIButton = components
         .confirmButton.init()
@@ -149,7 +155,9 @@ open class ComposerView: _View, ThemeProvider {
         trailingContainer.distribution = .equal
         trailingContainer.directionalLayoutMargins = .zero
         trailingContainer.addArrangedSubview(sendButton)
+        trailingContainer.addArrangedSubview(cooldownView)
         trailingContainer.addArrangedSubview(confirmButton)
+        cooldownView.isHidden = true
         confirmButton.isHidden = true
 
         leadingContainer.axis = .horizontal

@@ -153,6 +153,8 @@ class DatabaseContainer: NSPersistentContainer {
             }
         }
         
+        FetchCache.clear()
+        
         setupLoggerForDatabaseChanges()
     }
     
@@ -202,7 +204,9 @@ class DatabaseContainer: NSPersistentContainer {
         writableContext.perform {
             log.debug("Starting a database session.", subsystems: .database)
             do {
+                FetchCache.clear()
                 try actions(self.writableContext)
+                FetchCache.clear()
                 // If you touch ManagedObject and update one of it properties to same value
                 // Object will be marked as `updated` even it hasn't changed.
                 // By reseting such objects we remove updates that are not updates.
@@ -224,6 +228,7 @@ class DatabaseContainer: NSPersistentContainer {
                 
             } catch {
                 log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)
+                FetchCache.clear()
                 completion(error)
             }
         }
@@ -353,9 +358,11 @@ class DatabaseContainer: NSPersistentContainer {
                     let entities = try writableContext.fetch(fetchRequest) as? [EphemeralValuesContainer]
                     entities?.forEach { $0.resetEphemeralValues() }
                 }
+                FetchCache.clear()
                 try writableContext.save()
                 log.debug("Ephemeral values reset.", subsystems: .database)
             } catch {
+                FetchCache.clear()
                 log.error("Error resetting ephemeral values: \(error)", subsystems: .database)
             }
         }

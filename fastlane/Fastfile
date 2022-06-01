@@ -11,7 +11,7 @@ stress_tests_cycles = 50
 
 before_all do
   if is_ci
-    setup_ci()
+    setup_ci
     xcversion(version: "~> #{xcode_version}")
   end
 end
@@ -358,7 +358,6 @@ end
 
 desc "Builds the latest version of Demo app and uploads it to TestFlight"
 lane :testflight_build do
-
   # Ask around if you're wandering where you can get this key from
   api_key = app_store_connect_api_key(
     key_id: "MT3PRT8TB7",
@@ -371,7 +370,7 @@ lane :testflight_build do
   build_number = latest_testflight_build_number(
     app_identifier: "io.getstream.iOS.ChatDemoApp",
     api_key: api_key
-  )
+  ) + 1
 
   # If version number is different from %d.%d.%d e.g. 3.2.1-beta-6.0 we won't be able to build a test flight build
   # so we take the current version and strip first %d.%d.%d out of it
@@ -391,13 +390,13 @@ lane :testflight_build do
   increment_build_number_in_plist(
     xcodeproj: "StreamChat.xcodeproj",
     target: "DemoApp",
-    build_number: (build_number + 1).to_s,
+    build_number: build_number.to_s
   )
 
   increment_build_number_in_plist(
     xcodeproj: "StreamChat.xcodeproj",
     target: "DemoAppPush",
-    build_number: (build_number + 1).to_s,
+    build_number: build_number.to_s
   )
 
   match_me
@@ -413,7 +412,17 @@ lane :testflight_build do
     output_directory: "archives"
   )
 
-  changelog = "This is the official sample app built with Stream’s iOS Chat SDK v4.0. It’s designed to highlight engaging features and new improvements to the SDK, but remember that this is just one possible implementation. You can start your own by borrowing and customizing the code from this sample, or build something completely different using Stream’s components."
+  external_groups = []
+  changelog =
+    if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
+      "This is the build for Regression testing on release candidate v#{version_number}"
+    else
+      external_groups << 'Public Link'
+      "This is the official sample app built with Stream's iOS Chat SDK v4.0. It's designed to highlight " \
+      'engaging features and new improvements to the SDK, but remember that this is just one possible ' \
+      'implementation. You can start your own by borrowing and customizing the code from this sample, ' \
+      "or build something completely different using Stream's components."
+    end
 
   pilot(
     api_key: api_key,
@@ -421,8 +430,8 @@ lane :testflight_build do
     app_identifier: "io.getstream.iOS.ChatDemoApp",
     app_platform: "ios",
     ipa: "archives/ChatSample.ipa",
-    groups: ['Public Link'],
-    distribute_external: true,
+    groups: external_groups,
+    distribute_external: external_groups.any?,
     reject_build_waiting_for_review: true,
     changelog: changelog
   )
@@ -443,26 +452,27 @@ lane :get_next_issue_number do
 end
 
 # Adds "CI=TRUE" environment variable to the provided test plan file
-def setCIEnvironmentVariable(testPlanFile)
-  file = File.read(testPlanFile)
-  data_hash = JSON.parse(file)
+def add_ci_env_var_to(test_plan_file)
+  return unless is_ci
+
+  data_hash = JSON.parse(File.read(test_plan_file))
 
   # Create the `environmentVariableEntries` array if it doesn't exist
   data_hash['defaultOptions']['environmentVariableEntries'] ||= []
 
   # Append the `CI` ENV variable
-  data_hash['defaultOptions']['environmentVariableEntries'] << {"key"=>"CI", "value"=>"TRUE"}
-  File.write(testPlanFile, JSON.pretty_generate(data_hash))
+  data_hash['defaultOptions']['environmentVariableEntries'] << { 'key' => 'CI', 'value' => 'TRUE' }
+  File.write(test_plan_file, JSON.pretty_generate(data_hash))
 
-  puts "✅ `CI=TRUE` ENV variable added to " + testPlanFile
-  puts "Current testplan ENV variables:"
-  puts data_hash['defaultOptions']['environmentVariableEntries']
+  UI.success("✅ `CI=TRUE` ENV variable added to #{test_plan_file}")
+  UI.message("Current testplan ENV variables:\n#{data_hash['defaultOptions']['environmentVariableEntries']}")
 end
 
 desc "Runs tests in Debug config"
 lane :test do |options|
+  next unless testing_required?(:unit)
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
+  add_ci_env_var_to("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -477,24 +487,52 @@ end
 
 desc "Runs e2e ui tests using mock server in Debug config"
 lane :test_e2e_mock do |options|
+  next unless testing_required?(:e2e)
 
-  setCIEnvironmentVariable('../StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan')
+  add_ci_env_var_to('../StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan')
 
-  scan(
+  scan_options = {
     project: 'StreamChat.xcodeproj',
     scheme: 'StreamChatUITestsApp',
     testplan: 'StreamChatUITestsApp',
     configuration: 'Debug',
-    clean: true,
     devices: options[:device],
     number_of_retries: 1
+  }
+  scan(scan_options.merge(clean: true, build_for_testing: is_ci))
+
+  if is_ci
+    parallelize_tests_on_ci(
+      scan: scan_options,
+      derived_data: lane_context[SharedValues::SCAN_DERIVED_DATA_PATH],
+      batch: options[:batch]
+    )
+  end
+end
+
+private_lane :parallelize_tests_on_ci do |options|
+  xctestrun = Dir.glob("#{options[:derived_data]}/Build/Products/*.xctestrun").first
+  tests = retrieve_tests(xctestrun: xctestrun).values.flatten
+  slice_size = (tests.size / ENV['MATRIX_SIZE'].to_f).ceil
+  only_testing = []
+  tests.each_slice(slice_size) { |test| only_testing << test }
+  only_testing_batch = only_testing[options[:batch].to_i]
+
+  UI.success("Tests in total: #{only_testing.flatten.size}. Running #{only_testing_batch.size} of them ⌛️")
+  scan(
+    options[:scan].merge(
+      test_without_building: true,
+      derived_data_path: options[:derived_data],
+      only_testing: only_testing_batch
+    )
   )
 end
 
 desc "Runs ui tests in Debug config"
 lane :test_ui do |options|
+  next unless testing_required?(:ui)
 
-  setCIEnvironmentVariable("../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -509,8 +547,7 @@ end
 
 desc "Runs ui tests in Release config"
 lane :test_ui_release do |options|
-
-  setCIEnvironmentVariable("../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -524,8 +561,7 @@ end
 
 desc "Runs tests in Release config"
 lane :test_release do |options|
-
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -539,10 +575,9 @@ end
 
 desc "Runs tests in Release config on macOS"
 lane :test_release_macos do
+  add_ci_env_var_to("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
-
-  match_macos()
+  match_macos
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -557,10 +592,9 @@ end
 
 desc "Runs tests in Debug config on macOS"
 lane :test_debug_macos do
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
-
-  match_macos()
+  match_macos
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -593,7 +627,7 @@ lane :stress_test do
     devices: options[:device]
   )
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan')
 
   stress_tests_cycles.times {
     scan(
@@ -618,7 +652,7 @@ lane :stress_test_release do |options|
     devices: options[:device]
   )
 
-  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan')
 
   stress_tests_cycles.times {
     scan(
@@ -749,4 +783,24 @@ lane :emerge_upload do
     pr_number: pr_num,
     sha: sha
   )
+end
+
+def testing_required?(type)
+  return true if ENV['GITHUB_EVENT_NAME'] != 'pull_request'
+
+  sources = {
+    e2e: %w[Sources StreamChatUITestsAppUITests StreamChatUITestsApp],
+    unit: %w[Sources Tests StreamChat.xcodeproj],
+    ui: %w[Sources Tests/StreamChatUITests Tests/UISDKdocumentationTests]
+  }
+
+  pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
+
+  changed_files = sh("gh pr view #{pr_number} --json files -q '.files[].path'")
+
+  changed_files = changed_files.split("\n").select do |path|
+    sources[type.to_sym].any? { |required| path.start_with?(required) }
+  end
+
+  changed_files.size.positive?
 end

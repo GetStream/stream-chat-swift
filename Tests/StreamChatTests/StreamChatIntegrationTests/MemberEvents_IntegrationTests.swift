@@ -30,7 +30,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
     }
 
     func test_MemberAddedEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "MemberAdded")
+        let json = XCTestCase.mockData(fromJSONFile: "MemberAdded")
         let event = try eventDecoder.decode(from: json) as? MemberAddedEventDTO
 
         let unwrappedEvent = try XCTUnwrap(event)
@@ -40,7 +40,10 @@ final class MemberEvents_IntegrationTests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: unwrappedEvent.cid))
         }
 
-        client.eventNotificationCenter.process(unwrappedEvent)
+        let completionCalled = expectation(description: "completion called")
+        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        
+        wait(for: [completionCalled], timeout: 1)
 
         AssertAsync {
             Assert.willNotBeNil(
@@ -53,12 +56,15 @@ final class MemberEvents_IntegrationTests: XCTestCase {
     }
 
     func test_MemberUpdatedEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "MemberUpdated")
+        let json = XCTestCase.mockData(fromJSONFile: "MemberUpdated")
         let event = try eventDecoder.decode(from: json) as? MemberUpdatedEventDTO
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
-
+        let completionCalled = expectation(description: "completion called")
+        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        
+        wait(for: [completionCalled], timeout: 1)
+        
         AssertAsync {
             Assert.willNotBeNil(
                 self.client.databaseContainer.viewContext.member(
@@ -70,7 +76,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
     }
 
     func test_MemberRemovedEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "MemberRemoved")
+        let json = XCTestCase.mockData(fromJSONFile: "MemberRemoved")
         let event = try eventDecoder.decode(from: json) as? MemberRemovedEventDTO
 
         let channelId = ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY")

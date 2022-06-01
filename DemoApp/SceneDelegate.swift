@@ -14,26 +14,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = scene as? UIWindowScene else { return }
-        let window = UIWindow(windowScene: scene)
         
-        guard let navigationController = UIStoryboard(
-            name: "Main",
-            bundle: nil
-        ).instantiateInitialViewController() as? UINavigationController else { return }
-        window.rootViewController = navigationController
-        coordinator = DemoAppCoordinator(navigationController: navigationController)
-
-        UNUserNotificationCenter.current().delegate = coordinator
-
-        if let notificationResponse = connectionOptions.notificationResponse {
-            print("debugging: \(notificationResponse)")
-            print("debugging: \(notificationResponse.actionIdentifier)")
-            print("debugging: \(notificationResponse.notification)")
-        }
+        let window = UIWindow(windowScene: scene)
+        window.tintColor = .streamBlue
+        
+        coordinator = DemoAppCoordinator(window: window)
+        coordinator.start()
+        
+        window.makeKeyAndVisible()
         
         self.window = window
-        window.makeKeyAndVisible()
-        scene.windows.forEach { $0.tintColor = .streamBlue }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {}

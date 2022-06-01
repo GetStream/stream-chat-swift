@@ -14,6 +14,11 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
     var pendingThreadReply: String { "pending \(threadReply)" }
     var failedThreadReply: String { "failed \(threadReply)" }
 
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        addTags([.messageDeliveryStatus])
+    }
+
     // MARK: Message List
     func test_singleCheckmarkShown_whenMessageIsSent() {
         linkToScenario(withId: 129)
@@ -46,7 +51,9 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
         }
         WHEN("user sends a new message") {
             backendRobot.delayServerResponse(byTimeInterval: 5.0)
-            userRobot.sendMessage(pendingMessage)
+            userRobot
+                .sendMessage(pendingMessage)
+                .waitForNewMessage(withText: pendingMessage)
         }
         THEN("message delivery status shows clocks") {
             userRobot.assertMessageDeliveryStatus(.pending)
@@ -66,7 +73,9 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
             deviceRobot.setConnectivity(to: .off)
         }
         WHEN("user sends a new message") {
-            userRobot.sendMessage(failedMessage)
+            userRobot
+                .sendMessage(failedMessage)
+                .waitForNewMessage(withText: failedMessage)
         }
         THEN("error indicator is shown for the message") {
             userRobot
@@ -177,7 +186,9 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("user succesfully sends new message") {
-            userRobot.sendMessage(message)
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         AND("delivery status shows single checkmark") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -317,7 +328,9 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to the message in thread") {
-            userRobot.replyToMessageInThread(threadReply)
+            userRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessageInThread(threadReply)
         }
         THEN("user spots single checkmark below the thread reply") {
             userRobot
@@ -336,7 +349,9 @@ extension MessageDeliveryStatus_Tests {
                 .openChannel()
         }
         AND("user sends a new message") {
-            userRobot.sendMessage(message)
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         WHEN("user becomes offline") {
             deviceRobot.setConnectivity(to: .off)
@@ -367,6 +382,7 @@ extension MessageDeliveryStatus_Tests {
         }
         WHEN("user replies to message in thread") {
             userRobot
+                .waitForNewMessage(withText: message)
                 .replyToMessageInThread(threadReply)
                 .waitForNewMessage(withText: threadReply)
         }
@@ -393,7 +409,9 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
-            userRobot.replyToMessageInThread(threadReply)
+            userRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessageInThread(threadReply)
         }
         WHEN("new participant is added to the channel") {
             userRobot
@@ -422,13 +440,14 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
-            userRobot.replyToMessageInThread(threadReply)
-                participantRobot.chill(duration: 1)
+            userRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessageInThread(threadReply)
         }
         AND("thread reply is read by participant") {
             participantRobot
+                .waitForNewMessage(withText: threadReply)
                 .readMessage()
-                .chill(duration: 1)
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
@@ -456,7 +475,9 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
-            userRobot.replyToMessageInThread(threadReply)
+            userRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessageInThread(threadReply)
         }
         AND("delivery status shows single checkmark") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -484,7 +505,9 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
-            userRobot.replyToMessageInThread(threadReply)
+            userRobot
+                .waitForNewMessage(withText: message)
+                .replyToMessageInThread(threadReply)
         }
         AND("delivery status shows single checkmark") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -562,7 +585,9 @@ extension MessageDeliveryStatus_Tests {
         }
         WHEN("user sends a new message") {
             backendRobot.delayServerResponse(byTimeInterval: 5.0)
-            userRobot.sendMessage(pendingMessage)
+            userRobot
+                .sendMessage(pendingMessage)
+                .waitForNewMessage(withText: pendingMessage)
         }
         THEN("message delivery status shows clocks") {
             userRobot
@@ -589,6 +614,7 @@ extension MessageDeliveryStatus_Tests {
         }
         THEN("error indicator is shown for the message") {
             userRobot
+                .waitForNewMessage(withText: failedMessage)
                 .assertMessageFailedToBeSent()
         }
         AND("delivery status is hidden") {
@@ -695,7 +721,9 @@ extension MessageDeliveryStatus_Tests {
                 .openChannel()
         }
         AND("user succesfully sends new message") {
-            userRobot.sendMessage(message)
+            userRobot
+                .sendMessage(message)
+                .waitForNewMessage(withText: message)
         }
         AND("delivery status is hidden") {
             userRobot.assertMessageDeliveryStatus(nil)
