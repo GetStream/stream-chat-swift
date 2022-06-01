@@ -49,6 +49,40 @@ let messageDisplayOptions = MessageDisplayOptions(
 )
 ```
 
+For link attachments, you can control the link text attributes (font, font weight, color) based on the message. Here's an example how to change the link color based on the message sender, with the `messageLinkDisplayResolver`:
+
+```swift
+let messageDisplayOptions = MessageDisplayOptions(messageLinkDisplayResolver: { message in
+    let color = message.isSentByCurrentUser ? UIColor.red : UIColor.green
+        return [
+            NSAttributedString.Key.foregroundColor: color
+        ]
+    })
+let messageListConfig = MessageListConfig(messageDisplayOptions: messageDisplayOptions)
+let utils = Utils(messageListConfig: messageListConfig)
+        
+let streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+## Date Indicators
+
+The SDK supports two types of date indicators - floating overlay and date separators inside the messages. This feature can be configured via the `dateIndicatorPlacement` in the `MessageListConfig`. With the floating overlay option (`.overlay`), the date indicator is shown for a short time whenever a new message appears. On the other hand, if you want to always show the date between messages, similarly to Apple Messages and WhatsApp, you should use the `.messageList` option. You can turn off both options by using the `.none` option. Here's an example how to setup the `messageList` option:
+
+```swift
+let utils = Utils(messageListConfig: MessageListConfig(dateIndicatorPlacement: .messageList))
+let streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+If you want to replace the separating date indicator view, you need to implement the `makeMessageListDateIndicator` method. You can control the size of this view view with the `overlayDateLabelSize` in the `MessageDisplayOptions`.
+
+```swift
+public func makeMessageListDateIndicator(date: Date) -> some View {
+    DateIndicatorView(date: date)
+}
+```
+
+## Message List Background
+
 You can also modify the background of the message list to any SwiftUI `View` (`Color`, `LinearGradient`, `Image` etc.). In order to do this, you would need to implement the `makeMessageListBackground` method in the `ViewFactory`.
 
 ```swift
@@ -156,6 +190,10 @@ The parameters that you can use in this method are:
 - `quotedMessage`: binding of an optional quoted message.
 - `onLongPress`: called when the message is long pressed.
 - `isLast`: whether it is the last message (e.g. to apply extra padding).
+
+## Grouping Messages
+
+The messages are grouped based on the `maxTimeIntervalBetweenMessagesInGroup` value in the `MessageListConfig`. The default value of this property is 60 seconds, which means messages that are 60 seconds (or less) apart, will be grouped together. You can change this value when you initialize the `MessageListConfig`.
 
 ## System Messages 
 
