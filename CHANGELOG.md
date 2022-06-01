@@ -8,7 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # [4.15.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.15.1)
 _June 01, 2022_
 
+This release does not contain any code changes.
+
 ### 🔄 Changed
+* Provides new `SPI` config.
+* Adds [swift docc plugin](https://github.com/apple/swift-docc-plugin) to package dependencies.
 
 # [4.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.15.0)
 _May 11, 2022_
