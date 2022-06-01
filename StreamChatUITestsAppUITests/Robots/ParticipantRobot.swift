@@ -60,8 +60,13 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func sendMessage(_ text: String) -> Self {
+    func sendMessage(_ text: String,
+                     at messageCellIndex: Int? = nil,
+                     waitForAppearance: Bool = true,
+                     file: StaticString = #filePath,
+                     line: UInt = #line) -> Self {
         waitForChannelQueryUpdate()
+        
         server.websocketMessage(
             text,
             channelId: server.currentChannelId,
@@ -69,6 +74,15 @@ final class ParticipantRobot: Robot {
             eventType: .messageNew,
             user: participant()
         )
+        
+        if waitForAppearance {
+            server.waitForWebsocketMessage(withText: text)
+            
+            let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
+            let textView = attributes.text(in: cell)
+            _ = textView.waitForText(text)
+        }
+        
         return self
     }
 
@@ -81,7 +95,7 @@ final class ParticipantRobot: Robot {
         }
 
         texts.forEach {
-            sendMessage($0)
+            sendMessage($0, waitForAppearance: false)
             wait(0.5)
         }
         return self

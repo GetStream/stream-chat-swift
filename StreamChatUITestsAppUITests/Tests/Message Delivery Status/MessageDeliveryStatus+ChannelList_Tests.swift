@@ -28,9 +28,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
             backendRobot.delayServerResponse(byTimeInterval: 10.0)
         }
         AND("user sends new message") {
-            userRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            userRobot.sendMessage(message, waitForAppearance: false)
         }
         WHEN("user retuns to the channel list before the message is sent") {
             userRobot.tapOnBackButton()
@@ -52,9 +50,6 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
         }
         AND("user sends new message") {
             userRobot.sendMessage(message)
-        }
-        AND("message is succesfully sent") {
-            userRobot.waitForNewMessage(withText: message)
         }
         WHEN("user retuns to the channel list") {
             userRobot.tapOnBackButton()
@@ -79,7 +74,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
         AND("user's message is not sent") {
             deviceRobot.setConnectivity(to: .off)
             userRobot
-                .sendMessage(failedMessage)
+                .sendMessage(failedMessage, waitForAppearance: false)
                 .assertMessageFailedToBeSent()
         }
         WHEN("user retuns to the channel list") {
@@ -101,9 +96,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("user succesfully sends new message") {
-            userRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            userRobot.sendMessage(message)
         }
         AND("user retuns to the channel list") {
             userRobot.tapOnBackButton()
@@ -131,9 +124,6 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
         AND("user sends a new message") {
             userRobot.sendMessage(message)
         }
-        AND("message is succesfully sent") {
-            userRobot.waitForNewMessage(withText: message)
-        }
         WHEN("user retuns to the channel list") {
             userRobot.tapOnBackButton()
         }
@@ -153,9 +143,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("participant sends a new message") {
-            participantRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            participantRobot.sendMessage(message)
         }
         AND("user retuns to the channel list") {
             userRobot.tapOnBackButton()
@@ -184,9 +172,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to the message in thread") {
-            userRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessageInThread(threadReply)
+            userRobot.replyToMessageInThread(threadReply)
         }
         WHEN("user retuns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
@@ -209,15 +195,13 @@ extension MessageDeliveryStatus_ChannelList_Tests {
                 .openChannel()
         }
         AND("user sends a new message") {
-            userRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            userRobot.sendMessage(message)
         }
         AND("user becomes offline") {
             deviceRobot.setConnectivity(to: .off)
         }
         AND("user replies to message in thread") {
-            userRobot.replyToMessageInThread(failedThreadReply)
+            userRobot.replyToMessageInThread(failedThreadReply, waitForAppearance: false)
         }
         WHEN("user retuns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
@@ -239,9 +223,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
                 .openChannel()
         }
         AND("participant sends a new message") {
-            participantRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
             userRobot.replyToMessageInThread(threadReply)
@@ -275,9 +257,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
-            userRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessageInThread(threadReply)
+            userRobot.replyToMessageInThread(threadReply)
         }
         WHEN("user retuns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
@@ -302,9 +282,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
             participantRobot.sendMessage(message)
         }
         AND("participant replies to message in thread") {
-            participantRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessageInThread(threadReply)
+            participantRobot.replyToMessageInThread(threadReply)
         }
         WHEN("user retuns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()

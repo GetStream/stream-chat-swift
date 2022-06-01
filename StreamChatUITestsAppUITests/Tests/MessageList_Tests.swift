@@ -111,9 +111,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("user sends the message: '\(message)'") {
-            userRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            userRobot.sendMessage(message)
         }
         AND("user deletes the message: '\(message)'") {
             userRobot.deleteMessage()
@@ -139,9 +137,7 @@ final class MessageList_Tests: StreamTestCase {
                 .sendMessage(message)
         }
         THEN("the message is delivered") {
-            userRobot
-                .waitForNewMessage(withText: message)
-                .assertMessageAuthor(author)
+            userRobot.assertMessageAuthor(author)
         }
     }
     
@@ -154,9 +150,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant sends the message: '\(message)'") {
-            participantRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            participantRobot.sendMessage(message)
         }
         AND("participant deletes the message: '\(message)'") {
             participantRobot.deleteMessage()
@@ -182,9 +176,7 @@ final class MessageList_Tests: StreamTestCase {
                 .sendMessage(message)
         }
         AND("participant edits the message: '\(editedMessage)'") {
-            participantRobot
-                .waitForNewMessage(withText: message)
-                .editMessage(editedMessage)
+            participantRobot.editMessage(editedMessage)
         }
         THEN("the message is edited") {
             participantRobot.assertMessage(editedMessage)
@@ -202,9 +194,7 @@ final class MessageList_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("user sends \(oneLineMessage) message") {
-            userRobot
-                .sendMessage(oneLineMessage)
-                .waitForNewMessage(withText: oneLineMessage)
+            userRobot.sendMessage(oneLineMessage)
         }
         WHEN("user edits their message so that the length becomes two lines") {
             userRobot.editMessage(twoLinesMessage)
@@ -297,9 +287,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.scrollMessageListUp()
         }
         AND("user sends a new message") {
-            userRobot
-                .sendMessage(newMessage)
-                .waitForNewMessage(withText: newMessage)
+            userRobot.sendMessage(newMessage)
         }
         THEN("message list is scrolled down") {
             userRobot.assertMessageIsVisible(newMessage)
@@ -311,7 +299,6 @@ final class MessageList_Tests: StreamTestCase {
 
         let count = 50
         let message = "message"
-        let lastMessage = "\(message)-\(count)"
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
@@ -320,14 +307,10 @@ final class MessageList_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("channel is scrollable") {
-            participantRobot
-                .sendMultipleMessages(repeatingText: message, count: count)
-                .waitForNewMessage(withText: lastMessage)
+            participantRobot.sendMultipleMessages(repeatingText: message, count: count)
         }
         WHEN("participant sends a message") {
-            participantRobot
-                .sendMessage(newMessage)
-                .waitForNewMessage(withText: newMessage)
+            participantRobot.sendMessage(newMessage)
         }
         THEN("message list is scrolled down") {
             userRobot.assertMessageIsVisible(newMessage)
@@ -379,9 +362,7 @@ extension MessageList_Tests {
             participantRobot.sendMessage(message)
         }
         WHEN("user adds a quoted reply to participant message") {
-            userRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessage(quotedMessage)
+            userRobot.replyToMessage(quotedMessage)
         }
         THEN("user observes the reply in message list") {
             userRobot.assertQuotedMessage(replyText: quotedMessage, quotedText: message)
@@ -403,9 +384,7 @@ extension MessageList_Tests {
             userRobot.sendMessage(message)
         }
         WHEN("participant adds a quoted reply to users message") {
-            participantRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessage(quotedMessage)
+            participantRobot.replyToMessage(quotedMessage)
         }
         THEN("user observes the reply in message list") {
             userRobot.assertQuotedMessage(replyText: quotedMessage, quotedText: message)
@@ -427,9 +406,7 @@ extension MessageList_Tests {
             userRobot.sendMessage(message)
         }
         AND("participant adds a quoted reply to users message") {
-            participantRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessage(quotedMessage)
+            participantRobot.replyToMessage(quotedMessage)
         }
         WHEN("participant deletes a quoted message") {
             participantRobot.deleteMessage()
@@ -454,9 +431,7 @@ extension MessageList_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user adds a quoted reply to users message") {
-            userRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessage(quotedMessage)
+            userRobot.replyToMessage(quotedMessage)
         }
         WHEN("user deletes a quoted message") {
             userRobot.deleteMessage()
@@ -484,9 +459,7 @@ extension MessageList_Tests {
             participantRobot.sendMessage(message)
         }
         WHEN("user adds a thread reply to participant's message and sends it also to main channel") {
-            userRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
         }
         THEN("user observes the thread reply in thread") {
             userRobot.assertThreadReply(threadReply)
@@ -513,9 +486,7 @@ extension MessageList_Tests {
             userRobot.sendMessage(message)
         }
         AND("participant adds a thread reply to users's message and sends it also to main channel") {
-            participantRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
         }
         WHEN("participant removes the thread reply from channel") {
             participantRobot.deleteMessage()
@@ -545,9 +516,7 @@ extension MessageList_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user adds a thread reply to participant's message and sends it also to main channel") {
-            userRobot
-                .waitForNewMessage(withText: message)
-                .replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
         }
         WHEN("user removes thread reply from thread") {
             userRobot.deleteMessage()
@@ -574,9 +543,7 @@ extension MessageList_Tests {
                 .openChannel()
         }
         AND("participant sends a message") {
-            participantRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            participantRobot.sendMessage(message)
         }
         AND("user adds a thread reply to participant's message and sends it also to main channel") {
             userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)

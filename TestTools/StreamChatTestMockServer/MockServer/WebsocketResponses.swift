@@ -117,6 +117,7 @@ public extension StreamMockServer {
         json[MessagePayloadsCodingKeys.type.rawValue] = eventType.rawValue
         
         writeText(json.jsonToString())
+        if eventType == .messageNew { latestWebsocketMessage = text ?? "" }
         return self
     }
     
