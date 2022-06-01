@@ -227,9 +227,9 @@ final class ListChangeAggregator_Tests: XCTestCase {
         aggregator.controller(
             fakeController,
             didChange: updatedObject,
-            at: [2, 0],
+            at: [1, 0],
             for: .update,
-            newIndexPath: nil
+            newIndexPath: [2, 0],
         )
 
         // Simulate FRC finishes updating
