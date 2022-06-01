@@ -32,7 +32,7 @@ build() {
   xcodebuild docbuild -scheme "${TARGET}" \
   -destination generic/platform=iOS \
   OTHER_DOCC_FLAGS="--transform-for-static-hosting --hosting-base-path
-${HOSTING_BASE_PATH} --output-path ./docs --emit-digest"
+${HOSTING_BASE_PATH} --output-path docs --emit-digest"
   #
   # $(xcrun --find swift) build --target "${TARGET}" \
   #     --destination "generic/platform=iOS" \
@@ -46,8 +46,11 @@ convert() {
       --fallback-display-name "${TARGET}" \
       --fallback-bundle-identifier "${BUNDLE_IDENTIFIER}" \
       --fallback-bundle-version "${BUNDLE_VERSION}" \
-      --additional-symbol-graph-dir .build/symbol-graphs \
       --experimental-documentation-coverage \
+      --transform-for-static-hosting \
+      --hosting-base-path ${HOSTING_BASE_PATH} \
+      --output-path ./docs \
+      --emit-digest \
       --level brief
 }
 
@@ -60,6 +63,6 @@ preview() {
 }
 
 build
-
+# convert
 # convert
 # host_on_GH_pages
