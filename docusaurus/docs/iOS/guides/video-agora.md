@@ -20,9 +20,10 @@ In order to create this, follow these six steps:
 6. Hook up the agora SDK to the UI
 
 <aside>
-💡 On the second step of creating a server: we will provide a solution for you that you can re-use but in case you’re interested we offer a guide on how to build one as well. (TODO: link to repo)
-
+💡 On the second step of creating a server: we provide <a href="https://github.com/GetStream/iOS-video-integration-agora">a solution</a> for you that you can re-use but in case you’re interested we offer a guide on how to build one as well.
 </aside>
+
+<br />
 
 In order to not start from the beginning, [the tutorial for SwiftUI](https://getstream.io/tutorials/swiftui-chat/) from [our website](https://getstream.io) is set as the starting point. So, if you followed this one, you are ready to jump right in.
 
@@ -37,7 +38,7 @@ Once you have these two available you can continue with this guide.
 
 ## 2. Create a server
 
-This guide does not cover each and every step required to create a server. However, we do offer a custom solution in *node.js* that you can use, that supports all necessary steps and APIs.
+This guide does not cover each and every step required to create a server. However, we do offer a custom solution in _node.js_ that you can use, that supports all necessary steps and APIs.
 
 Go to the Github page (TODO: create a Github page with a guide) to see an integration guide. We will assume that you followed the following steps, to have a server up and running on your local machine:
 
@@ -63,7 +64,7 @@ struct AccessTokenResponse: Codable {
 }
 
 class NetworkManager {
-	
+
 #if targetEnvironment(simulator)
 	// simulator code
 	let serverAddress: String = "http://localhost:3000"
@@ -71,35 +72,35 @@ class NetworkManager {
 	// real device code (you need to check the IP address of your mac in network settings
 	let serverAddress: String = "http://192.168.178.132:3000"
 #endif
-	
+
 	static let shared = NetworkManager()
-	
+
 	private init() {}
-	
+
 	func getAccessToken(for channel: String, with uid: UInt) async throws -> AccessTokenResponse {
 		var urlComponents = URLComponents(string: createRoomCreationUrlString())
-		
+
 		// Add query parameters
 		urlComponents?.queryItems = [
 			URLQueryItem(name: "channelId", value: channel),
 			URLQueryItem(name: "uid", value: "\(uid)")
 		]
-		
+
 		guard let url = urlComponents?.url else {
 			throw MyError.urlCreationFailure(message: "Access Token URL could not be created")
 		}
-		
+
 		var request = URLRequest(url: url)
 		request.httpMethod = "GET"
-		
+
 		print("=== \(request.url?.absoluteString ?? "unknown")")
-		
+
 		let (data, response) = try await URLSession.shared.data(for: request)
-		
+
 		guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
 			throw MyError.invalidServerResponse(message: response.debugDescription)
 		}
-		
+
 		if let responseObject = try? JSONDecoder().decode(AccessTokenResponse.self, from: data) {
 			print(responseObject)
 			return responseObject
@@ -107,7 +108,7 @@ class NetworkManager {
 			throw MyError.unsupportedData
 		}
 	}
-	
+
 	private func createRoomCreationUrlString() -> String {
 		return "\(serverAddress)/accessToken"
 	}
@@ -115,10 +116,11 @@ class NetworkManager {
 ```
 
 <aside>
-💡 Note that you need to change the `serverAddress` variable on *line 21* to match the IP address of your Mac in order to connect your real device to the server.
-Not sure where to find the correct IP? [Check out this guide](https://www.hellotech.com/guide/for/how-to-find-ip-address-on-mac).
-
+💡 Note that you need to change the <code>serverAddress</code> variable on <b>line 21</b> to match the IP address of your Mac in order to connect your real device to the server.
+Not sure where to find the correct IP? <a href="https://www.hellotech.com/guide/for/how-to-find-ip-address-on-mac">Check out this guide</a>.
 </aside>
+
+<br />
 
 With that, the server is running and you have a helper class that allows you to interact with the backend without much need for customization.
 
@@ -151,36 +153,36 @@ import StreamChat
 import StreamChatSwiftUI
 
 class CallViewModel: NSObject, ObservableObject  {
-	
+
 	@Injected(\.chatClient) var chatClient
 
-		// Indicates whether a call is active at the moment
+	// Indicates whether a call is active at the moment
 	@Published fileprivate(set) var callActive: Bool = false
 
 	// Indicates whether the call screen is currently shown
 	@Published var isCallScreenShown: Bool = false
-	
+
 	// Handles for muting of audio / video
 	@Published private(set) var isAudioMuted = false
 	@Published private(set) var isVideoMuted = false
 
-		// Needed to update the call info about the channel
-		private var channelController: ChatChannelController?
+	// Needed to update the call info about the channel
+	private var channelController: ChatChannelController?
 
-		// Property used to detect if the user is currently in a call
-		@Published private(set) var ownUid: UInt?
+	// Property used to detect if the user is currently in a call
+	@Published private(set) var ownUid: UInt?
 
-		func setChannelId(_ id: ChannelId) {}
+	func setChannelId(_ id: ChannelId) {}
 
-		func startCall(updateChannel: Bool = true) {}
+	func startCall(updateChannel: Bool = true) {}
 
-		func joinCall() {}
+	func joinCall() {}
 
-		func leaveCall() {}
+	func leaveCall() {}
 
-		func toggleAudioMute() {}
+	func toggleAudioMute() {}
 
-		func toggleVideoMute() {}
+	func toggleVideoMute() {}
 }
 ```
 
@@ -194,7 +196,7 @@ You saw the UI in the video at the beginning of this guide. It’s not a complic
 
 You’ll start off with creating the view for calls, that shows some UI elements and the participants. Let’s have a look first at what it is made up of:
 
-![call-preview.png](../assets/agora-call-preview.png)
+![Preview of the call screen](../assets/video-call-preview.png)
 
 The UI components are:
 
@@ -204,7 +206,7 @@ The UI components are:
 
 ### Create a View for Call Participants
 
-For the rendering of participants’ videos, you will use the *agora* SDK. This is only supported in UIKit yet so this part of the UI will be wrapped inside of a `ViewController` that will then be bridged with SwiftUI to make it integrate seamlessly into the project.
+For the rendering of participants’ videos, you will use the _agora_ SDK. This is only supported in UIKit yet so this part of the UI will be wrapped inside of a `ViewController` that will then be bridged with SwiftUI to make it integrate seamlessly into the project.
 
 Start off by creating a new Swift file called `RemoteVideoViewController`.
 
@@ -222,7 +224,7 @@ import AgoraRtcKit
 import SwiftUI
 
 class RemoteVideoViewController: UIViewController {
-	
+
 	let stackView: UIStackView = {
 		let sv = UIStackView()
 		sv.translatesAutoresizingMaskIntoConstraints = false
@@ -231,14 +233,14 @@ class RemoteVideoViewController: UIViewController {
 		sv.spacing = 16.0
 		return sv
 	}()
-	
+
 	var remoteVideoViews: [UInt: UIView] = [:]
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
 		self.view.addSubview(stackView)
-		
+
 		NSLayoutConstraint.activate([
 			stackView.topAnchor.constraint(equalTo: view.topAnchor),
 			stackView.leftAnchor.constraint(equalTo: view.leftAnchor),
@@ -246,19 +248,19 @@ class RemoteVideoViewController: UIViewController {
 			stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
 		])
 	}
-	
+
 	func addVideoView(_ view: AgoraRtcVideoCanvas, with uid: UInt) {
 		let containerView = UIView()
 		containerView.backgroundColor = .gray
 		containerView.translatesAutoresizingMaskIntoConstraints = false
-		
+
 		stackView.addArrangedSubview(containerView)
-		
+
 		view.view = containerView
-		
+
 		remoteVideoViews[uid] = containerView
 	}
-	
+
 	func removeVideoView(with uid: UInt) {
 		if !remoteVideoViews.keys.contains(uid) {
 			print("Uid (\(uid)) is not in keys.")
@@ -268,7 +270,7 @@ class RemoteVideoViewController: UIViewController {
 		viewToRemove?.removeFromSuperview()
 		remoteVideoViews.removeValue(forKey: uid)
 	}
-	
+
 	override func viewDidDisappear(_ animated: Bool) {
 		remoteVideoViews = [:]
 				for child in stackView.subviews {
@@ -276,37 +278,38 @@ class RemoteVideoViewController: UIViewController {
 		}
 		super.viewDidDisappear(animated)
 	}
-	
+
 }
 ```
 
 <aside>
 💡 Note that the view uses UI that is created programmatically. The sole purpose is that it fits the scope of this guide better. You are free to use whatever you like.
-
 </aside>
+
+<br />
 
 Connecting this code with real calls will happen in a later chapter, but the UI is functional for now. The last required step is to create a bridge for SwiftUI so that you can use the `RemoteVideoViewController` in the SwiftUI world.
 
 Luckily, there is `UIViewControllerRepresentable` that allows to quite simply wrap a `UIViewController` with very few lines of code.
 
-Add the following lines to the top of the  `RemoteVideoViewController.swift` file (after the imports):
+Add the following lines to the top of the `RemoteVideoViewController.swift` file (after the imports):
 
 ```swift
 struct RemoteVideoView: UIViewControllerRepresentable {
-	
+
 	let viewController: RemoteVideoViewController
-	
+
 	func makeUIViewController(context: Context) -> some UIViewController {
 		return viewController
 	}
-	
+
 	func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
 		// nothing to do here
 	}
 }
 ```
 
-The `viewController` variable is used because it will be part of the view model and needs to reflect updates from the *agora* SDK when participants are joining or leaving a call.
+The `viewController` variable is used because it will be part of the view model and needs to reflect updates from the _agora_ SDK when participants are joining or leaving a call.
 
 Add the following variable to `CallViewModel`:
 
@@ -318,9 +321,9 @@ You have now taken care of the video from other participants of the call, so let
 
 ### Create a view of the user’s video
 
-What you can see from the UIKit view is that in order to show the remote video, you need to have a `UIView` as a container. You’ll then create the *agora* SDK’s video view and assign your container as its `view` property (you will see how to do that in the later chapter called “**Integration of the agora SDK**”.
+What you can see from the UIKit view is that in order to show the remote video, you need to have a `UIView` as a container. You’ll then create the _agora_ SDK’s video view and assign your container as its `view` property (you will see how to do that in the later chapter called “**Integration of the agora SDK**”.
 
-The process is merely the same for the user’s local video. Again, you’ll need to create a `UIView` for the container that serves as a canvas for the video. 
+The process is merely the same for the user’s local video. Again, you’ll need to create a `UIView` for the container that serves as a canvas for the video.
 
 Create a new Swift file called `VideoCanvas` and fill it with this code:
 
@@ -328,22 +331,22 @@ Create a new Swift file called `VideoCanvas` and fill it with this code:
 import SwiftUI
 
 struct VideoCanvas: UIViewRepresentable {
-	
+
 	let containerView = UIView()
-	
+
 	func makeUIView(context: Context) -> some UIView {
 		containerView.backgroundColor = .gray
 		return containerView
 	}
-	
+
 	func updateUIView(_ uiView: UIViewType, context: Context) {
 		// Nothing to do here
 	}
-	
+
 }
 ```
 
-It is important to have a reference to the `containerView` because that is needed to assign it to the *agora* SDK’s video view.
+It is important to have a reference to the `containerView` because that is needed to assign it to the _agora_ SDK’s video view.
 
 With that, head over to the `CallViewModel` and give it a new property (e.g. right below the previously added `remoteVideoViewController`):
 
@@ -351,7 +354,7 @@ With that, head over to the `CallViewModel` and give it a new property (e.g. rig
 var localCanvas = VideoCanvas()
 ```
 
-Hooking that up with real functionality comes later but now you have everything ready to combine the previously created views and create the UI for an entire call. 
+Hooking that up with real functionality comes later but now you have everything ready to combine the previously created views and create the UI for an entire call.
 
 ### Combine everything with the call view
 
@@ -375,18 +378,18 @@ Here is the code for the `CallView`:
 import SwiftUI
 
 struct CallView: View {
-	
+
 	@ObservedObject var viewModel: CallViewModel
-	
+
 	var body: some View {
 		ZStack {
 			RemoteVideoView(viewController: viewModel.remoteVideoViewController)
-			
+
 			VStack {
 				if let _ = viewModel.ownUid {
 					HStack {
 						Spacer()
-						
+
 						if viewModel.isVideoMuted {
 							Rectangle()
 								.fill(Color.gray)
@@ -399,9 +402,9 @@ struct CallView: View {
 					}
 					.padding()
 				}
-				
+
 				Spacer()
-				
+
 				HStack(spacing: 40) {
 					Button {
 						// mute
@@ -411,7 +414,7 @@ struct CallView: View {
 							.foregroundColor(viewModel.isAudioMuted ? .gray : .primary)
 							.frame(width: 50, height: 50)
 					}
-					
+
 					Button {
 						// toggle video
 					} label: {
@@ -420,7 +423,7 @@ struct CallView: View {
 							.foregroundColor(viewModel.isVideoMuted ? .gray : .primary)
 							.frame(width: 50, height: 50)
 					}
-					
+
 					Button {
 						// end call
 					} label: {
@@ -441,11 +444,11 @@ With that, the `CallView` is finished and you have already called the correct fu
 
 ### Create the custom channel header
 
- For initiating calls the channel header will have a call icon at the right as shown in the screenshot below:
+For initiating calls the channel header will have a call icon at the right as shown in the screenshot below:
 
-![channel-header.png](../assets/agora-channel-header.png)
+![Preview image of the custom channel header.](../assets/agora-channel-header.png)
 
-Creating the custom channel header requires a few steps. 
+Creating the custom channel header requires a few steps.
 
 You start off by creating a new Swift file called `CustomChatChannelHeader.swift`. It will define a toolbar and the content that should go there, which are two things:
 
@@ -458,16 +461,16 @@ There are a few things you need to make everything work as expected. Create the 
 
 ```swift
 public struct CustomChatChannelHeader: ToolbarContent {
-		// Stream SDK related
+	// Stream SDK related
 	@Injected(\.fonts) var fonts
 	@Injected(\.utils) var utils
 	@Injected(\.chatClient) var chatClient
-	
-		// Parameters received upon creation
+
+	// Parameters received upon creation
 	@ObservedObject var viewModel: CallViewModel
 
 	public var onTapTrailing: () -> ()
-	
+
 	public var body: some ToolbarContent {
 		// To fill
 	}
@@ -504,16 +507,16 @@ You need to create one more element, which is the modifier for the channel heade
 
 The button to start a call will be disabled (with the `.disabled`) modifier when a call in the channel is active. You only want one active call at all times so disabling prevents users from initiating new ones while one is currently ongoing.
 
-We already mentioned it and here is where you’ll add a `.sheet` modifier that will hold the `CallView` that will popup when a call is entered. 
+We already mentioned it and here is where you’ll add a `.sheet` modifier that will hold the `CallView` that will popup when a call is entered.
 
 Create that below the definition of the `CustomChannelHeader`:
 
 ```swift
 struct CustomChannelHeaderModifier: ChatChannelHeaderViewModifier {
-	
+
 	var channel: ChatChannel
 	@ObservedObject var viewModel: GeneralViewModel
-	
+
 	func body(content: Content) -> some View {
 		content.toolbar {
 			CustomChatChannelHeader(viewModel: viewModel, channel: channel, isCallShown: $viewModel.isCallScreenShown) {
@@ -525,7 +528,7 @@ struct CustomChannelHeaderModifier: ChatChannelHeaderViewModifier {
 		}, content: {
 			CallView(viewModel: viewModel)
 		})
-				.onAppear {
+		.onAppear {
 			// when we the channel header appears the channel has become active, so we notify the viewModel
 			viewModel.setChannelId(channel.cid)
 		}
@@ -551,9 +554,9 @@ func makeChannelHeaderViewModifier(for channel: ChatChannel) -> some ChatChannel
 
 When a call is active inside of a channel, there should be an indicator at the bottom of the screen that indicates that and allows users to join. It looks like this:
 
-![call-ongoing.png](../assets/agora-call-ongoing.png)
+![Preview of the UI when a call is ongoing inside of a channel.](../assets/agora-call-ongoing.png)
 
-The *StreamChatSwiftUI* SDK makes it very easy to build that because you can create a custom view modifier and conditionally apply that. Let’s first create the UI and then hook it up with the SDK in the `CustomFactory`.
+The _StreamChatSwiftUI_ SDK makes it very easy to build that because you can create a custom view modifier and conditionally apply that. Let’s first create the UI and then hook it up with the SDK in the `CustomFactory`.
 
 Create a new Swift file called `CallOverlay`. This will be a `struct` that conforms to `ViewModifier`. What this requires you to do is give it a function with the signature `body(content: Content) -> some View`.
 
@@ -565,9 +568,9 @@ If it is active you will give the content a little padding and then create an ov
 import SwiftUI
 
 struct CallOverlay: ViewModifier {
-	
+
 	@ObservedObject var viewModel: CallViewModel
-	
+
 	func body(content: Content) -> some View {
 		if viewModel.callActive {
 			content
@@ -577,9 +580,9 @@ struct CallOverlay: ViewModifier {
 						Spacer()
 						HStack {
 							Text("Call ongoing")
-							
+
 							Spacer()
-							
+
 							Button {
 								// join
 								viewModel.joinCall()
@@ -628,7 +631,7 @@ The approach taken is a very reactive one. So, let’s go over the points and bu
 
 ### Watching for channel updates
 
-The first thing you will create is a little helper function that takes care of watching a channel. The concept of watching channels in the *StreamChat* SDK simply means that you are subscribing to updates of it and can define a `delegate` that will be called anytime there are changes.
+The first thing you will create is a little helper function that takes care of watching a channel. The concept of watching channels in the _StreamChat_ SDK simply means that you are subscribing to updates of it and can define a `delegate` that will be called anytime there are changes.
 
 For the convenience function, you create you will need the `ChannelId` to create a controller. You already added a member variable to the `CallViewModel` earlier that will hold the `channelController` so that you can also stop watching the channel (no longer receive updates for that one) if necessary.
 
@@ -658,7 +661,7 @@ func setChannelId(_ id: ChannelId) {
 				print(error)
 				return
 			}
-			
+
 			self.watchChannel(with: id)
 		}
 	} else {
@@ -669,8 +672,9 @@ func setChannelId(_ id: ChannelId) {
 
 <aside>
 💡 Note that error handling is rudimentary. In production apps, you should handle errors more gracefully and notify the user of the problems you have encountered whenever they are affected.
-
 </aside>
+
+<br />
 
 Remember that `setChannelId` is already called in the `CustomFactory` when the channel header is created, so there’s no more setup that you need to do.
 
@@ -690,7 +694,7 @@ extension String {
 
 The code will still not build as the `CallViewModel` is still not conforming to the `ChatChannelControllerDelegate`. You will do that right now by going to `CallViewModel.swift` and after the definition of the class, `CallViewModel` creates an extension for it.
 
-The extension will implement the `didUpdateChannel` function and inside of it, you will check if the `extraData` of the channel will contain the `callActive` key. 
+The extension will implement the `didUpdateChannel` function and inside of it, you will check if the `extraData` of the channel will contain the `callActive` key.
 
 It is important to note that channel updates can come from many sources so in order to prevent unnecessary state updates and redrawing of the UI you will also check if your local state (represented by the `callActive` property of the `CallViewModel`) is different from the newly received state. If it is, only then will you update it.
 
@@ -713,12 +717,13 @@ With that, the code will build and you are watching updates on the channel at al
 
 You are listening to updates of the channel state. However, right now there are no updates happening. The code to update the channel state is not very complex. But first, there’s a concept we have for this tutorial and there are many ways to approach it, so we’ll quickly discuss that.
 
-In the extensions you made to `String` there is the `callInitiator` key. This is there because the code will work like this: the user who starts a call has the role of “initiator”. Someone joining the call will have the role of “participant”.  The difference will be that when a participant will leave a call it will remain active. When the initiator leaves, however, then the call will be terminated which requires a channel state update.
+In the extensions you made to `String` there is the `callInitiator` key. This is there because the code will work like this: the user who starts a call has the role of “initiator”. Someone joining the call will have the role of “participant”. The difference will be that when a participant will leave a call it will remain active. When the initiator leaves, however, then the call will be terminated which requires a channel state update.
 
 <aside>
 💡 This is only one possible solution, you can come up with many different concepts here.
-
 </aside>
+
+<br />
 
 In order to accommodate that, create a new Swift file and call it `CallRole`. It will be an enum that tracks the state of the current user and your logic will adapt to that.
 
@@ -732,7 +737,7 @@ enum CallRole {
 }
 ```
 
-With that, there is everything in place to update the channel state. You’ll create a function called `updateChannelCallState` inside of `CallViewModel` for that. This will be private and will only be called when you integrate the *agora* SDK in the next chapter. It will do the following things:
+With that, there is everything in place to update the channel state. You’ll create a function called `updateChannelCallState` inside of `CallViewModel` for that. This will be private and will only be called when you integrate the _agora_ SDK in the next chapter. It will do the following things:
 
 - Get the channel data from `channelController`
 - Get the `extraData` from the channel
@@ -755,7 +760,7 @@ private func updateChannelCallState(to activeCall: Bool, with uid: UInt) {
 		updatedExtraData.removeValue(forKey: .callActive)
 		updatedExtraData.removeValue(forKey: .callInitiator)
 	}
-	
+
 	channelController?.updateChannel(name: channel.name, imageURL: channel.imageURL, team: channel.team, extraData: updatedExtraData)
 }
 ```
@@ -773,25 +778,25 @@ First, let’s have a look at the steps to do when joining a call:
 1. Get an `id` that identifies the user (you will use a random one here but it would make sense to combine that with your authentication solution in production)
 2. Get the current `channelId`
 3. Request an access token from your backend (you need the user id and the channel id for that and can then use the `NetworkManager` class)
-4. Join the call with the *Agora* SDK
+4. Join the call with the _Agora_ SDK
 
 Due to the `NetworkManager` using `async/await` you have to wrap the call to get an access token in a `Task {}`. With the asynchronous nature of that, it is then again necessary to call all UI-relevant code on the main thread. Therefore that will then be wrapped inside of a `[MainActor.run](http://MainActor.run){}` closure.
 
-In order to keep the code clean you’ll extract the *Agora* SDK part of the code into its own function but here is the code of the `startCall` function:
+In order to keep the code clean you’ll extract the _Agora_ SDK part of the code into its own function but here is the code of the `startCall` function:
 
 ```swift
 func startCall(updateChannel: Bool = true) {
 	let uid: UInt = UInt.random(in: UInt.min ... 1000)
-	
+
 	guard let channelId = channelController?.channel?.cid.id else {
 		print("Couldn't get channel id")
 		return
 	}
-	
+
 	Task {
 		do {
 			let accessTokenResponse = try await NetworkManager.shared.getAccessToken(for: channelId, with: uid)
-			
+
 			await MainActor.run {
 				agoraJoinCall(from: accessTokenResponse, with: uid, updateChannel: updateChannel)
 			}
@@ -805,9 +810,9 @@ func startCall(updateChannel: Bool = true) {
 
 The code works exactly the way it was described. You have not yet created the `agoraJoinCall` function, so that’s up next.
 
-It will again do a few things. First, it will set up the *agora* SDK and enable video capabilities. Then, you will call the `joinChannel` function with the token you received and the rest of the necessary information. 
+It will again do a few things. First, it will set up the _agora_ SDK and enable video capabilities. Then, you will call the `joinChannel` function with the token you received and the rest of the necessary information.
 
-Once that is done, the local video will be set up with a combination of the `AgoraRtcVideoCanvas` (the UIKit view that the *agora* SDK offers) and the `localCanvas` property of the `CallViewModel`.
+Once that is done, the local video will be set up with a combination of the `AgoraRtcVideoCanvas` (the UIKit view that the _agora_ SDK offers) and the `localCanvas` property of the `CallViewModel`.
 
 Also, the published properties of `isCallScreenShown` as well as the `ownUid` are updated. Depending on the role of the user (`initiator` or `participant`) the channel will be updated (remember that you prepared this method in the last chapter) and the local `callRole` will be set.
 
@@ -817,20 +822,20 @@ With that explained, here is the code for it:
 private func agoraJoinCall(from accessTokenResponse: AccessTokenResponse, with uid: UInt, updateChannel: Bool) {
 	agoraKit = AgoraRtcEngineKit.sharedEngine(withAppId: accessTokenResponse.appId, delegate: self)
 	agoraKit?.enableVideo()
-	
+
 	agoraKit?.joinChannel(byToken: accessTokenResponse.token, channelId: accessTokenResponse.channelId, info: nil, uid: uid, joinSuccess: { [unowned self] (channel, uid, elapsed) in
-		
+
 		// setup local video
 		let videoCanvas = AgoraRtcVideoCanvas()
 		videoCanvas.uid = uid
 		videoCanvas.renderMode = .hidden
 		videoCanvas.view = localCanvas.containerView
 		agoraKit?.setupLocalVideo(videoCanvas)
-		
+
 		// update published properties
 		isCallScreenShown = true
 		ownUid = uid
-		
+
 		// set call role and update channel if necessary
 		if updateChannel {
 			callRole = .initiator
@@ -838,7 +843,7 @@ private func agoraJoinCall(from accessTokenResponse: AccessTokenResponse, with u
 		} else {
 			callRole = .participant
 		}
-		
+
 	})
 }
 ```
@@ -859,7 +864,7 @@ In case you want to save more information about the call, such as number of part
 
 ### Leaving a call
 
-When a user is leaving a call there is some clean-up to do. The *agora* SDK requires a few function call to disable the call locally. 
+When a user is leaving a call there is some clean-up to do. The _agora_ SDK requires a few function call to disable the call locally.
 
 There is also a few published properties that require updating, namely `isCallScreenShown`, `ownUid`, and `callRole`. When the initiator of the call is leaving it you’ll also terminate the entire call by updating the channel info. Again, you can re-use the previously created function `updateChannelCallState`.
 
@@ -870,13 +875,13 @@ func leaveCall() {
 	agoraKit?.leaveChannel(nil)
 	AgoraRtcEngineKit.destroy()
 	isCallScreenShown = false
-	
+
 	guard let id = ownUid else { return }
-	
+
 	if callRole == .initiator {
 		updateChannelCallState(to: false, with: id)
 	}
-	
+
 	// cleanup
 	ownUid = nil
 	callRole = .notJoined
@@ -905,12 +910,13 @@ func toggleVideoMute() {
 
 The last thing to do really is to listen to updates during a call. This is necessary because after joining this will allow you to add the necessary views for each participant (via the `addVideoView` of `remoteVideoViewController`). Once another user leaves a call you will be notified and can update the video view (or the `remoteVideoViewController` from the `CallViewModel` to be more specific) as well.
 
-The *agora* SDK gives you the option to implement the `AgoraRtcEngineDelegate` which offers a set of callbacks. You will use the `CallViewModel` and create an extension of it that will implement the delegate. Create a new Swift file called `CallViewModel+AgoraRtcEngineDelegate`. 
+The _agora_ SDK gives you the option to implement the `AgoraRtcEngineDelegate` which offers a set of callbacks. You will use the `CallViewModel` and create an extension of it that will implement the delegate. Create a new Swift file called `CallViewModel+AgoraRtcEngineDelegate`.
 
 <aside>
-💡 You could also at it at the bottom of the `CallViewModel` file but it is good practice to separate out the delegate for a better overview of the functionality.
-
+💡 You could also at it at the bottom of the <code>CallViewModel</code> file but it is good practice to separate out the delegate for a better overview of the functionality.
 </aside>
+
+<br />
 
 Add the following code for the file (the callbacks will be added in a second):
 
@@ -931,9 +937,9 @@ func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: I
 	let videoCanvas = AgoraRtcVideoCanvas()
 	videoCanvas.uid = uid
 	videoCanvas.renderMode = .hidden
-	
+
 	self.remoteVideoViewController.addVideoView(videoCanvas, with: uid)
-	
+
 	agoraKit?.setupRemoteVideo(videoCanvas)
 }
 ```
@@ -952,11 +958,11 @@ There’s more functionality you can implement, but this is all you need to have
 
 ## Summary
 
-With that, you are finished with the integration of video calls in your chat application with the *agora* SDK. You created a well-architected app that uses modern, reactive solutions like SwiftUI, MVVM and `async/await`.
+With that, you are finished with the integration of video calls in your chat application with the _agora_ SDK. You created a well-architected app that uses modern, reactive solutions like SwiftUI, MVVM and `async/await`.
 
 This is just a suggested solution and you can of course use a pure `UIKit` solution just as well. Also, there is more functionality to explore, such as audio calls, livestreams, and much more. For the scope of this article, we only implemented one for video calls.
 
-Also, it is worth noting that the architecture allows for quick exchange of *agora* as a solution provider and use of other ones because the code is separated out into modular pieces. This guide is aimed to show you the flexibility of the StreamChat SDK that makes the integration easy and straightforward.
+Also, it is worth noting that the architecture allows for quick exchange of _agora_ as a solution provider and use of other ones because the code is separated out into modular pieces. This guide is aimed to show you the flexibility of the StreamChat SDK that makes the integration easy and straightforward.
 
 In case you have any more questions about this video integration or the work with other SDKs, feel free to [reach out to the team](https://getstream.io/contact/) and we’re happy to help and support you!
 
