@@ -579,7 +579,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Simulate successful response from backend
         env.channelListUpdater?.update_completion?(.success([]))
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertEqual(controller.channels.count, 1)
         XCTAssertEqual(filterCalls, 0)
 
@@ -614,7 +614,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Simulate successful response from backend
         env.channelListUpdater?.update_completion?(.success([]))
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertEqual(controller.channels.count, 1)
         XCTAssertEqual(filterCalls, 0)
 
@@ -642,7 +642,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Simulate successful response from backend
         env.channelListUpdater?.update_completion?(.success([]))
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertEqual(controller.channels.count, 1)
         XCTAssertEqual(filterCalls, 0)
 
@@ -915,7 +915,7 @@ final class ChannelListController_Tests: XCTestCase {
             receivedError = result.error
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: 0.5)
 
         XCTAssertNil(receivedError)
         // When receiving a full page, we did not reach the end of the pagination
@@ -941,7 +941,7 @@ final class ChannelListController_Tests: XCTestCase {
             receivedError = result.error
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: 0.5)
 
         XCTAssertNil(receivedError)
         // When receiving an incomplete page, we did reach the end of the pagination
@@ -967,7 +967,7 @@ final class ChannelListController_Tests: XCTestCase {
             receivedError = result.error
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: 0.5)
 
         XCTAssertEqual(receivedError, error)
     }

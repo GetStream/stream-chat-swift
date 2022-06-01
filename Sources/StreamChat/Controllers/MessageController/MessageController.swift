@@ -623,7 +623,7 @@ private extension ChatMessageController {
                         log.warning("Callback called while self is nil")
                         return
                     }
-                    
+                    log.debug("didChangeReplies: \(changes.map(\.debugDescription))")
                     $0.messageController(self, didChangeReplies: changes)
                 }
             }

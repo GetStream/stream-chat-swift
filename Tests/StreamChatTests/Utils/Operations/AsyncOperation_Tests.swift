@@ -16,7 +16,7 @@ final class AsyncOperation_Tests: XCTestCase {
 
         operation.start()
 
-        waitForExpectations(timeout: 0.1) { error in
+        waitForExpectations(timeout: 0.5) { error in
             if error != nil {
                 XCTFail(error.debugDescription)
             }

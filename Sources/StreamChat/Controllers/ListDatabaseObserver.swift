@@ -20,18 +20,33 @@ public enum ListChange<Item> {
 }
 
 extension ListChange: CustomStringConvertible {
-    /// Returns pretty `ListChange` description
+    /// Returns pretty `ListChange` type description.
     public var description: String {
-        switch self {
-        case let .insert(item, indexPath):
-            return "Insert at \(indexPath): \(item)"
-        case let .move(item, from, to):
-            return "Move from \(from) to \(to): \(item)"
-        case let .update(item, indexPath):
-            return "Update at \(indexPath): \(item)"
-        case let .remove(item, indexPath):
-            return "Remove at \(indexPath): \(item)"
+        let indexPathDescription: (IndexPath) -> String = { indexPath in
+            "(\(indexPath.row), \(indexPath.section))"
         }
+        switch self {
+        case let .insert(_, indexPath):
+            return "Insert \(indexPathDescription(indexPath))"
+        case let .move(_, from, to):
+            return "Move \(indexPathDescription(from)) to \(indexPathDescription(to))"
+        case let .update(_, indexPath):
+            return "Update \(indexPathDescription(indexPath))"
+        case let .remove(_, indexPath):
+            return "Remove \(indexPathDescription(indexPath))"
+        }
+    }
+}
+
+extension ListChange where Item == ChatMessage {
+    public var debugDescription: String {
+        "\(description) - (text:\(item.text), id:\(item.id))"
+    }
+}
+
+extension ListChange where Item == ChatChannel {
+    public var debugDescription: String {
+        "\(description) - (cid:\(item.cid))"
     }
 }
 
@@ -266,8 +281,6 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
 /// When this object is set as `NSFetchedResultsControllerDelegate`, it aggregates the callbacks from the fetched results
 /// controller and forwards them in the way of `[Change<Item>]`. You can set the `onDidChange` callback to receive these updates.
 class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResultsControllerDelegate {
-    // TODO: Extend this to also provide `CollectionDifference` and `NSDiffableDataSourceSnapshot`
-    
     /// Used for converting the `DTO`s provided by `FetchResultsController` to the resulting `Item`.
     let itemCreator: (DTO) throws -> Item
 
@@ -327,7 +340,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
             currentChanges.append(.move(item, fromIndex: fromIndex, toIndex: toIndex))
             
         case .update:
-            guard let index = indexPath else {
+            guard let index = newIndexPath else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.update` change.")
                 return
             }

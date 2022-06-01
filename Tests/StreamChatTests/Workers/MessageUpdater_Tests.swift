@@ -347,7 +347,7 @@ final class MessageUpdater_Tests: XCTestCase {
             .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
         apiClient.test_simulateResponse(response)
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         // Assert database error is propogated
         XCTAssertEqual(completionCalledError as? TestError, databaseError)
     }
@@ -383,7 +383,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 0.1)
+            wait(for: [expectation], timeout: 0.5)
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
             XCTAssertNotNil(message.deletedAt)
@@ -432,7 +432,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
             apiClient.test_simulateResponse(response)
 
-            wait(for: [expectation], timeout: 0.1)
+            wait(for: [expectation], timeout: 0.5)
             XCTAssertCall("saveSuccessfullyDeletedMessage(message:completion:)", on: messageRepository, times: 1)
         }
     }
@@ -1205,7 +1205,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
         
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         let request = apiClient.waitForRequest()
 
@@ -1240,7 +1240,7 @@ final class MessageUpdater_Tests: XCTestCase {
             dbCall.fulfill()
         }
 
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         // Requests are sent async so we need to wait for that
         apiClient.waitForRequest()
@@ -1268,7 +1268,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
@@ -1309,7 +1309,7 @@ final class MessageUpdater_Tests: XCTestCase {
             dbCall.fulfill()
         }
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
             return
@@ -1350,7 +1350,7 @@ final class MessageUpdater_Tests: XCTestCase {
             dbCall.fulfill()
         }
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
             return
@@ -1389,7 +1389,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         // Assert correct endpoint is called.
         apiClient.waitForRequest()
@@ -1408,7 +1408,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         // Simulate API response with success.
         apiClient.waitForRequest()
@@ -1438,7 +1438,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
@@ -1489,7 +1489,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
@@ -1541,7 +1541,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()

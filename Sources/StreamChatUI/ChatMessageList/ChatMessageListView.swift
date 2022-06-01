@@ -160,9 +160,20 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         completion: (() -> Void)? = nil
     ) {
         listChangeUpdater.performUpdate(with: changes) { [weak self] _ in
-            let lastMessageInserted = changes.first(where: { $0.isInsertion && $0.indexPath.row == 0 })?.item
-            if lastMessageInserted?.isSentByCurrentUser == true {
-                self?.scrollToMostRecentMessage()
+            if let newMessageInserted = changes.first(where: { $0.isInsertion && $0.indexPath.row == 0 })?.item {
+                UIView.performWithoutAnimation {
+                    // Hide the timestamp of the previous message if needed
+                    self?.performBatchUpdates({
+                        let previousMessageIndexPath = IndexPath(row: 1, section: 0)
+                        self?.reloadRows(at: [previousMessageIndexPath], with: .none)
+                    })
+                }
+
+                if newMessageInserted.isSentByCurrentUser {
+                    self?.scrollToMostRecentMessage()
+                }
+
+                completion?()
             }
         }
     }

@@ -154,7 +154,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
         let member2ReadAtOwnMessage: ChannelReadPayload = .init(
             user: .dummy(userId: .unique),
-            lastReadAt: currentUserMessage.createdAt,
+            lastReadAt: currentUserMessage.createdAt.addingTimeInterval(2),
             unreadMessagesCount: 0
         )
         let member3ReadLaterOwnMessage: ChannelReadPayload = .init(

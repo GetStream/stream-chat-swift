@@ -84,6 +84,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                     log.warning("Callback called while self is nil")
                     return
                 }
+                log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
                 $0.controller(self, didChangeChannels: changes)
             }
             self?.handleLinkedChannels(changes)
