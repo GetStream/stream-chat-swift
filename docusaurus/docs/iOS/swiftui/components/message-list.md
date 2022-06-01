@@ -74,7 +74,7 @@ let utils = Utils(messageListConfig: MessageListConfig(dateIndicatorPlacement: .
 let streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
 
-If you want to replace the separating date indicator view, you need to implement the `makeMessageListDateIndicator` method. You can control the size of this view view with the `overlayDateLabelSize` in the `MessageDisplayOptions`.
+If you want to replace the separating date indicator view, you need to implement the `makeMessageListDateIndicator` method. You can control the size of this view with the `overlayDateLabelSize` in the `MessageDisplayOptions`.
 
 ```swift
 public func makeMessageListDateIndicator(date: Date) -> some View {
