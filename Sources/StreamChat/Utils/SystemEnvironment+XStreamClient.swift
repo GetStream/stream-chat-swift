@@ -14,15 +14,15 @@ extension SystemEnvironment {
     static let xStreamClientHeader: String = {
         "stream-chat-\(sdkIdentifier)-client-v\(version)|app=\(appName)|app_version=\(appVersion)|os=\(os) \(osVersion)|device_model=\(model)|device_screen_ratio=\(scale)"
     }()
-    
+
     private static var sdkIdentifier: String {
-        #if canImport(StreamChatSwiftUI)
-        return "swiftui"
-        #elseif canImport(StreamChatUI)
-        return "uikit"
-        #else
-        return "swift"
-        #endif
+        if NSClassFromString("StreamChatSwiftUI.SDKIdentifier") != nil {
+            return "swiftui"
+        } else if NSClassFromString("StreamChatUI.SDKIdentifier") != nil {
+            return "uikit"
+        } else {
+            return "swift"
+        }
     }
 
     private static var info: [String: Any] {

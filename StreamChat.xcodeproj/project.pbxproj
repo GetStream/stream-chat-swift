@@ -1644,6 +1644,8 @@
 		C14A46532845043300EF498E /* ThreadSafeWeakCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46522845043300EF498E /* ThreadSafeWeakCollection.swift */; };
 		C14A46542845043300EF498E /* ThreadSafeWeakCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46522845043300EF498E /* ThreadSafeWeakCollection.swift */; };
 		C14A46562845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */; };
+		C14A46582846636900EF498E /* SDKIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46572846636900EF498E /* SDKIdentifier.swift */; };
+		C14A46592846636900EF498E /* SDKIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46572846636900EF498E /* SDKIdentifier.swift */; };
 		C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
@@ -3372,6 +3374,7 @@
 		C149B743282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Validation_Tests.swift"; sourceTree = "<group>"; };
 		C14A46522845043300EF498E /* ThreadSafeWeakCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeWeakCollection.swift; sourceTree = "<group>"; };
 		C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeWeakCollection_Tests.swift; sourceTree = "<group>"; };
+		C14A46572846636900EF498E /* SDKIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKIdentifier.swift; sourceTree = "<group>"; };
 		C152F5FB27C3DC53003B4805 /* MessageRepository_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Spy.swift; sourceTree = "<group>"; };
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
@@ -3895,6 +3898,7 @@
 				8850B929255C286B003AED69 /* Components.swift */,
 				BDDD1E982632C4C900BA007B /* Components+SwiftUI.swift */,
 				BD4016352638411D00F09774 /* Deprecations.swift */,
+				C14A46572846636900EF498E /* SDKIdentifier.swift */,
 				AD99C901279B06E9009DD9C5 /* Appearance+Formatters */,
 				ADECE08926AAEC63001AE411 /* ChatChannel */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
@@ -8929,6 +8933,7 @@
 				C1FC2F8927416E150062530F /* ImageEncoding.swift in Sources */,
 				847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */,
 				885B3D7725642B3D003E6BDF /* CurrentChatUserAvatarView.swift in Sources */,
+				C14A46582846636900EF498E /* SDKIdentifier.swift in Sources */,
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
 				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
@@ -10312,6 +10317,7 @@
 				C121EB762746A1E700023E4C /* Array+Extensions.swift in Sources */,
 				C121EB772746A1E700023E4C /* UIViewController+Extensions.swift in Sources */,
 				C121EB782746A1E700023E4C /* NSLayoutConstraint+Extensions.swift in Sources */,
+				C14A46592846636900EF498E /* SDKIdentifier.swift in Sources */,
 				C121EB792746A1E700023E4C /* UITextView+Extensions.swift in Sources */,
 				C121EB7A2746A1E700023E4C /* String+Extensions.swift in Sources */,
 				C121EB7B2746A1E700023E4C /* ChatMessage+Extensions.swift in Sources */,
