@@ -67,7 +67,7 @@ let streamChat = StreamChat(chatClient: chatClient, utils: utils)
 
 ## Date Indicators
 
-The SDK supports two types of date indicators - floating overlay and date separators inside the messages. This feature can be configured via the `dateIndicatorPlacement` in the `MessageListConfig`. With the floating overlay option (`.overlay`), the date indicator is shown for a short time whenever a new message appears. On the other hand, if you want to always show the date between messages, similarly to Apple Messages and WhatsApp, you should use the `.messageList` option. You can turn off both options by using the `.none` option. Here's an example how to setup the `messageList` option:
+The SDK supports two types of date indicators - floating overlay and date separators in-between the messages. This feature can be configured via the `dateIndicatorPlacement` in the `MessageListConfig`. With the floating overlay option (`.overlay`), the date indicator is shown for a short time whenever a new message appears. On the other hand, if you want to always show the date between messages, similarly to Apple Messages and WhatsApp, you should use the `.messageList` option. You can turn off both options by using the `.none` option. Here's an example of how to set up the `messageList` option:
 
 ```swift
 let utils = Utils(messageListConfig: MessageListConfig(dateIndicatorPlacement: .messageList))
