@@ -21,6 +21,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix DM Channel with multiple members displaying only 1 user avatar [#2019](https://github.com/GetStream/stream-chat-swift/pull/2019)
 - Improve stability of Message List with Diffing disabled [#2006](https://github.com/GetStream/stream-chat-swift/pull/2006)
 
+# [4.15.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.15.1)
+_June 01, 2022_
+
+This release does not contain any code changes.
+
+### 🔄 Changed
+* Provides new `SPI` config.
+* Adds [swift docc plugin](https://github.com/apple/swift-docc-plugin) to package dependencies.
+
 # [4.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.15.0)
 _May 11, 2022_
 ## StreamChat
