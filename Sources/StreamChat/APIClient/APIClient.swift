@@ -167,7 +167,7 @@ class APIClient {
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
     ///   - completion: Called when the networking request is finished.
-    private func executeRequest<Response: Decodable>(
+    func executeRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {

@@ -10,6 +10,11 @@ import XCTest
 final class APIClient_Spy: APIClient, Spy {
     var recordedFunctions: [String] = []
 
+    /// The last endpoint `execute_request` function was called with.
+    @Atomic var executeRequest_endpoint: AnyEndpoint?
+    @Atomic var executeRequest_completion: Any?
+    @Atomic var executeRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
+    
     /// The last endpoint `request` function was called with.
     @Atomic var request_endpoint: AnyEndpoint?
     @Atomic var request_completion: Any?
@@ -33,6 +38,10 @@ final class APIClient_Spy: APIClient, Spy {
 
     // Cleans up all recorded values
     func cleanUp() {
+        executeRequest_endpoint = nil
+        executeRequest_completion = nil
+        executeRequest_allRecordedCalls = []
+        
         request_allRecordedCalls = []
         request_endpoint = nil
         request_completion = nil
@@ -92,6 +101,15 @@ final class APIClient_Spy: APIClient, Spy {
         request_completion = completion
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
         request_expectation.fulfill()
+    }
+    
+    override func executeRequest<Response>(
+        endpoint: Endpoint<Response>,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) where Response : Decodable {
+        executeRequest_endpoint = AnyEndpoint(endpoint)
+        executeRequest_completion = completion
+        _executeRequest_allRecordedCalls.mutate { $0.append((executeRequest_endpoint!, executeRequest_completion!)) }
     }
 
     override func recoveryRequest<Response>(

@@ -117,13 +117,13 @@ final class TokenProvider_Tests: XCTestCase {
             imageURL: imageURL,
             extraData: extraData
         )
-        AssertAsync.willBeEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.request_endpoint)
+        AssertAsync.willBeEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.executeRequest_endpoint)
 
         // Simulate error.
         let error = TestError()
-        let tokenResult: Result<GuestUserTokenPayload, Error> = .failure(error)
-        client.mockAPIClient.test_simulateResponse(tokenResult)
-
+        let completion = client.mockAPIClient.executeRequest_completion as! (Result<GuestUserTokenPayload, Error>) -> Void
+        completion(.failure(error))
+        
         // Wait the result is received.
         AssertAsync.willBeTrue(getTokenResult != nil)
 

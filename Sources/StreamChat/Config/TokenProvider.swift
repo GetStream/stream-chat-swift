@@ -52,7 +52,8 @@ extension UserConnectionProvider {
                 imageURL: imageURL,
                 extraData: extraData
             )
-            client.apiClient.request(endpoint: endpoint) {
+            
+            client.apiClient.executeRequest(endpoint: endpoint) {
                 switch $0 {
                 case let .success(payload):
                     let token = payload.token
