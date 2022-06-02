@@ -128,9 +128,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         contentContainerView.isLayoutMarginsRelativeArrangement = true
         contentContainerView.alignment = .top
 
-        addSubview(containerView)
-        containerView.pin(to: layoutMarginsGuide)
-        directionalLayoutMargins = .zero
+        embed(containerView)
 
         containerView.addArrangedSubview(authorAvatarView)
         containerView.addArrangedSubview(contentContainerView)
