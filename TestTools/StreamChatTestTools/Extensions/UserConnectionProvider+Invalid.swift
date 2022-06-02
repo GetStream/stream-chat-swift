@@ -7,8 +7,6 @@ import Foundation
 
 extension UserConnectionProvider {
     static func invalid(_ error: Error = TestError()) -> Self {
-        .closure {
-            $1(.failure(error))
-        }
+        .init { $0(.failure(error)) }
     }
 }
