@@ -9,38 +9,47 @@ import Foundation
 final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDelegate, Spy {
     var recordedFunctions: [String] = []
 
-    @Atomic var token: Token?
-    @Atomic var tokenWaiters: [String: (Token?) -> Void] = [:]
+    @Atomic var tokenResult: Result<Token, Error>?
+    @Atomic var tokenWaiters: [WaiterToken: TokenWaiter] = [:]
 
-    @Atomic var connectionId: ConnectionId?
-    @Atomic var connectionWaiters: [String: (ConnectionId?) -> Void] = [:]
+    @Atomic var connectionIdResult: Result<ConnectionId, Error>?
+    @Atomic var connectionWaiters: [WaiterToken: ConnectionIdWaiter] = [:]
 
     func clear() {
-        recordedFunctions.removeAll()
+        tokenResult = nil
         tokenWaiters.removeAll()
+        
+        connectionIdResult = nil
+        connectionWaiters.removeAll()
+        
+        recordedFunctions.removeAll()
     }
 
-    func provideConnectionId(completion: @escaping (ConnectionId?) -> Void) -> WaiterToken {
+    func provideConnectionId(completion: @escaping ConnectionIdWaiter) -> WaiterToken {
         let waiterToken = String.newUniqueId
-        _connectionWaiters.mutate {
-            $0[waiterToken] = completion
-        }
 
-        if let connectionId = connectionId {
-            completion(connectionId)
+        if let result = connectionIdResult {
+            completion(result)
+        } else {
+            _connectionWaiters.mutate {
+                $0[waiterToken] = completion
+            }
         }
+        
         return waiterToken
     }
 
-    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken {
+    func provideToken(completion: @escaping TokenWaiter) -> WaiterToken {
         let waiterToken = String.newUniqueId
-        _tokenWaiters.mutate {
-            $0[waiterToken] = completion
+        
+        if let result = tokenResult {
+            completion(result)
+        } else {
+            _tokenWaiters.mutate {
+                $0[waiterToken] = completion
+            }
         }
-
-        if let token = token {
-            completion(token)
-        }
+        
         return waiterToken
     }
 
@@ -48,16 +57,16 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
 
     func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {}
 
-    func completeConnectionIdWaiters(passing connectionId: String?) {
+    func completeConnectionIdWaiters(passing result: Result<ConnectionId, Error>) {
         _connectionWaiters.mutate { waiters in
-            waiters.forEach { $0.value(connectionId) }
+            waiters.forEach { $0.value(result) }
             waiters.removeAll()
         }
     }
 
-    func completeTokenWaiters(passing token: Token?) {
+    func completeTokenWaiters(passing result: Result<Token, Error>) {
         _tokenWaiters.mutate { waiters in
-            waiters.forEach { $0.value(token) }
+            waiters.forEach { $0.value(result) }
             waiters.removeAll()
         }
     }

@@ -29,7 +29,7 @@ final class PinnedMessagesQuery_IntegrationTests: XCTestCase {
 
         // Create token provider
         let tokenProvider = ConnectionDetailsProviderDelegate_Spy()
-        tokenProvider.token = .unique(userId: .unique)
+        tokenProvider.tokenResult = .success(.unique(userId: .unique))
 
         // Create request encoder.
         let baseURL = BaseURL.dublin.restAPIBaseURL

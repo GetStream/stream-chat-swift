@@ -65,7 +65,7 @@ final class RequestEncoder_Tests: XCTestCase {
         
         // Simulate provided token
         let token = Token.unique()
-        connectionDetailsProvider.token = token
+        connectionDetailsProvider.tokenResult = .success(token)
 
         // Encode the request and wait for the result
         let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -85,7 +85,7 @@ final class RequestEncoder_Tests: XCTestCase {
         )
 
         // Set anonymous token.
-        connectionDetailsProvider.token = .anonymous
+        connectionDetailsProvider.tokenResult = .success(.anonymous)
 
         // Encode the request and wait for the result.
         let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -104,17 +104,18 @@ final class RequestEncoder_Tests: XCTestCase {
         )
 
         // Reset the token.
-        connectionDetailsProvider.token = nil
+        connectionDetailsProvider.tokenResult = nil
 
         // Encode the request and capture the result
         var encodingResult: Result<URLRequest, Error>?
         encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
 
         // Cancel all token waiting requests.
-        connectionDetailsProvider.completeTokenWaiters(passing: nil)
+        let error = TestError()
+        connectionDetailsProvider.completeTokenWaiters(passing: .failure(error))
 
         // Assert request encoding has failed.
-        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingToken)
+        AssertAsync.willBeEqual(encodingResult?.error as? TestError, error)
     }
 
     func test_endpointRequiringToken_ifTokenProviderTimeouts() throws {
@@ -127,7 +128,7 @@ final class RequestEncoder_Tests: XCTestCase {
         )
 
         // Reset the token.
-        connectionDetailsProvider.token = nil
+        connectionDetailsProvider.tokenResult = nil
 
         let connectionDetailsProviderDelegate = encoder.connectionDetailsProviderDelegate
         encoder = DefaultRequestEncoder(baseURL: baseURL, apiKey: apiKey, timerType: VirtualTimeTimer.self)
@@ -169,7 +170,7 @@ final class RequestEncoder_Tests: XCTestCase {
         
         // Set a new connection id
         let connectionId = String.unique
-        connectionDetailsProvider.connectionId = connectionId
+        connectionDetailsProvider.connectionIdResult = .success(connectionId)
         
         // Encode the request and wait for the result
         let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -191,17 +192,18 @@ final class RequestEncoder_Tests: XCTestCase {
         )
 
         // Reset a connection id
-        connectionDetailsProvider.connectionId = nil
+        connectionDetailsProvider.connectionIdResult = nil
 
         // Encode the request and capture the result
         var encodingResult: Result<URLRequest, Error>?
         encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
 
         // Cancel all connection id waiting requests.
-        connectionDetailsProvider.completeConnectionIdWaiters(passing: nil)
+        let error = TestError()
+        connectionDetailsProvider.completeConnectionIdWaiters(passing: .failure(error))
 
         // Assert request encoding has failed.
-        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingConnectionId)
+        AssertAsync.willBeEqual(encodingResult?.error as? TestError, error)
     }
 
     func test_endpointRequiringConnectionId_ifTokenProviderTimeouts() throws {
@@ -214,7 +216,7 @@ final class RequestEncoder_Tests: XCTestCase {
         )
 
         // Reset the token.
-        connectionDetailsProvider.connectionId = nil
+        connectionDetailsProvider.connectionIdResult = nil
 
         let connectionDetailsProviderDelegate = encoder.connectionDetailsProviderDelegate
         encoder = DefaultRequestEncoder(baseURL: baseURL, apiKey: apiKey, timerType: VirtualTimeTimer.self)
@@ -257,11 +259,11 @@ final class RequestEncoder_Tests: XCTestCase {
 
         // Set a new connection id
         let connectionId = String.unique
-        connectionDetailsProvider.connectionId = connectionId
+        connectionDetailsProvider.connectionIdResult = .success(connectionId)
 
         // Set a new token
         let token = Token.unique()
-        connectionDetailsProvider.token = token
+        connectionDetailsProvider.tokenResult = .success(token)
 
         // Encode the request and wait for the result
         let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()

@@ -317,17 +317,17 @@ final class ChatClient_Tests: XCTestCase {
         _ = client.webSocketClient
         
         // Set a connection Id waiter and assert it's `nil`
-        var providedConnectionId: ConnectionId?
+        var connectionResult: Result<ConnectionId, Error>?
         client.provideConnectionId {
-            providedConnectionId = $0
+            connectionResult = $0
         }
-        XCTAssertNil(providedConnectionId)
+        XCTAssertNil(connectionResult)
         
         // Simulate WebSocketConnection change
         testEnv.webSocketClient?.connectionStateDelegate?
             .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connecting)
         
-        AssertAsync.staysTrue(providedConnectionId == nil)
+        AssertAsync.staysTrue(connectionResult == nil)
         
         // Simulate WebSocket connected and connection id is provided
         testEnv.webSocketClient?.connectionStateDelegate?
@@ -336,18 +336,18 @@ final class ChatClient_Tests: XCTestCase {
         testEnv.webSocketClient?.connectionStateDelegate?
             .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
-        AssertAsync.willBeEqual(providedConnectionId, connectionId)
-        XCTAssertEqual(try waitFor { client.provideConnectionId(completion: $0) }, connectionId)
+        AssertAsync.willBeEqual(connectionResult?.value, connectionId)
+        XCTAssertEqual(try waitFor { client.provideConnectionId(completion: $0) }.value, connectionId)
         
         // Simulate WebSocketConnection disconnecting and assert connectionId is reset
         testEnv.webSocketClient?.connectionStateDelegate?
             .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connecting)
         
-        providedConnectionId = nil
+        connectionResult = nil
         client.provideConnectionId {
-            providedConnectionId = $0
+            connectionResult = $0
         }
-        AssertAsync.staysTrue(providedConnectionId == nil)
+        AssertAsync.staysTrue(connectionResult == nil)
     }
     
     func test_client_failsConnectionIdWaiters_whenWebSocketIsDisconnected() {
@@ -363,11 +363,11 @@ final class ChatClient_Tests: XCTestCase {
         _ = client.webSocketClient
         
         // Set a connection Id waiter and set `providedConnectionId` to a non-nil value
-        var providedConnectionId: ConnectionId? = .unique
+        var providedConnectionIdResult: Result<ConnectionId, Error>? = .success(.unique)
         client.provideConnectionId {
-            providedConnectionId = $0
+            providedConnectionIdResult = $0
         }
-        XCTAssertNotNil(providedConnectionId)
+        XCTAssertNotNil(providedConnectionIdResult)
         
         // Simulate WebSocketConnection change to "disconnected"
         let error = ClientError(with: TestError())
@@ -378,13 +378,13 @@ final class ChatClient_Tests: XCTestCase {
             )
         
         // Assert the provided connection id is `nil`
-        XCTAssertNil(providedConnectionId)
+        XCTAssertNil(providedConnectionIdResult?.value)
         
         // Simulate WebSocketConnection change to "connected" and assert `providedConnectionId` is still `nil`
         testEnv.webSocketClient?.connectionStateDelegate?
             .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: .unique))
 
-        XCTAssertNil(providedConnectionId)
+        XCTAssertNil(providedConnectionIdResult?.value)
     }
     
     func test_webSocketIsDisconnected_becauseTokenExpired_newTokenIsExpiredToo() throws {
@@ -460,16 +460,16 @@ final class ChatClient_Tests: XCTestCase {
         _ = client.webSocketClient
         
         // Set a connection Id waiter and set `providedConnectionId` to nil value
-        var providedConnectionId: ConnectionId?
+        var providedConnectionIdResult: Result<ConnectionId, Error>?
         client.provideConnectionId { _ in
             // Set another connectionId waiter inside the first one
             // This is to simulate the case where 2 entities call this func
             // Like, calling `synchronize` in a delegate callback
             client.provideConnectionId {
-                providedConnectionId = $0
+                providedConnectionIdResult = $0
             }
         }
-        XCTAssertNil(providedConnectionId)
+        XCTAssertNil(providedConnectionIdResult)
         
         // Simulate providing connection id
         testEnv.webSocketClient?.connectionStateDelegate?
@@ -479,7 +479,7 @@ final class ChatClient_Tests: XCTestCase {
             .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         // Assert that our waiter received the new connectionId
-        AssertAsync.willBeEqual(providedConnectionId, connectionId)
+        AssertAsync.willBeEqual(providedConnectionIdResult?.value, connectionId)
     }
 
     func test_invalidateTokenWaiterRemovesBlockFromWaiter() {
@@ -825,16 +825,16 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: inactiveInMemoryStorageConfig)
         
         // Set a connection Id waiter
-        var providedConnectionId: ConnectionId? = .unique
+        var providedConnectionIdResult: Result<ConnectionId, Error>? = .success(.unique)
         var connectionIdCallbackCalled = false
         client.provideConnectionId {
-            providedConnectionId = $0
+            providedConnectionIdResult = $0
             connectionIdCallbackCalled = true
         }
         
         AssertAsync.willBeTrue(connectionIdCallbackCalled)
         // Assert that `nil` id is provided by waiter
-        XCTAssertNil(providedConnectionId)
+        XCTAssertTrue(providedConnectionIdResult?.error is ClientError.ClientIsNotInActiveMode)
     }
     
     func test_sessionHeaders_xStreamClient_correctValue() {

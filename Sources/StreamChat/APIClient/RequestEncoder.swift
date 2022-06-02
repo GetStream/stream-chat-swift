@@ -144,9 +144,7 @@ struct DefaultRequestEncoder: RequestEncoder {
             "The endpoint requires `token` but `connectionDetailsProviderDelegate` is not set.",
             subsystems: .httpRequests
         )
-
-        let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
-
+        
         var waiterToken: WaiterToken?
         let timer = timerType
             .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
@@ -159,7 +157,9 @@ struct DefaultRequestEncoder: RequestEncoder {
 
         waiterToken = connectionDetailsProviderDelegate?.provideToken {
             timer.cancel()
-            if let token = $0 {
+            
+            switch $0 {
+            case let .success(token):
                 var updatedRequest = request
 
                 if token.userId.isAnonymousUser {
@@ -169,8 +169,8 @@ struct DefaultRequestEncoder: RequestEncoder {
                 }
 
                 completion(.success(updatedRequest))
-            } else {
-                completion(.failure(missingTokenError))
+            case let .failure(error):
+                completion(.failure(error))
             }
         }
     }
@@ -191,10 +191,6 @@ struct DefaultRequestEncoder: RequestEncoder {
             subsystems: .httpRequests
         )
 
-        let missingConnectionIdError = ClientError.MissingConnectionId(
-            "Failed to get `connectionId`, request can't be created."
-        )
-
         var waiterToken: WaiterToken?
         let timer = timerType
             .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
@@ -207,15 +203,17 @@ struct DefaultRequestEncoder: RequestEncoder {
 
         waiterToken = connectionDetailsProviderDelegate?.provideConnectionId {
             timer.cancel()
-            do {
-                if let connectionId = $0 {
+            
+            switch $0 {
+            case let .success(connectionId):
+                do {
                     var updatedRequest = request
                     updatedRequest.url = try updatedRequest.url?.appendingQueryItems(["connection_id": connectionId])
                     completion(.success(updatedRequest))
-                } else {
-                    throw missingConnectionIdError
+                } catch {
+                    completion(.failure(error))
                 }
-            } catch {
+            case let .failure(error):
                 completion(.failure(error))
             }
         }
@@ -301,11 +299,14 @@ private extension URL {
 }
 
 typealias WaiterToken = String
+typealias TokenWaiter = (Result<Token, Error>) -> Void
+typealias ConnectionIdWaiter = (Result<ConnectionId, Error>) -> Void
+
 protocol ConnectionDetailsProviderDelegate: AnyObject {
     @discardableResult
-    func provideConnectionId(completion: @escaping (_ connectionId: ConnectionId?) -> Void) -> WaiterToken
+    func provideConnectionId(completion: @escaping ConnectionIdWaiter) -> WaiterToken
     @discardableResult
-    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken
+    func provideToken(completion: @escaping TokenWaiter) -> WaiterToken
     func invalidateTokenWaiter(_ waiter: WaiterToken)
     func invalidateConnectionIdWaiter(_ waiter: WaiterToken)
 }
