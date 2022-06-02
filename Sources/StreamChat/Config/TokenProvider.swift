@@ -12,11 +12,6 @@ struct UserConnectionProvider {
 }
 
 extension UserConnectionProvider {
-    /// The provider that can be used when user is unknown.
-    static var anonymous: Self {
-        .static(.anonymous)
-    }
-
     /// The provider that can be used during the development. It's handy since doesn't require a token.
     /// - Parameter userId: The user identifier.
     /// - Returns: The new `TokenProvider` instance.

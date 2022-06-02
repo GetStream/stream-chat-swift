@@ -289,6 +289,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
+            userInfo: .init(id: currentUserId),
             userConnectionProvider: .static(updatedToken)
         ) {
             reloadUserIfNeededCompletionCalled = true
@@ -374,6 +375,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
+            userInfo: .init(id: newUserId),
             userConnectionProvider: .static(updatedToken)
         ) {
             reloadUserIfNeededCompletionCalled = true
@@ -444,8 +446,13 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let updater = ChatClientUpdater(client: client)
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
+        let token: Token = .unique()
         let error = try waitFor { completion in
-            updater.reloadUserIfNeeded(userConnectionProvider: .static(.unique()), completion: completion)
+            return updater.reloadUserIfNeeded(
+                userInfo: .init(id: token.userId),
+                userConnectionProvider: .static(token),
+                completion: completion
+            )
         }
 
         // Assert `ClientError.ClientIsNotInActiveMode` is propagated.
@@ -462,7 +469,11 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         var error: Error?
-        updater.reloadUserIfNeeded(userConnectionProvider: .static(.unique())) {
+        let token: Token = .unique()
+        updater.reloadUserIfNeeded(
+            userInfo: .init(id: token.userId),
+            userConnectionProvider: .static(token)
+        ) {
             error = $0
         }
         
@@ -489,8 +500,10 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         let error: Error? = try waitFor { completion in
+            let token: Token = .unique()
             updater.reloadUserIfNeeded(
-                userConnectionProvider: .static(.unique()),
+                userInfo: .init(id: token.userId),
+                userConnectionProvider: .static(token),
                 completion: completion
             )
             
@@ -509,10 +522,12 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let updater = ChatClientUpdater(client: client)
 
         // Simulate `reloadUserIfNeeded` call.
+        let token: Token = .unique()
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
-            userConnectionProvider: .static(.unique())
+            userInfo: .init(id: token.userId),
+            userConnectionProvider: .static(token)
         ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
@@ -539,6 +554,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         
         // Simulate `reloadUserIfNeeded` call.
         updater?.reloadUserIfNeeded(
+            userInfo: .init(id: .anonymous),
             userConnectionProvider: .init {
                 tokenProviderCompletion = $0
             }

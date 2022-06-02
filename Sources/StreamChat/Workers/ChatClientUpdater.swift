@@ -12,7 +12,7 @@ class ChatClientUpdater {
     }
 
     func prepareEnvironment(
-        userInfo: UserInfo?,
+        userInfo: UserInfo,
         newToken: Token,
         completion: @escaping (Error?) -> Void
     ) {
@@ -22,7 +22,7 @@ class ChatClientUpdater {
             // Set the token
             client.currentToken = newToken
             // Set the web-socket endpoint
-            client.webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo ?? .init(id: newToken.userId))
+            client.webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo)
             // Create background workers
             client.createBackgroundWorkers()
             // Provide the token to pending API requests
@@ -55,9 +55,7 @@ class ChatClientUpdater {
                 }
                 
                 // Update web-socket endpoint.
-                client.webSocketClient?.connectEndpoint = .webSocketConnect(
-                    userInfo: userInfo ?? .init(id: newToken.userId)
-                )
+                client.webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo)
 
                 // Re-create backgroundWorker's since they are related to the previous user.
                 client.createBackgroundWorkers()
@@ -75,7 +73,7 @@ class ChatClientUpdater {
 
         // Set the web-socket endpoint
         if client.webSocketClient?.connectEndpoint == nil {
-            client.webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo ?? .init(id: newToken.userId))
+            client.webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo)
         }
 
         guard newToken != client.currentToken else {
@@ -99,7 +97,7 @@ class ChatClientUpdater {
     }
 
     func reloadUserIfNeeded(
-        userInfo: UserInfo? = nil,
+        userInfo: UserInfo,
         userConnectionProvider: UserConnectionProvider?,
         completion: ((Error?) -> Void)? = nil
     ) {

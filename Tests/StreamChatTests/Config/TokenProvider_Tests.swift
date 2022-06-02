@@ -7,15 +7,6 @@
 import XCTest
 
 final class TokenProvider_Tests: XCTestCase {
-    func test_anonymousProvider_propagatesToken() throws {
-        // Get token from `anonymous` provider.
-        let token = try waitFor { UserConnectionProvider.anonymous.tokenProvider($0) }.get()
-
-        // Assert token is correct.
-        XCTAssertEqual(token.rawValue, "")
-        XCTAssertTrue(token.userId.isAnonymousUser)
-    }
-
     func test_developmentProvider_propagatesToken() throws {
         // Create a user identifier.
         let userId: UserId = .unique

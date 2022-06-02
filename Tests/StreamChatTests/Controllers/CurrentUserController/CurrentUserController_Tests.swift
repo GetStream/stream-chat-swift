@@ -710,6 +710,9 @@ final class CurrentUserController_Tests: XCTestCase {
     // MARK: - Reload user if needed
 
     func test_reloadUserIfNeeded_callsClientUpdater_and_propagatesTheResult() {
+        // Simulate `connectUser`
+        client.currentUserId = .unique
+        
         for error in [nil, TestError()] {
             // Simulate `reloadUserIfNeeded` and capture the result.
             var reloadUserIfNeededCompletionCalled = false

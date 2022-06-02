@@ -396,7 +396,8 @@ final class ChatClient_Tests: XCTestCase {
         
         let userId: UserId = .unique
         client.connectUser(userInfo: .init(id: userId), tokenProvider: { $0(.success(.unique(userId: userId))) })
-
+        client.currentUserId = userId
+        
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
         

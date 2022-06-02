@@ -360,9 +360,10 @@ public class ChatClient {
     /// Connects anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
+        let token = Token.anonymous
         setConnectionInfoAndConnect(
-            userInfo: nil,
-            userConnectionProvider: .anonymous,
+            userInfo: .init(id: token.userId),
+            userConnectionProvider: .static(token),
             completion: completion
         )
     }
@@ -426,7 +427,7 @@ public class ChatClient {
     }
     
     private func setConnectionInfoAndConnect(
-        userInfo: UserInfo?,
+        userInfo: UserInfo,
         userConnectionProvider: UserConnectionProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -682,6 +683,11 @@ extension ChatClient: ConnectionStateDelegate {
     private func refreshToken(
         completion: ((Error?) -> Void)?
     ) {
+        guard let currentUserId = currentUserId else {
+            completion?(ClientError.CurrentUserDoesNotExist())
+            return
+        }
+        
         guard let tokenProvider = userConnectionProvider?.tokenProvider else {
             return log.assertionFailure(
                 "In case if token expiration is enabled on backend you need to provide a way to reobtain it via `tokenProvider` on ChatClient"
@@ -697,6 +703,7 @@ extension ChatClient: ConnectionStateDelegate {
                 queue: .main
             ) { [clientUpdater] in
                 clientUpdater.reloadUserIfNeeded(
+                    userInfo: .init(id: currentUserId),
                     userConnectionProvider: .init { completion in
                         tokenProvider { result in
                             if case .success = result {

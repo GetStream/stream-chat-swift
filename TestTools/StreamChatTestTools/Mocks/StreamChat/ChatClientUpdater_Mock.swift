@@ -38,7 +38,7 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
     }
 
     override func reloadUserIfNeeded(
-        userInfo: UserInfo?,
+        userInfo: UserInfo,
         userConnectionProvider: UserConnectionProvider?,
         completion: ((Error?) -> Void)?
     ) {
