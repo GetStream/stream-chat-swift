@@ -54,10 +54,7 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
         }
     }
 
-    override func connect(
-        userInfo: UserInfo?,
-        completion: ((Error?) -> Void)? = nil
-    ) {
+    override func connect(completion: ((Error?) -> Void)? = nil) {
         connect_called = true
         connect_completion = completion
     }
