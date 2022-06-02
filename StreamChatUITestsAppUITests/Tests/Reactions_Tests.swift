@@ -122,7 +122,7 @@ final class Reactions_Tests: StreamTestCase {
                 .addReaction(type: .like)
         }
         THEN("the reaction is added") {
-            participantRobot.assertReaction(isPresent: true)
+            userRobot.assertReaction(isPresent: true)
         }
     }
 
@@ -141,13 +141,13 @@ final class Reactions_Tests: StreamTestCase {
             participantRobot
                 .readMessage()
                 .addReaction(type: .lol)
-                .waitForNewReaction()
+            userRobot.waitForNewReaction()
         }
         AND("participant removes the reaction") {
             participantRobot.deleteReaction(type: .lol)
         }
         THEN("the reaction is removed") {
-            participantRobot.assertReaction(isPresent: false)
+            userRobot.assertReaction(isPresent: false)
         }
     }
     
@@ -166,7 +166,7 @@ final class Reactions_Tests: StreamTestCase {
             participantRobot.addReaction(type: .wow)
         }
         THEN("the reaction is added") {
-            participantRobot.assertReaction(isPresent: true)
+            userRobot.assertReaction(isPresent: true)
         }
     }
     
@@ -182,15 +182,14 @@ final class Reactions_Tests: StreamTestCase {
             participantRobot.sendMessage(message)
         }
         AND("participant adds the reaction") {
-            participantRobot
-                .addReaction(type: .sad)
-                .waitForNewReaction()
+            participantRobot.addReaction(type: .sad)
+            userRobot.waitForNewReaction()
         }
         AND("participant removes the reaction") {
             participantRobot.deleteReaction(type: .sad)
         }
         THEN("the reaction is removed") {
-            participantRobot.assertReaction(isPresent: false)
+            userRobot.assertReaction(isPresent: false)
         }
     }
     

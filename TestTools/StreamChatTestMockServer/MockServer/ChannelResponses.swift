@@ -52,7 +52,8 @@ public extension StreamMockServer {
             return self?.updateChannelList(request)
         }
         server.register(MockEndpoint.channels) { [weak self] request in
-            self?.updateChannelList(request)
+            self?.channelsEndpointWasCalled = true
+            return self?.updateChannelList(request)
         }
         server.register(MockEndpoint.channel) { [weak self] request in
             self?.handleChannelRequest(request)
@@ -114,6 +115,18 @@ public extension StreamMockServer {
         
         json[JSONKey.channels] = channels
         channelList = json
+    }
+    
+    func waitForChannelQueryUpdate(timeout: Double = XCUIElement.waitTimeout) {
+        let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
+        while !channelQueryEndpointWasCalled
+                && endTime > Date().timeIntervalSince1970 * 1000 {}
+    }
+    
+    func waitForChannelsUpdate(timeout: Double = XCUIElement.waitTimeout) {
+        let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
+        while !channelsEndpointWasCalled
+                && endTime > Date().timeIntervalSince1970 * 1000 {}
     }
     
     private func updateChannelList(_ request: HttpRequest) -> HttpResponse {

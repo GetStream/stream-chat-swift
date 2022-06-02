@@ -59,20 +59,19 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
         linkToScenario(withId: 141)
 
         GIVEN("user opens the channel") {
-            deviceRobot.setConnectivitySwitchVisibility(to: .on)
             userRobot
+                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }
         AND("user becomes offline") {
-            deviceRobot.setConnectivity(to: .off)
+            userRobot.setConnectivity(to: .off)
         }
         WHEN("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)
         }
         THEN("error indicator is shown for the message") {
-            userRobot
-                .assertMessageFailedToBeSent()
+            userRobot.assertMessageFailedToBeSent()
         }
         AND("delivery status is hidden") {
             userRobot
@@ -147,8 +146,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         AND("is read by participant") {
-            participantRobot
-                .readMessage()
+            participantRobot.readMessage()
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
@@ -244,13 +242,13 @@ extension MessageDeliveryStatus_Tests {
         linkToScenario(withId: 149)
 
         GIVEN("user opens the channel") {
-            deviceRobot.setConnectivitySwitchVisibility(to: .on)
             userRobot
+                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }
         WHEN("user becomes offline") {
-            deviceRobot.setConnectivity(to: .off)
+            userRobot.setConnectivity(to: .off)
         }
         AND("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)
@@ -320,8 +318,8 @@ extension MessageDeliveryStatus_Tests {
         linkToScenario(withId: 152)
 
         GIVEN("user opens the channel") {
-            deviceRobot.setConnectivitySwitchVisibility(to: .on)
             userRobot
+                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }
@@ -329,10 +327,10 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         WHEN("user becomes offline") {
-            deviceRobot.setConnectivity(to: .off)
+            userRobot.setConnectivity(to: .off)
         }
         AND("user replies to message in thread") {
-            userRobot.replyToMessageInThread(failedThreadReply)
+            userRobot.replyToMessageInThread(failedThreadReply, waitForAppearance: false)
         }
         THEN("error indicator is shown for the thread reply") {
             userRobot.assertThreadReplyFailedToBeSent()
@@ -558,13 +556,13 @@ extension MessageDeliveryStatus_Tests {
 
         GIVEN("user opens the channel") {
             backendRobot.setReadEvents(to: false)
-            deviceRobot.setConnectivitySwitchVisibility(to: .on)
             userRobot
+                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }
         AND("user becomes offline") {
-            deviceRobot.setConnectivity(to: .off)
+            userRobot.setConnectivity(to: .off)
         }
         WHEN("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)

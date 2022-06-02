@@ -31,7 +31,7 @@ let package = Package(
     dependencies: [
         .package(name: "StreamChatTestHelpers",
                  url: "https://github.com/GetStream/stream-chat-swift-test-helpers.git",
-                .revision("b1ba8062f583a1aa744c139b5a7deb8364e6c8f0")),
+                .revision("4e5c5dae3098965c13e42bcdd27a0c81542fa9eb")),
         .package(name: "Swifter", url: "https://github.com/httpswift/swifter", .exact("1.5.0"))
     ],
     targets: [
