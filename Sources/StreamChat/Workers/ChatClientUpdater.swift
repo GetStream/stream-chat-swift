@@ -108,7 +108,7 @@ class ChatClientUpdater {
             return
         }
         
-        userConnectionProvider.getToken(client) {
+        userConnectionProvider.tokenProvider {
             switch $0 {
             case let .success(newToken):
                 self.prepareEnvironment(

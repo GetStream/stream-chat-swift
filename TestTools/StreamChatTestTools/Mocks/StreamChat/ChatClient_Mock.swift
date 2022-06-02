@@ -8,7 +8,6 @@ import XCTest
 
 final class ChatClient_Mock: ChatClient {
     @Atomic var init_config: ChatClientConfig
-    @Atomic var init_tokenProvider: TokenProvider?
     @Atomic var init_environment: Environment
     @Atomic var init_completion: ((Error?) -> Void)?
 
@@ -32,17 +31,14 @@ final class ChatClient_Mock: ChatClient {
 
     init(
         config: ChatClientConfig,
-        tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder] = [],
         environment: Environment = .mock
     ) {
         init_config = config
-        init_tokenProvider = tokenProvider
         init_environment = environment
 
         super.init(
             config: config,
-            tokenProvider: tokenProvider,
             environment: environment
         )
         if !workerBuilders.isEmpty {
@@ -101,7 +97,6 @@ final class ChatClient_Mock: ChatClient {
         completeTokenWaiters_token = nil
 
         _backgroundWorkers?.removeAll()
-        init_tokenProvider = nil
         init_completion = nil
     }
 }
