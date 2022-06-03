@@ -10,6 +10,12 @@ Agora is an infrastructure provider for live, interactive voice and video. They 
 
 You must complete quite a few steps to create the final product. We will cover all of them to help you create a well-integrated, fully functional, and reusable solution in the end.
 
+First, let’s take a look at the end result of this project:
+
+<video width="400" height="860" controls loop muted autoplay>
+  <source src="https://getstream.io/static-cdn/videos/agora-demo.mov"/>
+</video>
+
 In order to create this, follow these six steps:
 
 1. Set up an Agora account
