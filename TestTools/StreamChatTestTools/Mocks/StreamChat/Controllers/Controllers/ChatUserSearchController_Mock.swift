@@ -6,8 +6,8 @@ import Foundation
 @testable import StreamChat
 
 public class ChatUserSearchController_Mock: ChatUserSearchController {
-    public static func mock() -> ChatUserSearchController_Mock {
-        .init(client: .mock())
+    public static func mock(client: ChatClient? = nil) -> ChatUserSearchController_Mock {
+        .init(client: client ?? .mock())
     }
     
     public var users_mock: [ChatUser]?

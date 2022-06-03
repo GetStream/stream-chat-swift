@@ -7,7 +7,7 @@ import CoreData
 import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.
-final public class DatabaseContainer_Spy: DatabaseContainer, Spy {
+public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     @Atomic public var recordedFunctions: [String] = []
 
     /// If set, the `write` completion block is called with this value.
@@ -33,7 +33,7 @@ final public class DatabaseContainer_Spy: DatabaseContainer, Spy {
         shouldCleanUpTempDBFiles = true
     }
     
-    public override init(
+    override public init(
         kind: DatabaseContainer.Kind,
         shouldFlushOnStart: Bool = false,
         shouldResetEphemeralValuesOnStart: Bool = true,
@@ -71,7 +71,7 @@ final public class DatabaseContainer_Spy: DatabaseContainer, Spy {
         }
     }
     
-    public override func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
+    override public func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
         removeAllData_called = true
 
         if let error = removeAllData_errorResponse {
@@ -82,7 +82,7 @@ final public class DatabaseContainer_Spy: DatabaseContainer, Spy {
         super.removeAllData(force: force, completion: completion)
     }
     
-    public override func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) {
+    override public func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) {
         recreatePersistentStore_called = true
         
         if let error = recreatePersistentStore_errorResponse {
@@ -93,7 +93,7 @@ final public class DatabaseContainer_Spy: DatabaseContainer, Spy {
         super.recreatePersistentStore(completion: completion)
     }
     
-    public override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
+    override public func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         record()
         let wrappedActions: ((DatabaseSession) throws -> Void) = { session in
             self.isWriteSessionInProgress = true
@@ -111,7 +111,7 @@ final public class DatabaseContainer_Spy: DatabaseContainer, Spy {
         }
     }
     
-    public override func resetEphemeralValues() {
+    override public func resetEphemeralValues() {
         record()
         resetEphemeralValues_called = true
         super.resetEphemeralValues()

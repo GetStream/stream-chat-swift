@@ -6,8 +6,8 @@ import Foundation
 @testable import StreamChat
 
 public class ChatMessageSearchController_Mock: ChatMessageSearchController {
-    public static func mock() -> ChatMessageSearchController_Mock {
-        .init(client: .mock())
+    public static func mock(client: ChatClient? = nil) -> ChatMessageSearchController_Mock {
+        .init(client: client ?? .mock())
     }
     
     public var messages_mock: LazyCachedMapCollection<ChatMessage>?
