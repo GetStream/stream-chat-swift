@@ -29,6 +29,14 @@ Get code coverage report and run complexity analysis for Sonar
 
 Upload test results to Allure TestOps
 
+### allure_launch
+
+```sh
+[bundle exec] fastlane allure_launch
+```
+
+Create launch on Allure TestOps
+
 ### allure_create_testcase
 
 ```sh

@@ -66,14 +66,14 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
         linkToScenario(withId: 168)
 
         GIVEN("user opens the channel") {
-            deviceRobot.setConnectivitySwitchVisibility(to: .on)
             userRobot
+                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }
         AND("user's message is not sent") {
-            deviceRobot.setConnectivity(to: .off)
             userRobot
+                .setConnectivity(to: .off)
                 .sendMessage(failedMessage, waitForAppearance: false)
                 .assertMessageFailedToBeSent()
         }
@@ -189,8 +189,8 @@ extension MessageDeliveryStatus_ChannelList_Tests {
         linkToScenario(withId: 173)
 
         GIVEN("user opens the channel") {
-            deviceRobot.setConnectivitySwitchVisibility(to: .on)
             userRobot
+                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }
@@ -198,7 +198,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
             userRobot.sendMessage(message)
         }
         AND("user becomes offline") {
-            deviceRobot.setConnectivity(to: .off)
+            userRobot.setConnectivity(to: .off)
         }
         AND("user replies to message in thread") {
             userRobot.replyToMessageInThread(failedThreadReply, waitForAppearance: false)

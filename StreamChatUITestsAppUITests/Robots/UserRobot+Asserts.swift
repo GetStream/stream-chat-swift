@@ -5,7 +5,6 @@
 import Foundation
 import XCTest
 import StreamChat
-@testable import StreamChatUI
 
 let channelAttributes = ChannelListPage.Attributes.self
 let channelCells = ChannelListPage.cells
@@ -106,7 +105,7 @@ extension UserRobot {
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let errorButton = attributes.errorButton(in: messageCell).wait()
-        XCTAssertTrue(errorButton.exists, file: file, line: line)
+        XCTAssertTrue(errorButton.wait().exists, file: file, line: line)
         return self
     }
 
