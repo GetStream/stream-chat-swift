@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `Date._unconditionallyBridgeFromObjectiveC(NSDate?)` crash [#2027](https://github.com/GetStream/stream-chat-swift/pull/2027)
 - Fix `NSHashTable` count underflow crash [#2032](https://github.com/GetStream/stream-chat-swift/pull/2032)
 - Fix Message List using incorrect indexPath for message updates [#2044](https://github.com/GetStream/stream-chat-swift/pull/2044)
+- Fix hidden channels not appearing on relaunch  [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
+- Fix `channel.hidden` event failing to decode on launch/reconnection [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
+- Fix messages in hidden channels with `clearHistory` re-appearing [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
+- Fix last message of hidden channel with `clearHistory` visible in channel list [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 ### 🔄 Changed
 - Changing the decoding of `role` to `channel_role` as `role` is now deprecated on the backend. This allows for custom roles defined within your V2 permissions [#2028](https://github.com/GetStream/stream-chat-swift/issues/2028)
 
