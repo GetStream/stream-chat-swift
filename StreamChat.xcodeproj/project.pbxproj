@@ -439,7 +439,6 @@
 		829CD5CC2848C8D6003C3877 /* BackendRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5CB2848C8D6003C3877 /* BackendRobot.swift */; };
 		82A6F5C027E2031000F4A2F6 /* Reactions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */; };
 		82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */; };
-		82BA52F127E1F36B00951B87 /* Robot+CustomAssertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52F027E1F36B00951B87 /* Robot+CustomAssertions.swift */; };
 		82CED1C827DF492F006E967A /* ThreadPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CED1C727DF492F006E967A /* ThreadPage.swift */; };
 		840B4FCF26A9E53100D5EFAB /* CustomEventRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840B4FCE26A9E53100D5EFAB /* CustomEventRequestBody.swift */; };
 		84196FA32805892500185E99 /* LocalMessageState+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */; };
@@ -2743,7 +2742,6 @@
 		82B350FC27EA2A3900FEB6A0 /* MessageResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageResponses.swift; sourceTree = "<group>"; };
 		82B3510027EA2B1400FEB6A0 /* EventResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventResponses.swift; sourceTree = "<group>"; };
 		82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList_Tests.swift; sourceTree = "<group>"; };
-		82BA52F027E1F36B00951B87 /* Robot+CustomAssertions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Robot+CustomAssertions.swift"; sourceTree = "<group>"; };
 		82CED1C727DF492F006E967A /* ThreadPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadPage.swift; sourceTree = "<group>"; };
 		82D2E81E27D10F4300169ADA /* StreamMockServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamMockServer.swift; sourceTree = "<group>"; };
 		82E4CBDB27F240C60013B02D /* WebsocketResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsocketResponses.swift; sourceTree = "<group>"; };
@@ -5037,7 +5035,6 @@
 		82AD02B627D8E3D4000611B7 /* Robots */ = {
 			isa = PBXGroup;
 			children = (
-				82BA52F027E1F36B00951B87 /* Robot+CustomAssertions.swift */,
 				8298C8E827D22C3E004082D3 /* UserRobot.swift */,
 				A3B78F19282A6A8F00348AD1 /* UserRobot+Asserts.swift */,
 			);
@@ -9948,7 +9945,6 @@
 				A33FA818282E559A00DC40E8 /* SlowMode_Tests.swift in Sources */,
 				A39B040B27F196F200D6B18A /* StreamChatUITests.swift in Sources */,
 				825A32CF27DBB48D000402A9 /* StartPage.swift in Sources */,
-				82BA52F127E1F36B00951B87 /* Robot+CustomAssertions.swift in Sources */,
 				A3BEB6AF27F3235600D6D80D /* Bundle+Target.swift in Sources */,
 				A3AFEAA72816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift in Sources */,
 				822F265727D8F75D00E454FB /* UserRobot.swift in Sources */,
