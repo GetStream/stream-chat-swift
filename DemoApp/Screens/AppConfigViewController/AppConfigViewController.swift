@@ -16,8 +16,6 @@ struct DemoAppConfig {
 class AppConfig {
     /// The Demo App Configuration.
     var demoAppConfig: DemoAppConfig
-    /// The StreamChat SDK Config.
-    var chatClientConfig: ChatClientConfig
 
     static var shared = AppConfig()
 
@@ -27,11 +25,6 @@ class AppConfig {
             isHardDeleteEnabled: false,
             isAtlantisEnabled: false
         )
-
-        // DemoApp ChatClientConfig
-        chatClientConfig = ChatClientConfig(apiKeyString: apiKeyString)
-        chatClientConfig.shouldShowShadowedMessages = true
-        chatClientConfig.applicationGroupIdentifier = applicationGroupIdentifier
     }
 }
 
@@ -45,9 +38,9 @@ class AppConfigViewController: UITableViewController {
     }
 
     var chatClientConfig: ChatClientConfig {
-        get { AppConfig.shared.chatClientConfig }
+        get { StreamChatWrapper.shared.config }
         set {
-            AppConfig.shared.chatClientConfig = newValue
+            StreamChatWrapper.shared.config = newValue
             tableView.reloadData()
         }
     }
@@ -251,22 +244,5 @@ class AppConfigViewController: UITableViewController {
         }
 
         navigationController?.pushViewController(selectorViewController, animated: true)
-    }
-}
-
-extension ChatClientConfig.DeletedMessageVisibility: CustomStringConvertible {
-    public var description: String {
-        labelText
-    }
-
-    public var labelText: String {
-        switch self {
-        case .alwaysHidden:
-            return "alwaysHidden"
-        case .alwaysVisible:
-            return "alwaysVisible"
-        case .visibleForCurrentUser:
-            return "visibleForCurrentUser"
-        }
     }
 }

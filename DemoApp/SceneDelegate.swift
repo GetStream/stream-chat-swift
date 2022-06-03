@@ -11,6 +11,14 @@ extension UIColor {
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var coordinator: DemoAppCoordinator!
     var window: UIWindow?
+
+    var chat: StreamChatWrapper {
+        StreamChatWrapper.shared
+    }
+
+    var pushNotifications: PushNotifications {
+        PushNotifications.shared
+    }
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = scene as? UIWindowScene else { return }
@@ -18,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
         window.tintColor = .streamBlue
         
-        coordinator = DemoAppCoordinator(window: window)
+        coordinator = DemoAppCoordinator(window: window, chat: chat, pushNotifications: pushNotifications)
         coordinator.start()
         
         window.makeKeyAndVisible()
