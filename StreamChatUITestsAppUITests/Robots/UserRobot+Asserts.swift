@@ -5,7 +5,6 @@
 import Foundation
 import XCTest
 import StreamChat
-@testable import StreamChatUI
 
 let channelAttributes = ChannelListPage.Attributes.self
 let channelCells = ChannelListPage.cells
