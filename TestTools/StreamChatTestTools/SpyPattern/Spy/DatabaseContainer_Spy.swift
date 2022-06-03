@@ -7,8 +7,8 @@ import CoreData
 import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.
-final class DatabaseContainer_Spy: DatabaseContainer, Spy {
-    @Atomic var recordedFunctions: [String] = []
+final public class DatabaseContainer_Spy: DatabaseContainer, Spy {
+    @Atomic public var recordedFunctions: [String] = []
 
     /// If set, the `write` completion block is called with this value.
     @Atomic var write_errorResponse: Error?
@@ -28,12 +28,12 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     /// If set to `true` and the mock will remove its database files once deinited.
     var shouldCleanUpTempDBFiles = false
     
-    convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
+    public convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
         self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
         shouldCleanUpTempDBFiles = true
     }
     
-    override init(
+    public override init(
         kind: DatabaseContainer.Kind,
         shouldFlushOnStart: Bool = false,
         shouldResetEphemeralValuesOnStart: Bool = true,
@@ -71,7 +71,7 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         }
     }
     
-    override func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
+    public override func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
         removeAllData_called = true
 
         if let error = removeAllData_errorResponse {
@@ -82,7 +82,7 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         super.removeAllData(force: force, completion: completion)
     }
     
-    override func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) {
+    public override func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) {
         recreatePersistentStore_called = true
         
         if let error = recreatePersistentStore_errorResponse {
@@ -93,7 +93,7 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         super.recreatePersistentStore(completion: completion)
     }
     
-    override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
+    public override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         record()
         let wrappedActions: ((DatabaseSession) throws -> Void) = { session in
             self.isWriteSessionInProgress = true
@@ -111,7 +111,7 @@ final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         }
     }
     
-    override func resetEphemeralValues() {
+    public override func resetEphemeralValues() {
         record()
         resetEphemeralValues_called = true
         super.resetEphemeralValues()
