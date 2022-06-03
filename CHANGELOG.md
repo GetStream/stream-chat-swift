@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix DM Channel with multiple members displaying only 1 user avatar [#2019](https://github.com/GetStream/stream-chat-swift/pull/2019)
 - Improve stability of Message List with Diffing disabled [#2006](https://github.com/GetStream/stream-chat-swift/pull/2006)
 - Fix quoted message extra spacing jump UI glitch [#2050](https://github.com/GetStream/stream-chat-swift/pull/2050)
+- Fix edge case where cell would be hidden after reacting to it [#2053](https://github.com/GetStream/stream-chat-swift/pull/2053)
 
 # [4.15.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.15.1)
 _June 01, 2022_
