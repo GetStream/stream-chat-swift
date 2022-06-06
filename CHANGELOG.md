@@ -2,6 +2,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+
+### 🔄 Changed
+
+# [4.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.16.0)
+_June 06, 2022_
 ## StreamChat
 ### 💥 Removed
 - The `tokenProvider` property was removed from `ChatClient` [#2031](https://github.com/GetStream/stream-chat-swift/issues/2031)
