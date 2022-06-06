@@ -135,6 +135,7 @@ public extension ChatChannel {
         reads: [ChatChannelRead] = [],
         extraData: [String: RawJSON] = [:],
         latestMessages: [ChatMessage] = [],
+        pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil
     ) -> Self {
@@ -159,6 +160,7 @@ public extension ChatChannel {
             reads: reads,
             extraData: extraData,
             latestMessages: { latestMessages },
+            pinnedMessages: { pinnedMessages },
             muteDetails: { muteDetails },
             previewMessage: { previewMessage },
             underlyingContext: nil
