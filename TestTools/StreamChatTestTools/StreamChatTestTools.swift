@@ -12,10 +12,8 @@ extension Bundle {
 
     static let bundleName = "StreamChat_StreamChatTestTools"
 
-    private static let fixtures = "Fixtures"
-    private static let JSONs = "\(fixtures)/JSONs/"
-    private static let images = "\(fixtures)/Images/"
-    private static let other = "\(fixtures)/Other/"
+    private static let JSONs = "JSONs/"
+    private static let other = "Other/"
 
     /// Returns the resource bundle associated with the current Swift module.
     static let testTools: Bundle = {
@@ -41,10 +39,6 @@ extension Bundle {
 
     var pathToJSONsFolder: String {
         Self.testTools.bundlePath.contains(Self.bundleName) ? Self.JSONs : ""
-    }
-
-    var pathToImagesFolder: String {
-        Self.testTools.bundlePath.contains(Self.bundleName) ? Self.images : ""
     }
 
     var pathToOtherFolder: String {
