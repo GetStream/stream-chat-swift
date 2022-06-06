@@ -89,8 +89,14 @@ final class MessageSearchController_Tests: XCTestCase {
         // Deallocate controller
         controller = nil
         
+        var query: MessageSearchQueryDTO? {
+            // Force DB to re-fetch DTO from persistent store
+            FetchCache.clear()
+            return client.databaseContainer.viewContext.messageSearchQuery(filterHash: filterHash)
+        }
+        
         // Assert query doesn't exist in DB anymore
-        AssertAsync.willBeNil(client.databaseContainer.viewContext.messageSearchQuery(filterHash: filterHash))
+        AssertAsync.willBeNil(query)
         
         // Assert the message is still here
         AssertAsync.staysTrue(message != nil)

@@ -242,7 +242,10 @@ open class ChatMessageListVC: _ViewController,
         if #available(iOS 13.0, *), isDiffingEnabled {
             updateMessagesSnapshot(with: changes, completion: completion)
         } else {
-            listView.updateMessages(with: changes, completion: completion)
+            // Because we use an inverted table view, we need to avoid animations since they look odd.
+            UIView.performWithoutAnimation {
+                listView.updateMessages(with: changes, completion: completion)
+            }
         }
     }
 

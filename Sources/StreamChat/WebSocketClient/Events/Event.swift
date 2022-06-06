@@ -23,6 +23,10 @@ protocol EventDTO: Event {
 
 extension EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? { nil }
+
+    var name: String {
+        String(describing: Self.self).replacingOccurrences(of: "DTO", with: "")
+    }
 }
 
 /// A protocol for any `ChannelEvent` where it has a  `channel` payload.

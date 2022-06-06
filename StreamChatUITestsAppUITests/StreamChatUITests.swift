@@ -3,6 +3,7 @@
 //
 
 @_exported import StreamChatTestHelpers
+@_exported import StreamChatTestMockServer
 import Foundation
 
 final class StreamChatUITests {}

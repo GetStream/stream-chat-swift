@@ -24,7 +24,7 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
                 channelDTO.isHidden = true
                 
                 if event.isHistoryCleared {
-                    channelDTO.truncatedAt = event.createdAt
+                    channelDTO.truncatedAt = event.createdAt.bridgeDate
                 }
                 
             // New Message will unhide the channel

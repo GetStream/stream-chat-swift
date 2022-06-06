@@ -5,6 +5,7 @@
 import Foundation
 import XCTest
 import StreamChat
+@testable import StreamChatUI
 
 // swiftlint:disable convenience_type
 
@@ -12,6 +13,14 @@ class MessageListPage {
     
     static var cells: XCUIElementQuery {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMessageCell'"))
+    }
+
+    static var list: XCUIElement {
+        app.tables.firstMatch
+    }
+    
+    static var typingIndicator: XCUIElement {
+        app.otherElements["TypingIndicatorView"].staticTexts.firstMatch
     }
     
     enum NavigationBar {
@@ -60,7 +69,8 @@ class MessageListPage {
         static var confirmButton: XCUIElement { app.buttons["ConfirmButton"] }
         static var attachmentButton: XCUIElement { app.buttons["AttachmentButton"] }
         static var commandButton: XCUIElement { app.buttons["CommandButton"] }
-        static var inputField: XCUIElement { app.otherElements["InputChatMessageView"] }
+        static var inputField: XCUIElement { app.otherElements["inputTextContainer"] }
+        static var cooldown: XCUIElement { app.staticTexts["cooldownLabel"] }
     }
     
     enum Reactions {
@@ -154,7 +164,7 @@ class MessageListPage {
         }
         
         static func text(in messageCell: XCUIElement) -> XCUIElement {
-            messageCell.textViews["textView"]
+            messageCell.textViews["textView"].firstMatch
         }
         
         static func quotedText(_ text: String, in messageCell: XCUIElement) -> XCUIElement {
@@ -183,6 +193,27 @@ class MessageListPage {
                 identifier = "\(identifier)_\(status.rawValue)"
             }
             return messageCell.images[identifier]
+        }
+        
+        static func giphySendButton(in messageCell: XCUIElement) -> XCUIElement {
+            attachmentActionButton(in: messageCell, label: "Send")
+        }
+        
+        static func giphyShuffleButton(in messageCell: XCUIElement) -> XCUIElement {
+            attachmentActionButton(in: messageCell, label: "Shuffle")
+        }
+        
+        static func giphyCancelButton(in messageCell: XCUIElement) -> XCUIElement {
+            attachmentActionButton(in: messageCell, label: "Cancel")
+        }
+        
+        private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {
+            messageCell.buttons.matching(NSPredicate(
+                format: "identifier LIKE 'ActionButton' AND label LIKE '\(label)'")).firstMatch
+        }
+        
+        static var deletedMessagePlaceholder: String {
+            L10n.Message.deletedMessagePlaceholder
         }
     }
     

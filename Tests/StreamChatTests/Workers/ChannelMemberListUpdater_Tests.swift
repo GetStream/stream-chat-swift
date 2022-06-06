@@ -63,14 +63,14 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         ])
         apiClient.test_simulateResponse(.success(payload))
         
+        AssertAsync.willBeTrue(completionCalled)
+        
         // Load query.
         var queryDTO: ChannelMemberListQueryDTO? {
             database.viewContext.channelMemberListQuery(queryHash: query.queryHash)
         }
         
         AssertAsync {
-            // Assert completion is called.
-            Assert.willBeTrue(completionCalled)
             // Assert query is saved to the database.
             Assert.willBeTrue(queryDTO != nil)
             // Assert query members are saved to the database.
@@ -91,18 +91,11 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
         
         // Simulate successful channel response.
-        let dymmyChannelPayload = dummyPayload(with: query.cid)
-        apiClient.test_simulateResponse(.success(dymmyChannelPayload))
-        
-        // Load channel.
-        var channelDTO: ChannelDTO? {
-            database.viewContext.channel(cid: query.cid)
-        }
+        let dummyChannelPayload = dummyPayload(with: query.cid)
+        apiClient.test_simulateResponse(.success(dummyChannelPayload))
         
         let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
         AssertAsync {
-            // Assert channel is saved to the database.
-            Assert.willBeTrue(channelDTO != nil)
             // Assert members endpoint is called.
             Assert.willBeEqual(self.apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
         }
@@ -115,14 +108,24 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         ])
         apiClient.test_simulateResponse(.success(payload))
         
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionCalled)
+        
         // Load query.
         var queryDTO: ChannelMemberListQueryDTO? {
-            database.viewContext.channelMemberListQuery(queryHash: query.queryHash)
+            FetchCache.clear()
+            return database.viewContext.channelMemberListQuery(queryHash: query.queryHash)
+        }
+        
+        // Load channel.
+        var channelDTO: ChannelDTO? {
+            FetchCache.clear()
+            return database.viewContext.channel(cid: query.cid)
         }
         
         AssertAsync {
-            // Assert completion is called.
-            Assert.willBeTrue(completionCalled)
+            // Assert channel is saved to the database.
+            Assert.willBeTrue(channelDTO != nil)
             // Assert query is saved to the database.
             Assert.willBeTrue(queryDTO != nil)
             // Assert query members are saved to the database.

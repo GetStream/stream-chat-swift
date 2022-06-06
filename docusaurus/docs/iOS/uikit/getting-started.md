@@ -8,84 +8,101 @@ This section provides a high-level overview of the library, core components, and
 
 Before starting, make sure you have installed `StreamChatUI` as explained in the [Installation](./uikit-overview.md#installation) section.
 
-### Chat Setup and Users
+### Chat Setup
 
-The first step to use the library is to create an instance of `ChatClient` and then connect as a user. You should do this as early as possible in your application and ensure that only one
-`ChatClient` instance is used across your application. For the sake of simplicity, we are going to show this using a singleton pattern.
-
+The first step to use the library is to create an instance of `ChatClient`. It's recommended to instantiate the `ChatClient` as early as possible and ensure that only one `ChatClient` instance is used across your application. For the sake of simplicity, we are going to show this using a singleton pattern:
 ```swift
-/// for sake of simplicity we are extending ChatClient and add a static var `shared`
 extension ChatClient {
-    static var shared: ChatClient!
+    static let shared: ChatClient = {
+        // You can grab your API Key from https://getstream.io/dashboard/
+        let config = ChatClientConfig(apiKeyString: "<# Your API Key Here #>")
+        
+        // Create an instance of the `ChatClient` with the given config
+        let client = ChatClient(config: config)
+        
+        return client
+    }()
 }
 ```
 
-You should place this code in your `SceneDelegate.scene(_:willConnectTo:options:)` method:
+### Connect User
 
+The next step is to connect the `ChatClient` with a user. In order to connect, the chat client needs an authorization token.
+
+In case the **token does not expire**, the connection step can look as follows:
 ```swift
-/// you can grab your API Key from https://getstream.io/dashboard/
-let config = ChatClientConfig(apiKey: .init("<# Your API Key Here #>"))
+// You can generate the token for this user from https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift
+// make sure to use the `leia_organa` as user id and the correct API Key Secret.
+let nonExpiringToken: Token = "<# User Token Here #>"
 
-/// you can generate the token for this user from https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift
-/// make sure to use the `leia_organa` as user id and the correct API Key Secret
-let token: Token = "Your User Token Here"
+// Create the user info to connect with
+let userInfo = UserInfo(
+    id: "leia_organa",
+    name: "Leia Organa",
+    imageURL: URL(string: "https://cutt.ly/SmeFRfC")
+)
 
-/// create an instance of ChatClient and share it using the singleton
-ChatClient.shared = ChatClient(config: config, tokenProvider: .closure { client, completion in
-    guard let userId = client.currentUserId else {
-        return
-    }
-    /// on a real application you would request the chat token from your backend API
-    /// Auth.getChatToken(userID: userId, { token in
-    ///     completion(.success(token))
-    /// })
-    completion(.success(token))
-})
+// Connect the client with the static token
+ChatClient.shared.connectUser(userInfo: userInfo, token: nonExpiringToken) { error in
+ /* handle the connection error */
+}
+```
 
-/// connect to chat
-ChatClient.shared.connectUser(
-    userInfo: UserInfo(
-        id: "leia_organa",
-        name: "Leia Organa",
-        imageURL: URL(string: "https://cutt.ly/SmeFRfC")
-    ),
-    token: token
+:::note
+This example has the user and its token hard-coded. But the best practice is to fetch the user and generate a valid chat token on your backend infrastructure.
+:::
+
+In case of a **token with an expiration date**, the chat client should be connected by giving the token provider that is invoked for initial connection and also to obtain the new token when the current token expires:
+```swift
+// Create the user info to connect with
+let userInfo = UserInfo(
+    id: "leia_organa",
+    name: "Leia Organa",
+    imageURL: URL(string: "https://cutt.ly/SmeFRfC")
+)
+
+// Create a token provider that uses the backend to retreive a new token. The token provider is called on `connect` as well as when the current token expires
+let tokenProvider: TokenProvider = { completion in
+   yourAuthService.fetchToken(for: userInfo.id, completion: completion)
+}
+
+// Connect the client with the token provider
+ChatClient.shared.connectUser(userInfo: userInfo, tokenProvider: tokenProvider) { error in
+ /* handle the connection error */
+}
+```
+
+### Show Channel List
+
+Once the `ChatClient` is connected, we can show the list of channels. 
+
+To modally show the channel list screen, add the following code-snippet to your app (read more about presentation styles [here](./components/channel-list.md)):
+```swift
+let query = ChannelListQuery(filter: .containMembers(userIds: [userId]))
+let controller = ChatClient.shared.channelListController(query: query)
+let channelListVC = ChatChannelList.make(with: controller)
+let channelListNVC = UINavigationController(rootViewController: channelListVC)
+
+rootViewController.present(channelListNVC)
+```
+
+We also support loading the channel list screen from the storyboard by passing in the reference of the `UIStoryboard` and the identifier:
+```swift
+let storyboard = UIStoryboard(name: "Main", bundle: /*bundle containing the storyboard*/)
+let channelListVC = ChatChannelList.make(
+    with: controller, 
+    storyboard: storyboard, 
+    storyboardId: "<# Storyboard ID Here #>"
 )
 ```
 
-- You can grab your API Key and API Secret from the [dashboard](https://getstream.io/dashboard/)
-- You can use the token generator [here](https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift)
+The code snippets above will also create the `ChatChannelListController` with the specified query. `ChannelListQuery` allows us to define the channels to fetch and their order. Here we are listing channels where the current user is a member. In this case, the query will load all the channels the user is a member of. 
 
-This example has the user and its token hard-coded. The best practice is to fetch the user and generate a valid chat token on your backend infrastructure.
-
-In the next step, we are adding the channel list and message list screens to our app. If this is a new application, make sure to embed your view controller in a navigation controller.
+Read more about channel list query and low-level channel list controller [here](./controllers/channels.md).
 
 :::note
 You can load test data for your application using the test data generator [here](https://generator.getstream.io/).
 :::
-
-```swift
-import UIKit
-import StreamChat
-import StreamChatUI
-
-
-class DemoChannelList: ChatChannelListVC {}
-```
-
-This will create a brand new UIViewController that is subclassing the ChatChannelListVC.
-
-```swift
-let query = ChannelListQuery(filter: .containMembers(userIds: [userId]))
-let controller = ChatClient.shared.channelListController(query: query)
-let channelList = DemoChannelList.make(with: controller)
-```
-
-When deciding to push your `UIViewController` on to the `NavigationStack`, you can use our factory method to instantiate this `ViewController`. We also support `UIStoryboard` by passing in the reference of the `UIStoryboard` and the `StoryboardId`.
-
-The snippet above will also create the `ChatChannelListController` with the specified query. In this case the query will load all the channels that you're currently a member of.
-
-`ChannelListQuery` allows us to define the channels to fetch and their order. Here we are listing channels where the current user is a member. By default tapping on a channel will navigate to `ChatMessageListVC`.
 
 ### Creating a Channel
 

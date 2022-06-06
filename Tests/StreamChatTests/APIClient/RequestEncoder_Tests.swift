@@ -146,7 +146,7 @@ final class RequestEncoder_Tests: XCTestCase {
         // We execute the timeout timer
         VirtualTimeTimer.time.scheduledTimers.first.map { $0.callback($0) }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         guard let request = receivedRequest else {
             XCTFail("We should have received a request here")
             return
@@ -233,7 +233,7 @@ final class RequestEncoder_Tests: XCTestCase {
         // We execute the timeout timer
         VirtualTimeTimer.time.scheduledTimers.first.map { $0.callback($0) }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         guard let request = receivedRequest else {
             XCTFail("We should have received a request here")
             return

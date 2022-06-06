@@ -19,8 +19,8 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var urlEnrichmentEnabled: Bool
     @NSManaged var messageRetention: String
     @NSManaged var maxMessageLength: Int32
-    @NSManaged var createdAt: Date
-    @NSManaged var updatedAt: Date
+    @NSManaged var createdAt: DBDate
+    @NSManaged var updatedAt: DBDate
     @NSManaged var commands: NSOrderedSet
 
     func asModel() throws -> ChannelConfig {
@@ -41,8 +41,8 @@ final class ChannelConfigDTO: NSManagedObject {
             commands: Array(Set(
                 commands.compactMap { try? ($0 as? CommandDTO)?.asModel() }
             )),
-            createdAt: createdAt,
-            updatedAt: updatedAt
+            createdAt: createdAt.bridgeDate,
+            updatedAt: updatedAt.bridgeDate
         )
     }
 }
@@ -56,7 +56,7 @@ extension ChannelConfig {
         if let loadedDto = ChannelConfigDTO.load(by: request, context: context).first {
             dto = loadedDto
         } else {
-            dto = ChannelConfigDTO(context: context)
+            dto = NSEntityDescription.insertNewObject(into: context, for: request)
         }
 
         dto.reactionsEnabled = reactionsEnabled
@@ -71,8 +71,8 @@ extension ChannelConfig {
         dto.urlEnrichmentEnabled = urlEnrichmentEnabled
         dto.messageRetention = messageRetention
         dto.maxMessageLength = Int32(maxMessageLength)
-        dto.createdAt = createdAt
-        dto.updatedAt = updatedAt
+        dto.createdAt = createdAt.bridgeDate
+        dto.updatedAt = updatedAt.bridgeDate
         dto.commands = NSOrderedSet(array: commands.map { $0.asDTO(context: context) })
         return dto
     }

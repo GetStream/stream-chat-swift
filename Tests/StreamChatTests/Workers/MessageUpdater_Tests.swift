@@ -347,7 +347,7 @@ final class MessageUpdater_Tests: XCTestCase {
             .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
         apiClient.test_simulateResponse(response)
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         // Assert database error is propogated
         XCTAssertEqual(completionCalledError as? TestError, databaseError)
     }
@@ -383,7 +383,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 0.1)
+            wait(for: [expectation], timeout: 0.5)
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
             XCTAssertNotNil(message.deletedAt)
@@ -432,7 +432,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
             apiClient.test_simulateResponse(response)
 
-            wait(for: [expectation], timeout: 0.1)
+            wait(for: [expectation], timeout: 0.5)
             XCTAssertCall("saveSuccessfullyDeletedMessage(message:completion:)", on: messageRepository, times: 1)
         }
     }
@@ -986,6 +986,9 @@ final class MessageUpdater_Tests: XCTestCase {
             flaggedMessageId: messageId
         )
         apiClient.test_simulateResponse(.success(flagMessagePayload))
+        
+        // Assert flag completion is called.
+        AssertAsync.willBeTrue(flagCompletionCalled)
 
         // Load the message.
         var messageDTO: MessageDTO? {
@@ -993,8 +996,6 @@ final class MessageUpdater_Tests: XCTestCase {
         }
         
         AssertAsync {
-            // Assert flag completion is called.
-            Assert.willBeTrue(flagCompletionCalled)
             // Assert current user has the message flagged.
             Assert.willBeTrue(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? false)
             // Assert message is flagged by current user.
@@ -1015,9 +1016,10 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate unflag API response.
         apiClient.test_simulateResponse(.success(flagMessagePayload))
         
+        // Assert unflag completion is called.
+        AssertAsync.willBeTrue(unflagCompletionCalled)
+        
         AssertAsync {
-            // Assert unflag completion is called.
-            Assert.willBeTrue(unflagCompletionCalled)
             // Assert current user doesn't have the message as flagged.
             Assert.willBeFalse(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? true)
             // Assert message is not flagged by current user anymore.
@@ -1203,7 +1205,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
         
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         let request = apiClient.waitForRequest()
 
@@ -1238,7 +1240,7 @@ final class MessageUpdater_Tests: XCTestCase {
             dbCall.fulfill()
         }
 
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         // Requests are sent async so we need to wait for that
         apiClient.waitForRequest()
@@ -1266,7 +1268,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
@@ -1307,7 +1309,7 @@ final class MessageUpdater_Tests: XCTestCase {
             dbCall.fulfill()
         }
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
             return
@@ -1348,7 +1350,7 @@ final class MessageUpdater_Tests: XCTestCase {
             dbCall.fulfill()
         }
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
             return
@@ -1387,7 +1389,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         // Assert correct endpoint is called.
         apiClient.waitForRequest()
@@ -1406,7 +1408,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         // Simulate API response with success.
         apiClient.waitForRequest()
@@ -1436,7 +1438,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
@@ -1487,7 +1489,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
@@ -1539,7 +1541,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // wait for the db call to be done
-        wait(for: [dbCall], timeout: 0.1)
+        wait(for: [dbCall], timeout: 0.5)
 
         guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
@@ -1615,7 +1617,7 @@ final class MessageUpdater_Tests: XCTestCase {
             XCTAssertNil(completionError)
             XCTAssertEqual(message.localMessageState, expectedState)
             XCTAssertEqual(message.pinned, true)
-            XCTAssertEqual(message.pinExpires, pin.expirationDate)
+            XCTAssertEqual(message.pinExpires?.bridgeDate, pin.expirationDate)
             XCTAssertEqual(message.pinnedBy?.id, currentUserId)
             XCTAssertNotNil(message.pinnedAt)
         }

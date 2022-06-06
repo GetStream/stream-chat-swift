@@ -7,8 +7,8 @@
 import XCTest
 
 final class SyncRepository_Tests: XCTestCase {
-    var _activeChannelControllers: NSHashTable<ChatChannelController>!
-    var _activeChannelListControllers: NSHashTable<ChatChannelListController>!
+    var _activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>!
+    var _activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>!
     var client: ChatClient_Mock!
     var offlineRequestsRepository: OfflineRequestsRepository_Spy!
     var database: DatabaseContainer_Spy!
@@ -17,14 +17,14 @@ final class SyncRepository_Tests: XCTestCase {
     var repository: SyncRepository!
 
     private var lastSyncAtValue: Date? {
-        database.viewContext.currentUser?.lastSynchedEventDate
+        database.viewContext.currentUser?.lastSynchedEventDate?.bridgeDate
     }
 
     override func setUp() {
         super.setUp()
 
-        _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
-        _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
+        _activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
+        _activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
         client = ChatClient_Mock(config: config)
@@ -75,7 +75,7 @@ final class SyncRepository_Tests: XCTestCase {
         repository.syncLocalState {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         
         let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
         XCTAssertTrue(Calendar.current.isDateInToday(lastSyncAt))
@@ -106,7 +106,7 @@ final class SyncRepository_Tests: XCTestCase {
         repository.syncLocalState {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         
         let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
         XCTAssertTrue(Calendar.current.isDateInToday(lastSyncAt))
@@ -287,13 +287,13 @@ final class SyncRepository_Tests: XCTestCase {
         let eventsPayload1 = messageEventPayload(with: [firstDate, secondDate])
         waitForSyncLocalStateRun(requestResult: .success(eventsPayload1))
         
-        XCTAssertEqual(lastSyncAtValue, secondDate)
+        XCTAssertNearlySameDate(lastSyncAtValue, secondDate)
                 
         let thirdDate = secondDate.addingTimeInterval(1)
         let eventsPayload2 = messageEventPayload(with: [thirdDate])
         waitForSyncLocalStateRun(requestResult: .success(eventsPayload2))
         
-        XCTAssertEqual(lastSyncAtValue, thirdDate)
+        XCTAssertNearlySameDate(lastSyncAtValue, thirdDate)
     }
 
     // MARK: - Sync existing channels events
@@ -365,7 +365,7 @@ final class SyncRepository_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let query = ChannelListQuery(filter: .exists(.cid))
             try session.saveChannel(payload: .dummy(cid: .unique), query: query)
-            session.currentUser?.lastSynchedEventDate = Date()
+            session.currentUser?.lastSynchedEventDate = DBDate()
         }
         let result = getSyncExistingChannelEventsResult()
 
@@ -378,7 +378,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_syncExistingChannelsEvents_someChannels_apiFailure() throws {
         try database.createCurrentUser(id: "123")
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = Date().addingTimeInterval(-3600)
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
             try session.saveChannel(payload: .dummy(cid: .unique), query: query)
         }
@@ -395,7 +395,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_syncExistingChannelsEvents_someChannels_tooManyEventsError() throws {
         try database.createCurrentUser(id: "123")
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = Date().addingTimeInterval(-3600)
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
             try session.saveChannel(payload: .dummy(cid: .unique), query: query)
         }
@@ -415,7 +415,7 @@ final class SyncRepository_Tests: XCTestCase {
         try database.createCurrentUser(id: "123")
         let cid = try ChannelId(cid: "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F")
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = Date().addingTimeInterval(-3600)
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0), query: query)
         }
@@ -457,7 +457,7 @@ final class SyncRepository_Tests: XCTestCase {
             callback(result)
         }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         return receivedResult
     }
 
@@ -575,7 +575,7 @@ final class SyncRepository_Tests: XCTestCase {
         mock = nil
         
         // THEN
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
     }
     
     func test_cancelRecoveryFlow_cancelsAllOperations() throws {
@@ -653,7 +653,7 @@ extension SyncRepository_Tests {
 
         try database.writeSynchronously { session in
             if let lastSynchedEventDate = lastSynchedEventDate {
-                session.currentUser?.lastSynchedEventDate = lastSynchedEventDate
+                session.currentUser?.lastSynchedEventDate = lastSynchedEventDate.bridgeDate
             }
             if createChannel {
                 let query = ChannelListQuery(filter: .exists(.cid))
@@ -686,7 +686,7 @@ extension SyncRepository_Tests {
             callback(result)
         }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertCall("exitRecoveryMode()", on: apiClient)
     }
     

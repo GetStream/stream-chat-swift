@@ -128,17 +128,17 @@ final class ListChangeAggregator_Tests: XCTestCase {
         aggregator.controller(
             fakeController,
             didChange: updatedObject1,
-            at: [1, 0],
+            at: [0, 0],
             for: .update,
-            newIndexPath: nil
+            newIndexPath: [1, 0] // Should use newIndexPath
         )
 
         aggregator.controller(
             fakeController,
             didChange: updatedObject2,
-            at: [4, 0],
+            at: [3, 0],
             for: .update,
-            newIndexPath: nil
+            newIndexPath: [4, 0] // Should use newIndexPath
         )
 
         // Simulate FRC finishes updating
@@ -227,9 +227,9 @@ final class ListChangeAggregator_Tests: XCTestCase {
         aggregator.controller(
             fakeController,
             didChange: updatedObject,
-            at: [2, 0],
+            at: [1, 0],
             for: .update,
-            newIndexPath: nil
+            newIndexPath: [2, 0]
         )
 
         // Simulate FRC finishes updating
@@ -240,58 +240,6 @@ final class ListChangeAggregator_Tests: XCTestCase {
             .move(movedObject.uniqueValue, fromIndex: [4, 0], toIndex: [0, 0]),
             .remove(removedObject.uniqueValue, index: [4, 0]),
             .update(updatedObject.uniqueValue, index: [2, 0])
-        ])
-    }
-
-    func test_controllerWillChangeContent_whenUpdatesAndMovesWithSameIndexPath_removeThoseUpdates() {
-        var result: [ListChange<String>]?
-        aggregator.onDidChange = { result = $0 }
-
-        // Simulate FRC starts updating
-        aggregator.controllerWillChangeContent(fakeController)
-
-        let addedObject = TestManagedObject()
-        let movedObject = TestManagedObject()
-        let updatedObject = TestManagedObject()
-
-        aggregator.controller(
-            fakeController,
-            didChange: addedObject,
-            at: nil,
-            for: .insert,
-            newIndexPath: [1, 0]
-        )
-
-        aggregator.controller(
-            fakeController,
-            didChange: updatedObject,
-            at: [2, 0],
-            for: .update,
-            newIndexPath: nil
-        )
-
-        aggregator.controller(
-            fakeController,
-            didChange: movedObject,
-            at: [4, 0],
-            for: .move,
-            newIndexPath: [2, 0]
-        )
-
-        aggregator.controller(
-            fakeController,
-            didChange: updatedObject,
-            at: [2, 0],
-            for: .update,
-            newIndexPath: nil
-        )
-
-        // Simulate FRC finishes updating
-        aggregator.controllerDidChangeContent(fakeController)
-
-        XCTAssertEqual(result, [
-            .insert(addedObject.uniqueValue, index: [1, 0]),
-            .move(movedObject.uniqueValue, fromIndex: [4, 0], toIndex: [2, 0])
         ])
     }
 }

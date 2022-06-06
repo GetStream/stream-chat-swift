@@ -8,6 +8,11 @@ final class ChannelList_Tests: StreamTestCase {
 
     let message = "message"
 
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        addTags([.coreFeatures])
+    }
+
     func test_newMessageShownInChannelPreview_whenComingBackFromChannel() {
         linkToScenario(withId: 79)
 
@@ -17,9 +22,7 @@ final class ChannelList_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("participant sends a new message") {
-            participantRobot
-                .sendMessage(message)
-                .waitForNewMessage(withText: message)
+            participantRobot.sendMessage(message)
         }
         AND("user goes back to channel list") {
             userRobot.tapOnBackButton()
@@ -33,20 +36,22 @@ final class ChannelList_Tests: StreamTestCase {
         linkToScenario(withId: 92)
         
         GIVEN("user opens the channel") {
-            deviceRobot.setConnectivitySwitchVisibility(to: .on)
             userRobot
+                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
                 .tapOnBackButton()
         }
         AND("user becomes offline") {
-            deviceRobot.setConnectivity(to: .off)
+            userRobot.setConnectivity(to: .off)
         }
         WHEN("participant sends a new message") {
-            participantRobot.sendMessage(message).chill(duration: 2)
+            participantRobot
+                .sendMessage(message)
+                .wait(2.0)
         }
         AND("user becomes online") {
-            deviceRobot.setConnectivity(to: .on)
+            userRobot.setConnectivity(to: .on)
         }
         THEN("list shows a preview of participant's message") {
             userRobot.assertLastMessageInChannelPreview(message)
@@ -67,10 +72,7 @@ final class ChannelList_Tests: StreamTestCase {
         AND("user sends a message with invalid command") {
             userRobot
                 .sendMessage(message)
-                .sendMessage("/\(invalidCommand)")
-        }
-        AND("error message is shown") {
-            userRobot.waitForNewMessage(withText: Message.message(withInvalidCommand: invalidCommand))
+                .sendMessage("/\(invalidCommand)", waitForAppearance: false)
         }
         WHEN("user goes back to the channel list") {
             userRobot.tapOnBackButton()

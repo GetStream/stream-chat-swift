@@ -33,8 +33,8 @@ public class ChatClient {
     private(set) var backgroundWorkers: [Worker] = []
 
     /// Keeps a weak reference to the active channel list controllers to ensure a proper recovery when coming back online
-    private(set) var activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
-    private(set) var activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
+    private(set) var activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
+    private(set) var activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
 
     /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
     private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
@@ -227,10 +227,7 @@ public class ChatClient {
     
     /// The token of the current user. If the current user is anonymous, the token is `nil`.
     @Atomic var currentToken: Token?
-
-    /// In case of token expiration this property is used to obtain a new token
-    public var tokenProvider: TokenProvider?
-
+    
     /// Sets the user token to the client, this method is only needed to perform API calls
     /// without connecting as a user.
     /// You should only use this in special cases like a notification service or other background process
@@ -244,8 +241,7 @@ public class ChatClient {
     ///   - config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
     ///   - tokenProvider: In case of token expiration this closure is used to obtain a new token
     public convenience init(
-        config: ChatClientConfig,
-        tokenProvider: TokenProvider? = nil
+        config: ChatClientConfig
     ) {
         var environment = Environment()
         
@@ -255,7 +251,6 @@ public class ChatClient {
         
         self.init(
             config: config,
-            tokenProvider: tokenProvider,
             environment: environment
         )
     }
@@ -268,11 +263,9 @@ public class ChatClient {
     ///
     init(
         config: ChatClientConfig,
-        tokenProvider: TokenProvider? = nil,
         environment: Environment
     ) {
         self.config = config
-        self.tokenProvider = tokenProvider
         self.environment = environment
 
         setupConnectionRecoveryHandler(with: environment)
@@ -300,19 +293,44 @@ public class ChatClient {
         )
     }
     
-    /// Connects authorized user
+    /// Connects the client with the given user.
+    ///
+    /// - Parameters:
+    ///   - userInfo: The user info passed to `connect` endpoint.
+    ///   - tokenProvider: The closure used to retreive a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
+    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
+    ///
+    /// - Note: Connect endpoint uses an upsert mechanism. If the user does not exist, it will be created with the given `userInfo`. If user already exists, it will get updated with non-nil fields from the `userInfo`.
+    public func connectUser(
+        userInfo: UserInfo,
+        tokenProvider: @escaping TokenProvider,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        setConnectionInfoAndConnect(
+            userInfo: userInfo,
+            userConnectionProvider: .init(tokenProvider: tokenProvider),
+            completion: completion
+        )
+    }
+    
+    /// Connects the client with the given user.
+    ///
     /// - Parameters:
     ///   - userInfo: User info that is passed to the `connect` endpoint for user creation
     ///   - token: Authorization token for the user.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
+    ///
+    /// - Note: Connect endpoint uses an upsert mechanism. If the user does not exist, it will be created with the given `userInfo`. If user already exists, it will get updated with non-nil fields from the `userInfo`.
+    ///
+    /// - Important: This method can only be used when `token` does not expire. If the token expores, the `connect` API with token provider has to be used.
     public func connectUser(
         userInfo: UserInfo,
         token: Token,
         completion: ((Error?) -> Void)? = nil
     ) {
-        setConnectionInfoAndConnect(
+        connectUser(
             userInfo: userInfo,
-            userConnectionProvider: .static(token),
+            tokenProvider: { $0(.success(token)) },
             completion: completion
         )
     }
@@ -329,6 +347,7 @@ public class ChatClient {
         setConnectionInfoAndConnect(
             userInfo: userInfo,
             userConnectionProvider: .guest(
+                client: self,
                 userId: userInfo.id,
                 name: userInfo.name,
                 imageURL: userInfo.imageURL,
@@ -351,7 +370,9 @@ public class ChatClient {
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     public func disconnect() {
-        clientUpdater.disconnect()
+        clientUpdater.disconnect(source: .userInitiated) {
+            log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
+        }
         userConnectionProvider = nil
     }
 
@@ -536,8 +557,8 @@ extension ChatClient {
         
         var syncRepositoryBuilder: (
             _ config: ChatClientConfig,
-            _ activeChannelControllers: NSHashTable<ChatChannelController>,
-            _ activeChannelListControllers: NSHashTable<ChatChannelListController>,
+            _ activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>,
+            _ activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>,
             _ offlineRequestsRepository: OfflineRequestsRepository,
             _ eventNotificationCenter: EventNotificationCenter,
             _ database: DatabaseContainer,
@@ -611,6 +632,12 @@ extension ClientError {
             """
         }
     }
+    
+    public class ClientHasBeenDeallocated: ClientError {
+        override public var localizedDescription: String {
+            "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
+        }
+    }
 }
 
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
@@ -655,7 +682,7 @@ extension ChatClient: ConnectionStateDelegate {
     private func refreshToken(
         completion: ((Error?) -> Void)?
     ) {
-        guard let tokenProvider = tokenProvider else {
+        guard let tokenProvider = userConnectionProvider?.tokenProvider else {
             return log.assertionFailure(
                 "In case if token expiration is enabled on backend you need to provide a way to reobtain it via `tokenProvider` on ChatClient"
             )
@@ -670,7 +697,7 @@ extension ChatClient: ConnectionStateDelegate {
                 queue: .main
             ) { [clientUpdater] in
                 clientUpdater.reloadUserIfNeeded(
-                    userConnectionProvider: .closure { _, completion in
+                    userConnectionProvider: .init { completion in
                         tokenProvider { result in
                             if case .success = result {
                                 self.tokenExpirationRetryStrategy.resetConsecutiveFailures()

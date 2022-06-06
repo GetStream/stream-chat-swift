@@ -13,11 +13,11 @@ class UserDTO: NSManagedObject {
     @NSManaged var imageURL: URL?
     @NSManaged var isBanned: Bool
     @NSManaged var isOnline: Bool
-    @NSManaged var lastActivityAt: Date?
+    @NSManaged var lastActivityAt: DBDate?
 
-    @NSManaged var userCreatedAt: Date
+    @NSManaged var userCreatedAt: DBDate
     @NSManaged var userRoleRaw: String
-    @NSManaged var userUpdatedAt: Date
+    @NSManaged var userUpdatedAt: DBDate
     
     @NSManaged var flaggedBy: CurrentUserDTO?
 
@@ -67,9 +67,7 @@ extension UserDTO {
     ///   - context: The context used to fetch `UserDTO`
     ///
     static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
-        let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return try? context.fetch(request).first
+        load(by: id, context: context).first
     }
     
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise creates a new
@@ -80,11 +78,12 @@ extension UserDTO {
     ///   - context: The context used to fetch/create `UserDTO`
     ///
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> UserDTO {
-        if let existing = Self.load(id: id, context: context) {
+        if let existing = load(id: id, context: context) {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! UserDTO
+        let request = fetchRequest(id: id)
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         new.teams = []
         return new
@@ -117,10 +116,10 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.imageURL = payload.imageURL
         dto.isBanned = payload.isBanned
         dto.isOnline = payload.isOnline
-        dto.lastActivityAt = payload.lastActiveAt
-        dto.userCreatedAt = payload.createdAt
+        dto.lastActivityAt = payload.lastActiveAt?.bridgeDate
+        dto.userCreatedAt = payload.createdAt.bridgeDate
         dto.userRoleRaw = payload.role.rawValue
-        dto.userUpdatedAt = payload.updatedAt
+        dto.userUpdatedAt = payload.updatedAt.bridgeDate
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)
@@ -216,9 +215,9 @@ extension ChatUser {
             isBanned: dto.isBanned,
             isFlaggedByCurrentUser: dto.flaggedBy != nil,
             userRole: UserRole(rawValue: dto.userRoleRaw),
-            createdAt: dto.userCreatedAt,
-            updatedAt: dto.userUpdatedAt,
-            lastActiveAt: dto.lastActivityAt,
+            createdAt: dto.userCreatedAt.bridgeDate,
+            updatedAt: dto.userUpdatedAt.bridgeDate,
+            lastActiveAt: dto.lastActivityAt?.bridgeDate,
             teams: Set(dto.teams),
             extraData: extraData
         )

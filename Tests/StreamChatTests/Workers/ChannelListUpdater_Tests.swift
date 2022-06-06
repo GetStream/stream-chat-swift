@@ -62,13 +62,14 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
         apiClient.test_simulateResponse(.success(payload))
         
+        AssertAsync.willBeTrue(completionCalled)
+        
         // Assert the data is stored in the DB
         var channel: ChatChannel? {
             try? database.viewContext.channel(cid: cid)?.asModel()
         }
         AssertAsync {
             Assert.willBeTrue(channel != nil)
-            Assert.willBeTrue(completionCalled)
         }
     }
     
@@ -107,13 +108,14 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let payload = ChannelListPayload(channels: [])
         apiClient.test_simulateResponse(.success(payload))
         
+        AssertAsync.willBeTrue(completionCalled)
+        
         // Assert the data is stored in the DB
         var queryDTO: ChannelListQueryDTO? {
             database.viewContext.channelListQuery(filterHash: query.filter.filterHash)
         }
         AssertAsync {
             Assert.willBeTrue(queryDTO != nil)
-            Assert.willBeTrue(completionCalled)
         }
     }
 
@@ -144,7 +146,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
@@ -182,7 +184,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         )
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
@@ -241,7 +243,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         })
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.2, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // EXPECTED RESULTS:
         // syncedId1 -> Not present in remote query, but synched:               Unwanted    -

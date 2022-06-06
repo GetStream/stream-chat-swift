@@ -378,6 +378,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                         log.warning("Callback called while self is nil")
                         return
                     }
+                    log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
                     $0.channelController(self, didUpdateMessages: changes)
                 }
             }
@@ -1314,6 +1315,17 @@ public extension ChatChannelController {
                 }
             }
         }
+    }
+    
+    /// Returns the current cooldown time for the channel. Returns 0 in case there is no cooldown active.
+    func currentCooldownTime() -> Int {
+        guard let cooldownDuration = channel?.cooldownDuration,
+              let currentUserLastMessage = channel?.lastMessageFromCurrentUser else {
+            return 0
+        }
+        
+        let currentTime = Date().timeIntervalSince(currentUserLastMessage.createdAt)
+        return cooldownDuration - Int(currentTime)
     }
 }
 

@@ -65,7 +65,7 @@ class MessageUpdater: Worker {
             
             if messageDTO.existsOnlyLocally && !isLocalStorageEnabled {
                 messageDTO.type = MessageType.deleted.rawValue
-                messageDTO.deletedAt = Date()
+                messageDTO.deletedAt = DBDate()
                 shouldDeleteOnBackend = false
             } else {
                 messageDTO.localMessageState = .deleting
@@ -512,7 +512,7 @@ class MessageUpdater: Worker {
 
             guard action.isCancel == false else {
                 // For ephemeral messages we don't change `state` to `.deleted`
-                messageDTO.deletedAt = Date()
+                messageDTO.deletedAt = DBDate()
                 messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
                 return
             }

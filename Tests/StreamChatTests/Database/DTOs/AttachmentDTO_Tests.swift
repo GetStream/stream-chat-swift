@@ -56,7 +56,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         
-        let giphyWithActionsJSON = XCTestCase.mockData(fromFile: "AttachmentPayloadGiphyWithActions")
+        let giphyWithActionsJSON = XCTestCase.mockData(fromJSONFile: "AttachmentPayloadGiphyWithActions")
         let attachment = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: giphyWithActionsJSON)
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 

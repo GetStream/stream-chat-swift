@@ -85,7 +85,7 @@ extension StreamChatWrapper {
             monitor.update(with: .unavailable)
 
             // Disconnect from websockets
-            client?.webSocketClient?.disconnect(source: .systemInitiated)
+            client?.webSocketClient?.disconnect(source: .systemInitiated) {}
 
         } else {
             HTTPStubs.removeAllStubs()

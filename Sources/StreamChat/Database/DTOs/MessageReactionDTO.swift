@@ -13,8 +13,8 @@ final class MessageReactionDTO: NSManagedObject {
     @NSManaged fileprivate var localStateRaw: String
     @NSManaged var type: String
     @NSManaged var score: Int64
-    @NSManaged var createdAt: Date?
-    @NSManaged var updatedAt: Date?
+    @NSManaged var createdAt: DBDate?
+    @NSManaged var updatedAt: DBDate?
     @NSManaged var extraData: Data?
     
     @NSManaged var message: MessageDTO
@@ -40,9 +40,7 @@ extension MessageReactionDTO {
         context: NSManagedObjectContext
     ) -> MessageReactionDTO? {
         let id = createId(userId: userId, messageId: messageId, type: type)
-        let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
-        return try? context.fetch(request).first
+        return load(by: id, context: context).first
     }
 
     static let notLocallyDeletedPredicates: NSPredicate = {
@@ -64,7 +62,7 @@ extension MessageReactionDTO {
             NSPredicate(format: "id IN %@", ids),
             Self.notLocallyDeletedPredicates
         ])
-        return (try? context.fetch(request)) ?? []
+        return load(by: request, context: context)
     }
     
     static func loadOrCreate(
@@ -73,14 +71,14 @@ extension MessageReactionDTO {
         user: UserDTO,
         context: NSManagedObjectContext
     ) -> MessageReactionDTO {
-        let userId = user.id
-
-        if let existing = Self.load(userId: userId, messageId: message.id, type: type, context: context) {
+        if let existing = load(userId: user.id, messageId: message.id, type: type, context: context) {
             return existing
         }
 
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MessageReactionDTO
-        new.id = createId(userId: userId, messageId: message.id, type: type)
+        let id = createId(userId: user.id, messageId: message.id, type: type)
+        let request = fetchRequest(id: id)
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
+        new.id = id
         new.type = type.rawValue
         new.message = message
         new.user = user
@@ -109,8 +107,8 @@ extension NSManagedObjectContext {
         )
 
         dto.score = Int64(clamping: payload.score)
-        dto.createdAt = payload.createdAt
-        dto.updatedAt = payload.updatedAt
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.localState = nil
         dto.version = nil
@@ -152,8 +150,8 @@ extension MessageReactionDTO {
         return try .init(
             type: .init(rawValue: type),
             score: Int(score),
-            createdAt: createdAt ?? .init(),
-            updatedAt: updatedAt ?? .init(),
+            createdAt: createdAt?.bridgeDate ?? .init(),
+            updatedAt: updatedAt?.bridgeDate ?? .init(),
             author: user.asModel(),
             extraData: decodedExtraData
         )

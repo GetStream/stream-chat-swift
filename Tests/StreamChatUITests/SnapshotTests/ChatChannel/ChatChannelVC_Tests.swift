@@ -9,16 +9,20 @@ import XCTest
 
 final class ChatChannelVC_Tests: XCTestCase {
     var vc: ChatChannelVC!
+    fileprivate var mockComposer: ComposerVC_Mock!
     var channelControllerMock: ChatChannelController_Mock!
     
     override func setUp() {
         super.setUp()
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
+        components.messageComposerVC = ComposerVC_Mock.self
         vc = ChatChannelVC()
         vc.components = components
         channelControllerMock = ChatChannelController_Mock.mock()
         vc.channelController = channelControllerMock
+        let mockedComposer = vc.messageComposerVC as! ComposerVC_Mock
+        mockedComposer.mockChannelController = channelControllerMock
     }
 
     override func tearDown() {
@@ -143,24 +147,18 @@ final class ChatChannelVC_Tests: XCTestCase {
     }
 
     func test_setUp_whenChannelControllerSynchronizeCompletes_shouldUpdateComposer() {
-        class ComposerVC_Mock: ComposerVC {
-            var updateContentCallCount = 0
-
-            override func updateContent() {
-                updateContentCallCount += 1
-            }
-        }
-
         var components = Components.mock
         components.messageComposerVC = ComposerVC_Mock.self
         vc.components = components
+        
+        let composer = vc.messageComposerVC as! ComposerVC_Mock
+        composer.callUpdateContent = false
 
         vc.setUp()
 
         // When channel controller synchronize completes
         channelControllerMock.synchronize_completion?(nil)
 
-        let composer = vc.messageComposerVC as! ComposerVC_Mock
         XCTAssertEqual(composer.updateContentCallCount, 1)
     }
 
@@ -517,6 +515,8 @@ private extension ChatChannelVC_Tests {
         config.deletedMessagesVisibility = visibility
         channelControllerMock = .mock(chatClientConfig: config)
         vc.channelController = channelControllerMock
+        let mockedComposer = vc.messageComposerVC as! ComposerVC_Mock
+        mockedComposer.mockChannelController = channelControllerMock
 
         var mockedMessages: [ChatMessage] = [
             makeMockedDeletedMessage(text: "My Text", isSentByCurrentUser: true)
@@ -557,5 +557,34 @@ private class ChatChannelHeaderViewMock: ChatChannelHeaderView {
         let mockedChannelController = ChatChannelController_Mock.mock()
         mockedChannelController.channel_mock = .mock(cid: .unique)
         channelController = mockedChannelController
+    }
+}
+
+class ComposerVC_Mock: ComposerVC {
+    var mockChannelController: ChatChannelController_Mock?
+    var callUpdateContent: Bool = true
+    
+    var updateContentCallCount = 0
+    
+    override var isCommandsEnabled: Bool {
+        true
+    }
+    
+    override var isAttachmentsEnabled: Bool {
+        true
+    }
+    
+    override func updateContent() {
+        if callUpdateContent {
+            super.updateContent()
+        }
+        
+        updateContentCallCount += 1
+    }
+    
+    override func setUp() {
+        super.setUp()
+        
+        super.channelController = mockChannelController
     }
 }

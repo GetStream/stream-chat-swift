@@ -314,7 +314,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
 
         // Insert parent message
@@ -363,7 +363,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
 
         // Insert parent message
@@ -412,7 +412,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
 
         // Insert parent message
@@ -461,7 +461,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
         
         // Insert parent message
@@ -509,7 +509,7 @@ final class MessageController_Tests: XCTestCase {
         // Save channel
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto.truncatedAt = truncatedDate.bridgeDate
         }
         
         // Insert parent message
@@ -1314,7 +1314,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 0.2)
+        wait(for: [exp], timeout: 0.5)
 
         XCTAssertEqual(controller.hasLoadedAllReactions, true)
     }
@@ -1336,7 +1336,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 0.2)
+        wait(for: [exp], timeout: 0.5)
 
         XCTAssertEqual(controller.hasLoadedAllReactions, false)
     }
@@ -1385,7 +1385,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 0.2)
+        wait(for: [exp], timeout: 0.5)
 
         XCTAssertEqual(controller.reactions.count, mockedReactions.count)
     }
@@ -1417,7 +1417,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 0.2)
+        wait(for: [exp], timeout: 0.5)
 
         XCTAssertEqual(controller.reactions.count, 5)
     }
@@ -1461,7 +1461,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 0.2)
+        wait(for: [exp], timeout: 0.5)
 
         XCTAssertEqual(controller.reactions.count, 5)
         XCTAssertEqual(testDelegate.callCount, 1)

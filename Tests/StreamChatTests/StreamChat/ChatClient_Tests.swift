@@ -394,8 +394,8 @@ final class ChatClient_Tests: XCTestCase {
             environment: testEnv.environment
         )
         
-        client.connectAnonymousUser()
-        client.tokenProvider = { $0(.success(.unique())) }
+        let userId: UserId = .unique
+        client.connectUser(userInfo: .init(id: userId), tokenProvider: { $0(.success(.unique(userId: userId))) })
 
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -568,6 +568,8 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertTrue(testEnv.apiClient! === client.apiClient)
         // Assert `disconnect` on updater is triggered
         XCTAssertTrue(testEnv.clientUpdater!.disconnect_called)
+        // Assert source is user initiated
+        XCTAssertEqual(testEnv.clientUpdater!.disconnect_source, .userInitiated)
     }
     
     // MARK: - Background workers tests
@@ -653,115 +655,147 @@ final class ChatClient_Tests: XCTestCase {
         }
     }
     
-    func test_reloadUserIfNeededIsCalled_whenClientIsInitialized_andErrorIsPropagated() {
+    // MARK: - Connect
+    
+    func test_reloadUserIfNeededIsCalled_whenClientIsInitialized_andErrorIsPropagated() throws {
         for error in [nil, TestError()] {
-            var clientInitCompletionCalled = false
-            var clientInitCompletionError: Error?
-
-            // Create a client, provide the completion and catch the result.
+            // GIVEN
             let client = ChatClient(
                 config: inMemoryStorageConfig,
                 environment: testEnv.environment
             )
-            client.connectAnonymousUser { error in
-                clientInitCompletionCalled = true
-                clientInitCompletionError = error
-            }
+            
+            // WHEN
+            let token = Token.unique()
+            var connectCompletionCalled = false
+            var connectCompletionError: Error?
+            client.connectUser(
+                userInfo: .init(id: .unique),
+                tokenProvider: { $0(.success(token)) },
+                completion: {
+                    connectCompletionCalled = true
+                    connectCompletionError = $0
+                }
+            )
+            
+            // THEN
+            var providedToken: Token?
+            client.userConnectionProvider?.tokenProvider { providedToken = try? $0.get() }
+            XCTAssertEqual(providedToken, token)
+            
+            XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
 
-            // Assert `reloadUserIfNeeded` is called on `clientUpdater`.
-            XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
-
-            // Simulate `reloadUserIfNeeded` completion result.
+            // WHEN
             testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
-            // Wait for `ChatClient.init` completion called.
-            AssertAsync.willBeTrue(clientInitCompletionCalled)
-
-            // Assert error from `reloadUserIfNeeded` is propagated.
-            XCTAssertEqual(clientInitCompletionError as? TestError, error)
+            
+            // THEN
+            XCTAssertEqual(connectCompletionError as? TestError, error)
+            XCTAssertTrue(connectCompletionCalled)
         }
     }
     
-    func test_reloadUserIfNeededIsNotCalled_whenClientIsInitialized_andTokenProviderIsNil() {
-        _ = ChatClient(
-            config: inMemoryStorageConfig,
-            environment: testEnv.environment
-        )
-        
-        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
-    }
-    
-    func test_connectUser_setsTokenProvider_andInitiatesConnection() {
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            environment: testEnv.environment
-        )
-        let token = Token.unique()
-        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
-
-        client.connectUser(
-            userInfo: .init(id: .unique, name: "John Doe", imageURL: .unique(), extraData: [:]),
-            token: token
-        )
-        XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
-        
-        var providedToken: Token?
-        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
-        AssertAsync.willBeEqual(token, providedToken)
+    func test_connectUserWithToken_setsTokenProvider_andInitiatesConnection() {
+        for error in [nil, TestError()] {
+            // GIVEN
+            let client = ChatClient(
+                config: inMemoryStorageConfig,
+                environment: testEnv.environment
+            )
+            
+            // WHEN
+            let token = Token.unique()
+            var connectCompletionCalled = false
+            var connectCompletionError: Error?
+            client.connectUser(
+                userInfo: .init(id: .unique),
+                token: token,
+                completion: {
+                    connectCompletionCalled = true
+                    connectCompletionError = $0
+                }
+            )
+            
+            // THEN
+            var providedToken: Token?
+            client.userConnectionProvider?.tokenProvider { providedToken = try? $0.get() }
+            XCTAssertEqual(providedToken, token)
+            
+            XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
+            
+            // WHEN
+            testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
+            
+            // THEN
+            XCTAssertEqual(connectCompletionError as? TestError, error)
+            XCTAssertTrue(connectCompletionCalled)
+        }
     }
     
     func test_connectGuestUser_setsTokenProvider_andInitiatesConnection() {
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            environment: testEnv.environment
-        )
-        let token = Token.unique()
-        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
-
-        let userId = UserId.unique
-        let name = "John Doe"
-        client.connectGuestUser(
-            userInfo: .init(
-                id: userId,
-                name: "John Doe",
+        for error in [nil, TestError()] {
+            // GIVEN
+            let client = ChatClient(
+                config: inMemoryStorageConfig,
+                environment: testEnv.environment
+            )
+            
+            // WHEN
+            let user = UserInfo(
+                id: .unique,
+                name: .unique,
                 imageURL: .localYodaImage,
                 extraData: [:]
             )
-        )
-        
-        XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
-        
-        var providedToken: Token?
-        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
-        
-        let expectedEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
-            userId: userId,
-            name: name,
-            imageURL: .localYodaImage,
-            extraData: [:]
-        )
-        AssertAsync.willBeEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.request_endpoint)
-        
-        let tokenResult: Result<GuestUserTokenPayload, Error> = .success(
-            .init(user: .dummy(userId: userId, role: .guest), token: token)
-        )
-        client.mockAPIClient.test_simulateResponse(tokenResult)
-
-        AssertAsync.willBeEqual(token, providedToken)
+            var connectCompletionCalled = false
+            var connectCompletionError: Error?
+            client.connectGuestUser(userInfo: user) {
+                connectCompletionCalled = true
+                connectCompletionError = $0
+            }
+            
+            // THEN
+            XCTAssertNotNil(client.userConnectionProvider)
+            XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
+            
+            // WHEN
+            testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
+            XCTAssertEqual(connectCompletionError as? TestError, error)
+            
+            // THEN
+            XCTAssertTrue(connectCompletionCalled)
+        }
     }
     
     func test_connectAnonymoususer_setsTokenProvider_andInitiatesConnection() {
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            environment: testEnv.environment
-        )
-        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
+        for error in [nil, TestError()] {
+            // GIVEN
+            let client = ChatClient(
+                config: inMemoryStorageConfig,
+                environment: testEnv.environment
+            )
+            
+            // WHEN
+            var connectCompletionCalled = false
+            var connectCompletionError: Error?
+            client.connectAnonymousUser {
+                connectCompletionCalled = true
+                connectCompletionError = $0
+            }
+            
+            // THEN
+            var providedToken: Token?
+            client.userConnectionProvider?.tokenProvider { providedToken = try? $0.get() }
+            XCTAssertEqual(providedToken?.userId.isAnonymousUser, true)
+            
+            XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
 
-        client.connectAnonymousUser()
-        XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
-        
-        var providedToken: Token?
-        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
-        AssertAsync.willBeTrue(providedToken != nil)
+            // WHEN
+            testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
+            
+            // THEN
+            XCTAssertEqual(connectCompletionError as? TestError, error)
+            XCTAssertTrue(connectCompletionCalled)
+        }
     }
 
     // MARK: - Passive (not active) Client tests

@@ -37,7 +37,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         repository.runQueuedRequests {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // No calls should be performed when there are no queued requests
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
@@ -55,7 +55,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
         apiClient.test_simulateRecoveryResponse(.success(Data()))
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // One call should be performed
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
@@ -76,7 +76,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
         // We reset the counter to properly assert later
         database.writeSessionCounter = 0
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // No actions should be taken for a request that is not supported offline
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
@@ -99,10 +99,10 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let jsonData = XCTestCase.mockData(fromFile: "Message")
+        let jsonData = XCTestCase.mockData(fromJSONFile: "Message")
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
@@ -128,7 +128,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
         apiClient.test_simulateRecoveryResponse(.success(Data()))
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
@@ -152,10 +152,10 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let jsonData = XCTestCase.mockData(fromFile: "Message")
+        let jsonData = XCTestCase.mockData(fromJSONFile: "Message")
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
@@ -183,7 +183,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             completion?(.success(Data()))
         }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // Queued requests should be removed once completed
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
@@ -212,7 +212,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // Queued requests with ConnectionError should be kept
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
@@ -241,7 +241,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
 
         // Queued requests should be removed when result is either success or an error that is not connection related
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
@@ -290,7 +290,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         repository.queueOfflineRequest(endpoint: endpoint) {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertNotCall("write(_:completion:)", on: database)
     }
 
@@ -308,7 +308,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         repository.queueOfflineRequest(endpoint: endpoint) {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertCall("write(_:completion:)", on: database, times: 1)
     }
 }

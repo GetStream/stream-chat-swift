@@ -359,7 +359,7 @@ final class MemberListController_Tests: XCTestCase {
         
         // Update second member to be created earlier than the first one.
         try client.databaseContainer.writeSynchronously { session in
-            session.member(userId: member2.user.id, cid: self.query.cid)?.memberCreatedAt = Date()
+            session.member(userId: member2.user.id, cid: self.query.cid)?.memberCreatedAt = DBDate()
         }
         
         // Assert `move` change is received for the second member.

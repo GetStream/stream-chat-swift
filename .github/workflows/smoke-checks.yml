@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+
   pull_request:
     branches:
       - '**'
@@ -26,6 +27,7 @@ jobs:
   automated-code-review:
     name: Automated Code Review
     runs-on: macos-12
+    if: ${{ github.event_name != 'push' }}
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/bootstrap
@@ -52,6 +54,13 @@ jobs:
         INSTALL_SONAR: true
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+    - uses: test-summary/action@v1
+      with:
+        paths: fastlane/test_output/report.junit
+      if: failure()
     - name: Get branch name
       id: get_branch_name
       run: echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
@@ -76,6 +85,7 @@ jobs:
   build-and-test-ui-debug:
     name: Test UI (Debug)
     runs-on: macos-12
+    if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
@@ -87,73 +97,95 @@ jobs:
         xcode: "13.3.1"
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"iPhone 12 Pro (15.4)"
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Test UI (Debug)"
-        fields: message,commit,author,action,workflow,job,took
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+    - uses: test-summary/action@v1
+      with:
+        paths: fastlane/test_output/report.junit
+      if: failure()
 
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
     runs-on: macos-12
+    if: ${{ github.event_name != 'push' }}
+    needs: allure_testops_launch
+    env:
+      LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
+    strategy:
+      matrix:
+        batch: [0, 1, 2]
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+      if: env.LAUNCH_ID != ''
+    - uses: ./.github/actions/bootstrap
+      if: env.LAUNCH_ID != ''
+      env:
+        INSTALL_ALLURE: true
+    - name: Run UI Tests (Debug)
+      if: env.LAUNCH_ID != ''
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+        MATRIX_SIZE: ${{ strategy.job-total }}
+    - uses: test-summary/action@v1
+      with:
+        paths: fastlane/test_output/report.junit
+      if: failure()
+    - name: Allure TestOps Upload
+      if: env.LAUNCH_ID != '' && (success() || failure())
+      run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+
+  allure_testops_launch:
+    name: Launch Allure TestOps
+    runs-on: macos-12
+    if: ${{ github.event_name != 'push' }}
+    outputs:
+      launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
       env:
-        INSTALL_ALLURE: true
-    - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}"
-    - name: Upload test results to Allure TestOps
-      if: success() || failure()
-      run: bundle exec fastlane allure_upload
+        XCODE_ACTIONS: false
+    - name: Create a new launch on Allure TestOps
+      run: bundle exec fastlane allure_launch
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-        ALLURE_GITHUB_TOKEN: ${{ secrets.ALLURE_GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Test UI (Debug)"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
+    - id: get_launch_id
+      run: echo "::set-output name=launch_id::${{env.LAUNCH_ID}}"
+      if: env.LAUNCH_ID != ''
 
   build-xcode12:
     name: Build LLC + UI (Xcode 12)
     runs-on: macos-11
+    if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
     - name: Build LLC (Xcode 12)
-      env:
-        XCODE_VERSION: "12.5.1"
       run: bundle exec fastlane test device:"iPhone 12" build_for_testing:true
-    - name: Build UI (Xcode 12)
       env:
         XCODE_VERSION: "12.5.1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+    - name: Build UI (Xcode 12)
       run: bundle exec fastlane test_ui device:"iPhone 12" build_for_testing:true
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Build LLC + UI (Xcode 12)"
-        fields: message,commit,author,action,workflow,job,took
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
+        XCODE_VERSION: "12.5.1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
 
   build-apps:
     name: Build Sample + Demo Apps
     runs-on: macos-12
+    if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
@@ -169,70 +201,33 @@ jobs:
       run: bundle exec fastlane build_messenger_clone
     - name: Build YouTubeClone App
       run: bundle exec fastlane build_youtube_clone
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Build Sample + Demo Apps"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
 
   # build-docs-snippets:
   #   name: Build Docs Snippets
   #   runs-on: macos-12
+  #   if: ${{ github.event_name != 'push' }}
   #   steps:
   #   - uses: actions/checkout@v1
   #   - uses: ./.github/actions/bootstrap
   #   - name: Build Docs Snippets
   #     run: bundle exec fastlane build_docs_snippets
-  #   - uses: 8398a7/action-slack@v3
-  #     with:
-  #       status: ${{ job.status }}
-  #       text: "You shall not pass!"
-  #       job_name: "Build Docs Snippets"
-  #       fields: message,commit,author,action,workflow,job,took
-  #     env:
-  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-  #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
-  #     if: ${{ github.event_name == 'push' && failure() }}
 
   spm-integration:
     name: Test Integration (SPM)
     runs-on: macos-12
+    if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane spm_integration
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Test Integration (SPM)"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
 
   cocoapods-integration:
     name: Test Integration (CocoaPods)
     runs-on: macos-12
+    if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane cocoapods_integration
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Test Integration (CocoaPods)"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}

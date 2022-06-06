@@ -126,6 +126,7 @@ final class ChatConnectionController_Tests: XCTestCase {
         controller.disconnect()
 
         // Assert the `chatClientUpdater` is called.
+        XCTAssertEqual(env.chatClientUpdater.disconnect_source, .userInitiated)
         XCTAssertTrue(env.chatClientUpdater.disconnect_called)
     }
 }
