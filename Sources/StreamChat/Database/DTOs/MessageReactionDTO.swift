@@ -23,7 +23,7 @@ final class MessageReactionDTO: NSManagedObject {
     // internal field needed to sync data optimistically
     @NSManaged var version: String?
 
-    private static func createId(
+    static func createId(
         userId: String,
         messageId: MessageId,
         type: MessageReactionType

@@ -1651,6 +1651,9 @@
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
 		C173538F27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
+		C174E0F6284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */; };
+		C174E0F7284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */; };
+		C174E0F9284DFD660040B936 /* IdentifiablePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C174E0F8284DFD660040B936 /* IdentifiablePayload_Tests.swift */; };
 		C186BFA627A7F4E10099CCA6 /* AsyncOperation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */; };
 		C186BFAA27AA979B0099CCA6 /* SyncRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA927AA979B0099CCA6 /* SyncRepository_Tests.swift */; };
 		C186BFAF27AADB410099CCA6 /* SyncOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFAE27AADB410099CCA6 /* SyncOperations.swift */; };
@@ -3379,6 +3382,8 @@
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
 		C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Array.swift"; sourceTree = "<group>"; };
+		C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload.swift; sourceTree = "<group>"; };
+		C174E0F8284DFD660040B936 /* IdentifiablePayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload_Tests.swift; sourceTree = "<group>"; };
 		C186BFA227A048690099CCA6 /* SyncRepository_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRepository_Spy.swift; sourceTree = "<group>"; };
 		C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation_Tests.swift; sourceTree = "<group>"; };
 		C186BFA927AA979B0099CCA6 /* SyncRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRepository_Tests.swift; sourceTree = "<group>"; };
@@ -4256,10 +4261,12 @@
 				7908829A2546D95A00896F03 /* FlagMessagePayload.swift */,
 				8836FFBA2540741D009FDF73 /* FlagUserPayload.swift */,
 				8A0D649924E579E90017A3C0 /* GuestUserTokenPayload.swift */,
+				C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */,
 				793728292498FFD300E13FE5 /* MemberPayload.swift */,
 				DABC6ABB2546FD0100A8FC78 /* MessageAttachmentPayload.swift */,
 				79682C4824BF37650071578E /* MessagePayloads.swift */,
 				8899BC3E2542FFA1003CB98B /* MessageReactionPayload.swift */,
+				79D5CDD327EA1BE300BE7D8B /* MessageTranslationsPayload.swift */,
 				F6ED5F792502791F005D7327 /* MissingEventsPayload.swift */,
 				88DA57DF2631E80D00FA8C53 /* MutedChannelPayload.swift */,
 				22B54C3E25C80E940041B357 /* RawJSON.swift */,
@@ -4267,7 +4274,6 @@
 				A30C3F1F276B428F00DA5968 /* UnknownUserEvent.swift */,
 				DA84070B25250581005A0F62 /* UserListPayload.swift */,
 				79B5517124E593C200CE9FEC /* UserPayloads.swift */,
-				79D5CDD327EA1BE300BE7D8B /* MessageTranslationsPayload.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -5810,6 +5816,7 @@
 				7908829B2546D95A00896F03 /* FlagMessagePayload_Tests.swift */,
 				8836FFC225408210009FDF73 /* FlagUserPayload_Tests.swift */,
 				8A0D649A24E579E90017A3C0 /* GuestUserTokenPayload_Tests.swift */,
+				C174E0F8284DFD660040B936 /* IdentifiablePayload_Tests.swift */,
 				7937282B249900CB00E13FE5 /* MemberPayload_Tests.swift */,
 				DA4971532549C2A000AC68C2 /* MessageAttachmentPayload_Tests.swift */,
 				79B5517B24E6A1CA00CE9FEC /* MessagePayloads_Tests.swift */,
@@ -9519,6 +9526,7 @@
 				697C6F90260CFA37000E9023 /* Deprecations.swift in Sources */,
 				7964F3A4249A0ACF002A09EC /* ChannelListQueryDTO.swift in Sources */,
 				79280F3F2484E3BA00CDEB89 /* ClientError.swift in Sources */,
+				C174E0F6284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */,
 				884C61222594A449008B70DC /* AttachmentActionRequestBody.swift in Sources */,
 				84A43CAF26A9A25000302763 /* UnknownChannelEvent.swift in Sources */,
 				C1B0B38327BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */,
@@ -9755,6 +9763,7 @@
 				84A1D2EA26AAFB1D00014712 /* EventSender_Tests.swift in Sources */,
 				A3F65E3827EB716A003F6256 /* TypingStartCleanupMiddleware_Tests.swift in Sources */,
 				888E8C41252B2ADC00195E03 /* UserController+SwiftUI_Tests.swift in Sources */,
+				C174E0F9284DFD660040B936 /* IdentifiablePayload_Tests.swift in Sources */,
 				8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */,
 				8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */,
 				790882A22546D95F00896F03 /* FlagMessagePayload_Tests.swift in Sources */,
@@ -10204,6 +10213,7 @@
 				C121E8B1274544B000023E4C /* ChannelListController+SwiftUI.swift in Sources */,
 				C121E8B2274544B000023E4C /* ChannelListController+Combine.swift in Sources */,
 				C121E8B3274544B000023E4C /* CurrentUserController.swift in Sources */,
+				C174E0F7284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */,
 				C121E8B4274544B000023E4C /* CurrentUserController+SwiftUI.swift in Sources */,
 				C121E8B5274544B000023E4C /* CurrentUserController+Combine.swift in Sources */,
 				C121E8B6274544B000023E4C /* ConnectionController.swift in Sources */,
