@@ -191,17 +191,17 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let stringWithMarkdown =
             """
             # Swift
-        
+            
             Swift is a new ~~programming~~ language for iOS, macOS, watchOS, and tvOS **app development**. Here is an example of its syntax:
-        
+            
             `let property: Double = 10.0`
-        
+            
             Swift has different keywords for defining types such as:
             - class
             - struct
             - enum
             - actor
-        
+            
             For more information you can visit [this link](https://docs.swift.org/swift-book/).
             """
         
