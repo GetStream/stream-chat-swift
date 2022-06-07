@@ -8,18 +8,68 @@ import SwiftUI
 import XCTest
 
 final class IdentifiablePayload_Tests: XCTestCase {
-    func test_UserPayload_isIdentifiablePayload() {
-        let payload = UserPayload.dummy(userId: "1")
-        let pair = payload.keyPathId()
-        XCTAssertEqual(pair?.keyPath, "id")
-        XCTAssertEqual(pair?.value, "1")
+    var database: DatabaseContainer!
+
+    override func setUp() {
+        super.setUp()
+        database = DatabaseContainer_Spy()
+    }
+
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        database = nil
+        super.tearDown()
+    }
+
+    // Fetch
+    func test_mesureBigPayload_getPayloadToModelIdMappings() {
+        let channelsCount = 14 // ChannelDetailPayload
+        let userCount = 14 // UserPayload
+        let otherWatchersCount = 14 // UserPayload
+        let messageCount = 14 // MessagePayload
+        let messageReactionsCount = 13 // MessageReactionPayload
+
+        let channelList = createChannelList(
+            channels: channelsCount,
+            users: userCount,
+            otherWatchers: otherWatchersCount,
+            messagesPerChannel: messageCount,
+            readCountsPerChannel: 0,
+            messageReactionsPerChannel: messageReactionsCount
+        )
+        measure {
+            _ = channelList.getPayloadToModelIdMappings(context: database.viewContext)
+        }
+    }
+
+    // Identifiable
+
+    func test_ChannelListPayload_isIdentifiablePayload() {
+        let payload = ChannelListPayload(channels: [])
+        XCTAssertNil(payload.databaseId)
+    }
+
+    func test_ChannelPayload_isIdentifiablePayload() {
+        let payload = ChannelPayload.dummy()
+        XCTAssertNil(payload.databaseId)
     }
 
     func test_ChannelDetailPayload_isIdentifiablePayload() {
         let payload = ChannelDetailPayload.dummy(cid: ChannelId(type: .messaging, id: "1"))
-        let pair = payload.keyPathId()
-        XCTAssertEqual(pair?.keyPath, "cid")
-        XCTAssertEqual(pair?.value, "messaging:1")
+        XCTAssertEqual(ChannelDetailPayload.keyPath, "cid")
+        XCTAssertEqual(payload.databaseId, "messaging:1")
+    }
+
+    func test_UserPayload_isIdentifiablePayload() {
+        let payload = UserPayload.dummy(userId: "1")
+        XCTAssertEqual(UserPayload.keyPath, "id")
+        XCTAssertEqual(payload.databaseId, "1")
+    }
+
+    func test_MessagePayload_isIdentifiablePayload() {
+        let payload = MessagePayload.dummy(messageId: "m1", authorUserId: "u1")
+        XCTAssertEqual(MessagePayload.keyPath, "id")
+        XCTAssertEqual(payload.databaseId, "m1")
     }
 
     func test_MessageReactionPayload_isIdentifiablePayload() {
@@ -28,21 +78,20 @@ final class IdentifiablePayload_Tests: XCTestCase {
             messageId: "2",
             user: UserPayload.dummy(userId: "3")
         )
-        let pair = payload.keyPathId()
-        XCTAssertEqual(pair?.keyPath, "id")
-        XCTAssertEqual(pair?.value, "3/2/1")
+        XCTAssertEqual(MessageReactionPayload.keyPath, "id")
+        XCTAssertEqual(payload.databaseId, "3/2/1")
     }
 
-    // Proxies
-
-    func test_ChannelListPayload_isIdentifiablePayload() {
-        let payload = ChannelListPayload(channels: [])
-        XCTAssertNil(payload.keyPathId())
+    func test_MemberPayload_isIdentifiablePayload() {
+        let payload = MemberPayload.dummy(user: .dummy(userId: "u2"))
+        XCTAssertEqual(MemberPayload.keyPath, "id")
+        XCTAssertNil(payload.databaseId)
     }
 
-    func test_ChannelPayload_isIdentifiablePayload() {
-        let payload = ChannelPayload.dummy()
-        XCTAssertNil(payload.keyPathId())
+    func test_ChannelReadPayload_isIdentifiablePayload() {
+        let payload = ChannelReadPayload(user: .dummy(userId: "u3"), lastReadAt: Date(), unreadMessagesCount: 2)
+        XCTAssertNil(ChannelReadPayload.keyPath)
+        XCTAssertNil(payload.databaseId)
     }
 
     // Recursion
@@ -56,7 +105,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         let channelPayload = ChannelPayload.dummy(channel: channelDetailPayload, watchers: watchers)
         let payload = ChannelListPayload(channels: [channelPayload])
 
-        let cache = recursivelyGetAllIds(for: payload)
+        let cache = payload.recursivelyGetAllIds()
 
         let userIds = try XCTUnwrap(cache["\(UserPayload.self)"])
         let channelDetailIds = try XCTUnwrap(cache["\(ChannelDetailPayload.self)"])
@@ -74,7 +123,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid, createdBy: watchers[0])
         let payload = ChannelPayload.dummy(channel: channelDetailPayload, watchers: watchers)
 
-        let cache = recursivelyGetAllIds(for: payload)
+        let cache = payload.recursivelyGetAllIds()
 
         let userIds = try XCTUnwrap(cache["\(UserPayload.self)"])
         let channelDetailIds = try XCTUnwrap(cache["\(ChannelDetailPayload.self)"])
@@ -85,22 +134,20 @@ final class IdentifiablePayload_Tests: XCTestCase {
     }
 
     func test_MessageReactionPayload_isIdentifiablePayload_recursively() throws {
-        let payloads = (1...4).map {
-            MessageReactionPayload.dummy(
-                type: MessageReactionType(rawValue: "\(1 * $0)"),
-                messageId: "\(2 * $0)",
-                user: UserPayload.dummy(userId: "\(3 * $0)")
-            )
-        }
+        let payload = MessageReactionPayload.dummy(
+            type: MessageReactionType(rawValue: "r1"),
+            messageId: "m2",
+            user: UserPayload.dummy(userId: "u3")
+        )
 
-        let cache = recursivelyGetAllIds(for: payloads)
+        let cache = payload.recursivelyGetAllIds()
 
         let reactionIds = try XCTUnwrap(cache["\(MessageReactionPayload.self)"])
         let userIds = try XCTUnwrap(cache["\(UserPayload.self)"])
 
         XCTAssertEqual(cache.keys.count, 2)
-        XCTAssertEqual(reactionIds, ["3/2/1", "6/4/2", "9/6/3", "12/8/4"])
-        XCTAssertEqual(userIds, ["3", "6", "9", "12"])
+        XCTAssertEqual(reactionIds, ["u3/m2/r1"])
+        XCTAssertEqual(userIds, ["u3"])
     }
 
     func test_bigChannelListPayload_recursivelyIdentifiablePayload() throws {
@@ -119,7 +166,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
             messageReactionsPerChannel: messageReactionsCount
         )
 
-        let cache = recursivelyGetAllIds(for: channelList)
+        let cache = channelList.recursivelyGetAllIds()
 
         let channelIds = try XCTUnwrap(cache["\(ChannelDetailPayload.self)"])
         let messageIds = try XCTUnwrap(cache["\(MessagePayload.self)"])

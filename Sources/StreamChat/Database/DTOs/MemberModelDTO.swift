@@ -8,7 +8,7 @@ import CoreData
 class MemberDTO: NSManagedObject {
     // Because we need to have a unique identifier of a member in the db, we use the combination of the related
     // user' id and the channel the member belongs to.
-    @NSManaged fileprivate var id: String
+    @NSManaged fileprivate(set) var id: String
     
     // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
     @NSManaged var channelRoleRaw: String?
