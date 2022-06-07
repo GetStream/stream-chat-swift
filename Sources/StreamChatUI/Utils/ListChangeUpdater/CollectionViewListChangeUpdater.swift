@@ -33,12 +33,15 @@ final class CollectionViewListChangeUpdater: ListChangeUpdater {
         collectionView?.performBatchUpdates({
             collectionView?.deleteItems(at: Array(indices.remove))
             collectionView?.insertItems(at: Array(indices.insert))
-            collectionView?.reloadItems(at: Array(indices.update))
             indices.move.forEach {
                 collectionView?.moveItem(at: $0.fromIndex, to: $0.toIndex)
             }
-        }, completion: { finished in
-            completion?(finished)
+        }, completion: { [weak self] finished in
+            UIView.performWithoutAnimation {
+                // To fix a crash on iOS 14 below, we moved the reloads to the completion block.
+                self?.collectionView?.reloadItems(at: Array(indices.update))
+                completion?(finished)
+            }
         })
     }
 }
