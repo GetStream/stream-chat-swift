@@ -69,10 +69,12 @@ final class SimpleChannelImageAttachmentsListController: UITableViewController, 
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
+        guard let cell = tableView.dequeueReusableCell(
             withIdentifier: ImageAttachmentCell.reuseIdentifier,
             for: indexPath
-        ) as! ImageAttachmentCell
+        ) as? ImageAttachmentCell else {
+            return UITableViewCell()
+        }
         cell.imageAttachment = imageAttachments[indexPath.row]
         return cell
     }

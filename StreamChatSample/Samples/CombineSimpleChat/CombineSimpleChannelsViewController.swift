@@ -263,7 +263,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
         func pushDirectMessageChat(for userId: UserId) {
             if let chatVC = UIStoryboard.combineSimpleChat
                 .instantiateViewController(withIdentifier: "CombineSimpleChatViewController") as? CombineSimpleChatViewController {
-                let controller = try! chatClient.channelController(
+                let controller = try? chatClient.channelController(
                     createDirectMessageChannelWith: [userId],
                     name: nil,
                     imageURL: nil,
@@ -346,10 +346,9 @@ class CombineSimpleChannelsViewController: UITableViewController {
     ///
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = tableView.indexPathForSelectedRow {
+            if let indexPath = tableView.indexPathForSelectedRow,
+               let controller = (segue.destination as? UINavigationController).topViewController as? CombineSimpleChatViewController {
                 let channel = channelListController.channels[indexPath.row]
-                let controller = (segue.destination as! UINavigationController)
-                    .topViewController as! CombineSimpleChatViewController
                 
                 /// Pass down reference to `ChannelController`.
                 controller.channelController = chatClient.channelController(for: channel.cid)
@@ -395,7 +394,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
         navigationItem.rightBarButtonItems = [usersButton, addButton]
         if let split = splitViewController {
             let controllers = split.viewControllers
-            detailViewController = (controllers[controllers.count - 1] as! UINavigationController)
+            detailViewController = (controllers[controllers.count - 1] as? UINavigationController)
                 .topViewController as? CombineSimpleChatViewController
         }
 

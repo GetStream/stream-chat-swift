@@ -15,8 +15,8 @@ open class ChatThreadArrowView: _View, AppearanceProvider {
         CAShapeLayer.self
     }
 
-    public var shape: CAShapeLayer {
-        layer as! CAShapeLayer
+    public var shape: CAShapeLayer? {
+        layer as? CAShapeLayer
     }
 
     private var isLeftToRight: Bool {
@@ -34,16 +34,16 @@ open class ChatThreadArrowView: _View, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        shape.contentsScale = layer.contentsScale
-        shape.strokeColor = appearance.colorPalette.border.cgColor
-        shape.fillColor = nil
-        shape.lineWidth = 1
+        shape?.contentsScale = layer.contentsScale
+        shape?.strokeColor = appearance.colorPalette.border.cgColor
+        shape?.fillColor = nil
+        shape?.lineWidth = 1
     }
 
     override open func draw(_ rect: CGRect) {
         let corner: CGFloat = 16
         let height = bounds.height / 2
-        let lineCenter = shape.lineWidth / 2
+        let lineCenter = shape?.lineWidth ?? 0 / 2
 
         let startX = isLeftToRight ? lineCenter : (bounds.width - lineCenter)
         let endX = isLeftToRight ? corner : (bounds.width - corner)
@@ -55,7 +55,7 @@ open class ChatThreadArrowView: _View, AppearanceProvider {
             to: CGPoint(x: endX, y: height),
             control: CGPoint(x: startX, y: height)
         )
-        shape.path = path
+        shape?.path = path
         super.draw(rect)
     }
 }

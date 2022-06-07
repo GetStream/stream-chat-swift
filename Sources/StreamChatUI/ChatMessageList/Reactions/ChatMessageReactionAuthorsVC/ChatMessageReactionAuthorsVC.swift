@@ -129,10 +129,12 @@ open class ChatMessageReactionAuthorsVC: _ViewController,
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: components.reactionAuthorCell.reuseId,
             for: indexPath
-        ) as! ChatMessageReactionAuthorViewCell
+        ) as? ChatMessageReactionAuthorViewCell else {
+            return UICollectionViewCell()
+        }
 
         guard let reaction = content[safe: indexPath.item],
               let currentUserId = messageController?.client.currentUserId else {

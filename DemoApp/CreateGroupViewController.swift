@@ -151,7 +151,10 @@ extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! SearchUserCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? SearchUserCell else {
+            return UITableViewCell()
+        }
+        
         let user = users[indexPath.row]
         
         if let imageURL = user.imageURL {
@@ -182,7 +185,9 @@ extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource 
             tableView.deselectRow(at: indexPath, animated: true)
         }
         
-        let cell = tableView.cellForRow(at: indexPath) as! SearchUserCell
+        guard let cell = tableView.cellForRow(at: indexPath) as? SearchUserCell else {
+            return
+        }
         guard cell.accessoryImageView.image == nil else {
             // The cell isn't selected
             // De-select user by tapping functionality was removed due to designer feedback
@@ -206,7 +211,9 @@ extension CreateGroupViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! GroupUserCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? GroupUserCell else {
+            return UICollectionViewCell()
+        }
         let user = selectedUsers[indexPath.row]
         
         if let imageURL = user.imageURL {

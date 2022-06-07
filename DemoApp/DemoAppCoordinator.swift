@@ -84,7 +84,9 @@ private extension DemoAppCoordinator {
             self?.showChat(for: user, animated: true)
         }
         
-        set(rootViewController: loginVC, animated: animated)
+        if let loginVC = loginVC {
+            set(rootViewController: loginVC, animated: animated)
+        }
     }
     
     func set(rootViewController: UIViewController, animated: Bool) {
@@ -101,14 +103,15 @@ private extension DemoAppCoordinator {
 // MARK: - Screens factory
 
 private extension DemoAppCoordinator {
-    func makeLoginVC(onUserSelection: @escaping (DemoUserType) -> Void) -> UIViewController {
+    func makeLoginVC(onUserSelection: @escaping (DemoUserType) -> Void) -> UIViewController? {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let loginNVC = storyboard.instantiateInitialViewController() as! UINavigationController
+        if let loginNVC = storyboard.instantiateInitialViewController() as? UINavigationController,
+           let loginVC = loginNVC.viewControllers.first as? LoginViewController {
+            loginVC.onUserSelection = onUserSelection
+            return loginNVC
+        }
         
-        let loginVC = loginNVC.viewControllers.first as! LoginViewController
-        loginVC.onUserSelection = onUserSelection
-        
-        return loginNVC
+        return nil
     }
     
     func makeChatVC(for user: DemoUserType, startOn cid: ChannelId?, onLogout: @escaping () -> Void) -> UIViewController {
@@ -145,7 +148,7 @@ private extension DemoAppCoordinator {
         onLogout: @escaping () -> Void
     ) -> UIViewController {
         let channelListVC = DemoChatChannelListVC.make(with: controller)
-        channelListVC.demoRouter.onLogout = onLogout
+        channelListVC.demoRouter?.onLogout = onLogout
         channelListVC.selectedChannel = selectedChannel
         return channelListVC
     }
@@ -290,7 +293,7 @@ final class DemoChatChannelVC: ChatChannelVC {
             let channelListVC = mainVC.viewControllers.first as? DemoChatChannelListVC
         else { return }
         
-        channelListVC.demoRouter.didTapMoreButton(for: cid)
+        channelListVC.demoRouter?.didTapMoreButton(for: cid)
     }
 }
 
@@ -314,8 +317,8 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         showUnder: navigationController!.navigationBar
     )
     
-    var demoRouter: DemoChatChannelListRouter {
-        router as! DemoChatChannelListRouter
+    var demoRouter: DemoChatChannelListRouter? {
+        router as? DemoChatChannelListRouter
     }
 
     override func viewDidLoad() {
@@ -333,11 +336,11 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     }
 
     @objc private func didTapCreateNewChannel(_ sender: Any) {
-        demoRouter.showCreateNewChannelFlow()
+        demoRouter?.showCreateNewChannelFlow()
     }
 
     @objc private func didTapHiddenChannelsButton(_ sender: Any) {
-        demoRouter.showHiddenChannels()
+        demoRouter?.showHiddenChannels()
     }
     
     var highlightSelectedChannel: Bool { splitViewController?.isCollapsed == false }

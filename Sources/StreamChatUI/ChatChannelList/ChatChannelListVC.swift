@@ -166,10 +166,12 @@ open class ChatChannelListVC: _ViewController,
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: collectionViewCellReuseIdentifier,
             for: indexPath
-        ) as! ChatChannelListCollectionViewCell
+        ) as? ChatChannelListCollectionViewCell else {
+            return UICollectionViewCell()
+        }
 
         guard let channel = getChannel(at: indexPath) else { return cell }
 

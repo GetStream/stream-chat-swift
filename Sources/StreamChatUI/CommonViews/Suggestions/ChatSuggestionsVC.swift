@@ -154,11 +154,13 @@ open class ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollecti
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        let headerView = collectionView.dequeueReusableSupplementaryView(
+        guard let headerView = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "CommandsHeader",
             for: indexPath
-        ) as! ChatSuggestionsCollectionReusableView
+        ) as? ChatSuggestionsCollectionReusableView else {
+            return UICollectionReusableView()
+        }
 
         headerView.suggestionsHeader.headerLabel.text = L10n.Composer.Suggestions.Commands.header
         headerView.suggestionsHeader.commandImageView.image = appearance.images.commands
@@ -172,10 +174,12 @@ open class ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollecti
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ChatCommandSuggestionCollectionViewCell.reuseId,
             for: indexPath
-        ) as! ChatCommandSuggestionCollectionViewCell
+        ) as? ChatCommandSuggestionCollectionViewCell else {
+            return UICollectionViewCell()
+        }
 
         cell.components = components
         guard let command = commands[safe: indexPath.row] else {
@@ -246,10 +250,12 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ChatMentionSuggestionCollectionViewCell.reuseId,
             for: indexPath
-        ) as! ChatMentionSuggestionCollectionViewCell
+        ) as? ChatMentionSuggestionCollectionViewCell else {
+            return UICollectionViewCell()
+        }
 
         guard let user = usersCache[safe: indexPath.row] else {
             indexNotFoundAssertion()

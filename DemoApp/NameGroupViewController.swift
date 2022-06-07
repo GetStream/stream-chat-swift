@@ -149,7 +149,9 @@ extension NameGroupViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UserCell.reuseIdentifier) as! UserCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: UserCell.reuseIdentifier) as? UserCell else {
+            return UITableViewCell()
+        }
         let user = selectedUsers[indexPath.row]
         
         if let imageURL = user.imageURL {

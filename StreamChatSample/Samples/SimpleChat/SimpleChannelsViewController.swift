@@ -242,7 +242,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         func pushDirectMessageChat(for userIds: UserId) {
             if let chatVC = UIStoryboard.simpleChat
                 .instantiateViewController(withIdentifier: "SimpleChatViewController") as? SimpleChatViewController {
-                let controller = try! chatClient.channelController(
+                let controller = try? chatClient.channelController(
                     createDirectMessageChannelWith: [userIds],
                     name: nil,
                     imageURL: nil,
@@ -320,9 +320,9 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     ///
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = tableView.indexPathForSelectedRow {
+            if let indexPath = tableView.indexPathForSelectedRow,
+                let controller = (segue.destination as? UINavigationController).topViewController as? SimpleChatViewController {
                 let channel = channelListController.channels[indexPath.row]
-                let controller = (segue.destination as! UINavigationController).topViewController as! SimpleChatViewController
                 
                 /// pass down reference to `ChannelController`.
                 controller.channelController = chatClient.channelController(for: channel.cid)
@@ -368,7 +368,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         navigationItem.rightBarButtonItems = [usersButton, addButton]
         if let split = splitViewController {
             let controllers = split.viewControllers
-            detailViewController = (controllers[controllers.count - 1] as! UINavigationController)
+            detailViewController = (controllers[controllers.count - 1] as? UINavigationController)
                 .topViewController as? SimpleChatViewController
         }
 
