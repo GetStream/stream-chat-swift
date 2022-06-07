@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 
+#if !XCODE_BETA_1
 @available(iOS 13, *)
 extension ChatChannelWatcherListController {
     /// A publisher emitting a new value every time the state of the controller changes.
@@ -52,3 +53,4 @@ extension ChatChannelWatcherListController.BasePublishers: ChatChannelWatcherLis
         watchersChanges.send(changes)
     }
 }
+#endif

@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 
+#if !XCODE_BETA_1
 @available(iOS 13, *)
 extension ChatMessageController {
     /// A publisher emitting a new value every time the state of the controller changes.
@@ -82,3 +83,4 @@ extension ChatMessageController.BasePublishers: ChatMessageControllerDelegate {
         self.reactions.send(reactions)
     }
 }
+#endif

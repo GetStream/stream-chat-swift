@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 
+#if !XCODE_BETA_1
 @available(iOS 13, *)
 extension EventsController {
     /// A publisher emitting a new value every time an event is observed.
@@ -41,3 +42,4 @@ extension EventsController.BasePublishers: EventsControllerDelegate {
         events.send(event)
     }
 }
+#endif

@@ -22,12 +22,14 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     public let client: ChatClient
     
     private let environment: Environment
-    
+
+    #if !XCODE_BETA_1
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
     lazy var basePublishers: BasePublishers = .init(controller: self)
+    #endif
 
     /// Used for observing the current user changes in a database.
     private lazy var currentUserObserver = createUserObserver()

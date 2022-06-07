@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 
+#if !XCODE_BETA_1
 @available(iOS 13, *)
 extension ChatChannelController {
     /// A publisher emitting a new value every time the state of the controller changes.
@@ -94,3 +95,4 @@ extension ChatChannelController.BasePublishers: ChatChannelControllerDelegate {
         self.typingUsers.send(typingUsers)
     }
 }
+#endif

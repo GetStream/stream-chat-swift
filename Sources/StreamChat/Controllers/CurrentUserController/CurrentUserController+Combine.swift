@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 
+#if !XCODE_BETA_1
 @available(iOS 13, *)
 extension CurrentChatUserController {
     /// A publisher emitting a new value every time the current user changes.
@@ -55,3 +56,4 @@ extension CurrentChatUserController.BasePublishers: CurrentChatUserControllerDel
         currentUserChange.send(currentUser)
     }
 }
+#endif

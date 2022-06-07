@@ -2,7 +2,9 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+#if !XCODE_BETA_1
 import Atlantis
+#endif
 import GDPerformanceView_Swift
 import StreamChat
 import StreamChatUI
@@ -169,12 +171,14 @@ private extension DemoAppCoordinator {
             PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
         ]
 
+        #if !XCODE_BETA_1
         // HTTP and WebSocket Proxy with Proxyman.app
         if isStreamInternalConfiguration || AppConfig.shared.demoAppConfig.isAtlantisEnabled {
             Atlantis.start()
         } else {
             Atlantis.stop()
         }
+        #endif
         
         // Create Client
         ChatClient.shared = ChatClient(config: AppConfig.shared.chatClientConfig)

@@ -4,6 +4,7 @@
 
 import Combine
 
+#if !XCODE_BETA_1
 @available(iOS 13, *)
 extension ChatMessageSearchController {
     /// A publisher emitting a new value every time the state of the controller changes.
@@ -51,3 +52,4 @@ extension ChatMessageSearchController.BasePublishers: ChatMessageSearchControlle
         messagesChange.send(changes)
     }
 }
+#endif

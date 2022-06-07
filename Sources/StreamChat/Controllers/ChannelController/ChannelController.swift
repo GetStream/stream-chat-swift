@@ -270,12 +270,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
         }
     }
-    
+
+    #if !XCODE_BETA_1
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
     lazy var basePublishers: BasePublishers = .init(controller: self)
+    #endif
 
     /// Creates a new `ChannelController`
     /// - Parameters:

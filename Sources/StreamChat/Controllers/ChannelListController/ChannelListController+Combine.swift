@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 
+#if !XCODE_BETA_1
 @available(iOS 13, *)
 extension ChatChannelListController {
     /// A publisher emitting a new value every time the state of the controller changes.
@@ -62,3 +63,4 @@ extension ChatChannelListController.BasePublishers: ChatChannelListControllerDel
         controller.multicastDelegate.mainDelegate?.controller(controller, shouldAddNewChannelToList: channel) ?? true
     }
 }
+#endif

@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 
+#if !XCODE_BETA_1
 @available(iOS 13, *)
 extension ChatConnectionController {
     /// A publisher emitting a new value every time the connection status changes.
@@ -40,3 +41,4 @@ extension ChatConnectionController.BasePublishers: ChatConnectionControllerDeleg
         connectionStatus.send(status)
     }
 }
+#endif

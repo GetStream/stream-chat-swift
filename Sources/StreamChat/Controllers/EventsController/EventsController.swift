@@ -29,12 +29,14 @@ public class EventsController: Controller, DelegateCallable {
     
     /// A callback queue on which delegate methods are invoked.
     public var callbackQueue: DispatchQueue = .main
-    
+
+    #if !XCODE_BETA_1
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
     lazy var basePublishers = BasePublishers(controller: self)
+    #endif
     
     /// A backing object used to deliver updates to main and additional delegates.
     var multicastDelegate = MulticastDelegate<EventsControllerDelegate>()
