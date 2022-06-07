@@ -123,6 +123,9 @@ public struct Components {
     /// Note: This is currently an experimental feature that we are actively
     /// working on and testing to make sure it is stable.
     public var _messageListDiffingEnabled = false
+    
+    /// A boolean value that determines whether Markdown is active for messages to be formatted.
+    public var markdownFormatterEnabled = true
 
     /// The view controller used to perform message actions.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
@@ -327,6 +330,9 @@ public struct Components {
     /// A view that displays the video attachment preview in composer.
     public var videoAttachmentComposerPreview: VideoAttachmentComposerPreview
         .Type = VideoAttachmentComposerPreview.self
+    
+    /// A formatter used for text Markdown
+    public var markdownFormatter: MarkdownFormatter.Type = DefaultMarkdownFormatter.self
 
     // MARK: - Composer suggestion components
     

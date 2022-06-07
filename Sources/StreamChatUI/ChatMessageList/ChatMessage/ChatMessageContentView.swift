@@ -51,6 +51,14 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// When this value is set the subviews are instantiated and laid out just once based on
     /// the received options.
     public var layoutOptions: ChatMessageLayoutOptions?
+    
+    /// The formatter used for text Mardown
+    public var markdownFormatter: MarkdownFormatter = DefaultMarkdownFormatter()
+    
+    /// A boolean value that determines whether Markdown is active for messages to be formatted.
+    open var markdownFormatterEnabled: Bool {
+        components.markdownFormatterEnabled
+    }
 
     // MARK: Content && Actions
 
@@ -492,6 +500,11 @@ open class ChatMessageContentView: _View, ThemeProvider {
         textView?.textColor = textColor
         textView?.font = textFont
         textView?.text = content?.textContent
+        
+        if markdownFormatterEnabled, markdownFormatter.containsMarkdown(text: content?.textContent ?? "") {
+            let markdownText = markdownFormatter.format(from: content?.textContent ?? "")
+            textView?.attributedText = markdownText
+        }
         
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1
