@@ -244,7 +244,25 @@ open class ChatMessageListVC: _ViewController,
         } else {
             // Because we use an inverted table view, we need to avoid animations since they look odd.
             UIView.performWithoutAnimation {
-                listView.updateMessages(with: changes, completion: completion)
+                listView.updateMessages(with: changes) { [weak self] in
+                    guard let self = self else {
+                        completion?()
+                        return
+                    }
+
+                    if let newMessageInserted = changes.first(where: { $0.isInsertion && $0.indexPath.row == 0 })?.item {
+                        if self.dataSource?.numberOfMessages(in: self) ?? 0 > 1 {
+                            let previousMessageIndexPath = IndexPath(row: 1, section: 0)
+                            self.listView.reloadRows(at: [previousMessageIndexPath], with: .none)
+                        }
+
+                        if newMessageInserted.isSentByCurrentUser {
+                            self.listView.scrollToMostRecentMessage()
+                        }
+                    }
+
+                    completion?()
+                }
             }
         }
     }
@@ -709,6 +727,30 @@ internal extension ChatMessageListVC {
 
                 completion?()
             }
+        }
+    }
+}
+
+private extension ListChange {
+    var isInsertion: Bool {
+        switch self {
+        case .insert:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var indexPath: IndexPath {
+        switch self {
+        case let .insert(_, index):
+            return index
+        case let .move(_, _, toIndex):
+            return toIndex
+        case let .update(_, index):
+            return index
+        case let .remove(_, index):
+            return index
         }
     }
 }

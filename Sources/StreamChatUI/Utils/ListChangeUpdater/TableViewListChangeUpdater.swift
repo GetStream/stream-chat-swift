@@ -33,12 +33,14 @@ final class TableViewListChangeUpdater: ListChangeUpdater {
         tableView?.performBatchUpdates({
             tableView?.deleteRows(at: Array(indices.remove), with: .none)
             tableView?.insertRows(at: Array(indices.insert), with: .none)
-            tableView?.reloadRows(at: Array(indices.update), with: .none)
             indices.move.forEach {
                 tableView?.moveRow(at: $0.fromIndex, to: $0.toIndex)
             }
-        }, completion: { finished in
-            completion?(finished)
+        }, completion: { [weak self] finished in
+            UIView.performWithoutAnimation {
+                self?.tableView?.reloadRows(at: Array(indices.update), with: .none)
+                completion?(finished)
+            }
         })
     }
 }
