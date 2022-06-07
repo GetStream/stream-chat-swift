@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Usage: ./removePublicDeclaracions.sh Sources/StreamNuke
+# Usage: ./removePublicDeclarations.sh Sources/StreamNuke
 #
 # This script would iterate over the files on a particular directory, and perform basic replacement operations.
 # It heavily relies on 'sed':
@@ -14,6 +14,7 @@ directory=$1
 files=`find $directory -name "*.swift"`
 for f in $files
 do
+    `sed -i '' -e 's/public internal(set) //g' -e 's/open //g' $f`
 	`sed -i '' -e 's/public //g' -e 's/open //g' $f`
 
 	# Nuke

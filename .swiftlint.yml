@@ -5,6 +5,7 @@ excluded:
   - Dependencies
   - Sources/StreamChatUI/Generated
   - Sources/StreamChatUI/StreamSwiftyGif
+  - Sources/StreamChatUI/StreamSwiftyMarkdown
   - Sources/StreamChatUI/StreamNuke
   - Sources/StreamChat/StreamStarscream
   - vendor

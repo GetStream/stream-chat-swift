@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import SwiftyMarkdown
 import UIKit
 
 public protocol MarkdownFormatter {
