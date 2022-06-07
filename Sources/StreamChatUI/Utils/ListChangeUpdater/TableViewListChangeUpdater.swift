@@ -38,6 +38,7 @@ final class TableViewListChangeUpdater: ListChangeUpdater {
             }
         }, completion: { [weak self] finished in
             UIView.performWithoutAnimation {
+                // To fix a crash on iOS 14 below, we moved the reloads to the completion block.
                 self?.tableView?.reloadRows(at: Array(indices.update), with: .none)
                 completion?(finished)
             }
