@@ -340,7 +340,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
             currentChanges.append(.move(item, fromIndex: fromIndex, toIndex: toIndex))
             
         case .update:
-            guard let index = newIndexPath else {
+            guard let index = indexPath else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.update` change.")
                 return
             }
