@@ -285,8 +285,8 @@ final class CurrentUserController_Tests: XCTestCase {
     // MARK: - Updating current user
     
     func test_updateUserData_callCurrentUserUpdater_withCorrectValues() {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
         
         let expectedName = String.unique
         let expectedImageUrl = URL.unique()
@@ -304,8 +304,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_updateUserData_propagatesError() throws {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
         
         var completionError: Error?
         controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] in
@@ -322,8 +322,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_updateUserData_propagatesNilError() throws {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
         
         var completionIsCalled = false
         controller
@@ -365,14 +365,47 @@ final class CurrentUserController_Tests: XCTestCase {
         
         XCTAssert(error is ClientError.CurrentUserDoesNotExist)
     }
+    
+    func test_updateUser_doesNotDeadlock() throws {
+        // GIVEN
+        // Simulate saving current user to a database
+        try client.databaseContainer.writeSynchronously {
+            let currentUserPayload: CurrentUserPayload = .dummy(
+                userId: .unique,
+                role: .user,
+                unreadCount: .none
+            )
+            try $0.saveCurrentUser(payload: currentUserPayload)
+        }
+
+        // WHEN
+        // updateUser is called from background queue
+        DispatchQueue.global().async {
+            self.controller.updateUserData()
+        }
+        
+        // Sleep main thread for a little time
+        // to make sure background thread acquires lock (from Atomic, in EntityDatabaseObserver.item)
+        // if we don't sleep, main thread acquires lock first & no deadlock occurs
+        sleep(1)
+        
+        // THEN
+        // updateUser is called from main queue and actually finishes
+        let exp = expectation(description: "completion called")
+        controller.updateUserData() { _ in
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 5)
+    }
 
     // MARK: - Device endpoints
 
     // MARK: synchronizeDevices
 
     func test_synchronizeDevices_whenRequestSuccess_completionCalledWithoutError() throws {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
 
         var completionError: Error?
         controller.synchronizeDevices { [callbackQueueID] in
@@ -387,8 +420,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
 
     func test_synchronizeDevices_whenRequestFails_propagatesError() {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
 
         var completionError: Error?
         controller.synchronizeDevices { [callbackQueueID] in
@@ -412,11 +445,44 @@ final class CurrentUserController_Tests: XCTestCase {
         XCTAssert(error is ClientError.CurrentUserDoesNotExist)
     }
     
+    func test_synchronizeDevices_doesNotDeadlock() throws {
+        // GIVEN
+        // Simulate saving current user to a database
+        try client.databaseContainer.writeSynchronously {
+            let currentUserPayload: CurrentUserPayload = .dummy(
+                userId: .unique,
+                role: .user,
+                unreadCount: .none
+            )
+            try $0.saveCurrentUser(payload: currentUserPayload)
+        }
+        
+        // WHEN
+        // updateUser is called from background queue
+        DispatchQueue.global().async {
+            self.controller.synchronizeDevices()
+        }
+        
+        // Sleep main thread for a little time
+        // to make sure background thread acquires lock (from Atomic, in EntityDatabaseObserver.item)
+        // if we don't sleep, main thread acquires lock first & no deadlock occurs
+        sleep(1)
+        
+        // THEN
+        // updateUser is called from main queue and actually finishes
+        let exp = expectation(description: "completion called")
+        controller.synchronizeDevices() { _ in
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 5)
+    }
+    
     // MARK: addDevice
     
     func test_addDevice_whenPushProviderIsAPN_callsCurrentUserUpdaterWithCorrectValues() {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
         
         let expectedDeviceToken = "test".data(using: .utf8)!
         
@@ -429,8 +495,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
 
     func test_addDevice_whenPushProviderIsFirebase_callsCurrentUserUpdaterWithCorrectValues() {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
 
         let expectedDeviceId = "test"
 
@@ -443,8 +509,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_addDevice_propagatesError() throws {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
         
         var completionError: Error?
         controller.addDevice(.firebase(token: "test")) { [callbackQueueID] in
@@ -461,8 +527,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_addDevice_propagatesNilError() throws {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
         
         var completionIsCalled = false
         controller.addDevice(.firebase(token: "test")) { [callbackQueueID] error in
@@ -499,11 +565,44 @@ final class CurrentUserController_Tests: XCTestCase {
         XCTAssert(error is ClientError.CurrentUserDoesNotExist)
     }
     
+    func test_addDevice_doesNotDeadlock() throws {
+        // GIVEN
+        // Simulate saving current user to a database
+        try client.databaseContainer.writeSynchronously {
+            let currentUserPayload: CurrentUserPayload = .dummy(
+                userId: .unique,
+                role: .user,
+                unreadCount: .none
+            )
+            try $0.saveCurrentUser(payload: currentUserPayload)
+        }
+        
+        // WHEN
+        // updateUser is called from background queue
+        DispatchQueue.global().async {
+            self.controller.addDevice(.apn(token: .init()))
+        }
+        
+        // Sleep main thread for a little time
+        // to make sure background thread acquires lock (from Atomic, in EntityDatabaseObserver.item)
+        // if we don't sleep, main thread acquires lock first & no deadlock occurs
+        sleep(1)
+        
+        // THEN
+        // updateUser is called from main queue and actually finishes
+        let exp = expectation(description: "completion called")
+        controller.addDevice(.apn(token: .init())) { _ in
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 5)
+    }
+    
     // MARK: removeDevice
     
     func test_removeDevice_callCurrentUserUpdater_withCorrectValues() {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
         
         let expectedId = String.unique
         
@@ -515,8 +614,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_removeDevice_propagatesError() throws {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
         
         let expectedId = String.unique
         
@@ -535,8 +634,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_removeDevice_propagatesNilError() throws {
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        // Simulate `connectUser`
+        client.currentUserId = .unique
         
         let expectedId = String.unique
         
@@ -573,6 +672,39 @@ final class CurrentUserController_Tests: XCTestCase {
         }
         
         XCTAssert(error is ClientError.CurrentUserDoesNotExist)
+    }
+    
+    func test_removeDevice_doesNotDeadlock() throws {
+        // GIVEN
+        // Simulate saving current user to a database
+        try client.databaseContainer.writeSynchronously {
+            let currentUserPayload: CurrentUserPayload = .dummy(
+                userId: .unique,
+                role: .user,
+                unreadCount: .none
+            )
+            try $0.saveCurrentUser(payload: currentUserPayload)
+        }
+        
+        // WHEN
+        // updateUser is called from background queue
+        DispatchQueue.global().async {
+            self.controller.removeDevice(id: .unique)
+        }
+        
+        // Sleep main thread for a little time
+        // to make sure background thread acquires lock (from Atomic, in EntityDatabaseObserver.item)
+        // if we don't sleep, main thread acquires lock first & no deadlock occurs
+        sleep(1)
+        
+        // THEN
+        // updateUser is called from main queue and actually finishes
+        let exp = expectation(description: "completion called")
+        controller.removeDevice(id: .unique) { _ in
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 5)
     }
     
     // MARK: - Reload user if needed
