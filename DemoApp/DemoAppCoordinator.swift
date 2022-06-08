@@ -107,12 +107,12 @@ private extension DemoAppCoordinator {
             channelListQuery = .init(filter: .equal(.type, to: .messaging))
         }
         
-        let channelController = cid.map { ChatClient.shared.channelController(for: $0) }
+        let channelController = chat.channelController(for: cid)
         let channelVC = channelController.map { makeChannelVC(controller: $0) }
         let channelNVC = channelVC.map { UINavigationController(rootViewController: $0) }
         
         let selectedChannel = channelController?.channel
-        let channelListController = ChatClient.shared.channelListController(query: channelListQuery)
+        let channelListController = chat.channelListController(query: channelListQuery)
         let channelListVC = makeChannelListVC(
             controller: channelListController,
             selectedChannel: selectedChannel,

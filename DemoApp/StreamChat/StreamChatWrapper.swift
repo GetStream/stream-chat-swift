@@ -7,12 +7,11 @@ import StreamChat
 import StreamChatUI
 import UserNotifications
 
-extension ChatClient {
-    static var shared: ChatClient!
-}
-
 final class StreamChatWrapper {
     static let shared = StreamChatWrapper()
+
+    // Chat client
+    private var client: ChatClient!
 
     // ChatClient config
     var config: ChatClientConfig = {
@@ -22,12 +21,14 @@ final class StreamChatWrapper {
         return config
     }()
 
-    private var client: ChatClient {
-        ChatClient.shared
-    }
+    private init() {}
 
+    // Instantiates chat client
     func setUpChat() {
-        guard ChatClient.shared == nil else { return }
+        guard client == nil else {
+            log.error("Client was already instantiated")
+            return
+        }
 
         // Set the log level
         LogConfig.level = .warning
@@ -36,7 +37,7 @@ final class StreamChatWrapper {
         ]
 
         // Create Client
-        ChatClient.shared = ChatClient(config: config)
+        client = ChatClient(config: config)
 
         // Customize UI
         configureUI()
@@ -53,7 +54,7 @@ final class StreamChatWrapper {
     }
 
     func configureUI() {
-        // Customize UI
+        // Customize UI configuration
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
 
@@ -63,12 +64,6 @@ final class StreamChatWrapper {
         Components.default.messageContentView = DemoChatMessageContentView.self
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
-    }
-}
-
-extension StreamChatWrapper {
-    func setMessageDiffingEnabled(_ isEnabled: Bool) {
-        Components.default._messageListDiffingEnabled = isEnabled
     }
 }
 
@@ -115,7 +110,19 @@ extension StreamChatWrapper {
         }
 
         client.disconnect()
-        ChatClient.shared = nil
+        client = nil
+    }
+}
+
+// MARK: Controllers
+
+extension StreamChatWrapper {
+    func channelController(for channelId: ChannelId?) -> ChatChannelController? {
+        channelId.map { client.channelController(for: $0) }
+    }
+
+    func channelListController(query: ChannelListQuery) -> ChatChannelListController {
+        client.channelListController(query: query)
     }
 }
 
@@ -136,5 +143,13 @@ extension StreamChatWrapper {
 
     func notificationInfo(for response: UNNotificationResponse) -> ChatPushNotificationInfo? {
         try? ChatPushNotificationInfo(content: response.notification.request.content)
+    }
+}
+
+// MARK: Develop configuration
+
+extension StreamChatWrapper {
+    func setMessageDiffingEnabled(_ isEnabled: Bool) {
+        Components.default._messageListDiffingEnabled = isEnabled
     }
 }
