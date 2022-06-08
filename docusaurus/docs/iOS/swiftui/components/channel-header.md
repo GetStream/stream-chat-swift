@@ -39,6 +39,8 @@ Below you can see the comparison of the before and after of this change.
 
 ![Depiction of the channel header namer comparison.](../../assets/channel-header-namer.png)
 
+> 💡 The best place to do this would be in the `AppDelegate` file of your project. Not sure how to set this one up? We got you covered in our [Getting started guide](../getting-started.md).
+
 ### Changing the color of the header
 
 Another simple change you can do is to change the tint color of the header. This will change the navigation bar buttons in all of the SDK components. To do this, simply initialize the `StreamChat` object with your preferred tint color.
@@ -70,12 +72,12 @@ In order to do this, you will need to perform four steps:
 First, you need to create your own header, conforming to SwiftUI's `ToolbarContent` protocol. Let's create a header that will show an additional button to the right, to do changes to the channel instead of the default avatar view.
 
 ```swift
-public struct CustomChatChannelHeader: ToolbarContent {
+struct CustomChatChannelHeader: ToolbarContent {
 
-    public var channelName: String
-    public var onTapTrailing: () -> ()
+    var channelName: String
+    var onTapTrailing: () -> ()
 
-    public var body: some ToolbarContent {
+    var body: some ToolbarContent {
         ToolbarItem(placement: .principal) {
             Text(channelName)
         }
@@ -97,15 +99,14 @@ The custom header implementation exposes an onTapTrailing callback, that will be
 The next step is to provide a new implementation of the `ChatChannelHeaderViewModifier`. In this case, you need to provide handling for the `onTapTrailing` method from the `CustomChatChannelHeader`. To do this, you introduce a new `@State` variable in the modifier and change its state to true when the button is tapped.
 
 ```swift
-struct CustomChannelModifier: ChatChannelHeaderViewModifier {
+struct CustomChatChannelModifier: ChatChannelHeaderViewModifier {
 
+    @State private var editShown = false
     var channel: ChatChannel
-
-    @State var editShown = false
 
     func body(content: Content) -> some View {
         content.toolbar {
-            CustomChatChannelHeader(channel: channel) {
+            CustomChatChannelHeader(channelName: channel.name ?? "Unkown") {
                 editShown = true
             }
         }
@@ -113,8 +114,8 @@ struct CustomChannelModifier: ChatChannelHeaderViewModifier {
             Text("Edit View")
         }
     }
-
 }
+
 ```
 
 The next step is to create a custom view factory (or update the existing one if it was already created) to return the newly created channel view modifier.
@@ -146,6 +147,8 @@ var body: some Scene {
 ```
 
 These are all the steps needed to provide your own navigation header in the chat channel. Take a look at the comparison between the default implementation and the custom one.
+
+![Depiction of the channel header with and without a custom channel header.](../../assets/channel-header-custom.png)
 
 ## Using the Chat Info Screen
 
