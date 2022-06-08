@@ -321,7 +321,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow,
-                let controller = (segue.destination as? UINavigationController).topViewController as? SimpleChatViewController {
+               let controller = (segue.destination as? UINavigationController)?.topViewController as? SimpleChatViewController {
                 let channel = channelListController.channels[indexPath.row]
                 
                 /// pass down reference to `ChannelController`.
@@ -368,7 +368,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         navigationItem.rightBarButtonItems = [usersButton, addButton]
         if let split = splitViewController {
             let controllers = split.viewControllers
-            detailViewController = (controllers[controllers.count - 1] as? UINavigationController)
+            detailViewController = (controllers[controllers.count - 1] as? UINavigationController)?
                 .topViewController as? SimpleChatViewController
         }
 

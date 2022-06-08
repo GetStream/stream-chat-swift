@@ -347,7 +347,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow,
-               let controller = (segue.destination as? UINavigationController).topViewController as? CombineSimpleChatViewController {
+               let controller = (segue.destination as? UINavigationController)?.topViewController as? CombineSimpleChatViewController {
                 let channel = channelListController.channels[indexPath.row]
                 
                 /// Pass down reference to `ChannelController`.
@@ -394,7 +394,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
         navigationItem.rightBarButtonItems = [usersButton, addButton]
         if let split = splitViewController {
             let controllers = split.viewControllers
-            detailViewController = (controllers[controllers.count - 1] as? UINavigationController)
+            detailViewController = (controllers[controllers.count - 1] as? UINavigationController)?
                 .topViewController as? CombineSimpleChatViewController
         }
 

@@ -124,6 +124,7 @@ struct SettingsView: UIViewControllerRepresentable {
             settingsViewController.currentUserController = currentUserController
             return settingsViewController
         }
+        return SettingsViewController()
     }
     
     func updateUIViewController(_ uiViewController: SettingsViewController, context: Context) {}
