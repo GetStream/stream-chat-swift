@@ -7,9 +7,9 @@ import StreamChatUI
 import UIKit
 
 final class DemoAppCoordinator: NSObject {
-    let window: UIWindow
-    let chat: StreamChatWrapper
-    let pushNotifications: PushNotifications
+    private let window: UIWindow
+    private let chat: StreamChatWrapper
+    private let pushNotifications: PushNotifications
 
     init(
         window: UIWindow,
