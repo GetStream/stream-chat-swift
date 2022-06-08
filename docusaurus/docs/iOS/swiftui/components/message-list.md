@@ -253,3 +253,19 @@ var body: some Scene {
     }
 }
 ```
+
+## Minimum Swipe Gesture Distance For Replying to Messages
+
+The minimum swipe gesture distance needed to trigger a reply response can be personalized. This allows to fine tune the overall message list experience.
+ 
+ This setup is done when the `StreamChat` object is being created, usually at the start of the app (e.g. in the `AppDelegate`).
+ 
+ Here's an example usage:
+
+```swift
+let messageDisplayOptions = MessageDisplayOptions(minimumSwipeGestureDistance: 20)
+let messageListConfig = MessageListConfig(messageDisplayOptions: messageDisplayOptions)
+let utils = Utils(messageListConfig: messageListConfig)
+
+let streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
