@@ -18,6 +18,7 @@ _June 06, 2022_
 - Fix `Date._unconditionallyBridgeFromObjectiveC(NSDate?)` crash [#2027](https://github.com/GetStream/stream-chat-swift/pull/2027)
 - Fix `NSHashTable` count underflow crash [#2032](https://github.com/GetStream/stream-chat-swift/pull/2032)
 - Fix Message List using incorrect indexPath for message updates [#2044](https://github.com/GetStream/stream-chat-swift/pull/2044)
+- Fix crash when participant hard deletes a message [2075](https://github.com/GetStream/stream-chat-swift/pull/2075)
 ### 🔄 Changed
 - Changing the decoding of `role` to `channel_role` as `role` is now deprecated on the backend. This allows for custom roles defined within your V2 permissions [#2028](https://github.com/GetStream/stream-chat-swift/issues/2028)
 
