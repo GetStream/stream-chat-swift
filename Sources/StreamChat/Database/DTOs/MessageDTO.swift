@@ -560,6 +560,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if let pinnedByUser = payload.pinnedBy {
             dto.pinnedBy = try saveUser(payload: pinnedByUser)
         }
+        
+        if dto.pinned {
+            channelDTO.pinnedMessages.insert(dto)
+        } else {
+            channelDTO.pinnedMessages.remove(dto)
+        }
 
         if let quotedMessage = payload.quotedMessage {
             dto.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channelDTO, syncOwnReactions: false)
@@ -591,12 +597,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
         
-        if dto.pinned {
-            channelDTO.pinnedMessages.insert(dto)
-        } else {
-            channelDTO.pinnedMessages.remove(dto)
-        }
-        
         dto.channel = channelDTO
 
         dto.latestReactions = payload
@@ -623,13 +623,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if let parentMessageId = payload.parentId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(dto)
-        }
-
-        dto.pinned = payload.pinned
-        dto.pinnedAt = payload.pinnedAt?.bridgeDate
-        dto.pinExpires = payload.pinExpires?.bridgeDate
-        if let pinnedBy = payload.pinnedBy {
-            dto.pinnedBy = try saveUser(payload: pinnedBy)
         }
         
         dto.translations = payload.translations?.mapKeys { $0.languageCode }

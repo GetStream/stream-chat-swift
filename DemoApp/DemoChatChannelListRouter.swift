@@ -244,11 +244,33 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             (
                 channelController.channel?.isHidden == false ?
                     .init(title: "Hide channel", style: .default, handler: { [unowned self] _ in
-                        channelController.hideChannel { error in
-                            if let error = error {
-                                self.rootViewController.presentAlert(title: "Couldn't hide channel \(cid)", message: "\(error)")
-                            }
-                        }
+                        self.rootViewController.presentAlert(
+                            title: "Clear History?",
+                            message: nil,
+                            actions: [
+                                .init(title: "Clear History", style: .default, handler: { _ in
+                                    channelController.hideChannel(clearHistory: true) { error in
+                                        if let error = error {
+                                            self.rootViewController.presentAlert(
+                                                title: "Couldn't hide channel \(cid)",
+                                                message: "\(error)"
+                                            )
+                                        }
+                                    }
+                                }),
+                                .init(title: "Keep History", style: .default, handler: { _ in
+                                    channelController.hideChannel(clearHistory: false) { error in
+                                        if let error = error {
+                                            self.rootViewController.presentAlert(
+                                                title: "Couldn't hide channel \(cid)",
+                                                message: "\(error)"
+                                            )
+                                        }
+                                    }
+                                })
+                            ],
+                            cancelHandler: nil
+                        )
                     }) :
                     .init(title: "Show channel", style: .default, handler: { [unowned self] _ in
                         channelController.showChannel { error in

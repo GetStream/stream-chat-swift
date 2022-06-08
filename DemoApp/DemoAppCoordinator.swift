@@ -67,7 +67,7 @@ extension DemoAppCoordinator: UNUserNotificationCenterDelegate {
 // MARK: - Navigation
 
 private extension DemoAppCoordinator {
-    func showChat(for user: DemoUserType, cid: ChannelId? = nil, animated: Bool) {
+    func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool) {
         logIn(as: user)
         
         let chatVC = makeChatVC(for: user, startOn: cid) { [weak self] in
@@ -81,7 +81,7 @@ private extension DemoAppCoordinator {
     
     func showLogin(animated: Bool) {
         let loginVC = makeLoginVC { [weak self] user in
-            self?.showChat(for: user, animated: true)
+            self?.showChat(for: user, cid: nil, animated: true)
         }
         
         set(rootViewController: loginVC, animated: animated)
@@ -131,12 +131,18 @@ private extension DemoAppCoordinator {
             selectedChannel: selectedChannel,
             onLogout: onLogout
         )
-        let channelListNVC = UINavigationController(rootViewController: channelListVC)
         
-        let splitVC = UISplitViewController()
-        splitVC.preferredDisplayMode = .oneBesideSecondary
-        splitVC.viewControllers = [channelListNVC, channelNVC].compactMap { $0 }
-        return splitVC
+        let channelListNVC = UINavigationController(rootViewController: channelListVC)
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+        if isIpad {
+            let splitVC = UISplitViewController()
+            splitVC.preferredDisplayMode = .oneBesideSecondary
+            splitVC.viewControllers = [channelListNVC, channelNVC].compactMap { $0 }
+            return splitVC
+        } else {
+            channelVC.map { channelListNVC.pushViewController($0, animated: false) }
+            return channelListNVC
+        }
     }
     
     func makeChannelListVC(
@@ -284,11 +290,17 @@ final class DemoChatChannelVC: ChatChannelVC {
     }
     
     @objc private func debugTap() {
-        guard
-            let cid = channelController.cid,
-            let mainVC = splitViewController?.viewControllers.first as? UINavigationController,
-            let channelListVC = mainVC.viewControllers.first as? DemoChatChannelListVC
-        else { return }
+        guard let cid = channelController.cid else { return }
+        
+        let channelListVC: DemoChatChannelListVC
+        if let mainVC = splitViewController?.viewControllers.first as? UINavigationController,
+           let _channelListVC = mainVC.viewControllers.first as? DemoChatChannelListVC {
+            channelListVC = _channelListVC
+        } else if let _channelListVC = navigationController?.viewControllers.first as? DemoChatChannelListVC {
+            channelListVC = _channelListVC
+        } else {
+            return
+        }
         
         channelListVC.demoRouter.didTapMoreButton(for: cid)
     }
