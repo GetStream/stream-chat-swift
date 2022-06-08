@@ -30,18 +30,31 @@ final class CollectionViewListChangeUpdater: ListChangeUpdater {
             return
         }
 
-        collectionView?.performBatchUpdates({
-            collectionView?.deleteItems(at: Array(indices.remove))
-            collectionView?.insertItems(at: Array(indices.insert))
-            indices.move.forEach {
-                collectionView?.moveItem(at: $0.fromIndex, to: $0.toIndex)
-            }
-        }, completion: { [weak self] finished in
-            UIView.performWithoutAnimation {
-                // To fix a crash on iOS 14 below, we moved the reloads to the completion block.
-                self?.collectionView?.reloadItems(at: Array(indices.update))
+        if #available(iOS 15, *) {
+            collectionView?.performBatchUpdates({
+                collectionView?.deleteItems(at: Array(indices.remove))
+                collectionView?.insertItems(at: Array(indices.insert))
+                collectionView?.reloadItems(at: Array(indices.update))
+                indices.move.forEach {
+                    collectionView?.moveItem(at: $0.fromIndex, to: $0.toIndex)
+                }
+            }, completion: { finished in
                 completion?(finished)
-            }
-        })
+            })
+        } else {
+            // To fix a crash on iOS 14 below, we moved the reloads to the completion block.
+            collectionView?.performBatchUpdates({
+                collectionView?.deleteItems(at: Array(indices.remove))
+                collectionView?.insertItems(at: Array(indices.insert))
+                indices.move.forEach {
+                    collectionView?.moveItem(at: $0.fromIndex, to: $0.toIndex)
+                }
+            }, completion: { [weak self] finished in
+                UIView.performWithoutAnimation {
+                    self?.collectionView?.reloadItems(at: Array(indices.update))
+                    completion?(finished)
+                }
+            })
+        }
     }
 }

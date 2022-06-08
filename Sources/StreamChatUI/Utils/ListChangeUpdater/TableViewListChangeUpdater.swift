@@ -30,18 +30,31 @@ final class TableViewListChangeUpdater: ListChangeUpdater {
             return
         }
 
-        tableView?.performBatchUpdates({
-            tableView?.deleteRows(at: Array(indices.remove), with: .none)
-            tableView?.insertRows(at: Array(indices.insert), with: .none)
-            indices.move.forEach {
-                tableView?.moveRow(at: $0.fromIndex, to: $0.toIndex)
-            }
-        }, completion: { [weak self] finished in
-            UIView.performWithoutAnimation {
-                // To fix a crash on iOS 14 below, we moved the reloads to the completion block.
-                self?.tableView?.reloadRows(at: Array(indices.update), with: .none)
+        if #available(iOS 15, *) {
+            tableView?.performBatchUpdates({
+                tableView?.deleteRows(at: Array(indices.remove), with: .none)
+                tableView?.insertRows(at: Array(indices.insert), with: .none)
+                tableView?.reloadRows(at: Array(indices.update), with: .none)
+                indices.move.forEach {
+                    tableView?.moveRow(at: $0.fromIndex, to: $0.toIndex)
+                }
+            }, completion: { finished in
                 completion?(finished)
-            }
-        })
+            })
+        } else {
+            // To fix a crash on iOS 14 below, we moved the reloads to the completion block.
+            tableView?.performBatchUpdates({
+                tableView?.deleteRows(at: Array(indices.remove), with: .none)
+                tableView?.insertRows(at: Array(indices.insert), with: .none)
+                indices.move.forEach {
+                    tableView?.moveRow(at: $0.fromIndex, to: $0.toIndex)
+                }
+            }, completion: { [weak self] finished in
+                UIView.performWithoutAnimation {
+                    self?.tableView?.reloadRows(at: Array(indices.update), with: .none)
+                    completion?(finished)
+                }
+            })
+        }
     }
 }
