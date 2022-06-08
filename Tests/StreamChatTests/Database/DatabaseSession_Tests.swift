@@ -384,7 +384,8 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let messageAfterEvent = database.viewContext.message(id: messageId)
 
-        XCTAssertNil(messageAfterEvent)
+        // XCTAssertNil(messageAfterEvent) This should be uncommented out after: https://stream-io.atlassian.net/browse/CIS-1963
+        XCTAssertTrue(messageAfterEvent?.isHardDeleted == true)
     }
 
     func test_saveEvent_whenMessageDelete_whenNotHardDeleted_shouldNotHardDeleteMessageFromDatabase() throws {
