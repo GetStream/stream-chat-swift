@@ -162,9 +162,9 @@ In order for it to be integrated in the same context as above, your `CustomChatC
 public struct CustomChatChannelHeader: ToolbarContent {
 
     public var channelName: String
-    public var onTapTrailing: () -> ()
     // highlight-next-line
     public var channel: ChatChannel
+    public var onTapTrailing: () -> ()
 
     public var body: some ToolbarContent {
         ToolbarItem(placement: .principal) {
@@ -184,3 +184,5 @@ public struct CustomChatChannelHeader: ToolbarContent {
 ```
 
 This will display the info button on the trailing edge of the header view and navigate to the detail screen once the user taps on it.
+
+![Depiction of the navigation from the trailing icon in the channel header that leads to the info screen.](../../assets/channel-header-info-screen.png)
