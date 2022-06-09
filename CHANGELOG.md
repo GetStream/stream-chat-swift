@@ -37,6 +37,7 @@ _June 10, 2022_
 - Add Support for Slow Mode [#1953](https://github.com/GetStream/stream-chat-swift/pull/1953)
 - Present channel screen modally when channel list in not embedded by navigation controller [#2011](https://github.com/GetStream/stream-chat-swift/pull/2011)
 - Show channel screen as right detail when channel list is embedded by split view controller [#2011](https://github.com/GetStream/stream-chat-swift/pull/2011)
+- Show typing users within a thread [#2079](https://github.com/GetStream/stream-chat-swift/issues/2079)
 ### 🐞 Fixed
 - Fix DM Channel with multiple members displaying only 1 user avatar [#2019](https://github.com/GetStream/stream-chat-swift/pull/2019)
 - Improve stability of Message List with Diffing disabled [#2006](https://github.com/GetStream/stream-chat-swift/pull/2006) [#2076](https://github.com/GetStream/stream-chat-swift/pull/2076)
