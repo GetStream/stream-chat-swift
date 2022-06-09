@@ -23,7 +23,7 @@ extension ListChange: CustomStringConvertible {
     /// Returns pretty `ListChange` type description.
     public var description: String {
         let indexPathDescription: (IndexPath) -> String = { indexPath in
-            "(\(indexPath.row), \(indexPath.section))"
+            "(\(indexPath.item), \(indexPath.section))"
         }
         switch self {
         case let .insert(_, indexPath):
