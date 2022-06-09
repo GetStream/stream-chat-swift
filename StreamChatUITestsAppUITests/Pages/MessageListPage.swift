@@ -5,6 +5,7 @@
 import Foundation
 import XCTest
 import StreamChat
+@testable import StreamChatUI
 
 // swiftlint:disable convenience_type
 
@@ -209,6 +210,10 @@ class MessageListPage {
         private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {
             messageCell.buttons.matching(NSPredicate(
                 format: "identifier LIKE 'ActionButton' AND label LIKE '\(label)'")).firstMatch
+        }
+        
+        static var deletedMessagePlaceholder: String {
+            L10n.Message.deletedMessagePlaceholder
         }
     }
     

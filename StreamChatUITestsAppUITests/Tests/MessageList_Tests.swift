@@ -179,7 +179,7 @@ final class MessageList_Tests: StreamTestCase {
             participantRobot.editMessage(editedMessage)
         }
         THEN("the message is edited") {
-            participantRobot.assertMessage(editedMessage)
+            userRobot.assertMessage(editedMessage)
         }
     }
 

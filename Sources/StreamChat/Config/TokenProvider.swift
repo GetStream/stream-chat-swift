@@ -8,7 +8,7 @@ public typealias TokenProvider = (@escaping (Result<Token, Error>) -> Void) -> V
 
 /// The type designed to provider a `Token` to the `ChatClient` when it asks for it.
 struct UserConnectionProvider {
-    let getToken: (_ client: ChatClient, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
+    let tokenProvider: TokenProvider
 }
 
 extension UserConnectionProvider {
@@ -28,9 +28,7 @@ extension UserConnectionProvider {
     /// - Parameter token: The token to be returned by the token provider.
     /// - Returns: The new `TokenProvider` instance.
     static func `static`(_ token: Token) -> Self {
-        .init {
-            $1(.success(token))
-        }
+        .init { $0(.success(token)) }
     }
 
     /// The provider which designed to be used for guest users.
@@ -41,12 +39,18 @@ extension UserConnectionProvider {
     ///   - extraData: The extra data a guest user will be created OR updated with if it exists.
     /// - Returns: The new `TokenProvider` instance.
     static func guest(
+        client: ChatClient,
         userId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> Self {
-        .init { client, completion in
+        .init { [weak client] completion in
+            guard let client = client else {
+                completion(.failure(ClientError.ClientHasBeenDeallocated()))
+                return
+            }
+            
             let endpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
                 userId: userId,
                 name: name,
@@ -64,14 +68,5 @@ extension UserConnectionProvider {
                 }
             }
         }
-    }
-
-    /// The token provider designed to be used when a token is dynamic (e.g. can change OR expire).
-    /// - Parameter handler: The closure which should get the token and pass it to the `completion`.
-    /// - Returns: The new `TokenProvider` instance.
-    static func closure(
-        _ handler: @escaping (_ client: ChatClient, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
-    ) -> Self {
-        .init(getToken: handler)
     }
 }

@@ -7,10 +7,19 @@ import Foundation
 
 public class ChatMessageController_Mock: ChatMessageController {
     /// Creates a new mock instance of `ChatMessageController`.
-    public static func mock(currentUserId: UserId = "ID") -> ChatMessageController_Mock {
-        let chatClient = ChatClient.mock()
+    public static func mock(
+        client: ChatClient? = nil,
+        currentUserId: UserId = "ID",
+        cid: ChannelId? = nil,
+        messageId: String = "MockMessage"
+    ) -> ChatMessageController_Mock {
+        let chatClient = client ?? ChatClient.mock()
         chatClient.currentUserId = currentUserId
-        return .init(client: chatClient, cid: try! .init(cid: "mock:channel"), messageId: "MockMessage")
+        var channelId = cid
+        if channelId == nil {
+            channelId = try! .init(cid: "mock:channel")
+        }
+        return .init(client: chatClient, cid: channelId!, messageId: messageId)
     }
     
     public var message_mock: ChatMessage?

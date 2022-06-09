@@ -539,8 +539,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
         
         // Simulate `reloadUserIfNeeded` call.
         updater?.reloadUserIfNeeded(
-            userConnectionProvider: .closure {
-                tokenProviderCompletion = $1
+            userConnectionProvider: .init {
+                tokenProviderCompletion = $0
             }
         )
 

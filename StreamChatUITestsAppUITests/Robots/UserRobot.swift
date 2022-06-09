@@ -20,7 +20,7 @@ final class UserRobot: Robot {
     
     @discardableResult
     func login() -> Self {
-        StartPage.startButton.tap()
+        StartPage.startButton.safeTap()
         return self
     }
     
@@ -42,7 +42,7 @@ final class UserRobot: Robot {
             "Channel cell is not found at index #\(channelCellIndex)"
         )
         
-        cells.allElementsBoundByIndex[channelCellIndex].tap()
+        cells.allElementsBoundByIndex[channelCellIndex].safeTap()
         return self
     }
 }
@@ -55,11 +55,6 @@ extension UserRobot {
     func openContextMenu(messageCellIndex: Int = 0) -> Self {
         let minExpectedCount = messageCellIndex + 1
         let cells = MessageListPage.cells.waitCount(minExpectedCount)
-        XCTAssertGreaterThanOrEqual(
-            cells.count,
-            minExpectedCount,
-            "Message cell is not found at index #\(messageCellIndex)"
-        )
         cells.allElementsBoundByIndex[messageCellIndex].press(forDuration: 0.5)
         return self
     }
@@ -80,8 +75,10 @@ extension UserRobot {
                      waitForAppearance: Bool = true,
                      file: StaticString = #filePath,
                      line: UInt = #line) -> Self {
+        server.channelsEndpointWasCalled = false
+        
         typeText(text)
-        composer.sendButton.tap()
+        composer.sendButton.safeTap()
         
         if waitForAppearance {
             server.waitForWebsocketMessage(withText: text)
@@ -98,26 +95,26 @@ extension UserRobot {
     @discardableResult
     func attemptToSendMessageWhileInSlowMode(_ text: String) -> Self {
         composer.inputField.obtainKeyboardFocus().typeText(text)
-        composer.cooldown.tap()
+        composer.cooldown.safeTap()
         return self
     }
     
     @discardableResult
     func deleteMessage(messageCellIndex: Int = 0) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
-        contextMenu.delete.element.wait().tap()
-        MessageListPage.PopUpButtons.delete.wait().tap()
+        contextMenu.delete.element.wait().safeTap()
+        MessageListPage.PopUpButtons.delete.wait().safeTap()
         return self
     }
     
     @discardableResult
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
-        contextMenu.edit.element.wait().tap()
+        contextMenu.edit.element.wait().safeTap()
         let inputField = composer.inputField
         inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
         inputField.typeText(newText)
-        composer.confirmButton.tap()
+        composer.confirmButton.safeTap()
         return self
     }
     
@@ -143,7 +140,7 @@ extension UserRobot {
                 return MessageListPage.Reactions.like
             }
         }
-        reaction.wait().tap()
+        reaction.wait().safeTap()
         
         return self
     }
@@ -169,7 +166,7 @@ extension UserRobot {
     @discardableResult
     func selectOptionFromContextMenu(option: MessageListPage.ContextMenu, forMessageAtIndex index: Int = 0) -> Self {
         openContextMenu(messageCellIndex: index)
-        option.element.wait().tap()
+        option.element.wait().safeTap()
         return self
     }
     
@@ -207,7 +204,7 @@ extension UserRobot {
             showThread(forMessageAt: messageCellIndex)
         }
         if alsoSendInChannel {
-            threadCheckbox.wait().tap()
+            threadCheckbox.wait().safeTap()
         }
         sendMessage(text,
                     at: messageCellIndex,
@@ -225,7 +222,7 @@ extension UserRobot {
     
     @discardableResult
     func leaveChatFromChannelList() -> Self {
-        ChannelListPage.userAvatar.wait().tap()
+        ChannelListPage.userAvatar.wait().safeTap()
         return self
     }
 
@@ -246,7 +243,7 @@ extension UserRobot {
     @discardableResult
     func openComposerCommands() -> Self {
         if MessageListPage.ComposerCommands.cells.count == 0 {
-            MessageListPage.Composer.commandButton.wait().tap()
+            MessageListPage.Composer.commandButton.wait().safeTap()
         }
         return self
     }
@@ -256,7 +253,7 @@ extension UserRobot {
         let giphyText = "Test"
         if useComposerCommand {
             openComposerCommands()
-            MessageListPage.ComposerCommands.giphyImage.wait().tap()
+            MessageListPage.ComposerCommands.giphyImage.wait().safeTap()
             sendMessage("\(giphyText)", waitForAppearance: false)
         } else {
             sendMessage("/giphy\(giphyText)", waitForAppearance: false)
@@ -288,7 +285,7 @@ extension UserRobot {
             showThread(forMessageAt: messageCellIndex)
         }
         if alsoSendInChannel {
-            threadCheckbox.wait().tap()
+            threadCheckbox.wait().safeTap()
         }
         return sendGiphy(useComposerCommand: useComposerCommand, shuffle: shuffle)
     }
@@ -297,7 +294,7 @@ extension UserRobot {
     func tapOnSendGiphyButton(messageCellIndex: Int = 0) -> Self {
         let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
         let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
-        MessageListPage.Attributes.giphySendButton(in: messageCell).wait().tap()
+        MessageListPage.Attributes.giphySendButton(in: messageCell).wait().safeTap()
         return self
     }
     
@@ -305,14 +302,14 @@ extension UserRobot {
     func tapOnShuffleGiphyButton(messageCellIndex: Int = 0) -> Self {
         let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
         let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
-        MessageListPage.Attributes.giphyShuffleButton(in: messageCell).wait().tap()
+        MessageListPage.Attributes.giphyShuffleButton(in: messageCell).wait().safeTap()
         return self
     }
     
     @discardableResult
     func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
         let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
-        MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().tap()
+        MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
         return self
     }
 }
@@ -323,24 +320,54 @@ extension UserRobot {
 
     @discardableResult
     func tapOnDebugMenu() -> Self {
-        MessageListPage.NavigationBar.debugMenu.tap()
+        MessageListPage.NavigationBar.debugMenu.safeTap()
         return self
     }
 
     @discardableResult
     func addParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
-        debugAlert.addMember.firstMatch.tap()
+        debugAlert.addMember.firstMatch.safeTap()
         debugAlert.addMemberTextField.firstMatch
             .obtainKeyboardFocus()
             .typeText(userId)
-        debugAlert.addMemberOKButton.firstMatch.tap()
+        debugAlert.addMemberOKButton.firstMatch.safeTap()
         return self
     }
 
     @discardableResult
     func removeParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
-        debugAlert.removeMember.firstMatch.tap()
-        debugAlert.selectMember(withUserId: userId).firstMatch.tap()
+        debugAlert.removeMember.firstMatch.safeTap()
+        debugAlert.selectMember(withUserId: userId).firstMatch.safeTap()
         return self
     }
+}
+
+// MARK: Connectivity
+
+extension UserRobot {
+
+    /// Toggles the visibility of the connectivity switch control. When set to `.on`, the switch control will be displayed in the navigation bar.
+    @discardableResult
+    func setConnectivitySwitchVisibility(to state: SwitchState) -> Self {
+        setSwitchState(Settings.showsConnectivity.element, state: state)
+    }
+
+    /// Mocks device connectivity, When set to `.off` state, the internet connectivity is mocked, HTTP request fails with "No Internet Connection" error.
+    ///
+    /// Note: Requires `setConnectivitySwitchVisibility` needs to be set `.on` on first screen.
+    @discardableResult
+    func setConnectivity(to state: SwitchState) -> Self {
+        setSwitchState(Settings.isConnected.element, state: state)
+    }
+}
+
+// MARK: Config
+
+extension UserRobot {
+
+    @discardableResult
+    func setIsLocalStorageEnabled(to state: SwitchState) -> Self {
+        setSwitchState(Settings.isLocalStorageEnabled.element, state: state)
+    }
+    
 }

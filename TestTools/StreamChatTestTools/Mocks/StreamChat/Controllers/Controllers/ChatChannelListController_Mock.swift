@@ -12,8 +12,8 @@ public class ChatChannelListController_Mock: ChatChannelListController, Spy {
     public var resetChannelsQueryResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
 
     /// Creates a new mock instance of `ChatChannelListController`.
-    public static func mock() -> ChatChannelListController_Mock {
-        .init(query: .init(filter: .equal(.memberCount, to: 0)), client: .mock())
+    public static func mock(client: ChatClient? = nil) -> ChatChannelListController_Mock {
+        .init(query: .init(filter: .equal(.memberCount, to: 0)), client: client ?? .mock())
     }
     
     public private(set) var channels_mock: [ChatChannel]?

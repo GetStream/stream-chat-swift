@@ -14,6 +14,18 @@ public class ChatChannelController_Mock: ChatChannelController {
             client: .mock(config: chatClientConfig)
         )
     }
+    
+    public static func mock(
+        channelQuery: ChannelQuery,
+        channelListQuery: ChannelListQuery?,
+        client: ChatClient
+    ) -> ChatChannelController_Mock {
+        .init(
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            client: client
+        )
+    }
 
     public static func mock(client: ChatClient) -> ChatChannelController_Mock {
         .init(

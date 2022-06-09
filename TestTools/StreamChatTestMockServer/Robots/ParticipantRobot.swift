@@ -6,23 +6,22 @@
 import Swifter
 import XCTest
 
-/// Simulates participant behavior
-final class ParticipantRobot: Robot {
+public class ParticipantRobot {
 
     private var server: StreamMockServer
     private var threadParentId: String?
     private var user: [String: String] = UserDetails.hanSolo
     
-    init(_ server: StreamMockServer) {
+    public init(_ server: StreamMockServer) {
         self.server = server
     }
 
-    var currentUserId: String {
+    public var currentUserId: String {
         UserDetails.userId(for: user)
     }
     
     @discardableResult
-    func startTyping() -> Self {
+    public func startTyping() -> Self {
         server.websocketEvent(
             .userStartTyping,
             user: participant(),
@@ -32,7 +31,7 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func stopTyping() -> Self {
+    public func stopTyping() -> Self {
         server.websocketEvent(
             .userStopTyping,
             user: participant(),
@@ -43,14 +42,16 @@ final class ParticipantRobot: Robot {
     
     // Sleep in seconds
     @discardableResult
-    func wait(_ duration: TimeInterval) -> Self {
+    public func wait(_ duration: TimeInterval) -> Self {
         let sleepTime = UInt32(duration * 1000)
         usleep(sleepTime)
         return self
     }
     
     @discardableResult
-    func readMessage() -> Self {
+    public func readMessage() -> Self {
+        server.waitForChannelsUpdate()
+        
         server.websocketEvent(
             .messageRead,
             user: participant(),
@@ -60,12 +61,13 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func sendMessage(_ text: String,
-                     at messageCellIndex: Int? = nil,
-                     waitForAppearance: Bool = true,
-                     file: StaticString = #filePath,
-                     line: UInt = #line) -> Self {
-        waitForChannelQueryUpdate()
+    public func sendMessage(_ text: String,
+                            at messageCellIndex: Int? = nil,
+                            waitForAppearance: Bool = true,
+                            waitForChannelQuery: Bool = true,
+                            file: StaticString = #filePath,
+                            line: UInt = #line) -> Self {
+        server.waitForChannelQueryUpdate()
         
         server.websocketMessage(
             text,
@@ -77,10 +79,6 @@ final class ParticipantRobot: Robot {
         
         if waitForAppearance {
             server.waitForWebsocketMessage(withText: text)
-            
-            let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
-            let textView = attributes.text(in: cell)
-            _ = textView.waitForText(text)
         }
         
         return self
@@ -88,7 +86,7 @@ final class ParticipantRobot: Robot {
 
     /// The given text will be decorated with the index, eg "message-10"
     @discardableResult
-    func sendMultipleMessages(repeatingText text: String, count: Int) -> Self {
+    public func sendMultipleMessages(repeatingText text: String, count: Int) -> Self {
         var texts = [String]()
         for index in 1...count {
             texts.append("\(text)-\(index)")
@@ -102,7 +100,7 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func editMessage(_ text: String) -> Self {
+    public func editMessage(_ text: String) -> Self {
         let messageId = server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
         server.websocketMessage(
             text,
@@ -115,7 +113,7 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func deleteMessage() -> Self {
+    public func deleteMessage() -> Self {
         let user = participant()
         guard let userId = user?[UserPayloadsCodingKeys.id.rawValue] as? String else {
             return self
@@ -132,7 +130,7 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func addReaction(type: TestData.Reactions) -> Self {
+    public func addReaction(type: TestData.Reactions) -> Self {
         server.websocketReaction(
             type: type,
             eventType: .reactionNew,
@@ -142,7 +140,7 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func deleteReaction(type: TestData.Reactions) -> Self {
+    public func deleteReaction(type: TestData.Reactions) -> Self {
         server.websocketReaction(
             type: type,
             eventType: .reactionDeleted,
@@ -152,7 +150,7 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func replyToMessage(_ text: String) -> Self {
+    public func replyToMessage(_ text: String) -> Self {
         let quotedMessage = server.lastMessage
         let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
         server.websocketMessage(
@@ -170,7 +168,7 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func replyToMessageInThread(_ text: String, alsoSendInChannel: Bool = false) -> Self {
+    public func replyToMessageInThread(_ text: String, alsoSendInChannel: Bool = false) -> Self {
         let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
         server.websocketMessage(
             text,
@@ -187,8 +185,9 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func sendGiphy() -> Self {
-        waitForChannelQueryUpdate()
+    public func sendGiphy(waitForChannelQuery: Bool = true) -> Self {
+        server.waitForChannelQueryUpdate()
+        
         server.websocketMessage(
             channelId: server.currentChannelId,
             messageId: TestData.uniqueId,
@@ -200,7 +199,7 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func replyWithGiphy() -> Self {
+    public func replyWithGiphy() -> Self {
         let quotedMessage = server.lastMessage
         let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
         server.websocketMessage(
@@ -218,7 +217,7 @@ final class ParticipantRobot: Robot {
     }
     
     @discardableResult
-    func replyWithGiphyInThread(alsoSendInChannel: Bool = false) -> Self {
+    public func replyWithGiphyInThread(alsoSendInChannel: Bool = false) -> Self {
         let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
         server.websocketMessage(
             channelId: server.currentChannelId,
@@ -241,12 +240,5 @@ final class ParticipantRobot: Robot {
         }
 
         return server.setUpUser(source: message, details: user)
-    }
-    
-    // To avoid collision of the first channel query call and a first participant's message
-    private func waitForChannelQueryUpdate(timeout: Double = 5) {
-        let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
-        while !server.channelQueryEndpointWasCalled
-                && endTime > Date().timeIntervalSince1970 * 1000 {}
     }
 }

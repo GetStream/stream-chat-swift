@@ -36,14 +36,14 @@ final class ChannelList_Tests: StreamTestCase {
         linkToScenario(withId: 92)
         
         GIVEN("user opens the channel") {
-            deviceRobot.setConnectivitySwitchVisibility(to: .on)
             userRobot
+                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
                 .tapOnBackButton()
         }
         AND("user becomes offline") {
-            deviceRobot.setConnectivity(to: .off)
+            userRobot.setConnectivity(to: .off)
         }
         WHEN("participant sends a new message") {
             participantRobot
@@ -51,7 +51,7 @@ final class ChannelList_Tests: StreamTestCase {
                 .wait(2.0)
         }
         AND("user becomes online") {
-            deviceRobot.setConnectivity(to: .on)
+            userRobot.setConnectivity(to: .on)
         }
         THEN("list shows a preview of participant's message") {
             userRobot.assertLastMessageInChannelPreview(message)

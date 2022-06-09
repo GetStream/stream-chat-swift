@@ -10,6 +10,12 @@ Video calls have become an integral part of daily life since the pandemic hit. T
 
 There are a few necessary steps to follow to integrate video calling capabilities with the Stream Chat SDK, but we will go over each phase of the process to come up with a functional and reusable solution that allows your end-users to communicate with one another through a seamless video experience.
 
+Here is a sneak peek of the final product you’ll build today: 
+
+<video width="400" height="860" controls loop muted autoplay>
+  <source src="https://getstream.io/static-cdn/videos/100ms-example.mov"/>
+</video>
+
 Follow the steps below to produce this app that allows your users to make video calls:
 
 1. Set up an account for 100ms

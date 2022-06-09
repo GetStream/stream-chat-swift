@@ -445,6 +445,9 @@ extension DatabaseSession {
         case .messageDeleted where channelDTO.previewMessage?.id == payload.message?.id:
             channelDTO.previewMessage = preview(for: cid)
             
+        case .channelHidden where payload.isChannelHistoryCleared == true:
+            channelDTO.previewMessage = preview(for: cid)
+            
         case .channelTruncated:
             // We're not using `preview(for: cid)` here because the channel
             // with updated `truncatedAt` is not saved to persistent store yet.
