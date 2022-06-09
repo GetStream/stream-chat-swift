@@ -19,6 +19,8 @@ public class ScheduledStreamTimer: StreamTimer {
     }
     
     public func start() {
+        stop()
+        
         timer = Foundation.Timer.scheduledTimer(
             withTimeInterval: interval,
             repeats: true
@@ -31,5 +33,6 @@ public class ScheduledStreamTimer: StreamTimer {
     
     public func stop() {
         timer?.invalidate()
+        timer = nil
     }
 }
