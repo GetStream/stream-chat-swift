@@ -13,34 +13,40 @@ extension TimeInterval {
     static let startTypingResendInterval: TimeInterval = .incomingTypingStartEventTimeout - .startTypingEventTimeout
 }
 
+/// Struct for storing currently typing info.
+private struct TypingInfo {
+    let channelId: ChannelId
+    let parentMessageId: MessageId?
+}
+
 /// Sends typing events.
 class TypingEventsSender: Worker {
     /// A timer type.
     var timer: Timer.Type = DefaultTimer.self
-    /// ChannelId for channel that typing has occurred in. Stored to stop typing when `TypingEventsSender` is deallocated
-    private var typingChannelId: ChannelId?
+    /// `TypingInfo` for channel (and parent message) that typing has occurred in. Stored to stop typing when `TypingEventsSender` is deallocated
+    private var typingInfo: TypingInfo?
     
     @Atomic private var currentUserTypingTimerControl: TimerControl?
     @Atomic private var currentUserLastTypingDate: Date?
     
     deinit {
         // We need to cleanup the typing state when sender is deallocated
-        guard let currentlyTypingChannelId = typingChannelId else {
-            log.info("There is no cid, skipping stopTyping on deinit.")
+        guard let typingInfo = typingInfo else {
+            log.info("There is no typingInfo, skipping stopTyping on deinit.")
             return
         }
         // We don't need to send `stopTyping` event if it's been already sent
         guard currentUserLastTypingDate != nil else { return }
-        self.stopTyping(in: currentlyTypingChannelId)
+        self.stopTyping(in: typingInfo.channelId, parentMessageId: typingInfo.parentMessageId)
     }
     
     // MARK: Typing events
     
-    func keystroke(in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+    func keystroke(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         cancelScheduledTypingTimerControl()
         
         currentUserTypingTimerControl = timer.schedule(timeInterval: .startTypingEventTimeout, queue: .main) { [weak self] in
-            self?.stopTyping(in: cid)
+            self?.stopTyping(in: cid, parentMessageId: parentMessageId)
         }
         
         // If the user is typing too long, it should resend `.typingStart` event.
@@ -51,29 +57,31 @@ class TypingEventsSender: Worker {
             return
         }
         
-        startTyping(in: cid)
+        startTyping(in: cid, parentMessageId: parentMessageId)
     }
     
-    func startTyping(in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        typingChannelId = cid
+    func startTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
+        typingInfo = .init(channelId: cid, parentMessageId: parentMessageId)
         currentUserLastTypingDate = timer.currentTime()
         
         apiClient.request(
-            endpoint: .sendEvent(cid: cid, eventType: .userStartTyping)
+            endpoint: .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
         ) {
             completion?($0.error)
         }
     }
     
-    func stopTyping(in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+    func stopTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         // If there's a timer set, we clear it
         if currentUserLastTypingDate != nil {
             cancelScheduledTypingTimerControl()
             currentUserLastTypingDate = nil
         }
         
+        typingInfo = nil
+        
         apiClient.request(
-            endpoint: .sendEvent(cid: cid, eventType: .userStopTyping)
+            endpoint: .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
         ) {
             completion?($0.error)
         }
