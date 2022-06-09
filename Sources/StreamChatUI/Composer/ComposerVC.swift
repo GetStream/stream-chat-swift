@@ -874,7 +874,7 @@ open class ComposerVC: _ViewController,
     
     /// Resumes the cooldown if the channel has currently an active cooldown.
     public func resumeCurrentCooldown() {
-        if let currentCooldownTime = channelController?.currentCooldownTime(), currentCooldownTime > 0 {
+        if let currentCooldownTime = channelController?.currentCooldownTime() {
             cooldownTracker.start(with: currentCooldownTime)
         }
     }
@@ -1050,7 +1050,6 @@ extension ComposerVC: ChatChannelControllerDelegate {
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        cooldownTracker.stop()
         cooldownTracker.start(with: channelController.currentCooldownTime())
     }
 }
