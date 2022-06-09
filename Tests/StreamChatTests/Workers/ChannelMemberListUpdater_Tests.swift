@@ -225,4 +225,109 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Assert the database error is propogated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
+    
+    func test_load_resetsExistingMembers_whenFirstPageIsQueried() throws {
+        // Make sure first page is being queried
+        query.pagination = .init(pageSize: 10, offset: 0)
+        
+        // Save channel to the database.
+        try database.createChannel(cid: query.cid)
+        
+        // Create and link a member to the query
+        let memberIdThatShouldNotExists = UserId.unique
+        try database.writeSynchronously { session in
+            try session.saveMember(
+                payload: .dummy(user: .dummy(userId: memberIdThatShouldNotExists)),
+                channelId: self.query.cid,
+                query: self.query
+            )
+        }
+        
+        // Simulate `load` call.
+        var completionCalled = false
+        listUpdater.load(query) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Assert members endpoint is called.
+        let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
+        
+        // Simulate members response.
+        let payload = ChannelMemberListPayload(members: [
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique))
+        ])
+        apiClient.test_simulateResponse(.success(payload))
+        
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Load query.
+        var queryDTO: ChannelMemberListQueryDTO? {
+            database.viewContext.channelMemberListQuery(queryHash: query.queryHash)
+        }
+        
+        AssertAsync {
+            // Assert query is saved to the database.
+            Assert.willBeTrue(queryDTO != nil)
+            // Assert query members are saved to the database.
+            Assert.willBeEqual(Set(queryDTO?.members.map(\.user.id) ?? []), Set(payload.members.map(\.user.id)))
+        }
+    }
+    
+    func test_load_doesNotResetsExistingMembers_whenNextPageIsQueried() throws {
+        // Make sure next page is being queried
+        query.pagination = .init(pageSize: 10, offset: 1)
+        
+        // Save channel to the database.
+        try database.createChannel(cid: query.cid)
+        
+        // Create and link a member to the query
+        let existingMemberId = UserId.unique
+        try database.writeSynchronously { session in
+            try session.saveMember(
+                payload: .dummy(user: .dummy(userId: existingMemberId)),
+                channelId: self.query.cid,
+                query: self.query
+            )
+        }
+        
+        // Simulate `load` call.
+        var completionCalled = false
+        listUpdater.load(query) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Assert members endpoint is called.
+        let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
+        
+        // Simulate members response.
+        let payload = ChannelMemberListPayload(members: [
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique))
+        ])
+        apiClient.test_simulateResponse(.success(payload))
+        
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Load query.
+        var queryDTO: ChannelMemberListQueryDTO? {
+            database.viewContext.channelMemberListQuery(queryHash: query.queryHash)
+        }
+        
+        AssertAsync {
+            // Assert query is saved to the database.
+            Assert.willBeTrue(queryDTO != nil)
+            // Assert query members are saved to the database.
+            Assert.willBeEqual(
+                Set(queryDTO?.members.map(\.user.id) ?? []),
+                Set(payload.members.map(\.user.id) + [existingMemberId])
+            )
+        }
+    }
 }

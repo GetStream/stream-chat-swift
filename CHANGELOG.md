@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix messages in hidden channels with `clearHistory` re-appearing [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix last message of hidden channel with `clearHistory` visible in channel list [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix possible deadlock in `CurrentUserController` functions being called from background threads [#2074](https://github.com/GetStream/stream-chat-swift/issues/2074)
+- Fix `ChannelMemberListController` reporting outdated members [#2079](https://github.com/GetStream/stream-chat-swift/issues/2079)
 ### 🔄 Changed
 - Changing the decoding of `role` to `channel_role` as `role` is now deprecated on the backend. This allows for custom roles defined within your V2 permissions [#2028](https://github.com/GetStream/stream-chat-swift/issues/2028)
 

@@ -22,6 +22,10 @@ class ChannelMemberListUpdater: Worker {
                 switch membersResult {
                 case let .success(memberListPayload):
                     self?.database.write({ session in
+                        // Clear existing members if first page is queried
+                        if let queryDTO = session.channelMemberListQuery(queryHash: query.queryHash), query.pagination.offset == 0 {
+                            queryDTO.members.removeAll()
+                        }
                         try memberListPayload.members.forEach {
                             try session.saveMember(
                                 payload: $0,
