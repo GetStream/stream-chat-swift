@@ -388,6 +388,80 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
     }
     
+    func test_startTypingEvent_withParentMessageId_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let messageId = MessageId.unique
+        let eventType = EventType.userStartTyping
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .channelEvent(cid.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["event": ["type": eventType.rawValue, "parent_id": messageId]]
+        )
+        
+        let endpoint = Endpoint<EmptyResponse>.startTypingEvent(cid: cid, parentMessageId: messageId)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+    }
+    
+    func test_startTypingEvent_withoutParentMessageId_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let eventType = EventType.userStartTyping
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .channelEvent(cid.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["event": ["type": eventType]]
+        )
+        
+        let endpoint = Endpoint<EmptyResponse>.startTypingEvent(cid: cid, parentMessageId: nil)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+    }
+    
+    func test_stopTypingEvent_withParentMessageId_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let messageId = MessageId.unique
+        let eventType = EventType.userStopTyping
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .channelEvent(cid.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["event": ["type": eventType.rawValue, "parent_id": messageId]]
+        )
+        
+        let endpoint = Endpoint<EmptyResponse>.stopTypingEvent(cid: cid, parentMessageId: messageId)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+    }
+    
+    func test_stopTypingEvent_withoutParentMessageId_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let eventType = EventType.userStopTyping
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .channelEvent(cid.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["event": ["type": eventType]]
+        )
+        
+        let endpoint = Endpoint<EmptyResponse>.stopTypingEvent(cid: cid, parentMessageId: nil)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+    }
+    
     func test_enableSlowMode_buildsCorrectly() {
         let cid = ChannelId.unique
         let cooldownDuration = Int.random(in: 0...120)
