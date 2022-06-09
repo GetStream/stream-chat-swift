@@ -128,17 +128,17 @@ final class ListChangeAggregator_Tests: XCTestCase {
         aggregator.controller(
             fakeController,
             didChange: updatedObject1,
-            at: [0, 0],
+            at: [1, 0],
             for: .update,
-            newIndexPath: [1, 0] // Should use newIndexPath
+            newIndexPath: nil
         )
 
         aggregator.controller(
             fakeController,
             didChange: updatedObject2,
-            at: [3, 0],
+            at: [4, 0],
             for: .update,
-            newIndexPath: [4, 0] // Should use newIndexPath
+            newIndexPath: nil
         )
 
         // Simulate FRC finishes updating
@@ -227,9 +227,9 @@ final class ListChangeAggregator_Tests: XCTestCase {
         aggregator.controller(
             fakeController,
             didChange: updatedObject,
-            at: [1, 0],
+            at: [2, 0],
             for: .update,
-            newIndexPath: [2, 0]
+            newIndexPath: nil
         )
 
         // Simulate FRC finishes updating
