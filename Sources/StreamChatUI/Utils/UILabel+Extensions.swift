@@ -14,4 +14,9 @@ extension UILabel {
         textAlignment = .natural
         return self
     }
+
+    func withNumberOfLines(_ numberOfLines: Int) -> Self {
+        self.numberOfLines = numberOfLines
+        return self
+    }
 }
