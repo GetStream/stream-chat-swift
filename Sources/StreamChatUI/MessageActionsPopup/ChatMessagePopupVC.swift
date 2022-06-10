@@ -176,7 +176,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// Add the message actions to the view hierarchy.
     open func addMessageActionsView() {
         guard let actionsController = actionsController else { return }
-        messageContainerStackView.addArrangedSubview(actionsContainerStackView)
+        messageContainerStackView.addArrangedSubview(actionsContainerStackView, respectsLayoutMargins: true)
         addChildViewController(actionsController, targetView: actionsContainerStackView)
     }
 
