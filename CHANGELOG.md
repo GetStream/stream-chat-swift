@@ -3,16 +3,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 ## StreamChat
-### 🐞 Fixed
-- Fix Logger persisting config after usage, preventing changing parameters (such as LogLevel) [#2081](https://github.com/GetStream/stream-chat-swift/issues/2081)
-
-## StreamChat
+### ✅ Added
+- `parentMessageId` parameter for typing events [#2080](https://github.com/GetStream/stream-chat-swift/issues/2080)
 ### 🐞 Fixed
 - Fix hidden channels not appearing on relaunch [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix `channel.hidden` event failing to decode on launch/reconnection [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix messages in hidden channels with `clearHistory` re-appearing [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix last message of hidden channel with `clearHistory` visible in channel list [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Message action title now supports displaying 2 lines of text instead of 1 [#2082](https://github.com/GetStream/stream-chat-swift/pull/2082)
+- Fix Logger persisting config after usage, preventing changing parameters (such as LogLevel) [#2081](https://github.com/GetStream/stream-chat-swift/issues/2081)
+
+## StreamChatUI
+### ✅ Added
+- Show typing users within a thread [#2080](https://github.com/GetStream/stream-chat-swift/issues/2080)
 
 # [4.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.16.0)
 _June 10, 2022_
@@ -21,7 +24,6 @@ _June 10, 2022_
 - The `tokenProvider` property was removed from `ChatClient` [#2031](https://github.com/GetStream/stream-chat-swift/issues/2031)
 ### ✅ Added
 - Make it possible to call `ChatClient.connect` with a `tokenProvider` [#2031](https://github.com/GetStream/stream-chat-swift/issues/2031)
-- `parentMessageId` parameter for typing events [#2080](https://github.com/GetStream/stream-chat-swift/issues/2080)
 ### 🐞 Fixed
 - Saving payloads to local database is now 50% faster. Initial launch and displaying channel list should be noticeably faster [#1973](https://github.com/GetStream/stream-chat-swift/issues/1973)
 - Fix not waiting for last batch of events to be processed when connecting as another user [#2016](https://github.com/GetStream/stream-chat-swift/issues/2016)
@@ -38,7 +40,6 @@ _June 10, 2022_
 - Add Support for Slow Mode [#1953](https://github.com/GetStream/stream-chat-swift/pull/1953)
 - Present channel screen modally when channel list in not embedded by navigation controller [#2011](https://github.com/GetStream/stream-chat-swift/pull/2011)
 - Show channel screen as right detail when channel list is embedded by split view controller [#2011](https://github.com/GetStream/stream-chat-swift/pull/2011)
-- Show typing users within a thread [#2080](https://github.com/GetStream/stream-chat-swift/issues/2080)
 ### 🐞 Fixed
 - Fix DM Channel with multiple members displaying only 1 user avatar [#2019](https://github.com/GetStream/stream-chat-swift/pull/2019)
 - Improve stability of Message List with Diffing disabled [#2006](https://github.com/GetStream/stream-chat-swift/pull/2006) [#2076](https://github.com/GetStream/stream-chat-swift/pull/2076)
