@@ -7,27 +7,6 @@ import Nuke
 import StreamChat
 import UIKit
 
-class GroupUserCell: UICollectionViewCell {
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var avatarView: AvatarView!
-}
-
-class SearchUserCell: UITableViewCell {
-    @IBOutlet var mainStackView: UIStackView! {
-        didSet {
-            mainStackView.isLayoutMarginsRelativeArrangement = true
-        }
-    }
-    
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var descriptionLabel: UILabel!
-    
-    @IBOutlet var avatarView: AvatarView!
-    @IBOutlet var accessoryImageView: UIImageView!
-    
-    var user: ChatUser?
-}
-
 class CreateGroupViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet var selectedUsersStackView: UIStackView! {
@@ -145,6 +124,39 @@ class CreateGroupViewController: UIViewController {
     }
 }
 
+// MARK: ChatUserSearchControllerDelegate functions
+
+extension CreateGroupViewController: ChatUserSearchControllerDelegate {
+    func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
+        tableView.beginUpdates()
+
+        for change in changes {
+            switch change {
+            case let .insert(_, index: index):
+                tableView.insertRows(at: [index], with: .automatic)
+            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+                tableView.moveRow(at: fromIndex, to: toIndex)
+            case let .update(_, index: index):
+                tableView.reloadRows(at: [index], with: .automatic)
+            case let .remove(_, index: index):
+                tableView.deleteRows(at: [index], with: .automatic)
+            }
+        }
+
+        tableView.endUpdates()
+    }
+
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        if case .remoteDataFetched = state {
+            print("\(users.count) users found")
+            loadingIndicator.stopAnimating()
+            noMatchView.isHidden = !users.isEmpty
+        }
+    }
+}
+
+// MARK: UITableViewDataSource functions
+
 extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         users.count
@@ -205,6 +217,8 @@ extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource 
     }
 }
 
+// MARK: UICollectionViewDataSource functions
+
 extension CreateGroupViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         selectedUsers.count
@@ -234,35 +248,6 @@ extension CreateGroupViewController: UICollectionViewDataSource, UICollectionVie
         
         if let cell = tableView.visibleCells.first(where: { ($0 as? SearchUserCell)?.user?.id == id }) as? SearchUserCell {
             cell.accessoryImageView.image = nil
-        }
-    }
-}
-
-extension CreateGroupViewController: ChatUserSearchControllerDelegate {
-    func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
-        tableView.beginUpdates()
-        
-        for change in changes {
-            switch change {
-            case let .insert(_, index: index):
-                tableView.insertRows(at: [index], with: .automatic)
-            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-                tableView.moveRow(at: fromIndex, to: toIndex)
-            case let .update(_, index: index):
-                tableView.reloadRows(at: [index], with: .automatic)
-            case let .remove(_, index: index):
-                tableView.deleteRows(at: [index], with: .automatic)
-            }
-        }
-        
-        tableView.endUpdates()
-    }
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if case .remoteDataFetched = state {
-            print("\(users.count) users found")
-            loadingIndicator.stopAnimating()
-            noMatchView.isHidden = !users.isEmpty
         }
     }
 }

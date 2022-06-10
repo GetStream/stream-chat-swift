@@ -6,37 +6,6 @@ import Nuke
 import StreamChat
 import UIKit
 
-class AvatarView: UIImageView {
-    override func updateConstraints() {
-        super.updateConstraints()
-        translatesAutoresizingMaskIntoConstraints = false
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        clipsToBounds = true
-        layer.cornerRadius = frame.width / 2.0
-        contentMode = .scaleAspectFill
-    }
-}
-
-class UserCredentialsCell: UITableViewCell {
-    @IBOutlet var mainStackView: UIStackView! {
-        didSet {
-            mainStackView.isLayoutMarginsRelativeArrangement = true
-        }
-    }
-    
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var descriptionLabel: UILabel!
-    
-    @IBOutlet var avatarView: AvatarView!
-    @IBOutlet var accessoryImageView: UIImageView!
-    
-    var user: ChatUser?
-}
-
 class LoginViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     var onUserSelection: ((DemoUserType) -> Void)!

@@ -12,7 +12,7 @@ class CreateChatViewController: UIViewController {
     enum State {
         case searching, loading, noUsers, selected, error
     }
-    
+
     // Composer subclass intended to be only used in this VC
     class DemoComposerVC: ComposerVC {
         override func createNewMessage(text: String) {
@@ -29,19 +29,19 @@ class CreateChatViewController: UIViewController {
                     self?.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
                     return
                 }
-                
+
                 // Send the message
                 createMessage(text)
-                
+
                 // Present the new chat and controller
                 let vc = ChatChannelVC()
                 vc.channelController = controller
-                
+
                 navController.setViewControllers([navController.viewControllers.first!, vc], animated: true)
             }
         }
     }
-    
+
     @IBOutlet var tableView: UITableView!
     @IBOutlet var noMatchView: UIView!
     @IBOutlet var searchFieldStack: UIStackView!
@@ -264,6 +264,8 @@ class CreateChatViewController: UIViewController {
     }
 }
 
+// MARK: ChatUserSearchControllerDelegate funcs
+
 extension CreateChatViewController: ChatUserSearchControllerDelegate {
     func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
         tableView.beginUpdates()
@@ -377,91 +379,5 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
     public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         // Hide keyboard on scroll
         view.endEditing(true)
-    }
-}
-
-extension UIImage {
-    func resized(to targetSize: CGSize) -> UIImage {
-        let size = self.size
-        let widthRatio = targetSize.width / size.width
-        let heightRatio = targetSize.height / size.height
-        let newSize = widthRatio > heightRatio ? CGSize(width: size.width * heightRatio, height: size.height * heightRatio) :
-            CGSize(
-                width: size.width * widthRatio,
-                height: size.height * widthRatio
-            )
-        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
-        
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
-        draw(in: rect)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return newImage!
-    }
-}
-
-extension UIViewController {
-    func presentAlert(title: String?, message: String? = nil, okHandler: (() -> Void)? = nil, cancelHandler: (() -> Void)? = nil) {
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-        
-        alert.addAction(.init(title: "OK", style: .default, handler: { _ in
-            okHandler?()
-        }))
-        
-        if let cancelHandler = cancelHandler {
-            alert.addAction(.init(title: "Cancel", style: .destructive, handler: { _ in
-                cancelHandler()
-            }))
-        }
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    func presentAlert(
-        title: String?,
-        message: String? = nil,
-        textFieldPlaceholder: String? = nil,
-        okHandler: @escaping ((String?) -> Void),
-        cancelHandler: (() -> Void)? = nil
-    ) {
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-        
-        alert.addTextField { textField in
-            textField.placeholder = textFieldPlaceholder
-        }
-        
-        alert.addAction(.init(title: "OK", style: .default, handler: { _ in
-            okHandler(alert.textFields?.first?.text)
-        }))
-        
-        alert.addAction(.init(title: "Cancel", style: .destructive, handler: { _ in
-            cancelHandler?()
-        }))
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    func presentAlert(title: String?, message: String? = nil, actions: [UIAlertAction], cancelHandler: (() -> Void)? = nil) {
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-        
-        actions.forEach { alert.addAction($0) }
-        alert.addAction(.init(title: "Cancel", style: .destructive, handler: { _ in
-            cancelHandler?()
-        }))
-        
-        present(alert, animated: true, completion: nil)
     }
 }
