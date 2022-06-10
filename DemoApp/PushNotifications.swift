@@ -17,10 +17,6 @@ final class PushNotifications: NSObject {
 
     var onNotificationResponse: ((UNNotificationResponse) -> Void)?
 
-    static let shared = PushNotifications()
-
-    override private init() {}
-
     func registerForPushNotifications() {
         center.requestAuthorization(options: authorizationOptions) { [weak self] granted, _ in
             print("Permission granted: \(granted)")

@@ -38,15 +38,13 @@ final class DemoAppCoordinator: NSObject {
             guard case UNNotificationDefaultActionIdentifier = response.actionIdentifier else {
                 return
             }
-
-            guard let self = self else { return }
             guard
-                let chatNotificationInfo = self.chat.notificationInfo(for: response),
+                let chatNotificationInfo = self?.chat.notificationInfo(for: response),
                 let cid = chatNotificationInfo.cid else {
                 return
             }
 
-            self.start(cid: cid)
+            self?.start(cid: cid)
         }
     }
 }
@@ -99,6 +97,7 @@ private extension DemoAppCoordinator {
     }
     
     func makeChatVC(for user: DemoUserType, startOn cid: ChannelId?, onLogout: @escaping () -> Void) -> UIViewController {
+        // Construct channel list query
         let channelListQuery: ChannelListQuery
         switch user {
         case let .credentials(userCredentials):
@@ -106,28 +105,25 @@ private extension DemoAppCoordinator {
         case .anonymous, .guest:
             channelListQuery = .init(filter: .equal(.type, to: .messaging))
         }
-        
-        let channelController = chat.channelController(for: cid)
-        let channelVC = channelController.map { makeChannelVC(controller: $0) }
-        let channelNVC = channelVC.map { UINavigationController(rootViewController: $0) }
-        
-        let selectedChannel = channelController?.channel
+
+        let tuple = makeChannelVCs(for: cid)
+        let selectedChannel = tuple.channelController?.channel
         let channelListController = chat.channelListController(query: channelListQuery)
         let channelListVC = makeChannelListVC(
             controller: channelListController,
             selectedChannel: selectedChannel,
             onLogout: onLogout
         )
-        
+
         let channelListNVC = UINavigationController(rootViewController: channelListVC)
         let isIpad = UIDevice.current.userInterfaceIdiom == .pad
         if isIpad {
             let splitVC = UISplitViewController()
             splitVC.preferredDisplayMode = .oneBesideSecondary
-            splitVC.viewControllers = [channelListNVC, channelNVC].compactMap { $0 }
+            splitVC.viewControllers = [channelListNVC, tuple.channelNVC].compactMap { $0 }
             return splitVC
         } else {
-            channelVC.map { channelListNVC.pushViewController($0, animated: false) }
+            tuple.channelVC.map { channelListNVC.pushViewController($0, animated: false) }
             return channelListNVC
         }
     }
@@ -147,6 +143,22 @@ private extension DemoAppCoordinator {
         let channelVC = DemoChatChannelVC()
         channelVC.channelController = controller
         return channelVC
+    }
+
+    // Creates channel controller, channel VC and navigation controller for given channel id
+    private func makeChannelVCs(for cid: ChannelId?)
+        -> (channelController: ChatChannelController?, channelVC: UIViewController?, channelNVC: UINavigationController?) {
+        guard let cid = cid else {
+            return (nil, nil, nil)
+        }
+        // Get channel controller (model)
+        let controller = chat.channelController(for: cid)
+
+        // Create channel VC with given controller
+        let channelVC = controller.map { makeChannelVC(controller: $0) }
+        let channelNVC = channelVC.map { UINavigationController(rootViewController: $0) }
+
+        return (controller, channelVC, channelNVC)
     }
 }
 

@@ -792,7 +792,6 @@
 		A3227E76284A4C6400EBE6CC /* MessageReactionType+Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E75284A4C6400EBE6CC /* MessageReactionType+Position.swift */; };
 		A3227E78284A4CAD00EBE6CC /* DemoChatMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E77284A4CAD00EBE6CC /* DemoChatMessageContentView.swift */; };
 		A3227E7A284A4CE000EBE6CC /* DemoChatChannelListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E79284A4CE000EBE6CC /* DemoChatChannelListVC.swift */; };
-		A3227E7C284A4F1F00EBE6CC /* DeletedMessageVisibility+CustomStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E7B284A4F1F00EBE6CC /* DeletedMessageVisibility+CustomStringConvertible.swift */; };
 		A3227E7E284A511200EBE6CC /* DemoAppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E7D284A511200EBE6CC /* DemoAppConfiguration.swift */; };
 		A3227EC9284A52EE00EBE6CC /* PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227EC8284A52EE00EBE6CC /* PushNotifications.swift */; };
 		A33FA816282D595C00DC40E8 /* ChannelList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33FA815282D595C00DC40E8 /* ChannelList_Tests.swift */; };
@@ -3065,7 +3064,6 @@
 		A3227E75284A4C6400EBE6CC /* MessageReactionType+Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageReactionType+Position.swift"; sourceTree = "<group>"; };
 		A3227E77284A4CAD00EBE6CC /* DemoChatMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatMessageContentView.swift; sourceTree = "<group>"; };
 		A3227E79284A4CE000EBE6CC /* DemoChatChannelListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatChannelListVC.swift; sourceTree = "<group>"; };
-		A3227E7B284A4F1F00EBE6CC /* DeletedMessageVisibility+CustomStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeletedMessageVisibility+CustomStringConvertible.swift"; sourceTree = "<group>"; };
 		A3227E7D284A511200EBE6CC /* DemoAppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppConfiguration.swift; sourceTree = "<group>"; };
 		A3227EC8284A52EE00EBE6CC /* PushNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotifications.swift; sourceTree = "<group>"; };
 		A33FA815282D595C00DC40E8 /* ChannelList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList_Tests.swift; sourceTree = "<group>"; };
@@ -5559,7 +5557,6 @@
 			isa = PBXGroup;
 			children = (
 				43016E1526B734410054E805 /* ChatUser+CustomFields.swift */,
-				A3227E7B284A4F1F00EBE6CC /* DeletedMessageVisibility+CustomStringConvertible.swift */,
 				A3227E75284A4C6400EBE6CC /* MessageReactionType+Position.swift */,
 			);
 			path = Extensions;
@@ -9266,7 +9263,6 @@
 				43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */,
 				794E20F52577DF4D00790DAB /* NameGroupViewController.swift in Sources */,
 				A3227EC9284A52EE00EBE6CC /* PushNotifications.swift in Sources */,
-				A3227E7C284A4F1F00EBE6CC /* DeletedMessageVisibility+CustomStringConvertible.swift in Sources */,
 				A3227E65284A4A5C00EBE6CC /* StreamChatWrapper.swift in Sources */,
 				A3227E78284A4CAD00EBE6CC /* DemoChatMessageContentView.swift in Sources */,
 				7933060B256FF94800FBB586 /* DemoChatChannelListRouter.swift in Sources */,

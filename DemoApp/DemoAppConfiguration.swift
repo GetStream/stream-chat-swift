@@ -25,34 +25,35 @@ enum DemoAppConfiguration {
         ProcessInfo.processInfo.environment["STREAM_DEV"] != nil
     }
 
+    // This function is called from `DemoAppCoordinator` before the Chat UI is created
     static func setInternalConfiguration() {
-        func enableMessageDiffingIfNeeded() {
-            StreamChatWrapper.shared.setMessageDiffingEnabled(isStreamInternalConfiguration)
-        }
+        StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
+        StreamRuntimeCheck._isLazyMappingEnabled = !isStreamInternalConfiguration
 
-        func setupInternalConfiguration() {
-            StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
-            StreamRuntimeCheck._isLazyMappingEnabled = !isStreamInternalConfiguration
+        configureAtlantisIfNeeded()
+        trackPerformanceIfNeeded()
+        enableMessageDiffingIfNeeded()
+    }
 
-            configureAtlantisIfNeeded()
-            trackPerformanceIfNeeded()
+    // HTTP and WebSocket Proxy with Proxyman.app
+    private static func configureAtlantisIfNeeded() {
+        if isStreamInternalConfiguration || AppConfig.shared.demoAppConfig.isAtlantisEnabled {
+            Atlantis.start()
+        } else {
+            Atlantis.stop()
         }
+    }
 
-        // HTTP and WebSocket Proxy with Proxyman.app
-        func configureAtlantisIfNeeded() {
-            if isStreamInternalConfiguration || AppConfig.shared.demoAppConfig.isAtlantisEnabled {
-                Atlantis.start()
-            } else {
-                Atlantis.stop()
-            }
+    // Performance tracker
+    private static func trackPerformanceIfNeeded() {
+        if isStreamInternalConfiguration {
+            PerformanceMonitor.shared().performanceViewConfigurator.options = [.performance]
+            PerformanceMonitor.shared().start()
         }
+    }
 
-        // Performance tracker
-        func trackPerformanceIfNeeded() {
-            if isStreamInternalConfiguration {
-                PerformanceMonitor.shared().performanceViewConfigurator.options = [.performance]
-                PerformanceMonitor.shared().start()
-            }
-        }
+    // Enable message diffing in Message List
+    private static func enableMessageDiffingIfNeeded() {
+        StreamChatWrapper.shared.setMessageDiffingEnabled(isStreamInternalConfiguration)
     }
 }

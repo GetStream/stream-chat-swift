@@ -200,7 +200,7 @@ class AppConfigViewController: UITableViewController {
                 self?.chatClientConfig.shouldShowShadowedMessages = newValue
             }
         case .deletedMessagesVisibility:
-            cell.detailTextLabel?.text = chatClientConfig.deletedMessagesVisibility.labelText
+            cell.detailTextLabel?.text = chatClientConfig.deletedMessagesVisibility.description
             cell.accessoryType = .disclosureIndicator
         }
     }

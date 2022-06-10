@@ -9,29 +9,25 @@ extension UIColor {
 }
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    var coordinator: DemoAppCoordinator!
+    private var coordinator: DemoAppCoordinator!
     var window: UIWindow?
 
+    // Stream Chat
     var chat: StreamChatWrapper {
         StreamChatWrapper.shared
     }
 
-    var pushNotifications: PushNotifications {
-        PushNotifications.shared
-    }
+    private let pushNotifications = PushNotifications()
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = scene as? UIWindowScene else { return }
-        
-        let window = UIWindow(windowScene: scene)
+
+        self.window = UIWindow(windowScene: scene)
+        guard let window = self.window else { return }
+
+        makeCoordinator(in: window)
         window.tintColor = .streamBlue
-        
-        coordinator = DemoAppCoordinator(window: window, chat: chat, pushNotifications: pushNotifications)
-        coordinator.start()
-        
         window.makeKeyAndVisible()
-        
-        self.window = window
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {}
@@ -55,5 +51,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+    }
+}
+
+extension SceneDelegate {
+    func makeCoordinator(in window: UIWindow) {
+        // Hook on registration for push notifications.
+        // This closure is called once the chat user is connected.
+        chat.onRemotePushRegistration = { [weak self] in
+            self?.pushNotifications.registerForPushNotifications()
+        }
+
+        // Create coordinator for this demo app
+        coordinator = DemoAppCoordinator(
+            window: window,
+            chat: chat,
+            pushNotifications: pushNotifications
+        )
+        coordinator.start()
     }
 }

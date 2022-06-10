@@ -10,6 +10,9 @@ import UserNotifications
 final class StreamChatWrapper {
     static let shared = StreamChatWrapper()
 
+    // This closure is called once the SDK is ready to register for remote push notifications
+    var onRemotePushRegistration: (() -> Void)?
+
     // Chat client
     private var client: ChatClient!
 
@@ -94,7 +97,7 @@ extension StreamChatWrapper {
             if let error = $0 {
                 log.warning(error.localizedDescription)
             } else {
-                self?.setupRemoteNotifications()
+                self?.onRemotePushRegistration?()
             }
         }
     }
@@ -129,10 +132,6 @@ extension StreamChatWrapper {
 // MARK: Push Notifications
 
 extension StreamChatWrapper {
-    func setupRemoteNotifications() {
-        PushNotifications.shared.registerForPushNotifications()
-    }
-
     func registerForPushNotifications(with deviceToken: Data) {
         client.currentUserController().addDevice(.apn(token: deviceToken)) {
             if let error = $0 {
