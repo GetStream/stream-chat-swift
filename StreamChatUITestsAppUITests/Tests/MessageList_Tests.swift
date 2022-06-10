@@ -562,4 +562,52 @@ extension MessageList_Tests {
                 .assertDeletedMessage()
         }
     }
+    
+    func test_threadTypingIndicatorShown_whenParticipantStartsTyping() {
+        linkToScenario(withId: 243)
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage("Hey")
+        }
+        AND("user opens the thread") {
+            userRobot.showThread()
+        }
+        WHEN("participant starts typing in thread") {
+            participantRobot.startTypingInThread()
+        }
+        THEN("user observes typing indicator is shown") {
+            let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
+            userRobot.assertTypingIndicatorShown(typingUserName: typingUserName)
+        }
+    }
+    
+    func test_threadTypingIndicatorHidden_whenParticipantStopsTyping() {
+        linkToScenario(withId: 244)
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage("Hey")
+        }
+        AND("user opens the thread") {
+            userRobot.showThread()
+        }
+        WHEN("participant starts typing in thread") {
+            participantRobot.startTypingInThread()
+        }
+        AND("participant stops typing in thread") {
+            participantRobot.stopTypingInThread()
+        }
+        THEN("user observes typing indicator has disappeared") {
+            userRobot.assertTypingIndicatorHidden()
+        }
+    }
 }
