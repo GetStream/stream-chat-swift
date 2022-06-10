@@ -15,17 +15,15 @@ final class YTChatComposerViewController: ComposerVC {
     
     override func setUp() {
         super.setUp()
-
-        guard let ytMessageComposerView = ytMessageComposerView else {
-            return
+        
+        if let ytMessageComposerView = ytMessageComposerView {
+            ytMessageComposerView
+                .emojiButton
+                .addTarget(self, action: #selector(showEmojiPicker(sender:)), for: .touchUpInside)
+            ytMessageComposerView
+                .dollarButton
+                .addTarget(self, action: #selector(showPayOptions(sender:)), for: .touchUpInside)
         }
-
-        ytMessageComposerView
-            .emojiButton
-            .addTarget(self, action: #selector(showEmojiPicker(sender:)), for: .touchUpInside)
-        ytMessageComposerView
-            .dollarButton
-            .addTarget(self, action: #selector(showPayOptions(sender:)), for: .touchUpInside)
     }
     
     override func typingMention(in textView: UITextView) -> (String, NSRange)? {
