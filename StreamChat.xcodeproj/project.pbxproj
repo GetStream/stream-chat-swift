@@ -1147,8 +1147,6 @@
 		ADFB7E95283E703A00ABB6CF /* TableViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */; };
 		ADFB7E97283E73C600ABB6CF /* ListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E96283E73C600ABB6CF /* ListChangeUpdater.swift */; };
 		ADFB7E98283E73C600ABB6CF /* ListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E96283E73C600ABB6CF /* ListChangeUpdater.swift */; };
-		ADFB7E9F283E93D600ABB6CF /* CollectionViewListChangeUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E9D283E927B00ABB6CF /* CollectionViewListChangeUpdater_Tests.swift */; };
-		ADFB7EA0283E93E500ABB6CF /* TableViewListChangeUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E9B283E926700ABB6CF /* TableViewListChangeUpdater_Tests.swift */; };
 		ADFCCD7525C9D4D10024505D /* AssertSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9F7B8525C821C300DF8CD2 /* AssertSnapshot.swift */; };
 		ADFCCD7625C9D4D10024505D /* SnapshotVariant.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */; };
 		BCE4831434E78C9538FA73F8 /* JSONDecoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE48068C1C02C0689BEB64E /* JSONDecoder_Tests.swift */; };
@@ -3346,8 +3344,6 @@
 		ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewListChangeUpdater.swift; sourceTree = "<group>"; };
 		ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewListChangeUpdater.swift; sourceTree = "<group>"; };
 		ADFB7E96283E73C600ABB6CF /* ListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListChangeUpdater.swift; sourceTree = "<group>"; };
-		ADFB7E9B283E926700ABB6CF /* TableViewListChangeUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewListChangeUpdater_Tests.swift; sourceTree = "<group>"; };
-		ADFB7E9D283E927B00ABB6CF /* CollectionViewListChangeUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewListChangeUpdater_Tests.swift; sourceTree = "<group>"; };
 		BCE48068C1C02C0689BEB64E /* JSONDecoder_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONDecoder_Tests.swift; sourceTree = "<group>"; };
 		BCE483AC99F58A9034EA2ECE /* FilterEncoding_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterEncoding_Tests.swift; sourceTree = "<group>"; };
 		BCE4862E2C4943998F0DCBD9 /* FilterDecoding_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDecoding_Tests.swift; sourceTree = "<group>"; };
@@ -6680,7 +6676,7 @@
 		A3960E0427DA5512003AB2B0 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				ADFB7E9A283E91E700ABB6CF /* ListChangeUpdater */,
+				640FE0F526A57903006CE703 /* ListChangeIndexPathResolver_Tests.swift */,
 				BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */,
 				C1320E07276B2E0800A06B35 /* Array+SafeSubscript_Tests.swift */,
 				E73262D725ED6432008CB152 /* ChatChannelNamer_Tests.swift */,
@@ -7401,16 +7397,6 @@
 				ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */,
 				ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */,
 				640FE0D426A568C3006CE703 /* ListChangeIndexPathResolver.swift */,
-			);
-			path = ListChangeUpdater;
-			sourceTree = "<group>";
-		};
-		ADFB7E9A283E91E700ABB6CF /* ListChangeUpdater */ = {
-			isa = PBXGroup;
-			children = (
-				ADFB7E9B283E926700ABB6CF /* TableViewListChangeUpdater_Tests.swift */,
-				ADFB7E9D283E927B00ABB6CF /* CollectionViewListChangeUpdater_Tests.swift */,
-				640FE0F526A57903006CE703 /* ListChangeIndexPathResolver_Tests.swift */,
 			);
 			path = ListChangeUpdater;
 			sourceTree = "<group>";
@@ -9132,7 +9118,6 @@
 				640FE12026A57955006CE703 /* ListChangeIndexPathResolver_Tests.swift in Sources */,
 				227299B325DBF52D005EAFCF /* ChatChannelUnreadCountView_Tests.swift in Sources */,
 				AD7909922811CBDF0013C434 /* ChatMessageReactionsView_Tests.swift in Sources */,
-				ADFB7E9F283E93D600ABB6CF /* CollectionViewListChangeUpdater_Tests.swift in Sources */,
 				78C8474125FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift in Sources */,
 				F86A11142616184300D9FE19 /* ChatMessagePopupVC_Tests.swift in Sources */,
 				AC1E16FF269C70530040548B /* String+Extensions_Tests.swift in Sources */,
@@ -9163,7 +9148,6 @@
 				CFAA6CBE2834AEA900EBF57A /* CooldownTracker_Mock.swift in Sources */,
 				BD40C1F5265FA80D004392CE /* ImageCDN_Tests.swift in Sources */,
 				AD447455263AC6A60030E583 /* ChatMentionSuggestionView_Tests.swift in Sources */,
-				ADFB7EA0283E93E500ABB6CF /* TableViewListChangeUpdater_Tests.swift in Sources */,
 				225504C725DEA03700A5A65A /* ChatChannelListItemView_Tests.swift in Sources */,
 				79B4F0E625D305D40063FFB5 /* CurrentChatUserAvatarView_Tests.swift in Sources */,
 				AD016A1425CAFAF2009EBAD2 /* ChatChannelListVC_Tests.swift in Sources */,

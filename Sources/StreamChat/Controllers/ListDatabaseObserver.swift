@@ -23,7 +23,7 @@ extension ListChange: CustomStringConvertible {
     /// Returns pretty `ListChange` type description.
     public var description: String {
         let indexPathDescription: (IndexPath) -> String = { indexPath in
-            "(\(indexPath.row), \(indexPath.section))"
+            "(\(indexPath.item), \(indexPath.section))"
         }
         switch self {
         case let .insert(_, indexPath):
@@ -340,7 +340,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
             currentChanges.append(.move(item, fromIndex: fromIndex, toIndex: toIndex))
             
         case .update:
-            guard let index = newIndexPath else {
+            guard let index = indexPath else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.update` change.")
                 return
             }

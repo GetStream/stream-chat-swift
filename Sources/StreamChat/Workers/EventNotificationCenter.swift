@@ -31,10 +31,10 @@ class EventNotificationCenter: NotificationCenter {
 
     func process(_ events: [Event], postNotifications: Bool = true, completion: (() -> Void)? = nil) {
         let processingEventsDebugMessage: () -> String = {
-            let eventNames = events.compactMap { ($0 as? EventDTO)?.name }
+            let eventNames = events.map(\.name)
             return "Processing Events: \(eventNames)"
         }
-        log.debug(processingEventsDebugMessage, subsystems: .webSocket)
+        log.debug(processingEventsDebugMessage(), subsystems: .webSocket)
 
         var eventsToPost = [Event]()
         database.write({ session in

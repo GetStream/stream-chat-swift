@@ -422,7 +422,9 @@ extension DatabaseSession {
         )
 
         if payload.eventType == .messageDeleted && payload.hardDelete {
-            delete(message: savedMessage)
+            // We should in fact delete it from the DB, but right now this produces a crash
+            // This should be fixed in this ticket: https://stream-io.atlassian.net/browse/CIS-1963
+            savedMessage.isHardDeleted = true
             return
         }
 

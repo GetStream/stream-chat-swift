@@ -22,7 +22,7 @@ final class CollectionViewListChangeUpdater: ListChangeUpdater {
     ///   - changes: The provided changes reported by a list controller.
     ///   - completion: A callback when the changes are fully executed.
     func performUpdate<Item>(with changes: [ListChange<Item>], completion: ((_ finished: Bool) -> Void)? = nil) {
-        guard let indices = listChangeIndexPathResolver.mapToSetsOfIndexPaths(
+        guard let indices = listChangeIndexPathResolver.resolve(
             changes: changes
         ) else {
             collectionView?.reloadData()
