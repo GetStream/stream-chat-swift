@@ -6,7 +6,7 @@ import Foundation
 
 extension TimeInterval {
     /// The number of seconds from the last `typingStart` event until the `typingStop` event is automatically sent.
-    static let startTypingEventTimeout: TimeInterval = 5
+    static let startTypingEventTimeout: TimeInterval = 7
     
     /// If the user is typing too long, `EventSender` should resend the `.typingStart` event.
     /// It should be before `.startTypingEventTimeout` and after `.startTypingEventTimeout` will be sent the stop typing event.
