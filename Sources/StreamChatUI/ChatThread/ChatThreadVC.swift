@@ -288,22 +288,22 @@ open class ChatThreadVC: _ViewController,
     
     // MARK: - EventsControllerDelegate
     
-    private var currentlyTypingUsers: [ChatUser] = []
+    private var currentlyTypingUsers: Set<ChatUser> = []
     
     open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         switch event {
         case let event as TypingEvent:
             guard event.parentId == messageController.messageId && event.user.id != client.currentUserId else { return }
             if event.isTyping {
-                currentlyTypingUsers.append(event.user)
+                currentlyTypingUsers.insert(event.user)
             } else {
-                currentlyTypingUsers.removeAll(where: { $0.id == event.user.id })
+                currentlyTypingUsers.remove(event.user)
             }
             
             if currentlyTypingUsers.isEmpty {
                 messageListVC.hideTypingIndicator()
             } else {
-                messageListVC.showTypingIndicator(typingUsers: currentlyTypingUsers)
+                messageListVC.showTypingIndicator(typingUsers: Array(currentlyTypingUsers))
             }
         default:
             break
