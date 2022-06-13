@@ -24,7 +24,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let stringWithNoMarkdown = "Hello, This is a test String"
 
         // WHEN
-        let containsMarkdown = sut.containsMarkdown(text: stringWithNoMarkdown)
+        let containsMarkdown = sut.containsMarkdown(stringWithNoMarkdown)
 
         // THEN
         XCTAssertEqual(false, containsMarkdown)
@@ -36,8 +36,8 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let stringWithItalicMarkdown2 = "Hello, This is a _test_ String"
 
         // WHEN
-        let containsItalicMarkdown1 = sut.containsMarkdown(text: stringWithItalicMarkdown1)
-        let containsItalicMarkdown2 = sut.containsMarkdown(text: stringWithItalicMarkdown2)
+        let containsItalicMarkdown1 = sut.containsMarkdown(stringWithItalicMarkdown1)
+        let containsItalicMarkdown2 = sut.containsMarkdown(stringWithItalicMarkdown2)
 
         // THEN
         XCTAssertEqual(true, containsItalicMarkdown1)
@@ -50,8 +50,8 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let stringWithBoldMarkdown2 = "Hello, This is a __test__ String"
 
         // WHEN
-        let containsBoldMarkdown1 = sut.containsMarkdown(text: stringWithBoldMarkdown1)
-        let containsBoldMarkdown2 = sut.containsMarkdown(text: stringWithBoldMarkdown2)
+        let containsBoldMarkdown1 = sut.containsMarkdown(stringWithBoldMarkdown1)
+        let containsBoldMarkdown2 = sut.containsMarkdown(stringWithBoldMarkdown2)
 
         // THEN
         XCTAssertEqual(true, containsBoldMarkdown1)
@@ -63,7 +63,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let stringWithStrikethroughMarkdown = "Hello, This is a ~~test~~ String"
 
         // WHEN
-        let containsStrikethroughMarkdown = sut.containsMarkdown(text: stringWithStrikethroughMarkdown)
+        let containsStrikethroughMarkdown = sut.containsMarkdown(stringWithStrikethroughMarkdown)
 
         // THEN
         XCTAssertEqual(true, containsStrikethroughMarkdown)
@@ -74,7 +74,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let stringWithCodeMarkdown = "Hello, This is a `test` String"
 
         // WHEN
-        let containsCodeMarkdown = sut.containsMarkdown(text: stringWithCodeMarkdown)
+        let containsCodeMarkdown = sut.containsMarkdown(stringWithCodeMarkdown)
 
         // THEN
         XCTAssertEqual(true, containsCodeMarkdown)
@@ -96,10 +96,10 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         """
 
         // WHEN
-        let containsHeadingsMarkdown1 = sut.containsMarkdown(text: stringWithHeadingsMarkdown1)
-        let containsHeadingsMarkdown2 = sut.containsMarkdown(text: stringWithHeadingsMarkdown2)
-        let containsHeadingsMarkdown3 = sut.containsMarkdown(text: stringWithHeadingsMarkdown3)
-        let containsHeadingsMarkdown4 = sut.containsMarkdown(text: stringWithHeadingsMarkdown4)
+        let containsHeadingsMarkdown1 = sut.containsMarkdown(stringWithHeadingsMarkdown1)
+        let containsHeadingsMarkdown2 = sut.containsMarkdown(stringWithHeadingsMarkdown2)
+        let containsHeadingsMarkdown3 = sut.containsMarkdown(stringWithHeadingsMarkdown3)
+        let containsHeadingsMarkdown4 = sut.containsMarkdown(stringWithHeadingsMarkdown4)
 
         // THEN
         XCTAssertEqual(true, containsHeadingsMarkdown1)
@@ -118,8 +118,8 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         """
 
         // WHEN
-        let containsLinkMarkdown1 = sut.containsMarkdown(text: stringWithLinkMarkdown1)
-        let containsLinkMarkdown2 = sut.containsMarkdown(text: stringWithLinkMarkdown2)
+        let containsLinkMarkdown1 = sut.containsMarkdown(stringWithLinkMarkdown1)
+        let containsLinkMarkdown2 = sut.containsMarkdown(stringWithLinkMarkdown2)
 
         // THEN
         XCTAssertEqual(true, containsLinkMarkdown1)
@@ -131,7 +131,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let stringWithBlockquotesMarkdown = "> Hello, This is a test String"
 
         // WHEN
-        let containsBlockquotesMarkdown = sut.containsMarkdown(text: stringWithBlockquotesMarkdown)
+        let containsBlockquotesMarkdown = sut.containsMarkdown(stringWithBlockquotesMarkdown)
 
         // THEN
         XCTAssertEqual(true, containsBlockquotesMarkdown)
@@ -147,7 +147,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         """
 
         // WHEN
-        let containsUnorderedListsMarkdown = sut.containsMarkdown(text: stringWithUnorderedListsMarkdown)
+        let containsUnorderedListsMarkdown = sut.containsMarkdown(stringWithUnorderedListsMarkdown)
 
         // THEN
         XCTAssertEqual(true, containsUnorderedListsMarkdown)
@@ -163,7 +163,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         """
 
         // WHEN
-        let containsOrderedListsMarkdown = sut.containsMarkdown(text: stringWithOrderedListsMarkdown)
+        let containsOrderedListsMarkdown = sut.containsMarkdown(stringWithOrderedListsMarkdown)
 
         // THEN
         XCTAssertEqual(true, containsOrderedListsMarkdown)
@@ -176,7 +176,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let expectedAttributedSubstring = "test"
 
         // WHEN
-        let attributedString = sut.format(from: stringWithMarkdown)
+        let attributedString = sut.format(stringWithMarkdown)
 
         // THEN
         attributedString.enumerateAttribute(.font, in: NSRange(location: 0, length: attributedString.length)) { value, range, _ in
@@ -214,7 +214,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let expectedUnorderedListedSubstrings = ["・\tclass", "・\tstruct", "・\tenum", "・\tactor"]
 
         // WHEN
-        let attributedString = sut.format(from: stringWithMarkdown)
+        let attributedString = sut.format(stringWithMarkdown)
 
         // THEN
         attributedString.enumerateAttributes(in: NSRange(
