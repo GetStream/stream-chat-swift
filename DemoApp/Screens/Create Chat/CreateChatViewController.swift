@@ -256,11 +256,9 @@ class CreateChatViewController: UIViewController {
     
     @objc func openCreateGroupChat() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        
-        if let createGroupController = storyboard.instantiateViewController(withIdentifier: "CreateGroupViewController") as? CreateGroupViewController {
-            createGroupController.searchController = searchController.client.userSearchController()
-            navigationController?.pushViewController(createGroupController, animated: true)
-        }
+        let createGroupController = storyboard.instantiateViewController(ofType: CreateGroupViewController.self)
+        createGroupController.searchController = searchController.client.userSearchController()
+        navigationController?.pushViewController(createGroupController, animated: true)
     }
 }
 
