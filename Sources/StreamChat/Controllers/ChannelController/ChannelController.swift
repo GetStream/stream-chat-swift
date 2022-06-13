@@ -791,7 +791,7 @@ public extension ChatChannelController {
     ///
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
-    func sendKeystrokeEvent(completion: ((Error?) -> Void)? = nil) {
+    func sendKeystrokeEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
         /// Ignore if typing events are not enabled
         guard areTypingEventsEnabled else {
             callback {
@@ -806,7 +806,7 @@ public extension ChatChannelController {
             return
         }
         
-        eventSender.keystroke(in: cid) { error in
+        eventSender.keystroke(in: cid, parentMessageId: parentMessageId) { error in
             self.callback {
                 completion?(error)
             }
@@ -821,7 +821,7 @@ public extension ChatChannelController {
     ///
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
-    func sendStartTypingEvent(completion: ((Error?) -> Void)? = nil) {
+    func sendStartTypingEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
         /// Ignore if typing events are not enabled
         guard areTypingEventsEnabled else {
             channelFeatureDisabled(feature: "typing events", completion: completion)
@@ -834,7 +834,7 @@ public extension ChatChannelController {
             return
         }
         
-        eventSender.startTyping(in: cid) { error in
+        eventSender.startTyping(in: cid, parentMessageId: parentMessageId) { error in
             self.callback {
                 completion?(error)
             }
@@ -849,7 +849,7 @@ public extension ChatChannelController {
     ///
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
-    func sendStopTypingEvent(completion: ((Error?) -> Void)? = nil) {
+    func sendStopTypingEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
         /// Ignore if typing events are not enabled
         guard areTypingEventsEnabled else {
             channelFeatureDisabled(feature: "typing events", completion: completion)
@@ -862,7 +862,7 @@ public extension ChatChannelController {
             return
         }
         
-        eventSender.stopTyping(in: cid) { error in
+        eventSender.stopTyping(in: cid, parentMessageId: parentMessageId) { error in
             self.callback {
                 completion?(error)
             }
@@ -901,7 +901,7 @@ public extension ChatChannelController {
         }
         
         /// Send stop typing event.
-        eventSender.stopTyping(in: cid)
+        eventSender.stopTyping(in: cid, parentMessageId: nil)
         
         updater.createNewMessage(
             in: cid,

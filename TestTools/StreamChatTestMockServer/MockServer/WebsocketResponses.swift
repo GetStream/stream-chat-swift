@@ -19,20 +19,27 @@ public extension StreamMockServer {
     func websocketEvent(
         _ eventType: EventType,
         user: [String: Any]?,
-        channelId: String
+        channelId: String,
+        parentMessageId: String? = nil
     ) -> Self {
-        let json = websocketEventJSON(eventType, user: user, channelId: channelId)
+        let json = websocketEventJSON(eventType, user: user, channelId: channelId, parentMessageId: parentMessageId)
         writeText(json.jsonToString())
         return self
     }
 
-    private func websocketEventJSON(_ eventType: EventType, user: [String: Any]?, channelId: String) -> [String: Any] {
+    private func websocketEventJSON(
+        _ eventType: EventType,
+        user: [String: Any]?,
+        channelId: String,
+        parentMessageId: String? = nil
+    ) -> [String: Any] {
         var json = TestData.getMockResponse(fromFile: .wsChatEvent).json
         json[EventPayload.CodingKeys.user.rawValue] = user
         json[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
         json[EventPayload.CodingKeys.eventType.rawValue] = eventType.rawValue
         json[EventPayload.CodingKeys.channelId.rawValue] = channelId
         json[EventPayload.CodingKeys.channelType.rawValue] = ChannelType.messaging.rawValue
+        json[EventPayload.CodingKeys.parentId.rawValue] = parentMessageId
         json[EventPayload.CodingKeys.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
         return json
     }

@@ -11,12 +11,16 @@ open class ChatThreadVC: _ViewController,
     ThemeProvider,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
-    ChatMessageControllerDelegate {
+    ChatMessageControllerDelegate,
+    EventsControllerDelegate {
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
 
     /// Controller for observing data changes within the parent thread message.
     open var messageController: ChatMessageController!
+    
+    /// Controller for observing typing events for this thread.
+    open lazy var channelEventsController: ChannelEventsController = client.channelEventsController(for: messageController.cid)
 
     public var client: ChatClient {
         channelController.client
@@ -65,6 +69,7 @@ open class ChatThreadVC: _ViewController,
         }
 
         messageController.delegate = self
+        channelEventsController.delegate = self
 
         let completeSetUp: (ChatMessage?) -> Void = { [messageController, messageComposerVC] message in
             if messageComposerVC.content.threadMessage == nil,
@@ -279,5 +284,29 @@ open class ChatThreadVC: _ViewController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         messageListVC.updateMessages(with: changes)
+    }
+    
+    // MARK: - EventsControllerDelegate
+    
+    private var currentlyTypingUsers: Set<ChatUser> = []
+    
+    open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        switch event {
+        case let event as TypingEvent:
+            guard event.parentId == messageController.messageId && event.user.id != client.currentUserId else { return }
+            if event.isTyping {
+                currentlyTypingUsers.insert(event.user)
+            } else {
+                currentlyTypingUsers.remove(event.user)
+            }
+            
+            if currentlyTypingUsers.isEmpty {
+                messageListVC.hideTypingIndicator()
+            } else {
+                messageListVC.showTypingIndicator(typingUsers: Array(currentlyTypingUsers))
+            }
+        default:
+            break
+        }
     }
 }
