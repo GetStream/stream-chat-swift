@@ -26,6 +26,7 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
     /// `UILabel` to show `title`.
     public lazy var titleLabel: UILabel = UILabel()
         .withAccessibilityIdentifier(identifier: "titleLabel")
+        .withNumberOfLines(2)
 
     /// `UIImageView` to show `image`.
     public lazy var imageView: UIImageView = UIImageView()

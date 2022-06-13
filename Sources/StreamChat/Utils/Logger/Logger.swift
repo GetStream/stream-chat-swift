@@ -133,30 +133,39 @@ public enum LogConfig {
         }
     }
     
+    private static var _destinations: [LogDestination]?
+    
     /// Destinations for the default logger. Please see `LogDestination`.
     /// Defaults to only `ConsoleLogDestination`, which only prints the messages.
     ///
     /// - Important: Other options in `ChatClientConfig.Logging` will not take affect if this is changed.
-    public static var destinations: [LogDestination] = {
-        destinationTypes.map {
-            $0.init(
-                identifier: identifier,
-                level: level,
-                subsystems: subsystems,
-                showDate: showDate,
-                dateFormatter: dateFormatter,
-                formatters: formatters,
-                showLevel: showLevel,
-                showIdentifier: showIdentifier,
-                showThreadName: showThreadName,
-                showFileName: showFileName,
-                showLineNumber: showLineNumber,
-                showFunctionName: showFunctionName
-            )
+    public static var destinations: [LogDestination] {
+        get {
+            if let destinations = _destinations {
+                return destinations
+            } else {
+                _destinations = destinationTypes.map {
+                    $0.init(
+                        identifier: identifier,
+                        level: level,
+                        subsystems: subsystems,
+                        showDate: showDate,
+                        dateFormatter: dateFormatter,
+                        formatters: formatters,
+                        showLevel: showLevel,
+                        showIdentifier: showIdentifier,
+                        showThreadName: showThreadName,
+                        showFileName: showFileName,
+                        showLineNumber: showLineNumber,
+                        showFunctionName: showFunctionName
+                    )
+                }
+                return _destinations!
+            }
         }
-    }() {
-        didSet {
+        set {
             invalidateLogger()
+            _destinations = newValue
         }
     }
     
@@ -183,6 +192,7 @@ public enum LogConfig {
     /// Invalidates the current logger instance so it can be recreated.
     private static func invalidateLogger() {
         _logger = nil
+        _destinations = nil
     }
 }
 

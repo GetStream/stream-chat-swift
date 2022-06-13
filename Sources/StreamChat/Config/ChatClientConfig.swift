@@ -132,13 +132,21 @@ public struct ChatClientConfig {
     public let maxAttachmentCountPerMessage = 10
 
     /// Specifies the visibility of deleted messages.
-    public enum DeletedMessageVisibility {
+    public enum DeletedMessageVisibility: String, CustomStringConvertible, CustomDebugStringConvertible {
         /// All deleted messages are always hidden.
         case alwaysHidden
         /// Deleted message by current user are visible, other deleted messages are hidden.
         case visibleForCurrentUser
         /// Deleted messages are always visible.
         case alwaysVisible
+
+        public var description: String {
+            rawValue
+        }
+
+        public var debugDescription: String {
+            rawValue
+        }
     }
 
     /// Specifies the visibility of deleted messages.

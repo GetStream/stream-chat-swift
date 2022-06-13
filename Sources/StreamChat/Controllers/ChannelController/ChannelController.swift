@@ -1325,7 +1325,8 @@ public extension ChatChannelController {
         }
         
         let currentTime = Date().timeIntervalSince(currentUserLastMessage.createdAt)
-        return cooldownDuration - Int(currentTime)
+        
+        return max(0, cooldownDuration - Int(currentTime))
     }
 }
 

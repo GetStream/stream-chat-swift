@@ -138,7 +138,7 @@ extension Array where Element == EventPayload {
             do {
                 return try $0.event()
             } catch {
-                log.error("Failed to decode event from event payload: \($0)")
+                log.error("Failed to decode event from event payload: \($0), error: \(error)")
                 return nil
             }
         }

@@ -159,50 +159,12 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
-        listChangeUpdater.performUpdate(with: changes) { [weak self] _ in
-            if let newMessageInserted = changes.first(where: { $0.isInsertion && $0.indexPath.row == 0 })?.item {
-                UIView.performWithoutAnimation {
-                    // Hide the timestamp of the previous message if needed
-                    self?.performBatchUpdates({
-                        let previousMessageIndexPath = IndexPath(row: 1, section: 0)
-                        self?.reloadRows(at: [previousMessageIndexPath], with: .none)
-                    })
-                }
-
-                if newMessageInserted.isSentByCurrentUser {
-                    self?.scrollToMostRecentMessage()
-                }
-
-                completion?()
-            }
+        listChangeUpdater.performUpdate(with: changes) { _ in
+            completion?()
         }
     }
 }
 
 private extension CGAffineTransform {
     static let mirrorY = Self(scaleX: 1, y: -1)
-}
-
-private extension ListChange {
-    var isInsertion: Bool {
-        switch self {
-        case .insert:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var indexPath: IndexPath {
-        switch self {
-        case let .insert(_, index):
-            return index
-        case let .move(_, _, toIndex):
-            return toIndex
-        case let .update(_, index):
-            return index
-        case let .remove(_, index):
-            return index
-        }
-    }
 }

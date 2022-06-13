@@ -35,6 +35,7 @@ open class CooldownView: _View, AppearanceProvider {
         
         embed(cooldownLabel, insets: .init(top: 6, leading: 10, bottom: 6, trailing: 10))
         cooldownLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        widthAnchor.pin(greaterThanOrEqualTo: heightAnchor).isActive = true
     }
     
     override open func setUpAppearance() {
