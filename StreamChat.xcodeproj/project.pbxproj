@@ -1835,6 +1835,8 @@
 		DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */; };
 		DBF17AE825D48865004517B3 /* BackgroundTaskScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF17AE725D48865004517B3 /* BackgroundTaskScheduler.swift */; };
 		E334B386282468F2002E9640 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = E334B385282468F2002E9640 /* Sentry */; };
+		E386432F28572D5F00DB3FBE /* Reusable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E386432C2857299E00DB3FBE /* Reusable+Extensions.swift */; };
+		E386433028572DDD00DB3FBE /* Reusable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E386432C2857299E00DB3FBE /* Reusable+Extensions.swift */; };
 		E3B987EF2844DE1200C2E101 /* MemberRole.json in Resources */ = {isa = PBXBuildFile; fileRef = E3B987EE2844DE1200C2E101 /* MemberRole.json */; };
 		E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70120152583EBC90036DACD /* CALayer+Extensions.swift */; };
 		E7073A6325DD67B3003896B9 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7073A6225DD67B3003896B9 /* UILabel+Extensions.swift */; };
@@ -3542,6 +3544,7 @@
 		DBCAFE2325C44B920015AD58 /* LazyCachedMapCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyCachedMapCollection.swift; sourceTree = "<group>"; };
 		DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlyLinkTappableTextView.swift; sourceTree = "<group>"; };
 		DBF17AE725D48865004517B3 /* BackgroundTaskScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTaskScheduler.swift; sourceTree = "<group>"; };
+		E386432C2857299E00DB3FBE /* Reusable+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Reusable+Extensions.swift"; sourceTree = "<group>"; };
 		E3B987EE2844DE1200C2E101 /* MemberRole.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MemberRole.json; sourceTree = "<group>"; };
 		E70120152583EBC90036DACD /* CALayer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Extensions.swift"; sourceTree = "<group>"; };
 		E7073A6225DD67B3003896B9 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
@@ -5189,6 +5192,7 @@
 				ADFB7E92283E701C00ABB6CF /* ListChangeUpdater */,
 				843F0BC426775D2D00B342CB /* VideoLoading.swift */,
 				22C23599259CA87B00DC805A /* Animation.swift */,
+				E386432C2857299E00DB3FBE /* Reusable+Extensions.swift */,
 				BDDD1EA52632C6D600BA007B /* AppearanceProvider.swift */,
 				88EF29FE2571288600B06EF1 /* Array+Extensions.swift */,
 				C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */,
@@ -9072,6 +9076,7 @@
 				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
 				C1FC2F7627416E150062530F /* Extensions.swift in Sources */,
 				ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */,
+				E386432F28572D5F00DB3FBE /* Reusable+Extensions.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
@@ -10588,6 +10593,7 @@
 				C121EBE82746A1EA00023E4C /* ChatMessageLinkPreviewView.swift in Sources */,
 				AD7B51D427EDECA80068CBD1 /* MixedAttachmentViewInjector.swift in Sources */,
 				C121EBE92746A1EA00023E4C /* ChatMessageGiphyView.swift in Sources */,
+				E386433028572DDD00DB3FBE /* Reusable+Extensions.swift in Sources */,
 				AD99C90D279B136D009DD9C5 /* UserLastActivityFormatter.swift in Sources */,
 				ADA5A0F9276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */,
 				C121EBEA2746A1EA00023E4C /* ChatMessageGiphyView+GiphyBadge.swift in Sources */,

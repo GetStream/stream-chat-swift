@@ -5,6 +5,7 @@
 import Foundation
 import Nuke
 import StreamChat
+import StreamChatUI
 import UIKit
 
 class CreateGroupViewController: UIViewController {
@@ -163,9 +164,7 @@ extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? SearchUserCell else {
-            return UITableViewCell()
-        }
+        let cell = tableView.dequeueReusableCell(with: SearchUserCell.self, for: indexPath)
         
         let user = users[indexPath.row]
         
@@ -225,9 +224,8 @@ extension CreateGroupViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? GroupUserCell else {
-            return UICollectionViewCell()
-        }
+        let cell = collectionView.dequeueReusableCell(with: GroupUserCell.self, for: indexPath)
+        
         let user = selectedUsers[indexPath.row]
         
         if let imageURL = user.imageURL {

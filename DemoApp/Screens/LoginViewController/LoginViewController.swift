@@ -43,9 +43,7 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? UserCredentialsCell else {
-            return UITableViewCell()
-        }
+        let cell = tableView.dequeueReusableCell(with: UserCredentialsCell.self, for: indexPath)
         
         let user = users[indexPath.row]
         

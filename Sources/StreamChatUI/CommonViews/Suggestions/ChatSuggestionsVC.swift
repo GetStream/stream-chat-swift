@@ -174,12 +174,7 @@ open class ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollecti
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ChatCommandSuggestionCollectionViewCell.reuseId,
-            for: indexPath
-        ) as? ChatCommandSuggestionCollectionViewCell else {
-            return UICollectionViewCell()
-        }
+        let cell = collectionView.dequeueReusableCell(with: ChatCommandSuggestionCollectionViewCell.self, for: indexPath)
 
         cell.components = components
         guard let command = commands[safe: indexPath.row] else {
@@ -250,12 +245,7 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ChatMentionSuggestionCollectionViewCell.reuseId,
-            for: indexPath
-        ) as? ChatMentionSuggestionCollectionViewCell else {
-            return UICollectionViewCell()
-        }
+        let cell = collectionView.dequeueReusableCell(with: ChatMentionSuggestionCollectionViewCell.self, for: indexPath)
 
         guard let user = usersCache[safe: indexPath.row] else {
             indexNotFoundAssertion()
