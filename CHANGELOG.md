@@ -4,15 +4,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 ## StreamChat
 ### 🐞 Fixed
-- Fix Logger persisting config after usage, preventing changing parameters (such as LogLevel) [#2081](https://github.com/GetStream/stream-chat-swift/issues/2081)
-
-## StreamChat
-### 🐞 Fixed
 - Fix hidden channels not appearing on relaunch [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix `channel.hidden` event failing to decode on launch/reconnection [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix messages in hidden channels with `clearHistory` re-appearing [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix last message of hidden channel with `clearHistory` visible in channel list [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Message action title now supports displaying 2 lines of text instead of 1 [#2082](https://github.com/GetStream/stream-chat-swift/pull/2082)
+
+## StreamChatUI
+### ✅ Added
+- Add support for Markdown syntax [#2067](https://github.com/GetStream/stream-chat-swift/pull/2067)
+### 🐞 Fixed
+- Fix Logger persisting config after usage, preventing changing parameters (such as LogLevel) [#2081](https://github.com/GetStream/stream-chat-swift/issues/2081)
 
 # [4.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.16.0)
 _June 10, 2022_
