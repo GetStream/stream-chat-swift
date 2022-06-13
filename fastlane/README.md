@@ -37,6 +37,14 @@ Upload test results to Allure TestOps
 
 Create launch on Allure TestOps
 
+### allure_launch_removal
+
+```sh
+[bundle exec] fastlane allure_launch_removal
+```
+
+Remove launch on Allure TestOps
+
 ### allure_create_testcase
 
 ```sh
