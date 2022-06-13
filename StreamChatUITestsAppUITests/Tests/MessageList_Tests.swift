@@ -40,10 +40,7 @@ final class MessageList_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("participant sends a message") {
-            participantRobot
-                .startTyping()
-                .stopTyping()
-                .sendMessage(message)
+            participantRobot.sendMessage(message)
         }
         THEN("MessageList updates for user") {
             userRobot.assertMessage(message)
@@ -131,10 +128,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant sends the emoji: '\(message)'") {
-            participantRobot
-                .startTyping()
-                .stopTyping()
-                .sendMessage(message)
+            participantRobot.sendMessage(message)
         }
         THEN("the message is delivered") {
             userRobot.assertMessageAuthor(author)
@@ -170,10 +164,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant sends the message: '\(message)'") {
-            participantRobot
-                .startTyping()
-                .stopTyping()
-                .sendMessage(message)
+            participantRobot.sendMessage(message)
         }
         AND("participant edits the message: '\(editedMessage)'") {
             participantRobot.editMessage(editedMessage)
