@@ -18,6 +18,19 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.channels.count, 20)
     }
     
+    func test_decode_bigChannelListPayload() {
+        // 3MB JSON Channel List from Watercooler
+        let url = XCTestCase.mockData(fromJSONFile: "BigChannelListPayload")
+        
+        measure {
+            do {
+                _ = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
+            } catch {
+                XCTFail("Failed to parse JSON: \(error)")
+            }
+        }
+    }
+    
     func test_hugeChannelListQuery_save() throws {
         let decodedPayload = createHugeChannelList()
         

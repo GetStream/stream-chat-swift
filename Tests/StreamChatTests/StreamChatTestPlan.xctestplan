@@ -27,6 +27,7 @@
   "testTargets" : [
     {
       "skippedTests" : [
+        "ChannelListPayload_Tests\/test_decode_bigChannelListPayload()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()"
       ],
       "target" : {
