@@ -57,7 +57,11 @@ final class ChannelList_Tests: StreamTestCase {
             userRobot.assertLastMessageInChannelPreview(message)
         }
     }
+}
 
+// MARK: - Preview
+
+extension ChannelList_Tests {
     func test_errorMessageIsNotShownInChannelPreview_whenErrorMessageIsReceived() {
         linkToScenario(withId: 185)
 
@@ -79,6 +83,127 @@ final class ChannelList_Tests: StreamTestCase {
         }
         THEN("the error message is not shown in preview") {
             userRobot.assertLastMessageInChannelPreview(message)
+        }
+    }
+    
+    // Revert scenario to the previous state.
+    func test_channelPreviewShowsNoMessages_whenChannelIsEmpty() {
+        linkToScenario(withId: 199)
+        
+        WHEN("user opens channel list") {
+            userRobot.login()
+        }
+        AND("the channel has no messages") {}
+        THEN("the channel preview shows No messages") {
+            userRobot.assertLastMessageInChannelPreview(message)
+        }
+        AND("last message timestamp is hidden") {
+            userRobot.assertLastMessageTimestampInChannelPreviewIsHidden()
+        }
+    }
+    
+    func test_channelPreviewShowsNoMessages_whenTheOnlyMessageInChannelIsDeleted() {
+        linkToScenario(withId: 202)
+        
+        let message = "Hey"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        AND("user deletes the message") {
+            userRobot.deleteMessage()
+        }
+        WHEN("user goes back to the channel list") {
+            userRobot.tapOnBackButton()
+        }
+        THEN("the channel preview shows No messages") {
+            userRobot.assertLastMessageInChannelPreview("No messages")
+        }
+        AND("last message timestamp is hidden") {
+            userRobot.assertLastMessageTimestampInChannelPreviewIsHidden()
+        }
+    }
+    
+    // The scenario should be created
+//    func test_channelPreviewShowsPreviousMessage_whenLastMessageIsDeleted() {
+//        linkToScenario(withId: 202)
+//
+//        let message1 = "Previous message"
+//        let message2 = "Last message"
+//
+//        GIVEN("user opens the channel") {
+//            userRobot
+//                .login()
+//                .openChannel()
+//        }
+//        AND("user sends 2 messages") {
+//            userRobot
+//                .sendMessage(message1)
+//                .sendMessage(message2)
+//        }
+//        AND("user deletes the last message") {
+//            userRobot.deleteMessage()
+//        }
+//        WHEN("user goes back to the channel list") {
+//            userRobot.tapOnBackButton()
+//        }
+//        THEN("the channel preview shows previous message") {
+//            userRobot.assertLastMessageInChannelPreview(message1)
+//        }
+//    }
+    
+    func test_channelPreviewIsNotUpdated_whenThreadReplyIsSent() {
+        linkToScenario(withId: 203)
+        
+        let channelMessage = "Channel message"
+        let threadReply = "Thread reply"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(channelMessage)
+        }
+        AND("user adds thread reply to this messages") {
+            userRobot.replyToMessageInThread(threadReply)
+        }
+        WHEN("user goes back to the channel list") {
+            userRobot.moveToChannelListFromThreadReplies()
+        }
+        THEN("the channel preview shows the last message in the channel") {
+            userRobot.assertLastMessageInChannelPreview(channelMessage)
+        }
+    }
+    
+    func test_channelPreviewIsUpdated_whenPreviewMessageIsEdited() {
+        linkToScenario(withId: 245)
+        
+        let originalMessage = "message"
+        let editedMessage = "edited message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(originalMessage)
+        }
+        WHEN("user edits the message") {
+            userRobot.editMessage(editedMessage)
+        }
+        AND("user goes back to the channel list") {
+            userRobot.tapOnBackButton()
+        }
+        THEN("the channel preview shows edited message") {
+            userRobot.assertLastMessageInChannelPreview(editedMessage)
         }
     }
 }

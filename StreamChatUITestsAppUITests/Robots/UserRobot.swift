@@ -249,7 +249,7 @@ extension UserRobot {
     }
     
     @discardableResult
-    func sendGiphy(useComposerCommand: Bool = false, shuffle: Bool = false) -> Self {
+    func sendGiphy(useComposerCommand: Bool = false, shuffle: Bool = false, send: Bool = true) -> Self {
         let giphyText = "Test"
         if useComposerCommand {
             openComposerCommands()
@@ -259,7 +259,8 @@ extension UserRobot {
             sendMessage("/giphy\(giphyText)", waitForAppearance: false)
         }
         if shuffle { tapOnShuffleGiphyButton() }
-        return tapOnSendGiphyButton()
+        if send { tapOnSendGiphyButton() }
+        return self
     }
     
     @discardableResult

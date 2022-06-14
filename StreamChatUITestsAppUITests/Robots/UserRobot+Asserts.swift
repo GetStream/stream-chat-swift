@@ -47,6 +47,18 @@ extension UserRobot {
         XCTAssertTrue(actualText.contains(text), file: file, line: line)
         return self
     }
+    
+    @discardableResult
+    func assertLastMessageTimestampInChannelPreviewIsHidden(
+        at cellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let cell = channelCell(withIndex: cellIndex, file: file, line: line)
+        let timestamp = channelAttributes.lastMessageTime(in: cell)
+        XCTAssertFalse(timestamp.exists, file: file, line: line)
+        return self
+    }
 
     @discardableResult
     func assertMessageDeliveryStatusInChannelPreview(
@@ -285,6 +297,18 @@ extension UserRobot {
         }
         typeText("\(limit)\n\(limit+1)", obtainKeyboardFocus: false)
         XCTAssertEqual(composerHeight, composer.height, file: file, line: line)
+    }
+    
+    @discardableResult
+    func assertMessageHasTimestamp(
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let timestampLabel = attributes.time(in: messageCell).wait()
+        XCTAssertTrue(timestampLabel.wait().exists, file: file, line: line)
+        return self
     }
 }
 

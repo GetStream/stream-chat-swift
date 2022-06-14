@@ -611,3 +611,56 @@ extension MessageList_Tests {
         }
     }
 }
+
+// MARK: - Message grouping
+
+extension MessageList_Tests {
+    func test_messageEndsGroup_whenFollowedByErrorMessage() {
+        linkToScenario(withId: 218)
+
+        let message = "Hey there"
+        let messageWithForbiddenContent = server.forbiddenWords.first ?? ""
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends the 1st message") {
+            userRobot.sendMessage(message)
+        }
+        AND("the timestamp is shown under the 1st message") {
+            userRobot.assertMessageHasTimestamp()
+        }
+        WHEN("user sends a message that does not pass moderation") {
+            userRobot.sendMessage(messageWithForbiddenContent, waitForAppearance: false)
+        }
+        THEN("messages are not grouped, 1st message shows the timestamp") {
+            userRobot.assertMessageHasTimestamp(at: 1)
+        }
+    }
+    
+    func test_messageEndsGroup_whenFollowedByEphemeralMessage() {
+        linkToScenario(withId: 221)
+        
+        let message = "Hey there"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends the 1st message") {
+            userRobot.sendMessage(message)
+        }
+        AND("the timestamp is shown under the 1st message") {
+            userRobot.assertMessageHasTimestamp()
+        }
+        WHEN("user sends an ephemeral message") {
+            userRobot.sendGiphy(send: false)
+        }
+        THEN("messages are not grouped, 1st message shows the timestamp") {
+            userRobot.assertMessageHasTimestamp(at: 1)
+        }
+    }
+}
