@@ -242,7 +242,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let checkmark = attributes.statusCheckmark(for: deliveryStatus, in: messageCell)
         if deliveryStatus == .failed || deliveryStatus == nil {
             XCTAssertFalse(checkmark.exists, file: file, line: line)
