@@ -184,6 +184,14 @@ extension UserRobot {
                     line: line)
         return self
     }
+    
+    @discardableResult
+    func tapOnThread(messageCellIndex: Int = 0) -> Self {
+        let minExpectedCount = messageCellIndex + 1
+        let cells = MessageListPage.cells.waitCount(minExpectedCount)
+        cells.allElementsBoundByIndex[messageCellIndex].firstMatch.buttons["threadReplyCountButton"].tap()
+        return self
+    }
 
     @discardableResult
     func showThread(forMessageAt index: Int = 0) -> Self {

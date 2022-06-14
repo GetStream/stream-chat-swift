@@ -444,6 +444,36 @@ extension MessageList_Tests {
 
 // MARK: - Thread replies
 extension MessageList_Tests {
+    func test_threadReplyAppearsInChannelAndThread_whenParticipantAddsThreadReplySentAlsoToChannel() {
+        linkToScenario(withId: 50)
+        
+        let message = "test message"
+        let threadReply = "thread reply"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("participant adds a thread reply to user's message") {
+            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        AND("user enters thread") {
+            userRobot.tapOnThread()
+        }
+        THEN("user observes the thread reply in thread") {
+            userRobot.assertThreadReply(threadReply)
+        }
+        AND("user observes the thread reply in channel") {
+            userRobot
+                .tapOnBackButton()
+                .assertMessage(threadReply)
+        }
+    }
+    
     func test_threadReplyAppearsInChannelAndThread_whenUserAddsThreadReplySentAlsoToChannel() {
         linkToScenario(withId: 111)
 
