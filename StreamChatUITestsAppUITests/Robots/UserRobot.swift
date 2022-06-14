@@ -111,10 +111,22 @@ extension UserRobot {
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
         contextMenu.edit.element.wait().safeTap()
-        let inputField = composer.inputField
-        inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
-        inputField.typeText(newText)
+        clearComposer()
+        composer.inputField.typeText(newText)
         composer.confirmButton.safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func clearComposer() -> Self {
+        let currentText = composer.textView.text
+        if currentText.isEmpty { return self }
+        
+        for _ in (0...currentText.split(separator: "\n").count - 1) {
+            composer.inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
+            composer.cutButton.wait().safeTap()
+        }
+        
         return self
     }
     

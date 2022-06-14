@@ -341,6 +341,38 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
+    func test_editsMessageDecreasingNumberOfTextLines() throws {
+        linkToScenario(withId: 100)
+        
+        let message = "test\nmessage"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        AND("user sends a two line message: '\(message)'") {
+            userRobot.sendMessage(message)
+        }
+        THEN("user verifies that message cell decreases after edit") {
+            userRobot.assertMessageCellChangesSizeAfterEdit(linesCountShouldBeIncreased: false)
+        }
+    }
+    
+    func test_editsMessageIncreasingNumberOfTextLines() throws {
+        linkToScenario(withId: 247)
+        
+        let message = "test message"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        AND("user sends a two line message: '\(message)'") {
+            userRobot.sendMessage(message)
+        }
+        THEN("user verifies that message cell increases after edit") {
+            userRobot.assertMessageCellChangesSizeAfterEdit(linesCountShouldBeIncreased: true)
+        }
+    }
+
 }
 
 // MARK: Quoted messages

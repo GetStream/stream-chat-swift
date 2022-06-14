@@ -70,7 +70,9 @@ class MessageListPage {
         static var attachmentButton: XCUIElement { app.buttons["AttachmentButton"] }
         static var commandButton: XCUIElement { app.buttons["CommandButton"] }
         static var inputField: XCUIElement { app.otherElements["inputTextContainer"] }
+        static var textView: XCUIElement { inputField.textViews.firstMatch }
         static var cooldown: XCUIElement { app.staticTexts["cooldownLabel"] }
+        static var cutButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Cut'")).firstMatch }
     }
     
     enum Reactions {
