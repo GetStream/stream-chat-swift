@@ -461,6 +461,7 @@ extension MessageList_Tests {
         WHEN("participant adds a thread reply to user's message") {
             participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
         }
+        
         AND("user enters thread") {
             userRobot.tapOnThread()
         }
