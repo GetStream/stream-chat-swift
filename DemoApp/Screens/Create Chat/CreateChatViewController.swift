@@ -256,9 +256,10 @@ class CreateChatViewController: UIViewController {
     
     @objc func openCreateGroupChat() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        let createGroupController = storyboard.instantiateViewController(ofType: CreateGroupViewController.self)
-        createGroupController.searchController = searchController.client.userSearchController()
-        navigationController?.pushViewController(createGroupController, animated: true)
+        if let createGroupController = storyboard.instantiateViewController(withIdentifier: "CreateGroupViewController") as? CreateGroupViewController {
+            createGroupController.searchController = searchController.client.userSearchController()
+            navigationController?.pushViewController(createGroupController, animated: true)
+        }
     }
 }
 
@@ -298,7 +299,9 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(with: UserCredentialsCell.self, for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "UserCredentialsCell", for: indexPath) as? UserCredentialsCell else {
+            return UITableViewCell()
+        }
         let user = users[indexPath.row]
         
         if let imageURL = user.imageURL {

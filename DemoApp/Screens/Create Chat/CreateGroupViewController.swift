@@ -164,7 +164,9 @@ extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(with: SearchUserCell.self, for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell else {
+            return UITableViewCell()
+        }
         
         let user = users[indexPath.row]
         
@@ -224,7 +226,9 @@ extension CreateGroupViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(with: GroupUserCell.self, for: indexPath)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GroupUserCell", for: indexPath) as? GroupUserCell else {
+            return UICollectionViewCell()
+        }
         
         let user = selectedUsers[indexPath.row]
         

@@ -1835,11 +1835,11 @@
 		DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */; };
 		DBF17AE825D48865004517B3 /* BackgroundTaskScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF17AE725D48865004517B3 /* BackgroundTaskScheduler.swift */; };
 		E334B386282468F2002E9640 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = E334B385282468F2002E9640 /* Sentry */; };
-		E386432F28572D5F00DB3FBE /* Reusable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E386432C2857299E00DB3FBE /* Reusable+Extensions.swift */; };
-		E386433028572DDD00DB3FBE /* Reusable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E386432C2857299E00DB3FBE /* Reusable+Extensions.swift */; };
 		E3B987EF2844DE1200C2E101 /* MemberRole.json in Resources */ = {isa = PBXBuildFile; fileRef = E3B987EE2844DE1200C2E101 /* MemberRole.json */; };
-		E3C7A0D828576064006133C3 /* UIStoryboard+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C7A0D728576064006133C3 /* UIStoryboard+Extensions.swift */; };
-		E3C7A0D928576064006133C3 /* UIStoryboard+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C7A0D728576064006133C3 /* UIStoryboard+Extensions.swift */; };
+		E3C7A0E02858BA9B006133C3 /* Reusable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E386432C2857299E00DB3FBE /* Reusable+Extensions.swift */; };
+		E3C7A0E12858BA9E006133C3 /* Reusable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E386432C2857299E00DB3FBE /* Reusable+Extensions.swift */; };
+		E3C7A0E22858BAA4006133C3 /* UIStoryboard+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C7A0D728576064006133C3 /* UIStoryboard+Extensions.swift */; };
+		E3C7A0E32858BAA7006133C3 /* UIStoryboard+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C7A0D728576064006133C3 /* UIStoryboard+Extensions.swift */; };
 		E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70120152583EBC90036DACD /* CALayer+Extensions.swift */; };
 		E7073A6325DD67B3003896B9 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7073A6225DD67B3003896B9 /* UILabel+Extensions.swift */; };
 		E7166CB225BED22B00B03B07 /* Appearance+ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7166CB125BED22B00B03B07 /* Appearance+ColorPalette.swift */; };
@@ -8011,6 +8011,7 @@
 				790881F925432B7200896F03 /* Sources */,
 				790881FA25432B7200896F03 /* Frameworks */,
 				790881FB25432B7200896F03 /* Resources */,
+				E3C7A0E52858BB2A006133C3 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -8080,7 +8081,6 @@
 				792DDA55256FB69E001DB91B /* Resources */,
 				437FC9FA26D630860000223C /* Embed App Extensions */,
 				C121EC652746AC8C00023E4C /* Embed Frameworks */,
-				E3FBB83E27F737F10067608A /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -8150,6 +8150,7 @@
 				799C9417247D2F80001F1104 /* Sources */,
 				799C9418247D2F80001F1104 /* Frameworks */,
 				799C9419247D2F80001F1104 /* Resources */,
+				E3C7A0E42858BB10006133C3 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -8839,7 +8840,25 @@
 			shellPath = /bin/sh;
 			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint; then\n  echo \"Runnning SwiftLint\"\n    mint run swiftlint\nelse\n  echo \"Warning: Mint not installed\"\nfi\n";
 		};
-		E3FBB83E27F737F10067608A /* SwiftLint */ = {
+		E3C7A0E42858BB10006133C3 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint; then\n  echo \"Runnning SwiftLint\"\n    mint run swiftlint\nelse\n  echo \"Warning: Mint not installed\"\nfi\n";
+		};
+		E3C7A0E52858BB2A006133C3 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -9077,11 +9096,11 @@
 				C14A46582846636900EF498E /* SDKIdentifier.swift in Sources */,
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
-				E3C7A0D828576064006133C3 /* UIStoryboard+Extensions.swift in Sources */,
+				E3C7A0E22858BAA4006133C3 /* UIStoryboard+Extensions.swift in Sources */,
 				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
 				C1FC2F7627416E150062530F /* Extensions.swift in Sources */,
 				ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */,
-				E386432F28572D5F00DB3FBE /* Reusable+Extensions.swift in Sources */,
+				E3C7A0E02858BA9B006133C3 /* Reusable+Extensions.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
@@ -10598,7 +10617,7 @@
 				C121EBE82746A1EA00023E4C /* ChatMessageLinkPreviewView.swift in Sources */,
 				AD7B51D427EDECA80068CBD1 /* MixedAttachmentViewInjector.swift in Sources */,
 				C121EBE92746A1EA00023E4C /* ChatMessageGiphyView.swift in Sources */,
-				E386433028572DDD00DB3FBE /* Reusable+Extensions.swift in Sources */,
+				E3C7A0E12858BA9E006133C3 /* Reusable+Extensions.swift in Sources */,
 				AD99C90D279B136D009DD9C5 /* UserLastActivityFormatter.swift in Sources */,
 				ADA5A0F9276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */,
 				C121EBEA2746A1EA00023E4C /* ChatMessageGiphyView+GiphyBadge.swift in Sources */,
@@ -10637,7 +10656,7 @@
 				C121EC092746A1EC00023E4C /* ChatMessageActionControl.swift in Sources */,
 				C121EC0A2746A1EC00023E4C /* ChatMessageActionItem.swift in Sources */,
 				C121EC0B2746A1EC00023E4C /* ChatMessageActionsVC.swift in Sources */,
-				E3C7A0D928576064006133C3 /* UIStoryboard+Extensions.swift in Sources */,
+				E3C7A0E32858BAA7006133C3 /* UIStoryboard+Extensions.swift in Sources */,
 				C121EC0C2746A1EC00023E4C /* ChatChannelListRouter.swift in Sources */,
 				C121EC0D2746A1EC00023E4C /* ChatMessageListRouter.swift in Sources */,
 				C121EC0E2746A1EC00023E4C /* ChatMessageActionsRouter.swift in Sources */,
