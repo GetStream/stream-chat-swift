@@ -995,6 +995,7 @@
 		A3C7BAD527E4E11D00BBF4FA /* UserListFilterScope_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7BAD427E4E11D00BBF4FA /* UserListFilterScope_Tests.swift */; };
 		A3C7BAE527E4EABC00BBF4FA /* ChannelEvents_IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7BAE427E4EABC00BBF4FA /* ChannelEvents_IntegrationTests.swift */; };
 		A3C7BAEA27E4ED3B00BBF4FA /* ChatChannelMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7BAC427E4DBA900BBF4FA /* ChatChannelMember.swift */; };
+		A3CB2BA02858C06B00DCAE3E /* Ephemeral_Messages_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3CB2B9F2858C06B00DCAE3E /* Ephemeral_Messages_Tests.swift */; };
 		A3D15D8627E9D4B5006B34D7 /* VirtualTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D15D8327E9D4B5006B34D7 /* VirtualTimer.swift */; };
 		A3D15D8827E9D4B5006B34D7 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D15D8527E9D4B5006B34D7 /* VirtualTime.swift */; };
 		A3D15D9027E9DA67006B34D7 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3D15D8F27E9DA67006B34D7 /* StreamChatTestHelpers */; };
@@ -3218,6 +3219,7 @@
 		A3C7BAE427E4EABC00BBF4FA /* ChannelEvents_IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEvents_IntegrationTests.swift; sourceTree = "<group>"; };
 		A3C7BAE627E4EC4000BBF4FA /* ChannelListQuery+Equatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListQuery+Equatable.swift"; sourceTree = "<group>"; };
 		A3C7BAE827E4ECE800BBF4FA /* TestMemberEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMemberEvent.swift; sourceTree = "<group>"; };
+		A3CB2B9F2858C06B00DCAE3E /* Ephemeral_Messages_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ephemeral_Messages_Tests.swift; sourceTree = "<group>"; };
 		A3D15D8027E9CF5A006B34D7 /* AssertAsync+Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AssertAsync+Events.swift"; sourceTree = "<group>"; };
 		A3D15D8327E9D4B5006B34D7 /* VirtualTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTimer.swift; sourceTree = "<group>"; };
 		A3D15D8427E9D4B5006B34D7 /* VirtualTime_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTime_Tests.swift; sourceTree = "<group>"; };
@@ -5083,6 +5085,7 @@
 				A33FA817282E559A00DC40E8 /* SlowMode_Tests.swift */,
 				A3600B3B283F639700E1C930 /* StreamTestCase+Tags.swift */,
 				A3B78F16282A670600348AD1 /* Message Delivery Status */,
+				A3CB2B9F2858C06B00DCAE3E /* Ephemeral_Messages_Tests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -10079,6 +10082,7 @@
 				825A32CF27DBB48D000402A9 /* StartPage.swift in Sources */,
 				A3BEB6AF27F3235600D6D80D /* Bundle+Target.swift in Sources */,
 				A3AFEAA72816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift in Sources */,
+				A3CB2BA02858C06B00DCAE3E /* Ephemeral_Messages_Tests.swift in Sources */,
 				822F265727D8F75D00E454FB /* UserRobot.swift in Sources */,
 				A3B78F1A282A6A8F00348AD1 /* UserRobot+Asserts.swift in Sources */,
 				825A32CD27DBB46F000402A9 /* ChannelListPage.swift in Sources */,

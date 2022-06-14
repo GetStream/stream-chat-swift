@@ -242,7 +242,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         let checkmark = attributes.statusCheckmark(for: deliveryStatus, in: messageCell)
         if deliveryStatus == .failed || deliveryStatus == nil {
             XCTAssertFalse(checkmark.exists, file: file, line: line)
@@ -406,6 +406,34 @@ extension UserRobot {
                             line: UInt = #line) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         attributes.reactionButton(in: cell).wait()
+        return self
+    }
+}
+
+// MARK: Ephemeral messages
+
+extension UserRobot {
+
+    @discardableResult
+    func assertGiphyImage(
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
+        XCTAssertTrue(attributes.giphyImageView(in: cell).wait().exists)
+        return self
+    }
+
+    @discardableResult
+    func assertInvalidCommand(
+        invalidCommand: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
+        XCTAssertEqual(attributes.text(in: cell).text, Message.message(withInvalidCommand: invalidCommand))
         return self
     }
 }

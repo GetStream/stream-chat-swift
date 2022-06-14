@@ -206,6 +206,10 @@ class MessageListPage {
         static func giphyCancelButton(in messageCell: XCUIElement) -> XCUIElement {
             attachmentActionButton(in: messageCell, label: "Cancel")
         }
+
+        static func giphyImageView(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.staticTexts["GIPHY"]
+        }
         
         private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {
             messageCell.buttons.matching(NSPredicate(
