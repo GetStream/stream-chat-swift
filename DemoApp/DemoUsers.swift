@@ -5,7 +5,7 @@
 import Foundation
 import StreamChat
 
-let apiKeyString = "8br4watad788"
+let apiKeyString = "twy69pcpwvfa"
 let applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
 
 enum DemoUserType {
@@ -35,27 +35,36 @@ struct UserCredentials {
 
 extension UserCredentials {
     static let builtInUsers: [UserCredentials] = [
-        .luke,
-        .leia,
-        .hanSolo,
-        .lando,
-        .chewbacca,
-        .c3po,
-        .r2d2,
-        .anakin,
-        .obiwan,
-        .padme,
-        .quiGonJinn,
-        .maceWindu,
-        .jarJarBinks,
-        .darthMaul,
-        .countDooku,
-        .generalGrievous
+        .harambe
+//        .luke,
+//        .leia,
+//        .hanSolo,
+//        .lando,
+//        .chewbacca,
+//        .c3po,
+//        .r2d2,
+//        .anakin,
+//        .obiwan,
+//        .padme,
+//        .quiGonJinn,
+//        .maceWindu,
+//        .jarJarBinks,
+//        .darthMaul,
+//        .countDooku,
+//        .generalGrievous
     ]
     
     static func builtInUsersByID(id: String) -> UserCredentials? {
         builtInUsers.first { $0.id == id }
     }
+    
+    static let harambe = Self(
+        id: "harambe",
+        name: "harambe",
+        avatarURL: URL(string: "https://getstream.io/random_png/?id=harambe&name=harambe")!,
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiaGFyYW1iZSJ9.eXjeF1X8suuo5p_hxT_HyAXMEASJg9kk7ZkCThOat-g",
+        birthLand: "Qymaen jai Sheelal"
+    )
     
     static let luke = Self(
         id: "luke_skywalker",

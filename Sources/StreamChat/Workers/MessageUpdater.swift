@@ -122,7 +122,7 @@ class MessageUpdater: Worker {
                 messageDTO.extraData = encodedExtraData
                 messageDTO.localMessageState = .pendingSync
                 updateQuotingMessages()
-            case .pendingSend, .sendingFailed:
+            case .pendingSend, .sendingFailed, .bounced:
                 messageDTO.text = text
                 messageDTO.extraData = encodedExtraData
                 messageDTO.localMessageState = .pendingSend
@@ -403,7 +403,7 @@ class MessageUpdater: Worker {
             case nil, .pendingSync, .syncingFailed, .deletingFailed:
                 try session.pin(message: messageDTO, pinning: pinning)
                 messageDTO.localMessageState = .pendingSync
-            case .pendingSend, .sendingFailed:
+            case .pendingSend, .sendingFailed, .bounced:
                 try session.pin(message: messageDTO, pinning: pinning)
                 messageDTO.localMessageState = .pendingSend
             case .sending, .syncing, .deleting:
@@ -431,7 +431,7 @@ class MessageUpdater: Worker {
             case nil, .pendingSync, .syncingFailed, .deletingFailed:
                 session.unpin(message: messageDTO)
                 messageDTO.localMessageState = .pendingSync
-            case .pendingSend, .sendingFailed:
+            case .pendingSend, .sendingFailed, .bounced:
                 session.unpin(message: messageDTO)
                 messageDTO.localMessageState = .pendingSend
             case .sending, .syncing, .deleting:
@@ -477,7 +477,7 @@ class MessageUpdater: Worker {
         database.write({
             let messageDTO = try $0.messageEditableByCurrentUser(messageId)
 
-            guard messageDTO.localMessageState == .sendingFailed else {
+            guard messageDTO.localMessageState == .sendingFailed || messageDTO.localMessageState == .bounced else {
                 throw ClientError.MessageEditing(
                     messageId: messageId,
                     reason: "only message in `.sendingFailed` can be resent"
@@ -627,7 +627,7 @@ extension ClientError {
 
 private extension MessageDTO {
     var existsOnlyLocally: Bool {
-        localMessageState == .pendingSend || localMessageState == .sendingFailed
+        localMessageState == .pendingSend || localMessageState == .sendingFailed || localMessageState == .bounced
     }
 }
 

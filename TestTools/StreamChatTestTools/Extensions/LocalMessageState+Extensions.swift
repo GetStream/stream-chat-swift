@@ -8,6 +8,7 @@ import StreamChat
 extension LocalMessageState {
     static let failedStates: [Self] = [
         .sendingFailed,
+        .bounced,
         .syncingFailed,
         .deletingFailed
     ]

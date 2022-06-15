@@ -7,6 +7,7 @@ import Foundation
 enum MessageRepositoryError: LocalizedError {
     case messageDoesNotExist
     case messageNotPendingSend
+    case messageBounced
     case messageDoesNotHaveValidChannel
     case failedToSendMessage
 }
@@ -73,10 +74,7 @@ class MessageRepository {
                         }
 
                     case let .failure(error):
-                        log.error("Sending the message with id \(messageId) failed with error: \(error)")
-                        self?.markMessageAsFailedToSend(id: messageId) {
-                            completion(.failure(.failedToSendMessage))
-                        }
+                        self?.handleSendingMessageError(error, messageId: messageId, completion: completion)
                     }
                 }
             })
@@ -93,7 +91,7 @@ class MessageRepository {
             guard let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false) else {
                 return
             }
-            if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
+            if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed || messageDTO.localMessageState == .bounced {
                 messageDTO.locallyCreatedAt = nil
                 messageDTO.localMessageState = nil
             }
@@ -103,6 +101,41 @@ class MessageRepository {
                 log.error("Error saving sent message with id \(message.id): \(error)", subsystems: .offlineSupport)
             }
             completion(messageModel)
+        })
+    }
+    
+    private func handleSendingMessageError(
+        _ error: Error,
+        messageId: MessageId,
+        completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
+    ) {
+        log.error("Sending the message with id \(messageId) failed with error: \(error)")
+        
+        if error is ClientError.BouncedMessageError {
+            markMessageAsBounced(id: messageId) {
+                completion(.failure(.messageBounced))
+            }
+        } else {
+            markMessageAsFailedToSend(id: messageId) {
+                completion(.failure(.failedToSendMessage))
+            }
+        }
+    }
+    
+    private func markMessageAsBounced(id: MessageId, completion: @escaping () -> Void) {
+        database.write({
+            let dto = $0.message(id: id)
+            if dto?.localMessageState == .sending {
+                dto?.localMessageState = .bounced
+            }
+        }, completion: {
+            if let error = $0 {
+                log.error(
+                    "Error changing localMessageState message with id \(id) to `bounced`: \(error)",
+                    subsystems: .offlineSupport
+                )
+            }
+            completion()
         })
     }
 

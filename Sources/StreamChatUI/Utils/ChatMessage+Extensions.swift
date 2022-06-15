@@ -21,7 +21,7 @@ public extension ChatMessage {
         guard isDeleted == false else { return false }
 
         switch localState {
-        case .sendingFailed, .syncingFailed, .deletingFailed:
+        case .sendingFailed, .bounced, .syncingFailed, .deletingFailed:
             return true
         default:
             return false

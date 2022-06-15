@@ -332,7 +332,7 @@ public extension ChatMessage {
         switch localState {
         case .pendingSend, .sending, .pendingSync, .syncing, .deleting:
             return .pending
-        case .sendingFailed, .syncingFailed, .deletingFailed:
+        case .sendingFailed, .bounced, .syncingFailed, .deletingFailed:
             return .failed
         case nil:
             return readByCount > 0 ? .read : .sent
@@ -401,6 +401,8 @@ public enum LocalMessageState: String {
     case sending
     /// Sending of the message failed after multiple of tries. The system is not trying to send this message anymore.
     case sendingFailed
+    /// The message was bounced after it was detected by moderation as inappropriate.
+    case bounced
     
     /// The message is waiting to be deleted.
     case deleting
@@ -409,7 +411,7 @@ public enum LocalMessageState: String {
 
     var isLocalOnly: Bool {
         switch self {
-        case .pendingSync, .syncing, .syncingFailed, .pendingSend, .sending, .sendingFailed:
+        case .pendingSync, .syncing, .syncingFailed, .pendingSend, .sending, .sendingFailed, .bounced:
             return true
         case .deleting, .deletingFailed:
             return false
