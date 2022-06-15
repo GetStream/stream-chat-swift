@@ -301,13 +301,18 @@ extension UserRobot {
     
     @discardableResult
     func assertMessageHasTimestamp(
+        _ hasTimestamp: Bool = true,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
-        let timestampLabel = attributes.time(in: messageCell).wait()
-        XCTAssertTrue(timestampLabel.wait().exists, file: file, line: line)
+        let timestampLabel = attributes.time(in: messageCell)
+        if hasTimestamp {
+            XCTAssertTrue(timestampLabel.wait().exists, file: file, line: line)
+        } else {
+            XCTAssertFalse(timestampLabel.exists, file: file, line: line)
+        }
         return self
     }
     
@@ -466,12 +471,17 @@ extension UserRobot {
     ) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         XCTAssertTrue(attributes.giphyImageView(in: cell).wait().exists)
+        XCTAssertTrue(attributes.giphyLabel(in: cell).wait().exists)
+        XCTAssertTrue(attributes.giphyBadge(in: cell).wait().exists)
+        XCTAssertFalse(attributes.giphySendButton(in: cell).exists)
+        XCTAssertFalse(attributes.giphyShuffleButton(in: cell).exists)
+        XCTAssertFalse(attributes.giphyCancelButton(in: cell).exists)
         return self
     }
 
     @discardableResult
     func assertInvalidCommand(
-        invalidCommand: String,
+        _ invalidCommand: String,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line

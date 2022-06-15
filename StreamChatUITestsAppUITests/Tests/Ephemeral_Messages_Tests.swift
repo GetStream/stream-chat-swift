@@ -54,10 +54,16 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .sendMessage(message, waitForAppearance: true)
                 .sendMessage("/\(invalidCommand)", waitForAppearance: false)
         }
-        THEN("the error message is not shown in preview") {
+        THEN("user observes error message") {
             userRobot
-                .assertInvalidCommand(invalidCommand: invalidCommand)
-                .assertMessageDeliveryStatus(nil, at: 1)
+                .assertInvalidCommand(invalidCommand)
+                .assertMessageHasTimestamp(false, at: 0)
+                .assertMessageDeliveryStatus(nil, at: 0)
+        }
+        AND("the previous message has timestamp and delivery status shown") {
+            userRobot
+                .assertMessageDeliveryStatus(.sent, at: 1)
+                .assertMessageHasTimestamp(at: 1)
         }
     }
 

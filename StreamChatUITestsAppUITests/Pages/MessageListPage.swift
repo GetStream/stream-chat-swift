@@ -210,6 +210,14 @@ class MessageListPage {
         }
 
         static func giphyImageView(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.images["imageView"]
+        }
+
+        static func giphyBadge(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.images["lightning"]
+        }
+
+        static func giphyLabel(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["GIPHY"]
         }
         
