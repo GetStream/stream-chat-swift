@@ -16,10 +16,7 @@ final class ChatClient_Mock: ChatClient {
     @Atomic var createBackgroundWorkers_called = false
 
     @Atomic var completeConnectionIdWaiters_called = false
-    @Atomic var completeConnectionIdWaiters_connectionId: String?
-
-    @Atomic var completeTokenWaiters_called = false
-    @Atomic var completeTokenWaiters_token: Token?
+    @Atomic var completeConnectionIdWaiters_connectionIdResult: Result<ConnectionId, Error>?
 
     override var backgroundWorkers: [Worker] {
         _backgroundWorkers ?? super.backgroundWorkers
@@ -67,18 +64,11 @@ final class ChatClient_Mock: ChatClient {
         super.createBackgroundWorkers()
     }
 
-    override func completeConnectionIdWaiters(connectionId: String?) {
+    override func completeConnectionIdWaiters(result: Result<ConnectionId, Error>) {
         completeConnectionIdWaiters_called = true
-        completeConnectionIdWaiters_connectionId = connectionId
+        completeConnectionIdWaiters_connectionIdResult = result
 
-        super.completeConnectionIdWaiters(connectionId: connectionId)
-    }
-
-    override func completeTokenWaiters(token: Token?) {
-        completeTokenWaiters_called = true
-        completeTokenWaiters_token = token
-
-        super.completeTokenWaiters(token: token)
+        super.completeConnectionIdWaiters(result: result)
     }
 
     // MARK: - Clean Up
@@ -91,10 +81,7 @@ final class ChatClient_Mock: ChatClient {
         createBackgroundWorkers_called = false
 
         completeConnectionIdWaiters_called = false
-        completeConnectionIdWaiters_connectionId = nil
-
-        completeTokenWaiters_called = false
-        completeTokenWaiters_token = nil
+        completeConnectionIdWaiters_connectionIdResult = nil
 
         _backgroundWorkers?.removeAll()
         init_completion = nil
@@ -170,6 +157,14 @@ extension ChatClient {
     var mockOfflineRequestsRepository: OfflineRequestsRepository_Spy {
         offlineRequestsRepository as! OfflineRequestsRepository_Spy
     }
+    
+    var mockTokenHandler: TokenHandler_Mock {
+        tokenHandler as! TokenHandler_Mock
+    }
+    
+    var mockChatClientUpdater: ChatClientUpdater_Mock {
+        clientUpdater as! ChatClientUpdater_Mock
+    }
 
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
         guard let connectionId = connectionId else {
@@ -212,7 +207,8 @@ extension ChatClient.Environment {
             clientUpdaterBuilder: ChatClientUpdater_Mock.init,
             syncRepositoryBuilder: SyncRepository_Spy.init,
             messageRepositoryBuilder: MessageRepository_Spy.init,
-            offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Spy.init
+            offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Spy.init,
+            tokenHandlerBuilder: TokenHandler_Mock.init
         )
     }
 

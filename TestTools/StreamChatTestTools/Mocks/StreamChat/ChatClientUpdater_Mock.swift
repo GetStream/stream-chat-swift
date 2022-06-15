@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamChatTestHelpers
 
 /// Mock implementation of `ChatClientUpdater`
 final class ChatClientUpdater_Mock: ChatClientUpdater {
@@ -18,7 +19,6 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
     var reloadUserIfNeeded_callsCount = 0
     @Atomic var reloadUserIfNeeded_completion: ((Error?) -> Void)?
     @Atomic var reloadUserIfNeeded_callSuper: (() -> Void)?
-    @Atomic var reloadUserIfNeeded_userConnectionProvider: UserConnectionProvider?
 
     @Atomic var connect_called = false
     @Atomic var connect_completion: ((Error?) -> Void)?
@@ -39,16 +39,13 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
 
     override func reloadUserIfNeeded(
         userInfo: UserInfo,
-        userConnectionProvider: UserConnectionProvider,
         completion: ((Error?) -> Void)?
     ) {
         reloadUserIfNeeded_called = true
         reloadUserIfNeeded_completion = completion
-        reloadUserIfNeeded_userConnectionProvider = userConnectionProvider
         reloadUserIfNeeded_callSuper = {
             super.reloadUserIfNeeded(
                 userInfo: userInfo,
-                userConnectionProvider: userConnectionProvider,
                 completion: completion
             )
         }
@@ -66,6 +63,12 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
         disconnect_source = source
         disconnect_completion = completion
     }
+    
+    lazy var mock_handleExpiredTokenError = MockFunc.mock(for: handleExpiredTokenError)
+    
+    override func handleExpiredTokenError(_ serverError: ClientError, completion: ErrorCompletionHandler? = nil) {
+        mock_handleExpiredTokenError.call(with: (serverError, completion))
+    }
 
     // MARK: - Clean Up
 
@@ -82,5 +85,7 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
 
         disconnect_source = nil
         disconnect_completion = nil
+        
+        mock_handleExpiredTokenError.calls.removeAll()
     }
 }

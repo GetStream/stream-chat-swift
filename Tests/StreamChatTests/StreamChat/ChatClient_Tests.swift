@@ -244,53 +244,19 @@ final class ChatClient_Tests: XCTestCase {
     func test_connectionStatus_isExposed() {
         let config = inMemoryStorageConfig
 
-        // Create an environment.
-        var clientUpdater: ChatClientUpdater?
-        var env = ChatClient.Environment()
-        env.clientUpdaterBuilder = {
-            if let updater = clientUpdater {
-                return updater
-            } else {
-                let updater = ChatClientUpdater(client: $0)
-                clientUpdater = updater
-                return updater
-            }
-        }
-
-        // Create a new chat client.
-        var initCompletionCalled = false
         let client = ChatClient(
-            config: config,
-            environment: env
+            config: config
         )
         
-        client.connectAnonymousUser { error in
-            XCTAssertNil(error)
-            initCompletionCalled = true
-        }
-
-        XCTAssertFalse(initCompletionCalled)
+        client.webSocketClient?.simulateConnectionStatus(.connecting)
         // Assert connection status is `.initialized`
         XCTAssertEqual(client.connectionStatus, .connecting)
-
-        // Simulate `connect` call and catch the completion.
-        var connectCompletionCalled = false
-        clientUpdater?.connect { error in
-            XCTAssertNil(error)
-            connectCompletionCalled = true
-        }
-
-        // Assert `connect` completion hasn't been called yet.
-        XCTAssertFalse(connectCompletionCalled)
 
         // Simulate established web-socket connection.
         client.webSocketClient?.simulateConnectionStatus(.connected(connectionId: .unique))
         // Assert the WSConnectionState is exposed as ChatClientConnectionStatus
         XCTAssertEqual(client.connectionStatus, .connected)
-
-        // Assert `connect` completion is called.
-        XCTAssertTrue(connectCompletionCalled)
-
+        
         // Simulate web-socket disconnection.
         let stopError = WebSocketEngineError(
             reason: .unique,
@@ -388,63 +354,17 @@ final class ChatClient_Tests: XCTestCase {
     }
     
     func test_webSocketIsDisconnected_becauseTokenExpired_newTokenIsExpiredToo() throws {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            environment: testEnv.environment
-        )
+        // GIVEN
+        let client = makeConnectedChatClient(token: .unique(userId: userId))
         
-        let userId: UserId = .unique
-        client.connectUser(userInfo: .init(id: userId), tokenProvider: { $0(.success(.unique(userId: userId))) })
-        client.currentUserId = userId
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Simulate .connected state to obtain connection id
-        let connectionId: ConnectionId = .unique
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
-        
-        XCTAssertEqual(client.connectionId, connectionId)
-        
-        // Was called on ChatClient init
-        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
-
-        // Simulate WebSocketConnection change to "disconnected"
+        // WHEN
         let error = ClientError(with: ErrorPayload(code: 40, message: "", statusCode: 200))
-        testEnv.webSocketClient?
-            .connectionStateDelegate?
-            .webSocketClient(
-                testEnv.webSocketClient!,
-                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: error))
-            )
-        
-        time.run(numberOfSeconds: 0.6)
-        // Was called one more time on receiving token expired error
-        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
-        
-        // Token is expired again
-        testEnv.webSocketClient?
-            .connectionStateDelegate?
-            .webSocketClient(
-                testEnv.webSocketClient!,
-                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: error))
-            )
-        
-        // Does not call secondary token refresh right away
-        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
-        
-        // Does not call secondary token refresh when not enough time has passed
-        time.run(numberOfSeconds: 0.1)
-        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
-        
-        // Calls secondary token refresh when enough time has passed
-        time.run(numberOfSeconds: 3)
-        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 3)
+        client.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: .serverInitiated(error: error)))
 
-        // We set connectionId to nil after token expiration disconnect
+        // THEN
         XCTAssertNil(client.connectionId)
+        XCTAssertEqual(client.mockChatClientUpdater.mock_handleExpiredTokenError.calls.count, 1)
+        XCTAssertEqual(client.mockChatClientUpdater.mock_handleExpiredTokenError.calls.first?.0, error)
     }
     
     func test_clientProvidesConnectionId_afterUnlockingResources() {
@@ -489,25 +409,14 @@ final class ChatClient_Tests: XCTestCase {
             environment: testEnv.environment
         )
 
-        client.provideToken { [weak client] _ in
-            // We call the block when it deinits, and this check is not important for us then
-            guard client != nil else { return }
+        let waiterToken = client.provideToken { _ in
             XCTFail("Should not reach here because the block should be removed when invalidating")
         }
-
-        XCTAssertEqual(client.tokenWaiters.count, 1)
-
-        guard let waiterToken = client.tokenWaiters.first?.key else {
-            XCTFail("Should have a token")
-            return
-        }
-
+        
         client.invalidateTokenWaiter(waiterToken)
-
-        XCTAssertEqual(client.tokenWaiters.count, 0)
-
+        
         // We simulate token waiters completion to make sure the previously invalidated block is not executed
-        client.completeTokenWaiters(token: nil)
+        client.tokenHandler.cancelRefreshFlow(with: TestError())
     }
 
     func test_invalidateConnectionIdWaiterRemovesBlockFromWaiter() {
@@ -517,7 +426,7 @@ final class ChatClient_Tests: XCTestCase {
             environment: testEnv.environment
         )
 
-        client.provideConnectionId { [weak client] _ in
+        let waiterToken = client.provideConnectionId { [weak client] _ in
             // We call the block when it deinits, and this check is not important for us then
             guard client != nil else { return }
             XCTFail("Should not reach here because the block should be removed when invalidating")
@@ -525,17 +434,12 @@ final class ChatClient_Tests: XCTestCase {
 
         XCTAssertEqual(client.connectionIdWaiters.count, 1)
 
-        guard let waiterToken = client.connectionIdWaiters.first?.key else {
-            XCTFail("Should have a token")
-            return
-        }
-
         client.invalidateConnectionIdWaiter(waiterToken)
 
         XCTAssertEqual(client.connectionIdWaiters.count, 0)
 
         // We simulate connection id waiters completion to make sure the previously invalidated block is not executed
-        client.completeConnectionIdWaiters(connectionId: nil)
+        client.completeConnectionIdWaiters(result: .failure(TestError()))
     }
     
     // MARK: - APIClient tests
@@ -585,8 +489,8 @@ final class ChatClient_Tests: XCTestCase {
         client.disconnect()
         
         // THEN
-        switch client.userConnectionProvider {
-        case .notInitiated(let userId):
+        switch client.tokenHandler.connectionProvider {
+        case let .notInitiated(userId):
             XCTAssertEqual(userId, client.currentUserId)
         default:
             XCTFail()
@@ -604,12 +508,58 @@ final class ChatClient_Tests: XCTestCase {
         client.disconnect()
         
         // THEN
-        switch client.userConnectionProvider {
+        switch client.tokenHandler.connectionProvider {
         case .noCurrentUser:
             break
         default:
             XCTFail()
         }
+    }
+    
+    func test_whenAPIClientTriggersTokenRefresher_clientUpdaterIsTriggeredAndCompletionIsCalledWithResult() {
+        for error in [nil, TestError()] {
+            // GIVEN
+            let client = ChatClient_Mock(config: inMemoryStorageConfig)
+            
+            let serverError = ClientError("some message")
+            let tokenRefresherCompletionCalled = expectation(description: "tokenRefresher completion called")
+            var tokenRefresherCompletionError: Error?
+            client.mockAPIClient.init_tokenRefresher(serverError) { error in
+                tokenRefresherCompletionError = error
+                tokenRefresherCompletionCalled.fulfill()
+            }
+            
+            XCTAssertEqual(client.mockChatClientUpdater.mock_handleExpiredTokenError.calls.count, 1)
+            XCTAssertEqual(client.mockChatClientUpdater.mock_handleExpiredTokenError.calls.first?.0, serverError)
+            
+            // WHEN
+            client.mockChatClientUpdater.mock_handleExpiredTokenError.calls.first?.1?(error)
+            
+            // THEN
+            wait(for: [tokenRefresherCompletionCalled], timeout: defaultTimeout)
+            XCTAssertEqual(tokenRefresherCompletionError as? TestError, error)
+        }
+    }
+    
+    func test_whenAPIClientTriggersTokenRefresherAndClientIsDeallocated_errorIsReturned() throws {
+        // GIVEN
+        var client: ChatClient_Mock? = ChatClient_Mock(config: inMemoryStorageConfig)
+        let tokenRefresher = try XCTUnwrap(client?.mockAPIClient.init_tokenRefresher)
+        
+        // WHEN
+        client = nil
+        
+        let serverError = ClientError("some message")
+        let tokenRefresherCompletionCalled = expectation(description: "tokenRefresher completion called")
+        var tokenRefresherCompletionError: Error?
+        tokenRefresher(serverError) { error in
+            tokenRefresherCompletionError = error
+            tokenRefresherCompletionCalled.fulfill()
+        }
+        
+        // THEN
+        wait(for: [tokenRefresherCompletionCalled], timeout: defaultTimeout)
+        XCTAssertTrue(tokenRefresherCompletionError is ClientError.ClientHasBeenDeallocated)
     }
     
     // MARK: - Background workers tests
@@ -618,9 +568,19 @@ final class ChatClient_Tests: XCTestCase {
         let config = inMemoryStorageConfig
 
         // Create a new chat client
-        var client: ChatClient! = ChatClient(config: config)
+        var env = ChatClient.Environment()
+        env.webSocketClientBuilder = {
+            WebSocketClient_Mock(
+                sessionConfiguration: $0,
+                requestEncoder: $1,
+                eventDecoder: $2,
+                eventNotificationCenter: $3
+            )
+        }
+        var client: ChatClient! = ChatClient(config: config, environment: env)
+        client.connectAnonymousUser { _ in }
         
-        client.connectAnonymousUser()
+        wait(for: [client.mockWebSocketClient.connect_expectation], timeout: defaultTimeout)
         
         // Check all the mandatory background workers are initialized
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
@@ -659,7 +619,6 @@ final class ChatClient_Tests: XCTestCase {
         let config = ChatClientConfig(apiKeyString: .unique)
         // Create an active client to save the current user to the database.
         var chatClient: ChatClient! = ChatClient(config: config)
-        chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
         
         // Create current user in the database.
         try chatClient.databaseContainer.createCurrentUser(id: currentUserId)
@@ -674,7 +633,6 @@ final class ChatClient_Tests: XCTestCase {
                     // Create a `ChatClient` instance with the same config
                     // to access the storage with exited current user.
                     let chatClient = ChatClient(config: config)
-                    chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
 
                     let expectedWebSocketEndpoint = AnyEndpoint(
                         .webSocketConnect(userInfo: UserInfo(id: currentUserId))
@@ -708,8 +666,8 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: config)
         
         // THEN
-        switch client.userConnectionProvider {
-        case .notInitiated(let userId):
+        switch client.tokenHandler.connectionProvider {
+        case let .notInitiated(userId):
             XCTAssertEqual(userId, currentUserId)
         case .noCurrentUser, .initiated:
             XCTFail()
@@ -721,7 +679,7 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: .init(apiKeyString: .unique))
         
         // THEN
-        switch client.userConnectionProvider {
+        switch client.tokenHandler.connectionProvider {
         case .noCurrentUser:
             break
         default:
@@ -731,144 +689,146 @@ final class ChatClient_Tests: XCTestCase {
     
     // MARK: - Connect
     
-    func test_reloadUserIfNeededIsCalled_whenClientIsInitialized_andErrorIsPropagated() throws {
+    func test_connectUserWithTokenProvider_callsUpdaterAndPropagatesResultToCompletion() {
         for error in [nil, TestError()] {
             // GIVEN
-            let client = ChatClient(
-                config: inMemoryStorageConfig,
-                environment: testEnv.environment
-            )
+            let client = ChatClient_Mock(config: inMemoryStorageConfig)
             
-            // WHEN
             let token = Token.unique()
-            var connectCompletionCalled = false
+            let tokenProvider: TokenProvider = { $0(.success(token)) }
+            let connectCompletionCalled = expectation(description: "connectUser completion called")
             var connectCompletionError: Error?
-            client.connectUser(
-                userInfo: .init(id: .unique),
-                tokenProvider: { $0(.success(token)) },
-                completion: {
-                    connectCompletionCalled = true
-                    connectCompletionError = $0
-                }
+            client.connectUser(userInfo: .init(id: token.userId), tokenProvider: tokenProvider) {
+                connectCompletionError = $0
+                connectCompletionCalled.fulfill()
+            }
+            
+            XCTAssertEqual(client.mockChatClientUpdater.reloadUserIfNeeded_callsCount, 1)
+            XCTAssertEqual(
+                client.mockTokenHandler.connectionProvider,
+                .initiated(userId: token.userId, tokenProvider: tokenProvider)
             )
-            
-            // THEN
-            var providedToken: Token?
-            client.userConnectionProvider.fetchToken { providedToken = try? $0.get() }
-            XCTAssertEqual(providedToken, token)
-            
-            XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
 
             // WHEN
-            testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
+            client.mockChatClientUpdater.reloadUserIfNeeded_completion!(error)
             
             // THEN
+            wait(for: [connectCompletionCalled], timeout: defaultTimeout)
             XCTAssertEqual(connectCompletionError as? TestError, error)
-            XCTAssertTrue(connectCompletionCalled)
         }
     }
     
-    func test_connectUserWithToken_setsTokenProvider_andInitiatesConnection() {
+    func test_connectUserWithToken_callsUpdaterAndPropagatesResultToCompletion() {
         for error in [nil, TestError()] {
             // GIVEN
-            let client = ChatClient(
-                config: inMemoryStorageConfig,
-                environment: testEnv.environment
-            )
+            let client = ChatClient_Mock(config: inMemoryStorageConfig)
             
-            // WHEN
             let token = Token.unique()
-            var connectCompletionCalled = false
+            let connectCompletionCalled = expectation(description: "connectUser completion called")
             var connectCompletionError: Error?
-            client.connectUser(
-                userInfo: .init(id: .unique),
-                token: token,
-                completion: {
-                    connectCompletionCalled = true
-                    connectCompletionError = $0
-                }
+            client.connectUser(userInfo: .init(id: token.userId), token: token) {
+                connectCompletionError = $0
+                connectCompletionCalled.fulfill()
+            }
+            
+            XCTAssertEqual(client.mockChatClientUpdater.reloadUserIfNeeded_callsCount, 1)
+            XCTAssertEqual(
+                client.mockTokenHandler.connectionProvider,
+                .static(token)
             )
-            
-            // THEN
-            var providedToken: Token?
-            client.userConnectionProvider.fetchToken { providedToken = try? $0.get() }
-            XCTAssertEqual(providedToken, token)
-            
-            XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
-            
+
             // WHEN
-            testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
+            client.mockChatClientUpdater.reloadUserIfNeeded_completion!(error)
             
             // THEN
+            wait(for: [connectCompletionCalled], timeout: defaultTimeout)
             XCTAssertEqual(connectCompletionError as? TestError, error)
-            XCTAssertTrue(connectCompletionCalled)
         }
     }
     
-    func test_connectGuestUser_setsTokenProvider_andInitiatesConnection() {
+    func test_connectGuestUser_callsUpdaterAndPropagatesResultToCompletion() {
         for error in [nil, TestError()] {
             // GIVEN
-            let client = ChatClient(
-                config: inMemoryStorageConfig,
-                environment: testEnv.environment
-            )
+            let client = ChatClient_Mock(config: inMemoryStorageConfig)
             
-            // WHEN
-            let user = UserInfo(
+            let userInfo = UserInfo(
                 id: .unique,
                 name: .unique,
                 imageURL: .localYodaImage,
                 extraData: [:]
             )
-            var connectCompletionCalled = false
+            let connectCompletionCalled = expectation(description: "connectUser completion called")
             var connectCompletionError: Error?
-            client.connectGuestUser(userInfo: user) {
-                connectCompletionCalled = true
+            client.connectGuestUser(userInfo: userInfo) {
                 connectCompletionError = $0
+                connectCompletionCalled.fulfill()
             }
             
-            // THEN
-            XCTAssertNotNil(client.userConnectionProvider)
-            XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
-            
+            XCTAssertEqual(client.mockChatClientUpdater.reloadUserIfNeeded_callsCount, 1)
+            XCTAssertEqual(
+                client.mockTokenHandler.connectionProvider,
+                .guest(client: client, userId: userInfo.id)
+            )
+
             // WHEN
-            testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
-            XCTAssertEqual(connectCompletionError as? TestError, error)
+            client.mockChatClientUpdater.reloadUserIfNeeded_completion!(error)
             
             // THEN
-            XCTAssertTrue(connectCompletionCalled)
+            wait(for: [connectCompletionCalled], timeout: defaultTimeout)
+            XCTAssertEqual(connectCompletionError as? TestError, error)
         }
     }
     
-    func test_connectAnonymoususer_setsTokenProvider_andInitiatesConnection() {
+    func test_connectAnonymousUser_callsUpdaterAndPropagatesResultToCompletion() {
         for error in [nil, TestError()] {
             // GIVEN
-            let client = ChatClient(
-                config: inMemoryStorageConfig,
-                environment: testEnv.environment
-            )
+            let client = ChatClient_Mock(config: inMemoryStorageConfig)
             
-            // WHEN
-            var connectCompletionCalled = false
+            let connectCompletionCalled = expectation(description: "connectUser completion called")
             var connectCompletionError: Error?
             client.connectAnonymousUser {
-                connectCompletionCalled = true
                 connectCompletionError = $0
+                connectCompletionCalled.fulfill()
             }
             
-            // THEN
             var providedToken: Token?
-            client.userConnectionProvider.fetchToken { providedToken = try? $0.get() }
+            client.mockTokenHandler.connectionProvider.fetchToken { providedToken = try? $0.get() }
             XCTAssertEqual(providedToken?.userId.isAnonymousUser, true)
+            XCTAssertEqual(client.mockChatClientUpdater.reloadUserIfNeeded_callsCount, 1)
             
-            XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
-
             // WHEN
-            testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
+            client.mockChatClientUpdater.reloadUserIfNeeded_completion!(error)
             
             // THEN
+            wait(for: [connectCompletionCalled], timeout: defaultTimeout)
             XCTAssertEqual(connectCompletionError as? TestError, error)
-            XCTAssertTrue(connectCompletionCalled)
+        }
+    }
+    
+    // MARK: - Set token
+    
+    func test_setToken_callsUpdaterAndPropagatesResultToCompletion() {
+        for error in [nil, TestError()] {
+            // GIVEN
+            let client = ChatClient_Mock(config: inMemoryStorageConfig)
+            
+            let token = Token.unique()
+            let setTokenCompletionCalled = expectation(description: "connectUser completion called")
+            var setTokenCompletionError: Error?
+            client.setToken(token: token) {
+                setTokenCompletionError = $0
+                setTokenCompletionCalled.fulfill()
+            }
+            
+            XCTAssertEqual(client.mockTokenHandler.mock_setToken.calls.count, 1)
+            XCTAssertEqual(client.mockTokenHandler.mock_setToken.calls.first?.0, token)
+            
+            // WHEN
+            client.mockTokenHandler.mock_setToken.calls.first?.1?(error)
+            
+            // THEN
+            wait(for: [setTokenCompletionCalled], timeout: defaultTimeout)
+            XCTAssertEqual(setTokenCompletionError as? TestError, error)
         }
     }
 
@@ -927,6 +887,23 @@ final class ChatClient_Tests: XCTestCase {
         }
         
         XCTAssertEqual(streamHeader, SystemEnvironment.xStreamClientHeader)
+    }
+    
+    // MARK: - Private
+    
+    private func makeConnectedChatClient(token: Token, tokenProvider: TokenProvider? = nil) -> ChatClient_Mock {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalStorageEnabled = false
+
+        let client = ChatClient_Mock(config: config)
+        client.currentUserId = userId
+        client.mockTokenHandler.currentToken = token
+        client.mockTokenHandler.connectionProvider = .initiated(
+            userId: token.userId,
+            tokenProvider: tokenProvider ?? { $0(.success(token)) }
+        )
+        client.webSocketClient?.simulateConnectionStatus(.connected(connectionId: .unique))
+        return client
     }
 }
 
@@ -1031,8 +1008,7 @@ private class TestEnvironment {
             backgroundTaskSchedulerBuilder: {
                 self.backgroundTaskScheduler = BackgroundTaskScheduler_Mock()
                 return self.backgroundTaskScheduler!
-            },
-            timerType: VirtualTimeTimer.self
+            }
         )
     }()
 }

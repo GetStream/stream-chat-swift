@@ -18,7 +18,7 @@ final class APIClient_Tests: XCTestCase {
     var encoder: RequestEncoder_Spy!
     var decoder: RequestDecoder_Spy!
     var cdnClient: CDNClient_Spy!
-    var tokenRefresher: ((@escaping () -> Void) -> Void)!
+    var tokenRefresher: RefreshTokenBlock!
     var queueOfflineRequest: QueueOfflineRequestBlock!
 
     override func setUp() {
@@ -40,7 +40,7 @@ final class APIClient_Tests: XCTestCase {
         encoder = RequestEncoder_Spy(baseURL: baseURL, apiKey: apiKey)
         decoder = RequestDecoder_Spy()
         cdnClient = CDNClient_Spy()
-        tokenRefresher = { _ in }
+        tokenRefresher = { _, _ in }
         queueOfflineRequest = { _ in }
         
         apiClient = APIClient(
@@ -230,7 +230,7 @@ final class APIClient_Tests: XCTestCase {
     }
 
     func test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests() {
-        createClient(tokenRefresher: { _ in
+        createClient(tokenRefresher: { _, _ in
             // If token refresh never completes, it will never complete the request
         })
 
@@ -363,7 +363,7 @@ final class APIClient_Tests: XCTestCase {
     
     func test_requestFailedWithExpiredToken_refreshesToken() throws {
         var tokenRefresherWasCalled = false
-        createClient(tokenRefresher: { _ in
+        createClient(tokenRefresher: { _, _ in
             tokenRefresherWasCalled = true
         })
 
@@ -377,10 +377,10 @@ final class APIClient_Tests: XCTestCase {
         XCTEnsureRequestsWereExecuted(times: 1)
     }
 
-    func test_requestFailedWithExpiredToken_requeuedOperationAndRetries() throws {
-        var completeTokenRefresh = {}
+    func test_whenTokenIsRefreshed_failedRequestOperationIsRetried() throws {
+        var completeTokenRefresh: (Error?) -> Void = { _ in }
         let tokenRefreshIsCalled = expectation(description: "Token refresh is called")
-        createClient(tokenRefresher: { completion in
+        createClient(tokenRefresher: { _, completion in
             tokenRefreshIsCalled.fulfill()
             completeTokenRefresh = completion
         })
@@ -399,7 +399,7 @@ final class APIClient_Tests: XCTestCase {
 
         let testUser = TestUser(name: "test")
         decoder.decodeRequestResponse = .success(testUser)
-        completeTokenRefresh()
+        completeTokenRefresh(nil)
 
         AssertAsync.willBeTrue(result != nil)
 
@@ -411,44 +411,41 @@ final class APIClient_Tests: XCTestCase {
         XCTEnsureRequestsWereExecuted(times: 2)
     }
     
-    func test_requestFailedWithExpiredToken_retriesRequestUntilReachingMaximumAttempts() throws {
-        var tokenRefresherWasCalled = false
-        createClient(tokenRefresher: { completion in
-            tokenRefresherWasCalled = true
-            completion()
+    func test_whenTokenRefreshFails_failedRequestOperationIsCancelled() throws {
+        var completeTokenRefresh: (Error?) -> Void = { _ in }
+        let tokenRefreshIsCalled = expectation(description: "Token refresh is called")
+        createClient(tokenRefresher: { _, completion in
+            completeTokenRefresh = completion
+            tokenRefreshIsCalled.fulfill()
         })
-        
+
         let encoderError = ClientError.ExpiredToken()
         decoder.decodeRequestResponse = .failure(encoderError)
 
-        var result: Result<TestUser, Error>?
-        waitUntil(timeout: 0.5) { done in
-            apiClient.request(
-                endpoint: Endpoint<TestUser>.mock(),
-                completion: {
-                    result = $0; done()
-                }
-            )
+        var requestResult: Result<TestUser, Error>?
+        let requestCompleted = expectation(description: "Token refresh is called")
+        apiClient.request(endpoint: Endpoint<TestUser>.mock()) {
+            requestResult = $0
+            requestCompleted.fulfill()
         }
+        
+        wait(for: [tokenRefreshIsCalled], timeout: defaultTimeout)
+        
+        let tokenRefreshError = TestError()
+        completeTokenRefresh(tokenRefreshError)
 
-        XCTAssertTrue(tokenRefresherWasCalled)
-
-        guard let result = result, case let .failure(error) = result else {
-            XCTFail()
-            return
-        }
-
-        XCTAssertTrue(error is ClientError.TooManyTokenRefreshAttempts)
-        // 1 request + 10 refresh attempts
-        XCTEnsureRequestsWereExecuted(times: 11)
+        wait(for: [requestCompleted], timeout: defaultTimeout)
+        
+        XCTAssertEqual(requestResult?.error as? TestError, tokenRefreshError)
+        XCTEnsureRequestsWereExecuted(times: 1)
     }
 
     // MARK: - Flush
 
     func test_flushRequestsQueue_whenThereAreOperationsOngoing_shouldStopQueuedOnes() {
-        var completeTokenRefresh = {}
+        var completeTokenRefresh: (Error?) -> Void = { _ in }
         let tokenRefreshIsCalled = expectation(description: "Token refresh is called")
-        createClient(tokenRefresher: { completion in
+        createClient(tokenRefresher: { _, completion in
             tokenRefreshIsCalled.fulfill()
             completeTokenRefresh = completion
         })
@@ -478,7 +475,7 @@ final class APIClient_Tests: XCTestCase {
         apiClient.flushRequestsQueue()
 
         // 4. We restart the queue by completing the token refresh
-        completeTokenRefresh()
+        completeTokenRefresh(nil)
 
         // 5. We apply a delay to verify that only one request (the initial one) went through
         waitUntil { done in
@@ -576,16 +573,16 @@ final class APIClient_Tests: XCTestCase {
     }
 
     func test_whenInRecoveryModeAndARequestFailsOrderShouldBeKeptWhenRetrying() {
-        var complete3rdTokenRefresh = {}
+        var complete3rdTokenRefresh: (Error?) -> Void = { _ in }
         var tokenRefreshCalls = 0
         let tokenRefreshIsCalled3Times = expectation(description: "Token refresh is called")
-        createClient(tokenRefresher: { completion in
+        createClient(tokenRefresher: { _, completion in
             tokenRefreshCalls += 1
             if tokenRefreshCalls == 3 {
                 tokenRefreshIsCalled3Times.fulfill()
                 complete3rdTokenRefresh = completion
             } else {
-                completion()
+                completion(nil)
             }
         })
 
@@ -619,7 +616,7 @@ final class APIClient_Tests: XCTestCase {
         let testUser = TestUser(name: "test")
         decoder.decodeRequestResponse = .success(testUser)
 
-        complete3rdTokenRefresh()
+        complete3rdTokenRefresh(nil)
 
         waitForExpectations(timeout: 0.5, handler: nil)
 
@@ -637,7 +634,7 @@ final class APIClient_Tests: XCTestCase {
 
 extension APIClient_Tests {
     private func createClient(
-        tokenRefresher: ((@escaping () -> Void) -> Void)? = nil,
+        tokenRefresher: RefreshTokenBlock? = nil,
         queueOfflineRequest: QueueOfflineRequestBlock? = nil
     ) {
         if let tokenRefresher = tokenRefresher {

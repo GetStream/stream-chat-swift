@@ -141,8 +141,7 @@ public extension CurrentChatUserController {
         }
         
         chatClientUpdater.reloadUserIfNeeded(
-            userInfo: .init(id: currentUserId),
-            userConnectionProvider: client.userConnectionProvider
+            userInfo: .init(id: currentUserId)
         ) { error in
             self.callback {
                 completion?(error)

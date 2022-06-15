@@ -107,14 +107,13 @@ public class ChatClient {
                 decoder: decoder,
                 sessionConfiguration: urlSessionConfiguration
             ),
-            { [weak self] completion in
+            { [weak self] serverError, completion in
                 guard let self = self else {
-                    completion()
+                    completion(ClientError.ClientHasBeenDeallocated())
                     return
                 }
-                self.refreshToken(
-                    completion: { _ in completion() }
-                )
+                
+                self.clientUpdater.handleExpiredTokenError(serverError, completion: completion)
             },
             { [weak self] endpoint in
                 self?.syncRepository.queueOfflineRequest(endpoint: endpoint)
@@ -127,7 +126,7 @@ public class ChatClient {
     lazy var webSocketClient: WebSocketClient? = {
         var encoder = environment.requestEncoderBuilder(config.baseURL.webSocketBaseURL, config.apiKey)
         encoder.connectionDetailsProviderDelegate = self
-                
+        
         // Create a WebSocketClient.
         let webSocketClient = environment.webSocketClientBuilder?(
             urlSessionConfiguration,
@@ -190,19 +189,14 @@ public class ChatClient {
         )
     }()
     
+    private(set) lazy var tokenHandler = environment.tokenHandlerBuilder(
+        currentUserId.map(UserConnectionProvider.notInitiated) ?? .noCurrentUser
+    )
+    
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
-    private(set) lazy var userConnectionProvider = currentUserId.map(
-        UserConnectionProvider.notInitiated
-    ) ?? .noCurrentUser
     
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
-    
-    /// Retry timing strategy for refreshing an expiried token
-    private lazy var tokenExpirationRetryStrategy = environment.tokenExpirationRetryStrategy
-    
-    /// A timer that runs token refreshing job
-    private var tokenRetryTimer: TimerControl?
     
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
@@ -223,19 +217,15 @@ public class ChatClient {
     
     /// An array of requests waiting for the connection id
     @Atomic private(set) var connectionIdWaiters: [WaiterToken: ConnectionIdWaiter] = [:]
-
-    /// An array of requests waiting for the token
-    @Atomic private(set) var tokenWaiters: [WaiterToken: TokenWaiter] = [:]
     
     /// The token of the current user. If the current user is anonymous, the token is `nil`.
-    @Atomic var currentToken: Token?
+    var currentToken: Token? { tokenHandler.currentToken }
     
     /// Sets the user token to the client, this method is only needed to perform API calls
     /// without connecting as a user.
     /// You should only use this in special cases like a notification service or other background process
-    public func setToken(token: Token) {
-        _currentToken.wrappedValue = token
-        completeTokenWaiters(token: token)
+    public func setToken(token: Token, completion: ((Error?) -> Void)? = nil) {
+        tokenHandler.set(token: token, completion: completion)
     }
 
     /// Creates a new instance of `ChatClient`.
@@ -270,13 +260,13 @@ public class ChatClient {
         self.config = config
         self.environment = environment
 
-        setupConnectionRecoveryHandler(with: environment)
         currentUserId = fetchCurrentUserIdFromDatabase()
+        setupConnectionRecoveryHandler(with: environment)
     }
     
     deinit {
-        completeConnectionIdWaiters(connectionId: nil)
-        completeTokenWaiters(token: nil)
+        let error = ClientError.ClientHasBeenDeallocated()
+        completeConnectionIdWaiters(result: .failure(error))
     }
 
     func setupConnectionRecoveryHandler(with environment: Environment) {
@@ -376,7 +366,6 @@ public class ChatClient {
         clientUpdater.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
         }
-        userConnectionProvider = currentUserId.map(UserConnectionProvider.notInitiated) ?? .noCurrentUser
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
@@ -413,27 +402,16 @@ public class ChatClient {
     func trackChannelListController(_ channelListController: ChatChannelListController) {
         activeChannelListControllers.add(channelListController)
     }
-
-    func completeConnectionIdWaiters(connectionId: String?) {
-        let result: Result<ConnectionId, Error> = connectionId.map { .success($0) } ?? .failure(
-            ClientError.MissingConnectionId("Failed to get `connectionId`, request can't be created.")
-        )
+    
+    func completeConnectionIdWaiters(result: Result<ConnectionId, Error>) {
+        var waiters: [ConnectionIdWaiter] = []
         
-        _connectionIdWaiters.mutate { waiters in
-            waiters.forEach { $0.value(result) }
-            waiters.removeAll()
+        _connectionIdWaiters.mutate {
+            waiters = Array($0.values)
+            $0.removeAll()
         }
-    }
-
-    func completeTokenWaiters(token: Token?) {
-        let result: Result<Token, Error> = token.map { .success($0) } ?? .failure(
-            ClientError.MissingToken("Failed to get `token`, request can't be created.")
-        )
         
-        _tokenWaiters.mutate { waiters in
-            waiters.forEach { $0.value(result) }
-            waiters.removeAll()
-        }
+        waiters.forEach { $0(result) }
     }
     
     private func setConnectionInfoAndConnect(
@@ -441,10 +419,10 @@ public class ChatClient {
         userConnectionProvider: UserConnectionProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
-        self.userConnectionProvider = userConnectionProvider
+        tokenHandler.connectionProvider = userConnectionProvider
+        
         clientUpdater.reloadUserIfNeeded(
             userInfo: userInfo,
-            userConnectionProvider: userConnectionProvider,
             completion: completion
         )
     }
@@ -458,7 +436,7 @@ extension ChatClient {
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
             _ CDNClient: CDNClient,
-            _ tokenRefresher: @escaping (@escaping () -> Void) -> Void,
+            _ tokenRefresher: @escaping RefreshTokenBlock,
             _ queueOfflineRequest: @escaping QueueOfflineRequestBlock
         ) -> APIClient = {
             APIClient(
@@ -542,10 +520,6 @@ extension ChatClient {
             }
         }
         
-        var timerType: Timer.Type = DefaultTimer.self
-        
-        var tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy()
-        
         var connectionRecoveryHandlerBuilder: (
             _ webSocketClient: WebSocketClient,
             _ eventNotificationCenter: EventNotificationCenter,
@@ -604,6 +578,18 @@ extension ChatClient {
                 apiClient: $2
             )
         }
+        
+        var tokenHandlerBuilder: (
+            _ connectionProvider: UserConnectionProvider
+        ) -> TokenHandler = {
+            DefaultTokenHandler(
+                connectionProvider: $0,
+                retryStrategy: DefaultRetryStrategy(),
+                retryTimeoutInterval: 10,
+                maximumTokenRefreshAttempts: 10,
+                timerType: DefaultTimer.self
+            )
+        }
     }
 }
 
@@ -649,6 +635,12 @@ extension ClientError {
             "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
         }
     }
+    
+    public class ClientHasBeenDisconnected: ClientError {
+        override public var localizedDescription: String {
+            "ChatClient has been disconnected."
+        }
+    }
 }
 
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
@@ -659,92 +651,26 @@ extension ChatClient: ConnectionStateDelegate {
         
         connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
         
-        // We should notify waiters if connectionId was obtained (i.e. state is .connected)
-        // or for .disconnected state except for disconnect caused by an expired token
-        let shouldNotifyConnectionIdWaiters: Bool
-        let connectionId: String?
         switch state {
         case let .connected(connectionId: id):
-            shouldNotifyConnectionIdWaiters = true
             connectionId = id
+            
+            completeConnectionIdWaiters(result: .success(id))
+            
         case let .disconnected(source):
-            if let error = source.serverError,
-               error.isInvalidTokenError {
-                refreshToken(completion: nil)
-                shouldNotifyConnectionIdWaiters = false
-            } else {
-                shouldNotifyConnectionIdWaiters = true
-            }
             connectionId = nil
+            
+            if let error = source.serverError, error.isInvalidTokenError {
+                clientUpdater.handleExpiredTokenError(error)
+            } else {
+                let error = source.serverError ?? ClientError.ConnectionNotSuccessful()
+                completeConnectionIdWaiters(result: .failure(error))
+            }
         case .initialized,
              .connecting,
              .disconnecting,
              .waitingForConnectionId:
-            shouldNotifyConnectionIdWaiters = false
             connectionId = nil
-        }
-        
-        updateConnectionId(
-            connectionId: connectionId,
-            shouldNotifyWaiters: shouldNotifyConnectionIdWaiters
-        )
-    }
-    
-    private func refreshToken(
-        completion: ((Error?) -> Void)?
-    ) {
-        guard let currentUserId = currentUserId else {
-            completion?(ClientError.CurrentUserDoesNotExist())
-            return
-        }
-        
-        let userConnectionProvider = self.userConnectionProvider
-        let reconnectionDelay = tokenExpirationRetryStrategy.getDelayAfterTheFailure()
-        
-        tokenRetryTimer = environment
-            .timerType
-            .schedule(
-                timeInterval: reconnectionDelay,
-                queue: .main
-            ) { [clientUpdater] in
-                clientUpdater.reloadUserIfNeeded(
-                    userInfo: .init(id: currentUserId),
-                    userConnectionProvider: .initiated(userId: currentUserId) { completion in
-                        userConnectionProvider.fetchToken { result in
-                            if case .success = result {
-                                self.tokenExpirationRetryStrategy.resetConsecutiveFailures()
-                            }
-                            completion(result)
-                        }
-                    },
-                    completion: completion
-                )
-            }
-    }
-    
-    /// Update connectionId and notify waiters if needed
-    /// - Parameters:
-    ///   - connectionId: new connectionId (if present)
-    ///   - shouldFailWaiters: Whether it's necessary to notify waiters or not
-    private func updateConnectionId(
-        connectionId: String?,
-        shouldNotifyWaiters: Bool
-    ) {
-        var connectionIdWaiters: [WaiterToken: ConnectionIdWaiter]!
-        _connectionId.mutate { mutableConnectionId in
-            mutableConnectionId = connectionId
-            _connectionIdWaiters.mutate { _connectionIdWaiters in
-                connectionIdWaiters = _connectionIdWaiters
-                if shouldNotifyWaiters {
-                    _connectionIdWaiters.removeAll()
-                }
-            }
-        }
-        if shouldNotifyWaiters {
-            let result: Result<ConnectionId, Error> = connectionId.map { .success($0) } ?? .failure(
-                ClientError.MissingConnectionId("Failed to get `connectionId`, request can't be created.")
-            )
-            connectionIdWaiters.forEach { $0.value(result) }
         }
     }
 }
@@ -753,15 +679,7 @@ extension ChatClient: ConnectionStateDelegate {
 extension ChatClient: ConnectionDetailsProviderDelegate {
     @discardableResult
     func provideToken(completion: @escaping TokenWaiter) -> WaiterToken {
-        let waiterToken = String.newUniqueId
-        if let token = currentToken {
-            completion(.success(token))
-        } else {
-            _tokenWaiters.mutate {
-                $0[waiterToken] = completion
-            }
-        }
-        return waiterToken
+        tokenHandler.add(tokenWaiter: completion)
     }
 
     @discardableResult
@@ -781,10 +699,8 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
         return waiterToken
     }
 
-    func invalidateTokenWaiter(_ waiter: WaiterToken) {
-        _tokenWaiters.mutate {
-            $0[waiter] = nil
-        }
+    func invalidateTokenWaiter(_ token: WaiterToken) {
+        tokenHandler.removeTokenWaiter(token)
     }
 
     func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {

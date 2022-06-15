@@ -57,7 +57,7 @@ struct DefaultRequestDecoder: RequestDecoder {
             
             if serverError.isInvalidTokenError {
                 log.info("Request failed because of an experied token.", subsystems: .httpRequests)
-                throw ClientError.ExpiredToken()
+                throw ClientError.ExpiredToken(with: serverError)
             }
             
             log

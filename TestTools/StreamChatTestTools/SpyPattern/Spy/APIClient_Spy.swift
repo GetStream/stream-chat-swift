@@ -30,6 +30,7 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var uploadFile_progress: ((Double) -> Void)?
     @Atomic var uploadFile_completion: ((Result<URL, Error>) -> Void)?
     
+    @Atomic var init_tokenRefresher: RefreshTokenBlock
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
     @Atomic var init_requestEncoder: RequestEncoder
     @Atomic var init_requestDecoder: RequestDecoder
@@ -63,9 +64,10 @@ final class APIClient_Spy: APIClient, Spy {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         CDNClient: CDNClient,
-        tokenRefresher: ((@escaping () -> Void) -> Void)!,
+        tokenRefresher: @escaping RefreshTokenBlock,
         queueOfflineRequest: @escaping QueueOfflineRequestBlock
     ) {
+        init_tokenRefresher = tokenRefresher
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
@@ -159,7 +161,7 @@ extension APIClient_Spy {
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
             CDNClient: CDNClient_Spy(),
-            tokenRefresher: { _ in },
+            tokenRefresher: { _, _ in },
             queueOfflineRequest: { _ in }
         )
     }

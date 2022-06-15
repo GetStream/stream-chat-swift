@@ -4,6 +4,8 @@
 
 import Foundation
 
+typealias ErrorCompletionHandler = (Error?) -> Void
+
 class ChatClientUpdater {
     unowned var client: ChatClient
 
@@ -19,22 +21,15 @@ class ChatClientUpdater {
         guard let currentUserId = client.currentUserId else {
             // Set the current user id
             client.currentUserId = newToken.userId
-            // Set the token
-            client.currentToken = newToken
             // Set the web-socket endpoint
             client.webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo)
             // Create background workers
             client.createBackgroundWorkers()
-            // Provide the token to pending API requests
-            client.completeTokenWaiters(token: newToken)
             completion(nil)
             return
         }
         
         guard newToken.userId == currentUserId else {
-            // Cancel all API requests since they are related to the previous user.
-            client.completeTokenWaiters(token: nil)
-
             // Setting a new user is not possible in connectionless mode.
             guard client.config.isClientInActiveMode else {
                 completion(ClientError.ClientIsNotInActiveMode())
@@ -43,9 +38,6 @@ class ChatClientUpdater {
 
             // Update the current user id to the new one.
             client.currentUserId = newToken.userId
-
-            // Update the current token with the new one.
-            client.currentToken = newToken
 
             // Disconnect from web-socket.
             disconnect(source: .userInitiated) { [weak client] in
@@ -81,11 +73,6 @@ class ChatClientUpdater {
             return
         }
 
-        client.currentToken = newToken
-
-        // Forward the new token to waiting requests.
-        client.completeTokenWaiters(token: newToken)
-
         // It makes more sense to create background workers here
         // other than in `init` because workers without currently logged-in
         // user do nothing.
@@ -98,24 +85,28 @@ class ChatClientUpdater {
 
     func reloadUserIfNeeded(
         userInfo: UserInfo,
-        userConnectionProvider: UserConnectionProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
-        userConnectionProvider.fetchToken {
+        client.tokenHandler.refreshToken { [weak self] in
+            guard let self = self else {
+                completion?(ClientError.ClientHasBeenDeallocated())
+                return
+            }
+            
             switch $0 {
             case let .success(newToken):
                 self.prepareEnvironment(
                     userInfo: userInfo,
                     newToken: newToken
                 ) { [weak self] error in
-                    // Errors thrown during `prepareEnvironment` cannot be recovered
-                    if let error = error {
-                        completion?(error)
+                    guard let self = self else {
+                        completion?(ClientError.ClientHasBeenDeallocated())
                         return
                     }
                     
-                    guard let self = self else {
-                        completion?(nil)
+                    // Errors thrown during `prepareEnvironment` cannot be recovered
+                    if let error = error {
+                        completion?(error)
                         return
                     }
                     
@@ -155,18 +146,8 @@ class ChatClientUpdater {
         }
 
         // Set up a waiter for the new connection id to know when the connection process is finished
-        client.provideConnectionId { [weak client] in
-            switch $0 {
-            case .success:
-                completion?(nil)
-            case .failure:
-                // Try to get a concrete error
-                if case let .disconnected(source) = client?.webSocketClient?.connectionState {
-                    completion?(ClientError.ConnectionNotSuccessful(with: source.serverError))
-                } else {
-                    completion?(ClientError.ConnectionNotSuccessful())
-                }
-            }
+        client.provideConnectionId {
+            completion?($0.error)
         }
 
         client.webSocketClient?.connect()
@@ -180,6 +161,7 @@ class ChatClientUpdater {
     ) {
         client.apiClient.flushRequestsQueue()
         client.syncRepository.cancelRecoveryFlow()
+        client.tokenHandler.cancelRefreshFlow(with: ClientError.ClientHasBeenDisconnected())
         
         // Disconnecting is not possible in connectionless mode (duh)
         guard client.config.isClientInActiveMode else {
@@ -203,9 +185,74 @@ class ChatClientUpdater {
             client?.connectionId = nil
 
             // Remove all waiters for connectionId
-            client?.completeConnectionIdWaiters(connectionId: nil)
+            let error = ClientError.ClientHasBeenDisconnected()
+            client?.completeConnectionIdWaiters(result: .failure(error))
             
             completion()
+        }
+    }
+    
+    /// Disconnects the web-socket if needed, refreshes the token and reconnects the web-socket once the token is refreshed.
+    /// - Parameters:
+    ///   - serverError: The server that led to to the disconnection.
+    ///   - completion: The completion that will be called when ws reconnects.
+    func handleExpiredTokenError(_ serverError: ClientError, completion: ErrorCompletionHandler? = nil) {
+        let disconnectionSource: WebSocketConnectionState.DisconnectionSource = .serverInitiated(error: serverError)
+        
+        let disconnectIfNeeded: (@escaping ErrorCompletionHandler) -> Void = { [weak self] completion in
+            guard let ws = self?.client.webSocketClient, ws.connectionState.isConnected else {
+                completion(nil)
+                return
+            }
+            
+            ws.disconnect(source: disconnectionSource) {
+                completion(nil)
+            }
+        }
+        
+        let refreshToken: (@escaping ErrorCompletionHandler) -> Void = { [weak client] completion in
+            guard let client = client else {
+                completion(ClientError.ClientHasBeenDeallocated())
+                return
+            }
+            
+            client.tokenHandler.refreshToken {
+                completion($0.error)
+            }
+        }
+        
+        let reconnectIfNeeded: (@escaping ErrorCompletionHandler) -> Void = { [weak client] completion in
+            guard let client = client else {
+                completion(ClientError.ClientHasBeenDeallocated())
+                return
+            }
+            
+            guard let ws = client.webSocketClient, ws.connectionState == .disconnected(source: disconnectionSource) else {
+                completion(nil)
+                return
+            }
+            
+            client.provideConnectionId { completion($0.error) }
+            
+            ws.connect()
+        }
+        
+        disconnectIfNeeded { disconnectError in
+            guard disconnectError == nil else {
+                completion?(disconnectError)
+                return
+            }
+            
+            refreshToken { refreshError in
+                guard refreshError == nil else {
+                    completion?(refreshError)
+                    return
+                }
+                
+                reconnectIfNeeded { reconnectError in
+                    completion?(reconnectError)
+                }
+            }
         }
     }
 }

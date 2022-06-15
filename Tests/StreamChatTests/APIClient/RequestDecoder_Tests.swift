@@ -76,7 +76,9 @@ final class RequestDecoder_Tests: XCTestCase {
         XCTAssertThrowsError(try {
             let _: Data = try self.decoder.decodeRequestResponse(data: data, response: response, error: nil)
         }()) { (error) in
-            XCTAssert(error is ClientError.ExpiredToken)
+            let tokenExpiredErrorPayload = (error as? ClientError.ExpiredToken)?.underlyingError as? ErrorPayload
+            XCTAssertEqual(tokenExpiredErrorPayload?.isInvalidTokenError, true)
+            XCTAssertEqual(tokenExpiredErrorPayload, errorPayload)
         }
     }
 

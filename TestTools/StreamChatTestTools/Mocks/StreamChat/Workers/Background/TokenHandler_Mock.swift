@@ -45,3 +45,18 @@ final class TokenHandler_Mock: TokenHandler {
         mock_cancelRefreshFlow.call(with: error)
     }
 }
+
+extension UserConnectionProvider: Equatable {
+    public static func == (lhs: UserConnectionProvider, rhs: UserConnectionProvider) -> Bool {
+        switch (lhs, rhs) {
+        case (.noCurrentUser, .noCurrentUser):
+            return true
+        case (.notInitiated(let id1), .notInitiated(let id2)) where id1 == id2:
+            return true
+        case (.initiated(let id1, _), .initiated(let id2, _)) where id1 == id2:
+            return true
+        default:
+            return false
+        }
+    }
+}

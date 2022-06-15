@@ -27,9 +27,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        client.completeConnectionIdWaiters(connectionId: nil)
-        client.completeTokenWaiters(token: nil)
-
+        client.completeConnectionIdWaiters(result: .failure(TestError()))
+        
         controllerCallbackQueueID = nil
         client.mockAPIClient.cleanUp()
         env.chatClientUpdater?.cleanUp()
@@ -74,7 +73,7 @@ final class CurrentUserController_Tests: XCTestCase {
         }
         
         // the sync completion is called when there is a connectionID
-        client.completeConnectionIdWaiters(connectionId: UUID().uuidString)
+        client.completeConnectionIdWaiters(result: .success(.unique))
 
         // Assert client is assigned correctly
         XCTAssertTrue(controller.client === client)
