@@ -86,7 +86,6 @@ extension ChannelList_Tests {
         }
     }
     
-    // Revert scenario to the previous state.
     func test_channelPreviewShowsNoMessages_whenChannelIsEmpty() {
         linkToScenario(withId: 199)
         
@@ -129,33 +128,32 @@ extension ChannelList_Tests {
         }
     }
     
-    // The scenario should be created
-//    func test_channelPreviewShowsPreviousMessage_whenLastMessageIsDeleted() {
-//        linkToScenario(withId: 202)
-//
-//        let message1 = "Previous message"
-//        let message2 = "Last message"
-//
-//        GIVEN("user opens the channel") {
-//            userRobot
-//                .login()
-//                .openChannel()
-//        }
-//        AND("user sends 2 messages") {
-//            userRobot
-//                .sendMessage(message1)
-//                .sendMessage(message2)
-//        }
-//        AND("user deletes the last message") {
-//            userRobot.deleteMessage()
-//        }
-//        WHEN("user goes back to the channel list") {
-//            userRobot.tapOnBackButton()
-//        }
-//        THEN("the channel preview shows previous message") {
-//            userRobot.assertLastMessageInChannelPreview(message1)
-//        }
-//    }
+    func test_channelPreviewShowsPreviousMessage_whenLastMessageIsDeleted() {
+        linkToScenario(withId: 248)
+
+        let message1 = "Previous message"
+        let message2 = "Last message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends 2 messages") {
+            userRobot
+                .sendMessage(message1)
+                .sendMessage(message2)
+        }
+        AND("user deletes the last message") {
+            userRobot.deleteMessage()
+        }
+        WHEN("user goes back to the channel list") {
+            userRobot.tapOnBackButton()
+        }
+        THEN("the channel preview shows previous message") {
+            userRobot.assertLastMessageInChannelPreview(message1)
+        }
+    }
     
     func test_channelPreviewIsNotUpdated_whenThreadReplyIsSent() {
         linkToScenario(withId: 203)
