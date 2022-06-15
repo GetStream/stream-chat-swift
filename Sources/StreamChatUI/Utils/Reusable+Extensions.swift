@@ -30,8 +30,8 @@ extension UITableView {
     ///   - type: A generic cell type
     ///   - indexPath: The indexPath of the row in the UITableView
     /// - Returns: A cell from the type passed through
-    func dequeueReusableCell<Cell: UITableViewCell>(with type: Cell.Type, for indexPath: IndexPath) -> Cell {
-        dequeueReusableCell(withIdentifier: type.reuseIdentifier, for: indexPath) as! Cell
+    func dequeueReusableCell<Cell: UITableViewCell>(with type: Cell.Type, for indexPath: IndexPath, reuseIdentifier: String? = nil) -> Cell {
+        dequeueReusableCell(withIdentifier: reuseIdentifier ?? type.reuseIdentifier, for: indexPath) as! Cell
     }
 }
 
@@ -50,8 +50,8 @@ extension UICollectionView {
     ///   - type: A generic cell type
     ///   - indexPath: The indexPath of the row in the UICollectionView
     /// - Returns: A Cell from the type passed through
-    func dequeueReusableCell<Cell: UICollectionViewCell>(with type: Cell.Type, for indexPath: IndexPath) -> Cell {
-        dequeueReusableCell(withReuseIdentifier: type.reuseIdentifier, for: indexPath) as! Cell
+    func dequeueReusableCell<Cell: UICollectionViewCell>(with type: Cell.Type, for indexPath: IndexPath, reuseIdentifier: String? = nil) -> Cell {
+        dequeueReusableCell(withReuseIdentifier: reuseIdentifier ?? type.reuseIdentifier, for: indexPath) as! Cell
     }
 }
 

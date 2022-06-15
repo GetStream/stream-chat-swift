@@ -342,12 +342,7 @@ open class GalleryVC: _ViewController,
             return UICollectionViewCell()
         }
         
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: reuseIdentifier,
-            for: indexPath
-        ) as? GalleryCollectionViewCell else {
-            return UICollectionViewCell()
-        }
+        let cell = collectionView.dequeueReusableCell(with: GalleryCollectionViewCell.self, for: indexPath, reuseIdentifier: reuseIdentifier)
 
         guard let item = getItem(at: indexPath) else { return cell }
 
