@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LxB-C7-hWF">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LxB-C7-hWF">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -42,28 +42,28 @@
         <!--Master-->
         <scene sceneID="FBh-Le-W2E">
             <objects>
-                <tableViewController title="Master" clearsSelectionOnViewWillAppear="NO" id="Cum-XP-LTo" customClass="CombineSimpleChannelsViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Master" clearsSelectionOnViewWillAppear="NO" id="Cum-XP-LTo" customClass="CombineSimpleChannelsViewController" customModule="StreamChatSample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="o4B-s6-tOX">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="KC1-Rc-dsO" detailTextLabel="Scs-Wu-zzc" style="IBUITableViewCellStyleSubtitle" id="W2n-we-iYD">
-                                <rect key="frame" x="0.0" y="28" width="414" height="55.5"/>
+                                <rect key="frame" x="0.0" y="44.5" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="W2n-we-iYD" id="rqX-7l-GNm">
-                                    <rect key="frame" x="0.0" y="0.0" width="395" height="55.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="383.5" height="55.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="channel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KC1-Rc-dsO">
-                                            <rect key="frame" x="15" y="10" width="60" height="20.5"/>
+                                            <rect key="frame" x="20" y="10" width="60" height="20.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="last message" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Scs-Wu-zzc">
-                                            <rect key="frame" x="15" y="31.5" width="74.5" height="14.5"/>
+                                            <rect key="frame" x="20" y="31.5" width="74.5" height="14.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -108,21 +108,21 @@
         <!--Cool Channel-->
         <scene sceneID="0dN-EP-EqE">
             <objects>
-                <tableViewController storyboardIdentifier="CombineSimpleChatViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="47C-ND-0Qu" customClass="CombineSimpleChatViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="CombineSimpleChatViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="47C-ND-0Qu" customClass="CombineSimpleChatViewController" customModule="StreamChatSample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="nDU-Ia-SV6">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessageCell" textLabel="bBO-9b-79z" style="IBUITableViewCellStyleDefault" id="a0t-QQ-ZVq">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                <rect key="frame" x="0.0" y="44.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="a0t-QQ-ZVq" id="ir1-WF-Odh">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="bBO-9b-79z">
-                                            <rect key="frame" x="20" y="0.0" width="386" height="43.5"/>
+                                            <rect key="frame" x="8" y="0.0" width="398" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
@@ -146,14 +146,14 @@
         <!--Select user to start chat:-->
         <scene sceneID="dBz-5c-EVa">
             <objects>
-                <tableViewController storyboardIdentifier="CombineSimpleUsersViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="CGP-Mu-ipv" customClass="CombineSimpleUsersViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="CombineSimpleUsersViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="CGP-Mu-ipv" customClass="CombineSimpleUsersViewController" customModule="StreamChatSample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="S9g-oP-g0s">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Nqn-3r-QG8">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="Nqn-3r-QG8">
+                                <rect key="frame" x="0.0" y="44.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Nqn-3r-QG8" id="hKy-36-fr1">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -176,14 +176,14 @@
         <!--Combine Simple Channel Members View Controller-->
         <scene sceneID="qhF-Np-dQ9">
             <objects>
-                <tableViewController storyboardIdentifier="CombineSimpleChannelMembersViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Kv9-tW-0Rf" customClass="CombineSimpleChannelMembersViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="CombineSimpleChannelMembersViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Kv9-tW-0Rf" customClass="CombineSimpleChannelMembersViewController" customModule="StreamChatSample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="UHu-TS-s6u">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="MemberCell" textLabel="8lG-31-3q5" detailTextLabel="D0G-uZ-oMe" style="IBUITableViewCellStyleSubtitle" id="G8P-3w-ccy">
-                                <rect key="frame" x="0.0" y="28" width="414" height="55.5"/>
+                                <rect key="frame" x="0.0" y="44.5" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="G8P-3w-ccy" id="eFy-KY-DgR">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="55.5"/>

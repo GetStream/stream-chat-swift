@@ -10,6 +10,7 @@ excluded:
   - vendor
   - UISDKdocumentation
   - Tests
+  - TestTools
   - Carthage
   - Pods
   - .build
@@ -19,8 +20,6 @@ disabled_rules:
   - multiple_closures_with_trailing_closure
   - todo
   - function_parameter_count
-  - force_cast
-  - force_try
   - type_name
   - nesting
   - identifier_name

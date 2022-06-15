@@ -45,17 +45,17 @@ open class GradientView: _View {
     }
     
     /// Returns the layer casted to gradient layer.
-    open var gradientLayer: CAGradientLayer {
-        layer as! CAGradientLayer
+    open var gradientLayer: CAGradientLayer? {
+        layer as? CAGradientLayer
     }
     
     override open func updateContent() {
         super.updateContent()
         
-        gradientLayer.colors = content?.colors.map(\.cgColor)
-        gradientLayer.startPoint = content?.direction.startPoint ?? .zero
-        gradientLayer.endPoint = content?.direction.endPoint ?? .zero
-        gradientLayer.locations = content?.locations.map { $0.map(NSNumber.init) }
+        gradientLayer?.colors = content?.colors.map(\.cgColor)
+        gradientLayer?.startPoint = content?.direction.startPoint ?? .zero
+        gradientLayer?.endPoint = content?.direction.endPoint ?? .zero
+        gradientLayer?.locations = content?.locations.map { $0.map(NSNumber.init) }
     }
 }
 

@@ -94,10 +94,12 @@ open class ComposerEmojiSuggestionsDataSource: NSObject, UICollectionViewDataSou
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ComposerEmojiSuggestionsCollectionViewCell.reuseId,
             for: indexPath
-        ) as! ComposerEmojiSuggestionsCollectionViewCell
+        ) as? ComposerEmojiSuggestionsCollectionViewCell else {
+            return UICollectionViewCell()
+        }
 
         let emoji = emojis[indexPath.row]
         cell.emojiLabel.text = emoji.symbol + "  " + emoji.code
