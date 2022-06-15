@@ -311,20 +311,23 @@ extension UserRobot {
         return self
     }
     
-    func assertMessageCellChangesSizeAfterEdit(linesCountShouldBeIncreased: Bool,
-                                               at messageCellIndex: Int = 0,
-                                               file: StaticString = #filePath,
-                                               line: UInt = #line) {
+    func assertMessageSizeChangesAfterEditing(linesCountShouldBeIncreased: Bool,
+                                              at messageCellIndex: Int = 0,
+                                              file: StaticString = #filePath,
+                                              line: UInt = #line) {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let cellHeight = messageCell.height
         let currentText = MessageListPage.Attributes.text(in: messageCell).text
         let newLine = "new line"
         if linesCountShouldBeIncreased {
-            editMessage("\(currentText)\n\(newLine)", messageCellIndex: messageCellIndex)
+            let newText = "\(currentText)\n\(newLine)"
+            editMessage(newText, messageCellIndex: messageCellIndex)
             XCTAssertLessThan(cellHeight, messageCell.height, file: file, line: line)
+            assertMessage(newText, at: messageCellIndex, file: file, line: line)
         } else {
             editMessage(newLine, messageCellIndex: messageCellIndex)
             XCTAssertGreaterThan(cellHeight, messageCell.height, file: file, line: line)
+            assertMessage(newLine, at: messageCellIndex)
         }
     }
 }

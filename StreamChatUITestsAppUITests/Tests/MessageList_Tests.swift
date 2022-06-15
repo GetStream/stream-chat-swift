@@ -186,21 +186,32 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageIncreases_whenUserEditsMessageWithOneLineText() {
         linkToScenario(withId: 99)
 
-        let oneLineMessage = "first line"
-        let twoLinesMessage = "first line\nsecond line"
+        let message = "test message"
+        
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
+            userRobot.login().openChannel()
         }
-        AND("user sends \(oneLineMessage) message") {
-            userRobot.sendMessage(oneLineMessage)
+        AND("user sends a one line message: '\(message)'") {
+            userRobot.sendMessage(message)
         }
-        WHEN("user edits their message so that the length becomes two lines") {
-            userRobot.editMessage(twoLinesMessage)
+        THEN("user verifies that message cell increases after editing") {
+            userRobot.assertMessageSizeChangesAfterEditing(linesCountShouldBeIncreased: true)
         }
-        THEN("message cell updates its size") {
-            userRobot.assertMessage(twoLinesMessage)
+    }
+    
+    func test_messageDecreases_whenUserEditsMessage() throws {
+        linkToScenario(withId: 100)
+        
+        let message = "test\nmessage"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        AND("user sends a two line message: '\(message)'") {
+            userRobot.sendMessage(message)
+        }
+        THEN("user verifies that message cell decreases after editing") {
+            userRobot.assertMessageSizeChangesAfterEditing(linesCountShouldBeIncreased: false)
         }
     }
 
@@ -338,38 +349,6 @@ final class MessageList_Tests: StreamTestCase {
         }
         THEN("message list is scrolled up") {
             userRobot.assertMessageIsNotVisible(newMessage)
-        }
-    }
-
-    func test_editsMessageDecreasingNumberOfTextLines() throws {
-        linkToScenario(withId: 100)
-        
-        let message = "test\nmessage"
-        
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        AND("user sends a two line message: '\(message)'") {
-            userRobot.sendMessage(message)
-        }
-        THEN("user verifies that message cell decreases after edit") {
-            userRobot.assertMessageCellChangesSizeAfterEdit(linesCountShouldBeIncreased: false)
-        }
-    }
-    
-    func test_editsMessageIncreasingNumberOfTextLines() throws {
-        linkToScenario(withId: 247)
-        
-        let message = "test message"
-        
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        AND("user sends a two line message: '\(message)'") {
-            userRobot.sendMessage(message)
-        }
-        THEN("user verifies that message cell increases after edit") {
-            userRobot.assertMessageCellChangesSizeAfterEdit(linesCountShouldBeIncreased: true)
         }
     }
 
