@@ -53,6 +53,28 @@ final class TokenProvider_Tests: XCTestCase {
         XCTAssertEqual(tokenResult.error as? TestError, error)
     }
     
+    func test_initiated_userId() {
+        // GIVEN
+        let userId: UserId = .unique
+        let provider: UserConnectionProvider = .initiated(userId: userId) { _ in }
+        
+        // THEN
+        XCTAssertEqual(provider.userId, userId)
+    }
+    
+    func test_notInitiated_userId() {
+        // GIVEN
+        let userId: UserId = .unique
+        let provider: UserConnectionProvider = .notInitiated(userId: userId)
+        
+        // THEN
+        XCTAssertEqual(provider.userId, userId)
+    }
+    
+    func test_noCurrentUser_userId() {
+        XCTAssertNil(UserConnectionProvider.noCurrentUser.userId)
+    }
+    
     func test_development_fetchToken_returnsDevToken() throws {
         // GIVEN
         let userId: UserId = .unique

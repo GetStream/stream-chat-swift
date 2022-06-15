@@ -70,9 +70,20 @@ extension UserConnectionProvider {
 }
 
 extension UserConnectionProvider {
+    var userId: UserId? {
+        switch self {
+        case let .initiated(id, _):
+            return id
+        case let .notInitiated(id):
+            return id
+        case .noCurrentUser:
+            return nil
+        }
+    }
+    
     func fetchToken(completion: @escaping TokenWaiter) {
         switch self {
-        case .initiated(_, let tokenProvider):
+        case let .initiated(_, tokenProvider):
             tokenProvider(completion)
         case .notInitiated:
             completion(.failure(ClientError.ConnectionWasNotInitiated()))
