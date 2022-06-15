@@ -61,6 +61,7 @@ class CurrentUserUpdater: Worker {
     func addDevice(
         deviceId: DeviceId,
         pushProvider: PushProvider,
+        providerName: String?,
         currentUserId: UserId,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -81,13 +82,15 @@ class CurrentUserUpdater: Worker {
                 endpoint: .addDevice(
                     userId: currentUserId,
                     deviceId: deviceId,
-                    pushProvider: pushProvider
+                    pushProvider: pushProvider,
+                    providerName: providerName
                 ),
                 completion: { result in
                     if let error = result.error {
                         completion?(error)
                         return
                     }
+                    log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
                     saveCurrentDevice(deviceId: deviceId, completion: completion)
                 }
             )

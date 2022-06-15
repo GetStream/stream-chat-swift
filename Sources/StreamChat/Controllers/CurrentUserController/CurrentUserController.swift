@@ -204,7 +204,8 @@ public extension CurrentChatUserController {
 
         currentUserUpdater.addDevice(
             deviceId: pushDevice.deviceId,
-            pushProvider: pushDevice.provider,
+            pushProvider: pushDevice.pushProvider,
+            providerName: pushDevice.providerName,
             currentUserId: currentUserId
         ) { error in
             self.callback {

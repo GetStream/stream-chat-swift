@@ -781,6 +781,8 @@
 		A3147EBD27F6E52500BA9972 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3147EBC27F6E52500BA9972 /* StreamChatTestHelpers */; };
 		A3147EBF27F6E52C00BA9972 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3147EBE27F6E52C00BA9972 /* StreamChatTestHelpers */; };
 		A3147EC127F6E53500BA9972 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3147EC027F6E53500BA9972 /* StreamChatTestHelpers */; };
+		A31783DD285B79EB005009B9 /* Bundle+PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31783DC285B79EB005009B9 /* Bundle+PushProvider.swift */; };
+		A31783DE285B7A0E005009B9 /* Bundle+PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31783DC285B79EB005009B9 /* Bundle+PushProvider.swift */; };
 		A3227E59284A484300EBE6CC /* UIImage+Resized.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E58284A484300EBE6CC /* UIImage+Resized.swift */; };
 		A3227E5B284A489000EBE6CC /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E5A284A489000EBE6CC /* UIViewController+Alert.swift */; };
 		A3227E60284A497300EBE6CC /* GroupUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E5F284A497300EBE6CC /* GroupUserCell.swift */; };
@@ -876,6 +878,52 @@
 		A3A0C9B5283E955200B18DA4 /* ReactionResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B350FA27EA298800FEB6A0 /* ReactionResponses.swift */; };
 		A3A0C9BB283E956200B18DA4 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3A0C9BA283E956200B18DA4 /* StreamChatTestHelpers */; };
 		A3A0C9BD283E956200B18DA4 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = A3A0C9BC283E956200B18DA4 /* Swifter */; };
+		A3A4DE8E285A0BF000E36642 /* BannerShowingConnectionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6428DD5426201DCC0065DA1D /* BannerShowingConnectionDelegate.swift */; };
+		A3A4DE8F285A0BF000E36642 /* SwitchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFEF2786070800E184B4 /* SwitchButton.swift */; };
+		A3A4DE90285A0BF000E36642 /* GroupUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E5F284A497300EBE6CC /* GroupUserCell.swift */; };
+		A3A4DE91285A0BF000E36642 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 647F66D4261E22C200111B19 /* BannerView.swift */; };
+		A3A4DE92285A0BF000E36642 /* HiddenChannelListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E71284A4BF700EBE6CC /* HiddenChannelListVC.swift */; };
+		A3A4DE93285A0BF000E36642 /* OptionsSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD75CB6A27886746005F5FF7 /* OptionsSelectorViewController.swift */; };
+		A3A4DE94285A0BF000E36642 /* DemoAppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */; };
+		A3A4DE95285A0BF000E36642 /* DemoChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E6F284A4BC700EBE6CC /* DemoChatChannelVC.swift */; };
+		A3A4DE96285A0BF000E36642 /* UserDefaults+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C1B69283686EE00F9DC42 /* UserDefaults+Shared.swift */; };
+		A3A4DE97285A0BF000E36642 /* DemoChatChannelListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E79284A4CE000EBE6CC /* DemoChatChannelListVC.swift */; };
+		A3A4DE98285A0BF000E36642 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DDA5D256FB69E001DB91B /* LoginViewController.swift */; };
+		A3A4DE99285A0BF000E36642 /* CreateGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DDAA725753BEA001DB91B /* CreateGroupViewController.swift */; };
+		A3A4DE9A285A0BF000E36642 /* DemoUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933064825712C8B00FBB586 /* DemoUsers.swift */; };
+		A3A4DE9B285A0BF000E36642 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DDA59256FB69E001DB91B /* AppDelegate.swift */; };
+		A3A4DE9C285A0BF000E36642 /* CreateChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DDAA025711AF2001DB91B /* CreateChatViewController.swift */; };
+		A3A4DE9D285A0BF000E36642 /* DemoAppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E7D284A511200EBE6CC /* DemoAppConfiguration.swift */; };
+		A3A4DE9E285A0BF000E36642 /* AppConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */; };
+		A3A4DE9F285A0BF000E36642 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DDA5B256FB69E001DB91B /* SceneDelegate.swift */; };
+		A3A4DEA0285A0BF000E36642 /* SearchUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E61284A499500EBE6CC /* SearchUserCell.swift */; };
+		A3A4DEA1285A0BF000E36642 /* MessageReactionType+Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E75284A4C6400EBE6CC /* MessageReactionType+Position.swift */; };
+		A3A4DEA2285A0BF000E36642 /* DemoChatMessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E73284A4C3300EBE6CC /* DemoChatMessageActionsVC.swift */; };
+		A3A4DEA3285A0BF000E36642 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
+		A3A4DEA4285A0BF000E36642 /* NameGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794E20F42577DF4D00790DAB /* NameGroupViewController.swift */; };
+		A3A4DEA5285A0BF000E36642 /* PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227EC8284A52EE00EBE6CC /* PushNotifications.swift */; };
+		A3A4DEA6285A0BF000E36642 /* StreamChatWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E64284A4A5C00EBE6CC /* StreamChatWrapper.swift */; };
+		A3A4DEA7285A0BF000E36642 /* DemoChatMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E77284A4CAD00EBE6CC /* DemoChatMessageContentView.swift */; };
+		A3A4DEA8285A0BF000E36642 /* DemoChatChannelListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933060A256FF94800FBB586 /* DemoChatChannelListRouter.swift */; };
+		A3A4DEA9285A0BF000E36642 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E68284A4AE800EBE6CC /* AvatarView.swift */; };
+		A3A4DEAA285A0BF000E36642 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E5A284A489000EBE6CC /* UIViewController+Alert.swift */; };
+		A3A4DEAB285A0BF000E36642 /* UserCredentialsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E6C284A4B6A00EBE6CC /* UserCredentialsCell.swift */; };
+		A3A4DEAC285A0BF000E36642 /* UIImage+Resized.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E58284A484300EBE6CC /* UIImage+Resized.swift */; };
+		A3A4DEAD285A0BF000E36642 /* AdvancedOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79330603256FEBE600FBB586 /* AdvancedOptionsViewController.swift */; };
+		A3A4DEAF285A0BF000E36642 /* GDPerformanceView-Swift in Frameworks */ = {isa = PBXBuildFile; productRef = A3A4DE8B285A0BF000E36642 /* GDPerformanceView-Swift */; };
+		A3A4DEB0285A0BF000E36642 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = A3A4DE89285A0BF000E36642 /* Atlantis */; };
+		A3A4DEB1285A0BF000E36642 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		A3A4DEB2285A0BF000E36642 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = A3A4DE87285A0BF000E36642 /* Nuke */; };
+		A3A4DEB3285A0BF000E36642 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; platformFilter = ios; };
+		A3A4DEB5285A0BF000E36642 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 792DDA64256FB69F001DB91B /* LaunchScreen.storyboard */; };
+		A3A4DEB6285A0BF000E36642 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E7D68C5C26B1BE4500FCF3B8 /* Localizable.strings */; };
+		A3A4DEB7285A0BF000E36642 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 792DDA62256FB69F001DB91B /* Assets.xcassets */; };
+		A3A4DEB8285A0BF000E36642 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = E7D68C6226B1CBA400FCF3B8 /* Localizable.stringsdict */; };
+		A3A4DEB9285A0BF000E36642 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 792DDA5F256FB69E001DB91B /* Main.storyboard */; };
+		A3A4DEBD285A0BF000E36642 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A3A4DEBE285A0BF000E36642 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A3A4DECB285B6E8F00E36642 /* Info-MB.plist in Resources */ = {isa = PBXBuildFile; fileRef = A3A4DEC9285B6E8F00E36642 /* Info-MB.plist */; };
+		A3A4DECC285B6E8F00E36642 /* Assets-MB.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3A4DECA285B6E8F00E36642 /* Assets-MB.xcassets */; };
 		A3A52B6627EB61FC00311DFC /* EventPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794927F0249E3DE6009D7EB7 /* EventPayload_Tests.swift */; };
 		A3A644B327BF99D400F92494 /* ChannelTruncateRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A644B227BF99D400F92494 /* ChannelTruncateRequestPayload_Tests.swift */; };
 		A3AFEAA72816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3AFEAA62816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift */; };
@@ -2105,6 +2153,20 @@
 			remoteGlobalIDString = 799C941A247D2F80001F1104;
 			remoteInfo = StreamChat;
 		};
+		A3A4DE84285A0BF000E36642 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
+		A3A4DE86285A0BF000E36642 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 790881FC25432B7200896F03;
+			remoteInfo = StreamChatUI;
+		};
 		A3F6923727E23E6D0072A293 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -2232,6 +2294,18 @@
 			files = (
 				7908821325432B7200896F03 /* StreamChatUI.framework in Embed Frameworks */,
 				79200D47250140BB002F4EB1 /* StreamChat.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A3A4DEBC285A0BF000E36642 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A3A4DEBD285A0BF000E36642 /* StreamChatUI.framework in Embed Frameworks */,
+				A3A4DEBE285A0BF000E36642 /* StreamChat.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3069,6 +3143,7 @@
 		A30C3F21276B4F8800DA5968 /* UnknownUserEvent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownUserEvent_Tests.swift; sourceTree = "<group>"; };
 		A30DEC98260B47DE0066E8CE /* TitleContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleContainerView.swift; sourceTree = "<group>"; };
 		A311B42C27E8BB7400CFCF6D /* StreamChatTestTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatTestTools.swift; sourceTree = "<group>"; };
+		A31783DC285B79EB005009B9 /* Bundle+PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+PushProvider.swift"; sourceTree = "<group>"; };
 		A3227E58284A484300EBE6CC /* UIImage+Resized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Resized.swift"; sourceTree = "<group>"; };
 		A3227E5A284A489000EBE6CC /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		A3227E5F284A497300EBE6CC /* GroupUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupUserCell.swift; sourceTree = "<group>"; };
@@ -3152,6 +3227,10 @@
 		A39B040A27F196F200D6B18A /* StreamChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatUITests.swift; sourceTree = "<group>"; };
 		A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatTestMockServer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3A0C9C0283E967600B18DA4 /* StreamChatTestMockServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatTestMockServer.swift; sourceTree = "<group>"; };
+		A3A4DEC3285A0BF000E36642 /* DemoApp (multi-bundle).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DemoApp (multi-bundle).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3A4DEC9285B6E8F00E36642 /* Info-MB.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-MB.plist"; sourceTree = "<group>"; };
+		A3A4DECA285B6E8F00E36642 /* Assets-MB.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-MB.xcassets"; sourceTree = "<group>"; };
+		A3A4DECE285B74EB00E36642 /* DemoApp(MB).entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "DemoApp(MB).entitlements"; path = "DemoApp-MultiBundle/DemoApp(MB).entitlements"; sourceTree = SOURCE_ROOT; };
 		A3A644B227BF99D400F92494 /* ChannelTruncateRequestPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTruncateRequestPayload_Tests.swift; sourceTree = "<group>"; };
 		A3AFEAA62816F1A200A79A6A /* MessageDeliveryStatus_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDeliveryStatus_Tests.swift; sourceTree = "<group>"; };
 		A3B0CFA127BBF52600F352F9 /* ChannelTruncateRequestPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTruncateRequestPayload.swift; sourceTree = "<group>"; };
@@ -3841,6 +3920,18 @@
 			files = (
 				A3A0C9BB283E956200B18DA4 /* StreamChatTestHelpers in Frameworks */,
 				A3A0C9BD283E956200B18DA4 /* Swifter in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A3A4DEAE285A0BF000E36642 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3A4DEAF285A0BF000E36642 /* GDPerformanceView-Swift in Frameworks */,
+				A3A4DEB0285A0BF000E36642 /* Atlantis in Frameworks */,
+				A3A4DEB1285A0BF000E36642 /* StreamChat.framework in Frameworks */,
+				A3A4DEB2285A0BF000E36642 /* Nuke in Frameworks */,
+				A3A4DEB3285A0BF000E36642 /* StreamChatUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5496,6 +5587,7 @@
 				AD9BE32526680E4200A6D284 /* Stream.playground */,
 				792E3D6A25C97D920040B0C2 /* Package.swift */,
 				792DDA58256FB69E001DB91B /* DemoApp */,
+				A3A4DEC8285B6E8F00E36642 /* DemoApp-MultiBundle */,
 				437FCA0526D67BE40000223C /* DemoAppPush */,
 				8082785225D1BAD1008039DD /* DocsSnippets */,
 				E3D5D2142701F0450054ECE5 /* Examples */,
@@ -5535,6 +5627,7 @@
 				A34407BA27D8C33F0044F150 /* StreamChatUITestsApp.app */,
 				A34407DC27D8C3400044F150 /* StreamChatUITestsAppUITests.xctest */,
 				A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */,
+				A3A4DEC3285A0BF000E36642 /* DemoApp (multi-bundle).app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5590,6 +5683,7 @@
 		A3227E57284A481500EBE6CC /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				A31783DC285B79EB005009B9 /* Bundle+PushProvider.swift */,
 				43016E1526B734410054E805 /* ChatUser+CustomFields.swift */,
 				A3227E75284A4C6400EBE6CC /* MessageReactionType+Position.swift */,
 			);
@@ -6766,6 +6860,16 @@
 				8224FD85280EC09800B32D43 /* HttpServer.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		A3A4DEC8285B6E8F00E36642 /* DemoApp-MultiBundle */ = {
+			isa = PBXGroup;
+			children = (
+				A3A4DECE285B74EB00E36642 /* DemoApp(MB).entitlements */,
+				A3A4DEC9285B6E8F00E36642 /* Info-MB.plist */,
+				A3A4DECA285B6E8F00E36642 /* Assets-MB.xcassets */,
+			);
+			path = "DemoApp-MultiBundle";
 			sourceTree = "<group>";
 		};
 		A3B78F16282A670600348AD1 /* Message Delivery Status */ = {
@@ -8319,6 +8423,31 @@
 			productReference = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		A3A4DE80285A0BF000E36642 /* DemoApp (multi-bundle) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A3A4DEBF285A0BF000E36642 /* Build configuration list for PBXNativeTarget "DemoApp (multi-bundle)" */;
+			buildPhases = (
+				A3A4DE8D285A0BF000E36642 /* Sources */,
+				A3A4DEAE285A0BF000E36642 /* Frameworks */,
+				A3A4DEB4285A0BF000E36642 /* Resources */,
+				A3A4DEBC285A0BF000E36642 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A3A4DE83285A0BF000E36642 /* PBXTargetDependency */,
+				A3A4DE85285A0BF000E36642 /* PBXTargetDependency */,
+			);
+			name = "DemoApp (multi-bundle)";
+			packageProductDependencies = (
+				A3A4DE87285A0BF000E36642 /* Nuke */,
+				A3A4DE89285A0BF000E36642 /* Atlantis */,
+				A3A4DE8B285A0BF000E36642 /* GDPerformanceView-Swift */,
+			);
+			productName = DemoApp;
+			productReference = A3A4DEC3285A0BF000E36642 /* DemoApp (multi-bundle).app */;
+			productType = "com.apple.product-type.application";
+		};
 		AC908380268B115F00ACFB8E /* YouTube */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AC908395268B116000ACFB8E /* Build configuration list for PBXNativeTarget "YouTube" */;
@@ -8558,6 +8687,7 @@
 				A3A0C998283E952900B18DA4 /* StreamChatTestMockServer */,
 				7908820425432B7200896F03 /* StreamChatUITests */,
 				792DDA56256FB69E001DB91B /* DemoApp */,
+				A3A4DE80285A0BF000E36642 /* DemoApp (multi-bundle) */,
 				437FCA0326D67BE40000223C /* DemoAppPush */,
 				8082785025D1BAD1008039DD /* DocsSnippets */,
 				E74DB08A2656631700508D22 /* UISDKDocumentation */,
@@ -8797,6 +8927,20 @@
 				A3B68B07284503AD00DF4321 /* http_message_ephemeral.json in Resources */,
 				A3C049D62840BDA700E25E38 /* http_reaction.json in Resources */,
 				A3C049D92840BDA700E25E38 /* http_member.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A3A4DEB4285A0BF000E36642 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3A4DEB5285A0BF000E36642 /* LaunchScreen.storyboard in Resources */,
+				A3A4DEB6285A0BF000E36642 /* Localizable.strings in Resources */,
+				A3A4DECC285B6E8F00E36642 /* Assets-MB.xcassets in Resources */,
+				A3A4DEB7285A0BF000E36642 /* Assets.xcassets in Resources */,
+				A3A4DEB8285A0BF000E36642 /* Localizable.stringsdict in Resources */,
+				A3A4DEB9285A0BF000E36642 /* Main.storyboard in Resources */,
+				A3A4DECB285B6E8F00E36642 /* Info-MB.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9326,6 +9470,7 @@
 				AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */,
 				A3227E60284A497300EBE6CC /* GroupUserCell.swift in Sources */,
 				647F66D5261E22C200111B19 /* BannerView.swift in Sources */,
+				A31783DD285B79EB005009B9 /* Bundle+PushProvider.swift in Sources */,
 				A3227E72284A4BF700EBE6CC /* HiddenChannelListVC.swift in Sources */,
 				AD75CB6B27886746005F5FF7 /* OptionsSelectorViewController.swift in Sources */,
 				648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */,
@@ -10212,6 +10357,46 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A3A4DE8D285A0BF000E36642 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3A4DE8E285A0BF000E36642 /* BannerShowingConnectionDelegate.swift in Sources */,
+				A3A4DE8F285A0BF000E36642 /* SwitchButton.swift in Sources */,
+				A3A4DE90285A0BF000E36642 /* GroupUserCell.swift in Sources */,
+				A3A4DE91285A0BF000E36642 /* BannerView.swift in Sources */,
+				A31783DE285B7A0E005009B9 /* Bundle+PushProvider.swift in Sources */,
+				A3A4DE92285A0BF000E36642 /* HiddenChannelListVC.swift in Sources */,
+				A3A4DE93285A0BF000E36642 /* OptionsSelectorViewController.swift in Sources */,
+				A3A4DE94285A0BF000E36642 /* DemoAppCoordinator.swift in Sources */,
+				A3A4DE95285A0BF000E36642 /* DemoChatChannelVC.swift in Sources */,
+				A3A4DE96285A0BF000E36642 /* UserDefaults+Shared.swift in Sources */,
+				A3A4DE97285A0BF000E36642 /* DemoChatChannelListVC.swift in Sources */,
+				A3A4DE98285A0BF000E36642 /* LoginViewController.swift in Sources */,
+				A3A4DE99285A0BF000E36642 /* CreateGroupViewController.swift in Sources */,
+				A3A4DE9A285A0BF000E36642 /* DemoUsers.swift in Sources */,
+				A3A4DE9B285A0BF000E36642 /* AppDelegate.swift in Sources */,
+				A3A4DE9C285A0BF000E36642 /* CreateChatViewController.swift in Sources */,
+				A3A4DE9D285A0BF000E36642 /* DemoAppConfiguration.swift in Sources */,
+				A3A4DE9E285A0BF000E36642 /* AppConfigViewController.swift in Sources */,
+				A3A4DE9F285A0BF000E36642 /* SceneDelegate.swift in Sources */,
+				A3A4DEA0285A0BF000E36642 /* SearchUserCell.swift in Sources */,
+				A3A4DEA1285A0BF000E36642 /* MessageReactionType+Position.swift in Sources */,
+				A3A4DEA2285A0BF000E36642 /* DemoChatMessageActionsVC.swift in Sources */,
+				A3A4DEA3285A0BF000E36642 /* ChatUser+CustomFields.swift in Sources */,
+				A3A4DEA4285A0BF000E36642 /* NameGroupViewController.swift in Sources */,
+				A3A4DEA5285A0BF000E36642 /* PushNotifications.swift in Sources */,
+				A3A4DEA6285A0BF000E36642 /* StreamChatWrapper.swift in Sources */,
+				A3A4DEA7285A0BF000E36642 /* DemoChatMessageContentView.swift in Sources */,
+				A3A4DEA8285A0BF000E36642 /* DemoChatChannelListRouter.swift in Sources */,
+				A3A4DEA9285A0BF000E36642 /* AvatarView.swift in Sources */,
+				A3A4DEAA285A0BF000E36642 /* UIViewController+Alert.swift in Sources */,
+				A3A4DEAB285A0BF000E36642 /* UserCredentialsCell.swift in Sources */,
+				A3A4DEAC285A0BF000E36642 /* UIImage+Resized.swift in Sources */,
+				A3A4DEAD285A0BF000E36642 /* AdvancedOptionsViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC90837D268B115F00ACFB8E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10934,6 +11119,17 @@
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
 			targetProxy = A35715FC283E9A940014E3B0 /* PBXContainerItemProxy */;
+		};
+		A3A4DE83285A0BF000E36642 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = A3A4DE84285A0BF000E36642 /* PBXContainerItemProxy */;
+		};
+		A3A4DE85285A0BF000E36642 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = 790881FC25432B7200896F03 /* StreamChatUI */;
+			targetProxy = A3A4DE86285A0BF000E36642 /* PBXContainerItemProxy */;
 		};
 		AC90839B268B120300ACFB8E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12268,6 +12464,90 @@
 			};
 			name = ReleaseTests;
 		};
+		A3A4DEC0285A0BF000E36642 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "DemoApp-MultiBundle/DemoApp(MB).entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES;
+				INFOPLIST_FILE = "DemoApp-MultiBundle/Info-MB.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoAppTwo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoAppTwo";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A3A4DEC1285A0BF000E36642 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "DemoApp-MultiBundle/DemoApp(MB).entitlements";
+				CODE_SIGN_IDENTITY = "Apple Distribution: Stream.io Inc (EHV7XZLAHA)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES;
+				INFOPLIST_FILE = "DemoApp-MultiBundle/Info-MB.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoAppTwo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore io.getstream.iOS.ChatDemoAppTwo";
+				SKIP_INSTALL = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A3A4DEC2285A0BF000E36642 /* ReleaseTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "DemoApp-MultiBundle/DemoApp(MB).entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES;
+				INFOPLIST_FILE = "DemoApp-MultiBundle/Info-MB.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoAppTwo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoAppTwo";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = ReleaseTests;
+		};
 		A57E5C6D24C6FA3900187DC2 /* ReleaseTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -13008,6 +13288,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		A3A4DEBF285A0BF000E36642 /* Build configuration list for PBXNativeTarget "DemoApp (multi-bundle)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3A4DEC0285A0BF000E36642 /* Debug */,
+				A3A4DEC1285A0BF000E36642 /* Release */,
+				A3A4DEC2285A0BF000E36642 /* ReleaseTests */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AC908395268B116000ACFB8E /* Build configuration list for PBXNativeTarget "YouTube" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -13087,6 +13377,30 @@
 			requirement = {
 				kind = revision;
 				revision = 1e4f51c92d7ca486242d8bf0722b99de2c3531aa;
+			};
+		};
+		A3A4DE88285A0BF000E36642 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				kind = exactVersion;
+				version = 10.3.3;
+			};
+		};
+		A3A4DE8A285A0BF000E36642 /* XCRemoteSwiftPackageReference "atlantis" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ProxymanApp/atlantis";
+			requirement = {
+				kind = exactVersion;
+				version = 1.16.0;
+			};
+		};
+		A3A4DE8C285A0BF000E36642 /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dani-gavrilov/GDPerformanceView-Swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
 			};
 		};
 		A3BD4813281A941B0090D511 /* XCRemoteSwiftPackageReference "AutomaticSettings" */ = {
@@ -13203,6 +13517,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A39B03BF27EDFC2F00D6B18A /* XCRemoteSwiftPackageReference "swifter" */;
 			productName = Swifter;
+		};
+		A3A4DE87285A0BF000E36642 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A3A4DE88285A0BF000E36642 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		A3A4DE89285A0BF000E36642 /* Atlantis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A3A4DE8A285A0BF000E36642 /* XCRemoteSwiftPackageReference "atlantis" */;
+			productName = Atlantis;
+		};
+		A3A4DE8B285A0BF000E36642 /* GDPerformanceView-Swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A3A4DE8C285A0BF000E36642 /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */;
+			productName = "GDPerformanceView-Swift";
 		};
 		A3BD4814281A941B0090D511 /* AutomaticSettings */ = {
 			isa = XCSwiftPackageProductDependency;

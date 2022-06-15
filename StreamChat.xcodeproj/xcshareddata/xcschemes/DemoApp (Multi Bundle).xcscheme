@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "792DDA56256FB69E001DB91B"
-               BuildableName = "ChatSample.app"
-               BlueprintName = "DemoApp"
+               BlueprintIdentifier = "A3A4DE80285A0BF000E36642"
+               BuildableName = "DemoApp (multi-bundle).app"
+               BlueprintName = "DemoApp (multi-bundle)"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -26,8 +26,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      onlyGenerateCoverageForSpecifiedTargets = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
    </TestAction>
@@ -45,22 +44,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "792DDA56256FB69E001DB91B"
-            BuildableName = "ChatSample.app"
-            BlueprintName = "DemoApp"
+            BlueprintIdentifier = "A3A4DE80285A0BF000E36642"
+            BuildableName = "DemoApp (multi-bundle).app"
+            BlueprintName = "DemoApp (multi-bundle)"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-UIViewLayoutFeedbackLoopDebuggingThreshold 100"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-com.apple.CoreData.ConcurrencyDebug 1 "
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -68,16 +57,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "792DDA56256FB69E001DB91B"
-            BuildableName = "ChatSample.app"
-            BlueprintName = "DemoApp"
+            BlueprintIdentifier = "A3A4DE80285A0BF000E36642"
+            BuildableName = "DemoApp (multi-bundle).app"
+            BlueprintName = "DemoApp (multi-bundle)"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

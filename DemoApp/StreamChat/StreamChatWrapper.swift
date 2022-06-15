@@ -14,7 +14,7 @@ final class StreamChatWrapper {
     var onRemotePushRegistration: (() -> Void)?
 
     // Chat client
-    private var client: ChatClient!
+    private var client: ChatClient?
 
     // ChatClient config
     var config: ChatClientConfig = {
@@ -70,21 +70,31 @@ final class StreamChatWrapper {
     }
 }
 
+extension StreamChatWrapper {
+    // Client not instantiated
+    private func logClientNotInstantiated() {
+        guard client != nil else {
+            print("⚠️ Chat client is not instantiated")
+            return
+        }
+    }
+}
+
 // MARK: User Authentication
 
 extension StreamChatWrapper {
     func connect(user: DemoUserType, completion: @escaping (Error?) -> Void) {
         switch user {
         case let .credentials(userCredentials):
-            client.connectUser(
+            client?.connectUser(
                 userInfo: userCredentials.userInfo,
                 token: userCredentials.token,
                 completion: completion
             )
         case let .guest(userId):
-            client.connectGuestUser(userInfo: .init(id: userId), completion: completion)
+            client?.connectGuestUser(userInfo: .init(id: userId), completion: completion)
         case .anonymous:
-            client.connectAnonymousUser(completion: completion)
+            client?.connectAnonymousUser(completion: completion)
         }
     }
 
@@ -103,6 +113,10 @@ extension StreamChatWrapper {
     }
 
     func logOut() {
+        guard let client = self.client else {
+            logClientNotInstantiated()
+            return
+        }
         let currentUserController = client.currentUserController()
         if let deviceId = currentUserController.currentUser?.currentDevice?.id {
             currentUserController.removeDevice(id: deviceId) { error in
@@ -113,7 +127,7 @@ extension StreamChatWrapper {
         }
 
         client.disconnect()
-        client = nil
+        self.client = nil
     }
 }
 
@@ -121,11 +135,15 @@ extension StreamChatWrapper {
 
 extension StreamChatWrapper {
     func channelController(for channelId: ChannelId?) -> ChatChannelController? {
-        channelId.map { client.channelController(for: $0) }
+        guard let client = self.client else {
+            logClientNotInstantiated()
+            return nil
+        }
+        return channelId.map { client.channelController(for: $0) }
     }
 
-    func channelListController(query: ChannelListQuery) -> ChatChannelListController {
-        client.channelListController(query: query)
+    func channelListController(query: ChannelListQuery) -> ChatChannelListController? {
+        client?.channelListController(query: query)
     }
 }
 
@@ -133,7 +151,7 @@ extension StreamChatWrapper {
 
 extension StreamChatWrapper {
     func registerForPushNotifications(with deviceToken: Data) {
-        client.currentUserController().addDevice(.apn(token: deviceToken)) {
+        client?.currentUserController().addDevice(.apn(token: deviceToken, providerName: Bundle.pushProviderName)) {
             if let error = $0 {
                 log.error("adding a device failed with an error \(error)")
             }
