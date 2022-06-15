@@ -553,9 +553,10 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var updater: ChatClientUpdater? = .init(client: client)
         
         // Simulate `reloadUserIfNeeded` call.
+        let userId: UserId = .unique
         updater?.reloadUserIfNeeded(
-            userInfo: .init(id: .anonymous),
-            userConnectionProvider: .init {
+            userInfo: .init(id: userId),
+            userConnectionProvider: .initiated(userId: userId) {
                 tokenProviderCompletion = $0
             }
         )

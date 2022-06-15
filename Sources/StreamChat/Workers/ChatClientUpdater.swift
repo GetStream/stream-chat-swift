@@ -98,15 +98,10 @@ class ChatClientUpdater {
 
     func reloadUserIfNeeded(
         userInfo: UserInfo,
-        userConnectionProvider: UserConnectionProvider?,
+        userConnectionProvider: UserConnectionProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard let userConnectionProvider = userConnectionProvider else {
-            completion?(ClientError.ConnectionWasNotInitiated())
-            return
-        }
-        
-        userConnectionProvider.tokenProvider {
+        userConnectionProvider.fetchToken {
             switch $0 {
             case let .success(newToken):
                 self.prepareEnvironment(

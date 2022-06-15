@@ -7,32 +7,76 @@
 import XCTest
 
 final class TokenProvider_Tests: XCTestCase {
-    func test_developmentProvider_propagatesToken() throws {
-        // Create a user identifier.
+    func test_noCurrentUser_fetchToken_returnsError() throws {
+        // GIVEN
+        let provider: UserConnectionProvider = .noCurrentUser
+        
+        // WHEN
+        let tokenResult = try waitFor(provider.fetchToken)
+        
+        // THEN
+        XCTAssertTrue(tokenResult.error is ClientError.CurrentUserDoesNotExist)
+    }
+    
+    func test_notInitiated_fetchToken_returnsError() throws {
+        // GIVEN
+        let provider: UserConnectionProvider = .notInitiated(userId: .unique)
+        
+        // WHEN
+        let tokenResult = try waitFor(provider.fetchToken)
+        
+        // THEN
+        XCTAssertTrue(tokenResult.error is ClientError.ConnectionWasNotInitiated)
+    }
+    
+    func test_initiated_fetchToken_propagatesToken() throws {
+        // GIVEN
+        let token: Token = .unique()
+        let provider: UserConnectionProvider = .initiated(userId: .unique) { $0(.success(token)) }
+        
+        // WHEN
+        let tokenResult = try waitFor(provider.fetchToken)
+        
+        // THEN
+        XCTAssertEqual(try tokenResult.get(), token)
+    }
+    
+    func test_initiated_fetchToken_propagatesError() throws {
+        // GIVEN
+        let error = TestError()
+        let provider: UserConnectionProvider = .initiated(userId: .unique) { $0(.failure(error)) }
+        
+        // WHEN
+        let tokenResult = try waitFor(provider.fetchToken)
+        
+        // THEN
+        XCTAssertEqual(tokenResult.error as? TestError, error)
+    }
+    
+    func test_development_fetchToken_returnsDevToken() throws {
+        // GIVEN
         let userId: UserId = .unique
-
-        // Get a token from `development` token provider.
-        let token = try waitFor {
-            UserConnectionProvider.development(userId: userId).tokenProvider($0)
-        }.get()
-
-        // Assert token is correct.
+        let provider: UserConnectionProvider = .development(userId: userId)
+        
+        // WHEN
+        let token = try waitFor(provider.fetchToken).get()
+        
+        // THEN
         let tokenParts = token.rawValue.split(separator: ".")
         XCTAssertEqual(tokenParts[0], "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9") // header
         XCTAssertEqual(token.userId, userId) // payload
         XCTAssertEqual(tokenParts[2], "devtoken") // signature
     }
 
-    func test_staticProvider_propagatesToken() throws {
-        // Create a token.
+    func test_staticProvider_fetchToken_propagatesToken() throws {
+        // GIVEN
         let token = Token.unique(userId: .unique)
+        let provider: UserConnectionProvider = .static(token)
 
-        // Get a token from `static` token provider.
-        let receivedToken = try waitFor {
-            UserConnectionProvider.static(token).tokenProvider($0)
-        }.get()
-
-        // Assert token is propagated.
+        // WHEN
+        let receivedToken = try waitFor(provider.fetchToken).get()
+        
+        // THEN
         XCTAssertEqual(receivedToken, token)
     }
     
@@ -57,7 +101,7 @@ final class TokenProvider_Tests: XCTestCase {
 
         // Get token from provider and capture the result.
         var getTokenResult: Result<Token, Error>?
-        provider.tokenProvider {
+        provider.fetchToken {
             getTokenResult = $0
         }
 
@@ -68,15 +112,13 @@ final class TokenProvider_Tests: XCTestCase {
             imageURL: imageURL,
             extraData: extraData
         )
-        AssertAsync.willBeEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.request_endpoint)
+        AssertAsync.willBeEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.executeRequest_endpoint)
 
         // Simulate successful response with a token.
         let token = Token.unique(userId: userId)
-        let tokenResult: Result<GuestUserTokenPayload, Error> = .success(
-            .init(user: .dummy(userId: userId, role: .guest), token: token)
-        )
-        client.mockAPIClient.test_simulateResponse(tokenResult)
-
+        let completion = client.mockAPIClient.executeRequest_completion as! (Result<GuestUserTokenPayload, Error>) -> Void
+        completion(.success(.init(user: .dummy(userId: userId, role: .guest), token: token)))
+        
         // Wait the result is received.
         AssertAsync.willBeTrue(getTokenResult != nil)
 
@@ -106,7 +148,7 @@ final class TokenProvider_Tests: XCTestCase {
 
         // Get token from provider and capture the result.
         var getTokenResult: Result<Token, Error>?
-        provider.tokenProvider {
+        provider.fetchToken {
             getTokenResult = $0
         }
 

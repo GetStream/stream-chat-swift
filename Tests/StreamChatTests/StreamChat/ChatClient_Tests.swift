@@ -573,6 +573,45 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(testEnv.clientUpdater!.disconnect_source, .userInitiated)
     }
     
+    func test_disconnect_whenCurrentUserExists_resetsConnectionProvider() {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        client.currentUserId = .unique
+        
+        // WHEN
+        client.disconnect()
+        
+        // THEN
+        switch client.userConnectionProvider {
+        case .notInitiated(let userId):
+            XCTAssertEqual(userId, client.currentUserId)
+        default:
+            XCTFail()
+        }
+    }
+    
+    func test_disconnect_whenCurrentUserDoesNotExist_resetsConnectionProvider() {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        
+        // WHEN
+        client.disconnect()
+        
+        // THEN
+        switch client.userConnectionProvider {
+        case .noCurrentUser:
+            break
+        default:
+            XCTFail()
+        }
+    }
+    
     // MARK: - Background workers tests
     
     func test_productionClientIsInitalizedWithAllMandatoryBackgroundWorkers() {
@@ -656,6 +695,40 @@ final class ChatClient_Tests: XCTestCase {
         }
     }
     
+    func test_userConnectionProvider_whenUserExists_hasCorrectInitialValue() throws {
+        // GIVEN
+        let currentUserId: UserId = .unique
+        let config = ChatClientConfig(apiKeyString: .unique)
+        
+        try ChatClient(config: config)
+            .databaseContainer
+            .createCurrentUser(id: currentUserId)
+        
+        // WHEN
+        let client = ChatClient(config: config)
+        
+        // THEN
+        switch client.userConnectionProvider {
+        case .notInitiated(let userId):
+            XCTAssertEqual(userId, currentUserId)
+        case .noCurrentUser, .initiated:
+            XCTFail()
+        }
+    }
+    
+    func test_userConnectionProvider_whenUserDoesNotExist_hasCorrectInitialValue() throws {
+        // WHEN
+        let client = ChatClient(config: .init(apiKeyString: .unique))
+        
+        // THEN
+        switch client.userConnectionProvider {
+        case .noCurrentUser:
+            break
+        default:
+            XCTFail()
+        }
+    }
+    
     // MARK: - Connect
     
     func test_reloadUserIfNeededIsCalled_whenClientIsInitialized_andErrorIsPropagated() throws {
@@ -681,7 +754,7 @@ final class ChatClient_Tests: XCTestCase {
             
             // THEN
             var providedToken: Token?
-            client.userConnectionProvider?.tokenProvider { providedToken = try? $0.get() }
+            client.userConnectionProvider.fetchToken { providedToken = try? $0.get() }
             XCTAssertEqual(providedToken, token)
             
             XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
@@ -718,7 +791,7 @@ final class ChatClient_Tests: XCTestCase {
             
             // THEN
             var providedToken: Token?
-            client.userConnectionProvider?.tokenProvider { providedToken = try? $0.get() }
+            client.userConnectionProvider.fetchToken { providedToken = try? $0.get() }
             XCTAssertEqual(providedToken, token)
             
             XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
@@ -785,7 +858,7 @@ final class ChatClient_Tests: XCTestCase {
             
             // THEN
             var providedToken: Token?
-            client.userConnectionProvider?.tokenProvider { providedToken = try? $0.get() }
+            client.userConnectionProvider.fetchToken { providedToken = try? $0.get() }
             XCTAssertEqual(providedToken?.userId.isAnonymousUser, true)
             
             XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)

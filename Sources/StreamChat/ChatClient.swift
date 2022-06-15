@@ -191,7 +191,9 @@ public class ChatClient {
     }()
     
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
-    private(set) var userConnectionProvider: UserConnectionProvider?
+    private(set) lazy var userConnectionProvider = currentUserId.map(
+        UserConnectionProvider.notInitiated
+    ) ?? .noCurrentUser
     
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
@@ -308,7 +310,7 @@ public class ChatClient {
     ) {
         setConnectionInfoAndConnect(
             userInfo: userInfo,
-            userConnectionProvider: .init(tokenProvider: tokenProvider),
+            userConnectionProvider: .initiated(userId: userInfo.id, tokenProvider: tokenProvider),
             completion: completion
         )
     }
@@ -374,7 +376,7 @@ public class ChatClient {
         clientUpdater.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
         }
-        userConnectionProvider = nil
+        userConnectionProvider = currentUserId.map(UserConnectionProvider.notInitiated) ?? .noCurrentUser
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
@@ -696,12 +698,7 @@ extension ChatClient: ConnectionStateDelegate {
             return
         }
         
-        guard let tokenProvider = userConnectionProvider?.tokenProvider else {
-            return log.assertionFailure(
-                "In case if token expiration is enabled on backend you need to provide a way to reobtain it via `tokenProvider` on ChatClient"
-            )
-        }
-        
+        let userConnectionProvider = self.userConnectionProvider
         let reconnectionDelay = tokenExpirationRetryStrategy.getDelayAfterTheFailure()
         
         tokenRetryTimer = environment
@@ -712,8 +709,8 @@ extension ChatClient: ConnectionStateDelegate {
             ) { [clientUpdater] in
                 clientUpdater.reloadUserIfNeeded(
                     userInfo: .init(id: currentUserId),
-                    userConnectionProvider: .init { completion in
-                        tokenProvider { result in
+                    userConnectionProvider: .initiated(userId: currentUserId) { completion in
+                        userConnectionProvider.fetchToken { result in
                             if case .success = result {
                                 self.tokenExpirationRetryStrategy.resetConsecutiveFailures()
                             }

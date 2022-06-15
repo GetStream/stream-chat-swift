@@ -987,7 +987,6 @@
 		A3C3BC7327E8AA4300224761 /* TestItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7BA7B27E3786500BBF4FA /* TestItem.swift */; };
 		A3C3BC7427E8AA4300224761 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C947B247E6051001F1104 /* TestError.swift */; };
 		A3C3BC7527E8AA7000224761 /* Endpoint+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7BA8027E37BA200BBF4FA /* Endpoint+Mock.swift */; };
-		A3C3BC7727E8AA8500224761 /* UserConnectionProvider+Invalid.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7BAA527E38BB500BBF4FA /* UserConnectionProvider+Invalid.swift */; };
 		A3C3BC7827E8AA9400224761 /* ChannelListQuery+Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7BAE627E4EC4000BBF4FA /* ChannelListQuery+Equatable.swift */; };
 		A3C3BC7927E8AA9400224761 /* AnyEncodable+Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7BA8B27E37E7700BBF4FA /* AnyEncodable+Equatable.swift */; };
 		A3C3BC7A27E8AA9400224761 /* CleanUpTypingEvent+Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7BAE127E4E95800BBF4FA /* CleanUpTypingEvent+Equatable.swift */; };
@@ -3245,7 +3244,6 @@
 		A3C7BA9D27E3893A00BBF4FA /* String+Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Date.swift"; sourceTree = "<group>"; };
 		A3C7BA9F27E389E400BBF4FA /* CustomCDNClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCDNClient.swift; sourceTree = "<group>"; };
 		A3C7BAA327E38B7700BBF4FA /* ChannelController_Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelController_Delegate.swift; sourceTree = "<group>"; };
-		A3C7BAA527E38BB500BBF4FA /* UserConnectionProvider+Invalid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserConnectionProvider+Invalid.swift"; sourceTree = "<group>"; };
 		A3C7BAA827E38C5E00BBF4FA /* ChatMessage+Unique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessage+Unique.swift"; sourceTree = "<group>"; };
 		A3C7BAAA27E4D1F100BBF4FA /* ChannelListController_Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListController_Delegate.swift; sourceTree = "<group>"; };
 		A3C7BAAC27E4D37400BBF4FA /* TestEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestEvent.swift; sourceTree = "<group>"; };
@@ -6911,7 +6909,6 @@
 				A344075F27D753530044F150 /* NSManagedObject+ContextChange.swift */,
 				A3C7BA9D27E3893A00BBF4FA /* String+Date.swift */,
 				A3C7BA8F27E37EE000BBF4FA /* URLSessionConfiguration+Equatable.swift */,
-				A3C7BAA527E38BB500BBF4FA /* UserConnectionProvider+Invalid.swift */,
 				A3C7BADA27E4E82100BBF4FA /* WebSocketEngineError+Equatable.swift */,
 				A3BEB6B227F3245E00D6D80D /* XCTestCase+MockData.swift */,
 				84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */,
@@ -9518,7 +9515,6 @@
 				A344078427D753530044F150 /* MemberPayload.swift in Sources */,
 				A3C3BC8027E8AAF000224761 /* FilterTestScope.swift in Sources */,
 				A311B43927E8BC8400CFCF6D /* ChannelListController_Delegate.swift in Sources */,
-				A3C3BC7727E8AA8500224761 /* UserConnectionProvider+Invalid.swift in Sources */,
 				A344077C27D753530044F150 /* ChatMessageImageAttachment_Mock.swift in Sources */,
 				A3C3BC4027E87F5C00224761 /* ChannelMemberListUpdater_Mock.swift in Sources */,
 				A3C3BC2527E87F2000224761 /* MessageReactionPayload.swift in Sources */,

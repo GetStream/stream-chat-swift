@@ -7,8 +7,10 @@ import Foundation
 public typealias TokenProvider = (@escaping (Result<Token, Error>) -> Void) -> Void
 
 /// The type designed to provider a `Token` to the `ChatClient` when it asks for it.
-struct UserConnectionProvider {
-    let tokenProvider: TokenProvider
+enum UserConnectionProvider {
+    case noCurrentUser
+    case notInitiated(userId: UserId)
+    case initiated(userId: UserId, tokenProvider: TokenProvider)
 }
 
 extension UserConnectionProvider {
@@ -23,7 +25,7 @@ extension UserConnectionProvider {
     /// - Parameter token: The token to be returned by the token provider.
     /// - Returns: The new `TokenProvider` instance.
     static func `static`(_ token: Token) -> Self {
-        .init { $0(.success(token)) }
+        .initiated(userId: token.userId) { $0(.success(token)) }
     }
 
     /// The provider which designed to be used for guest users.
@@ -40,7 +42,7 @@ extension UserConnectionProvider {
         imageURL: URL? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> Self {
-        .init { [weak client] completion in
+        .initiated(userId: userId) { [weak client] completion in
             guard let client = client else {
                 completion(.failure(ClientError.ClientHasBeenDeallocated()))
                 return
@@ -63,6 +65,19 @@ extension UserConnectionProvider {
                     completion(.failure(error))
                 }
             }
+        }
+    }
+}
+
+extension UserConnectionProvider {
+    func fetchToken(completion: @escaping TokenWaiter) {
+        switch self {
+        case .initiated(_, let tokenProvider):
+            tokenProvider(completion)
+        case .notInitiated:
+            completion(.failure(ClientError.ConnectionWasNotInitiated()))
+        case .noCurrentUser:
+            completion(.failure(ClientError.CurrentUserDoesNotExist()))
         }
     }
 }
