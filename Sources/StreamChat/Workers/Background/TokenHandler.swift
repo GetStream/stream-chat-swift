@@ -52,6 +52,8 @@ final class DefaultTokenHandler: TokenHandler {
         didSet {
             guard let oldUserId = oldValue.userId, connectionProvider.userId != oldUserId else { return }
             
+            log.info("ℹ️ Token provider for another user is assigned.", subsystems: .tokenRefresh)
+            
             let error = ClientError.UserDoesNotExist(userId: oldUserId)
             handleTokenResult(.failure(error))
         }
@@ -82,7 +84,9 @@ final class DefaultTokenHandler: TokenHandler {
     
     func set(token: Token, completion: ((Error?) -> Void)?) {
         if let userId = connectionProvider.userId, token.userId != userId {
-            completion?(ClientError.InvalidToken("The token is for another user"))
+            let message = "❌ Setting the token for another user is forbidden"
+            log.error(message, subsystems: .tokenRefresh)
+            completion?(ClientError.InvalidToken(message))
             return
         }
         
@@ -91,6 +95,8 @@ final class DefaultTokenHandler: TokenHandler {
     }
     
     func cancelRefreshFlow(with error: Error) {
+        log.info("ℹ️ Ongoing token refresh process is cancelled", subsystems: .tokenRefresh)
+        
         handleTokenResult(.failure(error), updateToken: false)
     }
     
@@ -100,9 +106,17 @@ final class DefaultTokenHandler: TokenHandler {
         _ = add(tokenWaiter: completion)
         
         guard shouldTriggerRefresh else {
+            let message = """
+                ℹ️ Token refresh is initiated but it's already running.
+                Only one refresh process can be active at a time.
+                The caller will just wait for process to be completed
+            """
+            log.info(message, subsystems: .tokenRefresh)
             return
         }
-                
+        
+        log.info("🚀 Token refresh process is started.", subsystems: .tokenRefresh)
+        
         retryRefresh(of: currentToken, using: connectionProvider) { [weak self] in
             self?.handleTokenResult($0)
         }
@@ -137,30 +151,41 @@ final class DefaultTokenHandler: TokenHandler {
         completion: @escaping (Result<Token, Error>) -> Void
     ) {
         guard retryStrategy.consecutiveFailuresCount < maximumTokenRefreshAttempts else {
+            let message = """
+            ❌ Token refresh failed : all attempts are used \(retryStrategy.consecutiveFailuresCount)
+            """
+            log.error(message, subsystems: .tokenRefresh)
             completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
             return
         }
         
         let delay = nextRetryDelay
         let attempt = retryStrategy.consecutiveFailuresCount + 1
-                
+        
+        log.info("⏳ Will fetch token in \(delay) sec (\(attempt) attempt)", subsystems: .tokenRefresh)
+        
         retryTimer = timerType.schedule(timeInterval: delay, queue: .main) { [weak self] in
             guard let self = self else { return }
             
             var attemptHasTimedOut = false
             
             self.retryTimeoutTimer = self.timerType.schedule(timeInterval: self.retryTimeoutInterval, queue: .main) {
+                log.info("⏰ Timeout (\(attempt) attempt)", subsystems: .tokenRefresh)
+                
                 attemptHasTimedOut = true
                 self.retryStrategy.incrementConsecutiveFailures()
                 self.retryRefresh(of: token, using: provider, completion: completion)
             }
-                        
+            
+            log.info("🔥 Fetching token... (\(attempt) attempt)", subsystems: .tokenRefresh)
+            
             provider.fetchToken { [weak self] in
                 guard let self = self else {
                     return
                 }
                 
                 guard !attemptHasTimedOut else {
+                    log.info("ℹ️ The token is returned after the timeout", subsystems: .tokenRefresh)
                     return
                 }
                 
@@ -168,38 +193,42 @@ final class DefaultTokenHandler: TokenHandler {
                 self.retryTimeoutTimer = nil
                 
                 guard self.currentToken == token else {
+                    let message = """
+                        ℹ️ The `currentToken` was assinged while the refresh process.
+                        The token returned by `tokenProvider` will be discarded.
+                    """
+                    log.info(message, subsystems: .tokenRefresh)
                     return
                 }
                 
                 guard self.connectionProvider.userId == provider.userId else {
+                    let message = """
+                        ℹ️ The `tokenProvider` for the new user was assinged while the refresh process.
+                        The token returned by `tokenProvider` will be discarded.
+                    """
+                    log.info(message, subsystems: .tokenRefresh)
                     return
                 }
                 
                 switch $0 {
                 case let .success(newToken):
+                    log.info("📥 Token is fetched after \(attempt) attempt.", subsystems: .tokenRefresh)
+                    
                     if newToken == token {
-                        let sameTokenError = """
-                            Token refresh failed ❌: the old token was returned during the refresh proccess.
-                            When connecting with a static token, make sure it has no expiration date.
-                            When connecting with a `tokenProvider`, make sure to fetch the new token from the backend.
-                        """
-                        completion(.failure(ClientError.InvalidToken(sameTokenError)))
+                        let message = "❌ Token refresh failed: the old token is returned"
+                        completion(.failure(ClientError.InvalidToken(message)))
                     } else if newToken.userId != provider.userId {
-                        let invalidTokenError = """
-                            Token refresh failed ❌: The token for different user is returned.
-                            Check your token refreshing logic and ensure it returns valid tokens.
-                        """
-                        completion(.failure(ClientError.InvalidToken(invalidTokenError)))
+                        let message = "❌ Token refresh failed: the token for another user is returned."
+                        completion(.failure(ClientError.InvalidToken(message)))
                     } else if newToken.isExpired {
-                        let expiredTokenError = """
-                            Token refresh failed ❌: the token returned from token provider is expired.
-                            Check your token refreshing logic and ensure it returns valid tokens.
-                        """
-                        completion(.failure(ClientError.ExpiredToken(expiredTokenError)))
+                        let message = "❌ Token refresh failed: an expired token is returned"
+                        completion(.failure(ClientError.ExpiredToken(message)))
                     } else {
                         completion(.success(newToken))
                     }
-                case let .failure:
+                case let .failure(error):
+                    log.info("❌ Token fetching has failed (\(attempt) attempt): \(error.localizedDescription)", subsystems: .tokenRefresh)
+                    
                     self.retryStrategy.incrementConsecutiveFailures()
                     self.retryRefresh(of: token, using: provider, completion: completion)
                 }
@@ -217,8 +246,12 @@ final class DefaultTokenHandler: TokenHandler {
         if updateToken {
             switch result {
             case let .success(token):
+                log.info("✅ Assigning the new token, unblocking pending API requests.", subsystems: .tokenRefresh)
+                
                 currentToken = token
             case let .failure(error):
+                log.info("❌ Resetting the current token, cancelling pending API requests with error: \(error.localizedDescription).", subsystems: .tokenRefresh)
+                
                 currentToken = nil
             }
         }
@@ -230,7 +263,7 @@ final class DefaultTokenHandler: TokenHandler {
         retryTimer = nil
         
         isRefreshingToken = false
-    
+        
         completeTokenWaiters(with: result)
     }
     
