@@ -432,7 +432,11 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
         if message?.isSentByCurrentUser == true && AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
             actions.append(hardDeleteActionItem())
         }
-        actions.append(translateActionItem())
+        
+        if let localState = message?.localState, localState != .bounced {
+            actions.append(translateActionItem())
+        }
+        
         return actions
     }
 

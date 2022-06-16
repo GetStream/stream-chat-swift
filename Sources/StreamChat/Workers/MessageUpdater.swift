@@ -60,13 +60,21 @@ class MessageUpdater: Worker {
                 // to try to delete the message on the backend.
                 return
             }
-
-            messageDTO.isHardDeleted = hard
             
-            if messageDTO.existsOnlyLocally && !isLocalStorageEnabled {
+            let isMessageBounced = messageDTO.localMessageState == .bounced
+            
+            messageDTO.isHardDeleted = hard || isMessageBounced
+            
+            if messageDTO.existsOnlyLocally && (!isLocalStorageEnabled || isMessageBounced) {
                 messageDTO.type = MessageType.deleted.rawValue
                 messageDTO.deletedAt = DBDate()
                 shouldDeleteOnBackend = false
+                
+                // This is a way to propagate the update of the channel preview when a bounced message is deleted,
+                // because the deleted bounced message is never stored on the backend.
+                if isMessageBounced, let channel = messageDTO.previewOfChannel, let channelId = try? ChannelId(cid: channel.cid) {
+                    channel.previewMessage = session.preview(for: channelId)
+                }
             } else {
                 messageDTO.localMessageState = .deleting
             }
@@ -480,7 +488,7 @@ class MessageUpdater: Worker {
             guard messageDTO.localMessageState == .sendingFailed || messageDTO.localMessageState == .bounced else {
                 throw ClientError.MessageEditing(
                     messageId: messageId,
-                    reason: "only message in `.sendingFailed` can be resent"
+                    reason: "only message in `.sendingFailed` or `.bounced` can be resent"
                 )
             }
 
