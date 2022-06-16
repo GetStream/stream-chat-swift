@@ -13043,8 +13043,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-chat-swift-test-helpers.git";
 			requirement = {
-				kind = revision;
-				revision = 4e5c5dae3098965c13e42bcdd27a0c81542fa9eb;
+				kind = exactVersion;
+				version = 0.2.1;
 			};
 		};
 		AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {

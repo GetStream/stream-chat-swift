@@ -108,7 +108,7 @@ extension UserRobot {
         let messageCell: XCUIElement
         if let index = index {
             let minExpectedCount = index + 1
-            let cells = cells.waitCount(index)
+            let cells = cells.waitCount(minExpectedCount)
             XCTAssertGreaterThanOrEqual(
                 cells.count,
                 minExpectedCount,
@@ -322,17 +322,17 @@ extension UserRobot {
                                               line: UInt = #line) {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let cellHeight = messageCell.height
-        let currentText = MessageListPage.Attributes.text(in: messageCell).text
+        let textView = MessageListPage.Attributes.text(in: messageCell)
         let newLine = "new line"
+        let newText = linesCountShouldBeIncreased ? "\(textView.text)\n\(newLine)" : newLine
+        
+        editMessage(newText, messageCellIndex: messageCellIndex)
+        assertMessage(newText, at: messageCellIndex, file: file, line: line)
+        
         if linesCountShouldBeIncreased {
-            let newText = "\(currentText)\n\(newLine)"
-            editMessage(newText, messageCellIndex: messageCellIndex)
             XCTAssertLessThan(cellHeight, messageCell.height, file: file, line: line)
-            assertMessage(newText, at: messageCellIndex, file: file, line: line)
         } else {
-            editMessage(newLine, messageCellIndex: messageCellIndex)
             XCTAssertGreaterThan(cellHeight, messageCell.height, file: file, line: line)
-            assertMessage(newLine, at: messageCellIndex)
         }
     }
 }
@@ -487,7 +487,9 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
-        XCTAssertEqual(attributes.text(in: cell).text, Message.message(withInvalidCommand: invalidCommand))
+        let expectedText = Message.message(withInvalidCommand: invalidCommand)
+        let actualText = attributes.text(in: cell).waitForText(expectedText).text
+        XCTAssertEqual(actualText, expectedText, file: file, line: line)
         return self
     }
 }
