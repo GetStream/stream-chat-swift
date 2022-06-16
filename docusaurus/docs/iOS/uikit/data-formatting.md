@@ -76,3 +76,49 @@ Appearance.default.formatters.channelName = CustomChannelNameFormatter()
 ```
 
 In the example above, if the channel has only the current user as a member, it uses the name of the current user as the channel name, otherwise, the default logic is used.
+
+## Markdown
+
+The SDK offers Markdown formatting out of the box for channel messages. It supports the most common Markdown syntax; _italic_, **bold**, ~~strikethrough~~, `code`, Headings, Links, etc. It uses [SwiftyMarkdown](https://github.com/SimonFairbairn/SwiftyMarkdown) library internally.
+
+<center><img src={require("../assets/markdown-formatting.png").default} width="60%" height="60%"/></center>
+
+Mardown support is enabled by default. You can disable it by setting the following flag to false in the `Appearance` config:
+
+```swift
+Appearance.default.formatters.markdownFormatterEnabled = false
+```
+
+You can also provide you own Markdown implementation either by subclassing our `DefaultMarkdownFormatter` class or by adopting the `MarkdownFormatter` protocol:
+
+```swift
+class CustomMarkdownFormatter: DefaultMarkdownFormatter {
+    override func containsMarkdown(_ string: String) -> Bool {
+        // Your custom implementation
+    }
+
+    override func format(_ string: String) -> NSAttributedString {
+        // Your custom implementation
+    }
+}
+```
+
+Or
+
+```swift
+class CustomMarkdownFormatter: MarkdownFormatter {
+    func containsMarkdown(_ string: String) -> Bool {
+        // Your custom implementation
+    }
+    
+    func format(_ string: String) -> NSAttributedString {
+        // Your custom implementation
+    }
+}
+```
+
+Set the `markdownFormatter` property in the `Appearance` config and you are done:
+
+```swift
+Appearance.default.formatters.markdownFormatter = CustomMarkdownFormatter()
+```
