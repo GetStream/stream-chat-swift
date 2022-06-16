@@ -2,7 +2,7 @@
 title: Getting Started
 ---
 
-This section provides a high-level overview of the SwiftUI components library. It is a great starting point for discovering how to use Stream's SwiftUI components in your app. For a complete, step-by-step guide check out [iOS Chat tutorial](/tutorials/ios-chat/).
+This section provides a high-level overview of the SwiftUI components library. It is a great starting point for discovering how to use Stream's SwiftUI components in your app. For a complete, step-by-step guide check out [iOS Chat tutorial](https://getstream.io/tutorials/swiftui-chat/).
 
 ## Your First App with Stream Chat
 
