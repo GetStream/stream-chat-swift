@@ -70,7 +70,9 @@ class MessageListPage {
         static var attachmentButton: XCUIElement { app.buttons["AttachmentButton"] }
         static var commandButton: XCUIElement { app.buttons["CommandButton"] }
         static var inputField: XCUIElement { app.otherElements["inputTextContainer"] }
+        static var textView: XCUIElement { inputField.textViews.firstMatch }
         static var cooldown: XCUIElement { app.staticTexts["cooldownLabel"] }
+        static var cutButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Cut'")).firstMatch }
     }
     
     enum Reactions {
@@ -205,6 +207,18 @@ class MessageListPage {
         
         static func giphyCancelButton(in messageCell: XCUIElement) -> XCUIElement {
             attachmentActionButton(in: messageCell, label: "Cancel")
+        }
+
+        static func giphyImageView(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.images["imageView"]
+        }
+
+        static func giphyBadge(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.images["lightning"]
+        }
+
+        static func giphyLabel(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.staticTexts["GIPHY"]
         }
         
         private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {

@@ -382,7 +382,7 @@ open class ComposerVC: _ViewController,
         }
 
         if !content.isEmpty && channelConfig?.typingEventsEnabled == true {
-            channelController?.sendKeystrokeEvent()
+            channelController?.sendKeystrokeEvent(parentMessageId: content.threadMessage?.id)
         }
 
         switch content.state {

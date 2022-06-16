@@ -31,11 +31,35 @@ public class ParticipantRobot {
     }
     
     @discardableResult
+    public func startTypingInThread() -> Self {
+        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
+        server.websocketEvent(
+            .userStartTyping,
+            user: participant(),
+            channelId: server.currentChannelId,
+            parentMessageId: parentId
+        )
+        return self
+    }
+    
+    @discardableResult
     public func stopTyping() -> Self {
         server.websocketEvent(
             .userStopTyping,
             user: participant(),
             channelId: server.currentChannelId
+        )
+        return self
+    }
+    
+    @discardableResult
+    public func stopTypingInThread() -> Self {
+        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
+        server.websocketEvent(
+            .userStopTyping,
+            user: participant(),
+            channelId: server.currentChannelId,
+            parentMessageId: parentId
         )
         return self
     }

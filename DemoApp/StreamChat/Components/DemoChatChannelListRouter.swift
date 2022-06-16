@@ -20,12 +20,10 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
 
     func showCreateNewChannelFlow() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        
-        let chatViewController = storyboard.instantiateViewController(withIdentifier: "CreateChatViewController")
-            as! CreateChatViewController
-        chatViewController.searchController = rootViewController.controller.client.userSearchController()
-        
-        rootNavigationController?.pushViewController(chatViewController, animated: true)
+        if let chatViewController = storyboard.instantiateViewController(withIdentifier: "CreateChatViewController") as? CreateChatViewController {
+            chatViewController.searchController = rootViewController.controller.client.userSearchController()
+            rootNavigationController?.pushViewController(chatViewController, animated: true)
+        }
     }
     
     override func showCurrentUserProfile() {

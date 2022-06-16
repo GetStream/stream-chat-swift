@@ -69,7 +69,9 @@ private extension DemoAppCoordinator {
             self?.showChat(for: user, cid: nil, animated: true)
         }
         
-        set(rootViewController: loginVC, animated: animated)
+        if let loginVC = loginVC {
+            set(rootViewController: loginVC, animated: animated)
+        }
     }
     
     func set(rootViewController: UIViewController, animated: Bool) {
@@ -86,14 +88,15 @@ private extension DemoAppCoordinator {
 // MARK: - Screens factory
 
 private extension DemoAppCoordinator {
-    func makeLoginVC(onUserSelection: @escaping (DemoUserType) -> Void) -> UIViewController {
+    func makeLoginVC(onUserSelection: @escaping (DemoUserType) -> Void) -> UIViewController? {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let loginNVC = storyboard.instantiateInitialViewController() as! UINavigationController
+        if let loginNVC = storyboard.instantiateInitialViewController() as? UINavigationController,
+           let loginVC = loginNVC.viewControllers.first as? LoginViewController {
+            loginVC.onUserSelection = onUserSelection
+            return loginNVC
+        }
         
-        let loginVC = loginNVC.viewControllers.first as! LoginViewController
-        loginVC.onUserSelection = onUserSelection
-        
-        return loginNVC
+        return nil
     }
     
     func makeChatVC(for user: DemoUserType, startOn cid: ChannelId?, onLogout: @escaping () -> Void) -> UIViewController {
@@ -134,7 +137,7 @@ private extension DemoAppCoordinator {
         onLogout: @escaping () -> Void
     ) -> UIViewController {
         let channelListVC = DemoChatChannelListVC.make(with: controller)
-        channelListVC.demoRouter.onLogout = onLogout
+        channelListVC.demoRouter?.onLogout = onLogout
         channelListVC.selectedChannel = selectedChannel
         return channelListVC
     }

@@ -41,6 +41,11 @@ lane :allure_launch do
   sh("echo 'LAUNCH_ID=#{launch_id}' >> $GITHUB_ENV")
 end
 
+desc 'Remove launch on Allure TestOps'
+lane :allure_launch_removal do |options|
+  allure_api(path: "/launch/#{options[:launch_id]}", http_method: 'DELETE')
+end
+
 desc 'Create test-case in Allure TestOps and get its id'
 lane :allure_create_testcase do
   body = { projectId: allure_project_id, name: 'Automatically created testcase', deleted: true }.to_json
@@ -80,6 +85,8 @@ private_lane :allure_api do |options|
       Net::HTTP::Post.new(url)
     when 'PATCH'
       Net::HTTP::Patch.new(url)
+    when 'DELETE'
+      Net::HTTP::Delete.new(url)
     end
   http = Net::HTTP.new(url.host, url.port)
   http.use_ssl = true
@@ -90,7 +97,7 @@ private_lane :allure_api do |options|
   request.body = options[:body] if options[:body]
 
   response_body = http.request(request).read_body
-  JSON.parse(response_body) unless response_body.empty?
+  JSON.parse(response_body) if !response_body.nil? && !response_body.empty?
 end
 
 def github_run_details

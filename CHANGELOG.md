@@ -3,12 +3,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 ## StreamChat
+### ✅ Added
+- `parentMessageId` parameter for typing events [#2080](https://github.com/GetStream/stream-chat-swift/issues/2080)
 ### 🐞 Fixed
 - Fix hidden channels not appearing on relaunch [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix `channel.hidden` event failing to decode on launch/reconnection [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix messages in hidden channels with `clearHistory` re-appearing [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix last message of hidden channel with `clearHistory` visible in channel list [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Message action title now supports displaying 2 lines of text instead of 1 [#2082](https://github.com/GetStream/stream-chat-swift/pull/2082)
+- Fix Logger persisting config after usage, preventing changing parameters (such as LogLevel) [#2081](https://github.com/GetStream/stream-chat-swift/issues/2081)
+### 🔄 Changed
+- JSON decoding performance is increased 3 times, parsing time reduced by %70 [#2081](https://github.com/GetStream/stream-chat-swift/issues/2081)
+
+## StreamChatUI
+### ✅ Added
+- Show typing users within a thread [#2080](https://github.com/GetStream/stream-chat-swift/issues/2080)
 
 ## StreamChatUI
 ### ✅ Added

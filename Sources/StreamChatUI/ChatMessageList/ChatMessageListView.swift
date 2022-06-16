@@ -106,11 +106,8 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
             register(ChatMessageCell.self, forCellReuseIdentifier: reuseIdentifier)
         }
-
-        let cell = dequeueReusableCell(
-            withIdentifier: reuseIdentifier,
-            for: indexPath
-        ) as! ChatMessageCell
+        
+        let cell = dequeueReusableCell(with: ChatMessageCell.self, for: indexPath, reuseIdentifier: reuseIdentifier)
 
         cell.setMessageContentIfNeeded(
             contentViewClass: contentViewClass,

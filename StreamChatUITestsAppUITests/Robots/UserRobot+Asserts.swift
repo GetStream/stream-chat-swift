@@ -47,6 +47,18 @@ extension UserRobot {
         XCTAssertTrue(actualText.contains(text), file: file, line: line)
         return self
     }
+    
+    @discardableResult
+    func assertLastMessageTimestampInChannelPreviewIsHidden(
+        at cellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let cell = channelCell(withIndex: cellIndex, file: file, line: line)
+        let timestamp = channelAttributes.lastMessageTime(in: cell)
+        XCTAssertFalse(timestamp.exists, file: file, line: line)
+        return self
+    }
 
     @discardableResult
     func assertMessageDeliveryStatusInChannelPreview(
@@ -286,6 +298,43 @@ extension UserRobot {
         typeText("\(limit)\n\(limit+1)", obtainKeyboardFocus: false)
         XCTAssertEqual(composerHeight, composer.height, file: file, line: line)
     }
+    
+    @discardableResult
+    func assertMessageHasTimestamp(
+        _ hasTimestamp: Bool = true,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let timestampLabel = attributes.time(in: messageCell)
+        if hasTimestamp {
+            XCTAssertTrue(timestampLabel.wait().exists, file: file, line: line)
+        } else {
+            XCTAssertFalse(timestampLabel.exists, file: file, line: line)
+        }
+        return self
+    }
+    
+    func assertMessageSizeChangesAfterEditing(linesCountShouldBeIncreased: Bool,
+                                              at messageCellIndex: Int = 0,
+                                              file: StaticString = #filePath,
+                                              line: UInt = #line) {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let cellHeight = messageCell.height
+        let currentText = MessageListPage.Attributes.text(in: messageCell).text
+        let newLine = "new line"
+        if linesCountShouldBeIncreased {
+            let newText = "\(currentText)\n\(newLine)"
+            editMessage(newText, messageCellIndex: messageCellIndex)
+            XCTAssertLessThan(cellHeight, messageCell.height, file: file, line: line)
+            assertMessage(newText, at: messageCellIndex, file: file, line: line)
+        } else {
+            editMessage(newLine, messageCellIndex: messageCellIndex)
+            XCTAssertGreaterThan(cellHeight, messageCell.height, file: file, line: line)
+            assertMessage(newLine, at: messageCellIndex)
+        }
+    }
 }
 
 // MARK: Quoted Messages
@@ -406,6 +455,39 @@ extension UserRobot {
                             line: UInt = #line) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         attributes.reactionButton(in: cell).wait()
+        return self
+    }
+}
+
+// MARK: Ephemeral messages
+
+extension UserRobot {
+
+    @discardableResult
+    func assertGiphyImage(
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
+        XCTAssertTrue(attributes.giphyImageView(in: cell).wait().exists)
+        XCTAssertTrue(attributes.giphyLabel(in: cell).wait().exists)
+        XCTAssertTrue(attributes.giphyBadge(in: cell).wait().exists)
+        XCTAssertFalse(attributes.giphySendButton(in: cell).exists)
+        XCTAssertFalse(attributes.giphyShuffleButton(in: cell).exists)
+        XCTAssertFalse(attributes.giphyCancelButton(in: cell).exists)
+        return self
+    }
+
+    @discardableResult
+    func assertInvalidCommand(
+        _ invalidCommand: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
+        XCTAssertEqual(attributes.text(in: cell).text, Message.message(withInvalidCommand: invalidCommand))
         return self
     }
 }

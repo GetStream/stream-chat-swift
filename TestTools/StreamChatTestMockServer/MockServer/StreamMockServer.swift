@@ -21,6 +21,7 @@ public final class StreamMockServer {
     public var channelQueryEndpointWasCalled = false
     public var latestWebsocketMessage = ""
     public var latestHttpMessage = ""
+    public let forbiddenWords: Set<String> = ["wth"]
 
     public init() {}
 
