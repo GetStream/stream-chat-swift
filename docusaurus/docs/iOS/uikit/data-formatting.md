@@ -79,7 +79,16 @@ In the example above, if the channel has only the current user as a member, it u
 
 ## Markdown
 
-The SDK offers Markdown formatting out of the box for channel messages. It supports the most common Markdown syntax; _italic_, **bold**, ~~strikethrough~~, `code`, Headings, Links, etc. It uses [SwiftyMarkdown](https://github.com/SimonFairbairn/SwiftyMarkdown) library internally.
+The SDK offers markdown formatting out of the box for channel messages.
+It supports the most common Markdown syntax:
+- _italic_
+- **bold**
+- ~~strikethrough~~
+- `code`
+- headings and subheadings
+- links, etc.
+
+It uses [SwiftyMarkdown](https://github.com/SimonFairbairn/SwiftyMarkdown) library internally.
 
 <center><img src={require("../assets/markdown-formatting.png").default} width="60%" height="60%"/></center>
 
@@ -89,7 +98,9 @@ Mardown support is enabled by default. You can disable it by setting the followi
 Appearance.default.formatters.markdownFormatterEnabled = false
 ```
 
-You can also provide you own Markdown implementation either by subclassing our `DefaultMarkdownFormatter` class or by adopting the `MarkdownFormatter` protocol:
+## Customizing the markdown formatter
+
+You can customize the default markdown implementation by subclassing the `DefaultMarkdownFormatter` class or by providing your own implementation of the `MarkdownFormatter` protocol:
 
 ```swift
 class CustomMarkdownFormatter: DefaultMarkdownFormatter {

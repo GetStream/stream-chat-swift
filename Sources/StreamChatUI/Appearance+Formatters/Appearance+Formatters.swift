@@ -31,6 +31,6 @@ public extension Appearance {
         public var markdownFormatter: MarkdownFormatter = DefaultMarkdownFormatter()
         
         /// A boolean value that determines whether Markdown is active for messages to be formatted.
-        public var markdownFormatterEnabled = true
+        public var isMarkdownEnabled = true
     }
 }

@@ -58,8 +58,8 @@ open class ChatMessageContentView: _View, ThemeProvider {
     }
     
     /// A boolean value that determines whether Markdown is active for messages to be formatted.
-    open var markdownFormatterEnabled: Bool {
-        appearance.formatters.markdownFormatterEnabled
+    open var isMarkdownEnabled: Bool {
+        appearance.formatters.isMarkdownEnabled
     }
 
     // MARK: Content && Actions
@@ -487,7 +487,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         }
 
         // Text
-        if markdownFormatterEnabled, markdownFormatter.containsMarkdown(content?.textContent ?? "") {
+        if isMarkdownEnabled, markdownFormatter.containsMarkdown(content?.textContent ?? "") {
             let markdownText = markdownFormatter.format(content?.textContent ?? "")
             textView?.attributedText = markdownText
         } else {
