@@ -487,7 +487,9 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
-        XCTAssertEqual(attributes.text(in: cell).text, Message.message(withInvalidCommand: invalidCommand))
+        let expectedText = Message.message(withInvalidCommand: invalidCommand)
+        let actualText = attributes.text(in: cell).waitForText(expectedText).text
+        XCTAssertEqual(actualText, expectedText, file: file, line: line)
         return self
     }
 }
