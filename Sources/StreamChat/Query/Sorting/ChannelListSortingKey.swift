@@ -33,7 +33,7 @@ public enum ChannelListSortingKey: String, SortingKey {
         case .memberCount: return true
         case .cid: return true
         case .hasUnread: return false
-        case .unreadCount: return true
+        case .unreadCount: return false
         case .default: return true
         }
     }

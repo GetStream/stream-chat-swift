@@ -53,9 +53,7 @@ extension UserRobot {
 
     @discardableResult
     func openContextMenu(messageCellIndex: Int = 0) -> Self {
-        let minExpectedCount = messageCellIndex + 1
-        let cells = MessageListPage.cells.waitCount(minExpectedCount)
-        cells.allElementsBoundByIndex[messageCellIndex].press(forDuration: 0.5)
+        messageCell(withIndex: messageCellIndex).safePress(forDuration: 1)
         return self
     }
     

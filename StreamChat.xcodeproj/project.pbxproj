@@ -268,6 +268,7 @@
 		79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B5517624E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift */; };
 		79B5517824E5969700CE9FEC /* UserPayloads_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B5517024E593C200CE9FEC /* UserPayloads_Tests.swift */; };
 		79B5517C24E6A1CA00CE9FEC /* MessagePayloads_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B5517B24E6A1CA00CE9FEC /* MessagePayloads_Tests.swift */; };
+		79B8B649285B5ADD0059FB2D /* ChannelListSortingKey_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B8B648285B5ADD0059FB2D /* ChannelListSortingKey_Tests.swift */; };
 		79BA19F324B3386B00E11FC2 /* CurrentUserDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */; };
 		79BF83F2248F8F60007611A1 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF83F1248F8F60007611A1 /* Logger.swift */; };
 		79C5CBE825F66DBD00D98001 /* ChatChannelWatcherListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C5CBE725F66DBD00D98001 /* ChatChannelWatcherListController.swift */; };
@@ -2592,6 +2593,7 @@
 		79B5517424E595CC00CE9FEC /* CurrentUserPayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserPayloads.swift; sourceTree = "<group>"; };
 		79B5517624E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserPayloads_Tests.swift; sourceTree = "<group>"; };
 		79B5517B24E6A1CA00CE9FEC /* MessagePayloads_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayloads_Tests.swift; sourceTree = "<group>"; };
+		79B8B648285B5ADD0059FB2D /* ChannelListSortingKey_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSortingKey_Tests.swift; sourceTree = "<group>"; };
 		79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserDTO_Tests.swift; sourceTree = "<group>"; };
 		79BF83F1248F8F60007611A1 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		79C5CBE725F66DBD00D98001 /* ChatChannelWatcherListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelWatcherListController.swift; sourceTree = "<group>"; };
@@ -6374,6 +6376,7 @@
 			isa = PBXGroup;
 			children = (
 				791D3D8F26776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift */,
+				79B8B648285B5ADD0059FB2D /* ChannelListSortingKey_Tests.swift */,
 				DA958D5325309917005D23FA /* Sorting_Tests.swift */,
 			);
 			path = Sorting;
@@ -9953,6 +9956,7 @@
 				A3960E0D27DA5973003AB2B0 /* ConnectionRecoveryHandler_Tests.swift in Sources */,
 				7931818E24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift in Sources */,
 				88EA9B0625472430007EE76B /* MessageReactionPayload_Tests.swift in Sources */,
+				79B8B649285B5ADD0059FB2D /* ChannelListSortingKey_Tests.swift in Sources */,
 				84F61270268B415C00DDF6EE /* ChatClientConfig_Tests.swift in Sources */,
 				79877A292498E51500015F8B /* ChannelDTO_Tests.swift in Sources */,
 				79D6CE1725F7C02400BE2EEC /* ChannelWatcherListQuery_Tests.swift in Sources */,
@@ -13105,8 +13109,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-chat-swift-test-helpers.git";
 			requirement = {
-				kind = revision;
-				revision = 4e5c5dae3098965c13e42bcdd27a0c81542fa9eb;
+				kind = exactVersion;
+				version = 0.2.1;
 			};
 		};
 		AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {

@@ -63,10 +63,7 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant sends the message: '\(message)'") {
-            participantRobot
-                .startTyping()
-                .stopTyping()
-                .sendMessage(message)
+            participantRobot.sendMessage(message)
         }
         AND("user adds the reaction") {
             userRobot
@@ -87,10 +84,7 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant sends the message: '\(message)'") {
-            participantRobot
-                .startTyping()
-                .stopTyping()
-                .sendMessage(message)
+            participantRobot.sendMessage(message)
         }
         AND("user adds the reaction") {
             userRobot
