@@ -56,12 +56,13 @@ class CurrentUserUpdater: Worker {
     /// - Parameters:
     ///   - deviceId: The device id.
     ///   - pushProvider: The push provider.
+    ///   - providerName: Name of the push configuration in dashboard. If nil, default configuration will be used.
     ///   - currentUserId: The current user identifier.
     ///   - completion: Called when device is successfully registered, or with error.
     func addDevice(
         deviceId: DeviceId,
         pushProvider: PushProvider,
-        providerName: String?,
+        providerName: String? = nil,
         currentUserId: UserId,
         completion: ((Error?) -> Void)? = nil
     ) {

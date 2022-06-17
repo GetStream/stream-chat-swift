@@ -12,13 +12,13 @@ extension Endpoint {
     ///   - deviceId: DeviceId to be added. DeviceId is obtained via
     ///   `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
     ///   - pushProvider: The push provider for this device (eg. APN, Firebase)
-    ///   - providerName: The bundle id of the app (multi-bundle).
+    ///   - providerName: Name of the push configuration in dashboard. If nil, default configuration will be used.
     /// - Returns: The endpoint for adding a device.
     static func addDevice(
         userId: UserId,
         deviceId: DeviceId,
         pushProvider: PushProvider,
-        providerName: String?
+        providerName: String? = nil
     ) -> Endpoint<EmptyResponse> {
         var body: [String: String] = [
             "user_id": userId,
