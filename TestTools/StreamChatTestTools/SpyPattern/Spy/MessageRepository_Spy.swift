@@ -52,7 +52,7 @@ final class MessageRepository_Spy: MessageRepository, Spy {
         completion?(saveSuccessfullyDeletedMessageError)
     }
 
-    override func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping () -> Void) {
+    override func updateMessage(withID id: MessageId, localState: LocalMessageState?, isBounced: Bool? = nil, completion: @escaping () -> Void) {
         record()
         updatedMessageLocalState = localState
         completion()

@@ -13,7 +13,11 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
         if message?.isSentByCurrentUser == true && AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
             actions.append(hardDeleteActionItem())
         }
-        actions.append(translateActionItem())
+        
+        if message?.isBounced == false {
+            actions.append(translateActionItem())
+        }
+        
         return actions
     }
 

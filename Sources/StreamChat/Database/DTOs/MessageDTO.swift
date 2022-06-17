@@ -22,6 +22,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var showReplyInChannel: Bool
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data?
+    @NSManaged var isBounced: Bool
     @NSManaged var isSilent: Bool
     @NSManaged var isShadowed: Bool
     @NSManaged var reactionScores: [String: Int]
@@ -867,6 +868,7 @@ private extension ChatMessage {
         parentMessageId = dto.parentMessageId
         showReplyInChannel = dto.showReplyInChannel
         replyCount = Int(dto.replyCount)
+        isBounced = dto.isBounced
         isSilent = dto.isSilent
         isShadowed = dto.isShadowed
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }

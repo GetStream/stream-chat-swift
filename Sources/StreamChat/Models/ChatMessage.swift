@@ -62,6 +62,9 @@ public struct ChatMessage {
 
     @CoreDataLazy internal var _quotedMessage: ChatMessage?
     
+    /// A flag indicating whether the message was bounced due to moderation.
+    public let isBounced: Bool
+    
     /// A flag indicating whether the message is a silent message.
     ///
     /// Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
@@ -187,6 +190,7 @@ public struct ChatMessage {
         replyCount: Int,
         extraData: [String: RawJSON],
         quotedMessage: @escaping () -> ChatMessage?,
+        isBounced: Bool,
         isSilent: Bool,
         isShadowed: Bool,
         reactionScores: [MessageReactionType: Int],
@@ -221,6 +225,7 @@ public struct ChatMessage {
         self.showReplyInChannel = showReplyInChannel
         self.replyCount = replyCount
         self.extraData = extraData
+        self.isBounced = isBounced
         self.isSilent = isSilent
         self.isShadowed = isShadowed
         self.reactionScores = reactionScores

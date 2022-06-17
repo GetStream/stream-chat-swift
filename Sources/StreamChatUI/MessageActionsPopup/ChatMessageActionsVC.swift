@@ -113,7 +113,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             return actions
         case .pendingSend, .sendingFailed, .pendingSync, .syncingFailed, .deletingFailed:
             return [
-                message.localState == .sendingFailed ? resendActionItem() : nil,
+                (message.localState == .sendingFailed || message.isBounced) ? resendActionItem() : nil,
                 editActionItem(),
                 deleteActionItem()
             ]

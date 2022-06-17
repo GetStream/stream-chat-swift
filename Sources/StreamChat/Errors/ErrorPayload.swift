@@ -10,6 +10,7 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
         case code
         case message
         case statusCode = "StatusCode"
+        case details
     }
     
     /// An error code.
@@ -18,6 +19,8 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
     public let message: String
     /// An HTTP status code.
     public let statusCode: Int
+    /// An array of specific details that compose the error.
+    public let details: [ErrorPayloadDetail]
     
     public var errorDescription: String? {
         "Error #\(code): \(message)"
@@ -38,6 +41,11 @@ extension ErrorPayload {
     var isClientError: Bool {
         ClosedRange.clientErrorCodes ~= statusCode
     }
+    
+    /// Returns `true` if internal status code is related to a moderation bouncing error.
+    var isBouncedMessageError: Bool {
+        code == 73
+    }
 }
 
 extension ClosedRange where Bound == Int {
@@ -46,4 +54,17 @@ extension ClosedRange where Bound == Int {
     
     /// The range of HTTP request status codes for client errors.
     static let clientErrorCodes: Self = 400...499
+}
+
+/// A parsed server response error detail.
+public struct ErrorPayloadDetail: LocalizedError, Codable, Equatable {
+    private enum CodingKeys: String, CodingKey {
+        case code
+        case messages
+    }
+    
+    /// An error code.
+    public let code: Int
+    /// An array of  message strings that better describe the error detail.
+    public let messages: [String]
 }
