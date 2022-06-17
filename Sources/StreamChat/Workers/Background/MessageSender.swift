@@ -69,11 +69,12 @@ class MessageSender: Worker {
             switch change {
             case .insert(let dto, index: _), .update(let dto, index: _):
                 database.backgroundReadOnlyContext.performAndWait {
-                    guard let cid = dto.channel.map({ try! ChannelId(cid: $0.cid) }) else {
+                    guard let cid = dto.channel.map({ try? ChannelId(cid: $0.cid) }) else {
                         log.error("Skipping sending of the message \(dto.id) because the channel info is missing.")
                         return
                     }
                     // Create the array if it didn't exist
+                    guard let cid = cid else { return }
                     newRequests[cid] = newRequests[cid] ?? []
                     newRequests[cid]!.append(.init(
                         messageId: dto.id,

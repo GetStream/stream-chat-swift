@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamChatUI
 import UIKit
 
 class UserCredentialsCell: UITableViewCell {

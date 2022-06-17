@@ -51,6 +51,16 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// When this value is set the subviews are instantiated and laid out just once based on
     /// the received options.
     public var layoutOptions: ChatMessageLayoutOptions?
+    
+    /// The formatter used for text Markdown
+    public var markdownFormatter: MarkdownFormatter {
+        appearance.formatters.markdownFormatter
+    }
+    
+    /// A boolean value that determines whether Markdown is active for messages to be formatted.
+    open var isMarkdownEnabled: Bool {
+        appearance.formatters.isMarkdownEnabled
+    }
 
     // MARK: Content && Actions
 
@@ -477,21 +487,26 @@ open class ChatMessageContentView: _View, ThemeProvider {
         }
 
         // Text
-        var textColor = appearance.colorPalette.text
-        var textFont = appearance.fonts.body
-        
-        if content?.isDeleted == true {
-            textColor = appearance.colorPalette.textLowEmphasis
-        } else if content?.shouldRenderAsJumbomoji == true {
-            textFont = appearance.fonts.emoji
-        } else if content?.type == .system || content?.type == .error {
-            textFont = appearance.fonts.caption1.bold
-            textColor = appearance.colorPalette.textLowEmphasis
+        if isMarkdownEnabled, markdownFormatter.containsMarkdown(content?.textContent ?? "") {
+            let markdownText = markdownFormatter.format(content?.textContent ?? "")
+            textView?.attributedText = markdownText
+        } else {
+            var textColor = appearance.colorPalette.text
+            var textFont = appearance.fonts.body
+            
+            if content?.isDeleted == true {
+                textColor = appearance.colorPalette.textLowEmphasis
+            } else if content?.shouldRenderAsJumbomoji == true {
+                textFont = appearance.fonts.emoji
+            } else if content?.type == .system || content?.type == .error {
+                textFont = appearance.fonts.caption1.bold
+                textColor = appearance.colorPalette.textLowEmphasis
+            }
+            
+            textView?.textColor = textColor
+            textView?.font = textFont
+            textView?.text = content?.textContent
         }
-        
-        textView?.textColor = textColor
-        textView?.font = textFont
-        textView?.text = content?.textContent
         
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1

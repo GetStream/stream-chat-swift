@@ -71,12 +71,23 @@ open class ChatChannelVC: _ViewController,
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
-
-        messageComposerVC.channelController = client.channelController(for: channelController.cid!)
+        
         messageComposerVC.userSearchController = userSuggestionSearchController
+        
+        func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
+            guard messageComposerVC.channelController == nil else { return }
+            let composerChannelController = channelController.cid.map { client.channelController(for: $0) }
+            messageComposerVC.channelController = composerChannelController
+        }
+
+        setChannelControllerToComposerIfNeeded(cid: channelController.cid)
 
         channelController.delegate = self
-        channelController.synchronize { [weak self] _ in
+        channelController.synchronize { [weak self] error in
+            if let error = error {
+                log.error("Error when synchronizing ChannelController: \(error)")
+            }
+            setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
             self?.messageComposerVC.updateContent()
         }
     }

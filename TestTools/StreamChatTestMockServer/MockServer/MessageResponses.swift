@@ -90,12 +90,15 @@ public extension StreamMockServer {
         let message = findMessageById(messageId)
         let cid = message?[messageKey.cid.rawValue] as? String
         let channelId = cid?.split(separator: ":").last.map { String($0) }
-        if request.method == EndpointMethod.delete.rawValue {
+        switch request.method {
+        case EndpointMethod.delete.rawValue:
             return messageDeletion(
                 messageId: messageId,
                 channelId: channelId
             )
-        } else {
+        case EndpointMethod.get.rawValue:
+            return messageInfo(messageId: messageId)
+        default:
             return messageCreation(
                 request,
                 channelId: channelId,
@@ -155,11 +158,19 @@ public extension StreamMockServer {
         let quotedMessageId = message?[messageKey.quotedMessageId.rawValue] as? String
 
         let messageText = message?[messageKey.text.rawValue] as? String ?? ""
+        let messageTextComponents = Set(messageText.components(separatedBy: " "))
+        
         let messageType: MessageType = messageText.starts(with: "/giphy") ? .ephemeral : .regular
         if messageType == .regular && messageText.starts(with: "/") {
             return messageInvalidCommand(message,
                                          command: String(messageText.dropFirst(1)),
                                          channelId: channelId)
+        } else if messageType == .regular && !forbiddenWords.isDisjoint(with: messageTextComponents) {
+            return errorMessageHttpResponse(
+                from: message,
+                errorText: Message.blockedByModerationPolicies,
+                channelId: channelId
+            )
         }
         
         if let parentId = parentId, let quotedMessageId = quotedMessageId {
@@ -465,6 +476,12 @@ public extension StreamMockServer {
         return .ok(.json(json))
     }
     
+    private func messageInfo(messageId: String) -> HttpResponse {
+        var json = TestData.toJson(.message)
+        json[JSONKey.message] = findMessageById(messageId)
+        return .ok(.json(json))
+    }
+    
     private func mockMessageReplies(_ messageId: String) -> HttpResponse {
         var json = "{\"\(JSONKey.messages)\":[]}".json
         let messages = findMessagesByParrentId(messageId)
@@ -501,6 +518,32 @@ public extension StreamMockServer {
             messageId: messageId,
             text: text,
             command: command,
+            user: user,
+            createdAt: timestamp,
+            updatedAt: timestamp
+        )
+
+        responseJson[JSONKey.message] = mockedMessage
+        return .ok(.json(responseJson))
+    }
+    
+    private func errorMessageHttpResponse(
+        from message: [String: Any]?,
+        errorText: String,
+        channelId: String?
+    ) -> HttpResponse {
+        let messageId = message?[messageKey.id.rawValue] as? String
+        var responseJson = TestData.toJson(.message)
+        let responseMessage = responseJson[JSONKey.message] as? [String: Any]
+        let timestamp: String = TestData.currentDate
+        let user = setUpUser(source: responseMessage, details: UserDetails.lukeSkywalker)
+        
+        let mockedMessage = mockMessage(
+            responseMessage,
+            messageType: .error,
+            channelId: channelId,
+            messageId: messageId,
+            text: errorText,
             user: user,
             createdAt: timestamp,
             updatedAt: timestamp

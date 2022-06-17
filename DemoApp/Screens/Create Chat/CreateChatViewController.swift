@@ -256,12 +256,10 @@ class CreateChatViewController: UIViewController {
     
     @objc func openCreateGroupChat() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        
-        let createGroupController = storyboard.instantiateViewController(withIdentifier: "CreateGroupViewController")
-            as! CreateGroupViewController
-        createGroupController.searchController = searchController.client.userSearchController()
-        
-        navigationController?.pushViewController(createGroupController, animated: true)
+        if let createGroupController = storyboard.instantiateViewController(withIdentifier: "CreateGroupViewController") as? CreateGroupViewController {
+            createGroupController.searchController = searchController.client.userSearchController()
+            navigationController?.pushViewController(createGroupController, animated: true)
+        }
     }
 }
 
@@ -301,7 +299,9 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserCredentialsCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "UserCredentialsCell", for: indexPath) as? UserCredentialsCell else {
+            return UITableViewCell()
+        }
         let user = users[indexPath.row]
         
         if let imageURL = user.imageURL {
@@ -332,7 +332,9 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
             tableView.deselectRow(at: indexPath, animated: true)
         }
         
-        let cell = tableView.cellForRow(at: indexPath) as! UserCredentialsCell
+        guard let cell = tableView.cellForRow(at: indexPath) as? UserCredentialsCell else {
+            return
+        }
         guard cell.accessoryImageView.image == nil else {
             // The cell isn't selected
             // De-select user by tapping functionality was removed due to designer feedback

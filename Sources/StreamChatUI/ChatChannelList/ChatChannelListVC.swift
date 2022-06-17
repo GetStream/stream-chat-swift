@@ -51,7 +51,7 @@ open class ChatChannelListVC: _ViewController,
     open var separatorReuseIdentifier: String { "CellSeparatorIdentifier" }
     
     /// Reuse identifier of `collectionViewCell`
-    open var collectionViewCellReuseIdentifier: String { "Cell" }
+    open var collectionViewCellReuseIdentifier: String { String(describing: ChatChannelListCollectionViewCell.self) }
 
     /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a view.
     private lazy var listChangeUpdater: ListChangeUpdater = CollectionViewListChangeUpdater(
@@ -166,11 +166,7 @@ open class ChatChannelListVC: _ViewController,
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: collectionViewCellReuseIdentifier,
-            for: indexPath
-        ) as! ChatChannelListCollectionViewCell
-
+        let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
         guard let channel = getChannel(at: indexPath) else { return cell }
 
         cell.components = components

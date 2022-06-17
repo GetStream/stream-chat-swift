@@ -32,6 +32,6 @@ final class DemoChatChannelVC: ChatChannelVC {
             return
         }
 
-        channelListVC.demoRouter.didTapMoreButton(for: cid)
+        channelListVC.demoRouter?.didTapMoreButton(for: cid)
     }
 }

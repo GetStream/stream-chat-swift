@@ -27,8 +27,8 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         showUnder: navigationController!.navigationBar
     )
 
-    var demoRouter: DemoChatChannelListRouter {
-        router as! DemoChatChannelListRouter
+    var demoRouter: DemoChatChannelListRouter? {
+        router as? DemoChatChannelListRouter
     }
 
     override func viewDidLoad() {
@@ -46,11 +46,11 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     }
 
     @objc private func didTapCreateNewChannel(_ sender: Any) {
-        demoRouter.showCreateNewChannelFlow()
+        demoRouter?.showCreateNewChannelFlow()
     }
 
     @objc private func didTapHiddenChannelsButton(_ sender: Any) {
-        demoRouter.showHiddenChannels()
+        demoRouter?.showHiddenChannels()
     }
 
     var highlightSelectedChannel: Bool { splitViewController?.isCollapsed == false }

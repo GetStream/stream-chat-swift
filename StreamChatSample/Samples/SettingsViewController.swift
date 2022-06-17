@@ -120,11 +120,11 @@ struct SettingsView: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> SettingsViewController {
         let navigationViewController = UIStoryboard.settings.instantiateInitialViewController()!
-        let settingsViewController = navigationViewController.children.first as! SettingsViewController
-        
-        settingsViewController.currentUserController = currentUserController
-        
-        return settingsViewController
+        if let settingsViewController = navigationViewController.children.first as? SettingsViewController {
+            settingsViewController.currentUserController = currentUserController
+            return settingsViewController
+        }
+        return SettingsViewController()
     }
     
     func updateUIViewController(_ uiViewController: SettingsViewController, context: Context) {}

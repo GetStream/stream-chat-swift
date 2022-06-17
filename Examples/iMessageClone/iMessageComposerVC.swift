@@ -11,20 +11,20 @@ final class iMessageComposerVC: ComposerVC {
         false
     }
 
-    var iMessageComposerView: iMessageComposerView {
-        composerView as! iMessageComposerView
+    var iMessageComposerView: iMessageComposerView? {
+        composerView as? iMessageComposerView
     }
 
     override func setUp() {
         super.setUp()
 
-        iMessageComposerView.emojiButton.addTarget(self, action: #selector(showEmojiPicker), for: .touchUpInside)
+        iMessageComposerView?.emojiButton.addTarget(self, action: #selector(showEmojiPicker), for: .touchUpInside)
     }
 
     override func updateContent() {
         super.updateContent()
 
-        iMessageComposerView.emojiButton.isHidden = !content.text.isEmpty
+        iMessageComposerView?.emojiButton.isHidden = !content.text.isEmpty
     }
 
     @objc func showEmojiPicker(sender: UIButton) {
