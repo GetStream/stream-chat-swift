@@ -90,12 +90,15 @@ public extension StreamMockServer {
         let message = findMessageById(messageId)
         let cid = message?[messageKey.cid.rawValue] as? String
         let channelId = cid?.split(separator: ":").last.map { String($0) }
-        if request.method == EndpointMethod.delete.rawValue {
+        switch request.method {
+        case EndpointMethod.delete.rawValue:
             return messageDeletion(
                 messageId: messageId,
                 channelId: channelId
             )
-        } else {
+        case EndpointMethod.get.rawValue:
+            return messageInfo(messageId: messageId)
+        default:
             return messageCreation(
                 request,
                 channelId: channelId,
@@ -470,6 +473,12 @@ public extension StreamMockServer {
         )
         
         json[JSONKey.message] = mockedMessage
+        return .ok(.json(json))
+    }
+    
+    private func messageInfo(messageId: String) -> HttpResponse {
+        var json = TestData.toJson(.message)
+        json[JSONKey.message] = findMessageById(messageId)
         return .ok(.json(json))
     }
     
