@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix Logger persisting config after usage, preventing changing parameters (such as LogLevel) [#2081](https://github.com/GetStream/stream-chat-swift/issues/2081)
 - Fix crash in `ChannelVC` when it's initialized using a `ChannelController` created with `createDirectMessageChannelWith` factory [#2097](https://github.com/GetStream/stream-chat-swift/issues/2097)
 - Fix `ChannelListSortingKey.unreadCount` causing database crash [#2094](https://github.com/GetStream/stream-chat-swift/issues/2094)
+- Fix attachment link previews with missing URL scheme not opening in browser [#2106](https://github.com/GetStream/stream-chat-swift/pull/2106)
+
 ### 🔄 Changed
 - JSON decoding performance is increased 3 times, parsing time reduced by %70 [#2081](https://github.com/GetStream/stream-chat-swift/issues/2081)
 - EventPayload decoding errors are now more verbose [#2099](https://github.com/GetStream/stream-chat-swift/issues/2099)
