@@ -67,6 +67,7 @@ final class StreamChatWrapper {
         Components.default.messageContentView = DemoChatMessageContentView.self
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
+        Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
     }
 }
 
