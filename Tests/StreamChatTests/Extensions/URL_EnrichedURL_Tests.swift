@@ -16,7 +16,7 @@ final class URL_EnrichedURL_Tests: XCTestCase {
 
     func test_urlWithSchemeIsNotChanged_whenHavingScheme() {
         // GIVEN
-        let url = URL(string: "http://google.com")
+        let url = URL(string: "https://google.com")
 
         // THEN
         XCTAssertEqual(url?.enrichedURL, url)
