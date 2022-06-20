@@ -20,36 +20,32 @@ lane :sonar_upload do
                  '-Dsonar.swift.lizard.report="reports/lizard.xml"'
   end
 
+  options = sonar_options(sonar_args: sonar_args, version_number: version_number)
+  sonar(options)
+
+  next if sonar_args.empty? || ENV['GITHUB_EVENT_NAME'] == 'pull_request' || sonar_branch !~ /main|develop/
+
+  slack_sonarcloud_metrics(version_number: version_number)
+end
+
+desc 'Gets Sonar options'
+private_lane :sonar_options do |options|
+  default_options = { sonar_login: ENV['SONAR_TOKEN'], sonar_runner_args: options[:sonar_args] }
+
   if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
-    sonar(
-      sonar_login: ENV['SONAR_TOKEN'],
-      pull_request_branch: ENV['GITHUB_HEAD_REF'],
-      pull_request_base: ENV['GITHUB_BASE_REF'],
-      pull_request_key: ENV['PR_NUMBER'],
-      project_version: version_number,
-      sonar_runner_args: sonar_args
-    )
+    default_options.merge(pull_request_branch: ENV['GITHUB_HEAD_REF'],
+                          pull_request_base: ENV['GITHUB_BASE_REF'],
+                          pull_request_key: ENV['PR_NUMBER'])
+  elsif sonar_branch == 'main'
+    default_options.merge(branch_name: sonar_branch, project_version: options[:version_number])
   else
-    branch = ENV['BRANCH_NAME'] || git_branch
-
-    sonar(
-      sonar_login: ENV['SONAR_TOKEN'],
-      branch_name: branch,
-      project_version: version_number,
-      sonar_runner_args: sonar_args
-    )
-
-    next if sonar_args.empty?
-
-    case branch.to_sym
-    when :main
-      slack_sonarcloud_metrics(new_period: version_number, branch: branch)
-    when :develop
-      slack_sonarcloud_metrics(branch: branch)
-    else
-      UI.message("Sonar MetricKit ignores branch: #{branch}")
-    end
+    default_options.merge(branch_name: sonar_branch)
   end
+end
+
+desc 'Gets Sonar branch'
+private_lane :sonar_branch do
+  ENV['BRANCH_NAME'] || git_branch
 end
 
 desc 'Creates a report in Slack with SonarCloud analysis details'
@@ -60,7 +56,7 @@ private_lane :slack_sonarcloud_metrics do |options|
     quality_gate: true,
     branch: options[:branch]
   )
-  new_period = options[:new_period] || options[:branch]
+  new_period = sonar_branch == 'main' ? options[:version_number] : sonar_branch
   new_coverage = metrics[:new_coverage].to_f.round(2)
   new_duplication_density = metrics[:new_duplicated_lines_density].to_f.round(2)
   vulnerabilities = metrics[:security_hotspots].to_i + metrics[:vulnerabilities].to_i
