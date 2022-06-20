@@ -34,7 +34,7 @@ final class StreamChatWrapper {
         }
 
         // Set the log level
-        LogConfig.level = .debug
+        LogConfig.level = .warning
         LogConfig.formatters = [
             PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
         ]
