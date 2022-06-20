@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - `parentMessageId` parameter for typing events [#2080](https://github.com/GetStream/stream-chat-swift/issues/2080)
+- Adds support for multi bundle push notifications [#2101](https://github.com/GetStream/stream-chat-swift/pull/2101)
+
 ### 🐞 Fixed
 - Fix hidden channels not appearing on relaunch [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
 - Fix `channel.hidden` event failing to decode on launch/reconnection [#2056](https://github.com/GetStream/stream-chat-swift/issues/2056)
