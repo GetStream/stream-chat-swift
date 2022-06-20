@@ -446,6 +446,59 @@ extension MessageList_Tests {
 
 // MARK: - Thread replies
 extension MessageList_Tests {
+    func test_threadReplyAppearsInThread_whenParticipantAddsThreadReply() {
+        linkToScenario(withId: 50)
+        
+        let message = "test message"
+        let threadReply = "thread reply"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("participant adds a thread reply to user's message") {
+            participantRobot.replyToMessageInThread(threadReply)
+        }
+        AND("user enters thread") {
+            userRobot.openThread()
+        }
+        THEN("user observes the thread reply in thread") {
+            userRobot.assertThreadReply(threadReply)
+        }
+    }
+    
+    func test_threadReplyAppearsInChannelAndThread_whenParticipantAddsThreadReplySentAlsoToChannel() {
+        linkToScenario(withId: 110)
+        
+        let message = "test message"
+        let threadReply = "thread reply"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("participant adds a thread reply to user's message") {
+            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        THEN("user observes the thread reply in channel") {
+            userRobot.assertMessage(threadReply)
+        }
+        WHEN("user enters thread") {
+            userRobot.openThread()
+        }
+        THEN("user observes the thread reply in thread") {
+            userRobot.assertThreadReply(threadReply)
+        }
+    }
+    
     func test_threadReplyAppearsInChannelAndThread_whenUserAddsThreadReplySentAlsoToChannel() {
         linkToScenario(withId: 111)
 
