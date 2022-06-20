@@ -540,7 +540,7 @@ open class ChatMessageListVC: _ViewController,
         _ attachment: ChatMessageLinkAttachment,
         at indexPath: IndexPath?
     ) {
-        router.showLinkPreview(link: attachment.originalURL)
+        router.showLinkPreview(link: attachment.url)
     }
 
     open func didTapOnAttachment(
