@@ -6,47 +6,51 @@ import CoreData
 import Foundation
 
 protocol IdentifiablePayload {
-    static var keyPath: String? { get }
     var databaseId: String? { get }
-    static var modelClass: NSManagedObject.Type? { get }
-    static func id(for model: NSManagedObject) -> String?
+    static var modelClass: (NSManagedObject & IdentifiableModel).Type? { get }
+    func fillIds(cache: inout [String: Set<String>])
 }
 
 extension IdentifiablePayload {
-    fileprivate static var className: String {
-        "\(Self.self)"
+    func addId(cache: inout [String: Set<String>]) {
+        guard let databaseId = databaseId, let modelClassName = Self.modelClass?.className else { return }
+        var ids = (cache[modelClassName] ?? Set<String>())
+        ids.insert(databaseId)
+        cache[modelClassName] = ids
     }
 
-    private var className: String {
-        type(of: self).className
+    func recursivelyGetAllIds() -> [String: Set<String>] {
+        var cache: [String: Set<String>] = [:]
+        fillIds(cache: &cache)
+        return cache
     }
 
-    func getPayloadToModelIdMappings(context: NSManagedObjectContext) -> [String: [String: NSManagedObjectID]] {
+    func getPayloadToModelIdMappings(context: NSManagedObjectContext) -> IDToObjectIDCache {
         let payloadIdsMappings = recursivelyGetAllIds()
 
         var modelToIdMappings: [String: [String: NSManagedObjectID]] = [:]
 
         for (className, identifiableValues) in payloadIdsMappings {
-            let aClass: IdentifiablePayload.Type? = {
+            let modelClass: (NSManagedObject & IdentifiableModel).Type? = {
                 switch className {
-                case ChannelDetailPayload.className:
-                    return ChannelDetailPayload.self
-                case UserPayload.className:
-                    return UserPayload.self
-                case MessagePayload.className:
-                    return MessagePayload.self
-                case MessageReactionPayload.className:
-                    return MessageReactionPayload.self
-                case MemberPayload.className:
-                    return MemberPayload.self
-                case ChannelReadPayload.className:
-                    return ChannelReadPayload.self
+                case ChannelDTO.className:
+                    return ChannelDTO.self
+                case UserDTO.className:
+                    return UserDTO.self
+                case MessageDTO.className:
+                    return MessageDTO.self
+                case MessageReactionDTO.className:
+                    return MessageReactionDTO.self
+                case MemberDTO.className:
+                    return MemberDTO.self
+                case ChannelReadDTO.className:
+                    return ChannelReadDTO.self
                 default:
                     return nil
                 }
             }()
 
-            guard let aClass = aClass, let modelClass = aClass.modelClass, let keyPath = aClass.keyPath else { continue }
+            guard let modelClass = modelClass, let keyPath = modelClass.idKeyPath else { continue }
 
             let values = Array(identifiableValues)
             var results: [NSManagedObject]?
@@ -57,7 +61,7 @@ extension IdentifiablePayload {
 
             var modelMapping: [String: NSManagedObjectID] = [:]
             results.forEach {
-                if let id = aClass.id(for: $0) {
+                if let id = modelClass.id(for: $0) {
                     modelMapping[id] = $0.objectID
                 }
             }
@@ -66,80 +70,115 @@ extension IdentifiablePayload {
 
         return modelToIdMappings
     }
+}
 
-    func recursivelyGetAllIds() -> [String: Set<String>] {
-        var cache: [String: Set<String>] = [:]
+protocol IdentifiablePayloadProxy: IdentifiablePayload {}
 
-        updateCache(with: self, cache: &cache)
+extension IdentifiablePayloadProxy {
+    var databaseId: String? { nil }
+    static var modelClass: (NSManagedObject & IdentifiableModel).Type? { nil }
+}
 
-        let mirror = Mirror(reflecting: self)
-        recursiveIdentifiable(elements: mirror.children.map(\.value), cache: &cache, depth: 0)
-        return cache
-    }
+extension Array where Element: IdentifiablePayload {
+    var databaseId: String? { nil }
+    static var modelClass: (NSManagedObject & IdentifiableModel).Type? { nil }
 
-    private func recursiveIdentifiable(elements: [Any], cache: inout [String: Set<String>], depth: Int) {
-        if depth == 30 {
-            log.assertionFailure("Preventing a stack overflow. Chances are that there's a cyclic dependency between the elements")
-            return
+    func fillIds(cache: inout [String: Set<String>]) {
+        forEach {
+            $0.fillIds(cache: &cache)
         }
-
-        for element in elements {
-            if let identifiable = element as? IdentifiablePayload {
-                updateCache(with: identifiable, cache: &cache)
-                let mirror = Mirror(reflecting: element)
-                recursiveIdentifiable(elements: mirror.children.map(\.value), cache: &cache, depth: depth + 1)
-            } else if let identifiableCollection = element as? [IdentifiablePayload] {
-                recursiveIdentifiable(elements: identifiableCollection, cache: &cache, depth: depth + 1)
-            }
-        }
-    }
-
-    private func updateCache(with element: IdentifiablePayload, cache: inout [String: Set<String>]) {
-        guard let id = element.databaseId else { return }
-        var set = (cache[element.className] ?? Set<String>())
-        set.insert(id)
-        cache[element.className] = set
     }
 }
 
-extension ChannelListPayload: IdentifiablePayload {
-    // Proxy
-    var databaseId: String? { nil }
-    static let keyPath: String? = nil
-    static let modelClass: NSManagedObject.Type? = nil
-    static func id(for model: NSManagedObject) -> String? { nil }
+extension UserListPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [String: Set<String>]) {
+        users.fillIds(cache: &cache)
+    }
 }
 
-extension ChannelPayload: IdentifiablePayload {
-    // Proxy
-    var databaseId: String? { nil }
-    static let keyPath: String? = nil
-    static let modelClass: NSManagedObject.Type? = nil
-    static func id(for model: NSManagedObject) -> String? { nil }
+extension MessageListPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [String: Set<String>]) {
+        messages.fillIds(cache: &cache)
+    }
+}
+
+extension MessageReactionsPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [String: Set<String>]) {
+        reactions.fillIds(cache: &cache)
+    }
+}
+
+extension MessageSearchResultsPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [String: Set<String>]) {
+        results.fillIds(cache: &cache)
+    }
+}
+
+extension MessagePayload.Boxed: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [String: Set<String>]) {
+        message.fillIds(cache: &cache)
+    }
+}
+
+extension ChannelMemberListPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [String: Set<String>]) {
+        members.fillIds(cache: &cache)
+    }
+}
+
+extension ChannelListPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [String: Set<String>]) {
+        channels.fillIds(cache: &cache)
+    }
+}
+
+extension ChannelPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [String: Set<String>]) {
+        addId(cache: &cache)
+        channel.fillIds(cache: &cache)
+        watchers?.fillIds(cache: &cache)
+        membership?.fillIds(cache: &cache)
+        messages.fillIds(cache: &cache)
+        pinnedMessages.fillIds(cache: &cache)
+        channelReads.fillIds(cache: &cache)
+    }
 }
 
 extension ChannelDetailPayload: IdentifiablePayload {
     var databaseId: String? { cid.rawValue }
-    private static let _keyPath: KeyPath<ChannelDTO, String> = \ChannelDTO.cid
-    static let keyPath: String? = _keyPath.stringValue
-    static let modelClass: NSManagedObject.Type? = ChannelDTO.self
-    static func id(for model: NSManagedObject) -> String? { (model as? ChannelDTO)?[keyPath: _keyPath] }
+    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = ChannelDTO.self
+
+    func fillIds(cache: inout [String: Set<String>]) {
+        addId(cache: &cache)
+        createdBy?.fillIds(cache: &cache)
+        members?.fillIds(cache: &cache)
+        invitedMembers.fillIds(cache: &cache)
+    }
 }
 
 extension UserPayload: IdentifiablePayload {
     var databaseId: String? { id }
-    private static let _keyPath: KeyPath<UserDTO, String> = \UserDTO.id
-    static let keyPath: String? = _keyPath.stringValue
-    static let modelClass: NSManagedObject.Type? = UserDTO.self
-    static func id(for model: NSManagedObject) -> String? { (model as? UserDTO)?[keyPath: _keyPath] }
+    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = UserDTO.self
+
+    func fillIds(cache: inout [String: Set<String>]) {
+        addId(cache: &cache)
+    }
 }
 
 extension MessagePayload: IdentifiablePayload {
     var databaseId: String? { id }
-    private static let _keyPath: KeyPath<MessageDTO, String> = \MessageDTO.id
-    static let keyPath: String? = _keyPath.stringValue
-    static let modelClass: NSManagedObject.Type? = MemberDTO.self
-    static func id(for model: NSManagedObject) -> String? { (model as? MessageDTO)?[keyPath: _keyPath] }
+    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = MessageDTO.self
+
+    func fillIds(cache: inout [String: Set<String>]) {
+        addId(cache: &cache)
+        user.fillIds(cache: &cache)
+        quotedMessage?.fillIds(cache: &cache)
+        mentionedUsers.fillIds(cache: &cache)
+        threadParticipants.fillIds(cache: &cache)
+        latestReactions.fillIds(cache: &cache)
+        pinnedBy?.fillIds(cache: &cache)
+        pinnedBy?.fillIds(cache: &cache)
+    }
 }
 
 extension MessageReactionPayload: IdentifiablePayload {
@@ -147,36 +186,31 @@ extension MessageReactionPayload: IdentifiablePayload {
         MessageReactionDTO.createId(userId: user.id, messageId: messageId, type: type)
     }
 
-    private static let _keyPath: KeyPath<MessageReactionDTO, String> = \MessageReactionDTO.id
-    static let keyPath: String? = _keyPath.stringValue
-    static let modelClass: NSManagedObject.Type? = MessageReactionDTO.self
-    static func id(for model: NSManagedObject) -> String? { (model as? MessageReactionDTO)?[keyPath: _keyPath] }
+    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = MessageReactionDTO.self
+
+    func fillIds(cache: inout [String: Set<String>]) {
+        addId(cache: &cache)
+        user.fillIds(cache: &cache)
+    }
 }
 
 extension MemberPayload: IdentifiablePayload {
-    var databaseId: String? {
-        nil // Cannot build id without channel id
-    }
+    var databaseId: String? { nil } // Cannot build id without channel id
+    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = MemberDTO.self
 
-    private static let _keyPath: KeyPath<MemberDTO, String> = \MemberDTO.id
-    static let keyPath: String? = _keyPath.stringValue
-    static let modelClass: NSManagedObject.Type? = MemberDTO.self
-    static func id(for model: NSManagedObject) -> String? { (model as? MemberDTO)?[keyPath: _keyPath] }
+    func fillIds(cache: inout [String: Set<String>]) {
+        addId(cache: &cache)
+        user.fillIds(cache: &cache)
+    }
 }
 
 extension ChannelReadPayload: IdentifiablePayload {
-    var databaseId: String? {
-        nil // Needs a composed predicate 'channel.cid == %@ && user.id == %@'
-    }
+    var databaseId: String? { nil } // Needs a composed predicate 'channel.cid == %@ && user.id == %@'
+    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = ChannelReadDTO.self
 
-    static let keyPath: String? = nil // Fetched by user.id
-    static let modelClass: NSManagedObject.Type? = ChannelReadDTO.self
-    static func id(for model: NSManagedObject) -> String? { nil }
-}
-
-private extension KeyPath where Root: NSObject {
-    var stringValue: String {
-        NSExpression(forKeyPath: self).keyPath
+    func fillIds(cache: inout [String: Set<String>]) {
+        addId(cache: &cache)
+        user.fillIds(cache: &cache)
     }
 }
 

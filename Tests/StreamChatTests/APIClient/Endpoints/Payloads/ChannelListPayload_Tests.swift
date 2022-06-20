@@ -17,22 +17,36 @@ final class ChannelListPayload_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(payload.channels.count, 20)
     }
-    
-    func test_hugeChannelListQuery_save() throws {
+
+    func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 10) {
+        let writeCompleted = expectation(description: "DB write complete")
+        database.write({ session in
+            try session.saveChannelList(payload: payload, query: .init(filter: .containMembers(userIds: [.unique])))
+        }, completion: { error in
+            if let error = error {
+                XCTFail("DB write error: \(error)")
+            }
+            writeCompleted.fulfill()
+        })
+        wait(for: [writeCompleted], timeout: timeout)
+    }
+
+    func test_hugeChannelListQuery_save_uncached() throws {
         let decodedPayload = createHugeChannelList()
-        
         measure {
             let databaseContainer = DatabaseContainer_Spy()
-            let writeCompleted = expectation(description: "DB write complete")
-            databaseContainer.write({ session in
-                try session.saveChannelList(payload: decodedPayload, query: .init(filter: .containMembers(userIds: [.unique])))
-            }, completion: { error in
-                if let error = error {
-                    XCTFail("DB write error: \(error)")
-                }
-                writeCompleted.fulfill()
-            })
-            wait(for: [writeCompleted], timeout: 10)
+            saveChannelListPayload(decodedPayload, database: databaseContainer)
+        }
+    }
+
+    func test_hugeChannelListQuery_save_cached() throws {
+        let decodedPayload = createHugeChannelList()
+        let databaseContainer = DatabaseContainer_Spy()
+
+        saveChannelListPayload(decodedPayload, database: databaseContainer)
+
+        measure {
+            saveChannelListPayload(decodedPayload, database: databaseContainer)
         }
     }
     

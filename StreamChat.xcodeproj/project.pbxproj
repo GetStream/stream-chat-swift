@@ -1679,6 +1679,8 @@
 		C1EE53A727BA53F300B1A6CA /* Endpoint_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */; };
 		C1EE53A927BA662B00B1A6CA /* QueuedRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */; };
 		C1EE53AA27BA662B00B1A6CA /* QueuedRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */; };
+		C1EFF3F3285E459C0057B91B /* IdentifiableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EFF3F2285E459C0057B91B /* IdentifiableModel.swift */; };
+		C1EFF3F4285E459C0057B91B /* IdentifiableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EFF3F2285E459C0057B91B /* IdentifiableModel.swift */; };
 		C1FC2F6727416E150062530F /* ResumableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728A2732CB7B006EB51E /* ResumableData.swift */; };
 		C1FC2F6827416E150062530F /* ImagePipelineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */; };
 		C1FC2F6927416E150062530F /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72952732CB7B006EB51E /* Log.swift */; };
@@ -3436,6 +3438,7 @@
 		C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
 		C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint_Tests.swift; sourceTree = "<group>"; };
 		C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO.swift; sourceTree = "<group>"; };
+		C1EFF3F2285E459C0057B91B /* IdentifiableModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiableModel.swift; sourceTree = "<group>"; };
 		C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Filter+ChatChannel.swift"; sourceTree = "<group>"; };
 		CF1F1D442824243F002E2977 /* CooldownTracker_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooldownTracker_Tests.swift; sourceTree = "<group>"; };
 		CF1F1D4828249CC0002E2977 /* CooldownTracker_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooldownTracker_Mock.swift; sourceTree = "<group>"; };
@@ -4261,6 +4264,7 @@
 				7908829A2546D95A00896F03 /* FlagMessagePayload.swift */,
 				8836FFBA2540741D009FDF73 /* FlagUserPayload.swift */,
 				8A0D649924E579E90017A3C0 /* GuestUserTokenPayload.swift */,
+				C1EFF3F2285E459C0057B91B /* IdentifiableModel.swift */,
 				C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */,
 				793728292498FFD300E13FE5 /* MemberPayload.swift */,
 				DABC6ABB2546FD0100A8FC78 /* MessageAttachmentPayload.swift */,
@@ -9530,6 +9534,7 @@
 				884C61222594A449008B70DC /* AttachmentActionRequestBody.swift in Sources */,
 				84A43CAF26A9A25000302763 /* UnknownChannelEvent.swift in Sources */,
 				C1B0B38327BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */,
+				C1EFF3F3285E459C0057B91B /* IdentifiableModel.swift in Sources */,
 				DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */,
 				C1FC2F982742579D0062530F /* TCPTransport.swift in Sources */,
 				AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */,
@@ -10141,6 +10146,7 @@
 				C121E874274544AF00023E4C /* UserDTO.swift in Sources */,
 				C186BFB027AADB410099CCA6 /* SyncOperations.swift in Sources */,
 				C121E875274544AF00023E4C /* UserListQueryDTO.swift in Sources */,
+				C1EFF3F4285E459C0057B91B /* IdentifiableModel.swift in Sources */,
 				C121E876274544AF00023E4C /* CurrentUserDTO.swift in Sources */,
 				C121E877274544AF00023E4C /* MemberModelDTO.swift in Sources */,
 				C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */,
