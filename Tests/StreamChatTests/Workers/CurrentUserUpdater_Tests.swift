@@ -217,6 +217,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     
     func test_addDevice_makesCorrectAPICall() throws {
         let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let deviceId = "test"
+        let pushProvider = PushProvider.apn
+        let providerName = "APN Configuration"
         
         // Save user to the db
         try database.writeSynchronously {
@@ -225,8 +228,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // Call addDevice
         currentUserUpdater.addDevice(
-            deviceId: "test",
-            pushProvider: .apn,
+            deviceId: deviceId,
+            pushProvider: pushProvider,
+            providerName: providerName,
             currentUserId: userPayload.id
         ) {
             // No error should be returned
@@ -236,8 +240,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Assert that request is made to the correct endpoint
         let expectedEndpoint: Endpoint<EmptyResponse> = .addDevice(
             userId: userPayload.id,
-            deviceId: "test",
-            pushProvider: .apn
+            deviceId: deviceId,
+            pushProvider: pushProvider,
+            providerName: providerName
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }

@@ -111,7 +111,9 @@ private extension DemoAppCoordinator {
 
         let tuple = makeChannelVCs(for: cid)
         let selectedChannel = tuple.channelController?.channel
-        let channelListController = chat.channelListController(query: channelListQuery)
+        guard let channelListController = chat.channelListController(query: channelListQuery) else {
+            return UIViewController()
+        }
         let channelListVC = makeChannelListVC(
             controller: channelListController,
             selectedChannel: selectedChannel,
