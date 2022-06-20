@@ -2,6 +2,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+
+### 🔄 Changed
+
+# [4.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.17.0)
+_June 20, 2022_
 ## StreamChat
 ### ✅ Added
 - `parentMessageId` parameter for typing events [#2080](https://github.com/GetStream/stream-chat-swift/issues/2080)
