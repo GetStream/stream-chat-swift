@@ -194,6 +194,13 @@ extension UserRobot {
                     line: line)
         return self
     }
+    
+    @discardableResult
+    func openThread(messageCellIndex: Int = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.threadButton(in: messageCell).wait().safeTap()
+        return self
+    }
 
     @discardableResult
     func showThread(forMessageAt index: Int = 0) -> Self {
