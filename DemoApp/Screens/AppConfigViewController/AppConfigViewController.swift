@@ -2,7 +2,7 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
+import StreamChat
 import UIKit
 
 /// The Demo App Configuration.
@@ -83,13 +83,10 @@ class AppConfigViewController: UITableViewController {
     }
 
     enum DemoAppInfoOption: CustomStringConvertible, CaseIterable {
-        case version
         case pushConfiguration
 
         var description: String {
             switch self {
-            case .version:
-                return "SDK version: \(SystemEnvironment.version)"
             case .pushConfiguration:
                 let configuration = Bundle.pushProviderName ?? "Not set"
                 return "Push Configuration: \(configuration)"
