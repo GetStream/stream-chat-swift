@@ -10,20 +10,27 @@ final class DeviceEndpoints_Tests: XCTestCase {
     func test_addDevice_whenPushProviderIsAPN() {
         let userId: UserId = .unique
         let deviceId: String = .unique
+        let providerName: String = "Push Configuration Name"
 
         let expectedEndpoint: Endpoint<EmptyResponse> = .init(
             path: .devices,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["user_id": userId, "id": deviceId, "push_provider": "apn"]
+            body: [
+                "user_id": userId,
+                "id": deviceId,
+                "push_provider": "apn",
+                "push_provider_name": providerName
+            ]
         )
 
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .addDevice(
             userId: userId,
             deviceId: deviceId,
-            pushProvider: .apn
+            pushProvider: .apn,
+            providerName: providerName
         )
 
         // Assert endpoint is built correctly
@@ -34,20 +41,27 @@ final class DeviceEndpoints_Tests: XCTestCase {
     func test_addDevice_whenPushProviderIsFirebase() {
         let userId: UserId = .unique
         let deviceId: String = .unique
+        let providerName: String = "Push Configuration Name"
 
         let expectedEndpoint: Endpoint<EmptyResponse> = .init(
             path: .devices,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["user_id": userId, "id": deviceId, "push_provider": "firebase"]
+            body: [
+                "user_id": userId,
+                "id": deviceId,
+                "push_provider": "firebase",
+                "push_provider_name": providerName
+            ]
         )
 
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .addDevice(
             userId: userId,
             deviceId: deviceId,
-            pushProvider: .firebase
+            pushProvider: .firebase,
+            providerName: providerName
         )
 
         // Assert endpoint is built correctly

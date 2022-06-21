@@ -782,6 +782,7 @@
 		A3147EBD27F6E52500BA9972 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3147EBC27F6E52500BA9972 /* StreamChatTestHelpers */; };
 		A3147EBF27F6E52C00BA9972 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3147EBE27F6E52C00BA9972 /* StreamChatTestHelpers */; };
 		A3147EC127F6E53500BA9972 /* StreamChatTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = A3147EC027F6E53500BA9972 /* StreamChatTestHelpers */; };
+		A31783DD285B79EB005009B9 /* Bundle+PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31783DC285B79EB005009B9 /* Bundle+PushProvider.swift */; };
 		A3227E59284A484300EBE6CC /* UIImage+Resized.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E58284A484300EBE6CC /* UIImage+Resized.swift */; };
 		A3227E5B284A489000EBE6CC /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E5A284A489000EBE6CC /* UIViewController+Alert.swift */; };
 		A3227E60284A497300EBE6CC /* GroupUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E5F284A497300EBE6CC /* GroupUserCell.swift */; };
@@ -3076,6 +3077,7 @@
 		A30C3F21276B4F8800DA5968 /* UnknownUserEvent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownUserEvent_Tests.swift; sourceTree = "<group>"; };
 		A30DEC98260B47DE0066E8CE /* TitleContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleContainerView.swift; sourceTree = "<group>"; };
 		A311B42C27E8BB7400CFCF6D /* StreamChatTestTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatTestTools.swift; sourceTree = "<group>"; };
+		A31783DC285B79EB005009B9 /* Bundle+PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+PushProvider.swift"; sourceTree = "<group>"; };
 		A3227E58284A484300EBE6CC /* UIImage+Resized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Resized.swift"; sourceTree = "<group>"; };
 		A3227E5A284A489000EBE6CC /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		A3227E5F284A497300EBE6CC /* GroupUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupUserCell.swift; sourceTree = "<group>"; };
@@ -5597,6 +5599,7 @@
 		A3227E57284A481500EBE6CC /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				A31783DC285B79EB005009B9 /* Bundle+PushProvider.swift */,
 				43016E1526B734410054E805 /* ChatUser+CustomFields.swift */,
 				A3227E75284A4C6400EBE6CC /* MessageReactionType+Position.swift */,
 			);
@@ -9354,6 +9357,7 @@
 				AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */,
 				A3227E60284A497300EBE6CC /* GroupUserCell.swift in Sources */,
 				647F66D5261E22C200111B19 /* BannerView.swift in Sources */,
+				A31783DD285B79EB005009B9 /* Bundle+PushProvider.swift in Sources */,
 				A3227E72284A4BF700EBE6CC /* HiddenChannelListVC.swift in Sources */,
 				AD75CB6B27886746005F5FF7 /* OptionsSelectorViewController.swift in Sources */,
 				648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */,
