@@ -2,7 +2,7 @@
 title: Push Notifications
 ---
 
-Push notifications can be configured to receive updates when the application is closed or on the background. Stream Chat sends push notification to channel members that are not online and have at least one registered device. Stream supports both **Certificate-based provider connection trust (.p12 certificate)** and **Token-based provider connection trust (JWT)**. Token-based authentication is the preferred way to configure push notifications. 
+Push notifications can be configured to receive updates when the application is closed or on the background. Stream Chat sends push notification to channel members that are not online and have at least one registered device. Stream supports **Token-based provider connection trust (JWT)**.
 
 :::note
 You can find more on setting up push [here](https://getstream.io/chat/docs/ios-swift/push_introduction/?language=swift). Make sure you've taken care of authentication before proceeding to the next steps.
@@ -12,7 +12,7 @@ You can find more on setting up push [here](https://getstream.io/chat/docs/ios-s
 
 To receive push notifications from the Stream server the first step you need to do is register the device. To do this you need to call `UIApplication.shared.registerForRemoteNotifications()` and send the token from `application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)`.
 
-Here is the boilerplate code that you can add to your `AppDelegate`:
+Here is the code that you can add to your `AppDelegate`:
 
 ```swift
 func application(
@@ -32,7 +32,7 @@ func application(
 }
 ```
 
-Because devices are linked to chat users, you should request the device token in the `connectUser` completion block
+Because devices are linked to chat users, you should request the device token once the your user is successfully connected to Chat.
 
 ```swift
 ChatClient.shared.connectUser(
@@ -59,12 +59,64 @@ ChatClient.shared.connectUser(
 }
 ```
 
+### Leveraging Multi-Bundle configuration
+
+If you're interested in leveraging different push configurations per each build type of your app (eg `AppStore`, `Staging`) or similar, you can do so via adding the new `multi-bundle` push configuration in `Push Notifications` tab in your Stream Dashboard.
+![Push Notifications](../assets/push_notifications_dashboard.jpg)
+
+You can add new multi-bundle configuration by tapping on `New Configuration` under `Push Notifications` tab and by selecting your preferred push notification provider (eg. `APN`, `Firebase`, ..).
+
+Once created, fill in the following details:
+* `Name of your configuration` - this name will be used in `addDevice` registration call.
+* `Bundle/Topic ID` - bundle identifier of your app.
+* [Team ID](https://help.apple.com/developer-account/#/dev55c3c710c)
+* [Key ID](https://help.apple.com/developer-account/#/dev646934554)
+* `.p8 token` in raw format.
+
+and `enable` the push configuration by tapping `Enabled` toggle on top right.
+Once done, save the new push configuration.
+
+Following example shows how to register your device for given APN push configuration in your app.
+
+```swift
+func application(
+    _ application: UIApplication,
+    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+) {
+    guard ChatClient.shared.currentUserId != nil else {
+        log.warning("cannot add the device without connecting as user first, did you call connectUser")
+        return
+    }
+
+    /// Specify `providerName:` parameter.
+    ChatClient.shared.currentUserController().addDevice(.apn(token: deviceToken, providerName: "Name of your configuration")) { error in
+        if let error = error {
+            log.warning("adding a device failed with an error \(error)")
+        }
+    }
+}
+```
+
 :::note
-Push notifications can be tricky to setup correctly. Make sure to set up [logging](https://getstream.io/chat/docs/ios-swift/push_logs/?language=swift) and check for errors and settings on the [Dashboard](https://getstream.io/dashboard/) and refer to our debugging tips for [common error scenarios](https://getstream.io/chat/docs/ios-swift/push_-_common_issues_and_faq/?language=swift).
+`providerName` can be specified only for the push configurations containing the `multi-bundle` badge. If you do not leverage `multi-bundle` setup, leave the `providerName` parameter empty.
+
+![Multi-Bundle Push Configuration](../assets/push_notifications_dashboard_multi_bundle_tag.png)
 
 :::
 
+### Troubleshooting Push Notifications
+:::note
+Push notifications can be tricky to setup correctly.
+
+Here's few articles that might help to troubleshoot your issues:
+* [Sending Push Notifications Using Command-Line Tools (developer.apple.com)](https://developer.apple.com/documentation/usernotifications/sending_push_notifications_using_command-line_tools).
+* [Set up logging on Stream Dashboard](https://getstream.io/chat/docs/ios-swift/push_logs/?language=swift)
+* [Check for errors and settings on the Dashboard](https://getstream.io/dashboard/) and refer to our debugging tips for [common error scenarios](https://getstream.io/chat/docs/ios-swift/push_-_common_issues_and_faq/?language=swift).
+:::
+
 ### Removing devices
+
+Usually you might want to deregister user's device from push notifications when logging the user out from the Chat.
 
 ```swift
 guard let deviceId = ChatClient.shared.currentUserController().currentUser?.devices.last?.id else
@@ -78,9 +130,9 @@ ChatClient.shared.currentUserController().removeDevice(id: deviceId) { error in
 }
 ```
 
-### Redirecting From Notification To App
+### Redirecting From Remote Push Notification To App
 
-In order to redirect the user from notifications to a specific screen in your app, you need to create a `UNUserNotificationCenterDelegate`, your delegate will be called when the app is open from a push notification.
+In order to redirect the user from push notification to a specific screen in your app, you need to create a `UNUserNotificationCenterDelegate`. Your delegate will be called when the app is opened from a push notification.
 
 The following code shows how to open the app on the channel after tapping on the push notification:
 
@@ -110,11 +162,11 @@ class SampleNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         guard case UNNotificationDefaultActionIdentifier = response.actionIdentifier else {
             return
         }
-        
+
         /// initialize ChatClient and connect the user
         let config = ChatClientConfig(apiKey: .init("<# Api Key Here #>"))
         ChatClient.shared = ChatClient(config: config)
-        
+
         let token = Token(stringLiteral: "<# User Token Here #>")
         ChatClient.shared = ChatClient(config: config)
         ChatClient.shared.connectUser(
@@ -149,7 +201,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: scene)
-        
+
         guard let navigationController = UIStoryboard(
             name: "Main",
             bundle: nil
@@ -165,11 +217,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 }
 ```
-## Customizing Push Notifications
+## Customising Remote Push Notifications
 
-Stream sends push notifications ready for iOS to be presented to the user. If you followed this document until now, you app is already receiving clear messages via push notifications.
+Stream sends remote push notifications ready for iOS to be presented to the user. If you followed this document until now, your app is already receiving clear messages via push notifications.
 
-In many cases you want the push message to be customized, the best way to do this is via a service extension. A service extension will capture all notifications and allows you to modify its content before presenting it to the user.
+In case you need to customise the UI of the received push notification, the best way to do this is via a service extension. A service extension will capture all notifications and allows you to modify its content before presenting it to the user.
 
 ### Notification Service Extension
 
@@ -228,7 +280,7 @@ class NotificationService: UNNotificationServiceExtension {
             contentHandler(content)
         }
     }
-    
+
     override func serviceExtensionTimeWillExpire() {
         // Called just before the extension will be terminated by the system.
         // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
@@ -241,7 +293,7 @@ class NotificationService: UNNotificationServiceExtension {
 Let's summarize the most important steps:
 
 - The `ChatClient` is initialized with Api Key and Token, `connectUser` must not be used in a service extension
-- `chatHandler.handleNotification` completion block receives a `ChatPushNotificationContent` 
+- `chatHandler.handleNotification` completion block receives a `ChatPushNotificationContent`
 - `ChatPushNotificationContent` is handled for the message case, in that case it will contain a regular `ChatMessage` model
 
 #### Complete Example
@@ -270,13 +322,13 @@ class NotificationService: UNNotificationServiceExtension {
             guard let downloadedUrl = downloadedUrl else {
                 return
             }
-          
+
             guard let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first else {
                 return
             }
-          
+
             let localURL = URL(fileURLWithPath: path).appendingPathComponent(url.lastPathComponent)
-          
+
             do {
                 try FileManager.default.moveItem(at: downloadedUrl, to: localURL)
             } catch {
@@ -347,14 +399,14 @@ class NotificationService: UNNotificationServiceExtension {
                 contentHandler(content)
             }
         }
-        
+
         if !chatNotification {
             /// this was not a notification from Stream Chat
             /// perform any other transformation to the notification if needed
             contentHandler(content)
         }
     }
-    
+
     override func serviceExtensionTimeWillExpire() {
         // Called just before the extension will be terminated by the system.
         // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
