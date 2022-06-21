@@ -52,8 +52,8 @@ let package = Package(
                 path: "TestTools/StreamChatTestTools",
                 exclude: ["Info.plist"],
                 resources: [
-                        .copy("Fixtures/JSONs"),
-                        .copy("Fixtures/Other"),
+                        .process("Fixtures/JSONs"),
+                        .process("Fixtures/Other"),
                         .process("Fixtures/Images")
                 ]
         ),
@@ -65,7 +65,7 @@ let package = Package(
                 ],
                 path: "TestTools/StreamChatTestMockServer",
                 exclude: ["Info.plist"],
-                resources: [.copy("Fixtures")]
+                resources: [.process("Fixtures")]
         ),
     ]
 )
