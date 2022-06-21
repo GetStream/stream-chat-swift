@@ -116,7 +116,7 @@ Here's few articles that might help to troubleshoot your issues:
 
 ### Removing devices
 
-Usually you might want to deregister user's device from push notifications when logging the user out from the Chat.
+Usually, you might want to deregister the user's device from push notifications when logging the user out from the Chat.
 
 ```swift
 guard let deviceId = ChatClient.shared.currentUserController().currentUser?.devices.last?.id else
