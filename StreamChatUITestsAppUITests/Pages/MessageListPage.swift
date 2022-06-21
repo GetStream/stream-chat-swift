@@ -229,6 +229,22 @@ class MessageListPage {
         static var deletedMessagePlaceholder: String {
             L10n.Message.deletedMessagePlaceholder
         }
+        
+        static func images(in messageCell: XCUIElement) -> XCUIElementQuery {
+            messageCell.images.matching(NSPredicate(format: "identifier LIKE 'imageView'"))
+        }
+        
+        static func fileNames(in messageCell: XCUIElement) -> XCUIElementQuery {
+            messageCell.staticTexts.matching(NSPredicate(format: "identifier LIKE 'fileNameLabel'"))
+        }
+        
+        static func fileIcons(in messageCell: XCUIElement) -> XCUIElementQuery {
+            messageCell.images.matching(NSPredicate(format: "identifier LIKE 'fileIconImageView'"))
+        }
+        
+        static func videoPlayer() -> XCUIElement {
+            app.otherElements["PlayerView"]
+        }
     }
     
     enum PopUpButtons {
@@ -252,6 +268,10 @@ class MessageListPage {
         
         static var cancelButton: XCUIElement {
             app.scrollViews.buttons.matching(NSPredicate(format: "label LIKE 'Cancel'")).firstMatch
+        }
+        
+        static var images: XCUIElementQuery {
+            app.scrollViews.images
         }
     }
     
