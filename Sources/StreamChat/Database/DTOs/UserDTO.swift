@@ -77,7 +77,7 @@ extension UserDTO {
     ///   - id: The id of the user to fetch
     ///   - context: The context used to fetch/create `UserDTO`
     ///
-    static func loadOrCreate(id: String, context: NSManagedObjectContext, cache: IDToObjectIDCache?) -> UserDTO {
+    static func loadOrCreate(id: String, context: NSManagedObjectContext, cache: PreWarmedCache?) -> UserDTO {
         if let cachedObject = cache?.model(for: id, context: context, type: UserDTO.self) {
             return cachedObject
         }
@@ -113,7 +113,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
     func saveUser(
         payload: UserPayload,
         query: UserListQuery?,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 

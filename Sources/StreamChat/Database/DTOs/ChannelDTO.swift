@@ -111,7 +111,7 @@ class ChannelDTO: NSManagedObject {
         return load(by: request, context: context)
     }
     
-    static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext, cache: IDToObjectIDCache?) -> ChannelDTO {
+    static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext, cache: PreWarmedCache?) -> ChannelDTO {
         if let cachedObject = cache?.model(for: cid.rawValue, context: context, type: ChannelDTO.self) {
             return cachedObject
         }
@@ -162,7 +162,7 @@ extension NSManagedObjectContext {
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self, cache: cache)
 
@@ -219,7 +219,7 @@ extension NSManagedObjectContext {
     func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query, cache: cache)
                 

@@ -63,7 +63,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         let channelList = measurePayload
         savePayload(payload: channelList, database: database)
 
-        var cache: IDToObjectIDCache = [:]
+        var cache: PreWarmedCache = [:]
         measure {
             cache = channelList.getPayloadToModelIdMappings(context: database.viewContext)
         }

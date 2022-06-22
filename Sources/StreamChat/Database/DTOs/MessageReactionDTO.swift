@@ -74,7 +74,7 @@ extension MessageReactionDTO {
         type: MessageReactionType,
         user: UserDTO,
         context: NSManagedObjectContext,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) -> MessageReactionDTO {
         let reactionId = createId(userId: user.id, messageId: message.id, type: type)
         if let cachedObject = cache?.model(for: reactionId, context: context, type: MessageReactionDTO.self) {
@@ -111,7 +111,7 @@ extension NSManagedObjectContext {
     @discardableResult
     func saveReaction(
         payload: MessageReactionPayload,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> MessageReactionDTO {
         guard let messageDTO = message(id: payload.messageId) else {
             throw ClientError.MessageDoesNotExist(messageId: payload.messageId)

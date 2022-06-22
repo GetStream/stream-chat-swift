@@ -348,7 +348,7 @@ class MessageDTO: NSManagedObject {
         load(by: id, context: context).first
     }
     
-    static func loadOrCreate(id: String, context: NSManagedObjectContext, cache: IDToObjectIDCache?) -> MessageDTO {
+    static func loadOrCreate(id: String, context: NSManagedObjectContext, cache: PreWarmedCache?) -> MessageDTO {
         if let cachedObject = cache?.model(for: id, context: context, type: MessageDTO.self) {
             return cachedObject
         }
@@ -526,7 +526,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         payload: MessagePayload,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> MessageDTO {
         let cid = try ChannelId(cid: channelDTO.cid)
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
@@ -679,7 +679,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         payload: MessagePayload,
         for cid: ChannelId?,
         syncOwnReactions: Bool = true,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> MessageDTO? {
         guard payload.channel != nil || cid != nil else {
             throw ClientError.MessagePayloadSavingFailure("""
@@ -712,7 +712,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
     }
     
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: IDToObjectIDCache?) throws -> MessageDTO? {
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO? {
         guard let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache) else {
             return nil
         }

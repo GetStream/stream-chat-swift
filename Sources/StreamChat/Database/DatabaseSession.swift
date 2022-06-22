@@ -10,7 +10,7 @@ protocol UserDatabaseSession {
     /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveUser(payload: UserPayload, query: UserListQuery?, cache: IDToObjectIDCache?) throws -> UserDTO
+    func saveUser(payload: UserPayload, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
 
     /// Saves the provided payload to the DB. Return's the matching `UserDTO`s  if the save was successful. Ignores unsaved elements.
     @discardableResult
@@ -103,7 +103,7 @@ protocol MessageDatabaseSession {
         payload: MessagePayload,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> MessageDTO?
     
     /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
@@ -116,11 +116,11 @@ protocol MessageDatabaseSession {
         payload: MessagePayload,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> MessageDTO
 
     @discardableResult
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: IDToObjectIDCache?) throws -> MessageDTO?
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO?
 
     func addReaction(
         to messageId: MessageId,
@@ -164,7 +164,7 @@ protocol MessageDatabaseSession {
     /// Saves the provided reaction payload to the DB. Throws an error if the save fails
     /// else returns saved `MessageReactionDTO` entity.
     @discardableResult
-    func saveReaction(payload: MessageReactionPayload, cache: IDToObjectIDCache?) throws -> MessageReactionDTO
+    func saveReaction(payload: MessageReactionPayload, cache: PreWarmedCache?) throws -> MessageReactionDTO
     
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
@@ -226,7 +226,7 @@ protocol ChannelDatabaseSession {
     func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> ChannelDTO
     
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
@@ -234,7 +234,7 @@ protocol ChannelDatabaseSession {
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> ChannelDTO
     
     /// Loads channel list query with the given filter hash from the database.
@@ -267,7 +267,7 @@ protocol ChannelReadDatabaseSession {
     func saveChannelRead(
         payload: ChannelReadPayload,
         for cid: ChannelId,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> ChannelReadDTO
     
     /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
@@ -300,7 +300,7 @@ protocol MemberDatabaseSession {
         payload: MemberPayload,
         channelId: ChannelId,
         query: ChannelMemberListQuery?,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> MemberDTO
 
     /// Creates new `MemberDTO` objects in the database with the given `payload` in the channel with `channelId`.

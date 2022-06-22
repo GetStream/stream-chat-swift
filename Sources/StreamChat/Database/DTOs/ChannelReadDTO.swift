@@ -49,7 +49,7 @@ class ChannelReadDTO: NSManagedObject {
         cid: ChannelId,
         userId: String,
         context: NSManagedObjectContext,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) -> ChannelReadDTO {
         let request = fetchRequest(for: cid, userId: userId)
         if let existing = load(by: request, context: context).first {
@@ -72,7 +72,7 @@ extension NSManagedObjectContext {
     func saveChannelRead(
         payload: ChannelReadPayload,
         for cid: ChannelId,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self, cache: cache)
         

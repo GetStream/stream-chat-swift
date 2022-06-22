@@ -74,7 +74,7 @@ extension MemberDTO {
         userId: String,
         channelId: ChannelId,
         context: NSManagedObjectContext,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) -> MemberDTO {
         let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
         if let cachedObject = cache?.model(for: memberId, context: context, type: MemberDTO.self) {
@@ -108,7 +108,7 @@ extension NSManagedObjectContext {
         payload: MemberPayload,
         channelId: ChannelId,
         query: ChannelMemberListQuery?,
-        cache: IDToObjectIDCache?
+        cache: PreWarmedCache?
     ) throws -> MemberDTO {
         let dto = MemberDTO.loadOrCreate(userId: payload.user.id, channelId: channelId, context: self, cache: cache)
         

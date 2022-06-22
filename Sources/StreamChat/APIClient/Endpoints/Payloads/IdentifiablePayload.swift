@@ -25,7 +25,7 @@ extension IdentifiablePayload {
         return cache
     }
 
-    func getPayloadToModelIdMappings(context: NSManagedObjectContext) -> IDToObjectIDCache {
+    func getPayloadToModelIdMappings(context: NSManagedObjectContext) -> PreWarmedCache {
         let payloadIdsMappings = recursivelyGetAllIds()
 
         var modelToIdMappings: [String: [String: NSManagedObjectID]] = [:]

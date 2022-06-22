@@ -5,9 +5,9 @@
 import CoreData
 import Foundation
 
-typealias IDToObjectIDCache = [String: [String: NSManagedObjectID]]
+typealias PreWarmedCache = [String: [String: NSManagedObjectID]]
 
-extension IDToObjectIDCache {
+extension PreWarmedCache {
     func model<T: NSManagedObject & IdentifiableModel>(for id: String, context: NSManagedObjectContext, type: T.Type) -> T? {
         guard let objectId = self[T.className]?[id] else { return nil }
         return try? context.existingObject(with: objectId) as? T
