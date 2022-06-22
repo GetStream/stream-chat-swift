@@ -4,6 +4,7 @@
 
 import Foundation
 
+// swiftlint:disable force_cast
 /// Responsible to hold a collection of delegates and call all of them when the multicast delegate is invoked.
 struct MulticastDelegate<T> {
     /// We need to use a weak NSHashTable instead of a WeakReference<T> type because <T> can't

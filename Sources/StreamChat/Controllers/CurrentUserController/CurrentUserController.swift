@@ -162,7 +162,7 @@ public extension CurrentChatUserController {
         userExtraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard let currentUserId = currentUser?.id else {
+        guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
@@ -182,7 +182,7 @@ public extension CurrentChatUserController {
     /// Fetches the most updated devices and syncs with the local database.
     /// - Parameter completion: Called when the devices are synced successfully, or with error.
     func synchronizeDevices(completion: ((Error?) -> Void)? = nil) {
-        guard let currentUserId = currentUser?.id else {
+        guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
@@ -197,14 +197,15 @@ public extension CurrentChatUserController {
     ///   - pushDevice: The device information required for the desired push provider.
     ///   - completion: Callback when device is successfully registered, or failed with error.
     func addDevice(_ pushDevice: PushDevice, completion: ((Error?) -> Void)? = nil) {
-        guard let currentUserId = currentUser?.id else {
+        guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
 
         currentUserUpdater.addDevice(
             deviceId: pushDevice.deviceId,
-            pushProvider: pushDevice.provider,
+            pushProvider: pushDevice.pushProvider,
+            providerName: pushDevice.providerName,
             currentUserId: currentUserId
         ) { error in
             self.callback {
@@ -220,7 +221,7 @@ public extension CurrentChatUserController {
     ///   If `currentUser.devices` is not up-to-date, please make an `synchronize` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
     func removeDevice(id: DeviceId, completion: ((Error?) -> Void)? = nil) {
-        guard let currentUserId = currentUser?.id else {
+        guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }

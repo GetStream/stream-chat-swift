@@ -31,11 +31,35 @@ public class ParticipantRobot {
     }
     
     @discardableResult
+    public func startTypingInThread() -> Self {
+        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
+        server.websocketEvent(
+            .userStartTyping,
+            user: participant(),
+            channelId: server.currentChannelId,
+            parentMessageId: parentId
+        )
+        return self
+    }
+    
+    @discardableResult
     public func stopTyping() -> Self {
         server.websocketEvent(
             .userStopTyping,
             user: participant(),
             channelId: server.currentChannelId
+        )
+        return self
+    }
+    
+    @discardableResult
+    public func stopTypingInThread() -> Self {
+        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
+        server.websocketEvent(
+            .userStopTyping,
+            user: participant(),
+            channelId: server.currentChannelId,
+            parentMessageId: parentId
         )
         return self
     }
@@ -65,9 +89,19 @@ public class ParticipantRobot {
                             at messageCellIndex: Int? = nil,
                             waitForAppearance: Bool = true,
                             waitForChannelQuery: Bool = true,
+                            waitBeforeSending: TimeInterval = 0,
                             file: StaticString = #filePath,
                             line: UInt = #line) -> Self {
-        server.waitForChannelQueryUpdate()
+        if waitBeforeSending > 0 {
+            wait(waitBeforeSending)
+        }
+        
+        if waitForChannelQuery {
+            server.waitForChannelQueryUpdate()
+        }
+        
+        startTyping()
+        stopTyping()
         
         server.websocketMessage(
             text,
@@ -80,7 +114,6 @@ public class ParticipantRobot {
         if waitForAppearance {
             server.waitForWebsocketMessage(withText: text)
         }
-        
         return self
     }
 
@@ -151,6 +184,9 @@ public class ParticipantRobot {
     
     @discardableResult
     public func replyToMessage(_ text: String) -> Self {
+        startTyping()
+        stopTyping()
+        
         let quotedMessage = server.lastMessage
         let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
         server.websocketMessage(
@@ -169,6 +205,9 @@ public class ParticipantRobot {
     
     @discardableResult
     public func replyToMessageInThread(_ text: String, alsoSendInChannel: Bool = false) -> Self {
+        startTypingInThread()
+        stopTypingInThread()
+        
         let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
         server.websocketMessage(
             text,
@@ -185,8 +224,17 @@ public class ParticipantRobot {
     }
     
     @discardableResult
-    public func sendGiphy(waitForChannelQuery: Bool = true) -> Self {
-        server.waitForChannelQueryUpdate()
+    public func sendGiphy(waitForChannelQuery: Bool = true, waitBeforeSending: TimeInterval = 0) -> Self {
+        if waitBeforeSending > 0 {
+            wait(waitBeforeSending)
+        }
+        
+        if waitForChannelQuery {
+            server.waitForChannelQueryUpdate()
+        }
+        
+        startTyping()
+        stopTyping()
         
         server.websocketMessage(
             channelId: server.currentChannelId,
@@ -200,6 +248,9 @@ public class ParticipantRobot {
     
     @discardableResult
     public func replyWithGiphy() -> Self {
+        startTyping()
+        stopTyping()
+        
         let quotedMessage = server.lastMessage
         let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
         server.websocketMessage(
@@ -218,6 +269,9 @@ public class ParticipantRobot {
     
     @discardableResult
     public func replyWithGiphyInThread(alsoSendInChannel: Bool = false) -> Self {
+        startTypingInThread()
+        stopTypingInThread()
+        
         let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
         server.websocketMessage(
             channelId: server.currentChannelId,

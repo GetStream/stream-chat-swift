@@ -14,11 +14,11 @@ open class PlayerView: _View {
     override open func setUp() {
         super.setUp()
         
-        playerLayer.player = player
+        playerLayer?.player = player
     }
     
-    public var playerLayer: AVPlayerLayer {
-        layer as! AVPlayerLayer
+    public var playerLayer: AVPlayerLayer? {
+        layer as? AVPlayerLayer
     }
     
     override public static var layerClass: AnyClass {

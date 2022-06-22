@@ -65,7 +65,7 @@ class ChannelDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
-        // Change to the `trunctedAt` value have effect on messages, we need to mark them dirty manually
+        // Change to the `truncatedAt` value have effect on messages, we need to mark them dirty manually
         // to triggers related FRC updates
         if changedValues().keys.contains("truncatedAt") {
             messages
@@ -186,6 +186,14 @@ extension NSManagedObjectContext {
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount)
         dto.truncatedAt = payload.truncatedAt?.bridgeDate
+        // We don't always set `truncatedAt` directly since we also use this property as `hiddenAt`
+        // when a channel is hidden with `clearHistory`
+        // Backend doesn't send `truncatedAt` for this case and we reset it, causing the hidden messages to re-appear
+        // It's not possible to set `truncatedAt` to `nil` once it's set on backend side
+        // so it's safe to keep client-side changes when backend sends `nil`
+        if payload.truncatedAt != nil {
+            dto.truncatedAt = payload.truncatedAt?.bridgeDate
+        }
 
         dto.isFrozen = payload.isFrozen
         

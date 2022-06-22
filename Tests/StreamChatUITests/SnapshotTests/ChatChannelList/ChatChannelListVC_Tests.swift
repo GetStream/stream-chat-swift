@@ -252,7 +252,7 @@ extension ChatChannelListVC_Tests {
 
         let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
-            .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
+            .remove(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 2, section: 0))
         ]
@@ -275,7 +275,7 @@ extension ChatChannelListVC_Tests {
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
-            .update(.mock(cid: .unique), index: .init(row: 3, section: 0))
+            .remove(.mock(cid: .unique), index: .init(row: 3, section: 0))
         ]
 
         mockedChannelListController.simulate(

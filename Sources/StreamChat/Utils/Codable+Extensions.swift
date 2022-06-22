@@ -10,6 +10,12 @@ extension JSONDecoder {
     /// A default `JSONDecoder`.
     static var `default`: JSONDecoder = stream
     
+    static let iso8601formatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
+        return formatter
+    }()
+    
     /// A Stream Chat JSON decoder.
     static let stream: JSONDecoder = {
         let decoder = JSONDecoder()
@@ -18,7 +24,11 @@ extension JSONDecoder {
         decoder.dateDecodingStrategy = .custom { decoder throws -> Date in
             let container = try decoder.singleValueContainer()
             var dateString: String = try container.decode(String.self)
-
+            
+            if let date = iso8601formatter.date(from: dateString) {
+                return date
+            }
+            
             if let date = DateFormatter.Stream.rfc3339Date(from: dateString) {
                 return date
             }

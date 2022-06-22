@@ -23,7 +23,7 @@ extension ListChange: CustomStringConvertible {
     /// Returns pretty `ListChange` type description.
     public var description: String {
         let indexPathDescription: (IndexPath) -> String = { indexPath in
-            "(\(indexPath.row), \(indexPath.section))"
+            "(\(indexPath.item), \(indexPath.section))"
         }
         switch self {
         case let .insert(_, indexPath):
@@ -226,13 +226,14 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
             // cause a race condition when the notification observers are not removed at the right time.
             guard let self = self else { return }
+            guard let fetchResultsController = self.frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
             
             // Simulate ChangeObserver callbacks like all data are being removed
-            self.changeAggregator.controllerWillChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
+            self.changeAggregator.controllerWillChangeContent(fetchResultsController)
             
             self.frc.fetchedObjects?.enumerated().forEach { index, item in
                 self.changeAggregator.controller(
-                    self.frc as! NSFetchedResultsController<NSFetchRequestResult>,
+                    fetchResultsController,
                     didChange: item,
                     at: IndexPath(item: index, section: 0),
                     for: .delete,
@@ -246,7 +247,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             self._items.reset()
 
             // Publish the changes
-            self.changeAggregator.controllerDidChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
+            self.changeAggregator.controllerDidChangeContent(fetchResultsController)
             
             // Remove delegate so it doesn't get further removal updates
             self.frc.delegate = nil
@@ -340,7 +341,7 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
             currentChanges.append(.move(item, fromIndex: fromIndex, toIndex: toIndex))
             
         case .update:
-            guard let index = newIndexPath else {
+            guard let index = indexPath else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.update` change.")
                 return
             }

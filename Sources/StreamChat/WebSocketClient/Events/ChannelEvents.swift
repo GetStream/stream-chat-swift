@@ -203,7 +203,7 @@ class ChannelHiddenEventDTO: EventDTO {
         cid = try response.value(at: \.cid)
         createdAt = try response.value(at: \.createdAt)
         user = try response.value(at: \.user)
-        isHistoryCleared = try response.value(at: \.isChannelHistoryCleared)
+        isHistoryCleared = (try? response.value(at: \.isChannelHistoryCleared)) ?? false
         payload = response
     }
     

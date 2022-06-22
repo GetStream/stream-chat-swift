@@ -9,19 +9,21 @@ import UIKit
 final class YTChatComposerViewController: ComposerVC {
     // We need to cast the composerView to our new `YTChatMessageComposerView`
     // so that we can have access to the new `emojiButton`.
-    var ytMessageComposerView: YTChatMessageComposerView {
-        composerView as! YTChatMessageComposerView
+    var ytMessageComposerView: YTChatMessageComposerView? {
+        composerView as? YTChatMessageComposerView
     }
     
     override func setUp() {
         super.setUp()
-
-        ytMessageComposerView
-            .emojiButton
-            .addTarget(self, action: #selector(showEmojiPicker(sender:)), for: .touchUpInside)
-        ytMessageComposerView
-            .dollarButton
-            .addTarget(self, action: #selector(showPayOptions(sender:)), for: .touchUpInside)
+        
+        if let ytMessageComposerView = ytMessageComposerView {
+            ytMessageComposerView
+                .emojiButton
+                .addTarget(self, action: #selector(showEmojiPicker(sender:)), for: .touchUpInside)
+            ytMessageComposerView
+                .dollarButton
+                .addTarget(self, action: #selector(showPayOptions(sender:)), for: .touchUpInside)
+        }
     }
     
     override func typingMention(in textView: UITextView) -> (String, NSRange)? {

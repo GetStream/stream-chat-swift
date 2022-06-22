@@ -7,6 +7,12 @@ import Foundation
 /// An `Event` object representing an event in the chat system.
 public protocol Event {}
 
+extension Event {
+    var name: String {
+        String(describing: Self.self).replacingOccurrences(of: "DTO", with: "")
+    }
+}
+
 /// An internal protocol marking the Events carrying the payload. This payload can be then used for additional work,
 /// i.e. for storing the data to the database.
 protocol EventDTO: Event {
@@ -23,10 +29,6 @@ protocol EventDTO: Event {
 
 extension EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? { nil }
-
-    var name: String {
-        String(describing: Self.self).replacingOccurrences(of: "DTO", with: "")
-    }
 }
 
 /// A protocol for any `ChannelEvent` where it has a  `channel` payload.

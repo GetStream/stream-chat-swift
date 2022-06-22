@@ -40,10 +40,7 @@ final class MessageList_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("participant sends a message") {
-            participantRobot
-                .startTyping()
-                .stopTyping()
-                .sendMessage(message)
+            participantRobot.sendMessage(message)
         }
         THEN("MessageList updates for user") {
             userRobot.assertMessage(message)
@@ -131,10 +128,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant sends the emoji: '\(message)'") {
-            participantRobot
-                .startTyping()
-                .stopTyping()
-                .sendMessage(message)
+            participantRobot.sendMessage(message)
         }
         THEN("the message is delivered") {
             userRobot.assertMessageAuthor(author)
@@ -170,10 +164,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant sends the message: '\(message)'") {
-            participantRobot
-                .startTyping()
-                .stopTyping()
-                .sendMessage(message)
+            participantRobot.sendMessage(message)
         }
         AND("participant edits the message: '\(editedMessage)'") {
             participantRobot.editMessage(editedMessage)
@@ -186,21 +177,32 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageIncreases_whenUserEditsMessageWithOneLineText() {
         linkToScenario(withId: 99)
 
-        let oneLineMessage = "first line"
-        let twoLinesMessage = "first line\nsecond line"
+        let message = "test message"
+        
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
+            userRobot.login().openChannel()
         }
-        AND("user sends \(oneLineMessage) message") {
-            userRobot.sendMessage(oneLineMessage)
+        AND("user sends a one line message: '\(message)'") {
+            userRobot.sendMessage(message)
         }
-        WHEN("user edits their message so that the length becomes two lines") {
-            userRobot.editMessage(twoLinesMessage)
+        THEN("user verifies that message cell increases after editing") {
+            userRobot.assertMessageSizeChangesAfterEditing(linesCountShouldBeIncreased: true)
         }
-        THEN("message cell updates its size") {
-            userRobot.assertMessage(twoLinesMessage)
+    }
+    
+    func test_messageDecreases_whenUserEditsMessage() throws {
+        linkToScenario(withId: 100)
+        
+        let message = "test\nmessage"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        AND("user sends a two line message: '\(message)'") {
+            userRobot.sendMessage(message)
+        }
+        THEN("user verifies that message cell decreases after editing") {
+            userRobot.assertMessageSizeChangesAfterEditing(linesCountShouldBeIncreased: false)
         }
     }
 
@@ -444,6 +446,59 @@ extension MessageList_Tests {
 
 // MARK: - Thread replies
 extension MessageList_Tests {
+    func test_threadReplyAppearsInThread_whenParticipantAddsThreadReply() {
+        linkToScenario(withId: 50)
+        
+        let message = "test message"
+        let threadReply = "thread reply"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("participant adds a thread reply to user's message") {
+            participantRobot.replyToMessageInThread(threadReply)
+        }
+        AND("user enters thread") {
+            userRobot.openThread()
+        }
+        THEN("user observes the thread reply in thread") {
+            userRobot.assertThreadReply(threadReply)
+        }
+    }
+    
+    func test_threadReplyAppearsInChannelAndThread_whenParticipantAddsThreadReplySentAlsoToChannel() {
+        linkToScenario(withId: 110)
+        
+        let message = "test message"
+        let threadReply = "thread reply"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("participant adds a thread reply to user's message") {
+            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        THEN("user observes the thread reply in channel") {
+            userRobot.assertMessage(threadReply)
+        }
+        WHEN("user enters thread") {
+            userRobot.openThread()
+        }
+        THEN("user observes the thread reply in thread") {
+            userRobot.assertThreadReply(threadReply)
+        }
+    }
+    
     func test_threadReplyAppearsInChannelAndThread_whenUserAddsThreadReplySentAlsoToChannel() {
         linkToScenario(withId: 111)
 
@@ -560,6 +615,107 @@ extension MessageList_Tests {
             userRobot
                 .showThread(forMessageAt: 1)
                 .assertDeletedMessage()
+        }
+    }
+    
+    func test_threadTypingIndicatorShown_whenParticipantStartsTyping() {
+        linkToScenario(withId: 243)
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage("Hey")
+        }
+        AND("user opens the thread") {
+            userRobot.showThread()
+        }
+        WHEN("participant starts typing in thread") {
+            participantRobot.startTypingInThread()
+        }
+        THEN("user observes typing indicator is shown") {
+            let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
+            userRobot.assertTypingIndicatorShown(typingUserName: typingUserName)
+        }
+    }
+    
+    func test_threadTypingIndicatorHidden_whenParticipantStopsTyping() {
+        linkToScenario(withId: 244)
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage("Hey")
+        }
+        AND("user opens the thread") {
+            userRobot.showThread()
+        }
+        WHEN("participant starts typing in thread") {
+            participantRobot.startTypingInThread()
+        }
+        AND("participant stops typing in thread") {
+            participantRobot.stopTypingInThread()
+        }
+        THEN("user observes typing indicator has disappeared") {
+            userRobot.assertTypingIndicatorHidden()
+        }
+    }
+}
+
+// MARK: - Message grouping
+
+extension MessageList_Tests {
+    func test_messageEndsGroup_whenFollowedByErrorMessage() {
+        linkToScenario(withId: 218)
+
+        let message = "Hey there"
+        let messageWithForbiddenContent = server.forbiddenWords.first ?? ""
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends the 1st message") {
+            userRobot.sendMessage(message)
+        }
+        AND("the timestamp is shown under the 1st message") {
+            userRobot.assertMessageHasTimestamp()
+        }
+        WHEN("user sends a message that does not pass moderation") {
+            userRobot.sendMessage(messageWithForbiddenContent, waitForAppearance: false)
+        }
+        THEN("messages are not grouped, 1st message shows the timestamp") {
+            userRobot.assertMessageHasTimestamp(at: 1)
+        }
+    }
+    
+    func test_messageEndsGroup_whenFollowedByEphemeralMessage() {
+        linkToScenario(withId: 221)
+        
+        let message = "Hey there"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends the 1st message") {
+            userRobot.sendMessage(message)
+        }
+        AND("the timestamp is shown under the 1st message") {
+            userRobot.assertMessageHasTimestamp()
+        }
+        WHEN("user sends an ephemeral message") {
+            userRobot.sendGiphy(send: false)
+        }
+        THEN("messages are not grouped, 1st message shows the timestamp") {
+            userRobot.assertMessageHasTimestamp(at: 1)
         }
     }
 }

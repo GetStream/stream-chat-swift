@@ -196,6 +196,60 @@ final class ChatMessageContentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
     
+    func test_appearance_whenMessageWithMarkdownFromTheCurrentUserIsSent() {
+        let channelWithReadsEnabled: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+        
+        let messageWithMarkdown = """
+          *italics* or _italics_
+          **bold** or __bold__
+          ~~Linethrough~~Strikethroughs.
+          `let property: Double = 10.0`
+
+          # Header 1
+          ## Header 2
+          ### Header 3
+          #### Header 4
+          ##### Header 5 #####
+          ###### Header 6 ######
+
+          [Links](https://getstream.io/)
+
+          > Blockquotes
+
+          - Bulleted
+          - Lists
+              - Including indented lists
+                  - Up to three levels
+          - Neat!
+
+          1. Ordered
+          1. Lists
+              1. Including indented lists
+                  - Up to three levels
+        """
+        
+        let sentMessageFromCurrentUser: ChatMessage = .mock(
+            id: .unique,
+            cid: channelWithReadsEnabled.cid,
+            text: messageWithMarkdown,
+            author: me,
+            createdAt: createdAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+        
+        let view = contentView(
+            message: sentMessageFromCurrentUser,
+            channel: channelWithReadsEnabled
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
     func test_appearance_whenMessageFromTheCurrentUserIsRead_inDirectMesssagesChannel() {
         let dmChannelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,

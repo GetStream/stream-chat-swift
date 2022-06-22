@@ -24,7 +24,7 @@ public extension XCTestCase {
         }()
         
         private static func getImage(withName name: String, fileExtension: String = "jpg") -> (url: URL, image: UIImage) {
-            let imageURL = Bundle.testTools.url(forResource: "\(Bundle.testTools.pathToImagesFolder)\(name)", withExtension: fileExtension)!
+            let imageURL = Bundle.testTools.url(forResource: name, withExtension: fileExtension)!
             let image = UIImage(contentsOfFile: imageURL.path)!
             return (imageURL, image)
         }
@@ -33,7 +33,7 @@ public extension XCTestCase {
 
 public extension URL {
     static let localYodaImage = Bundle.testTools
-        .url(forResource: "\(Bundle.testTools.pathToImagesFolder)yoda", withExtension: "jpg")!
+        .url(forResource: "yoda", withExtension: "jpg")!
 
     static let localYodaQuote = Bundle.testTools
         .url(forResource: "\(Bundle.testTools.pathToOtherFolder)yoda", withExtension: "txt")!

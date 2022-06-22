@@ -228,6 +228,32 @@ func makeMessageAuthorAndDateView(for message: ChatMessage) -> some View {
 }
 ```
 
+In some chat apps, the author's name is shown above the oldest message in a group. You can accomplish this by implementing the `makeLastInGroupHeaderView` in the `ViewFactory`:
+
+```swift
+public func makeLastInGroupHeaderView(for message: ChatMessage) -> some View {
+    HStack {
+        MessageAuthorView(message: message)
+        Spacer()
+    }
+    .padding(.leading, 60)
+}
+```
+
+When using this method, you also need to specify the size of this view in the message list config, with the `lastInGroupHeaderSize` in the `MessageListConfig`: 
+
+```swift
+let utils = Utils(
+    messageListConfig: MessageListConfig(
+        messageDisplayOptions: MessageDisplayOptions(showAuthorName: false, lastInGroupHeaderSize: 16),
+        dateIndicatorPlacement: .messageList
+    )
+)
+let streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+Note that we're also setting the `showAuthorName` to false here, to hide the default author view shown at the bottom.
+
 ## No Messages View
 
 When there are no messages available in the channel, you can provide your own custom view. To do this, you will need to implement the `makeEmptyMessagesView` method in the `ViewFactory`. In this method, the `channel` is provided as a parameter, allowing you to provide a personalized message for starting a conversation. The `colors` are provided as a parameter too. The default implementation in the SDK just shows the message list background in this slot.
@@ -252,4 +278,20 @@ var body: some Scene {
         ChatChannelListView(viewFactory: CustomFactory.shared)
     }
 }
+```
+
+## Minimum Swipe Gesture Distance For Replying to Messages
+
+The minimum swipe gesture distance needed to trigger a reply response can be personalized. This allows to fine tune the overall message list experience.
+ 
+ This setup is done when the `StreamChat` object is being created, usually at the start of the app (e.g. in the `AppDelegate`).
+ 
+ Here's an example usage:
+
+```swift
+let messageDisplayOptions = MessageDisplayOptions(minimumSwipeGestureDistance: 20)
+let messageListConfig = MessageListConfig(messageDisplayOptions: messageDisplayOptions)
+let utils = Utils(messageListConfig: messageListConfig)
+
+let streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```

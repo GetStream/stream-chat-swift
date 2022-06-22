@@ -5,28 +5,8 @@
 import Foundation
 import Nuke
 import StreamChat
+import StreamChatUI
 import UIKit
-
-class GroupUserCell: UICollectionViewCell {
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var avatarView: AvatarView!
-}
-
-class SearchUserCell: UITableViewCell {
-    @IBOutlet var mainStackView: UIStackView! {
-        didSet {
-            mainStackView.isLayoutMarginsRelativeArrangement = true
-        }
-    }
-    
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var descriptionLabel: UILabel!
-    
-    @IBOutlet var avatarView: AvatarView!
-    @IBOutlet var accessoryImageView: UIImageView!
-    
-    var user: ChatUser?
-}
 
 class CreateGroupViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
@@ -145,13 +125,49 @@ class CreateGroupViewController: UIViewController {
     }
 }
 
+// MARK: ChatUserSearchControllerDelegate functions
+
+extension CreateGroupViewController: ChatUserSearchControllerDelegate {
+    func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
+        tableView.beginUpdates()
+
+        for change in changes {
+            switch change {
+            case let .insert(_, index: index):
+                tableView.insertRows(at: [index], with: .automatic)
+            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+                tableView.moveRow(at: fromIndex, to: toIndex)
+            case let .update(_, index: index):
+                tableView.reloadRows(at: [index], with: .automatic)
+            case let .remove(_, index: index):
+                tableView.deleteRows(at: [index], with: .automatic)
+            }
+        }
+
+        tableView.endUpdates()
+    }
+
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        if case .remoteDataFetched = state {
+            print("\(users.count) users found")
+            loadingIndicator.stopAnimating()
+            noMatchView.isHidden = !users.isEmpty
+        }
+    }
+}
+
+// MARK: UITableViewDataSource functions
+
 extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         users.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! SearchUserCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell else {
+            return UITableViewCell()
+        }
+        
         let user = users[indexPath.row]
         
         if let imageURL = user.imageURL {
@@ -182,7 +198,9 @@ extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource 
             tableView.deselectRow(at: indexPath, animated: true)
         }
         
-        let cell = tableView.cellForRow(at: indexPath) as! SearchUserCell
+        guard let cell = tableView.cellForRow(at: indexPath) as? SearchUserCell else {
+            return
+        }
         guard cell.accessoryImageView.image == nil else {
             // The cell isn't selected
             // De-select user by tapping functionality was removed due to designer feedback
@@ -200,13 +218,18 @@ extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource 
     }
 }
 
+// MARK: UICollectionViewDataSource functions
+
 extension CreateGroupViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         selectedUsers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! GroupUserCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GroupUserCell", for: indexPath) as? GroupUserCell else {
+            return UICollectionViewCell()
+        }
+        
         let user = selectedUsers[indexPath.row]
         
         if let imageURL = user.imageURL {
@@ -227,35 +250,6 @@ extension CreateGroupViewController: UICollectionViewDataSource, UICollectionVie
         
         if let cell = tableView.visibleCells.first(where: { ($0 as? SearchUserCell)?.user?.id == id }) as? SearchUserCell {
             cell.accessoryImageView.image = nil
-        }
-    }
-}
-
-extension CreateGroupViewController: ChatUserSearchControllerDelegate {
-    func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
-        tableView.beginUpdates()
-        
-        for change in changes {
-            switch change {
-            case let .insert(_, index: index):
-                tableView.insertRows(at: [index], with: .automatic)
-            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-                tableView.moveRow(at: fromIndex, to: toIndex)
-            case let .update(_, index: index):
-                tableView.reloadRows(at: [index], with: .automatic)
-            case let .remove(_, index: index):
-                tableView.deleteRows(at: [index], with: .automatic)
-            }
-        }
-        
-        tableView.endUpdates()
-    }
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if case .remoteDataFetched = state {
-            print("\(users.count) users found")
-            loadingIndicator.stopAnimating()
-            noMatchView.isHidden = !users.isEmpty
         }
     }
 }

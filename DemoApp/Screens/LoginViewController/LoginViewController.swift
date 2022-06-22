@@ -6,37 +6,6 @@ import Nuke
 import StreamChat
 import UIKit
 
-class AvatarView: UIImageView {
-    override func updateConstraints() {
-        super.updateConstraints()
-        translatesAutoresizingMaskIntoConstraints = false
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        clipsToBounds = true
-        layer.cornerRadius = frame.width / 2.0
-        contentMode = .scaleAspectFill
-    }
-}
-
-class UserCredentialsCell: UITableViewCell {
-    @IBOutlet var mainStackView: UIStackView! {
-        didSet {
-            mainStackView.isLayoutMarginsRelativeArrangement = true
-        }
-    }
-    
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var descriptionLabel: UILabel!
-    
-    @IBOutlet var avatarView: AvatarView!
-    @IBOutlet var accessoryImageView: UIImageView!
-    
-    var user: ChatUser?
-}
-
 class LoginViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     var onUserSelection: ((DemoUserType) -> Void)!
@@ -74,7 +43,7 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserCredentialsCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "UserCredentialsCell", for: indexPath) as? UserCredentialsCell else { return UITableViewCell() }
         
         let user = users[indexPath.row]
         

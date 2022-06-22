@@ -9,6 +9,10 @@ public enum Message {
     public static func message(withInvalidCommand command: String) -> String {
         "Sorry, command \(command) doesn't exist. Try posting your message without the starting /"
     }
+    
+    public static var blockedByModerationPolicies: String {
+        "Message was blocked by moderation policies"
+    }
 }
 
 public enum MockFile: String {

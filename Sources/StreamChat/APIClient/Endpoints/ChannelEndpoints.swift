@@ -218,6 +218,40 @@ extension Endpoint {
         )
     }
     
+    static func startTypingEvent(cid: ChannelId, parentMessageId: MessageId?) -> Endpoint<EmptyResponse> {
+        let eventType = EventType.userStartTyping
+        let body: Encodable
+        if let parentMessageId = parentMessageId {
+            body = ["event": ["type": eventType.rawValue, "parent_id": parentMessageId]]
+        } else {
+            body = ["event": ["type": eventType]]
+        }
+        return .init(
+            path: .channelEvent(cid.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
+    }
+    
+    static func stopTypingEvent(cid: ChannelId, parentMessageId: MessageId?) -> Endpoint<EmptyResponse> {
+        let eventType = EventType.userStopTyping
+        let body: Encodable
+        if let parentMessageId = parentMessageId {
+            body = ["event": ["type": eventType.rawValue, "parent_id": parentMessageId]]
+        } else {
+            body = ["event": ["type": eventType]]
+        }
+        return .init(
+            path: .channelEvent(cid.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
+    }
+    
     static func enableSlowMode(cid: ChannelId, cooldownDuration: Int) -> Endpoint<EmptyResponse> {
         .init(
             path: .channelUpdate(cid.apiPath),

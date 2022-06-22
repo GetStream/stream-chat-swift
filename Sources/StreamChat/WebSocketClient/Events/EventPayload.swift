@@ -118,11 +118,46 @@ class EventPayload: Decodable {
     }
 }
 
+/// Extension to make decoding error messages better.
+/// The error message:
+/// ```
+/// `Swift.KeyPath<StreamChat.EventPayload, Swift.Optional<StreamChat.MemberPayload>>` field can't be `nil` for the `EventPayload` event.
+/// ```
+/// becomes:
+/// ```
+/// `memberContainer` field can't be `nil` for the `notification.added_to_channel` event.
+/// ```
+private extension PartialKeyPath where Root == EventPayload {
+    var stringValue: String {
+        switch self {
+        case \EventPayload.eventType: return "eventType"
+        case \EventPayload.connectionId: return "connectionId"
+        case \EventPayload.cid: return "cid"
+        case \EventPayload.currentUser: return "currentUser"
+        case \EventPayload.user: return "user"
+        case \EventPayload.createdBy: return "createdBy"
+        case \EventPayload.memberContainer: return "memberContainer"
+        case \EventPayload.channel: return "channel"
+        case \EventPayload.message: return "message"
+        case \EventPayload.reaction: return "reaction"
+        case \EventPayload.watcherCount: return "watcherCount"
+        case \EventPayload.unreadCount: return "unreadCount"
+        case \EventPayload.createdAt: return "createdAt"
+        case \EventPayload.isChannelHistoryCleared: return "isChannelHistoryCleared"
+        case \EventPayload.banReason: return "banReason"
+        case \EventPayload.banExpiredAt: return "banExpiredAt"
+        case \EventPayload.parentId: return "parentId"
+        case \EventPayload.hardDelete: return "hardDelete"
+        default: return String(describing: self)
+        }
+    }
+}
+
 extension EventPayload {
     /// Get an unwrapped value from the payload or throw an error.
     func value<Value>(at keyPath: KeyPath<EventPayload, Value?>) throws -> Value {
         guard let value = self[keyPath: keyPath] else {
-            throw ClientError.EventDecoding(missingValue: String(describing: keyPath), for: Self.self)
+            throw ClientError.EventDecoding(missingValue: keyPath.stringValue, for: eventType)
         }
         
         return value
@@ -138,7 +173,7 @@ extension Array where Element == EventPayload {
             do {
                 return try $0.event()
             } catch {
-                log.error("Failed to decode event from event payload: \($0)")
+                log.error("Failed to decode event from event payload: \($0), error: \(error)")
                 return nil
             }
         }

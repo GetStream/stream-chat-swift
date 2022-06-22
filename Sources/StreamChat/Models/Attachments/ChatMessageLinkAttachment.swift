@@ -26,6 +26,12 @@ public struct LinkAttachmentPayload: AttachmentPayload {
     /// A link for displaying an attachment.
     /// Can be different from the original link, depends on the enriching rules.
     public var titleLink: URL?
+    // A link for navigating to url. This computed fallbacks to `titleLink` or `originalURL` and enriches it with URL scheme if needed.
+    // e.g "google.com" -> "http://google.com"
+    public var url: URL {
+        titleLink?.enrichedURL ?? originalURL.enrichedURL
+    }
+
     /// An image.
     public var assetURL: URL?
     /// A preview image URL.

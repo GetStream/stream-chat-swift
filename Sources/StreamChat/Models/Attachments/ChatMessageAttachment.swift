@@ -76,6 +76,7 @@ public extension AnyChatMessageAttachment {
     }
 }
 
+// swiftlint:disable force_try
 public extension ChatMessageAttachment where Payload: AttachmentPayload {
     /// Returns an attachment matching `self` but payload casted to `Any`.
     var asAnyAttachment: AnyChatMessageAttachment {

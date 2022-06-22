@@ -53,9 +53,7 @@ extension UserRobot {
 
     @discardableResult
     func openContextMenu(messageCellIndex: Int = 0) -> Self {
-        let minExpectedCount = messageCellIndex + 1
-        let cells = MessageListPage.cells.waitCount(minExpectedCount)
-        cells.allElementsBoundByIndex[messageCellIndex].press(forDuration: 0.5)
+        messageCell(withIndex: messageCellIndex).safePress(forDuration: 1)
         return self
     }
     
@@ -111,10 +109,22 @@ extension UserRobot {
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
         contextMenu.edit.element.wait().safeTap()
-        let inputField = composer.inputField
-        inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
-        inputField.typeText(newText)
+        clearComposer()
+        composer.inputField.typeText(newText)
         composer.confirmButton.safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func clearComposer() -> Self {
+        let currentText = composer.textView.text
+        if currentText.isEmpty { return self }
+        
+        for _ in (0...currentText.split(separator: "\n").count - 1) {
+            composer.inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
+            composer.cutButton.wait().safeTap()
+        }
+        
         return self
     }
     
@@ -184,6 +194,13 @@ extension UserRobot {
                     line: line)
         return self
     }
+    
+    @discardableResult
+    func openThread(messageCellIndex: Int = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.threadButton(in: messageCell).wait().safeTap()
+        return self
+    }
 
     @discardableResult
     func showThread(forMessageAt index: Int = 0) -> Self {
@@ -249,7 +266,7 @@ extension UserRobot {
     }
     
     @discardableResult
-    func sendGiphy(useComposerCommand: Bool = false, shuffle: Bool = false) -> Self {
+    func sendGiphy(useComposerCommand: Bool = false, shuffle: Bool = false, send: Bool = true) -> Self {
         let giphyText = "Test"
         if useComposerCommand {
             openComposerCommands()
@@ -259,7 +276,8 @@ extension UserRobot {
             sendMessage("/giphy\(giphyText)", waitForAppearance: false)
         }
         if shuffle { tapOnShuffleGiphyButton() }
-        return tapOnSendGiphyButton()
+        if send { tapOnSendGiphyButton() }
+        return self
     }
     
     @discardableResult

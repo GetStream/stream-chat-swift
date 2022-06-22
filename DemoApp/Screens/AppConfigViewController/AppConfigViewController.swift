@@ -16,8 +16,6 @@ struct DemoAppConfig {
 class AppConfig {
     /// The Demo App Configuration.
     var demoAppConfig: DemoAppConfig
-    /// The StreamChat SDK Config.
-    var chatClientConfig: ChatClientConfig
 
     static var shared = AppConfig()
 
@@ -27,11 +25,6 @@ class AppConfig {
             isHardDeleteEnabled: false,
             isAtlantisEnabled: false
         )
-
-        // DemoApp ChatClientConfig
-        chatClientConfig = ChatClientConfig(apiKeyString: apiKeyString)
-        chatClientConfig.shouldShowShadowedMessages = true
-        chatClientConfig.applicationGroupIdentifier = applicationGroupIdentifier
     }
 }
 
@@ -45,9 +38,9 @@ class AppConfigViewController: UITableViewController {
     }
 
     var chatClientConfig: ChatClientConfig {
-        get { AppConfig.shared.chatClientConfig }
+        get { StreamChatWrapper.shared.config }
         set {
-            AppConfig.shared.chatClientConfig = newValue
+            StreamChatWrapper.shared.config = newValue
             tableView.reloadData()
         }
     }
@@ -62,11 +55,14 @@ class AppConfigViewController: UITableViewController {
     }
 
     enum ConfigOption {
+        case info([DemoAppInfoOption])
         case demoApp([DemoAppConfigOption])
         case chatClient([ChatClientConfigOption])
 
         var numberOfOptions: Int {
             switch self {
+            case let .info(options):
+                return options.count
             case let .demoApp(options):
                 return options.count
             case let .chatClient(options):
@@ -80,6 +76,20 @@ class AppConfigViewController: UITableViewController {
                 return "Demo App Configuration"
             case .chatClient:
                 return "Chat Client Configuration"
+            case .info:
+                return "General Info"
+            }
+        }
+    }
+
+    enum DemoAppInfoOption: CustomStringConvertible, CaseIterable {
+        case pushConfiguration
+
+        var description: String {
+            switch self {
+            case .pushConfiguration:
+                let configuration = Bundle.pushProviderName ?? "Not set"
+                return "Push Configuration: \(configuration)"
             }
         }
     }
@@ -97,6 +107,7 @@ class AppConfigViewController: UITableViewController {
     }
 
     let options: [ConfigOption] = [
+        .info(DemoAppInfoOption.allCases),
         .demoApp(DemoAppConfigOption.allCases),
         .chatClient(ChatClientConfigOption.allCases)
     ]
@@ -125,6 +136,9 @@ class AppConfigViewController: UITableViewController {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
 
         switch options[indexPath.section] {
+        case let .info(options):
+            configureDemoAppInfoCell(cell, at: indexPath, options: options)
+
         case let .demoApp(options):
             configureDemoAppOptionsCell(cell, at: indexPath, options: options)
 
@@ -139,12 +153,26 @@ class AppConfigViewController: UITableViewController {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         switch options[indexPath.section] {
+        case .info:
+            break
+
         case let .demoApp(options):
             didSelectDemoAppOptionsCell(cell, at: indexPath, options: options)
 
         case let .chatClient(options):
             didSelectChatClientOptionsCell(cell, at: indexPath, options: options)
         }
+    }
+
+    // MAKR: - Demo App Info
+
+    private func configureDemoAppInfoCell(
+        _ cell: UITableViewCell,
+        at indexPath: IndexPath,
+        options: [DemoAppInfoOption]
+    ) {
+        let option = options[indexPath.row]
+        cell.textLabel?.text = option.description
     }
 
     // MARK: - Demo App Options
@@ -207,7 +235,7 @@ class AppConfigViewController: UITableViewController {
                 self?.chatClientConfig.shouldShowShadowedMessages = newValue
             }
         case .deletedMessagesVisibility:
-            cell.detailTextLabel?.text = chatClientConfig.deletedMessagesVisibility.labelText
+            cell.detailTextLabel?.text = chatClientConfig.deletedMessagesVisibility.description
             cell.accessoryType = .disclosureIndicator
         }
     }
@@ -251,22 +279,5 @@ class AppConfigViewController: UITableViewController {
         }
 
         navigationController?.pushViewController(selectorViewController, animated: true)
-    }
-}
-
-extension ChatClientConfig.DeletedMessageVisibility: CustomStringConvertible {
-    public var description: String {
-        labelText
-    }
-
-    public var labelText: String {
-        switch self {
-        case .alwaysHidden:
-            return "alwaysHidden"
-        case .alwaysVisible:
-            return "alwaysVisible"
-        case .visibleForCurrentUser:
-            return "visibleForCurrentUser"
-        }
     }
 }

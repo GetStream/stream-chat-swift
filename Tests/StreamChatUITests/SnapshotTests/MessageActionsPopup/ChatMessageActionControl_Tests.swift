@@ -60,6 +60,16 @@ final class ChatMessageActionControl_Tests: XCTestCase {
         view.content = content
         AssertSnapshot(view)
     }
+
+    func test_defaultMultilineAppearance() {
+        content = TestChatMessageActionItem(
+            title: "Action that takes\n 2 lines of text",
+            icon: UIImage(named: "icn_inline_reply", in: .streamChatUI)!
+        )
+        let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
+        view.content = content
+        AssertSnapshot(view)
+    }
     
     func test_defaultAppearance_whenHighlighted() {
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
