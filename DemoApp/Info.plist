@@ -71,6 +71,6 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>PushNotification-Configuration</key>
-	<string>APN Configuration</string>
+	<string>APN-Configuration</string>
 </dict>
 </plist>
