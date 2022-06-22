@@ -333,7 +333,7 @@ final class SyncRepository_Tests: XCTestCase {
     func test_syncExistingChannelsEvents_someChannels_noUser() throws {
         try database.writeSynchronously { session in
             let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: .dummy(cid: .unique), query: query)
+            try session.saveChannel(payload: .dummy(cid: .unique), query: query, cache: nil)
         }
 
         let result = getSyncExistingChannelEventsResult()
@@ -348,7 +348,7 @@ final class SyncRepository_Tests: XCTestCase {
         try database.createCurrentUser(id: "123")
         try database.writeSynchronously { session in
             let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: .dummy(cid: .unique), query: query)
+            try session.saveChannel(payload: .dummy(cid: .unique), query: query, cache: nil)
         }
         XCTAssertNil(lastSyncAtValue)
 
@@ -364,7 +364,7 @@ final class SyncRepository_Tests: XCTestCase {
         try database.createCurrentUser(id: "123")
         try database.writeSynchronously { session in
             let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: .dummy(cid: .unique), query: query)
+            try session.saveChannel(payload: .dummy(cid: .unique), query: query, cache: nil)
             session.currentUser?.lastSynchedEventDate = DBDate()
         }
         let result = getSyncExistingChannelEventsResult()
@@ -380,7 +380,7 @@ final class SyncRepository_Tests: XCTestCase {
         try database.writeSynchronously { session in
             session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: .dummy(cid: .unique), query: query)
+            try session.saveChannel(payload: .dummy(cid: .unique), query: query, cache: nil)
         }
 
         let result = getSyncExistingChannelEventsResult(requestResult: .failure(ClientError("something went wrong")))
@@ -397,7 +397,7 @@ final class SyncRepository_Tests: XCTestCase {
         try database.writeSynchronously { session in
             session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: .dummy(cid: .unique), query: query)
+            try session.saveChannel(payload: .dummy(cid: .unique), query: query, cache: nil)
         }
 
         let expectedError = ErrorPayload(code: 1, message: "Too many events", statusCode: 400)
@@ -417,7 +417,7 @@ final class SyncRepository_Tests: XCTestCase {
         try database.writeSynchronously { session in
             session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0), query: query)
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0), query: query, cache: nil)
         }
 
         XCTAssertEqual(ChannelDTO.load(cid: cid, context: database.viewContext)?.messages.count, 0)
@@ -657,7 +657,7 @@ extension SyncRepository_Tests {
             }
             if createChannel {
                 let query = ChannelListQuery(filter: .exists(.cid))
-                try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query)
+                try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query, cache: nil)
             }
         }
         database.writeSessionCounter = 0

@@ -56,22 +56,26 @@ extension DatabaseSession_Mock {
         return try underlyingSession.saveCurrentUserDevices(devices, clearExisting: clearExisting)
     }
     
-    func saveChannelList(payload: ChannelListPayload, query: ChannelListQuery) throws -> [ChannelDTO] {
-        try throwErrorIfNeeded()
-        return try underlyingSession.saveChannelList(payload: payload, query: query)
+    func saveChannelList(payload: ChannelListPayload, query: ChannelListQuery?) -> [ChannelDTO] {
+        return underlyingSession.saveChannelList(payload: payload, query: query)
     }
     
     func saveChannel(
         payload: ChannelDetailPayload,
-        query: ChannelListQuery?
+        query: ChannelListQuery?,
+        cache: IDToObjectIDCache?
     ) throws -> ChannelDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveChannel(payload: payload, query: query)
+        return try underlyingSession.saveChannel(payload: payload, query: query, cache: cache)
     }
     
-    func saveUser(payload: UserPayload, query: UserListQuery?) throws -> UserDTO {
+    func saveUser(payload: UserPayload, query: UserListQuery?, cache: IDToObjectIDCache?) throws -> UserDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveUser(payload: payload, query: query)
+        return try underlyingSession.saveUser(payload: payload, query: query, cache: cache)
+    }
+
+    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
+        return underlyingSession.saveUsers(payload: payload, query: query)
     }
     
     func saveQuery(query: UserListQuery) throws -> UserListQueryDTO? {
@@ -149,14 +153,27 @@ extension DatabaseSession_Mock {
         )
     }
     
-    func saveMessage(payload: MessagePayload, for cid: ChannelId?, syncOwnReactions: Bool) throws -> MessageDTO? {
+    func saveMessage(
+        payload: MessagePayload,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool,
+        cache: IDToObjectIDCache?
+    ) throws -> MessageDTO? {
         try throwErrorIfNeeded()
-        return try? underlyingSession.saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions)
+        return try? underlyingSession.saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
     }
     
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO {
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool, cache: IDToObjectIDCache?) throws -> MessageDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveMessage(payload: payload, channelDTO: channelDTO, syncOwnReactions: syncOwnReactions)
+        return try underlyingSession.saveMessage(payload: payload, channelDTO: channelDTO, syncOwnReactions: syncOwnReactions, cache: cache)
+    }
+
+    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO] {
+        return underlyingSession.saveMessages(messagesPayload: messagesPayload, for: cid, syncOwnReactions: syncOwnReactions)
+    }
+
+    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
+        return underlyingSession.saveMessageSearch(payload: payload, for: query)
     }
     
     func pin(message: MessageDTO, pinning: MessagePinning) throws {
@@ -184,18 +201,22 @@ extension DatabaseSession_Mock {
         underlyingSession.reaction(messageId: messageId, userId: userId, type: type)
     }
     
-    func saveReaction(payload: MessageReactionPayload) throws -> MessageReactionDTO {
+    func saveReaction(payload: MessageReactionPayload, cache: IDToObjectIDCache?) throws -> MessageReactionDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveReaction(payload: payload)
+        return try underlyingSession.saveReaction(payload: payload, cache: cache)
+    }
+
+    func saveReactions(payload: MessageReactionsPayload) -> [MessageReactionDTO] {
+        return underlyingSession.saveReactions(payload: payload)
     }
     
     func delete(reaction: MessageReactionDTO) {
         underlyingSession.delete(reaction: reaction)
     }
     
-    func saveChannelRead(payload: ChannelReadPayload, for cid: ChannelId) throws -> ChannelReadDTO {
+    func saveChannelRead(payload: ChannelReadPayload, for cid: ChannelId, cache: IDToObjectIDCache?) throws -> ChannelReadDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveChannelRead(payload: payload, for: cid)
+        return try underlyingSession.saveChannelRead(payload: payload, for: cid, cache: cache)
     }
     
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
@@ -230,10 +251,11 @@ extension DatabaseSession_Mock {
     
     func saveChannel(
         payload: ChannelPayload,
-        query: ChannelListQuery?
+        query: ChannelListQuery?,
+        cache: IDToObjectIDCache?
     ) throws -> ChannelDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveChannel(payload: payload, query: query)
+        return try underlyingSession.saveChannel(payload: payload, query: query, cache: cache)
     }
     
     func channel(cid: ChannelId) -> ChannelDTO? {
@@ -243,12 +265,17 @@ extension DatabaseSession_Mock {
     func saveMember(
         payload: MemberPayload,
         channelId: ChannelId,
-        query: ChannelMemberListQuery?
+        query: ChannelMemberListQuery?,
+        cache: IDToObjectIDCache?
     ) throws -> MemberDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveMember(payload: payload, channelId: channelId, query: query)
+        return try underlyingSession.saveMember(payload: payload, channelId: channelId, query: query, cache: cache)
     }
-    
+
+    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
+        return underlyingSession.saveMembers(payload: payload, channelId: channelId, query: query)
+    }
+
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
         underlyingSession.member(userId: userId, cid: cid)
     }
@@ -287,9 +314,9 @@ extension DatabaseSession_Mock {
         underlyingSession.delete(query: query)
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: IDToObjectIDCache?) throws -> MessageDTO? {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveMessage(payload: payload, for: query)
+        return try underlyingSession.saveMessage(payload: payload, for: query, cache: cache)
     }
 
     func deleteQuery(_ query: MessageSearchQuery) {

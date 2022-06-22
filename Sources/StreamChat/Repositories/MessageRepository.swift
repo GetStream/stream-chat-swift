@@ -90,7 +90,7 @@ class MessageRepository {
     ) {
         var messageModel: ChatMessage?
         database.write({
-            guard let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false) else {
+            guard let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil) else {
                 return
             }
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
@@ -133,7 +133,8 @@ class MessageRepository {
             let deletedMessage = try session.saveMessage(
                 payload: message,
                 for: ChannelId(cid: cid),
-                syncOwnReactions: false
+                syncOwnReactions: false,
+                cache: nil
             )
             deletedMessage?.localMessageState = nil
 

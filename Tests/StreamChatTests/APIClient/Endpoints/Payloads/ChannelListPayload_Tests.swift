@@ -21,7 +21,7 @@ final class ChannelListPayload_Tests: XCTestCase {
     func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 10) {
         let writeCompleted = expectation(description: "DB write complete")
         database.write({ session in
-            try session.saveChannelList(payload: payload, query: .init(filter: .containMembers(userIds: [.unique])))
+            session.saveChannelList(payload: payload, query: .init(filter: .containMembers(userIds: [.unique])))
         }, completion: { error in
             if let error = error {
                 XCTFail("DB write error: \(error)")

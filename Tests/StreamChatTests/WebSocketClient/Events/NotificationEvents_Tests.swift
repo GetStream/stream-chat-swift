@@ -132,8 +132,8 @@ final class NotificationsEvents_Tests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMessageNewEvent)
@@ -247,8 +247,13 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertNil(dto.toDomainEvent(session: session))
         
         // Save event to database
-        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
-        _ = try session.saveMember(payload: eventPayload.memberContainer!.member!, channelId: eventPayload.channel!.cid, query: nil)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
+        _ = try session.saveMember(
+            payload: eventPayload.memberContainer!.member!,
+            channelId: eventPayload.channel!.cid,
+            query: nil,
+            cache: nil
+        )
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationAddedToChannelEvent)
@@ -372,7 +377,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
         try session.saveMember(
             payload: eventPayload.memberContainer!.member!,
             channelId: eventPayload.channel!.cid
@@ -407,7 +412,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
         try session.saveMember(
             payload: eventPayload.memberContainer!.member!,
             channelId: eventPayload.channel!.cid
@@ -434,7 +439,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         )
         
         // Save event to database
-        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
 
         // Create event DTO
         let dto = try NotificationChannelDeletedEventDTO(from: eventPayload)

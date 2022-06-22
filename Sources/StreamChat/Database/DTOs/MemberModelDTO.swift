@@ -56,7 +56,11 @@ extension MemberDTO {
 extension MemberDTO {
     static func load(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
         let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
-        return load(by: memberId, context: context).first
+        return load(memberId: memberId, context: context)
+    }
+
+    static func load(memberId: String, context: NSManagedObjectContext) -> MemberDTO? {
+        load(by: memberId, context: context).first
     }
     
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise create a new
@@ -66,12 +70,21 @@ extension MemberDTO {
     ///   - id: The id of the user to fetch
     ///   - context: The context used to fetch/create `UserDTO`
     ///
-    static func loadOrCreate(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO {
-        if let existing = load(userId: userId, channelId: channelId, context: context) {
+    static func loadOrCreate(
+        userId: String,
+        channelId: ChannelId,
+        context: NSManagedObjectContext,
+        cache: IDToObjectIDCache?
+    ) -> MemberDTO {
+        let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
+        if let cachedObject = cache?.model(for: memberId, context: context, type: MemberDTO.self) {
+            return cachedObject
+        }
+
+        if let existing = load(memberId: memberId, context: context) {
             return existing
         }
         
-        let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
         let request = fetchRequest(id: memberId)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = memberId
@@ -94,9 +107,10 @@ extension NSManagedObjectContext {
     func saveMember(
         payload: MemberPayload,
         channelId: ChannelId,
-        query: ChannelMemberListQuery?
+        query: ChannelMemberListQuery?,
+        cache: IDToObjectIDCache?
     ) throws -> MemberDTO {
-        let dto = MemberDTO.loadOrCreate(userId: payload.user.id, channelId: channelId, context: self)
+        let dto = MemberDTO.loadOrCreate(userId: payload.user.id, channelId: channelId, context: self, cache: cache)
         
         // Save user-part of member first
         dto.user = try saveUser(payload: payload.user)
@@ -129,6 +143,13 @@ extension NSManagedObjectContext {
     
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
         MemberDTO.load(userId: userId, channelId: cid, context: self)
+    }
+
+    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.members.compactMap {
+            try? saveMember(payload: $0, channelId: channelId, query: query, cache: cache)
+        }
     }
 }
 

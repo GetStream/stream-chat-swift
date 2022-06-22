@@ -77,7 +77,11 @@ extension UserDTO {
     ///   - id: The id of the user to fetch
     ///   - context: The context used to fetch/create `UserDTO`
     ///
-    static func loadOrCreate(id: String, context: NSManagedObjectContext) -> UserDTO {
+    static func loadOrCreate(id: String, context: NSManagedObjectContext, cache: IDToObjectIDCache?) -> UserDTO {
+        if let cachedObject = cache?.model(for: id, context: context, type: UserDTO.self) {
+            return cachedObject
+        }
+
         if let existing = load(id: id, context: context) {
             return existing
         }
@@ -108,9 +112,10 @@ extension NSManagedObjectContext: UserDatabaseSession {
     
     func saveUser(
         payload: UserPayload,
-        query: UserListQuery?
+        query: UserListQuery?,
+        cache: IDToObjectIDCache?
     ) throws -> UserDTO {
-        let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
+        let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 
         dto.name = payload.name
         dto.imageURL = payload.imageURL
@@ -138,6 +143,14 @@ extension NSManagedObjectContext: UserDatabaseSession {
             queryDTO.users.insert(dto)
         }
         return dto
+    }
+
+    @discardableResult
+    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.users.compactMap {
+            try? saveUser(payload: $0, query: query, cache: cache)
+        }
     }
 }
 

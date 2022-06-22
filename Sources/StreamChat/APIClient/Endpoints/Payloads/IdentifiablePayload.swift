@@ -176,6 +176,7 @@ extension MessagePayload: IdentifiablePayload {
         mentionedUsers.fillIds(cache: &cache)
         threadParticipants.fillIds(cache: &cache)
         latestReactions.fillIds(cache: &cache)
+        ownReactions.fillIds(cache: &cache)
         pinnedBy?.fillIds(cache: &cache)
         pinnedBy?.fillIds(cache: &cache)
     }

@@ -355,8 +355,13 @@ final class MessageRepositoryTests: XCTestCase {
         // We need a user, a channel, a message and an existing reaction
         try database.createCurrentUser(id: userId)
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
-            try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: .unique), for: cid, syncOwnReactions: false)
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, authorUserId: .unique),
+                for: cid,
+                syncOwnReactions: false,
+                cache: nil
+            )
             _ = try session.addReaction(to: messageId, type: reactionType, score: 1, extraData: [:], localState: nil)
         }
 
@@ -399,8 +404,13 @@ final class MessageRepositoryTests: XCTestCase {
         // We need a user, a channel, a message and an existing reaction
         try database.createCurrentUser(id: userId)
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
-            try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: .unique), for: cid, syncOwnReactions: false)
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, authorUserId: .unique),
+                for: cid,
+                syncOwnReactions: false,
+                cache: nil
+            )
         }
 
         // We undo reaction

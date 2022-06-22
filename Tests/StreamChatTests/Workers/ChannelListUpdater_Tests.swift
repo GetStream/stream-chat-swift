@@ -218,7 +218,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             try session.saveUser(payload: .dummy(userId: userId))
             try [syncedId1, syncedId2, outdatedId, watchedAndSynchedId, syncedAndWatchedId, localId].forEach {
                 let payload = self.dummyPayload(with: $0, members: [.dummy(user: .dummy(userId: userId))])
-                try session.saveChannel(payload: payload, query: query)
+                try session.saveChannel(payload: payload, query: query, cache: nil)
             }
         }
 

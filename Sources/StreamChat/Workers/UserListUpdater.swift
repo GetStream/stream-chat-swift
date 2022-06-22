@@ -22,10 +22,8 @@ class UserListUpdater: Worker {
                         let dto = try session.saveQuery(query: userListQuery)
                         dto?.users.removeAll()
                     }
-                    
-                    try userListPayload.users.forEach {
-                        try session.saveUser(payload: $0, query: userListQuery)
-                    }
+
+                    session.saveUsers(payload: userListPayload, query: userListQuery)
                 } completion: { error in
                     if let error = error {
                         log.error("Failed to save `UserListPayload` to the database. Error: \(error)")

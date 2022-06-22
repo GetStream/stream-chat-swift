@@ -57,5 +57,5 @@ extension MemberDTO: IdentifiableModel {
 extension ChannelReadDTO: IdentifiableModel {
     static let className: String = _className
     static let idKeyPath: String? = nil
-    static func id(for model: NSManagedObject) -> String? { nil }
+    static func id(for model: NSManagedObject) -> String? { nil } // Does not have id
 }

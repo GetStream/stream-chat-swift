@@ -98,7 +98,7 @@ final class UserListController_Tests: XCTestCase {
     func test_changesAreReported_beforeCallingSynchronize() throws {
         // Save a new user to DB
         client.databaseContainer.write { session in
-            try session.saveUser(payload: self.dummyUser, query: self.query)
+            try session.saveUser(payload: self.dummyUser, query: self.query, cache: nil)
         }
         
         // Assert the user is loaded
@@ -112,10 +112,10 @@ final class UserListController_Tests: XCTestCase {
         
         try client.databaseContainer.writeSynchronously { session in
             // Insert a user matching the query
-            try session.saveUser(payload: self.dummyUser(id: idMatchingQuery), query: self.query)
+            try session.saveUser(payload: self.dummyUser(id: idMatchingQuery), query: self.query, cache: nil)
             
             // Insert a user not matching the query
-            try session.saveUser(payload: self.dummyUser(id: idNotMatchingQuery), query: nil)
+            try session.saveUser(payload: self.dummyUser(id: idNotMatchingQuery), query: nil, cache: nil)
         }
         
         // Assert the existing user is loaded
@@ -132,7 +132,7 @@ final class UserListController_Tests: XCTestCase {
         let userId = UserId.unique
         try client.databaseContainer.writeSynchronously { session in
             // Insert a user matching the query
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.query)
+            try session.saveUser(payload: self.dummyUser(id: userId), query: self.query, cache: nil)
         }
         
         // Simulate successful network call.
@@ -206,7 +206,7 @@ final class UserListController_Tests: XCTestCase {
         let id: UserId = .unique
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveUser(payload: self.dummyUser(id: id), query: self.query)
+                try session.saveUser(payload: self.dummyUser(id: id), query: self.query, cache: nil)
             }, completion: $0)
         }
         
@@ -258,7 +258,7 @@ final class UserListController_Tests: XCTestCase {
         // Simulate DB update
         let id: UserId = .unique
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: id), query: self.query)
+            try session.saveUser(payload: self.dummyUser(id: id), query: self.query, cache: nil)
         }
 
         let user = try XCTUnwrap(client.databaseContainer.viewContext.user(id: id)).asModel()

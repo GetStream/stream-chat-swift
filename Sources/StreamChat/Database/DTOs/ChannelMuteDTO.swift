@@ -42,9 +42,8 @@ extension NSManagedObjectContext {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
-        
-        let channel = try saveChannel(payload: payload.mutedChannel, query: nil)
-        
+
+        let channel = try saveChannel(payload: payload.mutedChannel, query: nil, cache: nil)
         let dto = ChannelMuteDTO.loadOrCreate(cid: payload.mutedChannel.cid, context: self)
         dto.channel = channel
         dto.currentUser = currentUser

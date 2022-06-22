@@ -729,11 +729,11 @@ final class ChannelDTO_Tests: XCTestCase {
         let payload = ChannelDetailPayload.dummy(cid: channelId)
 
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: payload, query: nil)
+            try session.saveChannel(payload: payload, query: nil, cache: nil)
         }
 
         // Act: Save payload again
-        let channel = try database.viewContext.saveChannel(payload: payload, query: nil)
+        let channel = try database.viewContext.saveChannel(payload: payload, query: nil, cache: nil)
 
         // Assert: DTO should not contain any changes
         XCTAssertFalse(channel.hasPersistentChangedValues)
@@ -771,7 +771,7 @@ final class ChannelDTO_Tests: XCTestCase {
         
         // Save the channels to DB, but only channel 1 is associated with the query
         try! database.writeSynchronously { session in
-            try session.saveChannel(payload: payload1, query: query)
+            try session.saveChannel(payload: payload1, query: query, cache: nil)
             try session.saveChannel(payload: payload2)
         }
         
@@ -808,10 +808,10 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // Save the channels to DB. It doesn't matter which query we use because the filter for both of them is the same.
         try! database.writeSynchronously { session in
-            try session.saveChannel(payload: payload1, query: queryWithDefaultSorting)
-            try session.saveChannel(payload: payload2, query: queryWithDefaultSorting)
-            try session.saveChannel(payload: payload3, query: queryWithDefaultSorting)
-            try session.saveChannel(payload: payload4, query: queryWithDefaultSorting)
+            try session.saveChannel(payload: payload1, query: queryWithDefaultSorting, cache: nil)
+            try session.saveChannel(payload: payload2, query: queryWithDefaultSorting, cache: nil)
+            try session.saveChannel(payload: payload3, query: queryWithDefaultSorting, cache: nil)
+            try session.saveChannel(payload: payload4, query: queryWithDefaultSorting, cache: nil)
         }
 
         // A fetch request with a default sorting.
@@ -882,19 +882,21 @@ final class ChannelDTO_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             // Save the non-hidden channel
-            try session.saveChannel(payload: self.dummyPayload(with: visibleCid1), query: query)
+            try session.saveChannel(payload: self.dummyPayload(with: visibleCid1), query: query, cache: nil)
 
             // Save a channel with `isHidden` = false -> should be visible
             let visible = try session.saveChannel(
                 payload: self.dummyPayload(with: visibleCid2, numberOfMessages: 10),
-                query: query
+                query: query,
+                cache: nil
             )
             visible.isHidden = false
 
             // Save a channel with `isHidden` = `true` -> should NOT be visible
             let hidden1 = try session.saveChannel(
                 payload: self.dummyPayload(with: .unique, numberOfMessages: 10),
-                query: query
+                query: query,
+                cache: nil
             )
             hidden1.isHidden = true
         }
@@ -1063,7 +1065,8 @@ final class ChannelDTO_Tests: XCTestCase {
             chanenlDTO.previewMessage = try session.saveMessage(
                 payload: previewMessagePayload,
                 channelDTO: chanenlDTO,
-                syncOwnReactions: false
+                syncOwnReactions: false,
+                cache: nil
             )
         }
 

@@ -126,7 +126,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         // Save channel, then member, and pass the query in.
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid))
-            try session.saveMember(payload: member, channelId: cid, query: query)
+            try session.saveMember(payload: member, channelId: cid, query: query, cache: nil)
         }
         
         // Assert query and member exists in the database and linked.

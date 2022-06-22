@@ -58,7 +58,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         // Assert saving message reaction with the message throws `MessageDoesNotExist` error.
         XCTAssertThrowsError(
             try database.writeSynchronously { session in
-                try session.saveReaction(payload: payload)
+                try session.saveReaction(payload: payload, cache: nil)
             }
         ) { error in
             XCTAssertTrue(error is ClientError.MessageDoesNotExist)
@@ -80,7 +80,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         
         // Save message reaction to the database and corrupt extra data.
         try database.writeSynchronously { session in
-            try session.saveReaction(payload: payload)
+            try session.saveReaction(payload: payload, cache: nil)
         }
         
         // Load saved message reaction and build the model.
@@ -113,7 +113,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             // Save message reaction to the database.
-            let dto = try session.saveReaction(payload: payload)
+            let dto = try session.saveReaction(payload: payload, cache: nil)
             // Corrupt extra data.
             dto.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
@@ -151,7 +151,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         
         // Save message reaction to the database.
         try database.writeSynchronously { session in
-            try session.saveReaction(payload: payload)
+            try session.saveReaction(payload: payload, cache: nil)
         }
         
         // Delete message reaction from the database.
@@ -187,8 +187,13 @@ final class MessageReactionDTO_Tests: XCTestCase {
         let cid = ChannelId(type: .messaging, id: "c")
         let messageId = "m"
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
-            try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: .unique), for: cid, syncOwnReactions: false)
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, authorUserId: .unique),
+                for: cid,
+                syncOwnReactions: false,
+                cache: nil
+            )
         }
 
         // We store one reaction for each state
@@ -240,7 +245,8 @@ final class MessageReactionDTO_Tests: XCTestCase {
                     updatedAt: Date(),
                     user: .dummy(userId: userId),
                     extraData: [:]
-                )
+                ),
+                cache: nil
             )
             reaction.localState = state
             id = reaction.id
@@ -261,7 +267,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         
         // Save message reaction to the database.
         try database.writeSynchronously { session in
-            try session.saveReaction(payload: payload)
+            try session.saveReaction(payload: payload, cache: nil)
         }
         
         // Load saved message reaction.
