@@ -65,7 +65,7 @@ extension IdentifiablePayload {
                     modelMapping[id] = $0.objectID
                 }
             }
-            modelToIdMappings["\(modelClass)"] = modelMapping
+            modelToIdMappings[modelClass.className] = modelMapping
         }
 
         return modelToIdMappings
