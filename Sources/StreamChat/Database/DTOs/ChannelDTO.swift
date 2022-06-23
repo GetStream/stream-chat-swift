@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(ChannelDTO)
-class ChannelDTO: NSManagedObject {
+final class ChannelDTO: NSManagedObject {
     @NSManaged var cid: String
     @NSManaged var name: String?
     @NSManaged var imageURL: URL?

@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(UserDTO)
-class UserDTO: NSManagedObject {
+final class UserDTO: NSManagedObject {
     @NSManaged var extraData: Data
     @NSManaged var id: String
     @NSManaged var name: String?

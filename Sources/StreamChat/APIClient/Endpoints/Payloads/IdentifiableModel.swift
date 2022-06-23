@@ -15,47 +15,31 @@ extension PreWarmedCache {
 }
 
 protocol IdentifiableModel {
-    static var className: String { get }
-    static var idKeyPath: String? { get }
-    static func id(for model: NSManagedObject) -> String?
+    static var idKeyPath: KeyPath<Self, String> { get }
 }
 
-private extension IdentifiableModel {
-    static var _className: String { String(describing: self) }
+extension IdentifiableModel {
+    static var className: String { String(describing: self) }
+    
+    var id: String { self[keyPath: Self.idKeyPath] }
 }
 
 extension ChannelDTO: IdentifiableModel {
-    static let className: String = _className
-    static let idKeyPath: String? = "cid"
-    static func id(for model: NSManagedObject) -> String? { (model as? Self)?.cid }
+    static var idKeyPath: KeyPath<ChannelDTO, String> { \.cid }
 }
 
 extension UserDTO: IdentifiableModel {
-    static let className: String = _className
-    static let idKeyPath: String? = "id"
-    static func id(for model: NSManagedObject) -> String? { (model as? Self)?.id }
+    static var idKeyPath: KeyPath<UserDTO, String> { \.id }
 }
 
 extension MessageDTO: IdentifiableModel {
-    static let className: String = _className
-    static let idKeyPath: String? = "id"
-    static func id(for model: NSManagedObject) -> String? { (model as? Self)?.id }
+    static var idKeyPath: KeyPath<MessageDTO, String> { \.id }
 }
 
 extension MessageReactionDTO: IdentifiableModel {
-    static let className: String = _className
-    static let idKeyPath: String? = "id"
-    static func id(for model: NSManagedObject) -> String? { (model as? Self)?.id }
+    static var idKeyPath: KeyPath<MessageReactionDTO, String> { \.id }
 }
 
 extension MemberDTO: IdentifiableModel {
-    static let className: String = _className
-    static let idKeyPath: String? = "id"
-    static func id(for model: NSManagedObject) -> String? { (model as? Self)?.id }
-}
-
-extension ChannelReadDTO: IdentifiableModel {
-    static let className: String = _className
-    static let idKeyPath: String? = nil
-    static func id(for model: NSManagedObject) -> String? { nil } // Does not have id
+    static var idKeyPath: KeyPath<MemberDTO, String> { \.id }
 }

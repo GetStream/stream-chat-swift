@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(MessageDTO)
-class MessageDTO: NSManagedObject {
+final class MessageDTO: NSManagedObject {
     @NSManaged fileprivate var localMessageStateRaw: String?
     
     @NSManaged var id: String
