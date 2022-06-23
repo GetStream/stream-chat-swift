@@ -4,11 +4,25 @@
 
 import Foundation
 
+final class StreamJSONDecoder: JSONDecoder {
+    override func decode<T>(_ type: T.Type, from data: Data) throws -> T where T: Decodable {
+        // We reset the UserPayload cache before any decoding
+        UserPayload.userDecodingCache.removeAll()
+        // We reset the cache after decoding as not to leave a memory footprint
+        defer {
+            UserPayload.userDecodingCache.removeAll()
+        }
+        return try super.decode(type, from: data)
+    }
+}
+
 // MARK: - JSONDecoder Stream
 
 extension JSONDecoder {
     /// A default `JSONDecoder`.
     static var `default`: JSONDecoder = stream
+    
+    static let userPayloadCachingFlagKey = CodingUserInfoKey(rawValue: "userPayloadCachingFlagKey")!
     
     static let iso8601formatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
@@ -18,7 +32,7 @@ extension JSONDecoder {
     
     /// A Stream Chat JSON decoder.
     static let stream: JSONDecoder = {
-        let decoder = JSONDecoder()
+        let decoder = StreamJSONDecoder()
         
         /// A custom decoding for a date.
         decoder.dateDecodingStrategy = .custom { decoder throws -> Date in
@@ -36,6 +50,9 @@ extension JSONDecoder {
             // Fail
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
         }
+        
+        // We enable the UserPayload caching by setting this key
+        decoder.userInfo[userPayloadCachingFlagKey] = true
         
         return decoder
     }()

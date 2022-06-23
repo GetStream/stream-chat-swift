@@ -29,6 +29,8 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
 
 /// An object describing the incoming user JSON payload.
 class UserPayload: Decodable {
+    static var userDecodingCache = [String: UserPayload]()
+    
     let id: String
     let name: String?
     let imageURL: URL?
@@ -73,29 +75,50 @@ class UserPayload: Decodable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         let userId = try container.decode(String.self, forKey: .id)
-
+        
         id = userId
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
-        role = try container.decode(UserRole.self, forKey: .role)
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-        lastActiveAt = try container.decodeIfPresent(Date.self, forKey: .lastActiveAt)
-        isOnline = try container.decode(Bool.self, forKey: .isOnline)
-        isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
-        isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
-        teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
-
-        do {
-            var payload = try [String: RawJSON](from: decoder)
-            payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))
-            extraData = payload
-        } catch {
-            log.error(
-                "Failed to decode extra data for User with id: <\(userId)>, using default value instead. "
-                    + "Error: \(error)"
-            )
-            extraData = [:]
+        
+        let isCachingEnabled = decoder.userInfo[JSONDecoder.userPayloadCachingFlagKey] as? Bool ?? false
+        
+        if isCachingEnabled, let cachedUserPayload = UserPayload.userDecodingCache[userId] {
+            name = cachedUserPayload.name
+            imageURL = cachedUserPayload.imageURL
+            role = cachedUserPayload.role
+            createdAt = cachedUserPayload.createdAt
+            updatedAt = cachedUserPayload.updatedAt
+            lastActiveAt = cachedUserPayload.lastActiveAt
+            isOnline = cachedUserPayload.isOnline
+            isInvisible = cachedUserPayload.isInvisible
+            isBanned = cachedUserPayload.isBanned
+            teams = cachedUserPayload.teams
+            extraData = cachedUserPayload.extraData
+        } else {
+            name = try container.decodeIfPresent(String.self, forKey: .name)
+            imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
+            role = try container.decode(UserRole.self, forKey: .role)
+            createdAt = try container.decode(Date.self, forKey: .createdAt)
+            updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+            lastActiveAt = try container.decodeIfPresent(Date.self, forKey: .lastActiveAt)
+            isOnline = try container.decode(Bool.self, forKey: .isOnline)
+            isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
+            isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
+            teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
+            
+            do {
+                var payload = try [String: RawJSON](from: decoder)
+                payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))
+                extraData = payload
+            } catch {
+                log.error(
+                    "Failed to decode extra data for User with id: <\(userId)>, using default value instead. "
+                        + "Error: \(error)"
+                )
+                extraData = [:]
+            }
+            
+            if isCachingEnabled {
+                UserPayload.userDecodingCache[userId] = self
+            }
         }
     }
 }
