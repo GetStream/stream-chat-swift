@@ -7,6 +7,40 @@ import StreamChat
 import StreamChatUI
 import UserNotifications
 
+struct TokenPayload: Decodable {
+    let token: Token
+}
+
+enum TokenAPIError: Swift.Error {
+    case unexpected
+    case tokenDecodingFailed
+}
+
+enum TokenAPI {
+    static let baseURL = URL(string: "http://localhost:8090/")!
+
+    static func fetchToken(for userId: UserId, completion: @escaping (Result<Token, Error>) -> Void) {
+        let url = URL(string: "token?userID=\(userId)", relativeTo: baseURL)!
+        
+        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+            if let data = data {
+                do {
+                    let tokenPayload = try JSONDecoder().decode(TokenPayload.self, from: data)
+                    completion(.success(tokenPayload.token))
+                } catch {
+                    completion(.failure(TokenAPIError.tokenDecodingFailed))
+                }
+            } else if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.failure(TokenAPIError.unexpected))
+            }
+        }
+        
+        task.resume()
+    }
+}
+
 final class StreamChatWrapper {
     static let shared = StreamChatWrapper()
 
@@ -21,6 +55,7 @@ final class StreamChatWrapper {
         var config = ChatClientConfig(apiKeyString: apiKeyString)
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
+        config.staysConnectedInBackground = false
         return config
     }()
 
@@ -34,10 +69,11 @@ final class StreamChatWrapper {
         }
 
         // Set the log level
-        LogConfig.level = .warning
+        LogConfig.level = .info
         LogConfig.formatters = [
             PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
         ]
+        LogConfig.subsystems = [.tokenRefresh, .offlineSupport, .webSocket, .httpRequests]
 
         // Create Client
         client = ChatClient(config: config)
@@ -89,7 +125,7 @@ extension StreamChatWrapper {
         case let .credentials(userCredentials):
             client?.connectUser(
                 userInfo: userCredentials.userInfo,
-                token: userCredentials.token,
+                tokenProvider: { TokenAPI.fetchToken(for: userCredentials.userInfo.id, completion: $0) },
                 completion: completion
             )
         case let .guest(userId):
