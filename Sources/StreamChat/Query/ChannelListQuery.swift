@@ -47,10 +47,24 @@ extension FilterKey where Scope: AnyChannelListFilterScope {
     static var members: FilterKey<Scope, UserId> { "members" }
 }
 
-/// Non extra-data-specific filer keys for channel list.
+/// Filter values to be used with `.invite` FilterKey.
+public enum InviteFilterValue: String, FilterValue {
+    case pending
+    case accepted
+    case rejected
+}
+
+/// Filter keys for channel list.
 public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// A filter key for matching the `cid` value.
+    /// Supported operators: `in`, `equal`
     static var cid: FilterKey<Scope, ChannelId> { "cid" }
+    
+    /// A filter key for matching the `id` value.
+    /// Supported operators: `in`, `equal`
+    /// - Warning: Querying by the channel Identifier should be done using the `cid` field as much as possible to optimize API performance.
+    /// As the full channel ID, `cid`s are indexed everywhere in Stream database where `id` is not.
+    static var id: FilterKey<Scope, String> { "id" }
     
     /// A filter key for matching the `name` value.
     static var name: FilterKey<Scope, String> { "name" }
@@ -59,34 +73,65 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     static var imageURL: FilterKey<Scope, URL> { "image" }
     
     /// A filter key for matching the `type` value.
+    /// Supported operators: `in`, `equal`
     static var type: FilterKey<Scope, ChannelType> { "type" }
     
     /// A filter key for matching the `lastMessageAt` value.
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var lastMessageAt: FilterKey<Scope, Date> { "last_message_at" }
     
     /// A filter key for matching the `createdBy` value.
+    /// Supported operators: `equal`
     static var createdBy: FilterKey<Scope, UserId> { "created_by_id" }
     
     /// A filter key for matching the `createdAt` value.
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var createdAt: FilterKey<Scope, Date> { "created_at" }
     
     /// A filter key for matching the `updatedAt` value.
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var updatedAt: FilterKey<Scope, Date> { "updated_at" }
     
     /// A filter key for matching the `deletedAt` value.
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var deletedAt: FilterKey<Scope, Date> { "deleted_at" }
     
     /// A filter key for querying hidden channels.
+    /// Supported operators: `equal`
     static var hidden: FilterKey<Scope, Bool> { "hidden" }
     
     /// A filter key for matching the `frozen` value.
+    /// Supported operators: `equal`
     static var frozen: FilterKey<Scope, Bool> { "frozen" }
 
     /// A filter key for matching the `memberCount` value.
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var memberCount: FilterKey<Scope, Int> { "member_count" }
     
     /// A filter key for matching the `team` value.
+    /// Supported operators: `equal`
     static var team: FilterKey<Scope, TeamId?> { "team" }
+    
+    /// Filter for checking whether current user is joined the channel or not (through invite or directly)
+    /// Supported operators: `equal`
+    static var joined: FilterKey<Scope, Bool> { "joined" }
+    
+    /// Filter for checking whether current user has muted the channel
+    /// Supported operators: `equal`
+    static var muted: FilterKey<Scope, Bool> { "muted " }
+    
+    /// Filter for checking the status of the invite
+    /// Supported operators: `equal`
+    static var invite: FilterKey<Scope, InviteFilterValue> { "invite" }
+    
+    /// Filter for checking the `name` property of a user who is a member of the channel
+    /// Supported operators: `equal`, `notEqual`, `autocomplete`
+    /// - Warning: This filter is considerably expensive for the backend so avoid using this when possible.
+    static var memberName: FilterKey<Scope, String> { "member.user.name" }
+    
+    /// Filter for the time of the last message in the channel. If the channel has no messages, then the time the channel was created.
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
+    static var lastUpdatedAt: FilterKey<Scope, Date> { "last_updated" }
 }
 
 /// A query is used for querying specific channels from backend.
