@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Added missing `ChannelListFilterScope` and `MemberListFilterScope` filter keys [#2119](https://github.com/GetStream/stream-chat-swift/issues/2119)
 
 # [4.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.17.0)
 _June 22, 2022_
