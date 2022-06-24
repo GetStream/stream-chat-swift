@@ -23,6 +23,7 @@ public enum MockFile: String {
     case httpReplies = "http_replies"
     case httpMember = "http_member"
     case httpChannels = "http_channels"
+    case httpAttachment = "http_attachment"
     
     case wsChatEvent = "ws_events"
     case wsChannelEvent = "ws_events_channel"
@@ -49,6 +50,8 @@ public enum MockEndpoint {
     public static let query = "/channels/messaging/\(EndpointQuery.channelId)/query"
     public static let messageRead = "/channels/messaging/\(EndpointQuery.channelId)/read"
     public static let message = "/channels/messaging/\(EndpointQuery.channelId)/message"
+    public static let image = "/channels/messaging/\(EndpointQuery.channelId)/image"
+    public static let file = "/channels/messaging/\(EndpointQuery.channelId)/file"
 }
 
 public enum EndpointQuery {
@@ -77,6 +80,7 @@ public enum JSONKey {
     public static let id = "id"
     public static let cooldown = "cooldown"
     public static let attachmentAction = "image_action"
+    public static let file = "file"
 
     public enum Channel {
         public static let addMembers = "add_members"
@@ -181,4 +185,10 @@ public enum UserDetails {
         }
         return user
     }
+}
+
+public enum Attachments {
+    public static let image = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+    public static let video = "https://download.samplelib.com/mp4/sample-5s.mp4"
+    public static let file = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 }

@@ -45,6 +45,7 @@ public final class StreamMockServer {
         configureChannelEndpoints()
         configureReactionEndpoints()
         configureMessagingEndpoints()
+        configureAttachmentEndpoints()
     }
     
     public func writeText(_ text: String) {
