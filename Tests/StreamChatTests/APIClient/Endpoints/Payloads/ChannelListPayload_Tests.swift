@@ -44,7 +44,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         wait(for: [writeCompleted], timeout: timeout)
     }
 
-    func test_hugeChannelListQuery_save_uncached() throws {
+    func test_hugeChannelListQuery_save_DB_empty() throws {
         let decodedPayload = createHugeChannelList()
         measure {
             let databaseContainer = DatabaseContainer_Spy()
@@ -52,7 +52,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
     }
 
-    func test_hugeChannelListQuery_save_cached() throws {
+    func test_hugeChannelListQuery_save_DB_filled() throws {
         let decodedPayload = createHugeChannelList()
         let databaseContainer = DatabaseContainer_Spy()
 

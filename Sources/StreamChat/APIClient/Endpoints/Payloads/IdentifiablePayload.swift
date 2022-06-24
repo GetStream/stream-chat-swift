@@ -6,9 +6,9 @@ import CoreData
 import Foundation
 
 protocol IdentifiablePayload {
-    var databaseId: String? { get }
-    static var modelClass: (NSManagedObject & IdentifiableModel).Type? { get }
-    func fillIds(cache: inout [String: Set<String>])
+    var databaseId: DatabaseId? { get }
+    static var modelClass: (IdentifiableDatabaseObject).Type? { get }
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>])
 }
 
 extension IdentifiablePayload {
@@ -27,11 +27,10 @@ extension IdentifiablePayload {
 
     func getPayloadToModelIdMappings(context: NSManagedObjectContext) -> PreWarmedCache {
         let payloadIdsMappings = recursivelyGetAllIds()
-
-        var modelToIdMappings: [String: [String: NSManagedObjectID]] = [:]
+        var cache: PreWarmedCache = [:]
 
         for (className, identifiableValues) in payloadIdsMappings {
-            let modelClass: (NSManagedObject & IdentifiableModel).Type? = {
+            let modelClass: (IdentifiableDatabaseObject).Type? = {
                 switch className {
                 case ChannelDTO.className:
                     return ChannelDTO.self
@@ -59,31 +58,31 @@ extension IdentifiablePayload {
             }
             guard let results = results else { continue }
 
-            var modelMapping: [String: NSManagedObjectID] = [:]
+            var modelMapping: [DatabaseId: NSManagedObjectID] = [:]
             results.forEach {
                 if let id = modelClass.id(for: $0) {
                     modelMapping[id] = $0.objectID
                 }
             }
-            modelToIdMappings[modelClass.className] = modelMapping
+            cache[modelClass.className] = modelMapping
         }
 
-        return modelToIdMappings
+        return cache
     }
 }
 
 protocol IdentifiablePayloadProxy: IdentifiablePayload {}
 
 extension IdentifiablePayloadProxy {
-    var databaseId: String? { nil }
-    static var modelClass: (NSManagedObject & IdentifiableModel).Type? { nil }
+    var databaseId: DatabaseId? { nil }
+    static var modelClass: (IdentifiableDatabaseObject).Type? { nil }
 }
 
 extension Array where Element: IdentifiablePayload {
-    var databaseId: String? { nil }
-    static var modelClass: (NSManagedObject & IdentifiableModel).Type? { nil }
+    var databaseId: DatabaseId? { nil }
+    static var modelClass: (IdentifiableDatabaseObject).Type? { nil }
 
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         forEach {
             $0.fillIds(cache: &cache)
         }
@@ -91,49 +90,49 @@ extension Array where Element: IdentifiablePayload {
 }
 
 extension UserListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         users.fillIds(cache: &cache)
     }
 }
 
 extension MessageListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         messages.fillIds(cache: &cache)
     }
 }
 
 extension MessageReactionsPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         reactions.fillIds(cache: &cache)
     }
 }
 
 extension MessageSearchResultsPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         results.fillIds(cache: &cache)
     }
 }
 
 extension MessagePayload.Boxed: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         message.fillIds(cache: &cache)
     }
 }
 
 extension ChannelMemberListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         members.fillIds(cache: &cache)
     }
 }
 
 extension ChannelListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         channels.fillIds(cache: &cache)
     }
 }
 
 extension ChannelPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         channel.fillIds(cache: &cache)
         watchers?.fillIds(cache: &cache)
@@ -145,10 +144,10 @@ extension ChannelPayload: IdentifiablePayloadProxy {
 }
 
 extension ChannelDetailPayload: IdentifiablePayload {
-    var databaseId: String? { cid.rawValue }
-    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = ChannelDTO.self
+    var databaseId: DatabaseId? { cid.rawValue }
+    static let modelClass: (IdentifiableDatabaseObject).Type? = ChannelDTO.self
 
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         createdBy?.fillIds(cache: &cache)
         members?.fillIds(cache: &cache)
@@ -157,19 +156,19 @@ extension ChannelDetailPayload: IdentifiablePayload {
 }
 
 extension UserPayload: IdentifiablePayload {
-    var databaseId: String? { id }
-    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = UserDTO.self
+    var databaseId: DatabaseId? { id }
+    static let modelClass: (IdentifiableDatabaseObject).Type? = UserDTO.self
 
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
     }
 }
 
 extension MessagePayload: IdentifiablePayload {
-    var databaseId: String? { id }
-    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = MessageDTO.self
+    var databaseId: DatabaseId? { id }
+    static let modelClass: (IdentifiableDatabaseObject).Type? = MessageDTO.self
 
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
         quotedMessage?.fillIds(cache: &cache)
@@ -183,33 +182,33 @@ extension MessagePayload: IdentifiablePayload {
 }
 
 extension MessageReactionPayload: IdentifiablePayload {
-    var databaseId: String? {
+    var databaseId: DatabaseId? {
         MessageReactionDTO.createId(userId: user.id, messageId: messageId, type: type)
     }
 
-    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = MessageReactionDTO.self
+    static let modelClass: (IdentifiableDatabaseObject).Type? = MessageReactionDTO.self
 
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
     }
 }
 
 extension MemberPayload: IdentifiablePayload {
-    var databaseId: String? { nil } // Cannot build id without channel id
-    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = MemberDTO.self
+    var databaseId: DatabaseId? { nil } // Cannot build id without channel id
+    static let modelClass: (IdentifiableDatabaseObject).Type? = MemberDTO.self
 
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
     }
 }
 
 extension ChannelReadPayload: IdentifiablePayload {
-    var databaseId: String? { nil } // Needs a composed predicate 'channel.cid == %@ && user.id == %@'
-    static let modelClass: (NSManagedObject & IdentifiableModel).Type? = ChannelReadDTO.self
+    var databaseId: DatabaseId? { nil } // Needs a composed predicate 'channel.cid == %@ && user.id == %@'
+    static let modelClass: (IdentifiableDatabaseObject).Type? = ChannelReadDTO.self
 
-    func fillIds(cache: inout [String: Set<String>]) {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
     }
