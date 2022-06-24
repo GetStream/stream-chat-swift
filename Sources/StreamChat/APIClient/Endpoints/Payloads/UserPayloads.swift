@@ -29,7 +29,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
 
 /// An object describing the incoming user JSON payload.
 class UserPayload: Decodable {
-    static var userDecodingCache = [String: UserPayload]()
+    static var userDecodingCache = NSCache<NSString, UserPayload>()
     
     let id: String
     let name: String?
@@ -80,7 +80,7 @@ class UserPayload: Decodable {
         
         let isCachingEnabled = decoder.userInfo[JSONDecoder.userPayloadCachingFlagKey] as? Bool ?? false
         
-        if isCachingEnabled, let cachedUserPayload = UserPayload.userDecodingCache[userId] {
+        if isCachingEnabled, let cachedUserPayload = UserPayload.userDecodingCache.object(forKey: userId as NSString) {
             name = cachedUserPayload.name
             imageURL = cachedUserPayload.imageURL
             role = cachedUserPayload.role
@@ -117,7 +117,7 @@ class UserPayload: Decodable {
             }
             
             if isCachingEnabled {
-                UserPayload.userDecodingCache[userId] = self
+                UserPayload.userDecodingCache.setObject(self, forKey: userId as NSString)
             }
         }
     }

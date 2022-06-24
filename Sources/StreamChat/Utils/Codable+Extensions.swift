@@ -7,10 +7,10 @@ import Foundation
 final class StreamJSONDecoder: JSONDecoder {
     override func decode<T>(_ type: T.Type, from data: Data) throws -> T where T: Decodable {
         // We reset the UserPayload cache before any decoding
-        UserPayload.userDecodingCache.removeAll()
+        UserPayload.userDecodingCache.removeAllObjects()
         // We reset the cache after decoding as not to leave a memory footprint
         defer {
-            UserPayload.userDecodingCache.removeAll()
+            UserPayload.userDecodingCache.removeAllObjects()
         }
         return try super.decode(type, from: data)
     }
