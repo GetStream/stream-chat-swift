@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 /// The type responsible for holding and refreshing the access token.
 protocol TokenHandler: AnyObject {
@@ -36,43 +35,27 @@ protocol TokenHandler: AnyObject {
 }
 
 final class DefaultTokenHandler: TokenHandler {
-    private let maximumTokenRefreshAttempts: Int
-    private let retryTimeoutInterval: TimeInterval
-    private let timerType: Timer.Type
-    private var retryStrategy: RetryStrategy
-    private var retryTimer: TimerControl?
-    private var retryTimeoutTimer: TimerControl?
-
-    @Atomic private var isRefreshingToken: Bool = false
-    @Atomic private var tokenWaiters: [WaiterToken: TokenWaiter] = [:]
+    typealias TokenRefreshFlowBuilder = (UserConnectionProvider) -> TokenRefreshFlow
     
     private(set) var currentToken: Token?
-    
-    var connectionProvider: UserConnectionProvider {
+    private let refreshFlowBuilder: TokenRefreshFlowBuilder
+    @Atomic private(set) var refreshFlow: TokenRefreshFlow?
+    @Atomic private var tokenWaiters: [WaiterToken: TokenWaiter] = [:]
+    var connectionProvider: UserConnectionProvider = .noCurrentUser {
         didSet {
             guard let oldUserId = oldValue.userId, connectionProvider.userId != oldUserId else { return }
             
             log.info("ℹ️ Token provider for another user is assigned.", subsystems: .tokenRefresh)
             
             let error = ClientError.UserDoesNotExist(userId: oldUserId)
-            handleTokenResult(.failure(error))
+            handleTokenRefreshResult(.failure(error))
         }
     }
     
     // MARK: - Init & Deinit
     
-    init(
-        connectionProvider: UserConnectionProvider,
-        retryStrategy: RetryStrategy,
-        retryTimeoutInterval: TimeInterval,
-        maximumTokenRefreshAttempts: Int,
-        timerType: Timer.Type
-    ) {
-        self.connectionProvider = connectionProvider
-        self.retryStrategy = retryStrategy
-        self.retryTimeoutInterval = retryTimeoutInterval
-        self.maximumTokenRefreshAttempts = maximumTokenRefreshAttempts
-        self.timerType = timerType
+    init(refreshFlowBuilder: @escaping TokenRefreshFlowBuilder) {
+        self.refreshFlowBuilder = refreshFlowBuilder
     }
     
     deinit {
@@ -90,14 +73,8 @@ final class DefaultTokenHandler: TokenHandler {
             return
         }
         
-        handleTokenResult(.success(token))
+        handleTokenRefreshResult(.success(token))
         completion?(nil)
-    }
-    
-    func cancelRefreshFlow(with error: Error) {
-        log.info("ℹ️ Ongoing token refresh process is cancelled", subsystems: .tokenRefresh)
-        
-        handleTokenResult(.failure(error), updateToken: false)
     }
     
     func refreshToken(completion: @escaping TokenWaiter) {
@@ -117,8 +94,8 @@ final class DefaultTokenHandler: TokenHandler {
         
         log.info("🚀 Token refresh process is started.", subsystems: .tokenRefresh)
         
-        retryRefresh(of: currentToken, using: connectionProvider) { [weak self] in
-            self?.handleTokenResult($0)
+        refreshFlow?.refresh(token: currentToken) { [weak self] in
+            self?.handleTokenRefreshResult($0)
         }
     }
     
@@ -143,144 +120,55 @@ final class DefaultTokenHandler: TokenHandler {
         }
     }
     
-    // MARK: - Private
-    
-    private func retryRefresh(
-        of token: Token?,
-        using provider: UserConnectionProvider,
-        completion: @escaping (Result<Token, Error>) -> Void
-    ) {
-        guard retryStrategy.consecutiveFailuresCount < maximumTokenRefreshAttempts else {
-            let message = """
-            ❌ Token refresh failed : all attempts are used \(retryStrategy.consecutiveFailuresCount)
-            """
-            log.error(message, subsystems: .tokenRefresh)
-            completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
-            return
+    func cancelRefreshFlow(with error: Error) {
+        if isRefreshingToken {
+            log.info("ℹ️ Ongoing token refresh process is cancelled", subsystems: .tokenRefresh)
         }
         
-        let delay = nextRetryDelay
-        let attempt = retryStrategy.consecutiveFailuresCount + 1
+        refreshFlow = nil
         
-        log.info("⏳ Will fetch token in \(delay) sec (\(attempt) attempt)", subsystems: .tokenRefresh)
-        
-        retryTimer = timerType.schedule(timeInterval: delay, queue: .main) { [weak self] in
-            guard let self = self else { return }
-            
-            var attemptHasTimedOut = false
-            
-            self.retryTimeoutTimer = self.timerType.schedule(timeInterval: self.retryTimeoutInterval, queue: .main) {
-                log.info("⏰ Timeout (\(attempt) attempt)", subsystems: .tokenRefresh)
-                
-                attemptHasTimedOut = true
-                self.retryStrategy.incrementConsecutiveFailures()
-                self.retryRefresh(of: token, using: provider, completion: completion)
-            }
-            
-            log.info("🔥 Fetching token... (\(attempt) attempt)", subsystems: .tokenRefresh)
-            
-            provider.fetchToken { [weak self] in
-                guard let self = self else {
-                    return
-                }
-                
-                guard !attemptHasTimedOut else {
-                    log.info("ℹ️ The token is returned after the timeout", subsystems: .tokenRefresh)
-                    return
-                }
-                
-                self.retryTimeoutTimer?.cancel()
-                self.retryTimeoutTimer = nil
-                
-                guard self.currentToken == token else {
-                    let message = """
-                        ℹ️ The `currentToken` was assinged while the refresh process.
-                        The token returned by `tokenProvider` will be discarded.
-                    """
-                    log.info(message, subsystems: .tokenRefresh)
-                    return
-                }
-                
-                guard self.connectionProvider.userId == provider.userId else {
-                    let message = """
-                        ℹ️ The `tokenProvider` for the new user was assinged while the refresh process.
-                        The token returned by `tokenProvider` will be discarded.
-                    """
-                    log.info(message, subsystems: .tokenRefresh)
-                    return
-                }
-                
-                switch $0 {
-                case let .success(newToken):
-                    log.info("📥 Token is fetched after \(attempt) attempt.", subsystems: .tokenRefresh)
-                    
-                    if newToken == token {
-                        let message = "❌ Token refresh failed: the old token is returned"
-                        completion(.failure(ClientError.InvalidToken(message)))
-                    } else if newToken.userId != provider.userId {
-                        let message = "❌ Token refresh failed: the token for another user is returned."
-                        completion(.failure(ClientError.InvalidToken(message)))
-                    } else if newToken.isExpired {
-                        let message = "❌ Token refresh failed: an expired token is returned"
-                        completion(.failure(ClientError.ExpiredToken(message)))
-                    } else {
-                        completion(.success(newToken))
-                    }
-                case let .failure(error):
-                    log.info("❌ Token fetching has failed (\(attempt) attempt): \(error.localizedDescription)", subsystems: .tokenRefresh)
-                    
-                    self.retryStrategy.incrementConsecutiveFailures()
-                    self.retryRefresh(of: token, using: provider, completion: completion)
-                }
-            }
-        }
+        completeTokenWaiters(with: .failure(error))
     }
-    
-    private var nextRetryDelay: TimeInterval {
-        retryStrategy.consecutiveFailuresCount > 0
-            ? retryStrategy.nextRetryDelay()
-            : 0
+}
+
+// MARK: - Private
+
+private extension DefaultTokenHandler {
+    var isRefreshingToken: Bool {
+        refreshFlow != nil
     }
-    
-    private func handleTokenResult(_ result: Result<Token, Error>, updateToken: Bool = true) {
-        if updateToken {
-            switch result {
-            case let .success(token):
-                log.info("✅ Assigning the new token, unblocking pending API requests.", subsystems: .tokenRefresh)
-                
-                currentToken = token
-            case let .failure(error):
-                log.info("❌ Resetting the current token, cancelling pending API requests with error: \(error.localizedDescription).", subsystems: .tokenRefresh)
-                
-                currentToken = nil
-            }
-        }
-        
-        retryStrategy.resetConsecutiveFailures()
-        retryTimeoutTimer?.cancel()
-        retryTimeoutTimer = nil
-        retryTimer?.cancel()
-        retryTimer = nil
-        
-        isRefreshingToken = false
-        
-        completeTokenWaiters(with: result)
-    }
-    
-    private func initiateRefreshIfNotRunning() -> Bool {
+
+    func initiateRefreshIfNotRunning() -> Bool {
         var initiate = false
         
-        _isRefreshingToken.mutate { isRefreshingToken in
-            guard !isRefreshingToken else { return }
+        _refreshFlow.mutate { flow in
+            guard flow == nil else { return }
             
-            isRefreshingToken = true
+            flow = self.refreshFlowBuilder(self.connectionProvider)
             initiate = true
         }
         
         return initiate
     }
     
-    private func completeTokenWaiters(with result: Result<Token, Error>) {
+    func handleTokenRefreshResult(_ result: Result<Token, Error>) {
+        switch result {
+        case let .success(token):
+            log.info("✅ Assigning the new token, unblocking pending API requests.", subsystems: .tokenRefresh)
+            
+            currentToken = token
+        case let .failure(error):
+            log.info("❌ Resetting the current token, cancelling pending API requests with error: \(error.localizedDescription).", subsystems: .tokenRefresh)
+            
+            currentToken = nil
+        }
+        
+        refreshFlow = nil
+        
+        completeTokenWaiters(with: result)
+    }
+    
+    func completeTokenWaiters(with result: Result<Token, Error>) {
         var waiters: [TokenWaiter] = []
         
         _tokenWaiters.mutate {

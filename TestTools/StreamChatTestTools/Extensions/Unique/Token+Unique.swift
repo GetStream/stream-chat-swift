@@ -10,4 +10,9 @@ extension Token {
     static func unique(userId: UserId = .unique) -> Self {
         .init(rawValue: .unique, userId: userId, expiration: nil)
     }
+    
+    /// Returns an expired `Token` with the provided `user_id`.
+    static func expired(userId: UserId = .unique) -> Self {
+        .init(rawValue: .unique, userId: userId, expiration: Date().addingTimeInterval(-1))
+    }
 }

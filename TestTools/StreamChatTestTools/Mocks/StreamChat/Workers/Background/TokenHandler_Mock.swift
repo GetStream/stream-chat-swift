@@ -9,11 +9,7 @@ import XCTest
 final class TokenHandler_Mock: TokenHandler {
     var currentToken: Token?
     
-    var connectionProvider: UserConnectionProvider
-    
-    init(connectionProvider: UserConnectionProvider = .noCurrentUser) {
-        self.connectionProvider = connectionProvider
-    }
+    var connectionProvider: UserConnectionProvider = .noCurrentUser
     
     lazy var mock_setToken = MockFunc.mock(for: `set`)
 

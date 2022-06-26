@@ -68,11 +68,6 @@ class ChatClientUpdater {
             client.webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo)
         }
 
-        guard newToken != client.currentToken else {
-            completion(nil)
-            return
-        }
-
         // It makes more sense to create background workers here
         // other than in `init` because workers without currently logged-in
         // user do nothing.

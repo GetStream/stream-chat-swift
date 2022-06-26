@@ -189,9 +189,12 @@ public class ChatClient {
         )
     }()
     
-    private(set) lazy var tokenHandler = environment.tokenHandlerBuilder(
-        currentUserId.map(UserConnectionProvider.notInitiated) ?? .noCurrentUser
-    )
+    /// The object that stores/refreshes/resets the auth token of the currently connected user.
+    private(set) lazy var tokenHandler: TokenHandler = {
+        let handler = environment.tokenHandlerBuilder()
+        handler.connectionProvider = currentUserId.map(UserConnectionProvider.notInitiated) ?? .noCurrentUser
+        return handler
+    }()
     
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
     
@@ -579,15 +582,17 @@ extension ChatClient {
             )
         }
         
-        var tokenHandlerBuilder: (
-            _ connectionProvider: UserConnectionProvider
-        ) -> TokenHandler = {
+        var tokenHandlerBuilder: () -> TokenHandler = {
             DefaultTokenHandler(
-                connectionProvider: $0,
-                retryStrategy: DefaultRetryStrategy(),
-                retryTimeoutInterval: 10,
-                maximumTokenRefreshAttempts: 10,
-                timerType: DefaultTimer.self
+                refreshFlowBuilder: {
+                    DefaultTokenRefreshFlow(
+                        tokenProvider: $0,
+                        maximumTokenRefreshAttempts: 10,
+                        attemptTimeout: 10,
+                        retryStrategy: DefaultRetryStrategy(),
+                        timerType: DefaultTimer.self
+                    )
+                }
             )
         }
     }

@@ -7,51 +7,41 @@
 import XCTest
 
 final class TokenHandler_Tests: XCTestCase {
-    var mockRetryStrategy: RetryStrategy_Spy!
-    var mockTime: VirtualTime { VirtualTimeTimer.time }
-    
-    // MARK: - setUp, tearDown
-    
-    override func setUp() {
-        super.setUp()
-        
-        mockRetryStrategy = .init()
-        VirtualTimeTimer.time = .init()
-    }
-    
-    override func tearDown() {
-        VirtualTimeTimer.time = nil
-        mockRetryStrategy = nil
-        
-        super.tearDown()
-    }
-    
     // MARK: - connectionProvider
     
-    func test_connectionProvider_whenProviderForAnotherUserIsAssigned() {
+    func test_connectionProvider_whenProviderForAnotherUserIsAssigned() throws {
         // GIVEN
         let currentUserId: UserId = .unique
-        let sut = createTokenHandler(connectionProvider: .notInitiated(userId: currentUserId))
+        let token = Token.unique(userId: currentUserId)
+        
+        let sut = createTokenHandler()
+        sut.connectionProvider = .initiated(userId: currentUserId) { _ in }
+        sut.set(token: token) { _ in }
+        
+        var refreshTokenResult: Result<Token, Error>?
+        sut.refreshToken { refreshTokenResult = $0 }
         
         var waiterResult: Result<Token, Error>?
-        let waiterCalled = expectation(description: "waiter called")
-        sut.add {
-            waiterResult = $0
-            waiterCalled.fulfill()
-        }
-        
+        sut.add { waiterResult = $0 }
+                
         // WHEN
         let anotherUserId: UserId = .unique
         sut.connectionProvider = .initiated(userId: anotherUserId) { _ in }
         
         // THEN
-        wait(for: [waiterCalled], timeout: defaultTimeout)
-        XCTAssertTrue(waiterResult?.error is ClientError.UserDoesNotExist)
+        XCTAssertNil(sut.refreshFlow)
+        XCTAssertNil(sut.currentToken)
+        XCTAssertTrue(
+            [waiterResult, refreshTokenResult].allSatisfy {
+                $0?.error is ClientError.UserDoesNotExist
+            }
+        )
     }
     
     func test_connectionProvider_whenThereIsNoCurrentUserAndProviderForNewUserIsAssigned() {
         // GIVEN
-        let sut = createTokenHandler(connectionProvider: .noCurrentUser)
+        let sut = createTokenHandler()
+        sut.connectionProvider = .noCurrentUser
         
         var waiterCalled = false
         sut.add { _ in waiterCalled = true }
@@ -63,44 +53,16 @@ final class TokenHandler_Tests: XCTestCase {
         XCTAssertFalse(waiterCalled)
     }
     
-    func test_connectionProvider_whenConnectionProviderChangesWhileRefreshProcess_refreshResultIsDiscarded() throws {
-        // GIVEN
-        let oldUserId: UserId = .unique
-        
-        var tokenProviderCompletion: TokenWaiter?
-        let sut = createTokenHandler(
-            connectionProvider: .initiated(userId: oldUserId) {
-                tokenProviderCompletion = $0
-            }
-        )
-        
-        // WHEN
-        sut.refreshToken { _ in }
-        mockTime.run(numberOfSeconds: 0.1)
-        
-        // AND
-        let newUserId: UserId = .unique
-        sut.connectionProvider = .initiated(userId: newUserId) { _ in }
-        
-        // AND
-        let oldUserRefreshedToken: Token = .unique(userId: oldUserId)
-        tokenProviderCompletion?(.success(oldUserRefreshedToken))
-        
-        // THEN
-        XCTAssertNil(sut.currentToken)
-    }
-    
     // MARK: - refreshToken
     
-    func test_refreshToken_whenCalledMultipleTime_onlyOneRefreshProcessIsTriggered() {
+    func test_refreshToken_whenCalledMultipleTime_onlyOneRefreshProcessIsTriggered() throws {
         // GIVEN
-        let sut = createTokenHandler()
+        let refreshFlowBuilderCalledOnce = expectation(description: "refreshFlowBuilder called")
+        refreshFlowBuilderCalledOnce.assertForOverFulfill = true
         
-        let token: Token = .unique()
-        var connectionProviderCallsCount = 0
-        sut.connectionProvider = .initiated(userId: token.userId) { completion in
-            connectionProviderCallsCount += 1
-            completion(.success(token))
+        let sut = createTokenHandler {
+            refreshFlowBuilderCalledOnce.fulfill()
+            return TokenRefreshFlow_Mock(connectionProvider: $0)
         }
         
         // WHEN
@@ -110,7 +72,8 @@ final class TokenHandler_Tests: XCTestCase {
 
         let completionsCalled = XCTestExpectation(description: "refreshToken completions called")
         completionsCalled.expectedFulfillmentCount = iterations
-                
+        
+        _ = log
         DispatchQueue.concurrentPerform(iterations: iterations) { index in
             sut.refreshToken {
                 results[index] = $0
@@ -118,268 +81,81 @@ final class TokenHandler_Tests: XCTestCase {
             }
         }
         
-        mockTime.run()
+        wait(for: [refreshFlowBuilderCalledOnce], timeout: defaultTimeout)
+        
+        let token = Token.unique()
+        let refreshFlow = sut.mockRefeshFlow
+        sut.mockRefeshFlow?.mock_refresh.calls.first?.1(.success(token))
         
         // THEN
         wait(for: [completionsCalled], timeout: defaultTimeout)
         XCTAssertTrue(results.allSatisfy { $0?.value == token })
-        XCTAssertEqual(connectionProviderCallsCount, 1)
-    }
-    
-    func test_refreshToken_whenTheSameTokenIsReturned() {
-        // GIVEN
-        let sut = createTokenHandler()
-
-        let token: Token = .unique()
-        sut.connectionProvider = .initiated(userId: token.userId) { $0(.success(token)) }
-        sut.set(token: token) { _ in }
-        
-        // WHEN
-        var refreshResult: Result<Token, Error>?
-        sut.refreshToken { refreshResult = $0 }
-        mockTime.run()
-        
-        // THEN
-        XCTAssertTrue(refreshResult?.error is ClientError.InvalidToken)
-    }
-    
-    func test_refreshToken_whenExpiredTokenIsReturned() {
-        // GIVEN
-        let sut = createTokenHandler()
-        
-        let userId: UserId = .unique
-        let expiredToken = Token(rawValue: .unique, userId: userId, expiration: Date().addingTimeInterval(-1))
-        sut.connectionProvider = .initiated(userId: userId) { $0(.success(expiredToken)) }
-        
-        // WHEN
-        var refreshResult: Result<Token, Error>?
-        sut.refreshToken { refreshResult = $0 }
-        mockTime.run()
-        
-        // THEN
-        XCTAssertTrue(refreshResult?.error is ClientError.ExpiredToken)
-    }
-    
-    func test_refreshToken_whenTokenForAnotherUserIsReturned() {
-        // GIVEN
-        let sut = createTokenHandler()
-
-        let userId: UserId = .unique
-        let anotherUserId: UserId = .unique
-        let tokenForAnotherUser = Token.unique(userId: anotherUserId)
-        sut.connectionProvider = .initiated(userId: userId) { $0(.success(tokenForAnotherUser)) }
-        
-        // WHEN
-        var refreshResult: Result<Token, Error>?
-        sut.refreshToken { refreshResult = $0 }
-        mockTime.run()
-        
-        // THEN
-        XCTAssertTrue(refreshResult?.error is ClientError.InvalidToken)
+        XCTAssertEqual(refreshFlow?.mock_refresh.calls.count, 1)
     }
     
     func test_refreshToken_whenRefreshSucceeds() {
         // GIVEN
         let userId: UserId = .unique
-    
+        
         let sut = createTokenHandler()
+        sut.connectionProvider = .initiated(userId: userId) { _ in }
         
-        var connectionProviderCallsCount = 0
-        var tokenProviderCompletion: TokenWaiter?
-        sut.connectionProvider = .initiated(userId: userId) { completion in
-            tokenProviderCompletion = completion
-            connectionProviderCallsCount += 1
-        }
-        
-        // WHEN
         var refreshResult: Result<Token, Error>?
         sut.refreshToken { refreshResult = $0 }
         
+        XCTAssertEqual(sut.mockRefeshFlow?.connectionProvider, sut.connectionProvider)
+        
         var tokenWaiterResult: Result<Token, Error>?
         sut.add { tokenWaiterResult = $0 }
-        
-        mockTime.run(numberOfSeconds: 1)
-        
+    
+        // WHEN
         let token = Token.unique(userId: userId)
-        tokenProviderCompletion?(.success(token))
-        
-        mockTime.run()
+        sut.mockRefeshFlow?.mock_refresh.calls.first?.1(.success(token))
         
         // THEN
         XCTAssertEqual(refreshResult?.value, token)
         XCTAssertEqual(tokenWaiterResult?.value, token)
         XCTAssertEqual(sut.currentToken, token)
-        XCTAssertEqual(connectionProviderCallsCount, 1)
+        XCTAssertNil(sut.refreshFlow)
     }
     
-    func test_refreshToken_whenRefreshFails() {
+    func test_refreshToken_whenRefreshFails() throws {
         // GIVEN
-        let userId: UserId = .unique
-        let token: Token = .unique(userId: userId)
-            
-        let sut = createTokenHandler(maximumTokenRefreshAttempts: 1)
-        sut.set(token: token) { _ in }
+        let sut = createTokenHandler()
+        sut.set(token: .unique(userId: .unique)) { _ in }
         
-        var connectionProviderCallsCount = 0
-        var tokenProviderCompletion: TokenWaiter?
-        sut.connectionProvider = .initiated(userId: userId) { completion in
-            tokenProviderCompletion = completion
-            connectionProviderCallsCount += 1
-        }
-        
-        // WHEN
         var refreshResult: Result<Token, Error>?
         sut.refreshToken { refreshResult = $0 }
+        
+        XCTAssertEqual(sut.mockRefeshFlow?.connectionProvider, sut.connectionProvider)
         
         var tokenWaiterResult: Result<Token, Error>?
         sut.add { tokenWaiterResult = $0 }
         
-        mockTime.run(numberOfSeconds: 1)
-        
+        // WHEN
         let error = TestError()
-        mockRetryStrategy.consecutiveFailuresCount = 1
-        tokenProviderCompletion?(.failure(error))
-        
-        mockTime.run()
+        sut.mockRefeshFlow?.mock_refresh.calls.first?.1(.failure(error))
         
         // THEN
-        XCTAssertEqual(connectionProviderCallsCount, 1)
-        XCTAssertNotNil(refreshResult?.error)
-        XCTAssertNotNil(tokenWaiterResult?.error)
+        XCTAssertEqual(refreshResult?.error as? TestError, error)
+        XCTAssertEqual(tokenWaiterResult?.error as? TestError, error)
         XCTAssertNil(sut.currentToken)
-    }
-    
-    func test_refreshToken_whenAllRetryAttempsFail() {
-        // GIVEN
-        var connectionProviderCallsCount = 0
-        
-        let sut = createTokenHandler(
-            connectionProvider: .initiated(userId: .unique) { [mockRetryStrategy] completion in
-                mockRetryStrategy!.consecutiveFailuresCount += 1
-                connectionProviderCallsCount += 1
-                completion(.failure(TestError()))
-            },
-            maximumTokenRefreshAttempts: 3
-        )
-        
-        // WHEN
-        var refreshResult: Result<Token, Error>?
-        sut.refreshToken {
-            refreshResult = $0
-        }
-        
-        XCTAssertNil(refreshResult)
-        XCTAssertEqual(connectionProviderCallsCount, 0)
-        mockRetryStrategy.mock_nextRetryDelay.returns(2)
-        mockTime.run(numberOfSeconds: 1)
-        
-        XCTAssertNil(refreshResult)
-        XCTAssertEqual(connectionProviderCallsCount, 1)
-        mockRetryStrategy.mock_nextRetryDelay.returns(5)
-        mockTime.run(numberOfSeconds: 2)
-
-        XCTAssertNil(refreshResult)
-        XCTAssertEqual(connectionProviderCallsCount, 2)
-        mockRetryStrategy.mock_nextRetryDelay.returns(10)
-        mockTime.run()
-        
-        // THEN
-        XCTAssertTrue(refreshResult?.error is ClientError.TooManyTokenRefreshAttempts)
-        XCTAssertEqual(connectionProviderCallsCount, 3)
-    }
-    
-    func test_refreshToken_whenRefreshAttemptTimesOut_itIsTreatedAsFailed() {
-        // GIVEN
-        let userId: UserId = .unique
-        let timeout: TimeInterval = 5
-                
-        let connectionProviderCalledOnce = expectation(description: "connectionProvider called once")
-        connectionProviderCalledOnce.assertForOverFulfill = false
-        
-        let connectionProviderCalledTwice = expectation(description: "connectionProvider called twice")
-        connectionProviderCalledTwice.expectedFulfillmentCount = 2
-                
-        let sut = createTokenHandler(
-            connectionProvider: .initiated(userId: userId) { _ in
-                connectionProviderCalledOnce.fulfill()
-                connectionProviderCalledTwice.fulfill()
-            },
-            maximumTokenRefreshAttempts: 3,
-            retryTimeoutInterval: timeout
-        )
-        
-        // WHEN
-        sut.refreshToken { _ in }
-        
-        mockTime.run(numberOfSeconds: 0.1)
-        wait(for: [connectionProviderCalledOnce], timeout: defaultTimeout)
-        
-        mockTime.run(numberOfSeconds: timeout + 1)
-        mockTime.run(numberOfSeconds: 1)
-        
-        // THEN
-        XCTAssertTrue(mockRetryStrategy.mock_incrementConsecutiveFailures.called)
-        wait(for: [connectionProviderCalledTwice], timeout: defaultTimeout)
-    }
-    
-    func test_refreshToken_whenTokenComesAfterTheTimeoutAttempt_doesNothing() {
-        // GIVEN
-        let userId: UserId = .unique
-        let timeout: TimeInterval = 5
-                
-        let connectionProviderCalledOnce = expectation(description: "connectionProvider called once")
-        connectionProviderCalledOnce.assertForOverFulfill = false
-        
-        let connectionProviderCalledTwice = expectation(description: "connectionProvider called twice")
-        connectionProviderCalledTwice.expectedFulfillmentCount = 2
-        
-        var connectionProviderCompletions = [TokenWaiter]()
-        
-        let sut = createTokenHandler(
-            connectionProvider: .initiated(userId: userId) {
-                connectionProviderCompletions.append($0)
-                connectionProviderCalledOnce.fulfill()
-                connectionProviderCalledTwice.fulfill()
-            },
-            maximumTokenRefreshAttempts: 3,
-            retryTimeoutInterval: timeout
-        )
-        
-        var refreshResult: Result<Token, Error>?
-        sut.refreshToken { refreshResult = $0 }
-        
-        mockTime.run(numberOfSeconds: 0.1)
-        wait(for: [connectionProviderCalledOnce], timeout: defaultTimeout)
-        
-        mockTime.run(numberOfSeconds: timeout + 1)
-        mockTime.run(numberOfSeconds: 1)
-        wait(for: [connectionProviderCalledTwice], timeout: defaultTimeout)
-        
-        // WHEN
-        let token1 = Token.unique(userId: userId)
-        connectionProviderCompletions.first?(.success(token1))
-        
-        // THEN
-        XCTAssertFalse(mockRetryStrategy.mock_resetConsecutiveFailures.called)
-        XCTAssertNil(refreshResult)
-        
-        // WHEN
-        let token2 = Token.unique(userId: userId)
-        connectionProviderCompletions.last?(.success(token2))
-        
-        // THEN
-        XCTAssertTrue(mockRetryStrategy.mock_resetConsecutiveFailures.called)
-        XCTAssertEqual(refreshResult?.value, token2)
+        XCTAssertNil(sut.refreshFlow)
     }
     
     // MARK: - set(token: )
     
     func test_setToken_whenConnectionProviderIsMissing_assignesTokenAndCompletesWaiters() {
         // GIVEN
-        let sut = createTokenHandler(connectionProvider: .noCurrentUser)
+        let token = Token.unique(userId: .unique)
+        
+        let sut = createTokenHandler()
+        sut.connectionProvider = .noCurrentUser
+        
+        var tokenWaiterResult: Result<Token, Error>?
+        sut.add { tokenWaiterResult = $0 }
         
         // WHEN
-        let token = Token.unique(userId: .unique)
         let completionCalled = XCTestExpectation(description: "set(token:) completion called")
         var completionError: Error?
         sut.set(token: token) { error in
@@ -388,7 +164,8 @@ final class TokenHandler_Tests: XCTestCase {
         }
         
         // THEN
-        wait(for: [completionCalled], timeout: 0)
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        XCTAssertEqual(tokenWaiterResult?.value, token)
         XCTAssertEqual(sut.currentToken, token)
         XCTAssertNil(completionError)
     }
@@ -396,7 +173,12 @@ final class TokenHandler_Tests: XCTestCase {
     func test_setToken_whenConnectionProviderIsForSameUser_assignesTokenAndCompletesWaiters() {
         // GIVEN
         let token = Token.unique(userId: .unique)
-        let sut = createTokenHandler(connectionProvider: .notInitiated(userId: token.userId))
+        
+        let sut = createTokenHandler()
+        sut.connectionProvider = .notInitiated(userId: token.userId)
+        
+        var tokenWaiterResult: Result<Token, Error>?
+        sut.add { tokenWaiterResult = $0 }
         
         // WHEN
         let completionCalled = XCTestExpectation(description: "set(token:) completion called")
@@ -407,14 +189,19 @@ final class TokenHandler_Tests: XCTestCase {
         }
         
         // THEN
-        wait(for: [completionCalled], timeout: 0)
-        XCTAssertEqual(sut.currentToken, token)
+        wait(for: [completionCalled], timeout: defaultTimeout)
         XCTAssertNil(completionError)
+        XCTAssertEqual(tokenWaiterResult?.value, token)
+        XCTAssertEqual(sut.currentToken, token)
     }
     
     func test_setToken_whenConnectionProviderIsForAnotherUser_fails() {
         // GIVEN
-        let sut = createTokenHandler(connectionProvider: .notInitiated(userId: .unique))
+        let sut = createTokenHandler()
+        sut.connectionProvider = .notInitiated(userId: .unique)
+        
+        var tokenWaiterResult: Result<Token, Error>?
+        sut.add { tokenWaiterResult = $0 }
         
         // WHEN
         let completionCalled = XCTestExpectation(description: "set(token:) completion called")
@@ -428,31 +215,31 @@ final class TokenHandler_Tests: XCTestCase {
         wait(for: [completionCalled], timeout: 0)
         XCTAssertTrue(completionError is ClientError.InvalidToken)
         XCTAssertNil(sut.currentToken)
+        XCTAssertNil(tokenWaiterResult)
     }
     
-    func test_setToken_whenRefreshFlowIsInProgress_refreshResultIsDiscarded() throws {
+    func test_setToken_whenRefreshFlowIsInProgress_refreshFlowIsCancelled() throws {
         // GIVEN
         let userId: UserId = .unique
         
-        var tokenProviderCompletion: TokenWaiter?
-        let sut = createTokenHandler(
-            connectionProvider: .initiated(userId: userId) {
-                tokenProviderCompletion = $0
-            }
-        )
-        sut.refreshToken { _ in }
+        let sut = createTokenHandler()
+        sut.connectionProvider = .initiated(userId: userId) { _ in }
+        
+        var tokenWaiterResult: Result<Token, Error>?
+        sut.add { tokenWaiterResult = $0 }
+        
+        var refreshTokenResult: Result<Token, Error>?
+        sut.refreshToken { refreshTokenResult = $0 }
         
         // WHEN
         let token: Token = .unique(userId: userId)
         sut.set(token: token) { _ in }
         
-        mockTime.run(numberOfSeconds: 0.5)
-        
-        let refreshedToken: Token = .unique(userId: userId)
-        tokenProviderCompletion?(.success(refreshedToken))
-        
         // THEN
+        XCTAssertEqual(tokenWaiterResult?.value, token)
+        XCTAssertEqual(refreshTokenResult?.value, token)
         XCTAssertEqual(sut.currentToken, token)
+        XCTAssertNil(sut.refreshFlow)
     }
     
     // MARK: - add(tokenWaiter:)
@@ -488,7 +275,8 @@ final class TokenHandler_Tests: XCTestCase {
         // GIVEN
         let token: Token = .unique()
         
-        let sut = createTokenHandler(connectionProvider: .initiated(userId: token.userId) { _ in })
+        let sut = createTokenHandler()
+        sut.connectionProvider = .initiated(userId: token.userId) { _ in }
         sut.set(token: token) { _ in }
         sut.refreshToken { _ in }
         
@@ -503,11 +291,7 @@ final class TokenHandler_Tests: XCTestCase {
     func test_addTokenWaiter_doesNotTriggerRefreshProcess() {
         // GIVEN
         let sut = createTokenHandler()
-        
-        var tokenProviderCalled = false
-        sut.connectionProvider = .initiated(userId: .unique) { _ in
-            tokenProviderCalled = true
-        }
+        sut.connectionProvider = .initiated(userId: .unique) { _ in }
         
         // WHEN
         sut.add { _ in }
@@ -515,7 +299,7 @@ final class TokenHandler_Tests: XCTestCase {
         sut.add { _ in }
         
         // THEN
-        AssertAsync.staysTrue(tokenProviderCalled == false)
+        XCTAssertNil(sut.refreshFlow)
     }
     
     // MARK: - removeTokenWaiter
@@ -535,27 +319,24 @@ final class TokenHandler_Tests: XCTestCase {
         XCTAssertFalse(waiterCalled)
     }
     
-    func test_removeTokenWaiter_waiterIsNotCalledWhenTokenIsRefreshed() {
+    func test_removeTokenWaiter_waiterIsNotCalledWhenTokenIsRefreshed() throws {
         // GIVEN
         let sut = createTokenHandler()
         
         let token = Token.unique()
-        sut.connectionProvider = .initiated(userId: token.userId) {
-            $0(.success(token))
-        }
+        sut.connectionProvider = .initiated(userId: token.userId) { _ in }
         
         var waiterCalled = false
         let waiterToken = sut.add { _ in waiterCalled = true }
         
         // WHEN
         let refreshCompletionCalled = XCTestExpectation(description: "completion called")
-        sut.refreshToken { _ in
-            refreshCompletionCalled.fulfill()
-        }
+        sut.refreshToken { _ in refreshCompletionCalled.fulfill() }
         
         sut.removeTokenWaiter(waiterToken)
         
-        mockTime.run()
+        let refreshCompletion = try XCTUnwrap(sut.mockRefeshFlow?.mock_refresh.calls.first?.1)
+        refreshCompletion(.success(.unique(userId: token.userId)))
         
         // THEN
         wait(for: [refreshCompletionCalled], timeout: defaultTimeout)
@@ -645,138 +426,14 @@ final class TokenHandler_Tests: XCTestCase {
     // MARK: - Private
     
     private func createTokenHandler(
-        connectionProvider: UserConnectionProvider = .noCurrentUser,
-        maximumTokenRefreshAttempts: Int = 10,
-        retryTimeoutInterval: TimeInterval = 10
+        refreshFlowBuilder: @escaping DefaultTokenHandler.TokenRefreshFlowBuilder = TokenRefreshFlow_Mock.init
     ) -> DefaultTokenHandler {
-        .init(
-            connectionProvider: connectionProvider,
-            retryStrategy: mockRetryStrategy,
-            retryTimeoutInterval: retryTimeoutInterval,
-            maximumTokenRefreshAttempts: maximumTokenRefreshAttempts,
-            timerType: VirtualTimeTimer.self
-        )
+        .init(refreshFlowBuilder: refreshFlowBuilder)
     }
 }
 
-final class TokenHandler_IntegrationTests: XCTestCase {
-    var time: VirtualTime!
-    
-    override func setUp() {
-        super.setUp()
-        
-        time = VirtualTime()
-        VirtualTimeTimer.time = time
-    }
-    
-    override func tearDown() {
-        VirtualTimeTimer.invalidate()
-        time = nil
-        
-        super.tearDown()
-    }
-    
-    func test_whenAPIRequestFailsWithExpiredTokenErrorWhenWebsocketIsConnected() {
-        // GIVEN
-        var config = ChatClientConfig(apiKey: .init(.unique))
-        config.isLocalStorageEnabled = false
-        
-        var environment: ChatClient.Environment = .mock
-        environment.clientUpdaterBuilder = ChatClientUpdater.init
-        environment.tokenHandlerBuilder = {
-            DefaultTokenHandler(
-                connectionProvider: $0,
-                retryStrategy: DefaultRetryStrategy(),
-                retryTimeoutInterval: 10,
-                maximumTokenRefreshAttempts: 10,
-                timerType: VirtualTimeTimer.self
-            )
-        }
-        environment.connectionRecoveryHandlerBuilder = {
-            DefaultConnectionRecoveryHandler(
-                webSocketClient: $0,
-                eventNotificationCenter: $1,
-                syncRepository: $2,
-                backgroundTaskScheduler: nil,
-                internetConnection: $4,
-                reconnectionStrategy: DefaultRetryStrategy(),
-                reconnectionTimerType: VirtualTimeTimer.self,
-                keepConnectionAliveInBackground: $5
-            )
-        }
-        
-        let client = ChatClient(
-            config: config,
-            environment: environment
-        )
-        
-        let userId: UserId = .unique
-        let token = Token.unique(userId: userId)
-        let refreshedToken = Token.unique(userId: userId)
-        
-        var tokenProviderCompletion: TokenWaiter?
-        let tokenProviderCalledOnce = expectation(description: "connection provider is called once")
-        tokenProviderCalledOnce.assertForOverFulfill = false
-        let tokenProviderCalledTwice = expectation(description: "connection provider is called twice")
-        tokenProviderCalledTwice.expectedFulfillmentCount = 2
-        
-        let tokenProvider: TokenProvider = {
-            tokenProviderCompletion = $0
-            tokenProviderCalledOnce.fulfill()
-            tokenProviderCalledTwice.fulfill()
-        }
-        
-        // Connect chat client
-        var connectUserCompletionError: Error?
-        let connectUserCompletionCalled = expectation(description: "connectUser is called")
-        client.connectUser(userInfo: .init(id: userId), tokenProvider: tokenProvider) { error in
-            connectUserCompletionError = error
-            connectUserCompletionCalled.fulfill()
-        }
-        
-        time.run(numberOfSeconds: 0.1)
-        wait(for: [tokenProviderCalledOnce], timeout: defaultTimeout)
-        tokenProviderCompletion?(.success(token))
-        
-        wait(for: [client.mockWebSocketClient.connect_expectation], timeout: defaultTimeout)
-        XCTAssertEqual(client.mockWebSocketClient.connect_calledCounter, 1)
-        client.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
-        
-        wait(for: [connectUserCompletionCalled], timeout: defaultTimeout)
-        XCTAssertNil(connectUserCompletionError)
-        
-        // WHEN
-        var tokenRefresherCompletionError: Error?
-        let tokenRefresherCompletionCalled = expectation(description: "tokenRefresher is called")
-        let expiredTokenErrorPayload = ErrorPayload(code: 40, message: "Test", statusCode: 400)
-        let expiredTokenError = ClientError.ExpiredToken(with: expiredTokenErrorPayload)
-
-        client.mockAPIClient.init_tokenRefresher(expiredTokenError) { error in
-            tokenRefresherCompletionError = error
-            tokenRefresherCompletionCalled.fulfill()
-        }
-        
-        // THEN
-        wait(for: [client.mockWebSocketClient.disconnect_expectation], timeout: defaultTimeout)
-        let disconnectionSource: WebSocketConnectionState.DisconnectionSource = .serverInitiated(error: expiredTokenError)
-        XCTAssertEqual(client.mockWebSocketClient.disconnect_source, disconnectionSource)
-        XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 1)
-        client.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: disconnectionSource))
-        client.mockWebSocketClient.disconnect_completion?()
-        
-        client.mockWebSocketClient.cleanUp()
-        time.run(numberOfSeconds: 5)
-        XCTAssertFalse(client.mockWebSocketClient.connect_called)
-        
-        time.run(numberOfSeconds: 1)
-        wait(for: [tokenProviderCalledTwice], timeout: defaultTimeout)
-        tokenProviderCompletion?(.success(refreshedToken))
-        XCTAssertEqual(client.tokenHandler.currentToken, refreshedToken)
-        
-        wait(for: [client.mockWebSocketClient.connect_expectation], timeout: defaultTimeout)
-        client.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
-        
-        wait(for: [tokenRefresherCompletionCalled], timeout: defaultTimeout)
-        XCTAssertNil(tokenRefresherCompletionError)
+private extension DefaultTokenHandler {
+    var mockRefeshFlow: TokenRefreshFlow_Mock? {
+        refreshFlow.map { $0 as! TokenRefreshFlow_Mock }
     }
 }
