@@ -118,7 +118,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     
     /// Filter for checking whether current user has muted the channel
     /// Supported operators: `equal`
-    static var muted: FilterKey<Scope, Bool> { "muted " }
+    static var muted: FilterKey<Scope, Bool> { "muted" }
     
     /// Filter for checking the status of the invite
     /// Supported operators: `equal`
