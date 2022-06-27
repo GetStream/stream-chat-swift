@@ -36,10 +36,8 @@ private_lane :sonar_options do |options|
     default_options.merge(pull_request_branch: ENV['GITHUB_HEAD_REF'],
                           pull_request_base: ENV['GITHUB_BASE_REF'],
                           pull_request_key: ENV['PR_NUMBER'])
-  elsif sonar_branch == 'main'
-    default_options.merge(branch_name: sonar_branch, project_version: options[:version_number])
   else
-    default_options.merge(branch_name: sonar_branch)
+    default_options.merge(branch_name: sonar_branch, project_version: options[:version_number])
   end
 end
 

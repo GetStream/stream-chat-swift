@@ -88,6 +88,7 @@ class CurrentUserUpdater: Worker {
                 ),
                 completion: { result in
                     if let error = result.error {
+                        log.debug("Device token \(deviceId) failed to be registered on Stream's backend.\n Reason: \(error.localizedDescription)")
                         completion?(error)
                         return
                     }
