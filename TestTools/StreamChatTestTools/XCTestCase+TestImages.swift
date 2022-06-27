@@ -36,8 +36,8 @@ public extension URL {
         .url(forResource: "yoda", withExtension: "jpg")!
 
     static let localYodaQuote = Bundle.testTools
-        .url(forResource: "\(Bundle.testTools.pathToOtherFolder)yoda", withExtension: "txt")!
+        .url(forResource: "yoda", withExtension: "txt")!
 
     static let localYodaQuoteLongFileName = Bundle.testTools
-        .url(forResource: "\(Bundle.testTools.pathToOtherFolder)yoda_with_long_file_name", withExtension: "txt")!
+        .url(forResource: "yoda_with_long_file_name", withExtension: "txt")!
 }
