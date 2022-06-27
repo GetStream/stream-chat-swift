@@ -10,18 +10,27 @@ final class ChannelListFilterScope_Tests: XCTestCase {
     typealias Key<T: FilterValue> = FilterKey<ChannelListFilterScope, T>
 
     func test_filterKeys_matchChannelCodingKeys() {
+        // FilterKeys that exists in ChannelCodingKeys
         XCTAssertEqual(Key<ChannelId>.cid.rawValue, ChannelCodingKeys.cid.rawValue)
+        XCTAssertEqual(Key<String>.id.rawValue, ChannelCodingKeys.id.rawValue)
         XCTAssertEqual(Key<String>.name.rawValue, ChannelCodingKeys.name.rawValue)
         XCTAssertEqual(Key<URL>.imageURL.rawValue, ChannelCodingKeys.imageURL.rawValue)
         XCTAssertEqual(Key<ChannelType>.type.rawValue, ChannelCodingKeys.typeRawValue.rawValue)
         XCTAssertEqual(Key<Date>.lastMessageAt.rawValue, ChannelCodingKeys.lastMessageAt.rawValue)
-        XCTAssertEqual(Key<UserId>.createdBy.rawValue, "created_by_id")
         XCTAssertEqual(Key<Date>.createdAt.rawValue, ChannelCodingKeys.createdAt.rawValue)
         XCTAssertEqual(Key<Date>.updatedAt.rawValue, ChannelCodingKeys.updatedAt.rawValue)
         XCTAssertEqual(Key<Date>.deletedAt.rawValue, ChannelCodingKeys.deletedAt.rawValue)
         XCTAssertEqual(Key<Bool>.frozen.rawValue, ChannelCodingKeys.frozen.rawValue)
         XCTAssertEqual(Key<Int>.memberCount.rawValue, ChannelCodingKeys.memberCount.rawValue)
         XCTAssertEqual(Key<TeamId>.team.rawValue, ChannelCodingKeys.team.rawValue)
+        
+        // FilterKeys without corresponding ChannelCodingKeys
+        XCTAssertEqual(Key<UserId>.createdBy.rawValue, "created_by_id")
+        XCTAssertEqual(Key<Bool>.joined.rawValue, "joined")
+        XCTAssertEqual(Key<Bool>.muted.rawValue, "muted")
+        XCTAssertEqual(Key<InviteFilterValue>.invite.rawValue, "invite")
+        XCTAssertEqual(Key<String>.memberName.rawValue, "member.user.name")
+        XCTAssertEqual(Key<Date>.lastUpdatedAt.rawValue, "last_updated")
     }
 
     func test_containMembersHelper() {
