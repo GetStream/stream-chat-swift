@@ -111,7 +111,11 @@ class ChannelDTO: NSManagedObject {
         return load(by: request, context: context)
     }
     
-    static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
+    static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext, cache: PreWarmedCache?) -> ChannelDTO {
+        if let cachedObject = cache?.model(for: cid.rawValue, context: context, type: ChannelDTO.self) {
+            return cachedObject
+        }
+
         let request = fetchRequest(for: cid)
         if let existing = load(by: request, context: context).first {
             return existing
@@ -138,24 +142,29 @@ extension ChannelDTO: EphemeralValuesContainer {
 extension NSManagedObjectContext {
     func saveChannelList(
         payload: ChannelListPayload,
-        query: ChannelListQuery
-    ) throws -> [ChannelDTO] {
+        query: ChannelListQuery?
+    ) -> [ChannelDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+
         // The query will be saved during `saveChannel` call
         // but in case this query does not have any channels,
         // the query won't be saved, which will cause any future
         // channels to not become linked to this query
-        _ = saveQuery(query: query)
-        
-        return try payload.channels.map { channelPayload in
-            try saveChannel(payload: channelPayload, query: query)
+        if let query = query {
+            _ = saveQuery(query: query)
+        }
+
+        return payload.channels.compactMapLoggingError { channelPayload in
+            try saveChannel(payload: channelPayload, query: query, cache: cache)
         }
     }
     
     func saveChannel(
         payload: ChannelDetailPayload,
-        query: ChannelListQuery?
+        query: ChannelListQuery?,
+        cache: PreWarmedCache?
     ) throws -> ChannelDTO {
-        let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
+        let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self, cache: cache)
 
         dto.name = payload.name
         dto.imageURL = payload.imageURL
@@ -203,7 +212,7 @@ extension NSManagedObjectContext {
         }
 
         try payload.members?.forEach { memberPayload in
-            let member = try saveMember(payload: memberPayload, channelId: payload.cid)
+            let member = try saveMember(payload: memberPayload, channelId: payload.cid, query: nil, cache: cache)
             dto.members.insert(member)
         }
 
@@ -217,19 +226,20 @@ extension NSManagedObjectContext {
     
     func saveChannel(
         payload: ChannelPayload,
-        query: ChannelListQuery?
+        query: ChannelListQuery?,
+        cache: PreWarmedCache?
     ) throws -> ChannelDTO {
-        let dto = try saveChannel(payload: payload.channel, query: query)
+        let dto = try saveChannel(payload: payload.channel, query: query, cache: cache)
                 
         let reads = Set(
             try payload.channelReads.map {
-                try saveChannelRead(payload: $0, for: payload.channel.cid)
+                try saveChannelRead(payload: $0, for: payload.channel.cid, cache: cache)
             }
         )
         dto.reads.subtracting(reads).forEach { delete($0) }
         dto.reads = reads
         
-        try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true) }
+        try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
         
         if dto.needsPreviewUpdate(payload) {
             dto.previewMessage = preview(for: payload.channel.cid)
@@ -238,17 +248,17 @@ extension NSManagedObjectContext {
         dto.updateOldestMessageAt(payload: payload)
 
         try payload.pinnedMessages.forEach {
-            _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true)
+            _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
         
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
         try payload.members.forEach {
-            let member = try saveMember(payload: $0, channelId: payload.channel.cid)
+            let member = try saveMember(payload: $0, channelId: payload.channel.cid, query: nil, cache: cache)
             dto.members.insert(member)
         }
 
         if let membership = payload.membership {
-            let membership = try saveMember(payload: membership, channelId: payload.channel.cid)
+            let membership = try saveMember(payload: membership, channelId: payload.channel.cid, query: nil, cache: cache)
             dto.membership = membership
         } else {
             dto.membership = nil

@@ -202,7 +202,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
                         lastReadAt: .unique,
                         unreadMessagesCount: .unique
                     ),
-                    for: channelId
+                    for: channelId,
+                    cache: nil
                 )
             )
             read.unreadMessageCount = 15

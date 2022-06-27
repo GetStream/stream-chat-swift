@@ -271,7 +271,12 @@ final class ChannelUpdater_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
-                try session.saveMessage(payload: self.dummyMessagePayload(id: "\($0)dames"), for: cid, syncOwnReactions: false)
+                try session.saveMessage(
+                    payload: self.dummyMessagePayload(id: "\($0)dames"),
+                    for: cid,
+                    syncOwnReactions: false,
+                    cache: nil
+                )
             }
         }
 
@@ -304,7 +309,12 @@ final class ChannelUpdater_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
-                try session.saveMessage(payload: self.dummyMessagePayload(id: "\($0)dames"), for: cid, syncOwnReactions: false)
+                try session.saveMessage(
+                    payload: self.dummyMessagePayload(id: "\($0)dames"),
+                    for: cid,
+                    syncOwnReactions: false,
+                    cache: nil
+                )
             }
         }
 
@@ -343,7 +353,12 @@ final class ChannelUpdater_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
-                try session.saveMessage(payload: self.dummyMessagePayload(id: "\($0)"), for: cid, syncOwnReactions: false)
+                try session.saveMessage(
+                    payload: self.dummyMessagePayload(id: "\($0)"),
+                    for: cid,
+                    syncOwnReactions: false,
+                    cache: nil
+                )
             }
         }
 
@@ -382,7 +397,12 @@ final class ChannelUpdater_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
-                try session.saveMessage(payload: self.dummyMessagePayload(id: "\($0)"), for: cid, syncOwnReactions: false)
+                try session.saveMessage(
+                    payload: self.dummyMessagePayload(id: "\($0)"),
+                    for: cid,
+                    syncOwnReactions: false,
+                    cache: nil
+                )
             }
         }
 
@@ -1545,7 +1565,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         try! database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
         }
 
         // Create query

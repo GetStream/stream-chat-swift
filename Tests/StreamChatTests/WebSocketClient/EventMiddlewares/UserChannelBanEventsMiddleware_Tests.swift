@@ -133,7 +133,8 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
                     role: .member
                 ),
                 channelId: eventPayload.cid!,
-                query: nil
+                query: nil,
+                cache: nil
             )
 
             // Simulate the member is banned

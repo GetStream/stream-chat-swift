@@ -22,13 +22,7 @@ class ChannelMemberListUpdater: Worker {
                 switch membersResult {
                 case let .success(memberListPayload):
                     self?.database.write({ session in
-                        try memberListPayload.members.forEach {
-                            try session.saveMember(
-                                payload: $0,
-                                channelId: query.cid,
-                                query: query
-                            )
-                        }
+                        session.saveMembers(payload: memberListPayload, channelId: query.cid, query: query)
                     }, completion: { error in
                         if let error = error {
                             log.error("Failed to save `ChannelMemberListQuery` related data to the database. Error: \(error)")
