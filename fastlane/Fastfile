@@ -5,7 +5,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'].nil? ? '13.4.1' : ENV['XCODE_VERSION']
+xcode_version = ENV['XCODE_VERSION'] || '13.4.1'
 # The number of times the stress test suite is ran
 stress_tests_cycles = 50
 
