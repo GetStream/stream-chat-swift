@@ -31,7 +31,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
     }
 
-    func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 10) {
+    func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 20) {
         let writeCompleted = expectation(description: "DB write complete")
         database.write({ session in
             session.saveChannelList(payload: payload, query: .init(filter: .containMembers(userIds: [.unique])))
