@@ -89,14 +89,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
-    - name: Prepare iPhone 12 Pro with iOS 15.4
+    - name: Prepare iPhone 12 Pro with iOS 15.5
       uses: ./.github/actions/prepare-ios-simulator
       with:
         device: "iPhone 12 Pro"
-        ios: "15.4"
-        xcode: "13.3.1"
+        ios: "15.5"
+        xcode: "13.4.1"
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"iPhone 12 Pro (15.4)"
+      run: bundle exec fastlane test_ui device:"iPhone 12 Pro (15.5)"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
