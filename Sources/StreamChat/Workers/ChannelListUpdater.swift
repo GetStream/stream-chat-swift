@@ -103,15 +103,7 @@ class ChannelListUpdater: Worker {
             switch $0 {
             case let .success(payload):
                 self?.database.write { session in
-                    for channel in payload.channels {
-                        do {
-                            try session.saveChannel(payload: channel)
-                        } catch {
-                            log.warning(
-                                "Failed to save watched channel \(channel.channel.cid): \(error.localizedDescription)"
-                            )
-                        }
-                    }
+                    session.saveChannelList(payload: payload, query: nil)
                 } completion: { _ in
                     completion?(nil)
                 }
@@ -155,7 +147,7 @@ private extension ChannelListUpdater {
         var channels: [ChatChannel] = []
         database.write { session in
             initialActions?(session)
-            channels = try session.saveChannelList(payload: payload, query: query).compactMap { try? $0.asModel() }
+            channels = session.saveChannelList(payload: payload, query: query).compactMap { try? $0.asModel() }
         } completion: { error in
             if let error = error {
                 log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")

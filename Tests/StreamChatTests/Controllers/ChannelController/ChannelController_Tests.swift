@@ -273,7 +273,7 @@ final class ChannelController_Tests: XCTestCase {
         
         // Simulate successful updater response
         try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: payload, query: nil)
+            try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         
@@ -294,7 +294,7 @@ final class ChannelController_Tests: XCTestCase {
         
         // Simulate successful updater response
         try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: payload, query: nil)
+            try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
         env.channelUpdater?.update_channelCreatedCallback?(channelId)
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
@@ -316,7 +316,7 @@ final class ChannelController_Tests: XCTestCase {
         
         // Simulate successful updater response
         try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: payload, query: nil)
+            try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
         env.channelUpdater?.update_channelCreatedCallback?(channelId)
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
@@ -341,7 +341,7 @@ final class ChannelController_Tests: XCTestCase {
         
         // Simulate successful updater response
         try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: payload, query: nil)
+            try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
         
         // We call these callbacks on a queue other than main queue
@@ -434,7 +434,7 @@ final class ChannelController_Tests: XCTestCase {
         )
         // Save the message payload and check `channel.lastMessageAt` is updated
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
         }
         channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
         XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
@@ -656,7 +656,7 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate changes in the DB:
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
             }, completion: $0)
         }
         
@@ -698,7 +698,7 @@ final class ChannelController_Tests: XCTestCase {
         )
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveMessage(payload: newMessagePayload, for: self.channelId, syncOwnReactions: true)
+                try session.saveMessage(payload: newMessagePayload, for: self.channelId, syncOwnReactions: true, cache: nil)
             }, completion: $0)
         }
         
@@ -723,8 +723,8 @@ final class ChannelController_Tests: XCTestCase {
         let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
         
         // Check the order of messages is correct
@@ -749,8 +749,8 @@ final class ChannelController_Tests: XCTestCase {
         let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
         
         // Check the order of messages is correct
@@ -787,10 +787,10 @@ final class ChannelController_Tests: XCTestCase {
         )
         
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: reply1, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: reply2, for: self.channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: reply1, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: reply2, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
         
         // Check the relevant reply is shown in channel
@@ -818,8 +818,8 @@ final class ChannelController_Tests: XCTestCase {
         )
         
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: ephemeralMessage, for: self.channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: ephemeralMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
         
         // Check the relevant ephemeral message is not shown in channel
@@ -853,8 +853,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
 
         // Only outgoing deleted messages are returned by controller
@@ -888,8 +888,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
 
         // Both outgoing and incoming messages should NOT be visible
@@ -923,8 +923,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
 
         // Both outgoing and incoming messages should be visible
@@ -979,8 +979,8 @@ final class ChannelController_Tests: XCTestCase {
         )
         
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
         
         // Both messages should be visible
@@ -1011,8 +1011,8 @@ final class ChannelController_Tests: XCTestCase {
         )
         
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true)
-            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true)
+            try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
         
         // Only non-shadowed message should be visible
@@ -1078,7 +1078,7 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate DB update
         var error = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
             }, completion: $0)
         }
         XCTAssertNil(error)
@@ -1100,7 +1100,7 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate DB update
         error = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: newCid), query: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: newCid), query: nil, cache: nil)
             }, completion: $0)
         }
         XCTAssertNil(error)
@@ -1173,7 +1173,7 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate DB update
         let error = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
             }, completion: $0)
         }
         XCTAssertNil(error)
@@ -1197,7 +1197,7 @@ final class ChannelController_Tests: XCTestCase {
         
         // Create a channel in the DB
         try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
+            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
             // Create a read for the channel
             try $0.saveChannelRead(
                 payload: ChannelReadPayload(
@@ -1205,7 +1205,8 @@ final class ChannelController_Tests: XCTestCase {
                     lastReadAt: originalReadDate,
                     unreadMessagesCount: .unique // This value doesn't matter at all. It's not updated by events. We cam ignore it.
                 ),
-                for: self.channelId
+                for: self.channelId,
+                cache: nil
             )
         }
         

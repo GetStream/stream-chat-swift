@@ -127,7 +127,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Create channel and MemberListQuery in the database.
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
-            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery)
+            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery, cache: nil)
         }
         
         // Load the MemberListQueryDTO
@@ -228,7 +228,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             try $0.saveMember(
                 payload: .dummy(user: .dummy(userId: memberId)),
                 channelId: cid,
-                query: query
+                query: query,
+                cache: nil
             )
         }
         
@@ -452,7 +453,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Create channel and MemberListQuery in the database.
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
-            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery)
+            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery, cache: nil)
         }
         
         // Load the channel
@@ -593,7 +594,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Create channel and MemberListQuery in the database.
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
-            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery)
+            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery, cache: nil)
         }
         
         // Load the MemberListQueryDTO

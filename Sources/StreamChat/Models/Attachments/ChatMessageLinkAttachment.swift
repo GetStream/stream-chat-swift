@@ -36,6 +36,24 @@ public struct LinkAttachmentPayload: AttachmentPayload {
     public var assetURL: URL?
     /// A preview image URL.
     public var previewURL: URL?
+
+    public init(
+        originalURL: URL,
+        title: String? = nil,
+        text: String? = nil,
+        author: String? = nil,
+        titleLink: URL? = nil,
+        assetURL: URL? = nil,
+        previewURL: URL? = nil
+    ) {
+        self.originalURL = originalURL
+        self.title = title
+        self.text = text
+        self.author = author
+        self.titleLink = titleLink
+        self.assetURL = assetURL
+        self.previewURL = previewURL
+    }
 }
 
 extension LinkAttachmentPayload: Hashable {}

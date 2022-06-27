@@ -59,7 +59,7 @@ final class UserSearchController_Tests: XCTestCase {
     func test_userListIsEmpty_beforeSearch() throws {
         // Save a new user to DB, so DB is not empty
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser, query: nil)
+            try session.saveUser(payload: self.dummyUser, query: nil, cache: nil)
         }
         
         // Assert that controller users is empty

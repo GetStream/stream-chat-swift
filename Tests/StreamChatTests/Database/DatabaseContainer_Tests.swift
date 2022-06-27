@@ -77,9 +77,9 @@ final class DatabaseContainer_Tests: XCTestCase {
             
             // Add some random objects and for completion block
             try container.writeSynchronously { session in
-                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
-                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
-                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
             }
             
             // Delete the data
