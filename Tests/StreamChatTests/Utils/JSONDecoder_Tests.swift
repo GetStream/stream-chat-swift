@@ -7,20 +7,8 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-final class JSONDecoderTests: XCTestCase {
-    private var decoder: JSONDecoder!
-
-    private let key = "date"
-
-    override func setUp() {
-        decoder = .default
-        super.setUp()
-    }
-
-    override func tearDown() {
-        decoder = nil
-        super.tearDown()
-    }
+final class JSONDecoder_Tests: XCTestCase {
+    private var decoder: JSONDecoder = .default
 
     func test_throwsException_whenDecodingDateFromEmptyString() {
         checkDecodingDateThrowException(dateString: "")
@@ -118,13 +106,49 @@ final class JSONDecoderTests: XCTestCase {
             second: 13
         )
     }
-}
+    
+    func test_userPayloadCaching_isThreadSafe() {
+        for offset in 0..<100 {
+            DispatchQueue.random.asyncAfter(deadline: .now() + .milliseconds(offset % 100)) { [decoder] in
+                let payloadTuple = self.userPayloadJSON()
+                do {
+                    let userPayload = try decoder.decode(UserPayload.self, from: payloadTuple.payloadJSON.data(using: .utf8)!)
+                    XCTAssertEqual(userPayload.name, payloadTuple.name)
+                } catch {
+                    XCTFail("Failed to decode JSON: \(payloadTuple), error: \(error)")
+                }
+            }
+        }
+    }
 
-// MARK: Helpers
+    // MARK: Helpers
+    
+    private func userPayloadJSON() -> (payloadJSON: String, name: String) {
+        let name = String.unique
+        return ("""
+         {
+            "id" : "broken-waterfall-5",
+            "banned" : false,
+            "unread_channels" : 0,
+            "totalUnreadCount" : 0,
+            "last_active" : "2020-06-10T13:24:00.501797Z",
+            "created_at" : "2019-12-12T15:33:46.488935Z",
+            "unreadChannels" : 0,
+            "unread_count" : 0,
+            "image" : "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+            "updated_at" : "2020-06-10T14:11:29.946106Z",
+            "role" : "user",
+            "total_unread_count" : 0,
+            "online" : true,
+            "name" : "\(name)"
+          }
+        """, name)
+    }
 
-extension JSONDecoderTests {
+    private let dateKey = "date"
+    
     private func json(dateString: String) -> String {
-        "{\"\(key)\":\"\(dateString)\"}"
+        "{\"\(dateKey)\":\"\(dateString)\"}"
     }
 
     private func checkDateIsDecodingToComponents(
@@ -145,7 +169,7 @@ extension JSONDecoderTests {
         let decoded: [String: Date] = try! decoder.decode([String: Date].self, from: data)
 
         // Then
-        let decodedDate = decoded[key]!
+        let decodedDate = decoded[dateKey]!
 
         // Use GMT calendar, to test on GMT+0 timezone
         let components = Calendar.gmtCalendar.dateComponents(
