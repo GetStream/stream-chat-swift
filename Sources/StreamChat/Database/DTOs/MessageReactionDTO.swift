@@ -103,8 +103,8 @@ extension NSManagedObjectContext {
     @discardableResult
     func saveReactions(payload: MessageReactionsPayload) -> [MessageReactionDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.reactions.compactMap {
-            try? saveReaction(payload: $0, cache: cache)
+        return payload.reactions.compactMapLoggingError {
+            try saveReaction(payload: $0, cache: cache)
         }
     }
 

@@ -1679,6 +1679,8 @@
 		C14A46562845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */; };
 		C14A46582846636900EF498E /* SDKIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46572846636900EF498E /* SDKIdentifier.swift */; };
 		C14A46592846636900EF498E /* SDKIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14A46572846636900EF498E /* SDKIdentifier.swift */; };
+		C14D27B62869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */; };
+		C14D27B72869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */; };
 		C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
@@ -3452,6 +3454,7 @@
 		C14A46522845043300EF498E /* ThreadSafeWeakCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeWeakCollection.swift; sourceTree = "<group>"; };
 		C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeWeakCollection_Tests.swift; sourceTree = "<group>"; };
 		C14A46572846636900EF498E /* SDKIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKIdentifier.swift; sourceTree = "<group>"; };
+		C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+CompactMapLoggingError.swift"; sourceTree = "<group>"; };
 		C152F5FB27C3DC53003B4805 /* MessageRepository_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Spy.swift; sourceTree = "<group>"; };
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
@@ -4220,6 +4223,7 @@
 				CF324E762832FC1200E5BBE6 /* StreamTimer */,
 				C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */,
 				79D5CDD027EA1BA100BE7D8B /* TranslationLanguage.swift */,
+				C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -9737,6 +9741,7 @@
 				C1FC2F922742579D0062530F /* Server.swift in Sources */,
 				79280F422484F4EC00CDEB89 /* Event.swift in Sources */,
 				C1FC2F932742579D0062530F /* Framer.swift in Sources */,
+				C14D27B62869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */,
 				79682C4A24BF37C80071578E /* MessagePayloads.swift in Sources */,
 				8AAB1C6624CB39F2009B783F /* UnreadCount.swift in Sources */,
 				79877A282498E50D00015F8B /* UserDTO.swift in Sources */,
@@ -10334,6 +10339,7 @@
 				C121E829274544AD00023E4C /* WebSocketConnectPayload.swift in Sources */,
 				C121E82A274544AD00023E4C /* ConnectionStatus.swift in Sources */,
 				C121E82B274544AD00023E4C /* APIPathConvertible.swift in Sources */,
+				C14D27B72869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */,
 				C121E82C274544AD00023E4C /* APIClient.swift in Sources */,
 				C121E82D274544AD00023E4C /* CDNClient.swift in Sources */,
 				C121E82E274544AD00023E4C /* RequestEncoder.swift in Sources */,

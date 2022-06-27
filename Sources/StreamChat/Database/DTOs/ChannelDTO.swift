@@ -154,8 +154,8 @@ extension NSManagedObjectContext {
             _ = saveQuery(query: query)
         }
 
-        return payload.channels.compactMap { channelPayload in
-            try? saveChannel(payload: channelPayload, query: query, cache: cache)
+        return payload.channels.compactMapLoggingError { channelPayload in
+            try saveChannel(payload: channelPayload, query: query, cache: cache)
         }
     }
     

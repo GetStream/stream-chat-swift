@@ -147,8 +147,8 @@ extension NSManagedObjectContext {
 
     func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.members.compactMap {
-            try? saveMember(payload: $0, channelId: channelId, query: query, cache: cache)
+        return payload.members.compactMapLoggingError {
+            try saveMember(payload: $0, channelId: channelId, query: query, cache: cache)
         }
     }
 }

@@ -148,8 +148,8 @@ extension NSManagedObjectContext: UserDatabaseSession {
     @discardableResult
     func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.users.compactMap {
-            try? saveUser(payload: $0, query: query, cache: cache)
+        return payload.users.compactMapLoggingError {
+            try saveUser(payload: $0, query: query, cache: cache)
         }
     }
 }

@@ -663,8 +663,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
     func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool = true) -> [MessageDTO] {
         let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
-        return messagesPayload.messages.compactMap {
-            try? saveMessage(payload: $0, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
+        return messagesPayload.messages.compactMapLoggingError {
+            try saveMessage(payload: $0, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
         }
     }
 
@@ -833,8 +833,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
     func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.results.compactMap {
-            try? saveMessage(payload: $0.message, for: query, cache: cache)
+        return payload.results.compactMapLoggingError {
+            try saveMessage(payload: $0.message, for: query, cache: cache)
         }
     }
 }
