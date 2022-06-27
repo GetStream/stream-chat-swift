@@ -801,6 +801,7 @@
 		A3227E7A284A4CE000EBE6CC /* DemoChatChannelListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E79284A4CE000EBE6CC /* DemoChatChannelListVC.swift */; };
 		A3227E7E284A511200EBE6CC /* DemoAppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E7D284A511200EBE6CC /* DemoAppConfiguration.swift */; };
 		A3227EC9284A52EE00EBE6CC /* PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227EC8284A52EE00EBE6CC /* PushNotifications.swift */; };
+		A32B6D9E2869DABD002B1312 /* GiphyAttachmentPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32B6D9D2869DABD002B1312 /* GiphyAttachmentPayload_Tests.swift */; };
 		A32D55142860B40B00E66AF9 /* ChatMessageLinkAttachment_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32D55132860B40B00E66AF9 /* ChatMessageLinkAttachment_Tests.swift */; };
 		A32D55162860B54700E66AF9 /* AttachmentPayloadLink_without_title_link.json in Resources */ = {isa = PBXBuildFile; fileRef = A32D55152860B54700E66AF9 /* AttachmentPayloadLink_without_title_link.json */; };
 		A32D55182860B70200E66AF9 /* AttachmentPayloadLink_with_title_link.json in Resources */ = {isa = PBXBuildFile; fileRef = A32D55172860B70200E66AF9 /* AttachmentPayloadLink_with_title_link.json */; };
@@ -3107,6 +3108,7 @@
 		A3227E79284A4CE000EBE6CC /* DemoChatChannelListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatChannelListVC.swift; sourceTree = "<group>"; };
 		A3227E7D284A511200EBE6CC /* DemoAppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppConfiguration.swift; sourceTree = "<group>"; };
 		A3227EC8284A52EE00EBE6CC /* PushNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotifications.swift; sourceTree = "<group>"; };
+		A32B6D9D2869DABD002B1312 /* GiphyAttachmentPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyAttachmentPayload_Tests.swift; sourceTree = "<group>"; };
 		A32D55132860B40B00E66AF9 /* ChatMessageLinkAttachment_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageLinkAttachment_Tests.swift; sourceTree = "<group>"; };
 		A32D55152860B54700E66AF9 /* AttachmentPayloadLink_without_title_link.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AttachmentPayloadLink_without_title_link.json; sourceTree = "<group>"; };
 		A32D55172860B70200E66AF9 /* AttachmentPayloadLink_with_title_link.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AttachmentPayloadLink_with_title_link.json; sourceTree = "<group>"; };
@@ -6186,6 +6188,7 @@
 				843C53AA269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift */,
 				843C53AC269373EA00C7D8EA /* VideoAttachmentPayload_Tests.swift */,
 				A32D55132860B40B00E66AF9 /* ChatMessageLinkAttachment_Tests.swift */,
+				A32B6D9D2869DABD002B1312 /* GiphyAttachmentPayload_Tests.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -10078,6 +10081,7 @@
 				79A9EB572625798000F2A72D /* CoreDataLazy_StressTests.swift in Sources */,
 				DAF1BED92506612F003CEDC0 /* MessageController+SwiftUI_Tests.swift in Sources */,
 				A3A52B6627EB61FC00311DFC /* EventPayload_Tests.swift in Sources */,
+				A32B6D9E2869DABD002B1312 /* GiphyAttachmentPayload_Tests.swift in Sources */,
 				A3C7BAD327E4E05300BBF4FA /* MemberListFilterScope_Tests.swift in Sources */,
 				8A0D649D24E579F70017A3C0 /* GuestUserTokenPayload_Tests.swift in Sources */,
 				8A0C3BE224C1F74200CAFD19 /* MessageEvents_Tests.swift in Sources */,
