@@ -208,6 +208,13 @@ extension UserRobot {
     }
     
     @discardableResult
+    func tapOnMessage(at messageCellIndex: Int? = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        messageCell.safeTap()
+        return self
+    }
+    
+    @discardableResult
     func replyToMessageInThread(
         _ text: String,
         alsoSendInChannel: Bool = false,
@@ -328,6 +335,17 @@ extension UserRobot {
     func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
         let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
         MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func uploadImage(count: Int = 1, send: Bool = true) -> Self {
+        for i in 1...count {
+            MessageListPage.Composer.attachmentButton.wait().safeTap()
+            MessageListPage.AttachmentMenu.photoOrVideoButton.wait().safeTap()
+            MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i-1].safeTap()
+        }
+        if send { sendMessage("", waitForAppearance: false) }
         return self
     }
 }
