@@ -513,3 +513,55 @@ extension UserRobot {
         return self
     }
 }
+
+// MARK: Attachments
+extension UserRobot {
+    
+    @discardableResult
+    func assertImage(
+        count: Int = 1,
+        isPresent: Bool,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let images = attributes.images(in: messageCell)
+        let errMessage = isPresent ? "There are no images" : "Image are presented"
+        _ = isPresent ? images.firstMatch.wait() : images.firstMatch.waitForLoss()
+        XCTAssertEqual(images.count, count, errMessage, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertVideo(
+        isPresent: Bool,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        tapOnMessage(at: messageCellIndex)
+        let player = attributes.videoPlayer().wait()
+        let errMessage = isPresent ? "There is no video" : "Video is presented"
+        XCTAssertTrue(player.exists, errMessage, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertFile(
+        count: Int = 1,
+        isPresent: Bool,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let fileIcons = attributes.fileIcons(in: messageCell)
+        let fileNames = attributes.fileNames(in: messageCell)
+        let errMessage = isPresent ? "There are no files" : "Files are presented"
+        _ = isPresent ? fileNames.firstMatch.wait() : fileNames.firstMatch.waitForLoss()
+        XCTAssertEqual(fileNames.count, count, errMessage, file: file, line: line)
+        XCTAssertEqual(fileIcons.count, count, errMessage, file: file, line: line)
+        return self
+    }
+}
