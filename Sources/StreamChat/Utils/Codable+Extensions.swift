@@ -6,50 +6,57 @@ import Foundation
 
 // MARK: - JSONDecoder Stream
 
-extension JSONDecoder {
-    /// A default `JSONDecoder`.
-    static var `default`: JSONDecoder = stream
+final class StreamJSONDecoder: JSONDecoder {
+    let iso8601formatter: ISO8601DateFormatter
+    let dateCache: NSCache<NSString, NSDate>
     
-    static let iso8601formatter: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
-        return formatter
-    }()
-    
-    static let dateCache: NSCache<NSString, NSDate> = {
-        let cache = NSCache<NSString, NSDate>()
-        cache.countLimit = 5000 // We cache at most 5000 dates, which gives good enough performance
-        return cache
-    }()
-    
-    /// A Stream Chat JSON decoder.
-    static let stream: JSONDecoder = {
-        let decoder = JSONDecoder()
+    override convenience init() {
+        let iso8601formatter = ISO8601DateFormatter()
+        iso8601formatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
         
-        /// A custom decoding for a date.
-        decoder.dateDecodingStrategy = .custom { decoder throws -> Date in
+        let dateCache = NSCache<NSString, NSDate>()
+        dateCache.countLimit = 5000 // We cache at most 5000 dates, which gives good enough performance
+        
+        self.init(dateFormatter: iso8601formatter, dateCache: dateCache)
+    }
+    
+    init(dateFormatter: ISO8601DateFormatter, dateCache: NSCache<NSString, NSDate>) {
+        iso8601formatter = dateFormatter
+        self.dateCache = dateCache
+        
+        super.init()
+        
+        dateDecodingStrategy = .custom { [weak self] decoder throws -> Date in
             let container = try decoder.singleValueContainer()
-            var dateString: String = try container.decode(String.self)
+            let dateString: String = try container.decode(String.self)
             
-            if let date = dateCache.object(forKey: dateString as NSString) {
+            if let date = self?.dateCache.object(forKey: dateString as NSString) {
                 return date.bridgeDate
             }
             
-            if let date = iso8601formatter.date(from: dateString) {
-                dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
+            if let date = self?.iso8601formatter.date(from: dateString) {
+                self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
                 return date
             }
             
             if let date = DateFormatter.Stream.rfc3339Date(from: dateString) {
-                dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
+                self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
                 return date
             }
-
+            
             // Fail
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
         }
-        
-        return decoder
+    }
+}
+
+extension JSONDecoder {
+    /// A default `JSONDecoder`.
+    static var `default`: JSONDecoder = stream
+    
+    /// A Stream Chat JSON decoder.
+    static let stream: StreamJSONDecoder = {
+        StreamJSONDecoder()
     }()
 }
 
