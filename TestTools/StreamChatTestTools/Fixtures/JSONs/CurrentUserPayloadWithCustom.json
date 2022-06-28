@@ -55,7 +55,15 @@
               "role" : "user",
               "total_unread_count" : 0,
               "online" : true,
-              "name" : "broken-waterfall-5"
+              "name" : "broken-waterfall-5",
+              "secret_note": "Anakin is Vader!",
+              "good_movies_count": 3,
+              "awesome": true,
+              "nested_stuff": {
+                  "how_many_times": 42,
+                  "small": 0.001,
+                  "colors": ["blue", "yellow", 42]
+              },
           }
       },
   ],
@@ -85,7 +93,15 @@
               "online" : true,
               "name" : "Broken Waterfall",
               "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
-              "secret_note" : "Anaking is Vader!",
+              "secret_note": "Anakin is Vader!",
+              "good_movies_count": 3,
+              "awesome": true,
+              "nested_stuff": {
+                  "how_many_times": 42,
+                  "small": 0.001,
+                  "colors": ["blue", "yellow", 42]
+              },
+              
           },
           "channel": {
               "id": "B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",

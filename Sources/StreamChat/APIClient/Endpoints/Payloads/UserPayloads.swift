@@ -77,32 +77,30 @@ class UserPayload: Decodable {
         let userId = try container.decode(String.self, forKey: .id)
         
         id = userId
+        // `role` is scope dependent so we don't use the cached value
+        role = try container.decode(UserRole.self, forKey: .role)
+        // These fields are not always sent in a UserPayload
+        // so we can't use the cached values
+        lastActiveAt = try container.decodeIfPresent(Date.self, forKey: .lastActiveAt)
+        isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
+        isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
+        teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         
         let isCachingEnabled = decoder.userInfo[JSONDecoder.userPayloadCachingFlagKey] as? Bool ?? false
         
         if isCachingEnabled, let cachedUserPayload = UserPayload.userDecodingCache.object(forKey: userId as NSString) {
             name = cachedUserPayload.name
             imageURL = cachedUserPayload.imageURL
-            role = cachedUserPayload.role
             createdAt = cachedUserPayload.createdAt
             updatedAt = cachedUserPayload.updatedAt
-            lastActiveAt = cachedUserPayload.lastActiveAt
             isOnline = cachedUserPayload.isOnline
-            isInvisible = cachedUserPayload.isInvisible
-            isBanned = cachedUserPayload.isBanned
-            teams = cachedUserPayload.teams
             extraData = cachedUserPayload.extraData
         } else {
             name = try container.decodeIfPresent(String.self, forKey: .name)
             imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
-            role = try container.decode(UserRole.self, forKey: .role)
             createdAt = try container.decode(Date.self, forKey: .createdAt)
             updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-            lastActiveAt = try container.decodeIfPresent(Date.self, forKey: .lastActiveAt)
             isOnline = try container.decode(Bool.self, forKey: .isOnline)
-            isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
-            isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
-            teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
             
             do {
                 var payload = try [String: RawJSON](from: decoder)
