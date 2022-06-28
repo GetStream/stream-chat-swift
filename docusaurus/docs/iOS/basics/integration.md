@@ -201,3 +201,9 @@ An **XCFramework** is a package that contains binaries for multiple architecture
 **Module Stability:**
 
 While ABI Stability was allowing us to have code written with different Swift versions in the same runtime, Module Stability enables us to use a library built in a particular version of the compiler running in a different version of the compiler (Think of a framework that is built using Swift X to work on an app built with Swift X+1).
+
+## Add Usage Descriptions to Info.plist
+
+Add the NSPhotoLibraryUsageDescription key in your Info.plist with a description of use.
+Add the NSPhotoLibraryAddUsageDescription key in your Info.plist with a description of use.
+Add the NSCameraUsageDescription key in your Info.plist with a description of use.

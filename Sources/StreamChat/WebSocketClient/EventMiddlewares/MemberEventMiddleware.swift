@@ -47,7 +47,7 @@ struct MemberEventMiddleware: EventMiddleware {
                 member.queries.removeAll()
                 
             case let event as NotificationAddedToChannelEventDTO:
-                let channel = try session.saveChannel(payload: event.channel, query: nil)
+                let channel = try session.saveChannel(payload: event.channel, query: nil, cache: nil)
                 let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)
                 channel.membership = member
                 
@@ -76,12 +76,12 @@ struct MemberEventMiddleware: EventMiddleware {
                 member.queries.removeAll()
                 
             case let event as NotificationInviteAcceptedEventDTO:
-                let channel = try session.saveChannel(payload: event.channel, query: nil)
+                let channel = try session.saveChannel(payload: event.channel, query: nil, cache: nil)
                 let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)
                 channel.membership = member
                 
             case let event as NotificationInviteRejectedEventDTO:
-                let channel = try session.saveChannel(payload: event.channel, query: nil)
+                let channel = try session.saveChannel(payload: event.channel, query: nil, cache: nil)
                 let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)
                 channel.membership = member
                 
