@@ -1,6 +1,8 @@
 ---
-title: SwiftUIRepresentable
+title: SwiftUIRepresentable [Deprecated]
 ---
+
+This has been deprecated, please refer to the SwiftUI dedicated SDK at https://github.com/GetStream/stream-chat-swiftui.
 
 Protocol with necessary properties to make `SwiftUIRepresentable` instance
 
