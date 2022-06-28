@@ -16,6 +16,12 @@ extension JSONDecoder {
         return formatter
     }()
     
+    static let dateCache: NSCache<NSString, NSDate> = {
+        let cache = NSCache<NSString, NSDate>()
+        cache.countLimit = 5000 // We cache at most 5000 dates, which gives good enough performance
+        return cache
+    }()
+    
     /// A Stream Chat JSON decoder.
     static let stream: JSONDecoder = {
         let decoder = JSONDecoder()
@@ -25,11 +31,17 @@ extension JSONDecoder {
             let container = try decoder.singleValueContainer()
             var dateString: String = try container.decode(String.self)
             
+            if let date = dateCache.object(forKey: dateString as NSString) {
+                return date.bridgeDate
+            }
+            
             if let date = iso8601formatter.date(from: dateString) {
+                dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
                 return date
             }
             
             if let date = DateFormatter.Stream.rfc3339Date(from: dateString) {
+                dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
                 return date
             }
 
