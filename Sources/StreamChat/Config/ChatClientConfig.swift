@@ -53,7 +53,7 @@ public struct ChatClientConfig {
     }
 
     /// The datacenter `ChatClient` uses for connecting.
-    public var baseURL: BaseURL = .usEast
+    public var baseURL: BaseURL = .default
     
     /// Determines whether `ChatClient` caches the data locally. This makes it possible to browse the existing chat data also
     /// when the internet connection is not available.
