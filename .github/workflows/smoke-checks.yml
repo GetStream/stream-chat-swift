@@ -30,6 +30,7 @@ env:
 jobs:
   automated-code-review:
     name: Automated Code Review
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -44,6 +45,7 @@ jobs:
 
   build-and-test-debug:
     name: Test LLC (Debug)
+    timeout-minutes: 25
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
@@ -88,6 +90,7 @@ jobs:
 
   build-and-test-ui-debug:
     name: Test UI (Debug)
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -111,6 +114,7 @@ jobs:
 
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
+    timeout-minutes: 35
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     needs: allure_testops_launch
@@ -148,6 +152,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     outputs:
@@ -169,6 +174,7 @@ jobs:
 
   build-xcode12:
     name: Build LLC + UI (Xcode 12)
+    timeout-minutes: 25
     runs-on: macos-11
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -189,6 +195,7 @@ jobs:
 
   build-apps:
     name: Build Sample + Demo Apps
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     env:
@@ -222,6 +229,7 @@ jobs:
 
   spm-integration:
     name: Test Integration (SPM)
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -235,6 +243,7 @@ jobs:
 
   cocoapods-integration:
     name: Test Integration (CocoaPods)
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
