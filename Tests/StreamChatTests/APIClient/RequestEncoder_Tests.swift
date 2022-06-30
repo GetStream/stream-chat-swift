@@ -117,45 +117,6 @@ final class RequestEncoder_Tests: XCTestCase {
         // Assert request encoding has failed.
         AssertAsync.willBeEqual(encodingResult?.error as? TestError, error)
     }
-
-    func test_endpointRequiringToken_ifTokenProviderTimeouts() throws {
-        // Prepare a new endpoint.
-        let endpoint = Endpoint<Data>(
-            path: .guest,
-            method: .get,
-            requiresConnectionId: false,
-            requiresToken: true
-        )
-
-        // Reset the token.
-        connectionDetailsProvider.tokenResult = nil
-
-        let connectionDetailsProviderDelegate = encoder.connectionDetailsProviderDelegate
-        encoder = DefaultRequestEncoder(baseURL: baseURL, apiKey: apiKey, timerType: VirtualTimeTimer.self)
-        encoder.connectionDetailsProviderDelegate = connectionDetailsProviderDelegate
-
-        // Encode the request and capture the result
-        var receivedRequest: URLRequest?
-        let expectation = self.expectation(description: "Encoding Request Completes")
-        encoder.encodeRequest(for: endpoint) {
-            receivedRequest = try? $0.get()
-            expectation.fulfill()
-        }
-
-        AssertAsync.willBeTrue(VirtualTimeTimer.time.scheduledTimers.count == 1)
-
-        // We execute the timeout timer
-        VirtualTimeTimer.time.scheduledTimers.first.map { $0.callback($0) }
-
-        waitForExpectations(timeout: 0.5, handler: nil)
-        guard let request = receivedRequest else {
-            XCTFail("We should have received a request here")
-            return
-        }
-
-        // When we timeout, we succeed but with a request that does not contain the token
-        XCTAssertNil(request.allHTTPHeaderFields?["Stream-Auth-Type"])
-    }
     
     func test_endpointRequiringConnectionId_hasCorrectQueryItems_ifConnectionIdIsProvided() throws {
         // Prepare an endpoint that requires connection id
@@ -205,47 +166,7 @@ final class RequestEncoder_Tests: XCTestCase {
         // Assert request encoding has failed.
         AssertAsync.willBeEqual(encodingResult?.error as? TestError, error)
     }
-
-    func test_endpointRequiringConnectionId_ifTokenProviderTimeouts() throws {
-        // Prepare a new endpoint.
-        let endpoint = Endpoint<Data>(
-            path: .guest,
-            method: .get,
-            requiresConnectionId: true,
-            requiresToken: false
-        )
-
-        // Reset the token.
-        connectionDetailsProvider.connectionIdResult = nil
-
-        let connectionDetailsProviderDelegate = encoder.connectionDetailsProviderDelegate
-        encoder = DefaultRequestEncoder(baseURL: baseURL, apiKey: apiKey, timerType: VirtualTimeTimer.self)
-        encoder.connectionDetailsProviderDelegate = connectionDetailsProviderDelegate
-
-        // Encode the request and capture the result
-        var receivedRequest: URLRequest?
-        let expectation = self.expectation(description: "Encoding Request Completes")
-        encoder.encodeRequest(for: endpoint) {
-            receivedRequest = try? $0.get()
-            expectation.fulfill()
-        }
-
-        AssertAsync.willBeTrue(VirtualTimeTimer.time.scheduledTimers.count == 1)
-
-        // We execute the timeout timer
-        VirtualTimeTimer.time.scheduledTimers.first.map { $0.callback($0) }
-
-        waitForExpectations(timeout: 0.5, handler: nil)
-        guard let request = receivedRequest else {
-            XCTFail("We should have received a request here")
-            return
-        }
-
-        // When we timeout, we succeed but with a request that does not contain the connection id
-        let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
-        XCTAssertNil(urlComponents.queryItems?["connection_id"])
-    }
-
+    
     func test_endpointRequiringConnectionIdAndToken_isEncodedCorrectly_ifBothAreProvided() throws {
         // Prepare an endpoint that requires connection id
         let endpoint = Endpoint<Data>(

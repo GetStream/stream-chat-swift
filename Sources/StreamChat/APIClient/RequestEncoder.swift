@@ -62,17 +62,7 @@ extension RequestEncoder {
 struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
-    let timerType: Timer.Type
-
-    /// The most probable reason why a RequestEncoder can timeout when waiting for token or connectionId is because there's no connection.
-    /// When returning an error, it will just fail without giving an opportunity to know if the timeout occurred because of a networking problem.
-    /// Instead, now, returning a success, even without the needed token/connectionId, it will account for this case and instead will let the APIClient
-    /// return a connection error if needed.
-    /// That way, the request can be requeued, and we give a much better experience.
-    ///
-    /// On the other hand, any big number for a timeout here would be "to much". In normal situations, the requests should be back in less than a second,
-    /// otherwise we have a connection problem, which is handled as described above.
-    private let waiterTimeout: TimeInterval = 10
+    
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     
     func encodeRequest<ResponsePayload: Decodable>(
@@ -116,13 +106,8 @@ struct DefaultRequestEncoder: RequestEncoder {
     }
 
     init(baseURL: URL, apiKey: APIKey) {
-        self.init(baseURL: baseURL, apiKey: apiKey, timerType: DefaultTimer.self)
-    }
-
-    init(baseURL: URL, apiKey: APIKey, timerType: Timer.Type) {
         self.baseURL = baseURL
         self.apiKey = apiKey
-        self.timerType = timerType
     }
     
     // MARK: - Private
@@ -145,19 +130,7 @@ struct DefaultRequestEncoder: RequestEncoder {
             subsystems: .httpRequests
         )
         
-        var waiterToken: WaiterToken?
-        let timer = timerType
-            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
-                // We complete with a success to account for the most probable case for the timeout: No connection.
-                // That way, when reaching the APIClient, we would properly report a connection error.
-                defer { completion(.success(request)) }
-                guard let waiterToken = waiterToken else { return }
-                connectionDetailsProviderDelegate?.invalidateTokenWaiter(waiterToken)
-            }
-
-        waiterToken = connectionDetailsProviderDelegate?.provideToken {
-            timer.cancel()
-            
+        connectionDetailsProviderDelegate?.provideToken {
             switch $0 {
             case let .success(token):
                 var updatedRequest = request
@@ -191,19 +164,7 @@ struct DefaultRequestEncoder: RequestEncoder {
             subsystems: .httpRequests
         )
 
-        var waiterToken: WaiterToken?
-        let timer = timerType
-            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
-                // We complete with a success to account for the most probable case for the timeout: No connection.
-                // That way, when reaching the APIClient, we would properly report a connection error.
-                defer { completion(.success(request)) }
-                guard let waiterToken = waiterToken else { return }
-                connectionDetailsProviderDelegate?.invalidateConnectionIdWaiter(waiterToken)
-            }
-
-        waiterToken = connectionDetailsProviderDelegate?.provideConnectionId {
-            timer.cancel()
-            
+        connectionDetailsProviderDelegate?.provideConnectionId {
             switch $0 {
             case let .success(connectionId):
                 do {
