@@ -117,14 +117,11 @@ extension UserRobot {
     
     @discardableResult
     func clearComposer() -> Self {
-        let currentText = composer.textView.text
-        if currentText.isEmpty { return self }
-        
-        for _ in (0...currentText.split(separator: "\n").count - 1) {
-            composer.inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
-            composer.cutButton.wait().safeTap()
+        if !composer.textView.text.isEmpty {
+            composer.inputField.tap()
+            composer.selectAllButton.wait().safeTap()
+            composer.inputField.typeText(XCUIKeyboardKey.delete.rawValue)
         }
-        
         return self
     }
     
@@ -210,7 +207,7 @@ extension UserRobot {
     @discardableResult
     func tapOnMessage(at messageCellIndex: Int? = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        messageCell.safeTap()
+        messageCell.waitForHitPoint().tap()
         return self
     }
     
@@ -259,8 +256,7 @@ extension UserRobot {
 
     @discardableResult
     func scrollMessageListUp() -> Self {
-        let topMessage = MessageListPage.cells.element(boundBy: 0)
-        MessageListPage.list.press(forDuration: 0.1, thenDragTo: topMessage)
+        MessageListPage.list.swipeDown()
         return self
     }
     
@@ -343,7 +339,7 @@ extension UserRobot {
         for i in 1...count {
             MessageListPage.Composer.attachmentButton.wait().safeTap()
             MessageListPage.AttachmentMenu.photoOrVideoButton.wait().safeTap()
-            MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i-1].safeTap()
+            MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i].safeTap()
         }
         if send { sendMessage("", waitForAppearance: false) }
         return self
