@@ -9,9 +9,11 @@ on:
   pull_request:
     branches:
       - '**'
+
   release:
     types:
       - created
+
   workflow_dispatch:
 
 concurrency:
@@ -28,6 +30,7 @@ env:
 jobs:
   automated-code-review:
     name: Automated Code Review
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -42,6 +45,7 @@ jobs:
 
   build-and-test-debug:
     name: Test LLC (Debug)
+    timeout-minutes: 25
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
@@ -86,6 +90,7 @@ jobs:
 
   build-and-test-ui-debug:
     name: Test UI (Debug)
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -109,6 +114,7 @@ jobs:
 
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
+    timeout-minutes: 35
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     needs: allure_testops_launch
@@ -132,10 +138,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
         MATRIX_SIZE: ${{ strategy.job-total }}
-    - uses: test-summary/action@v1
-      with:
-        paths: fastlane/test_output/report.junit
-      if: failure()
     - name: Allure TestOps Upload
       if: env.LAUNCH_ID != '' && (success() || failure())
       run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
@@ -150,6 +152,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     outputs:
@@ -159,7 +162,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         XCODE_ACTIONS: false
-    - name: Create a new launch on Allure TestOps
+    - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
@@ -171,6 +174,7 @@ jobs:
 
   build-xcode12:
     name: Build LLC + UI (Xcode 12)
+    timeout-minutes: 25
     runs-on: macos-11
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -191,8 +195,12 @@ jobs:
 
   build-apps:
     name: Build Sample + Demo Apps
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_EVENT: ${{ toJson(github.event) }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
@@ -221,6 +229,7 @@ jobs:
 
   spm-integration:
     name: Test Integration (SPM)
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -228,9 +237,13 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane spm_integration
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
 
   cocoapods-integration:
     name: Test Integration (CocoaPods)
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -238,3 +251,6 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane cocoapods_integration
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
