@@ -22,7 +22,7 @@ public protocol CDNClient {
 
 /// Default implementation of CDNClient that uses Stream CDN
 class StreamCDNClient: CDNClient {
-    static var maxAttachmentSize: Int64 { 20 * 1024 * 1024 }
+    static var maxAttachmentSize: Int64 { 100 * 1024 * 1024 }
 
     private let decoder: RequestDecoder
     private let encoder: RequestEncoder

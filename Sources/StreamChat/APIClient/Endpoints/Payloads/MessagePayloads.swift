@@ -110,12 +110,12 @@ class MessagePayload: Decodable {
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
         quotedMessage = try container.decodeIfPresent(MessagePayload.self, forKey: .quotedMessage)
-        mentionedUsers = try container.decode([UserPayload].self, forKey: .mentionedUsers)
+        mentionedUsers = try container.decodeArrayIgnoringFailures([UserPayload].self, forKey: .mentionedUsers)
         // backend returns `thread_participants` only if message is a thread, we are fine with to have it on all messages
         threadParticipants = try container.decodeIfPresent([UserPayload].self, forKey: .threadParticipants) ?? []
         replyCount = try container.decode(Int.self, forKey: .replyCount)
-        latestReactions = try container.decode([MessageReactionPayload].self, forKey: .latestReactions)
-        ownReactions = try container.decode([MessageReactionPayload].self, forKey: .ownReactions)
+        latestReactions = try container.decodeArrayIgnoringFailures([MessageReactionPayload].self, forKey: .latestReactions)
+        ownReactions = try container.decodeArrayIgnoringFailures([MessageReactionPayload].self, forKey: .ownReactions)
 
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?

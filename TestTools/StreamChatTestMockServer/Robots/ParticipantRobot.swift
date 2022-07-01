@@ -67,7 +67,7 @@ public class ParticipantRobot {
     // Sleep in seconds
     @discardableResult
     public func wait(_ duration: TimeInterval) -> Self {
-        let sleepTime = UInt32(duration * 1000)
+        let sleepTime = UInt32(duration * 1000000)
         usleep(sleepTime)
         return self
     }
@@ -126,7 +126,7 @@ public class ParticipantRobot {
 
         texts.forEach {
             sendMessage($0, waitForAppearance: false)
-            wait(0.5)
+            wait(0.3)
         }
         return self
     }
