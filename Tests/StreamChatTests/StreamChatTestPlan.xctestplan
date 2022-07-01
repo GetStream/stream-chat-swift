@@ -28,7 +28,9 @@
     {
       "skippedTests" : [
         "ChannelListPayload_Tests\/test_decode_bigChannelListPayload()",
-        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()"
+        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()",
+        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_empty()",
+        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_filled()"
       ],
       "target" : {
         "containerPath" : "container:StreamChat.xcodeproj",
