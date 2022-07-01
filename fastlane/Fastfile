@@ -718,17 +718,6 @@ def build_example_app(scheme, options)
   )
 end
 
-desc "Build Docs Snippets target"
-lane :build_docs_snippets do |options|
-  scan(
-    project: "StreamChat.xcodeproj",
-    scheme: "DocsSnippets",
-    clean: true,
-    build_for_testing: true,
-    devices: options[:device]
-  )
-end
-
 desc "Test SPM Integration"
 lane :spm_integration do
   next unless check_required?(:integration)
