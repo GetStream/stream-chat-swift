@@ -9,6 +9,7 @@ import SwiftUI
 @available(iOS 13.0, *)
 /// Protocol of `ChatChannelListItemView` wrapper for use in SwiftUI.
 public protocol ChatChannelListItemViewSwiftUIView: View {
+    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     init(dataSource: ChatChannelListItemView.ObservedObject<Self>)
 }
 
@@ -25,10 +26,12 @@ extension ChatChannelListItemView {
     public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelListItemView, ObservableObject {
         var hostingController: UIViewController?
 
+        @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
         override public var intrinsicContentSize: CGSize {
             hostingController?.view.intrinsicContentSize ?? super.intrinsicContentSize
         }
 
+        @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
         override public func setUp() {
             super.setUp()
 
@@ -39,11 +42,13 @@ extension ChatChannelListItemView {
             hostingController!.view.backgroundColor = .clear
         }
 
+        @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
         override public func setUpLayout() {
             hostingController!.view.translatesAutoresizingMaskIntoConstraints = false
             embed(hostingController!.view)
         }
 
+        @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
         override public func updateContent() {
             objectWillChange.send()
         }

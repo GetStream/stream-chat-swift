@@ -9,6 +9,7 @@ import SwiftUI
 @available(iOS 13.0, *)
 extension Appearance {
     /// Used to initialize `Components` as `ObservableObject`.
+    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     public var asObservableObject: ObservableObject { .init(self) }
 
     @dynamicMemberLookup
@@ -20,6 +21,7 @@ extension Appearance {
             wrappedAppearance[keyPath: keyPath]
         }
 
+        @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
         fileprivate init(_ wrappedAppearance: Appearance) {
             self.wrappedAppearance = wrappedAppearance
         }
@@ -32,10 +34,12 @@ private struct SwiftUIAppearance: ViewModifier {
     /// Custom `ObservableObject` of `components`
     private let appearance: Appearance
 
+    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     public init(_ appearance: Appearance) {
         self.appearance = appearance
     }
 
+    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     public func body(content: Content) -> some View {
         content.environmentObject(appearance.asObservableObject)
     }
@@ -44,6 +48,7 @@ private struct SwiftUIAppearance: ViewModifier {
 @available(iOS 13.0, *)
 public extension View {
     /// Sets up custom `Components`.
+    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     func setUpStreamChatAppearance(_ appearance: Appearance = .default) -> some View {
         modifier(SwiftUIAppearance(appearance))
     }

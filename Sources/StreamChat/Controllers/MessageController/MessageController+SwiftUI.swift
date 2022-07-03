@@ -8,6 +8,7 @@ import SwiftUI
 @available(iOS 13, *)
 extension ChatMessageController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
+    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     public var observableObject: ObservableObject { .init(controller: self) }
     
     /// A wrapper object for `CurrentUserController` type which makes it possible to use the controller comfortably in SwiftUI.
@@ -28,6 +29,7 @@ extension ChatMessageController {
         @Published public private(set) var state: DataController.State
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
+        @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
         init(controller: ChatMessageController) {
             self.controller = controller
             state = controller.state

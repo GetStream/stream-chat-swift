@@ -11,6 +11,7 @@ public typealias ChatChannelList = SwiftUIViewControllerRepresentable<ChatChanne
 
 @available(iOSApplicationExtension, unavailable)
 extension ChatChannelListVC: SwiftUIRepresentable {
+    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     public var content: ChatChannelListController {
         get {
             controller

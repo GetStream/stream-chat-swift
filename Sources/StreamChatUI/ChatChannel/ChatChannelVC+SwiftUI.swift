@@ -7,6 +7,7 @@ import SwiftUI
 
 @available(iOSApplicationExtension, unavailable)
 extension ChatChannelVC: SwiftUIRepresentable {
+    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     public var content: ChatChannelController {
         get {
             channelController
