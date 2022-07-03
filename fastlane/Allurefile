@@ -16,7 +16,7 @@ end
 
 desc 'Create launch on Allure TestOps'
 lane :allure_launch do
-  next unless testing_required?(:e2e)
+  next unless check_required?(:e2e)
 
   tags = []
   github_run = github_run_details

@@ -6,16 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Added missing `ChannelListFilterScope` and `MemberListFilterScope` filter keys [#2119](https://github.com/GetStream/stream-chat-swift/issues/2119)
-
 ### 🔄 Changed
 - Improved performance when saving big payloads (by 50% in some edge cases)[#2113](https://github.com/GetStream/stream-chat-swift/pull/2113)
 - Chat SDK now leverages `chat.stream-io-api.com` endpoint by default [#2125](https://github.com/GetStream/stream-chat-swift/pull/2125)
 - JSON decoding performance is futher increased, parsing time reduced by another %50 [#2128](https://github.com/GetStream/stream-chat-swift/issues/2128)
 - SwiftUIRepresentable is marked as deprecated in favor of the dedicated SwiftUI project
+- Better errors in case JSON decoding fails [#2126](https://github.com/GetStream/stream-chat-swift/issues/2126)
+- File upload size limit is increased to 100MB [#2136](https://github.com/GetStream/stream-chat-swift/pull/2136)
 
 ### 🐞 Fixed
 - Allow sending giphy messages programmatically [#2124](https://github.com/GetStream/stream-chat-swift/pull/2124)
-
+- Allow scroll automatically to the bottom when sending a giphy from the middle of the message list [#2130](https://github.com/GetStream/stream-chat-swift/pull/2130)
+- JSON decoding is now more robust, single incomplete/broken object won't disable whole channel list [#2126](https://github.com/GetStream/stream-chat-swift/issues/2126)
 
 # [4.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.17.0)
 _June 22, 2022_

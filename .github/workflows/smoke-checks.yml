@@ -9,9 +9,11 @@ on:
   pull_request:
     branches:
       - '**'
+
   release:
     types:
       - created
+
   workflow_dispatch:
 
 concurrency:
@@ -20,12 +22,15 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  XCODE_VERSION: 13.3.1
+  XCODE_VERSION: 13.4.1
+  IOS_VERSION: "15.5"
   IOS_SIMULATOR_DEVICE: "iPhone 12 Pro"
+  IOS_SIMULATOR_DEVICE_WITH_VERSION: "iPhone 12 Pro (15.5)"
 
 jobs:
   automated-code-review:
     name: Automated Code Review
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -40,6 +45,7 @@ jobs:
 
   build-and-test-debug:
     name: Test LLC (Debug)
+    timeout-minutes: 25
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
@@ -84,19 +90,20 @@ jobs:
 
   build-and-test-ui-debug:
     name: Test UI (Debug)
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
-    - name: Prepare iPhone 12 Pro with iOS 15.4
+    - name: "Prepare ${{ env.IOS_SIMULATOR_DEVICE }} with iOS ${{ env.IOS_VERSION }}"
       uses: ./.github/actions/prepare-ios-simulator
       with:
-        device: "iPhone 12 Pro"
-        ios: "15.4"
-        xcode: "13.3.1"
+        device: ${{ env.IOS_SIMULATOR_DEVICE }}
+        ios: ${{ env.IOS_VERSION }}
+        xcode: ${{ env.XCODE_VERSION }}
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"iPhone 12 Pro (15.4)"
+      run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE_WITH_VERSION }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
@@ -107,6 +114,7 @@ jobs:
 
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
+    timeout-minutes: 35
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     needs: allure_testops_launch
@@ -130,10 +138,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
         MATRIX_SIZE: ${{ strategy.job-total }}
-    - uses: test-summary/action@v1
-      with:
-        paths: fastlane/test_output/report.junit
-      if: failure()
     - name: Allure TestOps Upload
       if: env.LAUNCH_ID != '' && (success() || failure())
       run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
@@ -148,6 +152,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     outputs:
@@ -157,7 +162,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         XCODE_ACTIONS: false
-    - name: Create a new launch on Allure TestOps
+    - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
@@ -169,6 +174,7 @@ jobs:
 
   build-xcode12:
     name: Build LLC + UI (Xcode 12)
+    timeout-minutes: 25
     runs-on: macos-11
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -189,8 +195,12 @@ jobs:
 
   build-apps:
     name: Build Sample + Demo Apps
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_EVENT: ${{ toJson(github.event) }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
@@ -219,6 +229,7 @@ jobs:
 
   spm-integration:
     name: Test Integration (SPM)
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -226,9 +237,13 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane spm_integration
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
 
   cocoapods-integration:
     name: Test Integration (CocoaPods)
+    timeout-minutes: 25
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -236,3 +251,6 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane cocoapods_integration
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
