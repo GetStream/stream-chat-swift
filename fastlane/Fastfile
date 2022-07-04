@@ -801,9 +801,11 @@ def check_required?(type)
 
   pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
 
-  changed_files = sh("gh pr view #{pr_number} --json files -q '.files[].path'")
+  changed_files = sh("gh pr view #{pr_number} --json files -q '.files[].path'").split("\n")
 
-  changed_files = changed_files.split("\n").select do |path|
+  return true if changed_files.size == 100 # TODO: https://github.com/cli/cli/issues/5368
+
+  changed_files.select! do |path|
     sources[type.to_sym].any? { |required| path.start_with?(required) }
   end
 
