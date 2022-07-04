@@ -262,14 +262,6 @@ Builds MessengerClone app
 
 Builds YouTubeClone app
 
-### build_docs_snippets
-
-```sh
-[bundle exec] fastlane build_docs_snippets
-```
-
-Build Docs Snippets target
-
 ### spm_integration
 
 ```sh
