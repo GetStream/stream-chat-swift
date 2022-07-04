@@ -217,16 +217,6 @@ jobs:
     - name: Build YouTubeClone App
       run: bundle exec fastlane build_youtube_clone
 
-  # build-docs-snippets:
-  #   name: Build Docs Snippets
-  #   runs-on: macos-12
-  #   if: ${{ github.event_name != 'push' }}
-  #   steps:
-  #   - uses: actions/checkout@v1
-  #   - uses: ./.github/actions/bootstrap
-  #   - name: Build Docs Snippets
-  #     run: bundle exec fastlane build_docs_snippets
-
   spm-integration:
     name: Test Integration (SPM)
     timeout-minutes: 25
