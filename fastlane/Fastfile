@@ -416,13 +416,14 @@ lane :testflight_build do
   external_groups = []
   changelog =
     if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
-      "This is the build for Regression testing on release candidate v#{version_number}"
+      sha = ENV['GITHUB_SHA'] ? ENV['GITHUB_SHA'][0..8] : sh('git rev-parse --short HEAD')
+      "This is the build for Regression testing on release candidate v#{version_number} (sha: #{sha})."
     else
       external_groups << 'Public Link'
-      "This is the official sample app built with Stream's iOS Chat SDK v4.0. It's designed to highlight " \
-      'engaging features and new improvements to the SDK, but remember that this is just one possible ' \
-      'implementation. You can start your own by borrowing and customizing the code from this sample, ' \
-      "or build something completely different using Stream's components."
+      "This is the official sample app built with Stream's iOS Chat SDK v#{version_number}. It's designed " \
+      'to highlight engaging features and new improvements to the SDK, but remember that this is just one ' \
+      'possible implementation. You can start your own by borrowing and customizing the code from this ' \
+      "sample, or build something completely different using Stream's components."
     end
 
   pilot(
@@ -436,6 +437,12 @@ lane :testflight_build do
     reject_build_waiting_for_review: true,
     changelog: changelog
   )
+
+  next unless ENV['GITHUB_EVENT_NAME'] == 'pull_request'
+
+  pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
+  message = "Build for regression testing №#{build_number} has been uploaded to TestFlight 🎁"
+  sh("gh pr comment #{pr_number} -b '#{message}'")
 end
 
 desc "Get next PR number from github to be used in CHANGELOG"
