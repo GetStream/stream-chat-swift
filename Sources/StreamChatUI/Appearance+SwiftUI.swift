@@ -9,7 +9,6 @@ import SwiftUI
 @available(iOS 13.0, *)
 extension Appearance {
     /// Used to initialize `Components` as `ObservableObject`.
-    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     public var asObservableObject: ObservableObject { .init(self) }
 
     @dynamicMemberLookup
@@ -20,8 +19,7 @@ extension Appearance {
         public subscript<T>(dynamicMember keyPath: KeyPath<Appearance, T>) -> T {
             wrappedAppearance[keyPath: keyPath]
         }
-
-        @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
+        
         fileprivate init(_ wrappedAppearance: Appearance) {
             self.wrappedAppearance = wrappedAppearance
         }

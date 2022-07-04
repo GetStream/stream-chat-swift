@@ -11,7 +11,6 @@ extension ChatUserListController {
     public var observableObject: ObservableObject { .init(controller: self) }
     
     /// A wrapper object for `UserListController` type which makes it possible to use the controller comfortably in SwiftUI.
-    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     public class ObservableObject: SwiftUI.ObservableObject {
         /// The underlying controller. You can still access it and call methods on it.
         public let controller: ChatUserListController
