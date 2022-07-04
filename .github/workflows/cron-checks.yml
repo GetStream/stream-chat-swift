@@ -38,7 +38,7 @@ jobs:
       if: ${{ matrix.ios != 'latest' }}
       run: xcversion simulators --install='iOS ${{ matrix.ios }}'
     - name: Launch Allure TestOps
-      run: bundle exec fastlane allure_launch
+      run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_e2e_mock cron:true device:"${{ matrix.device }}" ios:"${{ matrix.ios }}"
     - name: Allure TestOps Upload
