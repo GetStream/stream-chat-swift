@@ -8,7 +8,6 @@ import SwiftUI
 @available(iOS 13, *)
 extension ChatUserController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
-    @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
     public var observableObject: ObservableObject { .init(controller: self) }
     
     /// A wrapper object for `ChatUserController` type which makes it possible to use the controller comfortably in SwiftUI.
