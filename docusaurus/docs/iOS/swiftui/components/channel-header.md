@@ -130,7 +130,7 @@ class CustomFactory: ViewFactory {
     public static let shared = CustomFactory()
 
     func makeChannelHeaderViewModifier(for channel: ChatChannel) -> some ChatChannelHeaderViewModifier {
-        CustomChannelModifier(channel: channel)
+        CustomChatChannelModifier(channel: channel)
     }
 
 }
