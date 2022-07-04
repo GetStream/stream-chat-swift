@@ -15,13 +15,15 @@ lane :allure_upload do |options|
 end
 
 desc 'Create launch on Allure TestOps'
-lane :allure_launch do
+lane :allure_launch do |options|
   next unless check_required?(:e2e)
 
   tags = []
   github_run = github_run_details
   launch_name =
-    if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
+    if options[:cron]
+      'Cron checks'
+    elsif ENV['GITHUB_EVENT_NAME'] == 'pull_request'
       pull_request = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']
       tags = pull_request['labels'].map { |label| { name: label['name'] } }
       pull_request['title']

@@ -13,5 +13,3 @@ echo -e "👉 Linting DemoApp..."
 mint run swiftformat --lint --config .swiftformat DemoApp
 echo -e "👉 Linting Integration..."
 mint run swiftformat --lint --config .swiftformat Integration
-echo -e "👉 Linting DocsSnippets..."
-mint run swiftformat --lint --config .swiftformat-snippets DocsSnippets
