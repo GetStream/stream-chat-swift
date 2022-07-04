@@ -28,7 +28,6 @@ extension ChatChannelController {
         @Published public private(set) var typingUsers: Set<ChatUser> = []
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
-        @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
         init(controller: ChatChannelController) {
             self.controller = controller
             state = controller.state

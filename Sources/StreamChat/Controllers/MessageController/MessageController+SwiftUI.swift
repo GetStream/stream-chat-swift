@@ -28,7 +28,6 @@ extension ChatMessageController {
         @Published public private(set) var state: DataController.State
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
-        @available(*, deprecated, message: "This is now deprecated, please refer to the SwiftUI SDK at https://github.com/GetStream/stream-chat-swiftui")
         init(controller: ChatMessageController) {
             self.controller = controller
             state = controller.state
