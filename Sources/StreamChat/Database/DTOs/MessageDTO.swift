@@ -455,7 +455,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: cid)
         }
 
-        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self, cache: nil)
+        let message = MessageDTO.loadOrCreate(id: .newUniqueId.lowercased(), context: self, cache: nil)
         
         // We make `createdDate` 0.1 second bigger than Channel's most recent message
         // so if the local time is not in sync, the message will still appear in the correct position
