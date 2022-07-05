@@ -169,52 +169,52 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
 
 public extension Filter {
     /// Matches values that are equal to a specified value.
-    static func equal<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
+    static func equal<Value>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
         .init(operator: .equal, key: key, value: value)
     }
     
     /// Matches all values that are not equal to a specified value.
-    static func notEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
+    static func notEqual<Value>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
         .init(operator: .notEqual, key: key, value: value)
     }
     
     /// Matches values that are greater than a specified value.
-    static func greater<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
+    static func greater<Value>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(operator: .greater, key: key, value: value)
     }
     
     /// Matches values that are greater than a specified value.
-    static func greaterOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
+    static func greaterOrEqual<Value>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(operator: .greaterOrEqual, key: key, value: value)
     }
     
     /// Matches values that are less than a specified value.
-    static func less<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
+    static func less<Value>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(operator: .less, key: key, value: value)
     }
     
     /// Matches values that are less than or equal to a specified value.
-    static func lessOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
+    static func lessOrEqual<Value>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(operator: .lessOrEqual, key: key, value: value)
     }
     
     /// Matches any of the values specified in an array.
-    static func `in`<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
+    static func `in`<Value>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
         .init(operator: .in, key: key, value: values)
     }
     
     /// Matches none of the values specified in an array.
-    static func notIn<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
+    static func notIn<Value>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
         .init(operator: .notIn, key: key, value: values)
     }
     
     /// Matches values by performing text search with the specified value.
-    static func query<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
+    static func query<Value>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
         .init(operator: .query, key: key, value: text)
     }
     
     /// Matches values with the specified prefix.
-    static func autocomplete<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
+    static func autocomplete<Value>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
         .init(operator: .autocomplete, key: key, value: text)
     }
     
@@ -223,12 +223,12 @@ public extension Filter {
     /// - Parameter exists: `true`(default value) if the filter matches values that exist. `false` if the
     /// filter should match values that don't exist.
     ///
-    static func exists<Value: Encodable>(_ key: FilterKey<Scope, Value>, exists: Bool = true) -> Filter {
+    static func exists<Value>(_ key: FilterKey<Scope, Value>, exists: Bool = true) -> Filter {
         .init(operator: .exists, key: key, value: exists)
     }
     
     /// Matches if the key contains the given value.
-    static func contains<Value: Encodable>(_ key: FilterKey<Scope, Value>, value: String) -> Filter {
+    static func contains<Value>(_ key: FilterKey<Scope, Value>, value: String) -> Filter {
         .init(operator: .contains, key: key, value: value)
     }
 }

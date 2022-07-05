@@ -30,18 +30,18 @@ public class EventsController: Controller, DelegateCallable {
     /// A callback queue on which delegate methods are invoked.
     public var callbackQueue: DispatchQueue = .main
     
-    var _basePublishers: Any?
-    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
-    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
-    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
-    @available(iOS 13, *)
-    var basePublishers: BasePublishers {
-        if let value = _basePublishers as? BasePublishers {
-            return value
-        }
-        _basePublishers = BasePublishers(controller: self)
-        return _basePublishers as? BasePublishers ?? .init(controller: self)
-    }
+//    var _basePublishers: Any?
+//    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
+//    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
+//    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
+//    @available(iOS 13, *)
+//    var basePublishers: BasePublishers {
+//        if let value = _basePublishers as? BasePublishers {
+//            return value
+//        }
+//        _basePublishers = BasePublishers(controller: self)
+//        return _basePublishers as? BasePublishers ?? .init(controller: self)
+//    }
     
     /// A backing object used to deliver updates to main and additional delegates.
     var multicastDelegate = MulticastDelegate<EventsControllerDelegate>()
