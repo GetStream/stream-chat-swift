@@ -66,6 +66,7 @@ public extension Appearance {
                 return loadImageSafely(with: "download")
             }
         }()
+        public var emptyChannelListMessageBubble: UIImage = loadImageSafely(with: "empty_channel_list_message_bubble")
 
         // MARK: - Message Receipts
         

@@ -60,10 +60,8 @@ final class ChatChannelListVC_Tests: XCTestCase {
     }
 
     func test_emptyAppearance() {
-        mockedChannelListController.simulateInitial(
-            channels: [],
-            state: .remoteDataFetched
-        )
+        vc.executeLifecycleMethods()
+        mockedChannelListController.simulate(state: .remoteDataFetched)
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
     

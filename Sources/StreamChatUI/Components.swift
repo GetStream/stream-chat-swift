@@ -302,6 +302,9 @@ public struct Components {
 
     /// The view that shows a number of unread messages in channel.
     public var channelUnreadCountView: ChatChannelUnreadCountView.Type = ChatChannelUnreadCountView.self
+    
+    /// The view that is displayed when there are no channels on the list, i.e. when is on empty state.
+    public var channelListEmptyView: ChatChannelListEmptyView.Type = ChatChannelListEmptyView.self
 
     // MARK: - Composer components
 

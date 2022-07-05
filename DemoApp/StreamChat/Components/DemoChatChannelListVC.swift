@@ -43,6 +43,11 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         ]
         createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
         hiddenChannelsButton.addTarget(self, action: #selector(didTapHiddenChannelsButton), for: .touchUpInside)
+        
+        emptyView.actionButtonPressed = { [weak self] in
+            guard let self = self else { return }
+            self.didTapCreateNewChannel(self)
+        }
     }
 
     @objc private func didTapCreateNewChannel(_ sender: Any) {

@@ -42,6 +42,10 @@ open class ChatChannelListVC: _ViewController,
             .withoutAutoresizingMaskConstraints
             .withAccessibilityIdentifier(identifier: "collectionView")
     
+    /// The view that is displayed when there are no channels on the list, i.e. when is on empty state.
+    open lazy var emptyView: ChatChannelListEmptyView = components.channelListEmptyView.init()
+        .withoutAutoresizingMaskConstraints
+    
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
     open private(set) lazy var userAvatarView: CurrentChatUserAvatarView = components
         .currentUserAvatarView.init()
@@ -136,6 +140,8 @@ open class ChatChannelListVC: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
         view.embed(collectionView)
+        view.embed(emptyView)
+        emptyView.isHidden = true
         collectionView.addSubview(loadingIndicator)
         loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
     }
@@ -316,6 +322,19 @@ open class ChatChannelListVC: _ViewController,
         default:
             loadingIndicator.stopAnimating()
         }
+        
+        let shouldHideEmptyView: Bool
+
+        switch state {
+        case .initialized:
+            shouldHideEmptyView = true
+        case .localDataFetched, .remoteDataFetched:
+            shouldHideEmptyView = !self.controller.channels.isEmpty
+        case .localDataFetchFailed, .remoteDataFetchFailed:
+            shouldHideEmptyView = emptyView.isHidden
+        }
+
+        emptyView.isHidden = shouldHideEmptyView
     }
 
     private func getChannel(at indexPath: IndexPath) -> ChatChannel? {
