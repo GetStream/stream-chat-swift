@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.18.0)
+_July 05, 2022_
+
 ## StreamChat
 ### ✅ Added
 - Added missing `ChannelListFilterScope` and `MemberListFilterScope` filter keys [#2119](https://github.com/GetStream/stream-chat-swift/issues/2119)
@@ -15,8 +20,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Allow sending giphy messages programmatically [#2124](https://github.com/GetStream/stream-chat-swift/pull/2124)
-- Allow scroll automatically to the bottom when sending a giphy from the middle of the message list [#2130](https://github.com/GetStream/stream-chat-swift/pull/2130)
 - JSON decoding is now more robust, single incomplete/broken object won't disable whole channel list [#2126](https://github.com/GetStream/stream-chat-swift/issues/2126)
+
+## StreamChatUI
+### 🐞 Fixed
+- Allow scroll automatically to the bottom when sending a giphy from the middle of the message list [#2130](https://github.com/GetStream/stream-chat-swift/pull/2130)
 
 # [4.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.17.0)
 _June 22, 2022_
