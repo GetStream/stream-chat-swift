@@ -112,7 +112,7 @@ class MessageRepository {
     ) {
         log.error("Sending the message with id \(messageId) failed with error: \(error)")
         
-        let isBounced = error is ClientError.BouncedMessageError
+        let isBounced = (error as? ClientError)?.isBouncedMessageError ?? false
         
         markMessageAsFailedToSend(id: messageId, isBounced: isBounced) {
             completion(.failure(.failedToSendMessage))

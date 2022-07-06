@@ -32,6 +32,10 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
 }
 
 extension ErrorPayload {
+    private enum ErrorCodes: Int {
+        case bouncedMessage = 73
+    }
+    
     /// Returns `true` if code is withing invalid token codes range.
     var isInvalidTokenError: Bool {
         ClosedRange.tokenInvalidErrorCodes ~= code
@@ -44,7 +48,7 @@ extension ErrorPayload {
     
     /// Returns `true` if internal status code is related to a moderation bouncing error.
     var isBouncedMessageError: Bool {
-        code == 73
+        code == ErrorCodes.bouncedMessage.rawValue
     }
 }
 

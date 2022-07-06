@@ -61,16 +61,19 @@ class MessageUpdater: Worker {
                 return
             }
             
-            messageDTO.isHardDeleted = hard || messageDTO.isBounced
+            let shouldBeHardDeleted = hard || messageDTO.isBounced
+            let shouldAllowLocallyStoredMessageDeletion = !isLocalStorageEnabled || messageDTO.isBounced
             
-            if messageDTO.existsOnlyLocally && (!isLocalStorageEnabled || messageDTO.isBounced) {
+            messageDTO.isHardDeleted = shouldBeHardDeleted
+            
+            if messageDTO.existsOnlyLocally && shouldAllowLocallyStoredMessageDeletion {
                 messageDTO.type = MessageType.deleted.rawValue
                 messageDTO.deletedAt = DBDate()
                 shouldDeleteOnBackend = false
                 
                 // Ensures bounced message deletion updates the channel preview. Bounced messages are not stored on the backend,
                 // so there would be no incoming websocket payload event `.messageDeleted` to trigger that update.
-                if messageDTO.isBounced, let channelDTO = messageDTO.previewOfChannel, let channelId = try? ChannelId(cid: channelDTO.cid) {
+                if let channelDTO = messageDTO.previewOfChannel, let channelId = try? ChannelId(cid: channelDTO.cid) {
                     channelDTO.previewMessage = session.preview(for: channelId)
                 }
             } else {
