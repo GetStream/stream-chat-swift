@@ -155,7 +155,7 @@ final class MessageController_Tests: XCTestCase {
             text: .unique
         )
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true)
+            try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
         }
         
         // Assert the controller's `message` is up-to-date
@@ -210,8 +210,8 @@ final class MessageController_Tests: XCTestCase {
         )
         
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: reply1, for: self.cid, syncOwnReactions: true)
-            try $0.saveMessage(payload: reply2, for: self.cid, syncOwnReactions: true)
+            try $0.saveMessage(payload: reply1, for: self.cid, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: reply2, for: self.cid, syncOwnReactions: true, cache: nil)
         }
         
         // Set top-to-bottom ordering
@@ -292,9 +292,9 @@ final class MessageController_Tests: XCTestCase {
         
         // Save messages
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: reply1, for: cid, syncOwnReactions: true)
-            try $0.saveMessage(payload: reply2, for: cid, syncOwnReactions: true)
-            try $0.saveMessage(payload: reply3, for: cid, syncOwnReactions: true)
+            try $0.saveMessage(payload: reply1, for: cid, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: reply2, for: cid, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: reply3, for: cid, syncOwnReactions: true, cache: nil)
         }
         
         // Check if the replies are correct
@@ -343,8 +343,8 @@ final class MessageController_Tests: XCTestCase {
 
         // Save messages
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: ownReply, for: cid, syncOwnReactions: true)
-            try $0.saveMessage(payload: otherReply, for: cid, syncOwnReactions: true)
+            try $0.saveMessage(payload: ownReply, for: cid, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: otherReply, for: cid, syncOwnReactions: true, cache: nil)
         }
 
         // Only own reply should be visible
@@ -392,8 +392,8 @@ final class MessageController_Tests: XCTestCase {
 
         // Save messages
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: ownReply, for: cid, syncOwnReactions: true)
-            try $0.saveMessage(payload: otherReply, for: cid, syncOwnReactions: true)
+            try $0.saveMessage(payload: ownReply, for: cid, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: otherReply, for: cid, syncOwnReactions: true, cache: nil)
         }
 
         // both deleted replies should be hidden
@@ -441,8 +441,8 @@ final class MessageController_Tests: XCTestCase {
 
         // Save messages
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: ownReply, for: cid, syncOwnReactions: true)
-            try $0.saveMessage(payload: otherReply, for: cid, syncOwnReactions: true)
+            try $0.saveMessage(payload: ownReply, for: cid, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: otherReply, for: cid, syncOwnReactions: true, cache: nil)
         }
 
         // both deleted replies should be visible
@@ -490,8 +490,8 @@ final class MessageController_Tests: XCTestCase {
         
         // Save messages
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: nonShadowedReply, for: cid, syncOwnReactions: true)
-            try $0.saveMessage(payload: shadowedReply, for: cid, syncOwnReactions: true)
+            try $0.saveMessage(payload: nonShadowedReply, for: cid, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: shadowedReply, for: cid, syncOwnReactions: true, cache: nil)
         }
         
         // all replies should be visible
@@ -538,8 +538,8 @@ final class MessageController_Tests: XCTestCase {
         
         // Save messages
         try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: nonShadowedReply, for: cid, syncOwnReactions: true)
-            try $0.saveMessage(payload: shadowedReply, for: cid, syncOwnReactions: true)
+            try $0.saveMessage(payload: nonShadowedReply, for: cid, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: shadowedReply, for: cid, syncOwnReactions: true, cache: nil)
         }
         
         // only non-shadowed reply should be visible
@@ -608,7 +608,7 @@ final class MessageController_Tests: XCTestCase {
             authorUserId: currentUserId
         )
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true)
+            try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
         }
         env.messageUpdater.getMessage_completion?(nil)
         
@@ -645,7 +645,7 @@ final class MessageController_Tests: XCTestCase {
             text: "new text"
         )
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true)
+            try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
         }
         env.messageUpdater.getMessage_completion?(nil)
         
@@ -683,7 +683,7 @@ final class MessageController_Tests: XCTestCase {
         
         var replyModel: ChatMessage?
         try client.databaseContainer.writeSynchronously { session in
-            replyModel = try session.saveMessage(payload: reply, for: self.cid, syncOwnReactions: true)!.asModel()
+            replyModel = try session.saveMessage(payload: reply, for: self.cid, syncOwnReactions: true, cache: nil)!.asModel()
         }
     
         // Assert `insert` entity change is received by the delegate

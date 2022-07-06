@@ -1,0 +1,98 @@
+name: Cron Checks
+
+on:
+  schedule:
+    # Runs "At 03:00 every night"
+    - cron: '0 3 * * *'
+
+env:
+  HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
+
+jobs:
+  build-and-test-e2e-debug:
+    name: Test E2E UI (Debug)
+    timeout-minutes: 90
+    strategy:
+      matrix:
+        ios: [12.4, 13.7, 14.5, latest]
+        device: ["iPhone 8"]
+        include:
+          - ios: latest
+            device: "iPhone SE (3rd generation)"
+          - ios: latest
+            device: "iPad Air (5th generation)"
+      fail-fast: false
+    runs-on: macos-12
+    env:
+      GITHUB_EVENT: ${{ toJson(github.event) }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+      IOS_VERSION: ${{ matrix.ios }}
+      DEVICE_NAME: ${{ matrix.device }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_ALLURE: true
+    - name: Setup iOS ${{ matrix.ios }} Runtime
+      if: ${{ matrix.ios != 'latest' }}
+      run: xcversion simulators --install='iOS ${{ matrix.ios }}'
+    - name: Launch Allure TestOps
+      run: bundle exec fastlane allure_launch cron:true
+    - name: Run UI Tests (Debug)
+      run: bundle exec fastlane test_e2e_mock cron:true device:"${{ matrix.device }}" ios:"${{ matrix.ios }}"
+    - name: Allure TestOps Upload
+      if: success() || failure()
+      run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
+    - name: Allure TestOps Launch Removal
+      if: cancelled()
+      run: bundle exec fastlane allure_launch_removal launch_id:$LAUNCH_ID
+      env:
+        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        job_name: "${{ github.workflow }}: ${{ github.job }}"
+        fields: message,commit,author,action,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: failure()
+
+
+  build-and-test-debug:
+    name: Test LLC (Debug)
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        xcode: [13.4.1, 13.1]
+        os: [macos-12]
+        include:
+          - xcode: 12.5.1
+            os: macos-11
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/bootstrap
+    - name: Run LLC Tests (Debug)
+      run: bundle exec fastlane test cron:true device:"iPhone 8"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+        XCODE_VERSION: ${{ matrix.xcode }}
+    - uses: test-summary/action@v1
+      with:
+        paths: fastlane/test_output/report.junit
+      if: failure()
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        job_name: "${{ github.workflow }}: ${{ github.job }}"
+        fields: message,commit,author,action,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: failure()

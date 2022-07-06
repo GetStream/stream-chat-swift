@@ -5,7 +5,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'].nil? ? '13.3.1' : ENV['XCODE_VERSION']
+xcode_version = ENV['XCODE_VERSION'] || '13.4.1'
 # The number of times the stress test suite is ran
 stress_tests_cycles = 50
 
@@ -298,6 +298,7 @@ lane :match_me do |options|
       app_identifier: [
         "io.getstream.StreamChat",
         "io.getstream.iOS.ChatDemoApp",
+        "io.getstream.iOS.ChatDemoAppTwo",
         "io.getstream.iOS.ChatDemoApp.DemoAppPush",
         "io.getstream.iOS.iMessageClone",
         "io.getstream.iOS.SlackClone",
@@ -415,13 +416,14 @@ lane :testflight_build do
   external_groups = []
   changelog =
     if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
-      "This is the build for Regression testing on release candidate v#{version_number}"
+      sha = ENV['GITHUB_SHA'] ? ENV['GITHUB_SHA'][0..8] : sh('git rev-parse --short HEAD')
+      "This is the build for Regression testing on release candidate v#{version_number} (sha: #{sha})."
     else
       external_groups << 'Public Link'
-      "This is the official sample app built with Stream's iOS Chat SDK v4.0. It's designed to highlight " \
-      'engaging features and new improvements to the SDK, but remember that this is just one possible ' \
-      'implementation. You can start your own by borrowing and customizing the code from this sample, ' \
-      "or build something completely different using Stream's components."
+      "This is the official sample app built with Stream's iOS Chat SDK v#{version_number}. It's designed " \
+      'to highlight engaging features and new improvements to the SDK, but remember that this is just one ' \
+      'possible implementation. You can start your own by borrowing and customizing the code from this ' \
+      "sample, or build something completely different using Stream's components."
     end
 
   pilot(
@@ -435,6 +437,12 @@ lane :testflight_build do
     reject_build_waiting_for_review: true,
     changelog: changelog
   )
+
+  next unless ENV['GITHUB_EVENT_NAME'] == 'pull_request'
+
+  pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
+  message = "Build for regression testing №#{build_number} has been uploaded to TestFlight 🎁"
+  sh("gh pr comment #{pr_number} -b '#{message}'")
 end
 
 desc "Get next PR number from github to be used in CHANGELOG"
@@ -470,9 +478,11 @@ end
 
 desc "Runs tests in Debug config"
 lane :test do |options|
-  next unless testing_required?(:unit)
+  next unless check_required?(:unit)
 
   add_ci_env_var_to("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
+
+  number_of_retries = options[:cron] ? 1 : 0
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -481,27 +491,33 @@ lane :test do |options|
     configuration: "Debug",
     clean: true,
     devices: options[:device],
-    build_for_testing: options[:build_for_testing]
+    build_for_testing: options[:build_for_testing],
+    number_of_retries: number_of_retries
   )
 end
 
 desc "Runs e2e ui tests using mock server in Debug config"
 lane :test_e2e_mock do |options|
-  next unless testing_required?(:e2e)
+  next unless check_required?(:e2e)
 
   add_ci_env_var_to('../StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan')
+
+  ios = options[:ios]
+  device = ios && ios != 'latest' ? "#{options[:device]} (#{ios})" : options[:device]
+  build_for_testing = is_ci && options[:cron].nil?
+  number_of_retries = options[:cron] ? 2 : 1
 
   scan_options = {
     project: 'StreamChat.xcodeproj',
     scheme: 'StreamChatUITestsApp',
     testplan: 'StreamChatUITestsApp',
     configuration: 'Debug',
-    devices: options[:device],
-    number_of_retries: 1
+    devices: device,
+    number_of_retries: number_of_retries
   }
-  scan(scan_options.merge(clean: true, build_for_testing: is_ci))
+  scan(scan_options.merge(clean: true, build_for_testing: build_for_testing))
 
-  if is_ci
+  if build_for_testing
     parallelize_tests_on_ci(
       scan: scan_options,
       derived_data: lane_context[SharedValues::SCAN_DERIVED_DATA_PATH],
@@ -530,7 +546,7 @@ end
 
 desc "Runs ui tests in Debug config"
 lane :test_ui do |options|
-  next unless testing_required?(:ui)
+  next unless check_required?(:ui)
 
   add_ci_env_var_to('../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
 
@@ -698,6 +714,8 @@ lane :build_youtube_clone do |options|
 end
 
 def build_example_app(scheme, options)
+  return unless check_required?(:sample_apps)
+
   scan(
     project: "StreamChat.xcodeproj",
     scheme: scheme,
@@ -707,19 +725,10 @@ def build_example_app(scheme, options)
   )
 end
 
-desc "Build Docs Snippets target"
-lane :build_docs_snippets do |options|
-  scan(
-    project: "StreamChat.xcodeproj",
-    scheme: "DocsSnippets",
-    clean: true,
-    build_for_testing: true,
-    devices: options[:device]
-  )
-end
-
 desc "Test SPM Integration"
-lane :spm_integration do |options|
+lane :spm_integration do
+  next unless check_required?(:integration)
+
   build_app(
     project: "Integration/SPM/SwiftPackageManager.xcodeproj",
     scheme: "SwiftPackageManager",
@@ -731,6 +740,7 @@ end
 
 desc "Test CocoaPods Integration"
 lane :cocoapods_integration do
+  next unless check_required?(:integration)
 
   cocoapods(
     clean_install: true,
@@ -785,20 +795,24 @@ lane :emerge_upload do
   )
 end
 
-def testing_required?(type)
+def check_required?(type)
   return true if ENV['GITHUB_EVENT_NAME'] != 'pull_request'
 
   sources = {
-    e2e: %w[Sources StreamChatUITestsAppUITests StreamChatUITestsApp],
+    e2e: %w[Sources StreamChatUITestsAppUITests StreamChatUITestsApp StreamChat.xcodeproj],
     unit: %w[Sources Tests StreamChat.xcodeproj],
-    ui: %w[Sources Tests/StreamChatUITests Tests/UISDKdocumentationTests]
+    ui: %w[Sources Tests/StreamChatUITests Tests/UISDKdocumentationTests StreamChat.xcodeproj],
+    sample_apps: %w[Sources Examples DemoApp StreamChatSample StreamChat.xcodeproj],
+    integration: %w[Sources Integration StreamChat.xcodeproj]
   }
 
   pr_number = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']['number']
 
-  changed_files = sh("gh pr view #{pr_number} --json files -q '.files[].path'")
+  changed_files = sh("gh pr view #{pr_number} --json files -q '.files[].path'").split("\n")
 
-  changed_files = changed_files.split("\n").select do |path|
+  return true if changed_files.size == 100 # TODO: https://github.com/cli/cli/issues/5368
+
+  changed_files.select! do |path|
     sources[type.to_sym].any? { |required| path.start_with?(required) }
   end
 

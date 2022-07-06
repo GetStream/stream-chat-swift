@@ -349,7 +349,11 @@ class MessageDTO: NSManagedObject {
         load(by: id, context: context).first
     }
     
-    static func loadOrCreate(id: String, context: NSManagedObjectContext) -> MessageDTO {
+    static func loadOrCreate(id: String, context: NSManagedObjectContext, cache: PreWarmedCache?) -> MessageDTO {
+        if let cachedObject = cache?.model(for: id, context: context, type: MessageDTO.self) {
+            return cachedObject
+        }
+
         if let existing = load(id: id, context: context) {
             return existing
         }
@@ -451,8 +455,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         guard let channelDTO = ChannelDTO.load(cid: cid, context: self) else {
             throw ClientError.ChannelDoesNotExist(cid: cid)
         }
-        
-        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self)
+
+        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self, cache: nil)
         
         // We make `createdDate` 0.1 second bigger than Channel's most recent message
         // so if the local time is not in sync, the message will still appear in the correct position
@@ -519,9 +523,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return message
     }
 
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO {
+    func saveMessage(
+        payload: MessagePayload,
+        channelDTO: ChannelDTO,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
         let cid = try ChannelId(cid: channelDTO.cid)
-        let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
+        let dto = MessageDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 
         dto.text = payload.text
         dto.createdAt = payload.createdAt.bridgeDate
@@ -569,7 +578,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         if let quotedMessage = payload.quotedMessage {
-            dto.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channelDTO, syncOwnReactions: false)
+            dto.quotedMessage = try saveMessage(
+                payload: quotedMessage,
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                cache: cache
+            )
         } else if let quotedMessageId = payload.quotedMessageId {
             // In case we do not have a fully formed quoted message in the payload,
             // we check for quotedMessageId. This can happen in the case of nested quoted messages.
@@ -602,13 +616,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.latestReactions = payload
             .latestReactions
-            .compactMap { try? saveReaction(payload: $0) }
+            .compactMap { try? saveReaction(payload: $0, cache: cache) }
             .map(\.id)
 
         if syncOwnReactions {
             dto.ownReactions = payload
                 .ownReactions
-                .compactMap { try? saveReaction(payload: $0) }
+                .compactMap { try? saveReaction(payload: $0, cache: cache) }
                 .map(\.id)
         }
 
@@ -648,7 +662,19 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return dto
     }
 
-    func saveMessage(payload: MessagePayload, for cid: ChannelId?, syncOwnReactions: Bool = true) throws -> MessageDTO? {
+    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool = true) -> [MessageDTO] {
+        let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
+        return messagesPayload.messages.compactMapLoggingError {
+            try saveMessage(payload: $0, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
+        }
+    }
+
+    func saveMessage(
+        payload: MessagePayload,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool = true,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO? {
         guard payload.channel != nil || cid != nil else {
             throw ClientError.MessagePayloadSavingFailure("""
             Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
@@ -664,7 +690,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         var channelDTO: ChannelDTO?
 
         if let channelPayload = payload.channel {
-            channelDTO = try saveChannel(payload: channelPayload, query: nil)
+            channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: cache)
         } else if let cid = cid {
             channelDTO = ChannelDTO.load(cid: cid, context: self)
         } else {
@@ -677,11 +703,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return nil
         }
         
-        return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions)
+        return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
     }
     
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
-        guard let messageDTO = try saveMessage(payload: payload, for: nil) else {
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO? {
+        guard let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache) else {
             return nil
         }
 
@@ -739,7 +765,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             message: message,
             type: type,
             user: currentUserDTO.user,
-            context: self
+            context: self,
+            cache: nil
         )
 
         // make sure we update the reactionScores for the message in a way that works for new or updated reactions
@@ -803,6 +830,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     
     func preview(for cid: ChannelId) -> MessageDTO? {
         MessageDTO.preview(for: cid.rawValue, context: self)
+    }
+
+    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.results.compactMapLoggingError {
+            try saveMessage(payload: $0.message, for: query, cache: cache)
+        }
     }
 }
 

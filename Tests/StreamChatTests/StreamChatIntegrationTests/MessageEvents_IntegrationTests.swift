@@ -157,11 +157,11 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save channel to database since it must exist when we get this event
-        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
+        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageNewEvent)
@@ -194,11 +194,11 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save channel to database since it must exist when we get this event
-        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
+        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageUpdatedEvent)
@@ -229,11 +229,11 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save channel to database since it must exist when we get this event
-        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
+        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageDeletedEvent)
@@ -263,7 +263,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save channel to database since it must exist when we get this event
-        _ = try session.saveChannel(payload: .dummy(cid: eventPayload.cid!), query: nil)
+        _ = try session.saveChannel(payload: .dummy(cid: eventPayload.cid!), query: nil, cache: nil)
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)

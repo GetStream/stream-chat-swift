@@ -1,7 +1,6 @@
 excluded:
   - Scripts
   - Package.swift
-  - DocsSnippets
   - Dependencies
   - Sources/StreamChatUI/Generated
   - Sources/StreamChatUI/StreamSwiftyGif

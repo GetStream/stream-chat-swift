@@ -72,7 +72,7 @@ class MessageListPage {
         static var inputField: XCUIElement { app.otherElements["inputTextContainer"] }
         static var textView: XCUIElement { inputField.textViews.firstMatch }
         static var cooldown: XCUIElement { app.staticTexts["cooldownLabel"] }
-        static var cutButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Cut'")).firstMatch }
+        static var selectAllButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Select All'")).firstMatch }
     }
     
     enum Reactions {
@@ -209,14 +209,6 @@ class MessageListPage {
             attachmentActionButton(in: messageCell, label: "Cancel")
         }
 
-        static func giphyImageView(in messageCell: XCUIElement) -> XCUIElement {
-            messageCell.images["imageView"]
-        }
-
-        static func giphyBadge(in messageCell: XCUIElement) -> XCUIElement {
-            messageCell.images["lightning"]
-        }
-
         static func giphyLabel(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["GIPHY"]
         }
@@ -229,29 +221,53 @@ class MessageListPage {
         static var deletedMessagePlaceholder: String {
             L10n.Message.deletedMessagePlaceholder
         }
+        
+        static func images(in messageCell: XCUIElement) -> XCUIElementQuery {
+            messageCell.images.matching(NSPredicate(format: "identifier LIKE 'imageView'"))
+        }
+        
+        static func fullscreenImage() -> XCUIElement {
+            app.cells["ImageAttachmentGalleryCell"].images.firstMatch
+        }
+        
+        static func fileNames(in messageCell: XCUIElement) -> XCUIElementQuery {
+            messageCell.staticTexts.matching(NSPredicate(format: "identifier LIKE 'fileNameLabel'"))
+        }
+        
+        static func videoPlayer() -> XCUIElement {
+            app.otherElements["PlayerView"]
+        }
     }
     
     enum PopUpButtons {
         static var cancel: XCUIElement {
-            app.scrollViews.buttons.matching(NSPredicate(format: "label LIKE 'Cancel'")).firstMatch
+            app.buttons.matching(NSPredicate(format: "label LIKE 'Cancel'")).firstMatch
         }
         
         static var delete: XCUIElement {
-            app.scrollViews.buttons.matching(NSPredicate(format: "label LIKE 'Delete'")).firstMatch
+            app.buttons.matching(NSPredicate(format: "label LIKE 'Delete'")).firstMatch
         }
     }
     
     enum AttachmentMenu {
         static var fileButton: XCUIElement {
-            app.scrollViews.buttons.matching(NSPredicate(format: "label LIKE 'File'")).firstMatch
+            app.buttons.matching(NSPredicate(format: "label LIKE 'File'")).firstMatch
         }
         
         static var photoOrVideoButton: XCUIElement {
-            app.scrollViews.buttons.matching(NSPredicate(format: "label LIKE 'Photo or Video'")).firstMatch
+            app.buttons.matching(NSPredicate(format: "label LIKE 'Photo or Video'")).firstMatch
         }
         
         static var cancelButton: XCUIElement {
-            app.scrollViews.buttons.matching(NSPredicate(format: "label LIKE 'Cancel'")).firstMatch
+            app.buttons.matching(NSPredicate(format: "label LIKE 'Cancel'")).firstMatch
+        }
+        
+        static var images: XCUIElementQuery {
+            if ProcessInfo().operatingSystemVersion.majorVersion > 13 {
+                return app.scrollViews.images
+            } else {
+                return app.collectionViews.cells
+            }
         }
     }
     

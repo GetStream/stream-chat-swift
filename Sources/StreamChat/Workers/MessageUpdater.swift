@@ -27,7 +27,7 @@ class MessageUpdater: Worker {
             switch $0 {
             case let .success(boxed):
                 self.database.write({ session in
-                    try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true)
+                    try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true, cache: nil)
                 }, completion: { error in
                     completion?(error)
                 })
@@ -221,7 +221,7 @@ class MessageUpdater: Worker {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    try payload.messages.forEach { try session.saveMessage(payload: $0, for: cid, syncOwnReactions: true) }
+                    session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
                 }, completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -251,10 +251,7 @@ class MessageUpdater: Worker {
             case let .success(payload):
                 var reactions: [ChatMessageReaction] = []
                 self.database.write({ session in
-                    try payload.reactions.forEach {
-                        let reaction = try session.saveReaction(payload: $0).asModel()
-                        reactions.append(reaction)
-                    }
+                    reactions = try session.saveReactions(payload: payload).map { try $0.asModel() }
                 }, completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -533,7 +530,7 @@ class MessageUpdater: Worker {
                 switch $0 {
                 case let .success(payload):
                     self.database.write({ session in
-                        try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true)
+                        try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
                     }, completion: { error in
                         completion?(error)
                     })
@@ -555,10 +552,8 @@ class MessageUpdater: Worker {
                         let dto = session.saveQuery(query: query)
                         dto.messages.removeAll()
                     }
-                    
-                    for boxedMessage in payload.results {
-                        try session.saveMessage(payload: boxedMessage.message, for: query)
-                    }
+
+                    session.saveMessageSearch(payload: payload, for: query)
                 } completion: { error in
                     completion?(error)
                 }
@@ -585,7 +580,8 @@ class MessageUpdater: Worker {
                     try session.saveMessage(
                         payload: boxedMessage.message,
                         for: boxedMessage.message.cid,
-                        syncOwnReactions: false
+                        syncOwnReactions: false,
+                        cache: nil
                     )
                 } completion: { completion?($0) }
             case let .failure(error):

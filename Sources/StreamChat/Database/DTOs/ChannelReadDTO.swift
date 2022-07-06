@@ -45,15 +45,20 @@ class ChannelReadDTO: NSManagedObject {
         load(by: fetchRequest(for: cid, userId: userId), context: context).first
     }
     
-    static func loadOrCreate(cid: ChannelId, userId: String, context: NSManagedObjectContext) -> ChannelReadDTO {
+    static func loadOrCreate(
+        cid: ChannelId,
+        userId: String,
+        context: NSManagedObjectContext,
+        cache: PreWarmedCache?
+    ) -> ChannelReadDTO {
         let request = fetchRequest(for: cid, userId: userId)
         if let existing = load(by: request, context: context).first {
             return existing
         }
         
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
-        new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context)
-        new.user = UserDTO.loadOrCreate(id: userId, context: context)
+        new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context, cache: cache)
+        new.user = UserDTO.loadOrCreate(id: userId, context: context, cache: cache)
         return new
     }
     
@@ -66,9 +71,10 @@ class ChannelReadDTO: NSManagedObject {
 extension NSManagedObjectContext {
     func saveChannelRead(
         payload: ChannelReadPayload,
-        for cid: ChannelId
+        for cid: ChannelId,
+        cache: PreWarmedCache?
     ) throws -> ChannelReadDTO {
-        let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self)
+        let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self, cache: cache)
         
         dto.user = try saveUser(payload: payload.user)
         
@@ -95,7 +101,7 @@ extension NSManagedObjectContext {
         } else if let channel = channel(cid: cid), let member = channel.members.first(where: { $0.user.id == userId }) {
             // We don't have a read object, but the user is a member.
             // We can safely create a read object for the user
-            let read = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
+            let read = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self, cache: nil)
             read.channel = channel
             read.user = member.user
             read.lastReadAt = at.bridgeDate

@@ -108,7 +108,10 @@ open class ChatMessageListRouter:
     ///
     @available(iOSApplicationExtension, unavailable)
     open func showLinkPreview(link: URL) {
-        UIApplication.shared.open(link)
+        UIApplication.shared.open(link) { success in
+            guard success == false else { return }
+            log.error("Failed to open URL from link preview: \(link)")
+        }
     }
 
     /// Shows a View Controller that show the detail of a file attachment.

@@ -269,7 +269,7 @@ extension DatabaseContainer {
                 reactionCounts: reactionCounts
             )
             
-            let messageDTO = try session.saveMessage(payload: message, channelDTO: channelDTO, syncOwnReactions: true)
+            let messageDTO = try session.saveMessage(payload: message, channelDTO: channelDTO, syncOwnReactions: true, cache: nil)
             messageDTO.localMessageState = localState
             messageDTO.reactionCounts = reactionCounts.mapKeys(\.rawValue)
             messageDTO.reactionScores = reactionScores.mapKeys(\.rawValue)
@@ -284,7 +284,7 @@ extension DatabaseContainer {
                     extraData: extraData
                 )
                 
-                let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true)!
+                let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true, cache: nil)!
                 messageDTO.replies.insert(replyDTO)
             }
         }
@@ -312,7 +312,7 @@ extension DatabaseContainer {
                 channel: channelPayload.channel
             )
             
-            try session.saveMessage(payload: message, for: searchQuery)
+            try session.saveMessage(payload: message, for: searchQuery, cache: nil)
         }
     }
     
@@ -339,7 +339,7 @@ extension DatabaseContainer {
                     channel: channelPayload.channel
                 )
                 
-                try session.saveMessage(payload: message, for: searchQuery)
+                try session.saveMessage(payload: message, for: searchQuery, cache: nil)
             }
         }
     }
@@ -363,7 +363,8 @@ extension DatabaseContainer {
                     isMemberBanned: isMemberBanned
                 ),
                 channelId: query?.cid ?? cid,
-                query: query
+                query: query,
+                cache: nil
             )
         }
     }

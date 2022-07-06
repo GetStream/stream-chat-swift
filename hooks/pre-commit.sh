@@ -6,4 +6,3 @@
 ./hooks/git-format-staged --formatter 'mint run swiftformat --config .swiftformat stdin' 'DemoApp/*.swift'
 ./hooks/git-format-staged --formatter 'mint run swiftformat --config .swiftformat stdin' 'Examples/*.swift'
 ./hooks/git-format-staged --formatter 'mint run swiftformat --config .swiftformat stdin' 'Integration/*.swift'
-./hooks/git-format-staged --formatter 'mint run swiftformat --config .swiftformat-snippets stdin' 'DocsSnippets/*.swift'

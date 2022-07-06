@@ -37,7 +37,7 @@ final class SyncOperations_Tests: XCTestCase {
     func test_GetChannelIdsOperation_withChannels() throws {
         try database.writeSynchronously { session in
             let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query)
+            try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query, cache: nil)
         }
 
         let context = SyncContext(lastSyncAt: .init())

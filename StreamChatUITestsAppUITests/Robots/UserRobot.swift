@@ -117,14 +117,11 @@ extension UserRobot {
     
     @discardableResult
     func clearComposer() -> Self {
-        let currentText = composer.textView.text
-        if currentText.isEmpty { return self }
-        
-        for _ in (0...currentText.split(separator: "\n").count - 1) {
-            composer.inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
-            composer.cutButton.wait().safeTap()
+        if !composer.textView.text.isEmpty {
+            composer.inputField.tap()
+            composer.selectAllButton.wait().safeTap()
+            composer.inputField.typeText(XCUIKeyboardKey.delete.rawValue)
         }
-        
         return self
     }
     
@@ -194,10 +191,24 @@ extension UserRobot {
                     line: line)
         return self
     }
+    
+    @discardableResult
+    func openThread(messageCellIndex: Int = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.threadButton(in: messageCell).wait().safeTap()
+        return self
+    }
 
     @discardableResult
     func showThread(forMessageAt index: Int = 0) -> Self {
         selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: index)
+    }
+    
+    @discardableResult
+    func tapOnMessage(at messageCellIndex: Int? = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        messageCell.waitForHitPoint().tap()
+        return self
     }
     
     @discardableResult
@@ -245,8 +256,7 @@ extension UserRobot {
 
     @discardableResult
     func scrollMessageListUp() -> Self {
-        let topMessage = MessageListPage.cells.element(boundBy: 0)
-        MessageListPage.list.press(forDuration: 0.1, thenDragTo: topMessage)
+        MessageListPage.list.swipeDown()
         return self
     }
     
@@ -321,6 +331,17 @@ extension UserRobot {
     func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
         let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
         MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func uploadImage(count: Int = 1, send: Bool = true) -> Self {
+        for i in 1...count {
+            MessageListPage.Composer.attachmentButton.wait().safeTap()
+            MessageListPage.AttachmentMenu.photoOrVideoButton.wait().safeTap()
+            MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i].safeTap()
+        }
+        if send { sendMessage("", waitForAppearance: false) }
         return self
     }
 }

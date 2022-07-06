@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamChat
 import StreamChatUI
 import UIKit
 
@@ -10,8 +11,11 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
     // For the propose of the demo app, we add an extra hard delete message to test it.
     override var messageActions: [ChatMessageActionItem] {
         var actions = super.messageActions
-        if message?.isSentByCurrentUser == true && AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
-            actions.append(hardDeleteActionItem())
+        if message?.isSentByCurrentUser == true {
+            actions.append(pinMessageActionItem())
+            if AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
+                actions.append(hardDeleteActionItem())
+            }
         }
         
         if message?.isBounced == false {
@@ -19,6 +23,31 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
         }
         
         return actions
+    }
+    
+    func pinMessageActionItem() -> PinMessageActionItem {
+        PinMessageActionItem(
+            title: message?.isPinned == false ? "Pin to Conversation" : "Unpin from Conservation",
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                if self.messageController.message?.isPinned == false {
+                    self.messageController.pin(.noExpiration) { error in
+                        if let error = error {
+                            log.error("Error when pinning message: \(error)")
+                        }
+                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                    }
+                } else {
+                    self.messageController.unpin { error in
+                        if let error = error {
+                            log.error("Error when unpinning message: \(error)")
+                        }
+                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                    }
+                }
+            },
+            appearance: appearance
+        )
     }
 
     func hardDeleteActionItem() -> ChatMessageActionItem {
@@ -49,6 +78,23 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             appearance: appearance
         )
     }
+    
+    struct PinMessageActionItem: ChatMessageActionItem {
+        var title: String
+        var isDestructive: Bool { false }
+        let icon: UIImage
+        let action: (ChatMessageActionItem) -> Void
+        
+        init(
+            title: String,
+            action: @escaping (ChatMessageActionItem) -> Void,
+            appearance: Appearance = .default
+        ) {
+            self.title = title
+            self.action = action
+            icon = UIImage(systemName: "pin")!
+        }
+    }
 
     struct HardDeleteActionItem: ChatMessageActionItem {
         var title: String { "Hard Delete Message" }
@@ -76,7 +122,7 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             appearance: Appearance = .default
         ) {
             self.action = action
-            icon = UIImage(systemName: "flag.fill")!
+            icon = UIImage(systemName: "flag")!
         }
     }
 }

@@ -103,7 +103,7 @@ final class ChannelListController_Tests: XCTestCase {
     func test_changesAreReported_beforeCallingSynchronize() throws {
         // Save a new channel to DB
         client.databaseContainer.write { session in
-            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query, cache: nil)
         }
         
         // Assert the channel is loaded
@@ -118,14 +118,18 @@ final class ChannelListController_Tests: XCTestCase {
         
         try client.databaseContainer.writeSynchronously { session in
             // Insert a channel matching the query
-            try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQuery), query: self.query)
+            try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQuery), query: self.query, cache: nil)
             
             // Insert a deleted channel matching the query
-            let dto = try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQueryDeleted), query: self.query)
+            let dto = try session.saveChannel(
+                payload: self.dummyPayload(with: cidMatchingQueryDeleted),
+                query: self.query,
+                cache: nil
+            )
             dto.deletedAt = .unique
             
             // Insert a channel not matching the query
-            try session.saveChannel(payload: self.dummyPayload(with: cidNotMatchingQuery), query: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cidNotMatchingQuery), query: nil, cache: nil)
         }
         
         // Assert the existing channel is loaded
@@ -267,7 +271,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Create a channel in the DB matching the query
         let channelId = ChannelId.unique
         try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: .dummy(cid: channelId), query: self.query)
+            try $0.saveChannel(payload: .dummy(cid: channelId), query: self.query, cache: nil)
         }
         
         // Simulate successful network call.
@@ -288,7 +292,7 @@ final class ChannelListController_Tests: XCTestCase {
         let cid: ChannelId = .unique
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+                try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
             }, completion: $0)
         }
         
@@ -306,7 +310,7 @@ final class ChannelListController_Tests: XCTestCase {
         let channelPayload = dummyPayload(with: cid)
         var channel: ChatChannel!
         try database.writeSynchronously { session in
-            let dto = try session.saveChannel(payload: channelPayload, query: self.query)
+            let dto = try session.saveChannel(payload: channelPayload, query: self.query, cache: nil)
             channel = try dto.asModel()
         }
         
@@ -332,7 +336,7 @@ final class ChannelListController_Tests: XCTestCase {
         
         // Insert a new channel to DB
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: newCid), query: nil)
+            try session.saveChannel(payload: .dummy(cid: newCid), query: nil, cache: nil)
         }
         
         // Assert the resulting value is not inserted
@@ -341,7 +345,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Insert a new channel to DB
         let insertedCid = ChannelId.unique
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: insertedCid), query: nil)
+            try session.saveChannel(payload: .dummy(cid: insertedCid), query: nil, cache: nil)
         }
         
         // Assert the resulting value is inserted
@@ -358,7 +362,7 @@ final class ChannelListController_Tests: XCTestCase {
         let channelPayload = dummyPayload(with: cid)
         var channel: ChatChannel!
         try database.writeSynchronously { session in
-            let dto = try session.saveChannel(payload: channelPayload, query: self.query)
+            let dto = try session.saveChannel(payload: channelPayload, query: self.query, cache: nil)
             channel = try dto.asModel()
         }
 
@@ -385,8 +389,8 @@ final class ChannelListController_Tests: XCTestCase {
         
         // Insert 2 channels to cid
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: shouldBeInsertedCid), query: nil)
-            try session.saveChannel(payload: .dummy(cid: shouldBeExcludedCid), query: nil)
+            try session.saveChannel(payload: .dummy(cid: shouldBeInsertedCid), query: nil, cache: nil)
+            try session.saveChannel(payload: .dummy(cid: shouldBeExcludedCid), query: nil, cache: nil)
         }
         
         // Assert that 2 new channels are not linked
@@ -424,7 +428,7 @@ final class ChannelListController_Tests: XCTestCase {
         let channelPayload = dummyPayload(with: cid)
         var channel: ChatChannel!
         try database.writeSynchronously { session in
-            let dto = try session.saveChannel(payload: channelPayload, query: self.query)
+            let dto = try session.saveChannel(payload: channelPayload, query: self.query, cache: nil)
             channel = try dto.asModel()
         }
 
@@ -472,7 +476,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Save a channel not-linked to the current query
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: nil, cache: nil)
         }
         
         AssertAsync {
@@ -500,7 +504,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Save a channel linked to the current query
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
         }
         
         // Assert channel is linked
@@ -528,8 +532,8 @@ final class ChannelListController_Tests: XCTestCase {
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
-            let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
+            let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query, cache: nil)
             dto.isHidden = true
         }
         
@@ -550,8 +554,8 @@ final class ChannelListController_Tests: XCTestCase {
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
-            let dto = try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query, cache: nil)
+            let dto = try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
             dto.isHidden = true
         }
         
@@ -667,7 +671,7 @@ final class ChannelListController_Tests: XCTestCase {
     private func addOrUpdateChannel(cid: ChannelId, ownerId: String, query: ChannelListQuery?) throws {
         try database.writeSynchronously { session in
             let payload = self.dummyPayload(with: cid, channelExtraData: ["owner_id": .string(ownerId)])
-            try session.saveChannel(payload: payload, query: query)
+            try session.saveChannel(payload: payload, query: query, cache: nil)
         }
     }
 
@@ -733,7 +737,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Simulate DB update
         let cid: ChannelId = .unique
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
         }
 
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: cid)).asModel()
@@ -790,7 +794,7 @@ final class ChannelListController_Tests: XCTestCase {
         controller.delegate = delegate
 
         client.databaseContainer.write { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
         }
 
         AssertAsync {

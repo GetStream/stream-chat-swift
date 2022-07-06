@@ -23,7 +23,7 @@ final class MessageReactionDTO: NSManagedObject {
     // internal field needed to sync data optimistically
     @NSManaged var version: String?
 
-    private static func createId(
+    static func createId(
         userId: String,
         messageId: MessageId,
         type: MessageReactionType
@@ -40,7 +40,11 @@ extension MessageReactionDTO {
         context: NSManagedObjectContext
     ) -> MessageReactionDTO? {
         let id = createId(userId: userId, messageId: messageId, type: type)
-        return load(by: id, context: context).first
+        return load(reactionId: id, context: context)
+    }
+
+    static func load(reactionId: String, context: NSManagedObjectContext) -> MessageReactionDTO? {
+        load(by: reactionId, context: context).first
     }
 
     static let notLocallyDeletedPredicates: NSPredicate = {
@@ -69,16 +73,21 @@ extension MessageReactionDTO {
         message: MessageDTO,
         type: MessageReactionType,
         user: UserDTO,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        cache: PreWarmedCache?
     ) -> MessageReactionDTO {
-        if let existing = load(userId: user.id, messageId: message.id, type: type, context: context) {
+        let reactionId = createId(userId: user.id, messageId: message.id, type: type)
+        if let cachedObject = cache?.model(for: reactionId, context: context, type: MessageReactionDTO.self) {
+            return cachedObject
+        }
+
+        if let existing = load(reactionId: reactionId, context: context) {
             return existing
         }
 
-        let id = createId(userId: user.id, messageId: message.id, type: type)
-        let request = fetchRequest(id: id)
+        let request = fetchRequest(id: reactionId)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
-        new.id = id
+        new.id = reactionId
         new.type = type.rawValue
         new.message = message
         new.user = user
@@ -92,8 +101,17 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
+    func saveReactions(payload: MessageReactionsPayload) -> [MessageReactionDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.reactions.compactMapLoggingError {
+            try saveReaction(payload: $0, cache: cache)
+        }
+    }
+
+    @discardableResult
     func saveReaction(
-        payload: MessageReactionPayload
+        payload: MessageReactionPayload,
+        cache: PreWarmedCache?
     ) throws -> MessageReactionDTO {
         guard let messageDTO = message(id: payload.messageId) else {
             throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
@@ -103,7 +121,8 @@ extension NSManagedObjectContext {
             message: messageDTO,
             type: payload.type,
             user: try saveUser(payload: payload.user),
-            context: self
+            context: self,
+            cache: cache
         )
 
         dto.score = Int64(clamping: payload.score)

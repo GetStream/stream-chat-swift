@@ -245,7 +245,6 @@ open class ChatMessageListVC: _ViewController,
             // Because we use an inverted table view, we need to avoid animations since they look odd.
             UIView.performWithoutAnimation {
                 listView.updateMessages(with: changes) { [weak self] in
-                    
                     if let newMessageInserted = changes.first(where: { ($0.isInsertion || $0.isMoved) && $0.indexPath.row == 0 })?.item {
                         if newMessageInserted.isSentByCurrentUser {
                             self?.listView.scrollToMostRecentMessage()
@@ -541,7 +540,7 @@ open class ChatMessageListVC: _ViewController,
         _ attachment: ChatMessageLinkAttachment,
         at indexPath: IndexPath?
     ) {
-        router.showLinkPreview(link: attachment.originalURL)
+        router.showLinkPreview(link: attachment.url)
     }
 
     open func didTapOnAttachment(

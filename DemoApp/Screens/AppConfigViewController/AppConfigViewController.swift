@@ -55,11 +55,14 @@ class AppConfigViewController: UITableViewController {
     }
 
     enum ConfigOption {
+        case info([DemoAppInfoOption])
         case demoApp([DemoAppConfigOption])
         case chatClient([ChatClientConfigOption])
 
         var numberOfOptions: Int {
             switch self {
+            case let .info(options):
+                return options.count
             case let .demoApp(options):
                 return options.count
             case let .chatClient(options):
@@ -73,6 +76,20 @@ class AppConfigViewController: UITableViewController {
                 return "Demo App Configuration"
             case .chatClient:
                 return "Chat Client Configuration"
+            case .info:
+                return "General Info"
+            }
+        }
+    }
+
+    enum DemoAppInfoOption: CustomStringConvertible, CaseIterable {
+        case pushConfiguration
+
+        var description: String {
+            switch self {
+            case .pushConfiguration:
+                let configuration = Bundle.pushProviderName ?? "Not set"
+                return "Push Configuration: \(configuration)"
             }
         }
     }
@@ -90,6 +107,7 @@ class AppConfigViewController: UITableViewController {
     }
 
     let options: [ConfigOption] = [
+        .info(DemoAppInfoOption.allCases),
         .demoApp(DemoAppConfigOption.allCases),
         .chatClient(ChatClientConfigOption.allCases)
     ]
@@ -118,6 +136,9 @@ class AppConfigViewController: UITableViewController {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
 
         switch options[indexPath.section] {
+        case let .info(options):
+            configureDemoAppInfoCell(cell, at: indexPath, options: options)
+
         case let .demoApp(options):
             configureDemoAppOptionsCell(cell, at: indexPath, options: options)
 
@@ -132,12 +153,26 @@ class AppConfigViewController: UITableViewController {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         switch options[indexPath.section] {
+        case .info:
+            break
+
         case let .demoApp(options):
             didSelectDemoAppOptionsCell(cell, at: indexPath, options: options)
 
         case let .chatClient(options):
             didSelectChatClientOptionsCell(cell, at: indexPath, options: options)
         }
+    }
+
+    // MAKR: - Demo App Info
+
+    private func configureDemoAppInfoCell(
+        _ cell: UITableViewCell,
+        at indexPath: IndexPath,
+        options: [DemoAppInfoOption]
+    ) {
+        let option = options[indexPath.row]
+        cell.textLabel?.text = option.description
     }
 
     // MARK: - Demo App Options

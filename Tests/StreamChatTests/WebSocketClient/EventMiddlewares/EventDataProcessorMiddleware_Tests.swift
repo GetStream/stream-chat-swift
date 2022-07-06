@@ -61,10 +61,11 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload]),
-                for: cid, syncOwnReactions: true
+                for: cid, syncOwnReactions: true,
+                cache: nil
             )
         }
 
@@ -106,8 +107,8 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)
         
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
-            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: true)
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: true, cache: nil)
         }
 
         let user = UserPayload.dummy(userId: .unique)
@@ -158,8 +159,8 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)
 
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
-            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: true)
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: true, cache: nil)
         }
 
         // Create reaction payload.

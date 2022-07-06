@@ -243,6 +243,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot
                 .login()
                 .openChannel()
+                .sendMessage("Hey")
         }
         WHEN("participant starts typing") {
             participantRobot.startTyping()
@@ -260,6 +261,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot
                 .login()
                 .openChannel()
+                .sendMessage("Hey")
         }
         WHEN("participant starts typing") {
             participantRobot.startTyping()
@@ -272,9 +274,13 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
-    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserSendsNewMessage() {
+    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserSendsNewMessage() throws {
         linkToScenario(withId: 193)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2020] Scroll on message list does not work well enough")
 
+        let count = 30
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
@@ -283,7 +289,7 @@ final class MessageList_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("channel is scrollable") {
-            participantRobot.sendMultipleMessages(repeatingText: "message", count: 50)
+            participantRobot.sendMultipleMessages(repeatingText: "message", count: count)
         }
         WHEN("user scrolls up") {
             userRobot.scrollMessageListUp()
@@ -299,7 +305,7 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageListScrollsDown_whenMessageListIsScrolledDown_andUserReceivesNewMessage() {
         linkToScenario(withId: 75)
 
-        let count = 50
+        let count = 30
         let message = "message"
         let newMessage = "New message"
 
@@ -322,6 +328,7 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageListDoesNotScrollDown_whenMessageListIsScrolledUp_andUserReceivesNewMessage() {
         linkToScenario(withId: 194)
 
+        let count = 30
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
@@ -330,7 +337,7 @@ final class MessageList_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("channel is scrollable") {
-            participantRobot.sendMultipleMessages(repeatingText: "message", count: 50)
+            participantRobot.sendMultipleMessages(repeatingText: "message", count: count)
         }
         WHEN("user scrolls up") {
             userRobot.scrollMessageListUp()
@@ -446,6 +453,59 @@ extension MessageList_Tests {
 
 // MARK: - Thread replies
 extension MessageList_Tests {
+    func test_threadReplyAppearsInThread_whenParticipantAddsThreadReply() {
+        linkToScenario(withId: 50)
+        
+        let message = "test message"
+        let threadReply = "thread reply"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("participant adds a thread reply to user's message") {
+            participantRobot.replyToMessageInThread(threadReply)
+        }
+        AND("user enters thread") {
+            userRobot.openThread()
+        }
+        THEN("user observes the thread reply in thread") {
+            userRobot.assertThreadReply(threadReply)
+        }
+    }
+    
+    func test_threadReplyAppearsInChannelAndThread_whenParticipantAddsThreadReplySentAlsoToChannel() {
+        linkToScenario(withId: 110)
+        
+        let message = "test message"
+        let threadReply = "thread reply"
+        
+        GIVEN("user opens the channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("participant adds a thread reply to user's message") {
+            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        THEN("user observes the thread reply in channel") {
+            userRobot.assertMessage(threadReply)
+        }
+        WHEN("user enters thread") {
+            userRobot.openThread()
+        }
+        THEN("user observes the thread reply in thread") {
+            userRobot.assertThreadReply(threadReply)
+        }
+    }
+    
     func test_threadReplyAppearsInChannelAndThread_whenUserAddsThreadReplySentAlsoToChannel() {
         linkToScenario(withId: 111)
 
@@ -580,7 +640,7 @@ extension MessageList_Tests {
             userRobot.showThread()
         }
         WHEN("participant starts typing in thread") {
-            participantRobot.startTypingInThread()
+            participantRobot.wait(1).startTypingInThread()
         }
         THEN("user observes typing indicator is shown") {
             let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
@@ -603,7 +663,7 @@ extension MessageList_Tests {
             userRobot.showThread()
         }
         WHEN("participant starts typing in thread") {
-            participantRobot.startTypingInThread()
+            participantRobot.wait(1).startTypingInThread()
         }
         AND("participant stops typing in thread") {
             participantRobot.stopTypingInThread()

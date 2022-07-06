@@ -82,7 +82,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         
         // Open a database session to simulate EventNotificationCenter
         try database.writeSynchronously {
-            try $0.saveChannel(payload: .dummy(cid: cid), query: nil)
+            try $0.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             // Handle the event
             _ = self.middleware.handle(event: event, session: $0)
         }

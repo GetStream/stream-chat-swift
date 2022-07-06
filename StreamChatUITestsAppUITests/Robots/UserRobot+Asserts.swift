@@ -209,7 +209,8 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let typingIndicatorView = MessageListPage.typingIndicator
+        let typingIndicatorView = MessageListPage.typingIndicator.wait()
+        XCTAssertTrue(typingIndicatorView.exists, "Element hidden", file: file, line: line)
         let typingUserText = typingIndicatorView.waitForText(typingUserName).text
         XCTAssert(typingUserText.contains(typingUserName), file: file, line: line)
         return self
@@ -322,12 +323,15 @@ extension UserRobot {
                                               line: UInt = #line) {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let cellHeight = messageCell.height
-        let textView = MessageListPage.Attributes.text(in: messageCell)
+        let textView = attributes.text(in: messageCell)
         let newLine = "new line"
-        let newText = linesCountShouldBeIncreased ? "\(textView.text)\n\(newLine)" : newLine
+        let newText = linesCountShouldBeIncreased ? "ok\n\(textView.text)\n\(newLine)" : newLine
         
         editMessage(newText, messageCellIndex: messageCellIndex)
-        assertMessage(newText, at: messageCellIndex, file: file, line: line)
+        if ProcessInfo().operatingSystemVersion.majorVersion > 12 {
+            // XCUITest does not get text from a cell after editing it on iOS 12
+            assertMessage(newText, at: messageCellIndex, file: file, line: line)
+        }
         
         if linesCountShouldBeIncreased {
             XCTAssertLessThan(cellHeight, messageCell.height, file: file, line: line)
@@ -470,9 +474,7 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
-        XCTAssertTrue(attributes.giphyImageView(in: cell).wait().exists)
         XCTAssertTrue(attributes.giphyLabel(in: cell).wait().exists)
-        XCTAssertTrue(attributes.giphyBadge(in: cell).wait().exists)
         XCTAssertFalse(attributes.giphySendButton(in: cell).exists)
         XCTAssertFalse(attributes.giphyShuffleButton(in: cell).exists)
         XCTAssertFalse(attributes.giphyCancelButton(in: cell).exists)
@@ -510,6 +512,54 @@ extension UserRobot {
                        "Keyboard should be \(isVisible ? "visible" : "hidden")",
                        file: file,
                        line: line)
+        return self
+    }
+}
+
+// MARK: Attachments
+extension UserRobot {
+    
+    @discardableResult
+    func assertImage(
+        isPresent: Bool,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        tapOnMessage(at: messageCellIndex)
+        let fullscreenImage = attributes.fullscreenImage().wait()
+        let errMessage = isPresent ? "There is no image" : "Image is presented"
+        XCTAssertTrue(fullscreenImage.exists, errMessage, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertVideo(
+        isPresent: Bool,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        tapOnMessage(at: messageCellIndex)
+        let player = attributes.videoPlayer().wait()
+        let errMessage = isPresent ? "There is no video" : "Video is presented"
+        XCTAssertTrue(player.exists, errMessage, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertFile(
+        count: Int = 1,
+        isPresent: Bool,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let fileNames = attributes.fileNames(in: messageCell)
+        let errMessage = isPresent ? "There are no files" : "Files are presented"
+        _ = isPresent ? fileNames.firstMatch.wait() : fileNames.firstMatch.waitForLoss()
+        XCTAssertEqual(fileNames.count, count, errMessage, file: file, line: line)
         return self
     }
 }

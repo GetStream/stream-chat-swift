@@ -301,7 +301,8 @@ final class MemberListController_Tests: XCTestCase {
                 try session.saveMember(
                     payload: member,
                     channelId: self.query.cid,
-                    query: self.query
+                    query: self.query,
+                    cache: nil
                 )
             }
         }
@@ -337,7 +338,7 @@ final class MemberListController_Tests: XCTestCase {
         // Save both members to the database and link to the query.
         try client.databaseContainer.writeSynchronously { session in
             for member in [member1, member2] {
-                try session.saveMember(payload: member, channelId: self.query.cid, query: self.query)
+                try session.saveMember(payload: member, channelId: self.query.cid, query: self.query, cache: nil)
             }
         }
         env.memberListUpdater!.load_completion!(nil)

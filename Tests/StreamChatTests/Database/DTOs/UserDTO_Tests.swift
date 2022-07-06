@@ -168,7 +168,7 @@ final class UserDTO_Tests: XCTestCase {
         
         // Save the channels to DB, but only user 1 is associated with the query
         try! database.writeSynchronously { session in
-            try session.saveUser(payload: payload1, query: query)
+            try session.saveUser(payload: payload1, query: query, cache: nil)
             try session.saveUser(payload: payload2)
         }
         
@@ -223,10 +223,10 @@ final class UserDTO_Tests: XCTestCase {
 
         // Save the users to DB. It doesn't matter which query we use because the filter for both of them is the same.
         try! database.writeSynchronously { session in
-            try session.saveUser(payload: payload1, query: queryWithLastActiveAtSorting)
-            try session.saveUser(payload: payload2, query: queryWithLastActiveAtSorting)
-            try session.saveUser(payload: payload3, query: queryWithLastActiveAtSorting)
-            try session.saveUser(payload: payload4, query: queryWithLastActiveAtSorting)
+            try session.saveUser(payload: payload1, query: queryWithLastActiveAtSorting, cache: nil)
+            try session.saveUser(payload: payload2, query: queryWithLastActiveAtSorting, cache: nil)
+            try session.saveUser(payload: payload3, query: queryWithLastActiveAtSorting, cache: nil)
+            try session.saveUser(payload: payload4, query: queryWithLastActiveAtSorting, cache: nil)
         }
 
         // A fetch request with lastActiveAt sorting.

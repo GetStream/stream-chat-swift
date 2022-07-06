@@ -125,14 +125,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             // Save channel to database
-            try session.saveChannel(payload: channel, query: nil)
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
                     channelId: channel.cid,
-                    query: memberListQuery
+                    query: memberListQuery,
+                    cache: nil
                 )
             }
         }
@@ -173,14 +174,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             // Save channel to database
-            try session.saveChannel(payload: channel, query: nil)
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
                     channelId: channel.cid,
-                    query: memberListQuery
+                    query: memberListQuery,
+                    cache: nil
                 )
             }
         }
@@ -221,14 +223,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             // Save channel to database
-            try session.saveChannel(payload: channel, query: nil)
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
                     channelId: channel.cid,
-                    query: memberListQuery
+                    query: memberListQuery,
+                    cache: nil
                 )
             }
         }
@@ -279,14 +282,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             // Save channel to database
-            try session.saveChannel(payload: channel, query: nil)
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
                     channelId: channel.cid,
-                    query: memberListQuery
+                    query: memberListQuery,
+                    cache: nil
                 )
             }
         }
@@ -343,14 +347,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             // Save channel to database
-            try session.saveChannel(payload: channel, query: nil)
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
                     channelId: channel.cid,
-                    query: memberListQuery
+                    query: memberListQuery,
+                    cache: nil
                 )
             }
         }
