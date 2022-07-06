@@ -36,4 +36,40 @@ public class BackendRobot {
         server.setCooldown(enabled: value, duration: duration, inChannelWithId: id)
         return self
     }
+    
+    @discardableResult
+    func generateChannels(
+        count: Int,
+        messagesCount: Int = 0,
+        authorDetails: [String: String] = UserDetails.lukeSkywalker,
+        memberDetails: [[String: String]] = [
+            UserDetails.lukeSkywalker,
+            UserDetails.hanSolo,
+            UserDetails.countDooku
+        ]
+    ) -> Self  {
+        var json = server.channelList
+        guard let sampleChannel = (json[JSONKey.channels] as? [[String: Any]])?.first else { return self }
+        
+        let userSources = TestData.toJson(.httpChatEvent)[JSONKey.event] as? [String: Any]
+        
+        let members = server.mockMembers(
+            userSources: userSources,
+            sampleChannel: sampleChannel,
+            memberDetails: memberDetails
+        )
+        
+        let author = server.setUpUser(source: userSources, details: authorDetails)
+        let channels = server.mockChannels(
+            count: count,
+            messagesCount: messagesCount,
+            author: author,
+            members: members,
+            sampleChannel: sampleChannel
+        )
+        
+        json[JSONKey.channels] = channels
+        server.channelList = json
+        return self
+    }
 }

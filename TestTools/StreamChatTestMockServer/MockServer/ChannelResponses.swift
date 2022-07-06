@@ -84,38 +84,6 @@ public extension StreamMockServer {
         }
         return channels[index]
     }
-
-    func generateChannels(
-        count: Int,
-        authorDetails: [String: String] = UserDetails.lukeSkywalker,
-        memberDetails: [[String: String]] = [
-            UserDetails.lukeSkywalker,
-            UserDetails.hanSolo,
-            UserDetails.countDooku
-        ]
-    ) {
-        var json = channelList
-        guard let sampleChannel = (json[JSONKey.channels] as? [[String: Any]])?.first else { return }
-        
-        let userSources = TestData.toJson(.httpChatEvent)[JSONKey.event] as? [String: Any]
-        
-        let members = mockMembers(
-            userSources: userSources,
-            sampleChannel: sampleChannel,
-            memberDetails: memberDetails
-        )
-        
-        let author = setUpUser(source: userSources, details: authorDetails)
-        let channels = mockChannels(
-            count: count,
-            author: author,
-            members: members,
-            sampleChannel: sampleChannel
-        )
-        
-        json[JSONKey.channels] = channels
-        channelList = json
-    }
     
     func waitForChannelQueryUpdate(timeout: Double = XCUIElement.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
@@ -222,7 +190,7 @@ public extension StreamMockServer {
         return .ok(.json(json))
     }
 
-    private func mockMembers(
+    func mockMembers(
         userSources: [String: Any]?,
         sampleChannel: [String: Any],
         memberDetails: [[String: String]]
@@ -239,8 +207,9 @@ public extension StreamMockServer {
         return members
     }
     
-    private func mockChannels(
+    func mockChannels(
         count: Int,
+        messagesCount: Int,
         author: [String: Any]?,
         members: [[String: Any]],
         sampleChannel: [String: Any]
@@ -253,13 +222,35 @@ public extension StreamMockServer {
         
         for _ in 1...count {
             var newChannel = sampleChannel
+            var messages: [[String: Any]?] = []
             newChannel[ChannelPayload.CodingKeys.members.rawValue] = members
             newChannel[ChannelPayload.CodingKeys.membership.rawValue] = membership
-            newChannel[ChannelPayload.CodingKeys.channel.rawValue] = mockChannelDetails(
+            let channelDetails = mockChannelDetails(
                 channel: newChannel,
                 author: author,
                 memberCount: members.count
             )
+            
+            if messagesCount > 0 {
+                for i in 1...messagesCount {
+                    let oldDate = Date(timeIntervalSinceReferenceDate: TimeInterval(i * 1000 - 123_456))
+                    let timestamp = TestData.stringTimestamp(oldDate)
+                    let message = mockMessage(
+                        TestData.toJson(.message)[JSONKey.message] as? [String : Any],
+                        channelId: channelDetails?[ChannelCodingKeys.id.rawValue] as? String,
+                        messageId: TestData.uniqueId,
+                        text: String(i),
+                        user: author,
+                        createdAt: timestamp,
+                        updatedAt: timestamp
+                    )
+                    messages.append(message)
+                    saveMessage(message)
+                }
+            }
+            
+            newChannel[ChannelPayload.CodingKeys.messages.rawValue] = messages
+            newChannel[ChannelPayload.CodingKeys.channel.rawValue] = channelDetails
             channels.append(newChannel)
         }
         
