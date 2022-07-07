@@ -72,6 +72,7 @@ class MessageListPage {
         static var inputField: XCUIElement { app.otherElements["inputTextContainer"] }
         static var textView: XCUIElement { inputField.textViews.firstMatch }
         static var cooldown: XCUIElement { app.staticTexts["cooldownLabel"] }
+        static var placeholder: XCUIElement { textView.staticTexts.firstMatch }
         static var selectAllButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Select All'")).firstMatch }
     }
     

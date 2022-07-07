@@ -5,6 +5,7 @@
 import Foundation
 import XCTest
 import StreamChat
+@testable import StreamChatUI
 
 let channelAttributes = ChannelListPage.Attributes.self
 let channelCells = ChannelListPage.cells
@@ -416,13 +417,27 @@ extension UserRobot {
 
     @discardableResult
     func assertCooldownIsShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        XCTAssertTrue(MessageListPage.Composer.cooldown.wait().exists)
+        XCTAssertEqual(MessageListPage.Composer.placeholder.text,
+                       L10n.Composer.Placeholder.slowMode,
+                       file: file,
+                       line: line)
+        XCTAssertTrue(MessageListPage.Composer.cooldown.wait().exists,
+                      "Cooldown should be visible",
+                      file: file,
+                      line: line)
         return self
     }
     
     @discardableResult
     func assertCooldownIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        XCTAssertFalse(MessageListPage.Composer.cooldown.exists)
+        XCTAssertNotEqual(MessageListPage.Composer.placeholder.text,
+                          L10n.Composer.Placeholder.slowMode,
+                          file: file,
+                          line: line)
+        XCTAssertFalse(MessageListPage.Composer.cooldown.exists,
+                       "Cooldown should not be visible",
+                       file: file,
+                       line: line)
         return self
     }
 

@@ -107,6 +107,7 @@ extension UserRobot {
     
     @discardableResult
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
+        composer.inputField.obtainKeyboardFocus()
         openContextMenu(messageCellIndex: messageCellIndex)
         contextMenu.edit.element.wait().safeTap()
         clearComposer()

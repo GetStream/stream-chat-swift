@@ -280,16 +280,11 @@ final class MessageList_Tests: StreamTestCase {
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
                       "[CIS-2020] Scroll on message list does not work well enough")
 
-        let count = 30
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("channel is scrollable") {
-            participantRobot.sendMultipleMessages(repeatingText: "message", count: count)
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
         }
         WHEN("user scrolls up") {
             userRobot.scrollMessageListUp()
@@ -305,17 +300,11 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageListScrollsDown_whenMessageListIsScrolledDown_andUserReceivesNewMessage() {
         linkToScenario(withId: 75)
 
-        let count = 30
-        let message = "message"
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("channel is scrollable") {
-            participantRobot.sendMultipleMessages(repeatingText: message, count: count)
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
         }
         WHEN("participant sends a message") {
             participantRobot.sendMessage(newMessage)
@@ -328,16 +317,11 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageListDoesNotScrollDown_whenMessageListIsScrolledUp_andUserReceivesNewMessage() {
         linkToScenario(withId: 194)
 
-        let count = 30
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("channel is scrollable") {
-            participantRobot.sendMultipleMessages(repeatingText: "message", count: count)
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
         }
         WHEN("user scrolls up") {
             userRobot.scrollMessageListUp()
