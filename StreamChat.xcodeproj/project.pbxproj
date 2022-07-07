@@ -1582,6 +1582,8 @@
 		C14D27B62869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */; };
 		C14D27B72869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */; };
 		C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */; };
+		C15C8838286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */; };
+		C15C8839286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
@@ -3255,6 +3257,7 @@
 		C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+CompactMapLoggingError.swift"; sourceTree = "<group>"; };
 		C152F5FB27C3DC53003B4805 /* MessageRepository_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Spy.swift; sourceTree = "<group>"; };
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
+		C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundListDatabaseObserver.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
 		C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Array.swift"; sourceTree = "<group>"; };
 		C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload.swift; sourceTree = "<group>"; };
@@ -4309,6 +4312,7 @@
 				DAD539DA250B8A9C00CFC649 /* Controller.swift */,
 				79280F4E2485308100CDEB89 /* DataController.swift */,
 				792AF91524D812440010097B /* EntityDatabaseObserver.swift */,
+				C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */,
 				79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */,
 				DAE566F22500F97E00E39431 /* ChannelController */,
 				DAE566F32500F98D00E39431 /* ChannelListController */,
@@ -9012,6 +9016,7 @@
 				7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */,
 				799C9445247D3DD2001F1104 /* WebSocketClient.swift in Sources */,
 				6971257E260CA503003C7B47 /* NSManagedObjectContext+Extensions.swift in Sources */,
+				C15C8838286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */,
 				DA640FBB2535CF8500D32944 /* ChannelListSortingKey.swift in Sources */,
 				C1FC2F8F2742579D0062530F /* Data+Extensions.swift in Sources */,
 				8899BC3F2542FFA1003CB98B /* MessageReactionPayload.swift in Sources */,
@@ -9762,6 +9767,7 @@
 				C121E8C1274544B100023E4C /* EventsController+SwiftUI.swift in Sources */,
 				C121E8C2274544B100023E4C /* ChannelEventsController.swift in Sources */,
 				C121E8C3274544B100023E4C /* ListDatabaseObserver.swift in Sources */,
+				C15C8839286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */,
 				C121E8C4274544B100023E4C /* EntityDatabaseObserver.swift in Sources */,
 				C121E8C5274544B100023E4C /* ChannelMemberListQuery.swift in Sources */,
 				C121E8C6274544B100023E4C /* ChannelWatcherListQuery.swift in Sources */,

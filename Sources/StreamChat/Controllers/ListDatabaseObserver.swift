@@ -87,10 +87,14 @@ extension ListChange: Equatable where Item: Equatable {}
 ///
 /// `ListObserver` is just a wrapper around `NSFetchedResultsController` and `ChangeAggregator`. You can use both of
 /// these elements separately, if it better fits your use case.
-class ListDatabaseObserver<Item, DTO: NSManagedObject> {
+class ListDatabaseObserver<Item, DTO: NSManagedObject>: ListDatabaseObserverType {
     /// The current collection of items matching the provided fetch request. To receive granular updates to this collection,
     /// you can use the `onChange` callback.
     @Cached var items: LazyCachedMapCollection<Item>
+
+    var anyItems: Any {
+        items
+    }
 
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
     /// on its delegate.
@@ -209,7 +213,11 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             onChange = nil
         }
     }
-    
+
+    var hasCache: Bool {
+        _items.hasCache
+    }
+
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
     /// are received.
     private func listenForRemoveAllDataNotifications() {
