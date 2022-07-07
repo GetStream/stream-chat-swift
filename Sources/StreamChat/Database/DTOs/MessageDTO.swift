@@ -75,7 +75,7 @@ class MessageDTO: NSManagedObject {
         
         // Manually mark the channel as dirty to trigger the entity update and give the UI a chance
         // to reload the channel cell to reflect the updated preview.
-        if let channel = previewOfChannel, !channel.hasChanges, channel.lastMessageAt == createdAt {
+        if let channel = previewOfChannel, !channel.hasChanges, !channel.isDeleted, channel.lastMessageAt == createdAt {
             let cid = channel.cid
             channel.cid = cid
         }
