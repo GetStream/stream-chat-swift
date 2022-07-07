@@ -96,7 +96,33 @@ extension UserRobot {
         }
         return self
     }
-
+    
+    @discardableResult
+    func assertChannelListPagination(
+        channelsCount expectedCount: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let expectedChannel = ChannelListPage.channel(withName: "\(expectedCount)")
+        var expectedChannelExist = expectedChannel.exists
+        
+        XCTAssertFalse(expectedChannelExist,
+                       "Expected channel should not be visible",
+                       file: file,
+                       line: line)
+        
+        let endTime = Date().timeIntervalSince1970 * 1000 + XCUIElement.waitTimeout * 1000
+        while !expectedChannelExist && endTime > Date().timeIntervalSince1970 * 1000 {
+            ChannelListPage.list.swipeUp()
+            expectedChannelExist = expectedChannel.exists
+        }
+        
+        XCTAssertTrue(expectedChannelExist,
+                      "Expected channel should be visible",
+                      file: file,
+                      line: line)
+        return self
+    }
 }
 
 // MARK: Message List
@@ -339,6 +365,60 @@ extension UserRobot {
         } else {
             XCTAssertGreaterThan(cellHeight, messageCell.height, file: file, line: line)
         }
+    }
+    
+    @discardableResult
+    func assertMessageListPagination(
+        messagesCount expectedCount: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let endTime = Date().timeIntervalSince1970 * 1000 + XCUIElement.waitTimeout * 1000
+        var actualCount = MessageListPage.cells.count
+        XCTAssertNotEqual(expectedCount, actualCount, file: file, line: line)
+        
+        while actualCount != expectedCount && endTime > Date().timeIntervalSince1970 * 1000 {
+            MessageListPage.list.swipeDown()
+            actualCount = MessageListPage.cells.count
+        }
+        
+        XCTAssertEqual(expectedCount, actualCount, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertComposerLeftButtons(
+        shouldBeVisible: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let composer = MessageListPage.Composer.self
+        let leftButtonsVisible = shouldBeVisible
+            ? composer.attachmentButton.wait().exists && composer.commandButton.wait().exists
+            : composer.attachmentButton.waitForLoss().exists && composer.commandButton.waitForLoss().exists
+        XCTAssertEqual(shouldBeVisible,
+                       leftButtonsVisible,
+                       "Composer left buttons should be visible: \(shouldBeVisible)",
+                       file: file,
+                       line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertComposerMentions(
+        shouldBeVisible: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let mentionsView = MessageListPage.ComposerMentions.self
+        if shouldBeVisible {
+            let count = mentionsView.cells.waitCount(1).count
+            XCTAssertGreaterThan(count, 0, file: file, line: line)
+        } else {
+            mentionsView.cells.firstMatch.waitForLoss()
+            XCTAssertEqual(mentionsView.cells.count, 0, file: file, line: line)
+        }
+        return self
     }
 }
 
