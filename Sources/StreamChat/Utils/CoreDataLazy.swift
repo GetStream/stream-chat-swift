@@ -71,7 +71,11 @@ class CoreDataLazy<T> {
             computeValue = newValue.0
             context = newValue.1
             persistentStoreIdentifier = context?.persistentStoreCoordinator?.persistentStores.first?.identifier
-            _cached = nil
+            if !StreamRuntimeCheck._isLazyMappingEnabled {
+                _cached = computeValue()
+            } else {
+                _cached = nil
+            }
         }
     }
     

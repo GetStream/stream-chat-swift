@@ -47,4 +47,8 @@ class Cached<T> {
     func reset() {
         _cached = nil
     }
+
+    var hasCache: Bool {
+        _cached != nil
+    }
 }

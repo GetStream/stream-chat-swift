@@ -247,7 +247,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Database observers.
     /// Will be `nil` when observing channel with backend generated `id` is not yet created.
     @Cached private var channelObserver: EntityDatabaseObserver<ChatChannel, ChannelDTO>?
-    @Cached private var messagesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
     
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
@@ -351,7 +351,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     private func setMessagesObserver() {
-        _messagesObserver.computeValue = { [weak self] in
+        messagesObserver = { [weak self] in
             guard let self = self else {
                 log.warning("Callback called while self is nil")
                 return nil
@@ -369,8 +369,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages
             }
 
-            let observer = ListDatabaseObserver(
-                context: self.client.databaseContainer.viewContext,
+            let observer = BackgroundListDatabaseObserver(
+                context: self.client.databaseContainer.backgroundReadOnlyContext,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
                     sortAscending: sortAscending,
@@ -379,7 +379,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 ),
                 itemCreator: { try $0.asModel() as ChatMessage }
             )
-            observer.onChange = { [weak self] changes in
+            observer.onDidChange = { [weak self] changes in
                 self?.delegateCallback {
                     guard let self = self else { return }
                     log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
@@ -388,7 +388,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
 
             return observer
-        }
+        }()
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -479,7 +479,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
     
     private func startMessagesObserver() -> Error? {
-        _messagesObserver.reset()
+//        _messagesObserver.reset()
         
         do {
             try messagesObserver?.startObserving()
