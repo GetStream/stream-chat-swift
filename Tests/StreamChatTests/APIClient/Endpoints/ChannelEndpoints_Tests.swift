@@ -249,11 +249,11 @@ final class ChannelEndpoints_Tests: XCTestCase {
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["add_members": userIds]
+            body: ["add_members": AnyEncodable(userIds), "hide_history": AnyEncodable(true)]
         )
 
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .addMembers(cid: cid, userIds: userIds)
+        let endpoint: Endpoint<EmptyResponse> = .addMembers(cid: cid, userIds: userIds, hideHistory: true)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
