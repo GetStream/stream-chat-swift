@@ -945,17 +945,18 @@ public extension ChatChannelController {
     ///
     /// - Parameters:
     ///   - users: Users Id to add to a channel.
+    ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func addMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+    func addMembers(userIds: Set<UserId>, hideHistory: Bool = false, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
         
-        updater.addMembers(cid: cid, userIds: userIds) { error in
+        updater.addMembers(cid: cid, userIds: userIds, hideHistory: hideHistory) { error in
             self.callback {
                 completion?(error)
             }
