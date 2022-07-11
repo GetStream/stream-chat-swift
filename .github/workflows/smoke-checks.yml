@@ -47,6 +47,9 @@ jobs:
     name: Test LLC (Debug)
     timeout-minutes: 25
     runs-on: macos-12
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_EVENT: ${{ toJson(github.event) }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -58,15 +61,10 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_SONAR: true
+    - name: Run Fastlane Linting
+      run: bundle exec fastlane rubocop
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
-    - uses: test-summary/action@v1
-      with:
-        paths: fastlane/test_output/report.junit
-      if: failure()
     - name: Get branch name
       id: get_branch_name
       run: echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
@@ -107,10 +105,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
-    - uses: test-summary/action@v1
-      with:
-        paths: fastlane/test_output/report.junit
-      if: failure()
 
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
