@@ -160,6 +160,22 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
+            .init(title: "Add member w/o history", style: .default, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter user id", textFieldPlaceholder: "User ID") { id in
+                    guard let id = id, !id.isEmpty else {
+                        self.rootViewController.presentAlert(title: "User ID is not valid")
+                        return
+                    }
+                    channelController.addMembers(userIds: [id], hideHistory: true) { error in
+                        if let error = error {
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't add user \(id) to channel \(cid)",
+                                message: "\(error)"
+                            )
+                        }
+                    }
+                }
+            }),
             .init(title: "Remove a member", style: .default, handler: { [unowned self] _ in
                 let actions = channelController.channel?.lastActiveMembers.map { member in
                     UIAlertAction(title: member.id, style: .default) { _ in
