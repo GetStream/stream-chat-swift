@@ -290,4 +290,10 @@ class MessageListPage {
         }
     }
     
+    enum ComposerMentions {
+        static var cells: XCUIElementQuery {
+            app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMentionSuggestionCollectionViewCell'"))
+        }
+    }
+    
 }

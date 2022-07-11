@@ -433,6 +433,60 @@ extension MessageList_Tests {
             userRobot.assertDeletedMessage()
         }
     }
+    
+    func test_paginationOnMessageList() {
+        linkToScenario(withId: 56)
+        
+        let messagesCount = 60
+        
+        WHEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: messagesCount)
+            userRobot.login().openChannel()
+        }
+        THEN("user makes sure that chat history is loaded") {
+            userRobot.assertMessageListPagination(messagesCount: messagesCount)
+        }
+    }
+    
+    func test_addingCommandHidesLeftButtons() {
+        linkToScenario(withId: 104)
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user types '/'") {
+            userRobot.typeText("/")
+        }
+        THEN("composer left buttons disappear") {
+            userRobot.assertComposerLeftButtons(shouldBeVisible: false)
+        }
+        WHEN("user removes '/'") {
+            userRobot.typeText(XCUIKeyboardKey.delete.rawValue)
+        }
+        THEN("composer left buttons appear") {
+            userRobot.assertComposerLeftButtons(shouldBeVisible: true)
+        }
+    }
+    
+    func test_mentionsView() {
+        linkToScenario(withId: 61)
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user types '@'") {
+            userRobot.typeText("@")
+        }
+        THEN("composer mention view appears") {
+            userRobot.assertComposerMentions(shouldBeVisible: true)
+        }
+        WHEN("user removes '@'") {
+            userRobot.typeText(XCUIKeyboardKey.delete.rawValue)
+        }
+        THEN("composer mention view disappears") {
+            userRobot.assertComposerMentions(shouldBeVisible: false)
+        }
+    }
 }
 
 // MARK: - Thread replies
