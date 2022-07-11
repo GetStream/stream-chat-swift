@@ -930,27 +930,6 @@ final class ChannelController_Tests: XCTestCase {
         // Both outgoing and incoming messages should be visible
         XCTAssertEqual(Set(controller.messages.map(\.id)), Set([outgoingDeletedMessage.id, incomingDeletedMessage.id]))
     }
-
-    func test_truncatedMessages_areNotVisible() throws {
-        // Prepare channel with 10 messages
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId, numberOfMessages: 10))
-        }
-
-        // Simulate `synchronize` call and check all messages are fetched
-        controller.synchronize()
-        XCTAssertEqual(controller.messages.count, 10)
-
-        // Set channel `truncatedAt` date before the 5th message
-        let truncatedAtDate = controller.messages[4].createdAt.addingTimeInterval(-0.1)
-        try client.databaseContainer.writeSynchronously {
-            $0.channel(cid: self.channelId)?.truncatedAt = truncatedAtDate.bridgeDate
-        }
-
-        // Check only the 5 messages after the truncatedAt date are visible
-        XCTAssertEqual(controller.messages.count, 5)
-        XCTAssert(controller.messages.allSatisfy { $0.createdAt > truncatedAtDate })
-    }
     
     func test_shadowedMessages_whenVisible() throws {
         // Simulate the config setting
@@ -1185,54 +1164,6 @@ final class ChannelController_Tests: XCTestCase {
             Assert.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
             Assert.willBeEqual(delegate.didUpdateMessages_messages, [.insert(message, index: [0, 0])])
         }
-    }
-    
-    func test_channelUpdateDelegate_isCalled_whenChannelReadsAreUpdated() throws {
-        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        let userId: UserId = .unique
-        
-        let originalReadDate: Date = .unique
-        
-        // Create a channel in the DB
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
-            // Create a read for the channel
-            try $0.saveChannelRead(
-                payload: ChannelReadPayload(
-                    user: self.dummyUser(id: userId),
-                    lastReadAt: originalReadDate,
-                    unreadMessagesCount: .unique // This value doesn't matter at all. It's not updated by events. We cam ignore it.
-                ),
-                for: self.channelId,
-                cache: nil
-            )
-        }
-        
-        XCTAssertEqual(
-            controller.channel?.reads.first(where: { $0.user.id == userId })?.lastReadAt,
-            originalReadDate
-        )
-        
-        // Simulate `synchronize()` call
-        controller.synchronize()
-        
-        let newReadDate: Date = .unique
-        
-        // Update the read
-        try client.databaseContainer.writeSynchronously {
-            let read = try XCTUnwrap($0.loadChannelRead(cid: self.channelId, userId: userId))
-            read.lastReadAt = newReadDate.bridgeDate
-        }
-
-        // Assert the value is updated and the delegate is called
-        XCTAssertEqual(
-            controller.channel?.reads.first(where: { $0.user.id == userId })?.lastReadAt,
-            newReadDate
-        )
-        
-        AssertAsync.willBeEqual(delegate.didUpdateChannel_channel, .update(controller.channel!))
     }
     
     // MARK: - New direct message channel creation tests
