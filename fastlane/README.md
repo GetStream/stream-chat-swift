@@ -118,14 +118,6 @@ If `readonly: false`, recreates all Profiles necessary for development and ad-ho
 
 Register new device, regenerates profiles, updates them remotely and locally
 
-### distribute_demo_app
-
-```sh
-[bundle exec] fastlane distribute_demo_app
-```
-
-Builds the latest version of Demo app and uploads it to Firebase
-
 ### testflight_build
 
 ```sh
