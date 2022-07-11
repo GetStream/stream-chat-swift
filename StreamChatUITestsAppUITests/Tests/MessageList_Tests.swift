@@ -15,7 +15,7 @@ final class MessageList_Tests: StreamTestCase {
         linkToScenario(withId: 25)
 
         let message = "message"
-        
+
         GIVEN("user opens the channel") {
             userRobot
                 .login()
