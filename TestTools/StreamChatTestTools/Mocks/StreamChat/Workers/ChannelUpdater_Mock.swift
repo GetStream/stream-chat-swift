@@ -37,6 +37,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     
     @Atomic var addMembers_cid: ChannelId?
     @Atomic var addMembers_userIds: Set<UserId>?
+    @Atomic var addMembers_hideHistory: Bool?
     @Atomic var addMembers_completion: ((Error?) -> Void)?
     
     @Atomic var inviteMembers_cid: ChannelId?
@@ -262,9 +263,10 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createNewMessage_completion = completion
     }
     
-    override func addMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+    override func addMembers(cid: ChannelId, userIds: Set<UserId>, hideHistory: Bool, completion: ((Error?) -> Void)? = nil) {
         addMembers_cid = cid
         addMembers_userIds = userIds
+        addMembers_hideHistory = hideHistory
         addMembers_completion = completion
     }
     

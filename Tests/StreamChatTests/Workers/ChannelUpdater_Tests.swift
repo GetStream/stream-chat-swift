@@ -947,10 +947,10 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `addMembers(cid:, mute:, userIds:)` call
-        channelUpdater.addMembers(cid: channelID, userIds: userIds)
+        channelUpdater.addMembers(cid: channelID, userIds: userIds, hideHistory: false)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(cid: channelID, userIds: userIds)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(cid: channelID, userIds: userIds, hideHistory: false)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -960,7 +960,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         
         // Simulate `addMembers(cid:, mute:, userIds:)` call
         var completionCalled = false
-        channelUpdater.addMembers(cid: channelID, userIds: userIds) { error in
+        channelUpdater.addMembers(cid: channelID, userIds: userIds, hideHistory: false) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -981,7 +981,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         
         // Simulate `muteChannel(cid:, mute:, completion:)` call
         var completionCalledError: Error?
-        channelUpdater.addMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
+        channelUpdater.addMembers(cid: channelID, userIds: userIds, hideHistory: false) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
