@@ -191,9 +191,9 @@ class MessageListPage {
         }
 
         static func statusCheckmark(for status: MessageDeliveryStatus?, in messageCell: XCUIElement) -> XCUIElement {
-            var identifier = "imageView"
+            var identifier = "There is no status checkmark"
             if let status = status {
-                identifier = "\(identifier)_\(status.rawValue)"
+                identifier = "imageView_\(status.rawValue)"
             }
             return messageCell.images[identifier]
         }

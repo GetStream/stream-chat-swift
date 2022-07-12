@@ -99,7 +99,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         }
         THEN("delivery status is hidden for ephemeral messages") {
             userRobot
-                .assertMessageDeliveryStatus(.failed)
+                .assertMessageDeliveryStatus(nil)
                 .assertMessageReadCount(readBy: 0)
         }
     }
