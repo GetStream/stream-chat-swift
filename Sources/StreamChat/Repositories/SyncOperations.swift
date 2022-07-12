@@ -20,7 +20,7 @@ final class SyncContext {
 private let syncOperationsMaximumRetries = 2
 
 final class GetChannelIdsOperation: AsyncOperation {
-    init(database: DatabaseContainer, context: SyncContext) {
+    init(database: DatabaseContainer, context: SyncContext, activeChannelIds: [ChannelId]) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
             guard let database = database else {
                 done(.continue)
@@ -32,6 +32,9 @@ final class GetChannelIdsOperation: AsyncOperation {
                     .compactMap { try? ChannelId(cid: $0.cid) }
                 log.info("0. Retrieved channels from existing queries from DB. Count \(cids.count)", subsystems: .offlineSupport)
                 context.localChannelIds = cids
+                if cids.isEmpty {
+                    context.localChannelIds = activeChannelIds
+                }
                 done(.continue)
             }
         }
