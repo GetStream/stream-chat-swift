@@ -81,8 +81,26 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         WHEN("user goes back to channel list") {
             userRobot.tapOnBackButton()
         }
-        THEN("Message is not added to the channel list") {
+        THEN("message is not added to the channel list") {
             userRobot.assertLastMessageInChannelPreview("No messages")
+        }
+    }
+    
+    func test_deliveryStatusHidden_whenEphemeralMessageShown() {
+        linkToScenario(withId: 182)
+
+        GIVEN("user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user runs a giphy command") {
+            userRobot.sendGiphy(send: false)
+        }
+        THEN("delivery status is hidden for ephemeral messages") {
+            userRobot
+                .assertMessageDeliveryStatus(.failed)
+                .assertMessageReadCount(readBy: 0)
         }
     }
 
