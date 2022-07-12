@@ -86,13 +86,13 @@ public extension StreamMockServer {
         return channels[index]
     }
     
-    func waitForChannelQueryUpdate(timeout: Double = XCUIElement.waitTimeout) {
+    func waitForChannelQueryUpdate(timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while !channelQueryEndpointWasCalled
                 && endTime > Date().timeIntervalSince1970 * 1000 {}
     }
     
-    func waitForChannelsUpdate(timeout: Double = XCUIElement.waitTimeout) {
+    func waitForChannelsUpdate(timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while !channelsEndpointWasCalled
                 && endTime > Date().timeIntervalSince1970 * 1000 {}

@@ -406,7 +406,7 @@ extension UserRobot {
         let composer = MessageListPage.Composer.self
         let leftButtonsVisible = shouldBeVisible
             ? composer.attachmentButton.wait().exists && composer.commandButton.wait().exists
-            : composer.attachmentButton.waitForLoss().exists && composer.commandButton.waitForLoss().exists
+            : composer.attachmentButton.waitForDisappearance().exists && composer.commandButton.waitForDisappearance().exists
         XCTAssertEqual(shouldBeVisible,
                        leftButtonsVisible,
                        "Composer left buttons should be visible: \(shouldBeVisible)",
@@ -426,7 +426,7 @@ extension UserRobot {
             let count = mentionsView.cells.waitCount(1).count
             XCTAssertGreaterThan(count, 0, file: file, line: line)
         } else {
-            mentionsView.cells.firstMatch.waitForLoss()
+            mentionsView.cells.firstMatch.waitForDisappearance()
             XCTAssertEqual(mentionsView.cells.count, 0, file: file, line: line)
         }
         return self
@@ -542,7 +542,7 @@ extension UserRobot {
 
     @discardableResult
     func assertSendButtonIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        XCTAssertFalse(MessageListPage.Composer.sendButton.waitForLoss().exists)
+        XCTAssertFalse(MessageListPage.Composer.sendButton.waitForDisappearance().exists)
         return self
     }
 }
@@ -559,7 +559,7 @@ extension UserRobot {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let reaction = attributes.reactionButton(in: messageCell)
         let errMessage = isPresent ? "There are no reactions" : "Reaction is presented"
-        _ = isPresent ? reaction.wait() : reaction.waitForLoss()
+        _ = isPresent ? reaction.wait() : reaction.waitForDisappearance()
         XCTAssertEqual(isPresent, reaction.exists, errMessage, file: file, line: line)
         return self
     }
@@ -672,7 +672,7 @@ extension UserRobot {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let fileNames = attributes.fileNames(in: messageCell)
         let errMessage = isPresent ? "There are no files" : "Files are presented"
-        _ = isPresent ? fileNames.firstMatch.wait() : fileNames.firstMatch.waitForLoss()
+        _ = isPresent ? fileNames.firstMatch.wait() : fileNames.firstMatch.waitForDisappearance()
         XCTAssertEqual(fileNames.count, count, errMessage, file: file, line: line)
         return self
     }
