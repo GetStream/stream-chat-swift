@@ -4,8 +4,8 @@
 
 import Foundation
 import XCTest
-import StreamChat
 @testable import StreamChatUI
+@testable import StreamChat
 
 let channelAttributes = ChannelListPage.Attributes.self
 let channelCells = ChannelListPage.cells
@@ -121,6 +121,17 @@ extension UserRobot {
                       "Expected channel should be visible",
                       file: file,
                       line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertChannelCount(
+        _ expectedCount: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let actualCount = ChannelListPage.cells.waitCount(expectedCount).count
+        XCTAssertEqual(expectedCount, actualCount, file: file, line: line)
         return self
     }
 }
@@ -418,6 +429,14 @@ extension UserRobot {
             mentionsView.cells.firstMatch.waitForLoss()
             XCTAssertEqual(mentionsView.cells.count, 0, file: file, line: line)
         }
+        return self
+    }
+    
+    @discardableResult
+    func assertMentionWasApplied(file: StaticString = #filePath, line: UInt = #line) -> Self {
+        let expectedText = "@\(UserDetails.hanSoloName)"
+        let actualText = MessageListPage.Composer.textView.waitForText(expectedText).text
+        XCTAssertEqual(expectedText, actualText, file: file, line: line)
         return self
     }
 }

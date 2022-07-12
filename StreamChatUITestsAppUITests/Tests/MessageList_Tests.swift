@@ -487,6 +487,20 @@ extension MessageList_Tests {
             userRobot.assertComposerMentions(shouldBeVisible: false)
         }
     }
+    
+    func test_userFillsTheComposerMentioningParticipantThroughMentionsView() {
+        linkToScenario(withId: 62)
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user taps on participants name") {
+            userRobot.mentionParticipant()
+        }
+        THEN("composer fills in participants name") {
+            userRobot.assertMentionWasApplied()
+        }
+    }
 }
 
 // MARK: - Thread replies
