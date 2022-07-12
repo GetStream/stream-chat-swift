@@ -453,6 +453,23 @@ extension UserRobot {
         XCTAssertEqual(expectedText, actualText, file: file, line: line)
         return self
     }
+
+    @discardableResult
+    func assertComposerCommands(
+        shouldBeVisible: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let commandsView = MessageListPage.ComposerCommands.self
+        if shouldBeVisible {
+            let count = commandsView.cells.waitCount(1).count
+            XCTAssertGreaterThan(count, 0, file: file, line: line)
+        } else {
+            commandsView.cells.firstMatch.waitForLoss()
+            XCTAssertEqual(commandsView.cells.count, 0, file: file, line: line)
+        }
+        return self
+    }
 }
 
 // MARK: Quoted Messages

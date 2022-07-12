@@ -334,6 +334,23 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
+    func test_commandsPopupDisappear_whenUserTapsOnMessageList() {
+        linkToScenario(withId: 98)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
+        }
+        AND("user opens command suggestions") {
+            userRobot.openComposerCommands()
+        }
+        WHEN("user taps on message list") {
+            userRobot.tapOnMessage()
+        }
+        THEN("command suggestions disappear") {
+            userRobot.assertComposerCommands(shouldBeVisible: false)
+        }
+    }
 }
 
 // MARK: Quoted messages
