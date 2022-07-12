@@ -29,7 +29,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_GetChannelIdsOperation_noChannels() {
         let context = SyncContext(lastSyncAt: .init())
-        let operation = GetChannelIdsOperation(database: database, context: context)
+        let operation = GetChannelIdsOperation(database: database, context: context, activeChannelIds: [])
         operation.startAndWaitForCompletion()
         XCTAssertEqual(context.localChannelIds.count, 0)
     }
@@ -41,7 +41,31 @@ final class SyncOperations_Tests: XCTestCase {
         }
 
         let context = SyncContext(lastSyncAt: .init())
-        let operation = GetChannelIdsOperation(database: database, context: context)
+        let operation = GetChannelIdsOperation(database: database, context: context, activeChannelIds: [])
+        operation.startAndWaitForCompletion()
+        
+        XCTAssertEqual(context.localChannelIds.count, 1)
+    }
+    
+    func test_GetChannelIdsOperation_withActiveChannels() throws {
+        let context = SyncContext(lastSyncAt: .init())
+        let activeChannelIds: [ChannelId] = [.unique]
+        let operation = GetChannelIdsOperation(database: database, context: context, activeChannelIds: activeChannelIds)
+        operation.startAndWaitForCompletion()
+        
+        XCTAssertEqual(context.localChannelIds.count, 1)
+    }
+    
+    func test_GetChannelIdsOperation_withDuplicates() throws {
+        let channelId = ChannelId.unique
+        try database.writeSynchronously { session in
+            let query = ChannelListQuery(filter: .exists(.cid))
+            try session.saveChannel(payload: self.dummyPayload(with: channelId, numberOfMessages: 0), query: query, cache: nil)
+        }
+        
+        let context = SyncContext(lastSyncAt: .init())
+        let activeChannelIds: [ChannelId] = [channelId]
+        let operation = GetChannelIdsOperation(database: database, context: context, activeChannelIds: activeChannelIds)
         operation.startAndWaitForCompletion()
         
         XCTAssertEqual(context.localChannelIds.count, 1)
