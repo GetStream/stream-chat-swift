@@ -81,6 +81,7 @@ public enum JSONKey {
     public static let cooldown = "cooldown"
     public static let attachmentAction = "image_action"
     public static let file = "file"
+    public static let payload = "payload"
 
     public enum Channel {
         public static let addMembers = "add_members"

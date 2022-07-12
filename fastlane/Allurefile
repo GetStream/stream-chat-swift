@@ -61,7 +61,7 @@ lane :allure_start_regression do |options|
   UI.user_error!('Release version has to be provided ⚠️') if options[:release_version].nil?
 
   response = allure_api(path: "/testplan/?projectId=#{allure_project_id}", http_method: 'GET')
-  testplan_id = response['content'].filter { |plan| plan['name'] == allure_regression_testplan }.first['id']
+  testplan_id = response['content'].find { |plan| plan['name'] == allure_regression_testplan }['id']
 
   allure_api(path: "/testplan/#{testplan_id}/sync", http_method: 'POST')
   UI.success("#{rocket}\nTestplan with id #{testplan_id} synced successfully 🎉")

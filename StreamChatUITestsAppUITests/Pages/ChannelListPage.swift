@@ -14,6 +14,15 @@ enum ChannelListPage {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatChannelListCollectionViewCell'"))
     }
     
+    static var list: XCUIElement {
+        app.collectionViews["collectionView"]
+    }
+    
+    static func channel(withName: String) -> XCUIElement {
+        app.staticTexts.matching(NSPredicate(
+            format: "identifier LIKE 'titleLabel' AND label LIKE '\(withName)'")).firstMatch
+    }
+    
     enum Attributes {
         static func name(in cell: XCUIElement) -> XCUIElement {
             cell.staticTexts["titleLabel"]

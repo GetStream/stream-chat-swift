@@ -32,25 +32,6 @@ class UserDTO: NSManagedObject {
         request.predicate = NSPredicate(format: "id == %@", userId)
         return request
     }
-
-    override func willSave() {
-        super.willSave()
-
-        // When user changed, we need to propagate this change to members and current user
-        if hasPersistentChangedValues {
-            if let currentUser = currentUser, !currentUser.hasChanges {
-                // this will not change object, but mark it as dirty, triggering updates
-                let assigningPropertyToItself = currentUser.unreadChannelsCount
-                currentUser.unreadChannelsCount = assigningPropertyToItself
-            }
-            for member in members ?? [] {
-                guard !member.hasChanges else { continue }
-                // this will not change object, but mark it as dirty, triggering updates
-                let assigningPropertyToItself = member.channelRoleRaw
-                member.channelRoleRaw = assigningPropertyToItself
-            }
-        }
-    }
 }
 
 extension UserDTO: EphemeralValuesContainer {

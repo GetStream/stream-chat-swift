@@ -15,16 +15,6 @@ class ChannelReadDTO: NSManagedObject {
     @NSManaged var channel: ChannelDTO
     @NSManaged var user: UserDTO
     
-    override func willSave() {
-        super.willSave()
-        
-        // When the read is updated, we need to propagate this change up to holding channel
-        if hasPersistentChangedValues, !channel.hasChanges {
-            // this will not change object, but mark it as dirty, triggering updates
-            channel.cid = channel.cid
-        }
-    }
-    
     static func fetchRequest(userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
         request.predicate = NSPredicate(format: "user.id == %@", userId)
