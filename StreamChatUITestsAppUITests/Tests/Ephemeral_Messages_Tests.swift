@@ -104,4 +104,22 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         }
     }
 
+    func test_messageIsNotSent_whenUserCancelsEphemeralMessage() {
+        linkToScenario(withId: 239)
+
+        GIVEN("user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user sends a giphy") {
+            userRobot.sendGiphy(send: false)
+        }
+        AND("user cancels the giphy") {
+            userRobot.tapOnCancelGiphyButton()
+        }
+        THEN("user doesn't see the ephemeral message") {
+            userRobot.assertGiphyImageNotVisible()
+        }
+    }
 }

@@ -336,6 +336,7 @@ extension UserRobot {
     
     @discardableResult
     func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
+        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
         let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
         MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
         return self

@@ -228,6 +228,20 @@ extension UserRobot {
     }
 
     @discardableResult
+    func assertHardDeletedMessage(
+        at messageCellIndex: Int = 0,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let message = attributes.text(in: messageCell).wait()
+        let expectedMessage = attributes.deletedMessagePlaceholder
+        let actualMessage = message.waitForText(expectedMessage).text
+        XCTAssertEqual(expectedMessage, actualMessage, "Text is wrong", file: file, line: line)
+        return self
+    }
+
+    @discardableResult
     func assertMessageAuthor(
         _ author: String,
         at messageCellIndex: Int? = nil,
@@ -589,6 +603,20 @@ extension UserRobot {
     ) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         XCTAssertTrue(attributes.giphyLabel(in: cell).wait().exists)
+        XCTAssertFalse(attributes.giphySendButton(in: cell).exists)
+        XCTAssertFalse(attributes.giphyShuffleButton(in: cell).exists)
+        XCTAssertFalse(attributes.giphyCancelButton(in: cell).exists)
+        return self
+    }
+
+    @discardableResult
+    func assertGiphyImageNotVisible(
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait(timeout: 1)
+        XCTAssertFalse(attributes.giphyLabel(in: cell).exists)
         XCTAssertFalse(attributes.giphySendButton(in: cell).exists)
         XCTAssertFalse(attributes.giphyShuffleButton(in: cell).exists)
         XCTAssertFalse(attributes.giphyCancelButton(in: cell).exists)
