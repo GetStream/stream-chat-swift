@@ -107,7 +107,7 @@ class SyncRepository {
         apiClient.enterRecoveryMode()
 
         // Get the existing channelIds
-        let activeChannelIds = activeChannelControllers.allObjects.compactMap { $0.cid }
+        let activeChannelIds = activeChannelControllers.allObjects.compactMap(\.cid)
         operations.append(GetChannelIdsOperation(database: database, context: context, activeChannelIds: activeChannelIds))
         
         // 1. Call `/sync` endpoint and get missing events for all locally existed channels

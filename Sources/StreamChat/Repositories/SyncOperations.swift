@@ -72,12 +72,6 @@ final class WatchChannelOperation: AsyncOperation {
                 return
             }
 
-            // Reset only if it needs recovery
-            if let cid = controller.cid, context.synchedChannelIds.contains(cid) {
-                done(.continue)
-                return
-            }
-
             let cidString = (controller.cid?.rawValue ?? "unknown")
             log.info("2. Watching active channel \(cidString)", subsystems: .offlineSupport)
             controller.recoverWatchedChannel { error in

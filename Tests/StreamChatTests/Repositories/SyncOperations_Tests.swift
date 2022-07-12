@@ -138,8 +138,8 @@ final class SyncOperations_Tests: XCTestCase {
 
         operation.startAndWaitForCompletion()
 
-        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
-        XCTAssertNotCall("recoverWatchedChannel(completion:)", on: controller)
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 1)
+        XCTAssertCall("recoverWatchedChannel(completion:)", on: controller)
     }
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchFailure_shouldRetry() {
