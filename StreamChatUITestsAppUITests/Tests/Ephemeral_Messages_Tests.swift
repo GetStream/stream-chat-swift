@@ -66,5 +66,24 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .assertMessageHasTimestamp(at: 1)
         }
     }
+    
+    func test_channelListNotModified_whenEphemeralMessageShown() {
+        linkToScenario(withId: 187)
+
+        GIVEN("user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user runs a giphy command") {
+            userRobot.sendGiphy(send: false)
+        }
+        WHEN("user goes back to channel list") {
+            userRobot.tapOnBackButton()
+        }
+        THEN("Message is not added to the channel list") {
+            userRobot.assertLastMessageInChannelPreview("No messages")
+        }
+    }
 
 }
