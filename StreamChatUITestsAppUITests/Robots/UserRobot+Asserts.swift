@@ -103,6 +103,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
+        ChannelListPage.cells.firstMatch.wait()
         let expectedChannel = ChannelListPage.channel(withName: "\(expectedCount)")
         var expectedChannelExist = expectedChannel.exists
         
@@ -685,7 +686,9 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        tapOnMessage(at: messageCellIndex)
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.time(in: messageCell).wait()
+        tapOnMessage(messageCell)
         let fullscreenImage = attributes.fullscreenImage().wait()
         let errMessage = isPresent ? "There is no image" : "Image is presented"
         XCTAssertTrue(fullscreenImage.exists, errMessage, file: file, line: line)
@@ -699,7 +702,9 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        tapOnMessage(at: messageCellIndex)
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.time(in: messageCell).wait()
+        tapOnMessage(messageCell)
         let player = attributes.videoPlayer().wait()
         let errMessage = isPresent ? "There is no video" : "Video is presented"
         XCTAssertTrue(player.exists, errMessage, file: file, line: line)

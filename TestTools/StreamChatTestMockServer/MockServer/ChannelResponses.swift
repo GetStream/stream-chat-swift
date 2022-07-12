@@ -139,7 +139,8 @@ public extension StreamMockServer {
         let channels = limitedChannelList[JSONKey.channels] as? [[String: Any]] ?? []
         let channelCount = channels.count - 1
         
-        if channelCount > limit {
+        if !allChannelsWereLoaded && channelCount > limit {
+            allChannelsWereLoaded = (channelCount - limit - offset < 0)
             let startWith = offset > channelCount ? channelCount : offset
             let endWith = offset + limit < channelCount ? offset + limit - 1 : channelCount
             limitedChannelList[JSONKey.channels] = Array(channels[startWith...endWith])
