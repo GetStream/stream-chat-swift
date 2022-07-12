@@ -277,13 +277,13 @@ extension MessageDeliveryStatus_Tests {
         AND("user succesfully sends new message") {
             userRobot.sendMessage(message)
         }
-        AND("the message is read by participant") {
-            participantRobot.readMessage()
-        }
-        WHEN("user previews thread for read message: \(message)") {
+        AND("user previews thread for read message: \(message)") {
             userRobot.showThread()
         }
-        THEN("user spots double checkmark below the message") {
+        WHEN("the message is read by participant") {
+            participantRobot.readMessage()
+        }
+        THEN("user spots double checkmark below the message in thread") {
             userRobot.assertMessageDeliveryStatus(.read)
         }
         AND("user spots read by 1 number below the message") {

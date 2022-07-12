@@ -208,7 +208,12 @@ extension UserRobot {
     @discardableResult
     func tapOnMessage(at messageCellIndex: Int? = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        messageCell.waitForHitPoint().tap()
+        return tapOnMessage(messageCell)
+    }
+    
+    @discardableResult
+    func tapOnMessage(_ messageCell: XCUIElement) -> Self {
+        messageCell.waitForHitPoint().safeTap()
         return self
     }
     
