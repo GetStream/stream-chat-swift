@@ -31,10 +31,7 @@ final class GetChannelIdsOperation: AsyncOperation {
                     .flatMap(\.channels)
                     .compactMap { try? ChannelId(cid: $0.cid) }
                 log.info("0. Retrieved channels from existing queries from DB. Count \(cids.count)", subsystems: .offlineSupport)
-                context.localChannelIds = cids
-                if cids.isEmpty {
-                    context.localChannelIds = activeChannelIds
-                }
+                context.localChannelIds = Array(Set(cids + activeChannelIds))
                 done(.continue)
             }
         }
