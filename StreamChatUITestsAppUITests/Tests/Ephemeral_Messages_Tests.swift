@@ -108,6 +108,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         linkToScenario(withId: 239)
 
         GIVEN("user opens a channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot
                 .login()
                 .openChannel()
@@ -120,6 +121,38 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         }
         THEN("user doesn't see the ephemeral message") {
             userRobot.assertGiphyImageNotVisible()
+        }
+    }
+    
+    func test_userObservesAnimatedGiphy_afterShufflingAndSendingGiphyMessage() {
+        linkToScenario(withId: 277)
+
+        GIVEN("user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user sends a giphy using giphy command") {
+            userRobot.sendGiphy(shuffle: true)
+        }
+        THEN("user observes the animated gif") {
+            userRobot.assertGiphyImage()
+        }
+    }
+    
+    func test_userObservesAnimatedGiphy_afterAddingGiphyThroughComposerMenu() {
+        linkToScenario(withId: 278)
+
+        GIVEN("user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user sends a giphy using giphy command") {
+            userRobot.sendGiphy(useComposerCommand: true)
+        }
+        THEN("user observes the animated gif") {
+            userRobot.assertGiphyImage()
         }
     }
 }

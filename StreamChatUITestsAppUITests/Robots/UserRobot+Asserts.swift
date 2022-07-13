@@ -621,9 +621,7 @@ extension UserRobot {
     ) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         XCTAssertTrue(attributes.giphyLabel(in: cell).wait().exists)
-        XCTAssertFalse(attributes.giphySendButton(in: cell).exists)
-        XCTAssertFalse(attributes.giphyShuffleButton(in: cell).exists)
-        XCTAssertFalse(attributes.giphyCancelButton(in: cell).exists)
+        XCTAssertEqual(0, attributes.giphyButtons(in: cell).count)
         return self
     }
 
@@ -633,11 +631,9 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait(timeout: 1)
-        XCTAssertFalse(attributes.giphyLabel(in: cell).exists)
-        XCTAssertFalse(attributes.giphySendButton(in: cell).exists)
-        XCTAssertFalse(attributes.giphyShuffleButton(in: cell).exists)
-        XCTAssertFalse(attributes.giphyCancelButton(in: cell).exists)
+        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        XCTAssertFalse(attributes.giphyLabel(in: cell).waitForDisappearance().exists)
+        XCTAssertEqual(0, attributes.giphyButtons(in: cell).count)
         return self
     }
 
