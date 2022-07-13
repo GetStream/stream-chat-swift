@@ -146,7 +146,6 @@ final class SyncOperations_Tests: XCTestCase {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelController_Spy(client: client)
         controller.state = .remoteDataFetched
-        context.localChannelIds.insert(controller.cid!, at: 0)
 
         let operation = WatchChannelOperation(controller: controller, context: context)
 
