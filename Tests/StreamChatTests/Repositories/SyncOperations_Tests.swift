@@ -141,6 +141,21 @@ final class SyncOperations_Tests: XCTestCase {
         XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 1)
         XCTAssertCall("recoverWatchedChannel(completion:)", on: controller)
     }
+    
+    func test_WatchChannelOperation_availableOnRemote_notSynched() {
+        let context = SyncContext(lastSyncAt: .init())
+        let controller = ChatChannelController_Spy(client: client)
+        controller.state = .remoteDataFetched
+        context.localChannelIds.insert(controller.cid!, at: 0)
+
+        let operation = WatchChannelOperation(controller: controller, context: context)
+
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 1)
+        XCTAssertEqual(context.synchedChannelIds.count, 0)
+        XCTAssertCall("recoverWatchedChannel(completion:)", on: controller)
+    }
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchFailure_shouldRetry() {
         let context = SyncContext(lastSyncAt: .init())
