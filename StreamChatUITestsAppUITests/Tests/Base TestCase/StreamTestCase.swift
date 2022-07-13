@@ -34,6 +34,7 @@ class StreamTestCase: XCTestCase {
         app.terminate()
         server.stop()
         server = nil
+        backendRobot.delayServerResponse(byTimeInterval: 0.0)
         
         try super.tearDownWithError()
         app.launchArguments.removeAll()

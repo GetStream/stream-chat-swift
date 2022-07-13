@@ -466,7 +466,7 @@ extension UserRobot {
             let count = commandsView.cells.waitCount(1).count
             XCTAssertGreaterThan(count, 0, file: file, line: line)
         } else {
-            commandsView.cells.firstMatch.waitForLoss()
+            commandsView.cells.firstMatch.waitForDisappearance()
             XCTAssertEqual(commandsView.cells.count, 0, file: file, line: line)
         }
         return self
