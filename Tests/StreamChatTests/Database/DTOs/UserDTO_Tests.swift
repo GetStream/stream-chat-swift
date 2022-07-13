@@ -277,4 +277,82 @@ final class UserDTO_Tests: XCTestCase {
             NSSortDescriptor(key: "userRoleRaw", ascending: true)
         )
     }
+
+    func test_userChange_triggerMembersUpdate() throws {
+        // Arrange: Store member and user in database
+        let userId: UserId = .unique
+        let channelId: ChannelId = .unique
+
+        let userPayload: UserPayload = .dummy(userId: userId)
+
+        let payload: MemberPayload = .init(
+            user: userPayload,
+            role: .moderator,
+            createdAt: .init(timeIntervalSince1970: 4000),
+            updatedAt: .init(timeIntervalSince1970: 5000)
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveMember(payload: payload, channelId: channelId)
+        }
+
+        // Arrange: Observe changes on members
+        let observer = EntityDatabaseObserver<MemberDTO, MemberDTO>(
+            context: database.viewContext,
+            fetchRequest: MemberDTO.member(userId, in: channelId),
+            itemCreator: { $0 }
+        )
+        try observer.startObserving()
+
+        var receivedChange: EntityChange<MemberDTO>?
+        observer.onChange { receivedChange = $0 }
+
+        // Act: Update user
+        try database.writeSynchronously { session in
+            let loadedUser: UserDTO = try XCTUnwrap(session.user(id: userId))
+            loadedUser.name = "Jo Jo"
+        }
+
+        // Assert: Members should be updated
+        XCTAssertNotNil(receivedChange)
+    }
+
+    func test_userChange_triggerCurrentUserUpdate() throws {
+        // Arrange: Store current user in database
+        let userId: UserId = .unique
+
+        let payload: CurrentUserPayload = .dummy(
+            userId: userId,
+            role: .admin,
+            extraData: [:],
+            devices: [DevicePayload.dummy],
+            mutedUsers: [
+                .dummy(userId: .unique)
+            ]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payload)
+        }
+
+        // Arrange: Observe changes on current user
+        let observer = EntityDatabaseObserver<CurrentUserDTO, CurrentUserDTO>(
+            context: database.viewContext,
+            fetchRequest: CurrentUserDTO.defaultFetchRequest,
+            itemCreator: { $0 }
+        )
+        try observer.startObserving()
+
+        var receivedChange: EntityChange<CurrentUserDTO>?
+        observer.onChange { receivedChange = $0 }
+
+        // Act: Update user
+        try database.writeSynchronously { session in
+            let loadedUser: UserDTO = try XCTUnwrap(session.user(id: userId))
+            loadedUser.name = "Jo Jo"
+        }
+
+        // Assert: Members should be updated
+        XCTAssertNotNil(receivedChange)
+    }
 }
