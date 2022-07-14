@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// A `RawJSON` type.
+/// A `RawJSON` type. The type use for handling extra data.
 /// Used to store and operate objects of unknown structure that's not possible to decode.
 /// https://forums.swift.org/t/new-unevaluated-type-for-decoder-to-allow-later-re-encoding-of-data-with-unknown-structure/11117
 public indirect enum RawJSON: Codable, Hashable {
@@ -38,11 +38,10 @@ public indirect enum RawJSON: Codable, Hashable {
             self = .nil
             return
         }
-        throw DecodingError
-            .dataCorrupted(
-                DecodingError
-                    .Context(codingPath: decoder.codingPath, debugDescription: "Could not find reasonable type to map to JSONValue")
-            )
+        throw DecodingError.dataCorrupted(DecodingError.Context(
+            codingPath: decoder.codingPath,
+            debugDescription: "Could not find reasonable type to map to JSONValue"
+        ))
     }
     
     public func encode(to encoder: Encoder) throws {
