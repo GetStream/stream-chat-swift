@@ -188,6 +188,99 @@ public extension RawJSON {
     }
 }
 
+// MARK: ExpressibleByLiteral
+
+extension RawJSON: ExpressibleByDictionaryLiteral {
+    public typealias Key = String
+    public typealias Value = RawJSON
+
+    /// RawJSON can be created by using a Dictionary Literal.
+    ///
+    /// Example:
+    /// ```
+    /// let extraData: [String: RawJSON] = [
+    ///     "flight": [
+    ///         "price": .number(1000),
+    ///         "destination": .string("Lisbon")
+    ///     ]
+    /// ]
+    /// ```
+    public init(dictionaryLiteral elements: (String, RawJSON)...) {
+        let dict: [String: RawJSON] = elements.reduce(into: [:]) { partialResult, element in
+            partialResult[element.0] = element.1
+        }
+        self = .dictionary(dict)
+    }
+}
+
+extension RawJSON: ExpressibleByArrayLiteral {
+    /// RawJSON can be created by using an Array Literal.
+    ///
+    /// Example:
+    /// ```
+    /// let extraData: [String: RawJSON] = [
+    ///     "names": [.string("John"), string("Doe")]
+    /// ]
+    /// ```
+    public init(arrayLiteral elements: RawJSON...) {
+        self = .array(elements)
+    }
+}
+
+extension RawJSON: ExpressibleByStringLiteral {
+    /// RawJSON can be created by using a String Literal.
+    ///
+    /// Example:
+    /// ```
+    /// let extraData: [String: RawJSON] = [
+    ///     "names": ["John", "Doe"] // instead of [.string("John"), .string("Doe")]
+    /// ]
+    /// ```
+    public init(stringLiteral value: StringLiteralType) {
+        self = .string(value)
+    }
+}
+
+extension RawJSON: ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral {
+    /// RawJSON can be created by using a Float Literal.
+    ///
+    /// Example:
+    /// ```
+    /// let extraData: [String: RawJSON] = [
+    ///     "distances": [3.5, 4.5] // instead of [.number(3.5), .number(3.5)]
+    /// ]
+    /// ```
+    public init(floatLiteral value: FloatLiteralType) {
+        self = .number(value)
+    }
+
+    /// RawJSON can be created by using an Integer Literal.
+    ///
+    /// Example:
+    /// ```
+    /// let extraData: [String: RawJSON] = [
+    ///     "ages": [23, 32] // instead of [.number(23.0), .number(32.0)]
+    /// ]
+    /// ```
+    public init(integerLiteral value: IntegerLiteralType) {
+        self = .number(Double(value))
+    }
+}
+
+extension RawJSON: ExpressibleByBooleanLiteral {
+    /// RawJSON can be created by using a Bool Literal.
+    ///
+    /// Example:
+    /// ```
+    /// let extraData: [String: RawJSON] = [
+    ///     "isManager": true // instead of .bool(true)
+    /// ]
+    /// ```
+    public init(booleanLiteral value: BooleanLiteralType) {
+        self = .bool(value)
+    }
+}
+
 // MARK: Deprecations
 
 public extension RawJSON {
