@@ -4,8 +4,8 @@
 
 import Foundation
 import XCTest
-import StreamChat
 @testable import StreamChatUI
+@testable import StreamChat
 
 let channelAttributes = ChannelListPage.Attributes.self
 let channelCells = ChannelListPage.cells
@@ -103,6 +103,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
+        ChannelListPage.cells.firstMatch.wait()
         let expectedChannel = ChannelListPage.channel(withName: "\(expectedCount)")
         var expectedChannelExist = expectedChannel.exists
         
@@ -121,6 +122,17 @@ extension UserRobot {
                       "Expected channel should be visible",
                       file: file,
                       line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertChannelCount(
+        _ expectedCount: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let actualCount = ChannelListPage.cells.waitCount(expectedCount).count
+        XCTAssertEqual(expectedCount, actualCount, file: file, line: line)
         return self
     }
 }
@@ -205,6 +217,20 @@ extension UserRobot {
     @discardableResult
     func assertDeletedMessage(
         at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let message = attributes.text(in: messageCell).wait()
+        let expectedMessage = attributes.deletedMessagePlaceholder
+        let actualMessage = message.waitForText(expectedMessage).text
+        XCTAssertEqual(expectedMessage, actualMessage, "Text is wrong", file: file, line: line)
+        return self
+    }
+
+    @discardableResult
+    func assertHardDeletedMessage(
+        at messageCellIndex: Int = 0,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
@@ -395,7 +421,7 @@ extension UserRobot {
         let composer = MessageListPage.Composer.self
         let leftButtonsVisible = shouldBeVisible
             ? composer.attachmentButton.wait().exists && composer.commandButton.wait().exists
-            : composer.attachmentButton.waitForLoss().exists && composer.commandButton.waitForLoss().exists
+            : composer.attachmentButton.waitForDisappearance().exists && composer.commandButton.waitForDisappearance().exists
         XCTAssertEqual(shouldBeVisible,
                        leftButtonsVisible,
                        "Composer left buttons should be visible: \(shouldBeVisible)",
@@ -415,8 +441,33 @@ extension UserRobot {
             let count = mentionsView.cells.waitCount(1).count
             XCTAssertGreaterThan(count, 0, file: file, line: line)
         } else {
-            mentionsView.cells.firstMatch.waitForLoss()
+            mentionsView.cells.firstMatch.waitForDisappearance()
             XCTAssertEqual(mentionsView.cells.count, 0, file: file, line: line)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func assertMentionWasApplied(file: StaticString = #filePath, line: UInt = #line) -> Self {
+        let expectedText = "@\(UserDetails.hanSoloName)"
+        let actualText = MessageListPage.Composer.textView.waitForText(expectedText).text
+        XCTAssertEqual(expectedText, actualText, file: file, line: line)
+        return self
+    }
+
+    @discardableResult
+    func assertComposerCommands(
+        shouldBeVisible: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let commandsView = MessageListPage.ComposerCommands.self
+        if shouldBeVisible {
+            let count = commandsView.cells.waitCount(1).count
+            XCTAssertGreaterThan(count, 0, file: file, line: line)
+        } else {
+            commandsView.cells.firstMatch.waitForDisappearance()
+            XCTAssertEqual(commandsView.cells.count, 0, file: file, line: line)
         }
         return self
     }
@@ -523,7 +574,7 @@ extension UserRobot {
 
     @discardableResult
     func assertSendButtonIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        XCTAssertFalse(MessageListPage.Composer.sendButton.waitForLoss().exists)
+        XCTAssertFalse(MessageListPage.Composer.sendButton.waitForDisappearance().exists)
         return self
     }
 }
@@ -540,7 +591,7 @@ extension UserRobot {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let reaction = attributes.reactionButton(in: messageCell)
         let errMessage = isPresent ? "There are no reactions" : "Reaction is presented"
-        _ = isPresent ? reaction.wait() : reaction.waitForLoss()
+        _ = isPresent ? reaction.wait() : reaction.waitForDisappearance()
         XCTAssertEqual(isPresent, reaction.exists, errMessage, file: file, line: line)
         return self
     }
@@ -570,9 +621,19 @@ extension UserRobot {
     ) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         XCTAssertTrue(attributes.giphyLabel(in: cell).wait().exists)
-        XCTAssertFalse(attributes.giphySendButton(in: cell).exists)
-        XCTAssertFalse(attributes.giphyShuffleButton(in: cell).exists)
-        XCTAssertFalse(attributes.giphyCancelButton(in: cell).exists)
+        XCTAssertEqual(0, attributes.giphyButtons(in: cell).count)
+        return self
+    }
+
+    @discardableResult
+    func assertGiphyImageNotVisible(
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let cell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        XCTAssertFalse(attributes.giphyLabel(in: cell).waitForDisappearance().exists)
+        XCTAssertEqual(0, attributes.giphyButtons(in: cell).count)
         return self
     }
 
@@ -621,7 +682,9 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        tapOnMessage(at: messageCellIndex)
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.time(in: messageCell).wait()
+        tapOnMessage(messageCell)
         let fullscreenImage = attributes.fullscreenImage().wait()
         let errMessage = isPresent ? "There is no image" : "Image is presented"
         XCTAssertTrue(fullscreenImage.exists, errMessage, file: file, line: line)
@@ -635,7 +698,9 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        tapOnMessage(at: messageCellIndex)
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.time(in: messageCell).wait()
+        tapOnMessage(messageCell)
         let player = attributes.videoPlayer().wait()
         let errMessage = isPresent ? "There is no video" : "Video is presented"
         XCTAssertTrue(player.exists, errMessage, file: file, line: line)
@@ -653,7 +718,7 @@ extension UserRobot {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let fileNames = attributes.fileNames(in: messageCell)
         let errMessage = isPresent ? "There are no files" : "Files are presented"
-        _ = isPresent ? fileNames.firstMatch.wait() : fileNames.firstMatch.waitForLoss()
+        _ = isPresent ? fileNames.firstMatch.wait() : fileNames.firstMatch.waitForDisappearance()
         XCTAssertEqual(fileNames.count, count, errMessage, file: file, line: line)
         return self
     }

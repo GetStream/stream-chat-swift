@@ -191,11 +191,16 @@ class MessageListPage {
         }
 
         static func statusCheckmark(for status: MessageDeliveryStatus?, in messageCell: XCUIElement) -> XCUIElement {
-            var identifier = "imageView"
+            var identifier = "There is no status checkmark"
             if let status = status {
-                identifier = "\(identifier)_\(status.rawValue)"
+                identifier = "imageView_\(status.rawValue)"
             }
             return messageCell.images[identifier]
+        }
+        
+        // Use this method to access `Cancel` button, e.g.: .giphyButtons().waitCount(3).lastMatch?
+        static func giphyButtons(in messageCell: XCUIElement) -> XCUIElementQuery {
+            messageCell.buttons.matching(NSPredicate(format: "identifier LIKE 'ActionButton'"))
         }
         
         static func giphySendButton(in messageCell: XCUIElement) -> XCUIElement {
@@ -205,18 +210,13 @@ class MessageListPage {
         static func giphyShuffleButton(in messageCell: XCUIElement) -> XCUIElement {
             attachmentActionButton(in: messageCell, label: "Shuffle")
         }
-        
-        static func giphyCancelButton(in messageCell: XCUIElement) -> XCUIElement {
-            attachmentActionButton(in: messageCell, label: "Cancel")
-        }
 
         static func giphyLabel(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["GIPHY"]
         }
         
         private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {
-            messageCell.buttons.matching(NSPredicate(
-                format: "identifier LIKE 'ActionButton' AND label LIKE '\(label)'")).firstMatch
+            giphyButtons(in: messageCell).matching(NSPredicate(format: "label LIKE '\(label)'")).firstMatch
         }
         
         static var deletedMessagePlaceholder: String {

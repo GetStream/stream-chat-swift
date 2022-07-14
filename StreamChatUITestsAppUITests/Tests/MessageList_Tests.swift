@@ -297,8 +297,11 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
-    func test_messageListScrollsDown_whenMessageListIsScrolledDown_andUserReceivesNewMessage() {
+    func test_messageListScrollsDown_whenMessageListIsScrolledDown_andUserReceivesNewMessage() throws {
         linkToScenario(withId: 75)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2020] Scroll on message list does not work well enough")
 
         let newMessage = "New message"
 
@@ -334,6 +337,23 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
+    func test_commandsPopupDisappear_whenUserTapsOnMessageList() {
+        linkToScenario(withId: 98)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
+        }
+        AND("user opens command suggestions") {
+            userRobot.openComposerCommands()
+        }
+        WHEN("user taps on message list") {
+            userRobot.tapOnMessage()
+        }
+        THEN("command suggestions disappear") {
+            userRobot.assertComposerCommands(shouldBeVisible: false)
+        }
+    }
 }
 
 // MARK: Quoted messages
@@ -485,6 +505,20 @@ extension MessageList_Tests {
         }
         THEN("composer mention view disappears") {
             userRobot.assertComposerMentions(shouldBeVisible: false)
+        }
+    }
+    
+    func test_userFillsTheComposerMentioningParticipantThroughMentionsView() {
+        linkToScenario(withId: 62)
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user taps on participants name") {
+            userRobot.mentionParticipant()
+        }
+        THEN("composer fills in participants name") {
+            userRobot.assertMentionWasApplied()
         }
     }
 }

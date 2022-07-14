@@ -108,15 +108,17 @@ public enum UserDetails {
         ]
     }
 
+    public static let hanSoloId = "han_solo"
+    public static let hanSoloName = "Han Solo"
     public static let hanSolo = [
-        UserPayloadsCodingKeys.id.rawValue: "han_solo",
-        UserPayloadsCodingKeys.name.rawValue: "Han Solo",
+        UserPayloadsCodingKeys.id.rawValue: hanSoloId,
+        UserPayloadsCodingKeys.name.rawValue: hanSoloName,
         UserPayloadsCodingKeys.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
     ]
 
-    public static let currentUserId = "luke_skywalker"
+    public static let lukeSkywalkerId = "luke_skywalker"
     public static let lukeSkywalker = [
-        UserPayloadsCodingKeys.id.rawValue: "luke_skywalker",
+        UserPayloadsCodingKeys.id.rawValue: lukeSkywalkerId,
         UserPayloadsCodingKeys.name.rawValue: "Luke Skywalker",
         UserPayloadsCodingKeys.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
     ]

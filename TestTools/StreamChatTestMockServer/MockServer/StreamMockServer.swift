@@ -10,6 +10,8 @@ public final class StreamMockServer {
 
     // Delays all HTTP responses by given time interval, 0 by default
     public static var httpResponseDelay: TimeInterval = 0.0
+    // Waits for all HTTP and Websocket responses during given time interval, 10 by default
+    public static var waitTimeout = 10.0
 
     public private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
@@ -19,6 +21,7 @@ public final class StreamMockServer {
     public var currentChannelId = ""
     public var channelsEndpointWasCalled = false
     public var channelQueryEndpointWasCalled = false
+    public var allChannelsWereLoaded = false
     public var latestWebsocketMessage = ""
     public var latestHttpMessage = ""
     public let forbiddenWords: Set<String> = ["wth"]

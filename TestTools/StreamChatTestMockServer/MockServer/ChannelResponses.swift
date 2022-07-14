@@ -86,13 +86,13 @@ public extension StreamMockServer {
         return channels[index]
     }
     
-    func waitForChannelQueryUpdate(timeout: Double = XCUIElement.waitTimeout) {
+    func waitForChannelQueryUpdate(timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while !channelQueryEndpointWasCalled
                 && endTime > Date().timeIntervalSince1970 * 1000 {}
     }
     
-    func waitForChannelsUpdate(timeout: Double = XCUIElement.waitTimeout) {
+    func waitForChannelsUpdate(timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while !channelsEndpointWasCalled
                 && endTime > Date().timeIntervalSince1970 * 1000 {}
@@ -139,7 +139,8 @@ public extension StreamMockServer {
         let channels = limitedChannelList[JSONKey.channels] as? [[String: Any]] ?? []
         let channelCount = channels.count - 1
         
-        if channelCount > limit {
+        if !allChannelsWereLoaded && channelCount > limit {
+            allChannelsWereLoaded = (channelCount - limit - offset < 0)
             let startWith = offset > channelCount ? channelCount : offset
             let endWith = offset + limit < channelCount ? offset + limit - 1 : channelCount
             limitedChannelList[JSONKey.channels] = Array(channels[startWith...endWith])

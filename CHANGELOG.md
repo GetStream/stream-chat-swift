@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Avoid triggering CoreData updates in willSave() [#2156](https://github.com/GetStream/stream-chat-swift/pull/2156)
 - Fix Channel missing messages from NSE push updates [#2166](https://github.com/GetStream/stream-chat-swift/pull/2166)
+- Sync active channels when no channel list [#2163](https://github.com/GetStream/stream-chat-swift/pull/2163)
 
 # [4.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.18.0)
 _July 05, 2022_

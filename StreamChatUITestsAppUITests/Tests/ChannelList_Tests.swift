@@ -58,6 +58,26 @@ final class ChannelList_Tests: StreamTestCase {
         }
     }
     
+    func test_userLogsInAfterLoggingOut() {
+        linkToScenario(withId: 83)
+        
+        let channelsCount = 10
+        
+        GIVEN("user logs in") {
+            backendRobot.generateChannels(count: channelsCount)
+            userRobot.login()
+        }
+        AND("user logs out") {
+            userRobot.logout()
+        }
+        WHEN("user logs in") {
+            userRobot.login()
+        }
+        THEN("user observes the channel list") {
+            userRobot.assertChannelCount(channelsCount)
+        }
+    }
+    
     func test_paginationOnChannelList() {
         linkToScenario(withId: 276)
         
