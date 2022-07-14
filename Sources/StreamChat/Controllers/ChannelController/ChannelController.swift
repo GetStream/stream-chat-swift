@@ -247,7 +247,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Database observers.
     /// Will be `nil` when observing channel with backend generated `id` is not yet created.
     @Cached private var channelObserver: EntityDatabaseObserver<ChatChannel, ChannelDTO>?
-    private var messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var messagesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
     
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
@@ -362,7 +362,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages
             }
 
-            let observer = BackgroundListDatabaseObserver(
+            let observer = ListDatabaseObserverWrapper(
+                isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
                 context: self.client.databaseContainer.backgroundReadOnlyContext,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,

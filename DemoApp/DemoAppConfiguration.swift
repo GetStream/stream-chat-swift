@@ -29,10 +29,12 @@ enum DemoAppConfiguration {
     static func setInternalConfiguration() {
         StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
         StreamRuntimeCheck._isLazyMappingEnabled = !isStreamInternalConfiguration
+        StreamRuntimeCheck._isBackgroundMappingEnabled = isStreamInternalConfiguration
 
         configureAtlantisIfNeeded()
-        trackPerformanceIfNeeded()
-        enableMessageDiffingIfNeeded()
+        if !StreamRuntimeCheck._isBackgroundMappingEnabled {
+            enableMessageDiffingIfNeeded()
+        }
     }
 
     // HTTP and WebSocket Proxy with Proxyman.app
@@ -45,8 +47,10 @@ enum DemoAppConfiguration {
     }
 
     // Performance tracker
-    private static func trackPerformanceIfNeeded() {
-        if isStreamInternalConfiguration {
+    static func showPerformanceTracker() {
+        guard isStreamInternalConfiguration else { return }
+        // PerformanceMonitor seems to have a bug where it cannot find the hierarchy when trying to place its view
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             PerformanceMonitor.shared().performanceViewConfigurator.options = [.performance]
             PerformanceMonitor.shared().start()
         }
