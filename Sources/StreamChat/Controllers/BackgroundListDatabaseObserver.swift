@@ -5,18 +5,79 @@
 import CoreData
 import Foundation
 
-#warning("bnsjhgbsfjhbgsfgs")
-protocol ListDatabaseObserverType {
-    func startObserving() throws
-    var anyItems: Any { get }
+class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
+    private var foreground: ListDatabaseObserver<Item, DTO>?
+    private var background: BackgroundListDatabaseObserver<Item, DTO>?
+    let isBackground: Bool
+
+    var items: LazyCachedMapCollection<Item> {
+        if isBackground {
+            return background!.items
+        } else {
+            return foreground!.items
+        }
+    }
+
+    /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
+    /// on its delegate.
+    var onWillChange: (() -> Void)? {
+        didSet {
+            if isBackground {
+                background!.onWillChange = onWillChange
+            } else {
+                foreground!.onWillChange = onWillChange
+            }
+        }
+    }
+
+    /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`
+    /// on its delegate.
+    var onDidChange: (([ListChange<Item>]) -> Void)? {
+        didSet {
+            if isBackground {
+                background!.onDidChange = onDidChange
+            } else {
+                foreground!.onChange = onDidChange
+            }
+        }
+    }
+
+    init(
+        isBackground: Bool,
+        context: NSManagedObjectContext,
+        fetchRequest: NSFetchRequest<DTO>,
+        itemCreator: @escaping (DTO) throws -> Item,
+        fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
+    ) {
+        self.isBackground = isBackground
+        if isBackground {
+            background = BackgroundListDatabaseObserver(
+                context: context,
+                fetchRequest: fetchRequest,
+                itemCreator: itemCreator,
+                fetchedResultsControllerType: fetchedResultsControllerType
+            )
+        } else {
+            foreground = ListDatabaseObserver(
+                context: context,
+                fetchRequest: fetchRequest,
+                itemCreator: itemCreator,
+                fetchedResultsControllerType: fetchedResultsControllerType
+            )
+        }
+    }
+
+    func startObserving() throws {
+        if isBackground {
+            try background!.startObserving()
+        } else {
+            try foreground!.startObserving()
+        }
+    }
 }
 
-class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: ListDatabaseObserverType {
+class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     private(set) var items: LazyCachedMapCollection<Item> = []
-
-    var anyItems: Any {
-        items
-    }
 
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
     /// on its delegate.

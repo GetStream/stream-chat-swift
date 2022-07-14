@@ -45,9 +45,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ///
     public var channels: LazyCachedMapCollection<ChatChannel> {
         startChannelListObserverIfNeeded()
-        // swiftlint:disable force_cast
-        return channelListObserver.anyItems as! LazyCachedMapCollection<ChatChannel>
-        // swiftlint:enable force_cast
+        return channelListObserver.items
     }
     
     /// The worker used to fetch the remote data and communicate with servers.
@@ -71,23 +69,57 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    let view: Bool = false
+    private(set) lazy var channelListObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
+        let request = ChannelDTO.channelListFetchRequest(query: self.query)
+        let observer = ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>(
+            isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+            context: client.databaseContainer.backgroundReadOnlyContext,
+            fetchRequest: request,
+            itemCreator: { try $0.asModel() }
+        )
 
-    var channelListObserver: ListDatabaseObserverType {
-        if view {
-            return viewChannelListObserver
-        } else {
-            return backgroundChannelListObserver
+        observer.onDidChange = { [weak self] changes in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+                log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
+                $0.controller(self, didChangeChannels: changes)
+            }
+            self?.handleLinkedChannels(changes)
         }
-    }
 
-    var updatedChannelObserver: ListDatabaseObserverType {
-        if view {
-            return viewUpdatedChannelObserver
-        } else {
-            return backgroundUpdatedChannelObserver
+        observer.onWillChange = { [weak self] in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+
+                $0.controllerWillChangeChannels(self)
+            }
         }
-    }
+
+        return observer
+    }()
+
+    /// Used for observing the database for changes.
+    private(set) lazy var updatedChannelObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
+        let request = ChannelDTO.channelsFetchRequest(notLinkedTo: query)
+        let observer = ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>(
+            isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+            context: client.databaseContainer.backgroundReadOnlyContext,
+            fetchRequest: request,
+            itemCreator: { try $0.asModel() }
+        )
+
+        observer.onDidChange = { [weak self] changes in
+            self?.handleUnlinkedChannels(changes)
+        }
+
+        return observer
+    }()
 
     private(set) lazy var backgroundChannelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
@@ -118,70 +150,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
                 $0.controllerWillChangeChannels(self)
             }
-        }
-
-        return observer
-    }()
-
-    private(set) lazy var backgroundUpdatedChannelObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
-        let request = ChannelDTO.channelsFetchRequest(notLinkedTo: query)
-        let observer = BackgroundListDatabaseObserver<ChatChannel, ChannelDTO>(
-            context: client.databaseContainer.backgroundReadOnlyContext,
-            fetchRequest: request,
-            itemCreator: { try $0.asModel() }
-        )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.handleUnlinkedChannels(changes)
-        }
-
-        return observer
-    }()
-
-    /// Used for observing the database for changes.
-    private(set) lazy var viewChannelListObserver: ListDatabaseObserver<ChatChannel, ChannelDTO> = {
-        let request = ChannelDTO.channelListFetchRequest(query: self.query)
-        let observer = self.environment.createChannelListDatabaseObserver(
-            client.databaseContainer.viewContext,
-            request,
-            { try $0.asModel() }
-        )
-
-        observer.onChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
-                $0.controller(self, didChangeChannels: changes)
-            }
-            self?.handleLinkedChannels(changes)
-        }
-
-        observer.onWillChange = { [weak self] in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.controllerWillChangeChannels(self)
-            }
-        }
-
-        return observer
-    }()
-
-    lazy var viewUpdatedChannelObserver: ListDatabaseObserver<ChatChannel, ChannelDTO> = {
-        let observer = self.environment.createChannelListDatabaseObserver(
-            client.databaseContainer.viewContext,
-            ChannelDTO.channelsFetchRequest(notLinkedTo: query),
-            { try $0.asModel() }
-        )
-
-        observer.onChange = { [weak self] changes in
-            self?.handleUnlinkedChannels(changes)
         }
 
         return observer
