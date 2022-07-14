@@ -281,6 +281,63 @@ extension RawJSON: ExpressibleByBooleanLiteral {
     }
 }
 
+// MARK: Subscripts
+
+extension RawJSON {
+    /// Accesses the RawJSON as a dictionary with the given key for reading and writing.
+    /// This is specially useful for accessing nested types inside the extra data dictionary.
+    ///
+    /// Example:
+    /// ```
+    /// let extraData = message.extraData
+    /// let price = extraData["flight"]?["price"].numberValue
+    /// let destination = extraData["flight"]?["destination"].stringValue
+    /// ```
+    subscript(key: String) -> RawJSON? {
+        get {
+            guard case let .dictionary(dict) = self else {
+                return nil
+            }
+
+            return dict[key]
+        }
+        set {
+            guard case var .dictionary(dict) = self else {
+                return
+            }
+
+            dict[key] = newValue
+            self = .dictionary(dict)
+        }
+    }
+
+    /// Accesses RawJSON as an array and accesses the element at the specified position.
+    /// This is specially useful for accessing arrays of nested types inside the extra data dictionary.
+    ///
+    /// Example:
+    /// ```
+    /// let extraData = message.extraData
+    /// let secondFlightPrice = extraData["flights"]?[1]?["price"] ?? 0
+    /// ```
+    subscript(index: Int) -> RawJSON? {
+        get {
+            guard case let .array(array) = self else {
+                return nil
+            }
+
+            return array[index]
+        }
+        set {
+            guard case var .array(array) = self, let newValue = newValue else {
+                return
+            }
+
+            array[index] = newValue
+            self = .array(array)
+        }
+    }
+}
+
 // MARK: Deprecations
 
 public extension RawJSON {
