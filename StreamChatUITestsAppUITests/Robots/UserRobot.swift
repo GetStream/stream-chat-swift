@@ -25,6 +25,12 @@ final class UserRobot: Robot {
     }
     
     @discardableResult
+    func logout() -> Self {
+        ChannelListPage.userAvatar.safeTap()
+        return self
+    }
+    
+    @discardableResult
     func openChannel(channelCellIndex: Int = 0) -> Self {
         let minExpectedCount = channelCellIndex + 1
         let cells = ChannelListPage.cells.waitCount(minExpectedCount)
@@ -335,8 +341,8 @@ extension UserRobot {
     
     @discardableResult
     func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
-        MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.giphyButtons(in: messageCell).waitCount(3).lastMatch?.tap()
         return self
     }
     
@@ -348,6 +354,18 @@ extension UserRobot {
             MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i].safeTap()
         }
         if send { sendMessage("", waitForAppearance: false) }
+        return self
+    }
+    
+    @discardableResult
+    func mentionParticipant(manually: Bool = false) -> Self {
+        let text = "@\(UserDetails.hanSoloId)"
+        if manually {
+            typeText(text)
+        } else {
+            typeText("\(text.prefix(3))")
+            MessageListPage.ComposerMentions.cells.firstMatch.wait().tap()
+        }
         return self
     }
 }

@@ -66,5 +66,93 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .assertMessageHasTimestamp(at: 1)
         }
     }
+    
+    func test_channelListNotModified_whenEphemeralMessageShown() {
+        linkToScenario(withId: 187)
 
+        GIVEN("user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user runs a giphy command") {
+            userRobot.sendGiphy(send: false)
+        }
+        WHEN("user goes back to channel list") {
+            userRobot.tapOnBackButton()
+        }
+        THEN("message is not added to the channel list") {
+            userRobot.assertLastMessageInChannelPreview("No messages")
+        }
+    }
+    
+    func test_deliveryStatusHidden_whenEphemeralMessageShown() {
+        linkToScenario(withId: 182)
+
+        GIVEN("user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user runs a giphy command") {
+            userRobot.sendGiphy(send: false)
+        }
+        THEN("delivery status is hidden for ephemeral messages") {
+            userRobot
+                .assertMessageDeliveryStatus(nil)
+                .assertMessageReadCount(readBy: 0)
+        }
+    }
+
+    func test_messageIsNotSent_whenUserCancelsEphemeralMessage() {
+        linkToScenario(withId: 239)
+
+        GIVEN("user opens a channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user sends a giphy") {
+            userRobot.sendGiphy(send: false)
+        }
+        AND("user cancels the giphy") {
+            userRobot.tapOnCancelGiphyButton()
+        }
+        THEN("user doesn't see the ephemeral message") {
+            userRobot.assertGiphyImageNotVisible()
+        }
+    }
+    
+    func test_userObservesAnimatedGiphy_afterShufflingAndSendingGiphyMessage() {
+        linkToScenario(withId: 277)
+
+        GIVEN("user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user sends a giphy using giphy command") {
+            userRobot.sendGiphy(shuffle: true)
+        }
+        THEN("user observes the animated gif") {
+            userRobot.assertGiphyImage()
+        }
+    }
+    
+    func test_userObservesAnimatedGiphy_afterAddingGiphyThroughComposerMenu() {
+        linkToScenario(withId: 278)
+
+        GIVEN("user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user sends a giphy using giphy command") {
+            userRobot.sendGiphy(useComposerCommand: true)
+        }
+        THEN("user observes the animated gif") {
+            userRobot.assertGiphyImage()
+        }
+    }
 }

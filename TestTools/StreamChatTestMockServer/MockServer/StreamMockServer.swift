@@ -10,6 +10,8 @@ public final class StreamMockServer {
 
     // Delays all HTTP responses by given time interval, 0 by default
     public static var httpResponseDelay: TimeInterval = 0.0
+    // Waits for all HTTP and Websocket responses during given time interval, 10 by default
+    public static var waitTimeout = 10.0
 
     public private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
