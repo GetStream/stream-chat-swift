@@ -210,10 +210,6 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
-    var hasCache: Bool {
-        _items.hasCache
-    }
-
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
     /// are received.
     private func listenForRemoveAllDataNotifications() {
