@@ -46,6 +46,15 @@ open class ChatChannelListVC: _ViewController,
     open lazy var emptyView: ChatChannelListEmptyView = components.channelListEmptyView.init()
         .withoutAutoresizingMaskConstraints
     
+    /// View which will be shown at the bottom when an error occurs when fetching either local or remote channels.
+    /// This view has an action to retry the channel loading.
+    open private(set) lazy var channelListErrorView: ChatChannelListErrorView = {
+        let view = components.channelListErrorView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
+        return view
+    }()
+    
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
     open private(set) lazy var userAvatarView: CurrentChatUserAvatarView = components
         .currentUserAvatarView.init()
@@ -61,6 +70,9 @@ open class ChatChannelListVC: _ViewController,
     private lazy var listChangeUpdater: ListChangeUpdater = CollectionViewListChangeUpdater(
         collectionView: collectionView
     )
+    
+    /// Value of `channelListErrorView` height constraint.
+    var channelListErrorViewHeight: CGFloat { 88 }
     
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
@@ -115,6 +127,10 @@ open class ChatChannelListVC: _ViewController,
         
         userAvatarView.controller = controller.client.currentUserController()
         userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
+        
+        channelListErrorView.refreshButtonAction = { [weak self] in
+            self?.controller.synchronize()
+        }
     }
 
     open func collectionView(
@@ -144,6 +160,11 @@ open class ChatChannelListVC: _ViewController,
         emptyView.isHidden = true
         collectionView.addSubview(loadingIndicator)
         loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
+        
+        view.addSubview(channelListErrorView)
+        channelListErrorView.topAnchor.pin(equalTo: view.bottomAnchor).isActive = true
+        channelListErrorView.heightAnchor.pin(equalToConstant: channelListErrorViewHeight).isActive = true
+        channelListErrorView.pin(anchors: [.leading, .trailing], to: view)
     }
     
     override open func setUpAppearance() {
@@ -237,6 +258,27 @@ open class ChatChannelListVC: _ViewController,
             self?.isPaginatingChannels = false
         }
     }
+    
+    /// Shows the error view.
+    open func showErrorView() {
+        channelListErrorView.isHidden = false
+        
+        UIView.animate(withDuration: 0.5) {
+            self.channelListErrorView.center = .init(x: self.channelListErrorView.center.x, y: self.channelListErrorView.center.y - self.channelListErrorViewHeight)
+            self.view.layoutSubviews()
+        }
+    }
+    
+    /// Hides the error view.
+    open func hideErrorView() {
+        if channelListErrorView.isHidden { return }
+        UIView.animate(withDuration: 0.5) {
+            self.channelListErrorView.center = .init(x: self.channelListErrorView.center.x, y: self.channelListErrorView.center.y + self.channelListErrorViewHeight)
+            self.view.layoutSubviews()
+        } completion: { _ in
+            self.channelListErrorView.isHidden = true
+        }
+    }
 
     open func swipeableViewWillShowActionViews(for indexPath: IndexPath) {
         // Close other open cells
@@ -323,6 +365,10 @@ open class ChatChannelListVC: _ViewController,
             loadingIndicator.stopAnimating()
         }
         
+        if !channelListErrorView.isHidden {
+            hideErrorView()
+        }
+        
         let shouldHideEmptyView: Bool
 
         switch state {
@@ -332,6 +378,7 @@ open class ChatChannelListVC: _ViewController,
             shouldHideEmptyView = !self.controller.channels.isEmpty
         case .localDataFetchFailed, .remoteDataFetchFailed:
             shouldHideEmptyView = emptyView.isHidden
+            showErrorView()
         }
 
         emptyView.isHidden = shouldHideEmptyView

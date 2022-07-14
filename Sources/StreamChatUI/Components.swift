@@ -305,6 +305,9 @@ public struct Components {
     
     /// The view that is displayed when there are no channels on the list, i.e. when is on empty state.
     public var channelListEmptyView: ChatChannelListEmptyView.Type = ChatChannelListEmptyView.self
+    
+    /// View that shows that some error occurred on ChatChannelList.
+    public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
 
     // MARK: - Composer components
 

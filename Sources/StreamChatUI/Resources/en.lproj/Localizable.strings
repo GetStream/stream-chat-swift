@@ -13,6 +13,8 @@
 "channelList.empty.subtitle" = "How about sending your first message to a friend?";
 "channelList.empty.button" = "Start a chat";
 
+"channelList.error.message" = "Error loading channels";
+
 "message.actions.inline-reply" = "Reply";
 "message.actions.thread-reply" = "Thread Reply";
 "message.actions.edit" = "Edit Message";

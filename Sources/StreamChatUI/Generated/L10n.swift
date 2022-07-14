@@ -65,6 +65,10 @@ internal enum L10n {
       /// Let's start chatting!
       internal static var title: String { L10n.tr("Localizable", "channelList.empty.title") }
     }
+    internal enum Error {
+      /// Error loading channels
+      internal static var message: String { L10n.tr("Localizable", "channelList.error.message") }
+    }
   }
 
   internal enum Composer {

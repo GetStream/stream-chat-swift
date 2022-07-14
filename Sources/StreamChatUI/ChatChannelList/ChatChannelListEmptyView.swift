@@ -10,14 +10,15 @@ import UIKit
 
 open class ChatChannelListEmptyView: _View, ThemeProvider {
     
+    /// Container which holds all elements except action button in this view.
     open private(set) lazy var container: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
-    
+    /// Icon ImageView which is displayed above the title label.
     open private(set) lazy var iconView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
-    
+    /// Title label which displays the main message for the empty view.
     open private(set) lazy var titleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    
+    /// Subtitle label which displays additional information for the empty view..
     open private(set) lazy var subtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    
+    /// Button for an additional action on the empty view. E.g. start a new chat.
     open private(set) lazy var actionButton: UIButton = UIButton(type: .system).withoutAutoresizingMaskConstraints
     
     public var actionButtonPressed: (() -> Void)?
@@ -34,8 +35,11 @@ open class ChatChannelListEmptyView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
         
+        directionalLayoutMargins = .init(top: 8, leading: 30, bottom: 8, trailing: 30)
+        
         addSubview(container)
         container.pin(anchors: [.centerX, .centerY], to: self)
+        container.pin(anchors: [.leading, .trailing], to: layoutMarginsGuide)
         container.axis = .vertical
         container.alignment = .center
         container.addArrangedSubviews([iconView, titleLabel, subtitleLabel])
@@ -44,7 +48,7 @@ open class ChatChannelListEmptyView: _View, ThemeProvider {
         NSLayoutConstraint.activate([
             actionButton.centerXAnchor.pin(equalTo: container.centerXAnchor),
             actionButton.topAnchor.pin(greaterThanOrEqualTo: container.bottomAnchor, constant: 10),
-            actionButton.bottomAnchor.pin(lessThanOrEqualTo: bottomAnchor, constant: -40)
+            actionButton.bottomAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor)
         ])
     }
     

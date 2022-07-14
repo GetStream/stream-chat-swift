@@ -1786,6 +1786,10 @@
 		CF24AAB3284A5659005AD3B8 /* DefaultMarkdownFormatter_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF24AAB2284A5659005AD3B8 /* DefaultMarkdownFormatter_Tests.swift */; };
 		CF33B3AC28171BE500C84CDB /* CooldownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF33B3AB28171BE500C84CDB /* CooldownView.swift */; };
 		CF33B3AD28171BE500C84CDB /* CooldownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF33B3AB28171BE500C84CDB /* CooldownView.swift */; };
+		CF38F5AF287DB53E00E24D10 /* ChatChannelListErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF38F5AE287DB53E00E24D10 /* ChatChannelListErrorView.swift */; };
+		CF38F5B0287DB53E00E24D10 /* ChatChannelListErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF38F5AE287DB53E00E24D10 /* ChatChannelListErrorView.swift */; };
+		CF38F5B3287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF38F5B1287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift */; };
+		CF38F5B4287DB64B00E24D10 /* ChatChannelListErrorView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF38F5B1287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift */; };
 		CF5DCBC42837F11000CCA48C /* ScheduledStreamTimer_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAA6CBF2834B0B700EBF57A /* ScheduledStreamTimer_Mock.swift */; };
 		CF8268B92800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8268B82800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift */; };
 		CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
@@ -3534,6 +3538,8 @@
 		CF324E732832FBD200E5BBE6 /* StreamTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamTimer.swift; sourceTree = "<group>"; };
 		CF324E772832FC2C00E5BBE6 /* ScheduledStreamTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledStreamTimer.swift; sourceTree = "<group>"; };
 		CF33B3AB28171BE500C84CDB /* CooldownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooldownView.swift; sourceTree = "<group>"; };
+		CF38F5AE287DB53E00E24D10 /* ChatChannelListErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListErrorView.swift; sourceTree = "<group>"; };
+		CF38F5B1287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListErrorView_Tests.swift; sourceTree = "<group>"; };
 		CF6E489E282341F2008416DC /* CountdownTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownTracker.swift; sourceTree = "<group>"; };
 		CF8268B82800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelHeaderView_Tests.swift; sourceTree = "<group>"; };
 		CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemEnvironment+XStreamClient.swift"; sourceTree = "<group>"; };
@@ -4086,6 +4092,7 @@
 				78C8473725FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift */,
 				E798D6D125FF69120002C3B9 /* SwipeableView.swift */,
 				CFE5F85A2874A9330099A6A1 /* ChatChannelListEmptyView.swift */,
+				CF38F5AE287DB53E00E24D10 /* ChatChannelListErrorView.swift */,
 			);
 			path = ChatChannelList;
 			sourceTree = "<group>";
@@ -6562,6 +6569,7 @@
 				78C8474025FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift */,
 				E798D6D025FF69120002C3B9 /* SwipeableView_Tests.swift */,
 				CFE5F85D2874F7BF0099A6A1 /* ChatChannelListEmptyView_Tests.swift */,
+				CF38F5B1287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift */,
 			);
 			path = ChatChannelList;
 			sourceTree = "<group>";
@@ -9100,6 +9108,7 @@
 				ADA3572F269C807A004AD8E9 /* ChatChannelHeaderView.swift in Sources */,
 				ADCD5E4327987EFE00E66911 /* StreamModalTransitioningDelegate.swift in Sources */,
 				F80BCA1426304F7800F2107B /* ShareButton.swift in Sources */,
+				CF38F5AF287DB53E00E24D10 /* ChatChannelListErrorView.swift in Sources */,
 				C1FC2F6F27416E150062530F /* ImagePipelineConfiguration.swift in Sources */,
 				F838F6B32636D42B0025E1F5 /* ZoomAnimator.swift in Sources */,
 				64B059E22670EFFE0024CE90 /* ChatChannelVC+SwiftUI.swift in Sources */,
@@ -9294,6 +9303,7 @@
 				845CEE5A270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift in Sources */,
 				79567F35266F6F12007EADD3 /* CommandLabelView_Tests.swift in Sources */,
 				849AE666270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift in Sources */,
+				CF38F5B4287DB64B00E24D10 /* ChatChannelListErrorView_Tests.swift in Sources */,
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
 				AD154C6D25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift in Sources */,
 				84F373F0280D95990081E8BA /* ChatMessageDeliveryStatusView_Tests.swift in Sources */,
@@ -10702,6 +10712,7 @@
 				C121EBB32746A1E900023E4C /* ShareButton.swift in Sources */,
 				C121EBB42746A1E900023E4C /* CloseButton.swift in Sources */,
 				C121EBB52746A1E900023E4C /* ChatNavigationBar.swift in Sources */,
+				CF38F5B3287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift in Sources */,
 				CFE5F85F2874F7BF0099A6A1 /* ChatChannelListEmptyView_Tests.swift in Sources */,
 				C121EBB62746A1E900023E4C /* BaseViews.swift in Sources */,
 				C121EBB72746A1E900023E4C /* SwiftUIViewRepresentable.swift in Sources */,
@@ -10742,6 +10753,7 @@
 				ADBBDA20279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */,
 				C121EBD62746A1EA00023E4C /* ChatMessageReactionAppearance.swift in Sources */,
 				C121EBD72746A1EA00023E4C /* ChatMessageReactions+Types.swift in Sources */,
+				CF38F5B0287DB53E00E24D10 /* ChatChannelListErrorView.swift in Sources */,
 				C121EBD82746A1EA00023E4C /* ChatMessageReactionsView.swift in Sources */,
 				C121EBD92746A1EA00023E4C /* ChatMessageReactionsPickerVC.swift in Sources */,
 				C121EBDA2746A1EA00023E4C /* ChatReactionPickerBubbleView.swift in Sources */,
