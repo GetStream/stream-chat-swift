@@ -198,7 +198,6 @@ class MessageListPage {
             return messageCell.images[identifier]
         }
         
-        // Use this method to access `Cancel` button, e.g.: .giphyButtons().waitCount(3).lastMatch?
         static func giphyButtons(in messageCell: XCUIElement) -> XCUIElementQuery {
             messageCell.buttons.matching(NSPredicate(format: "identifier LIKE 'ActionButton'"))
         }
@@ -209,6 +208,10 @@ class MessageListPage {
         
         static func giphyShuffleButton(in messageCell: XCUIElement) -> XCUIElement {
             attachmentActionButton(in: messageCell, label: "Shuffle")
+        }
+        
+        static func giphyCancelButton(in messageCell: XCUIElement) -> XCUIElement {
+            attachmentActionButton(in: messageCell, label: "Cancel")
         }
 
         static func giphyLabel(in messageCell: XCUIElement) -> XCUIElement {
