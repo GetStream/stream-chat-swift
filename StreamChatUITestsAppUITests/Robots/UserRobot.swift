@@ -36,10 +36,14 @@ final class UserRobot: Robot {
         let cells = ChannelListPage.cells.waitCount(minExpectedCount)
         
         // TODO: CIS-1737
-        if !cells.firstMatch.wait(timeout: 5).exists {
-            app.terminate()
-            app.launch()
-            login()
+        if !cells.firstMatch.exists {
+            for _ in 0...3 {
+                app.terminate()
+                app.launch()
+                login()
+                cells.waitCount(minExpectedCount, timeout: 10)
+                break
+            }
         }
         
         XCTAssertGreaterThanOrEqual(
@@ -325,16 +329,14 @@ extension UserRobot {
     
     @discardableResult
     func tapOnSendGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphySendButton(in: messageCell).wait().safeTap()
         return self
     }
     
     @discardableResult
     func tapOnShuffleGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphyShuffleButton(in: messageCell).wait().safeTap()
         return self
     }
@@ -342,7 +344,7 @@ extension UserRobot {
     @discardableResult
     func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        MessageListPage.Attributes.giphyButtons(in: messageCell).waitCount(3).lastMatch?.tap()
+        MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
         return self
     }
     
