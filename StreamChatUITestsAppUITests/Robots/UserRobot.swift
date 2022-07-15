@@ -36,10 +36,14 @@ final class UserRobot: Robot {
         let cells = ChannelListPage.cells.waitCount(minExpectedCount)
         
         // TODO: CIS-1737
-        if !cells.firstMatch.wait(timeout: 5).exists {
-            app.terminate()
-            app.launch()
-            login()
+        if !cells.firstMatch.exists {
+            for _ in 0...3 {
+                app.terminate()
+                app.launch()
+                login()
+                cells.waitCount(minExpectedCount, timeout: 10)
+                break
+            }
         }
         
         XCTAssertGreaterThanOrEqual(
