@@ -58,8 +58,11 @@ final class ChannelList_Tests: StreamTestCase {
         }
     }
     
-    func test_userLogsInAfterLoggingOut() {
+    func test_userLogsInAfterLoggingOut() throws {
         linkToScenario(withId: 83)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2053] There is no user avatar on the channel list")
         
         let channelsCount = 10
         

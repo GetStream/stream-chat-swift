@@ -6,8 +6,11 @@ import XCTest
 
 final class Ephemeral_Messages_Tests: StreamTestCase {
 
-    func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage() {
+    func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage() throws {
         linkToScenario(withId: 67)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2054] Giphy is not loaded")
 
         GIVEN("user opens a channel") {
             userRobot
@@ -22,8 +25,11 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         }
     }
 
-    func test_userObservesAnimatedGiphy_whenParticipantAddsGiphyMessage() {
+    func test_userObservesAnimatedGiphy_whenParticipantAddsGiphyMessage() throws {
         linkToScenario(withId: 68)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2054] Giphy is not loaded")
 
         GIVEN("user opens a channel") {
             userRobot
@@ -103,29 +109,12 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .assertMessageReadCount(readBy: 0)
         }
     }
-
-    func test_messageIsNotSent_whenUserCancelsEphemeralMessage() {
-        linkToScenario(withId: 239)
-
-        GIVEN("user opens a channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot
-                .login()
-                .openChannel()
-        }
-        WHEN("user sends a giphy") {
-            userRobot.sendGiphy(send: false)
-        }
-        AND("user cancels the giphy") {
-            userRobot.tapOnCancelGiphyButton()
-        }
-        THEN("user doesn't see the ephemeral message") {
-            userRobot.assertGiphyImageNotVisible()
-        }
-    }
     
-    func test_userObservesAnimatedGiphy_afterShufflingAndSendingGiphyMessage() {
+    func test_userObservesAnimatedGiphy_afterShufflingAndSendingGiphyMessage() throws {
         linkToScenario(withId: 277)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2054] Giphy is not loaded")
 
         GIVEN("user opens a channel") {
             userRobot
@@ -140,8 +129,11 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         }
     }
     
-    func test_userObservesAnimatedGiphy_afterAddingGiphyThroughComposerMenu() {
+    func test_userObservesAnimatedGiphy_afterAddingGiphyThroughComposerMenu() throws {
         linkToScenario(withId: 278)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2054] Giphy is not loaded")
 
         GIVEN("user opens a channel") {
             userRobot

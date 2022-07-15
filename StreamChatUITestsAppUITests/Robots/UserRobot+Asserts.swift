@@ -264,7 +264,7 @@ extension UserRobot {
     ) -> Self {
         let typingIndicatorView = MessageListPage.typingIndicator.wait()
         XCTAssertTrue(typingIndicatorView.exists, "Element hidden", file: file, line: line)
-        let typingUserText = typingIndicatorView.waitForText(typingUserName).text
+        let typingUserText = typingIndicatorView.waitForText(typingUserName, timeout: 10).text
         XCTAssert(typingUserText.contains(typingUserName), file: file, line: line)
         return self
     }
@@ -297,7 +297,7 @@ extension UserRobot {
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let errorButton = attributes.errorButton(in: messageCell).wait()
-        XCTAssertTrue(errorButton.wait().exists, file: file, line: line)
+        XCTAssertTrue(errorButton.wait(timeout: 10).exists, file: file, line: line)
         return self
     }
 
@@ -313,7 +313,7 @@ extension UserRobot {
         if deliveryStatus == .failed || deliveryStatus == nil {
             XCTAssertFalse(checkmark.exists, file: file, line: line)
         } else {
-            XCTAssertTrue(checkmark.wait().exists, file: file, line: line)
+            XCTAssertTrue(checkmark.wait(timeout: 10).exists, file: file, line: line)
         }
 
         return self
@@ -331,7 +331,7 @@ extension UserRobot {
         if readBy == 0 {
             XCTAssertFalse(readByCount.isHittable, file: file, line: line)
         } else {
-            let actualText = readByCount.waitForText("\(readBy)").text
+            let actualText = readByCount.waitForText("\(readBy)", timeout: 10).text
             XCTAssertEqual("\(readBy)", actualText, file: file, line: line)
         }
         return self
