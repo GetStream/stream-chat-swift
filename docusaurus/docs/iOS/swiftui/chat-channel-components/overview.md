@@ -12,7 +12,7 @@ The chat channel describes all the content that is shown for a specific channel.
 - Message List
 - Message Composer
 
-There are **many components** that make of the chat channel screen. The **channel header** is shown on the top to give an overview over the channel as well as provide other **helpful information**. It can take care of navigation (e.g. using a back button) and allow the user to see more information about members, name, and other properties of a channel. All of these components are **customizable and easily replaceable**.
+There are **many components** that make up the chat channel screen. The **channel header** is shown on the top to give an overview of the channel as well as provide other **helpful information**. It can take care of navigation (e.g. using a back button) and allow the user to see more information about the name, members, and other properties of a channel. All of these components are **customizable and easily replaceable**.
 
 The **message list** in the SwiftUI SDK is the view that shows all the messages in a channel. These include all kinds of types like **text, images, links, GIFs, and many more**. Also, it includes features such as message **reactions** and **threads**.
 
