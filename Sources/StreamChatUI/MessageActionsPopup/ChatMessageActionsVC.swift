@@ -122,8 +122,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             return actions
         case .pendingSend, .sendingFailed, .pendingSync, .syncingFailed, .deletingFailed:
             return [
-                // TODO: verify if .syncingFailed should be included to allow editing bounced messages that were edited.
-                (message.localState == .sendingFailed || message.isBounced) ? resendActionItem() : nil,
+                (message.localState == .sendingFailed || message.failedToBeSentDueToModeration) ? resendActionItem() : nil,
                 editActionItem(),
                 deleteActionItem()
             ]

@@ -63,8 +63,8 @@ class MessageUpdater: Worker {
             
             // Hard Deleting is necessary for bounced messages, since these messages are never stored on the cloud
             // an apiClient request to delete them would never be triggered.
-            let shouldBeHardDeleted = hard || messageDTO.isBounced
-            let shouldAllowLocallyStoredMessagesToBeDeleted = !isLocalStorageEnabled || messageDTO.isBounced
+            let shouldBeHardDeleted = hard || messageDTO.failedToBeSentDueToModeration
+            let shouldAllowLocallyStoredMessagesToBeDeleted = !isLocalStorageEnabled || messageDTO.failedToBeSentDueToModeration
             
             messageDTO.isHardDeleted = shouldBeHardDeleted
             

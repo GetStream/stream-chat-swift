@@ -428,6 +428,8 @@ class MessageDTO: NSManagedObject {
     }
 }
 
+// MARK: - State Helpers
+
 extension MessageDTO {
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     var localMessageState: LocalMessageState? {
@@ -438,6 +440,11 @@ extension MessageDTO {
     /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
     var failedToBeEditedDueToModeration: Bool {
         localMessageState == .syncingFailed && isBounced == true
+    }
+    
+    /// When a message fails to get synced because it was bounced by the moderation API it will return true to this state.
+    var failedToBeSentDueToModeration: Bool {
+        localMessageState == .sendingFailed && isBounced == true
     }
 }
 

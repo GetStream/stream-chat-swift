@@ -77,6 +77,11 @@ public extension ChatMessage {
     var failedToBeEditedDueToModeration: Bool {
         localState == .syncingFailed && isBounced == true
     }
+    
+    /// When a message fails to get synced because it was bounced by the moderation API it will return true to this state.
+    var failedToBeSentDueToModeration: Bool {
+        localState == .sendingFailed && isBounced == true
+    }
 }
 
 public extension ChatMessage {
