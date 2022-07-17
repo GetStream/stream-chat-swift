@@ -54,6 +54,9 @@
 "message.title.offline" = "Offline";
 "message.title.group" = "%d členů, %d online";
 
+"message.moderation.title" = "This message has been moderated";
+"message.moderation.message" = "Please select any of the following options to proceed";
+
 "current-selection" = "%d z %d";
 
 "attachment.max-size-exceeded" = "Velikost přílohy překročila limit.";

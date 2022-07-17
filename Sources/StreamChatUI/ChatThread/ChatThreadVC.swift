@@ -76,9 +76,15 @@ open class ChatThreadVC: _ViewController,
                let message = messageController?.message {
                 messageComposerVC.content.threadMessage = message
             }
-            // We only need to load the replies
-            // when we don't already have all the replies
-            if let message = message, message.latestReplies.count != message.replyCount {
+            
+            guard let message = message else {
+                return
+            }
+            
+            let repliesContainsFailedEditedMessages = message.latestReplies.contains(where: { $0.failedToBeEditedDueToModeration == true })
+            
+            // Replies are only loaded when we don't have all available or when a reply has a stale state.
+            if message.latestReplies.count != message.replyCount || repliesContainsFailedEditedMessages {
                 self.loadPreviousMessages()
             }
         }

@@ -203,6 +203,12 @@ internal enum L10n {
       /// Online
       internal static var online: String { L10n.tr("Localizable", "message.title.online") }
     }
+    internal enum Moderation {
+    /// moderation alert title
+    internal static var title: String { L10n.tr("Localizable", "message.moderation.title") }
+    /// moderation alert message
+    internal static var message: String { L10n.tr("Localizable", "message.moderation.message") }
+    }
   }
 
   internal enum MessageList {

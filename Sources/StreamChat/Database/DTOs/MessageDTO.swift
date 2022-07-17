@@ -430,6 +430,11 @@ extension MessageDTO {
         get { localMessageStateRaw.flatMap(LocalMessageState.init(rawValue:)) }
         set { localMessageStateRaw = newValue?.rawValue }
     }
+    
+    /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
+    var failedToBeEditedDueToModeration: Bool {
+        localMessageState == .syncingFailed && isBounced == true
+    }
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {

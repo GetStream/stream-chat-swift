@@ -12,7 +12,11 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
     override var messageActions: [ChatMessageActionItem] {
         var actions = super.messageActions
         if message?.isSentByCurrentUser == true {
-            actions.append(pinMessageActionItem())
+            
+            if message?.isBounced == false {
+                actions.append(pinMessageActionItem())
+            }
+            
             if AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
                 actions.append(hardDeleteActionItem())
             }
