@@ -44,7 +44,7 @@ class UserDTO: NSManagedObject {
                 currentUser.unreadChannelsCount = assigningPropertyToItself
             }
             for member in members ?? [] {
-                guard !member.hasChanges else { continue }
+                guard !member.hasChanges, !member.isDeleted else { continue }
                 // this will not change object, but mark it as dirty, triggering updates
                 let assigningPropertyToItself = member.channelRoleRaw
                 member.channelRoleRaw = assigningPropertyToItself

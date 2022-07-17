@@ -57,6 +57,43 @@ final class ChannelList_Tests: StreamTestCase {
             userRobot.assertLastMessageInChannelPreview(message)
         }
     }
+    
+    func test_userLogsInAfterLoggingOut() throws {
+        linkToScenario(withId: 83)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2053] There is no user avatar on the channel list")
+        
+        let channelsCount = 10
+        
+        GIVEN("user logs in") {
+            backendRobot.generateChannels(count: channelsCount)
+            userRobot.login()
+        }
+        AND("user logs out") {
+            userRobot.logout()
+        }
+        WHEN("user logs in") {
+            userRobot.login()
+        }
+        THEN("user observes the channel list") {
+            userRobot.assertChannelCount(channelsCount)
+        }
+    }
+    
+    func test_paginationOnChannelList() {
+        linkToScenario(withId: 276)
+        
+        let channelsCount = 30
+        
+        WHEN("user opens the channel list") {
+            backendRobot.generateChannels(count: channelsCount)
+            userRobot.login()
+        }
+        THEN("user makes sure that all channels are loaded") {
+            userRobot.assertChannelListPagination(channelsCount: channelsCount)
+        }
+    }
 }
 
 // MARK: - Preview

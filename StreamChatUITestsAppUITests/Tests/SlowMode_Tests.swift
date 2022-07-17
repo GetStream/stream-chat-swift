@@ -128,4 +128,23 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.assertSendButtonIsNotShown()
         }
     }
+    
+    func test_slowModeIsNotActiveAndCooldownIsNotShown_whenAMessageIsEdited() {
+        linkToScenario(withId: 195)
+        
+        GIVEN("user opens a channel") {
+            backendRobot
+                .generateChannels(count: 1, messagesCount: 1)
+                .setCooldown(enabled: true, duration: cooldownDuration)
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user edits an existed message") {
+            userRobot.editMessage(editedMessage)
+        }
+        THEN("slow mode is not active and cooldown is not shown") {
+            userRobot.assertCooldownIsNotShown()
+        }
+    }
 }

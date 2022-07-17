@@ -280,16 +280,11 @@ final class MessageList_Tests: StreamTestCase {
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
                       "[CIS-2020] Scroll on message list does not work well enough")
 
-        let count = 30
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("channel is scrollable") {
-            participantRobot.sendMultipleMessages(repeatingText: "message", count: count)
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
         }
         WHEN("user scrolls up") {
             userRobot.scrollMessageListUp()
@@ -302,20 +297,17 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
-    func test_messageListScrollsDown_whenMessageListIsScrolledDown_andUserReceivesNewMessage() {
+    func test_messageListScrollsDown_whenMessageListIsScrolledDown_andUserReceivesNewMessage() throws {
         linkToScenario(withId: 75)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2020] Scroll on message list does not work well enough")
 
-        let count = 30
-        let message = "message"
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("channel is scrollable") {
-            participantRobot.sendMultipleMessages(repeatingText: message, count: count)
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
         }
         WHEN("participant sends a message") {
             participantRobot.sendMessage(newMessage)
@@ -328,16 +320,11 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageListDoesNotScrollDown_whenMessageListIsScrolledUp_andUserReceivesNewMessage() {
         linkToScenario(withId: 194)
 
-        let count = 30
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("channel is scrollable") {
-            participantRobot.sendMultipleMessages(repeatingText: "message", count: count)
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
         }
         WHEN("user scrolls up") {
             userRobot.scrollMessageListUp()
@@ -350,6 +337,23 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
+    func test_commandsPopupDisappear_whenUserTapsOnMessageList() {
+        linkToScenario(withId: 98)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
+        }
+        AND("user opens command suggestions") {
+            userRobot.openComposerCommands()
+        }
+        WHEN("user taps on message list") {
+            userRobot.tapOnMessage()
+        }
+        THEN("command suggestions disappear") {
+            userRobot.assertComposerCommands(shouldBeVisible: false)
+        }
+    }
 }
 
 // MARK: Quoted messages
@@ -447,6 +451,74 @@ extension MessageList_Tests {
         }
         THEN("deleted message is shown") {
             userRobot.assertDeletedMessage()
+        }
+    }
+    
+    func test_paginationOnMessageList() {
+        linkToScenario(withId: 56)
+        
+        let messagesCount = 60
+        
+        WHEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: messagesCount)
+            userRobot.login().openChannel()
+        }
+        THEN("user makes sure that chat history is loaded") {
+            userRobot.assertMessageListPagination(messagesCount: messagesCount)
+        }
+    }
+    
+    func test_addingCommandHidesLeftButtons() {
+        linkToScenario(withId: 104)
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user types '/'") {
+            userRobot.typeText("/")
+        }
+        THEN("composer left buttons disappear") {
+            userRobot.assertComposerLeftButtons(shouldBeVisible: false)
+        }
+        WHEN("user removes '/'") {
+            userRobot.typeText(XCUIKeyboardKey.delete.rawValue)
+        }
+        THEN("composer left buttons appear") {
+            userRobot.assertComposerLeftButtons(shouldBeVisible: true)
+        }
+    }
+    
+    func test_mentionsView() {
+        linkToScenario(withId: 61)
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user types '@'") {
+            userRobot.typeText("@")
+        }
+        THEN("composer mention view appears") {
+            userRobot.assertComposerMentions(shouldBeVisible: true)
+        }
+        WHEN("user removes '@'") {
+            userRobot.typeText(XCUIKeyboardKey.delete.rawValue)
+        }
+        THEN("composer mention view disappears") {
+            userRobot.assertComposerMentions(shouldBeVisible: false)
+        }
+    }
+    
+    func test_userFillsTheComposerMentioningParticipantThroughMentionsView() {
+        linkToScenario(withId: 62)
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user taps on participants name") {
+            userRobot.mentionParticipant()
+        }
+        THEN("composer fills in participants name") {
+            userRobot.assertMentionWasApplied()
         }
     }
 }

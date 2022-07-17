@@ -58,6 +58,14 @@ open class ChatThreadVC: _ViewController,
     override open func setUp() {
         super.setUp()
 
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(appMovedToForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
@@ -314,5 +322,12 @@ open class ChatThreadVC: _ViewController,
         default:
             break
         }
+    }
+
+    // When app becomes active, and channel is open, recreate the database observers and reload
+    // the data source so that any missed database updates from the NotificationService are refreshed.
+    @objc func appMovedToForeground() {
+        messageController.delegate = self
+        messageListVC.dataSource = self
     }
 }

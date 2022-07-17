@@ -9,7 +9,7 @@
       ]
     },
     {
-      "UIKit" : [
+      "UIKit": [
         "uikit/uikit-overview",
         "uikit/getting-started",
         "uikit/localization",
@@ -17,80 +17,92 @@
         "uikit/custom-components",
         "uikit/data-formatting",
         {
-            "Controllers and Delegates": [
-              "uikit/controllers/controllers-overview",
-              "uikit/controllers/connection",
-              "uikit/controllers/channels",
-              "uikit/controllers/users",
-              "uikit/controllers/messages",
-              "uikit/controllers/events"
-            ]
-          },
-          {
-            "Core Components": [
-              "uikit/components/channel-list",
-              "uikit/components/channel",
-              "uikit/components/thread",
-              "uikit/components/message",
-              "uikit/components/message-composer"
-            ]
-          },
-         {
-            "Views": [
-              "uikit/views/channel-list-item-view",
-              "uikit/views/channel-header-view",
-              "uikit/views/thread-header-view",
-              "uikit/views/message-layout-options-resolver",
-              "uikit/views/avatar",
-              "uikit/views/reactions"
-            ]
-          }
-        ]
-      },
-    {
-      "SwiftUI": [
-        "swiftui/swiftui-overview",
-        "swiftui/getting-started",
-        "swiftui/localization",
-        "swiftui/dependency-injection",
-        "swiftui/view-customizations",
+          "Controllers and Delegates": [
+            "uikit/controllers/controllers-overview",
+            "uikit/controllers/connection",
+            "uikit/controllers/channels",
+            "uikit/controllers/users",
+            "uikit/controllers/messages",
+            "uikit/controllers/events"
+          ]
+        },
         {
-          "Components" : [
-            "swiftui/components/channel-list-header",
-            "swiftui/components/swipe-actions-channels",
-            "swiftui/components/query-filters",
-            "swiftui/components/helper-views",
-            "swiftui/components/list-tap-events",
-            "swiftui/components/chat-channel",
-            "swiftui/components/channel-header",
-            "swiftui/components/message-list",
-            "swiftui/components/custom-avatar",
-            "swiftui/components/attachments",
-            "swiftui/components/message-composer",
-            "swiftui/components/message-reactions",
-            "swiftui/components/message-threads",
-            "swiftui/components/inline-replies",
-            "swiftui/components/composer-commands",
-            "swiftui/components/typing-indicators",
-            "swiftui/components/read-indicators"
+          "Core Components": [
+            "uikit/components/channel-list",
+            "uikit/components/channel",
+            "uikit/components/thread",
+            "uikit/components/message",
+            "uikit/components/message-composer"
+          ]
+        },
+        {
+          "Views": [
+            "uikit/views/channel-list-item-view",
+            "uikit/views/channel-header-view",
+            "uikit/views/thread-header-view",
+            "uikit/views/message-layout-options-resolver",
+            "uikit/views/avatar",
+            "uikit/views/reactions"
           ]
         }
       ]
     },
     {
-        "Combine" : [
-          "combine/combine-overview",
-          "combine/connection",
-          "combine/channels",
-          "combine/users",
-          "combine/messages",
-          "combine/events"
-        ]
+      "SwiftUI": [
+        "swiftui/swiftui-overview",
+        "swiftui/getting-started",
+        {
+          "Core Principles": [
+            "swiftui/localization",
+            "swiftui/dependency-injection",
+            "swiftui/view-customizations",
+            "guides/push-notifications",
+            "guides/offline-support"
+          ]
+        },
+        {
+          "Channel List Components": [
+            "swiftui/channel-list-components/channel-list-header",
+            "swiftui/channel-list-components/helper-views",
+            "swiftui/channel-list-components/list-tap-events",
+            "swiftui/channel-list-components/swipe-actions-channels",
+            "swiftui/channel-list-components/query-filters"
+          ]
+        },
+        {
+          "Chat Channel Components": [
+            "swiftui/chat-channel-components/overview",
+            "swiftui/chat-channel-components/channel-header",
+            "swiftui/chat-channel-components/message-list",
+            "swiftui/chat-channel-components/message-composer",
+            "swiftui/chat-channel-components/composer-commands"
+          ]
+        },
+        {
+          "Message Components": [
+            "swiftui/message-components/custom-avatar",
+            "swiftui/message-components/attachments",
+            "swiftui/message-components/message-reactions",
+            "swiftui/message-components/message-threads",
+            "swiftui/message-components/inline-replies",
+            "swiftui/message-components/typing-indicators",
+            "swiftui/message-components/read-indicators"
+          ]
+        }
+      ]
     },
     {
-      "Advanced": [
-        "advanced/assertions"
+      "Combine": [
+        "combine/combine-overview",
+        "combine/connection",
+        "combine/channels",
+        "combine/users",
+        "combine/messages",
+        "combine/events"
       ]
+    },
+    {
+      "Advanced": ["advanced/assertions"]
     },
     {
       "Guides": [
@@ -101,10 +113,6 @@
         "guides/working-with-attachments",
         "guides/customize-message-composer",
         "guides/message-composer-custom-attachments",
-        "guides/message-list-delivery-status",
-        "guides/customize-message-delivery-status",
-        "guides/video-100ms",
-        "guides/video-agora",
         "guides/migrating-from-3-to-4",
         "guides/migrating-from-1.x-and-2.x"
       ]

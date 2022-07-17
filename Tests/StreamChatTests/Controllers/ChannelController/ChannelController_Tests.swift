@@ -930,27 +930,6 @@ final class ChannelController_Tests: XCTestCase {
         // Both outgoing and incoming messages should be visible
         XCTAssertEqual(Set(controller.messages.map(\.id)), Set([outgoingDeletedMessage.id, incomingDeletedMessage.id]))
     }
-
-    func test_truncatedMessages_areNotVisible() throws {
-        // Prepare channel with 10 messages
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId, numberOfMessages: 10))
-        }
-
-        // Simulate `synchronize` call and check all messages are fetched
-        controller.synchronize()
-        XCTAssertEqual(controller.messages.count, 10)
-
-        // Set channel `truncatedAt` date before the 5th message
-        let truncatedAtDate = controller.messages[4].createdAt.addingTimeInterval(-0.1)
-        try client.databaseContainer.writeSynchronously {
-            $0.channel(cid: self.channelId)?.truncatedAt = truncatedAtDate.bridgeDate
-        }
-
-        // Check only the 5 messages after the truncatedAt date are visible
-        XCTAssertEqual(controller.messages.count, 5)
-        XCTAssert(controller.messages.allSatisfy { $0.createdAt > truncatedAtDate })
-    }
     
     func test_shadowedMessages_whenVisible() throws {
         // Simulate the config setting

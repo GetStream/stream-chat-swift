@@ -25,15 +25,25 @@ final class UserRobot: Robot {
     }
     
     @discardableResult
+    func logout() -> Self {
+        ChannelListPage.userAvatar.safeTap()
+        return self
+    }
+    
+    @discardableResult
     func openChannel(channelCellIndex: Int = 0) -> Self {
         let minExpectedCount = channelCellIndex + 1
         let cells = ChannelListPage.cells.waitCount(minExpectedCount)
         
         // TODO: CIS-1737
-        if !cells.firstMatch.wait(timeout: 5).exists {
-            app.terminate()
-            app.launch()
-            login()
+        if !cells.firstMatch.exists {
+            for _ in 0...3 {
+                app.terminate()
+                app.launch()
+                login()
+                cells.waitCount(minExpectedCount, timeout: 10)
+                break
+            }
         }
         
         XCTAssertGreaterThanOrEqual(
@@ -107,6 +117,7 @@ extension UserRobot {
     
     @discardableResult
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
+        composer.inputField.obtainKeyboardFocus()
         openContextMenu(messageCellIndex: messageCellIndex)
         contextMenu.edit.element.wait().safeTap()
         clearComposer()
@@ -207,7 +218,12 @@ extension UserRobot {
     @discardableResult
     func tapOnMessage(at messageCellIndex: Int? = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        messageCell.waitForHitPoint().tap()
+        return tapOnMessage(messageCell)
+    }
+    
+    @discardableResult
+    func tapOnMessage(_ messageCell: XCUIElement) -> Self {
+        messageCell.waitForHitPoint().safeTap()
         return self
     }
     
@@ -313,23 +329,21 @@ extension UserRobot {
     
     @discardableResult
     func tapOnSendGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphySendButton(in: messageCell).wait().safeTap()
         return self
     }
     
     @discardableResult
     func tapOnShuffleGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphyShuffleButton(in: messageCell).wait().safeTap()
         return self
     }
     
     @discardableResult
     func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
         return self
     }
@@ -342,6 +356,18 @@ extension UserRobot {
             MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i].safeTap()
         }
         if send { sendMessage("", waitForAppearance: false) }
+        return self
+    }
+    
+    @discardableResult
+    func mentionParticipant(manually: Bool = false) -> Self {
+        let text = "@\(UserDetails.hanSoloId)"
+        if manually {
+            typeText(text)
+        } else {
+            typeText("\(text.prefix(3))")
+            MessageListPage.ComposerMentions.cells.firstMatch.wait().tap()
+        }
         return self
     }
 }

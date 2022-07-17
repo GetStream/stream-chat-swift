@@ -72,6 +72,7 @@ class MessageListPage {
         static var inputField: XCUIElement { app.otherElements["inputTextContainer"] }
         static var textView: XCUIElement { inputField.textViews.firstMatch }
         static var cooldown: XCUIElement { app.staticTexts["cooldownLabel"] }
+        static var placeholder: XCUIElement { textView.staticTexts.firstMatch }
         static var selectAllButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Select All'")).firstMatch }
     }
     
@@ -190,11 +191,15 @@ class MessageListPage {
         }
 
         static func statusCheckmark(for status: MessageDeliveryStatus?, in messageCell: XCUIElement) -> XCUIElement {
-            var identifier = "imageView"
+            var identifier = "There is no status checkmark"
             if let status = status {
-                identifier = "\(identifier)_\(status.rawValue)"
+                identifier = "imageView_\(status.rawValue)"
             }
             return messageCell.images[identifier]
+        }
+        
+        static func giphyButtons(in messageCell: XCUIElement) -> XCUIElementQuery {
+            messageCell.buttons.matching(NSPredicate(format: "identifier LIKE 'ActionButton'"))
         }
         
         static func giphySendButton(in messageCell: XCUIElement) -> XCUIElement {
@@ -214,8 +219,7 @@ class MessageListPage {
         }
         
         private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {
-            messageCell.buttons.matching(NSPredicate(
-                format: "identifier LIKE 'ActionButton' AND label LIKE '\(label)'")).firstMatch
+            giphyButtons(in: messageCell).matching(NSPredicate(format: "label LIKE '\(label)'")).firstMatch
         }
         
         static var deletedMessagePlaceholder: String {
@@ -286,6 +290,12 @@ class MessageListPage {
         
         static var giphyImage: XCUIElement {
             app.images["command_giphy"]
+        }
+    }
+    
+    enum ComposerMentions {
+        static var cells: XCUIElementQuery {
+            app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMentionSuggestionCollectionViewCell'"))
         }
     }
     
