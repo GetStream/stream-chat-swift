@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add hide history option when adding a new member [#2155](https://github.com/GetStream/stream-chat-swift/issues/2155)
 - Add Extra Data Usage Improvements [#2174](https://github.com/GetStream/stream-chat-swift/pull/2174)
+  - For more details please read the documentation [here](https://getstream.io/chat/docs/sdk/ios/uikit/extra-data).
 ### 🐞 Fixed
 - Avoid triggering CoreData updates in willSave() [#2156](https://github.com/GetStream/stream-chat-swift/pull/2156)
 - Sync active channels when no channel list [#2163](https://github.com/GetStream/stream-chat-swift/pull/2163)
