@@ -18,7 +18,7 @@ indirect enum RawJSON: Codable, Hashable {
 
 ## Adding Extra Data
 
-Adding extra data can be done through the Server-Side SDKs or through the client SDKs. In the iOS Stream Chat SDK, you can add extra data when creating/updating a message, user channel, or any other model through our controllers.
+Adding extra data can be done through the Server-Side SDKs or through the Client SDKs. In the iOS Stream Chat SDK, you can add extra data when creating/updating a message, user, channel, or any other model through our controllers.
 
 As a simple example, let's see how you can add a new email field to the currently logged user.
 
@@ -95,9 +95,6 @@ To see how you can get data with different types from extra data, we can pick th
 let ticket = message.extraData["ticket"]?.dictionaryValue
 let name = ticket?["name"]?.stringValue ?? ""
 let price = ticket?["price"]?.doubleValue ?? 0.0
-// This is also valid:
-let name = message.extraData["ticket"]?["name"]?.stringValue ?? ""
-let price = message.extraData["ticket"]?["price"]?.doubleValue ?? 0.0
 ```
 
 As you can see above, each type of value can be easily accessible from an extra data property. The SDK will try to convert the raw type to a strongly typed value and return it if the property exists, and if the type is correct. Below is the list of all values supported:
