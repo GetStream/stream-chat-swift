@@ -4,7 +4,7 @@ title: Extra Data
 
 Extra Data is additional information that can be added to the default data of Stream. It is a dictionary of key-value pairs that can be attached to messages, users, channels, and pretty much almost every domain model in the Stream SDK.
 
-On iOS, the Extra Data is represented by the following dictionary, `[String: RawJSON]`. The `RawJSON` is an enum that can be represented by different types of values. It can be a String, Number, Boolean, Array, Dictionary, or null. In the end, this is to make the dictionary strongly typed so that it is more safe and easier to use. The code snippet below shows the simplified implementation of `RawJSON`.
+On iOS, the Extra Data is represented by the following dictionary, `[String: RawJSON]`. The `RawJSON` is an enum that can be represented by different types of values. It can be a String, Number, Boolean, Array, Dictionary, or null. In the end, this is to make the dictionary strongly typed so that it is safer and easier to use. The code snippet below shows the simplified implementation of `RawJSON`.
 
 ```swift
 indirect enum RawJSON: Codable, Hashable {
@@ -20,7 +20,7 @@ indirect enum RawJSON: Codable, Hashable {
 
 Adding extra data can be done through the Server-Side SDKs or through the client SDKs. In the iOS Stream Chat SDK, you can add extra data when creating/updating a message, user channel, or any other model through our controllers.
 
-As a simple example, let's see how you can add a new email field to the current logged user.
+As a simple example, let's see how you can add a new email field to the currently logged user.
 
 ```swift
 let currentUserController = client.currentUserController()
@@ -32,7 +32,7 @@ currentUserController.updateUserData(
 )
 ```
 
-For a more complete example now, let's imagine you want to add a ticket information to a message.
+For a more complete example now, let's imagine you want to add ticket information to a message.
 
 ```swift
 let extraData: [String: RawJSON] = [
@@ -60,16 +60,16 @@ let extraData: [String: RawJSON] = [
 
 ## Reading Extra Data
 
-All of the most important domain models in the SDK have a `extraData` property that you can read the additional information that is added.
+All of the most important domain models in the SDK have an `extraData` property that you can read the additional information added by your app.
 
-Since the 4.19.0 version of the SDK you can read extra data properties very easily. The following code snippet shows how to get an email from a user's extra data.
+Since the 4.19.0 version of the SDK, you can read extra data properties very easily. The following code snippet shows how to get an email from a user's extra data.
 
 ```swift
 let email = user.extraData["email"]?.stringValue ?? ""
 print(email)
 ```
 
-If you are using an SDK version below 4.19.0, this how you would read the email from the extra data:
+If you are using an SDK version below 4.19.0, this is how you would read the email from the extra data:
 ```swift
 let extraData = user.extraData
 var email: String {
@@ -131,7 +131,7 @@ struct Passenger {
 }
 ```
 
-From the example above, now let's see how we can provide Extra Data mappings for these models:
+Next, let's see how we can provide Extra Data mappings for these models:
 
 ```swift
 extension Passenger {
