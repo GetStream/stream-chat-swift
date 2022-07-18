@@ -57,6 +57,7 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     var selectedChannel: ChatChannel?
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
         let channel = controller.channels[indexPath.row]
         selectedChannel = controller.channels[indexPath.row]
         router.showChannel(for: channel.cid)
