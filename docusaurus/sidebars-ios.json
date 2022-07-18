@@ -26,6 +26,7 @@
               "uikit/controllers/events"
             ]
           },
+          "client/extra-data",
           {
             "Core Components": [
               "uikit/components/channel-list",
@@ -35,7 +36,7 @@
               "uikit/components/message-composer"
             ]
           },
-         {
+          {
             "Views": [
               "uikit/views/channel-list-item-view",
               "uikit/views/channel-header-view",
