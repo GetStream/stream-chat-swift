@@ -21,10 +21,8 @@ struct MessageAttachmentPayload {
 
 extension MessageAttachmentPayload: Encodable {
     func encode(to encoder: Encoder) throws {
-        let payload = self.payload.dictionary(
-            with: .string(type.rawValue),
-            forKey: AttachmentCodingKeys.type.rawValue
-        )
+        var payload = self.payload
+        payload[AttachmentCodingKeys.type.rawValue] = .string(type.rawValue)
         try payload.encode(to: encoder)
     }
 }
@@ -48,14 +46,13 @@ extension MessageAttachmentPayload: Decodable {
             }
         }()
 
-        guard
-            let payload = try decoder
-            .singleValueContainer()
-            .decode(RawJSON.self)
-            .dictionary(with: nil, forKey: AttachmentCodingKeys.type.rawValue)
-        else {
+        var payload = try decoder.singleValueContainer().decode(RawJSON.self)
+
+        guard payload.dictionaryValue != nil else {
             throw ClientError.AttachmentDecoding("Payload must be keyed container")
         }
+
+        payload[AttachmentCodingKeys.type.rawValue] = nil
 
         self.init(
             type: attachmentType,
