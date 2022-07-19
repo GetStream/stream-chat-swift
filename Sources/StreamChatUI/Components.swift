@@ -308,6 +308,12 @@ public struct Components {
     
     /// View that shows that some error occurred on ChatChannelList.
     public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
+    
+    /// The `UICollectionViewCell` subclass that shows while loading the channel list.guard let self = self else { return }
+    public var channelListCollectionViewSkeletonCell: ChatChannelListCollectionViewSkeletonCell.Type = ChatChannelListCollectionViewSkeletonCell.self
+    
+    /// View that shows the loading state of a channel list item
+    public var channelListSkeletonItemView: ChatChannelListItemSkeletonView.Type = ChatChannelListItemSkeletonView.self
 
     // MARK: - Composer components
 

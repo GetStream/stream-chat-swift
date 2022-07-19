@@ -18,14 +18,6 @@ open class ChatChannelListVC: _ViewController,
     public var controller: ChatChannelListController!
 
     private var isPaginatingChannels: Bool = false
-
-    open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
-        if #available(iOS 13.0, *) {
-            return UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
-        } else {
-            return UIActivityIndicatorView(style: .whiteLarge).withoutAutoresizingMaskConstraints
-        }
-    }()
     
     /// A router object responsible for handling navigation actions of this view controller.
     open lazy var router: ChatChannelListRouter = components
@@ -65,6 +57,9 @@ open class ChatChannelListVC: _ViewController,
     
     /// Reuse identifier of `collectionViewCell`
     open var collectionViewCellReuseIdentifier: String { String(describing: ChatChannelListCollectionViewCell.self) }
+    
+    /// Reuse identifier of `collectionViewCell`
+    open var collectionViewSkeletonCellReuseIdentifier: String { String(describing: ChatChannelListCollectionViewSkeletonCell.self) }
 
     /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a view.
     private lazy var listChangeUpdater: ListChangeUpdater = CollectionViewListChangeUpdater(
@@ -73,6 +68,17 @@ open class ChatChannelListVC: _ViewController,
     
     /// Value of `channelListErrorView` height constraint.
     var channelListErrorViewHeight: CGFloat { 88 }
+    
+    private let numberOfItemsWhenLoading: Int = 99
+    
+    /// Boolean value that indicates if Channel list is currently in loading state.
+    var isLoading: Bool = true {
+        didSet {
+            if !isLoading {
+                collectionView.reloadData()
+            }
+        }
+    }
     
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
@@ -121,6 +127,11 @@ open class ChatChannelListVC: _ViewController,
             forSupplementaryViewOfKind: ListCollectionViewLayout.separatorKind,
             withReuseIdentifier: separatorReuseIdentifier
         )
+        
+        collectionView.register(
+            components.channelListCollectionViewSkeletonCell.self,
+            forCellWithReuseIdentifier: collectionViewSkeletonCellReuseIdentifier
+        )
 
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -158,8 +169,6 @@ open class ChatChannelListVC: _ViewController,
         view.embed(collectionView)
         view.embed(emptyView)
         emptyView.isHidden = true
-        collectionView.addSubview(loadingIndicator)
-        loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
         
         view.addSubview(channelListErrorView)
         channelListErrorView.topAnchor.pin(equalTo: view.bottomAnchor).isActive = true
@@ -186,26 +195,31 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        controller.channels.count
+        isLoading ? numberOfItemsWhenLoading : controller.channels.count
     }
     
     open func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
-        guard let channel = getChannel(at: indexPath) else { return cell }
+        if isLoading {
+            let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewSkeletonCell.self, for: indexPath)
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
+            guard let channel = getChannel(at: indexPath) else { return cell }
 
-        cell.components = components
-        cell.itemView.content = .init(channel: channel, currentUserId: controller.client.currentUserId)
+            cell.components = components
+            cell.itemView.content = .init(channel: channel, currentUserId: controller.client.currentUserId)
 
-        cell.swipeableView.delegate = self
-        cell.swipeableView.indexPath = { [weak cell, weak self] in
-            guard let cell = cell else { return nil }
-            return self?.collectionView.indexPath(for: cell)
+            cell.swipeableView.delegate = self
+            cell.swipeableView.indexPath = { [weak cell, weak self] in
+                guard let cell = cell else { return nil }
+                return self?.collectionView.indexPath(for: cell)
+            }
+            
+            return cell
         }
-        
-        return cell
     }
     
     open func collectionView(
@@ -354,17 +368,6 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        switch state {
-        case .initialized, .localDataFetched:
-            if self.controller.channels.isEmpty {
-                loadingIndicator.startAnimating()
-            } else {
-                loadingIndicator.stopAnimating()
-            }
-        default:
-            loadingIndicator.stopAnimating()
-        }
-        
         if !channelListErrorView.isHidden {
             hideErrorView()
         }
@@ -374,11 +377,14 @@ open class ChatChannelListVC: _ViewController,
         switch state {
         case .initialized:
             shouldHideEmptyView = true
+//            isLoading = true
         case .localDataFetched, .remoteDataFetched:
             shouldHideEmptyView = !self.controller.channels.isEmpty
+//            isLoading = false
         case .localDataFetchFailed, .remoteDataFetchFailed:
             shouldHideEmptyView = emptyView.isHidden
             showErrorView()
+//            isLoading = false
         }
 
         emptyView.isHidden = shouldHideEmptyView
