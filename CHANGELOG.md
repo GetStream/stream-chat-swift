@@ -1,3 +1,7 @@
+
+### 🔄 Changed
+
+_July 19, 2022_
 # StreamChat iOS SDK CHANGELOG
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
@@ -1221,4 +1225,5 @@ The best way to explore the SDKs and their usage is our [sample app](https://git
 
 - [**Cheat Sheet**](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet) Real-world code examples showcasing the usage of the SDK.
 - [**Controller Overview**](https://github.com/GetStream/stream-chat-swift/wiki/Controllers-Overview) This page contains a list of all available controllers within StreamChat, including their short description and typical use-cases.
-- [**Glossary**](https://github.com/GetStream/stream-chat-swift/wiki/Glossary) A list of names and terms used in the framework and documentation.
+# [4.19.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.19.0)
+# Upcoming
