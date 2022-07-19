@@ -66,7 +66,6 @@ public extension StreamMockServer {
         attachments: Any? = nil
     ) -> [String: Any]? {
         var mockedMessage = message
-        mockedMessage?[messageKey.user.rawValue] = user
         mockedMessage?[messageKey.type.rawValue] = messageType.rawValue
         if let createdAt = createdAt, let updatedAt = updatedAt {
             mockedMessage?[messageKey.createdAt.rawValue] = createdAt
@@ -101,6 +100,9 @@ public extension StreamMockServer {
         }
         if let attachments = attachments {
             mockedMessage?[MessagePayloadsCodingKeys.attachments.rawValue] = attachments as? [[String: Any]]
+        }
+        if let user = user {
+            mockedMessage?[messageKey.user.rawValue] = user
         }
         return mockedMessage
     }

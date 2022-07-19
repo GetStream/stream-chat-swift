@@ -24,7 +24,7 @@ public enum TestData {
     }
     
     public static var waitingEndTime: TimeInterval {
-        currentTimeInterval + XCUIElement.waitTimeout * 1000
+        currentTimeInterval + 10_000
     }
     
     public static func getMockResponse(fromFile file: MockFile) -> String {

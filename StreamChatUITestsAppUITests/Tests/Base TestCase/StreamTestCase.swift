@@ -30,9 +30,11 @@ class StreamTestCase: XCTestCase {
     }
 
     override func tearDownWithError() throws {
+        takeElementTree()
         app.terminate()
         server.stop()
         server = nil
+        backendRobot.delayServerResponse(byTimeInterval: 0.0)
         
         try super.tearDownWithError()
         app.launchArguments.removeAll()
@@ -52,5 +54,11 @@ extension StreamTestCase {
             .httpHost: "\(MockServerConfiguration.httpHost)",
             .port: "\(MockServerConfiguration.port)"
         ])
+    }
+    
+    private func takeElementTree() {
+        let attachment = XCTAttachment(string: app.debugDescription)
+        attachment.lifetime = .deleteOnSuccess
+        add(attachment)
     }
 }

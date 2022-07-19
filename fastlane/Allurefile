@@ -15,13 +15,15 @@ lane :allure_upload do |options|
 end
 
 desc 'Create launch on Allure TestOps'
-lane :allure_launch do
-  next unless testing_required?(:e2e)
+lane :allure_launch do |options|
+  next unless check_required?(:e2e)
 
   tags = []
   github_run = github_run_details
   launch_name =
-    if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
+    if options[:cron]
+      'Cron checks'
+    elsif ENV['GITHUB_EVENT_NAME'] == 'pull_request'
       pull_request = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']
       tags = pull_request['labels'].map { |label| { name: label['name'] } }
       pull_request['title']
@@ -59,7 +61,7 @@ lane :allure_start_regression do |options|
   UI.user_error!('Release version has to be provided ⚠️') if options[:release_version].nil?
 
   response = allure_api(path: "/testplan/?projectId=#{allure_project_id}", http_method: 'GET')
-  testplan_id = response['content'].filter { |plan| plan['name'] == allure_regression_testplan }.first['id']
+  testplan_id = response['content'].find { |plan| plan['name'] == allure_regression_testplan }['id']
 
   allure_api(path: "/testplan/#{testplan_id}/sync", http_method: 'POST')
   UI.success("#{rocket}\nTestplan with id #{testplan_id} synced successfully 🎉")

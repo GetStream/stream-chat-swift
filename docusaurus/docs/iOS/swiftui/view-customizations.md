@@ -1,5 +1,5 @@
 ---
-title: Views Customizations
+title: View Customizations
 ---
 
 ## Injecting Your Views

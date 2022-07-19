@@ -94,7 +94,7 @@ public extension StreamMockServer {
     }
     
     func waitForWebsocketMessage(withText text: String,
-                                 timeout: Double = XCUIElement.waitTimeout) {
+                                 timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while latestWebsocketMessage != text
                 && endTime > Date().timeIntervalSince1970 * 1000 {
@@ -103,7 +103,7 @@ public extension StreamMockServer {
     }
     
     func waitForHttpMessage(withText text: String,
-                            timeout: Double = XCUIElement.waitTimeout) {
+                            timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while latestHttpMessage != text
                 && endTime > Date().timeIntervalSince1970 * 1000 {

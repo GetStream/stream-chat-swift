@@ -25,15 +25,25 @@ final class UserRobot: Robot {
     }
     
     @discardableResult
+    func logout() -> Self {
+        ChannelListPage.userAvatar.safeTap()
+        return self
+    }
+    
+    @discardableResult
     func openChannel(channelCellIndex: Int = 0) -> Self {
         let minExpectedCount = channelCellIndex + 1
         let cells = ChannelListPage.cells.waitCount(minExpectedCount)
         
         // TODO: CIS-1737
-        if !cells.firstMatch.wait(timeout: 5).exists {
-            app.terminate()
-            app.launch()
-            login()
+        if !cells.firstMatch.exists {
+            for _ in 0...3 {
+                app.terminate()
+                app.launch()
+                login()
+                cells.waitCount(minExpectedCount, timeout: 10)
+                break
+            }
         }
         
         XCTAssertGreaterThanOrEqual(
@@ -107,6 +117,7 @@ extension UserRobot {
     
     @discardableResult
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
+        composer.inputField.obtainKeyboardFocus()
         openContextMenu(messageCellIndex: messageCellIndex)
         contextMenu.edit.element.wait().safeTap()
         clearComposer()
@@ -117,14 +128,11 @@ extension UserRobot {
     
     @discardableResult
     func clearComposer() -> Self {
-        let currentText = composer.textView.text
-        if currentText.isEmpty { return self }
-        
-        for _ in (0...currentText.split(separator: "\n").count - 1) {
-            composer.inputField.tap(withNumberOfTaps: 3, numberOfTouches: 1)
-            composer.cutButton.wait().safeTap()
+        if !composer.textView.text.isEmpty {
+            composer.inputField.tap()
+            composer.selectAllButton.wait().safeTap()
+            composer.inputField.typeText(XCUIKeyboardKey.delete.rawValue)
         }
-        
         return self
     }
     
@@ -210,7 +218,12 @@ extension UserRobot {
     @discardableResult
     func tapOnMessage(at messageCellIndex: Int? = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        messageCell.safeTap()
+        return tapOnMessage(messageCell)
+    }
+    
+    @discardableResult
+    func tapOnMessage(_ messageCell: XCUIElement) -> Self {
+        messageCell.waitForHitPoint().safeTap()
         return self
     }
     
@@ -259,8 +272,7 @@ extension UserRobot {
 
     @discardableResult
     func scrollMessageListUp() -> Self {
-        let topMessage = MessageListPage.cells.element(boundBy: 0)
-        MessageListPage.list.press(forDuration: 0.1, thenDragTo: topMessage)
+        MessageListPage.list.swipeDown()
         return self
     }
     
@@ -317,23 +329,21 @@ extension UserRobot {
     
     @discardableResult
     func tapOnSendGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphySendButton(in: messageCell).wait().safeTap()
         return self
     }
     
     @discardableResult
     func tapOnShuffleGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphyShuffleButton(in: messageCell).wait().safeTap()
         return self
     }
     
     @discardableResult
     func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
         return self
     }
@@ -343,9 +353,21 @@ extension UserRobot {
         for i in 1...count {
             MessageListPage.Composer.attachmentButton.wait().safeTap()
             MessageListPage.AttachmentMenu.photoOrVideoButton.wait().safeTap()
-            MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i-1].safeTap()
+            MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i].safeTap()
         }
         if send { sendMessage("", waitForAppearance: false) }
+        return self
+    }
+    
+    @discardableResult
+    func mentionParticipant(manually: Bool = false) -> Self {
+        let text = "@\(UserDetails.hanSoloId)"
+        if manually {
+            typeText(text)
+        } else {
+            typeText("\(text.prefix(3))")
+            MessageListPage.ComposerMentions.cells.firstMatch.wait().tap()
+        }
         return self
     }
 }

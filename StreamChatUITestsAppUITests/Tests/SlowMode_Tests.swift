@@ -27,7 +27,7 @@ final class SlowMode_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("user sends a new text message") {
-            userRobot.sendMessage(message)
+            userRobot.sendMessage(message, waitForAppearance: false)
         }
         THEN("slow mode is active and cooldown is shown") {
             userRobot.assertCooldownIsShown()
@@ -50,13 +50,13 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.selectOptionFromContextMenu(option: .reply)
         }
         WHEN("user types a new text message") {
-            userRobot.sendMessage(replyMessage)
+            userRobot.sendMessage(replyMessage, waitForAppearance: false)
         }
-        THEN("message is sent") {
-            userRobot.assertQuotedMessage(replyText: replyMessage, quotedText: message)
-        }
-        AND("slow mode is active and cooldown is shown") {
+        THEN("slow mode is active and cooldown is shown") {
             userRobot.assertCooldownIsShown()
+        }
+        AND("message is sent") {
+            userRobot.assertQuotedMessage(replyText: replyMessage, quotedText: message)
         }
     }
     
@@ -70,7 +70,7 @@ final class SlowMode_Tests: StreamTestCase {
                 .openChannel()
         }
         AND("user sends a new text message") {
-            userRobot.sendMessage(message)
+            userRobot.sendMessage(message, waitForAppearance: false)
         }
         AND("slow mode is active and cooldown is shown") {
             userRobot.assertCooldownIsShown()
@@ -126,6 +126,25 @@ final class SlowMode_Tests: StreamTestCase {
         }
         THEN("message is not sent") {
             userRobot.assertSendButtonIsNotShown()
+        }
+    }
+    
+    func test_slowModeIsNotActiveAndCooldownIsNotShown_whenAMessageIsEdited() {
+        linkToScenario(withId: 195)
+        
+        GIVEN("user opens a channel") {
+            backendRobot
+                .generateChannels(count: 1, messagesCount: 1)
+                .setCooldown(enabled: true, duration: cooldownDuration)
+            userRobot
+                .login()
+                .openChannel()
+        }
+        WHEN("user edits an existed message") {
+            userRobot.editMessage(editedMessage)
+        }
+        THEN("slow mode is not active and cooldown is not shown") {
+            userRobot.assertCooldownIsNotShown()
         }
     }
 }

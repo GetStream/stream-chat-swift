@@ -266,9 +266,10 @@ class ChannelUpdater: Worker {
     /// - Parameters:
     ///   - cid: The Id of the channel where you want to add the users.
     ///   - users: User Ids to add to the channel.
+    ///   - hideHistory: Hide the history of the channel to the added member.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func addMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .addMembers(cid: cid, userIds: userIds)) {
+    func addMembers(cid: ChannelId, userIds: Set<UserId>, hideHistory: Bool, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .addMembers(cid: cid, userIds: userIds, hideHistory: hideHistory)) {
             completion?($0.error)
         }
     }

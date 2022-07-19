@@ -58,14 +58,13 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
     func test_errorIndicatorShown_whenMessageFailedToBeSent() {
         linkToScenario(withId: 141)
 
-        GIVEN("user opens the channel") {
+        GIVEN("user becomes offline") {
             userRobot
                 .setConnectivitySwitchVisibility(to: .on)
                 .login()
+                .setConnectivity(to: .off)
                 .openChannel()
-        }
-        AND("user becomes offline") {
-            userRobot.setConnectivity(to: .off)
+                
         }
         WHEN("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)
@@ -241,16 +240,14 @@ extension MessageDeliveryStatus_Tests {
     func test_errorIndicatorShown_whenMessageFailedToBeSent_andCantBePreviewedInThread() {
         linkToScenario(withId: 149)
 
-        GIVEN("user opens the channel") {
+        GIVEN("user becomes offline") {
             userRobot
                 .setConnectivitySwitchVisibility(to: .on)
                 .login()
+                .setConnectivity(to: .off)
                 .openChannel()
         }
-        WHEN("user becomes offline") {
-            userRobot.setConnectivity(to: .off)
-        }
-        AND("user sends a new message") {
+        WHEN("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)
         }
         THEN("error indicator is shown for the message") {
@@ -277,13 +274,13 @@ extension MessageDeliveryStatus_Tests {
         AND("user succesfully sends new message") {
             userRobot.sendMessage(message)
         }
-        AND("the message is read by participant") {
-            participantRobot.readMessage()
-        }
-        WHEN("user previews thread for read message: \(message)") {
+        AND("user previews thread for read message: \(message)") {
             userRobot.showThread()
         }
-        THEN("user spots double checkmark below the message") {
+        WHEN("the message is read by participant") {
+            participantRobot.readMessage()
+        }
+        THEN("user spots double checkmark below the message in thread") {
             userRobot.assertMessageDeliveryStatus(.read)
         }
         AND("user spots read by 1 number below the message") {
@@ -317,19 +314,15 @@ extension MessageDeliveryStatus_Tests {
     func test_errorIndicatorShown_whenThreadReplyFailedToBeSent() {
         linkToScenario(withId: 152)
 
-        GIVEN("user opens the channel") {
+        GIVEN("user becomes offline") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot
                 .setConnectivitySwitchVisibility(to: .on)
                 .login()
+                .setConnectivity(to: .off)
                 .openChannel()
         }
-        AND("user sends a new message") {
-            userRobot.sendMessage(message)
-        }
-        WHEN("user becomes offline") {
-            userRobot.setConnectivity(to: .off)
-        }
-        AND("user replies to message in thread") {
+        WHEN("user replies to message in thread") {
             userRobot.replyToMessageInThread(failedThreadReply, waitForAppearance: false)
         }
         THEN("error indicator is shown for the thread reply") {
@@ -554,15 +547,13 @@ extension MessageDeliveryStatus_Tests {
     func test_errorIndicatorShown_whenMessageFailedToBeSentAndReadEventsIsDisabled() {
         linkToScenario(withId: 160)
 
-        GIVEN("user opens the channel") {
+        GIVEN("user becomes offline") {
             backendRobot.setReadEvents(to: false)
             userRobot
                 .setConnectivitySwitchVisibility(to: .on)
                 .login()
+                .setConnectivity(to: .off)
                 .openChannel()
-        }
-        AND("user becomes offline") {
-            userRobot.setConnectivity(to: .off)
         }
         WHEN("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)
