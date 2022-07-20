@@ -348,7 +348,7 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.openComposerCommands()
         }
         WHEN("user taps on message list") {
-            userRobot.tapOnMessage()
+            userRobot.tapOnMessageList()
         }
         THEN("command suggestions disappear") {
             userRobot.assertComposerCommands(shouldBeVisible: false)

@@ -228,6 +228,12 @@ extension UserRobot {
     }
     
     @discardableResult
+    func tapOnMessageList() -> Self {
+        MessageListPage.list.safeTap()
+        return self
+    }
+    
+    @discardableResult
     func replyToMessageInThread(
         _ text: String,
         alsoSendInChannel: Bool = false,
