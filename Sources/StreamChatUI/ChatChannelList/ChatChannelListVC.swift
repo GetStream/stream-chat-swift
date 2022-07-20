@@ -370,6 +370,19 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        
+        // TODO: - Check alternative with Nuno
+        switch state {
+        case .initialized, .localDataFetched:
+            if self.controller.channels.isEmpty {
+                isLoading = true
+            } else {
+                isLoading = false
+            }
+        default:
+            isLoading = false
+        }
+        
         if !channelListErrorView.isHidden {
             hideErrorView()
         }
