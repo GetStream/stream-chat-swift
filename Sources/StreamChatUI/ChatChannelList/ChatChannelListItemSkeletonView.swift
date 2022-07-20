@@ -36,7 +36,7 @@ open class ChatChannelListItemSkeletonView: /*ChatChannelListItemView,*/ _View, 
     open private(set) lazy var topContainer: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
-    open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView(alignment: .center, spacing: 4)
+    open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView(alignment: .center, spacing: 8)
         .withoutAutoresizingMaskConstraints
     
     private let avatarViewLayer = CAGradientLayer()
@@ -47,13 +47,13 @@ open class ChatChannelListItemSkeletonView: /*ChatChannelListItemView,*/ _View, 
     override open func setUp() {
         super.setUp()
         
-        titleLabel.text = "placeholder text"
-        subtitleLabel.text = "placeholder text"
-        timestampLabel.text = "placeholder text"
+        titleLabel.text = "Placeholder"
+        subtitleLabel.text = "subtitle placeholder"
+        timestampLabel.text = "00:00"
         
         avatarViewLayer.startPoint = CGPoint(x: 0, y: 0.5)
         avatarViewLayer.endPoint = CGPoint(x: 1, y: 0.5)
-        avatarView.layer.addSublayer(avatarViewLayer)
+        avatarView.presenceAvatarView.avatarView.imageView.layer.addSublayer(avatarViewLayer)
         
         titleLabelLayer.startPoint = CGPoint(x: 0, y: 0.5)
         titleLabelLayer.endPoint = CGPoint(x: 1, y: 0.5)
@@ -116,11 +116,11 @@ open class ChatChannelListItemSkeletonView: /*ChatChannelListItemView,*/ _View, 
     
     override open func layoutSubviews() {
         super.layoutSubviews()
-
-        avatarViewLayer.frame = titleLabel.bounds
+        
+        avatarViewLayer.frame = avatarView.bounds
         avatarViewLayer.cornerRadius = titleLabel.bounds.height / 2
 
-        titleLabelLayer.frame = titleLabel.bounds
+        titleLabelLayer.frame = titleLabel.textRect(forBounds: titleLabel.bounds, limitedToNumberOfLines: 1)
         titleLabelLayer.cornerRadius = titleLabel.bounds.height / 2
 
         subtitleLabelLayer.frame = subtitleLabel.bounds

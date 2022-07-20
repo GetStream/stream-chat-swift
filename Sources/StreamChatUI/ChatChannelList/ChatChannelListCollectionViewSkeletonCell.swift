@@ -27,6 +27,25 @@ open class ChatChannelListCollectionViewSkeletonCell: _CollectionViewCell, Theme
         contentView.addSubview(itemSkeletonView)
         itemSkeletonView.pin(to: contentView)
     }
+    
+    override open func preferredLayoutAttributesFitting(
+        _ layoutAttributes: UICollectionViewLayoutAttributes
+    ) -> UICollectionViewLayoutAttributes {
+        let preferredAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
+
+        let targetSize = CGSize(
+            width: layoutAttributes.frame.width,
+            height: UIView.layoutFittingCompressedSize.height
+        )
+
+        preferredAttributes.frame.size = contentView.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+
+        return preferredAttributes
+    }
 }
 
 // MARK: - Skeleton animation group

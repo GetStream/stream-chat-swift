@@ -203,9 +203,11 @@ open class ChatChannelListVC: _ViewController,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         if isLoading {
+            collectionView.isScrollEnabled = false
             let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewSkeletonCell.self, for: indexPath)
             return cell
         } else {
+            collectionView.isScrollEnabled = true
             let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
             guard let channel = getChannel(at: indexPath) else { return cell }
 
