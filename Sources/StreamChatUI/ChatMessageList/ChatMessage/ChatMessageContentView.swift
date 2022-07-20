@@ -167,7 +167,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
     // MARK: - Containers
 
     /// The root container which holds `authorAvatarView` (or the avatar padding) and `bubbleThreadMetaContainer`.
-    public lazy var mainContainer = ContainerStackView(axis: .horizontal)
+    public lazy var mainContainer = UIStackView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "mainContainer")
 
@@ -403,14 +403,16 @@ open class ChatMessageContentView: _View, ThemeProvider {
         ].compactMap { $0 }
 
         if options.contains(.centered) {
-            mainContainer.addArrangedSubviews([bubbleThreadFootnoteContainer])
+            mainContainer.addArrangedSubview(bubbleThreadFootnoteContainer)
             
             constraintsToActivate += [
                 mainContainer.centerXAnchor
                     .pin(equalTo: centerXAnchor)
             ]
         } else if options.contains(.flipped) {
-            mainContainer.addArrangedSubviews(mainContainerSubviews.reversed())
+            mainContainerSubviews.reversed().forEach {
+                mainContainer.addArrangedSubview($0)
+            }
 
             if let errorIndicator = errorIndicatorView {
                 mainContainer.setCustomSpacing(
@@ -425,7 +427,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
                     .almostRequired
             ]
         } else {
-            mainContainer.addArrangedSubviews(mainContainerSubviews)
+            mainContainerSubviews.forEach {
+                mainContainer.addArrangedSubview($0)
+            }
 
             if let errorIndicator = errorIndicatorView {
                 mainContainer.setCustomSpacing(

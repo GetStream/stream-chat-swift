@@ -2,32 +2,111 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+import ChatLayout
 import StreamChat
 import UIKit
 
+/// The object that acts as the data source of the message list.
+public protocol ChatMessageListDataSource: AnyObject {
+    /// Asks the data source to return all the available messages.
+    var messages: [ChatMessage] { get }
+
+    /// Asks the data source to return the channel for the given message list.
+    /// - Parameter vc: The message list requesting the channel.
+    func channel(for vc: ChatMessageList) -> ChatChannel?
+
+    /// Asks the data source to return the number of messages in the message list.
+    /// - Parameter vc: The message list requesting the number of messages.
+    func numberOfMessages(in vc: ChatMessageList) -> Int
+
+    /// Asks the data source for the message in a particular location of the message list.
+    /// - Parameters:
+    ///   - vc: The message list requesting the message.
+    ///   - indexPath: An index path locating the row in the message list.
+    func chatMessageListVC(
+        _ vc: ChatMessageList,
+        messageAt indexPath: IndexPath
+    ) -> ChatMessage?
+
+    /// Asks the data source for the message layout options in a particular location of the message list.
+    /// - Parameters:
+    ///   - vc: The message list requesting the layout options.
+    ///   - indexPath: An index path locating the row in the message list.
+    func chatMessageListVC(
+        _ vc: ChatMessageList,
+        messageLayoutOptionsAt indexPath: IndexPath
+    ) -> ChatMessageLayoutOptions
+}
+
+/// The object that acts as the delegate of the message list.
+public protocol ChatMessageListDelegate: AnyObject {
+    /// Tells the delegate the message list is about to draw a message for a particular row.
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    ///   - indexPath: An index path locating the row in the message list.
+    func chatMessageListVC(
+        _ vc: ChatMessageList,
+        willDisplayMessageAt indexPath: IndexPath
+    )
+
+    /// Tells the delegate when the user scrolls the content view within the receiver.
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    ///   - scrollView: The scroll view that belongs to the message list.
+    func chatMessageListVC(
+        _ vc: ChatMessageList,
+        scrollViewDidScroll scrollView: UIScrollView
+    )
+
+    /// Tells the delegate when the user taps on an action for the given message.
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    ///   - actionItem: The action performed on the given message.
+    ///   - message: The given message.
+    func chatMessageListVC(
+        _ vc: ChatMessageList,
+        didTapOnAction actionItem: ChatMessageActionItem,
+        for message: ChatMessage
+    )
+
+    /// Tells the delegate when the user taps on the message list view.
+    /// - Parameters:
+    ///   - vc: The message list  informing the delegate of this event.
+    ///   - messageListView: The message list view.
+    ///   - gestureRecognizer: The tap gesture recognizer that triggered the event.
+    func chatMessageListVC(
+        _ vc: ChatMessageList,
+        didTapOnMessageListView messageListView: ChatMessageListCollectionView,
+        with gestureRecognizer: UITapGestureRecognizer
+    )
+}
+
 /// Controller that shows list of messages and composer together in the selected channel.
 @available(iOSApplicationExtension, unavailable)
-open class ChatMessageListVC: _ViewController,
+open class ChatMessageList: _ViewController,
     ThemeProvider,
-    ChatMessageListScrollOverlayDataSource,
+    ChatMessageCollectionScrollOverlayDataSource,
     ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     FileActionContentViewDelegate,
     LinkPreviewViewDelegate,
-    UITableViewDataSource,
-    UITableViewDelegate,
+    UICollectionViewDataSource,
+    UICollectionViewDelegate,
     UIGestureRecognizerDelegate {
     /// The object that acts as the data source of the message list.
-    public weak var dataSource: ChatMessageListVCDataSource? {
+    public weak var dataSource: ChatMessageListDataSource? {
         didSet {
             updateContentIfNeeded()
         }
     }
 
+    public lazy var collectionView = ChatMessageListCollectionView()
+        .withoutAutoresizingMaskConstraints
+
     /// The object that acts as the delegate of the message list.
-    public weak var delegate: ChatMessageListVCDelegate?
+    public weak var delegate: ChatMessageListDelegate?
 
     /// The root object representing the Stream Chat.
     public var client: ChatClient!
@@ -37,41 +116,14 @@ open class ChatMessageListVC: _ViewController,
         .messageListRouter
         .init(rootViewController: self)
 
-    /// The diffing data sources are only used if iOS 13 is available and if the feature is enabled.
-    internal var isDiffingEnabled: Bool {
-        if #available(iOS 13.0, *) {
-            return self.components._messageListDiffingEnabled
-        }
-        return false
-    }
-
-    /// Strong reference of the `UITableViewDiffableDataSource`.
-    internal var _diffableDataSource: UITableViewDataSource?
-
-    /// Only stored properties support being marked with @available, so we need to maintain
-    /// a private _diffableDataSource property to keep the strong reference. This stored
-    /// property will cast the regular table view data source to the diffing one.
-    @available(iOS 13.0, *)
-    internal var diffableDataSource: UITableViewDiffableDataSource<Int, ChatMessage>? {
-        get { _diffableDataSource as? UITableViewDiffableDataSource }
-        set { _diffableDataSource = newValue }
-    }
-
-    /// A View used to display the messages.
-    open private(set) lazy var listView: ChatMessageListView = components
-        .messageListView
-        .init()
-        .withoutAutoresizingMaskConstraints
-
     /// A View used to display date of currently displayed messages
-    open private(set) lazy var dateOverlayView: ChatMessageListScrollOverlayView = {
-        let overlay = components
-            .messageListScrollOverlayView.init()
-            .withoutAutoresizingMaskConstraints
-        overlay.listView = listView
-        overlay.dataSource = self
-        return overlay
-    }()
+//    open private(set) lazy var dateOverlayView: ChatMessageCollectionScrollOverlayView = {
+//        let overlay = ChatMessageCollectionScrollOverlayView()
+//            .withoutAutoresizingMaskConstraints
+//        overlay.collectionView = collectionView
+//        overlay.dataSource = self
+//        return overlay
+//    }()
 
     /// A View which displays information about current users who are typing.
     open private(set) lazy var typingIndicatorView: TypingIndicatorView = components
@@ -96,9 +148,9 @@ open class ChatMessageListVC: _ViewController,
 
     /// A Boolean value indicating wether the scroll to bottom button is visible.
     open var isScrollToBottomButtonVisible: Bool {
-        let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
+        let isMoreContentThanOnePage = collectionView.contentSize.height > collectionView.bounds.height
 
-        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
+        return !collectionView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
 
     /// A formatter that converts the message date to textual representation.
@@ -114,75 +166,76 @@ open class ChatMessageListVC: _ViewController,
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
     }
-    
+
     override open func setUp() {
         super.setUp()
-        
+
         components.messageLayoutOptionsResolver.config = client.config
-        
+
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
-        listView.addGestureRecognizer(longPress)
-        
+        collectionView.addGestureRecognizer(longPress)
+
         let tapOnList = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         tapOnList.cancelsTouchesInView = false
         tapOnList.delegate = self
-        listView.addGestureRecognizer(tapOnList)
+        collectionView.addGestureRecognizer(tapOnList)
 
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.addSubview(listView)
-        listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
+        view.addSubview(collectionView)
+        collectionView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
         // Add a top padding to the table view so that the top message is not in the edge of the nav bar
-        // Note: we use "bottom" because the table view is inverted.
-        listView.contentInset = .init(top: 0, left: 0, bottom: 8, right: 0)
+        collectionView.contentInset = .init(top: 8, left: 0, bottom: 0, right: 0)
 
         view.addSubview(typingIndicatorView)
         typingIndicatorView.isHidden = true
         typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
         typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
-        typingIndicatorView.bottomAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
-        
+        typingIndicatorView.bottomAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
+
         view.addSubview(scrollToLatestMessageButton)
-        listView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
+        collectionView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
         scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
         setScrollToLatestMessageButton(visible: false, animated: false)
 
-        if isDateOverlayEnabled {
-            view.addSubview(dateOverlayView)
-            NSLayoutConstraint.activate([
-                dateOverlayView.centerXAnchor.pin(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-                dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
-            ])
-            dateOverlayView.isHidden = true
-        }
+//        if isDateOverlayEnabled {
+//            view.addSubview(dateOverlayView)
+//            NSLayoutConstraint.activate([
+//                dateOverlayView.centerXAnchor.pin(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+//                dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
+//            ])
+//            dateOverlayView.isHidden = true
+//        }
     }
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         view.backgroundColor = appearance.colorPalette.background
-        
-        listView.backgroundColor = appearance.colorPalette.background
+
+        collectionView.backgroundColor = appearance.colorPalette.background
     }
 
     override open func updateContent() {
         super.updateContent()
 
-        listView.delegate = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        // collectionView.reloadData()
+    }
 
-        if #available(iOS 13.0, *), isDiffingEnabled {
-            setupDiffableDataSource(for: listView)
-        } else {
-            listView.dataSource = self
-            listView.reloadData()
-        }
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        collectionView.collectionViewLayout.invalidateLayout()
+        collectionView.scrollToBottom()
     }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -190,7 +243,7 @@ open class ChatMessageListVC: _ViewController,
 
         view.layoutIfNeeded()
     }
-    
+
     /// Returns layout options for the message on given `indexPath`.
     ///
     /// Layout options are used to determine the layout of the message.
@@ -216,7 +269,7 @@ open class ChatMessageListVC: _ViewController,
             components: components
         )
     }
-    
+
     /// Set the visibility of `scrollToLatestMessageButton`.
     open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
         if visible { scrollToLatestMessageButton.isVisible = true }
@@ -226,7 +279,7 @@ open class ChatMessageListVC: _ViewController,
             if !visible { self.scrollToLatestMessageButton.isVisible = false }
         })
     }
-    
+
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
         scrollToMostRecentMessage()
@@ -234,24 +287,20 @@ open class ChatMessageListVC: _ViewController,
 
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
-        listView.scrollToMostRecentMessage(animated: animated)
+        collectionView.scrollToMostRecentMessage(animated: animated)
     }
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        if #available(iOS 13.0, *), isDiffingEnabled {
-            updateMessagesSnapshot(with: changes, completion: completion)
-        } else {
-            // Because we use an inverted table view, we need to avoid animations since they look odd.
-            UIView.performWithoutAnimation {
-                listView.updateMessages(with: changes) { [weak self] in
-                    if let newMessageInserted = changes.first(where: { ($0.isInsertion || $0.isMoved) && $0.indexPath.row == 0 })?.item {
-                        if newMessageInserted.isSentByCurrentUser {
-                            self?.listView.scrollToMostRecentMessage()
-                        }
+        let lastIndex = collectionView.numberOfItems(inSection: 0)
+        UIView.performWithoutAnimation {
+            collectionView.updateMessages(with: changes) { [weak self] in
+                if let newMessageInserted = changes.first(where: { ($0.isInsertion || $0.isMoved) && $0.indexPath.row == lastIndex })?.item {
+                    if newMessageInserted.isSentByCurrentUser {
+                        self?.collectionView.scrollToMostRecentMessage()
                     }
-                    completion?()
                 }
+                completion?()
             }
         }
     }
@@ -260,7 +309,7 @@ open class ChatMessageListVC: _ViewController,
     ///
     /// Default implementation will dismiss the keyboard if it is open
     @objc open func handleTap(_ gesture: UITapGestureRecognizer) {
-        delegate?.chatMessageListVC(self, didTapOnMessageListView: listView, with: gesture)
+        delegate?.chatMessageListVC(self, didTapOnMessageListView: collectionView, with: gesture)
         view.endEditing(true)
     }
 
@@ -269,11 +318,11 @@ open class ChatMessageListVC: _ViewController,
     /// Default implementation will convert the gesture location to collection view's `indexPath`
     /// and then call selection action on the selected cell.
     @objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        let location = gesture.location(in: listView)
+        let location = gesture.location(in: collectionView)
 
         guard
             gesture.state == .began,
-            let indexPath = listView.indexPathForRow(at: location)
+            let indexPath = collectionView.indexPathForItem(at: location)
         else { return }
 
         didSelectMessageCell(at: indexPath)
@@ -283,7 +332,7 @@ open class ChatMessageListVC: _ViewController,
     /// - Parameter indexPath: The index path that the message was selected.
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
-            let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
+            let cell = collectionView.cellForItem(at: indexPath) as? ChatMessageCollectionCell,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true,
@@ -327,7 +376,7 @@ open class ChatMessageListVC: _ViewController,
             client: client
         )
     }
-    
+
     /// Shows typing Indicator.
     /// - Parameter typingUsers: typing users gotten from `channelController`
     open func showTypingIndicator(typingUsers: [ChatUser]) {
@@ -342,7 +391,7 @@ open class ChatMessageListVC: _ViewController,
 
         typingIndicatorView.isHidden = false
     }
-    
+
     /// Hides typing Indicator.
     open func hideTypingIndicator() {
         guard isTypingEventsEnabled, typingIndicatorView.isVisible else { return }
@@ -359,13 +408,13 @@ open class ChatMessageListVC: _ViewController,
         guard isDateSeparatorEnabled else {
             return false
         }
-        
+
         let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
         guard let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) else {
             // If previous message doesn't exist show the separator as well.
             return true
         }
-        
+
         // Only show the separator if the previous message has a different day.
         let isDifferentDay = !Calendar.current.isDate(
             message.createdAt,
@@ -375,18 +424,18 @@ open class ChatMessageListVC: _ViewController,
         return isDifferentDay
     }
 
-    // MARK: - UITableViewDataSource & UITableViewDelegate
+    // MARK: - UICollectionViewDataSource & UICollectionViewDelegate
 
-    open func numberOfSections(in tableView: UITableView) -> Int {
+    open func numberOfSections(in collectionView: UICollectionView) -> Int {
         1
     }
 
-    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         dataSource?.numberOfMessages(in: self) ?? 0
     }
 
-    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: ChatMessageCell = listView.dequeueReusableCell(
+    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell: ChatMessageCollectionCell = self.collectionView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
@@ -404,26 +453,26 @@ open class ChatMessageListVC: _ViewController,
         cell.messageContentView?.channel = channel
         cell.messageContentView?.content = message
 
-        cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
-        cell.dateSeparatorView.content = dateSeparatorFormatter.format(message.createdAt)
+//        cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
+//        cell.dateSeparatorView.content = dateSeparatorFormatter.format(message.createdAt)
 
         return cell
     }
 
-    open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    open func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         delegate?.chatMessageListVC(self, willDisplayMessageAt: indexPath)
     }
-
+    
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
 
         setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
     }
 
-    // MARK: - ChatMessageListScrollOverlayDataSource
+    // MARK: - ChatMessageCollectionScrollOverlayDataSource
 
     open func scrollOverlay(
-        _ overlay: ChatMessageListScrollOverlayView,
+        _ overlay: ChatMessageCollectionScrollOverlayView,
         textForItemAt indexPath: IndexPath
     ) -> String? {
         guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
@@ -473,7 +522,7 @@ open class ChatMessageListVC: _ViewController,
                 "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage. Path: \(indexPath)"
             )
     }
-	
+
     open func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
         log
@@ -481,12 +530,12 @@ open class ChatMessageListVC: _ViewController,
                 "Tapped an avatarView. To customize the behavior, override messageContentViewDidTapOnAvatarView. Path: \(indexPath)"
             )
     }
-    
+
     /// This method is triggered when delivery status indicator on the message at the given index path is tapped.
     /// - Parameter indexPath: The index path of the message cell.
     open func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        
+
         log.info(
             """
             Tapped an delivery status view. To customize the behavior, override
@@ -571,7 +620,7 @@ open class ChatMessageListVC: _ViewController,
 
     open func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath,
-              let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
+              let cell = collectionView.cellForItem(at: indexPath) as? ChatMessageCollectionCell,
               let messageContentView = cell.messageContentView else {
             return
         }
@@ -590,133 +639,6 @@ open class ChatMessageListVC: _ViewController,
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
-    }
-}
-
-// MARK: - Backwards Compatibility DataSource Diffing
-
-@available(iOS 13.0, *)
-internal extension ChatMessageListVC {
-    /// Setup the `UITableViewDiffableDataSource`.
-    func setupDiffableDataSource(for listView: ChatMessageListView) {
-        let diffableDataSource = UITableViewDiffableDataSource<Int, ChatMessage>(
-            tableView: listView
-        ) { [weak self] _, indexPath, _ -> UITableViewCell? in
-            /// Re-use old `cellForRowAt` to maintain customer's customisations.
-            let cell = self?.tableView(listView, cellForRowAt: indexPath)
-            return cell
-        }
-
-        self.diffableDataSource = diffableDataSource
-        listView.dataSource = diffableDataSource
-
-        /// Populate the Initial messages data.
-        var snapshot = NSDiffableDataSourceSnapshot<Int, ChatMessage>()
-        snapshot.appendSections([0])
-        snapshot.appendItems(dataSource?.messages ?? [], toSection: 0)
-        diffableDataSource.apply(snapshot, animatingDifferences: false)
-    }
-
-    /// Transforms an array of changes to a diffable data source snapshot.
-    func updateMessagesSnapshot(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
-        var snapshot = diffableDataSource?.snapshot() ?? NSDiffableDataSourceSnapshot<Int, ChatMessage>()
-
-        let currentMessages: Set<ChatMessage> = Set(snapshot.itemIdentifiers)
-        var updatedMessages: [ChatMessage] = []
-        var insertedMessages: [(ChatMessage, row: Int)] = []
-        var removedMessages: [(ChatMessage, row: Int)] = []
-        var movedMessages: [(from: ChatMessage, to: ChatMessage)] = []
-
-        var hasNewInsertions = false
-        var hasInsertions = false
-
-        changes.forEach { change in
-            switch change {
-            case let .insert(message, indexPath):
-                hasInsertions = true
-                if !hasNewInsertions {
-                    hasNewInsertions = indexPath.row == 0
-                }
-                insertedMessages.append((message, row: indexPath.row))
-            case let .update(message, _):
-                // Check if it is a valid update. In rare occasions we get an update for a message which
-                // is not in the scope of the current pagination, although it is in the database.
-                guard currentMessages.contains(message) else { break }
-                updatedMessages.append(message)
-            case let .remove(message, indexPath):
-                removedMessages.append((message, row: indexPath.row))
-            case let .move(_, fromIndex, toIndex):
-                guard let fromMessage = snapshot.itemIdentifiers[safe: fromIndex.row] else { break }
-                guard let toMessage = snapshot.itemIdentifiers[safe: toIndex.row] else { break }
-                movedMessages.append((from: fromMessage, to: toMessage))
-            }
-        }
-
-        let sortedInsertedMessages = insertedMessages
-            .sorted(by: { $0.row < $1.row })
-            .map(\.0)
-
-        if hasNewInsertions, let currentFirstMessage = snapshot.itemIdentifiers.first {
-            // Insert new messages at the bottom.
-            snapshot.insertItems(sortedInsertedMessages, beforeItem: currentFirstMessage)
-        } else if hasInsertions, let currentLastMessage = snapshot.itemIdentifiers.last {
-            // Load new messages at the top.
-            snapshot.insertItems(sortedInsertedMessages, afterItem: currentLastMessage)
-        } else if hasInsertions {
-            snapshot.appendItems(sortedInsertedMessages)
-        }
-
-        snapshot.deleteItems(removedMessages.map(\.0))
-        snapshot.reloadItems(updatedMessages)
-
-        movedMessages.forEach {
-            snapshot.moveItem($0.from, afterItem: $0.to)
-            snapshot.reloadItems([$0.from, $0.to])
-        }
-
-        // The reason we call `performWithoutAnimation` and `animatingDifferences: true` at the same time
-        // is because we don't want animations, but on iOS 14 calling `animatingDifferences: false`
-        // is the same as calling `reloadData()`. Info: https://developer.apple.com/videos/play/wwdc2021/10252/?time=158
-        UIView.performWithoutAnimation {
-            diffableDataSource?.apply(snapshot, animatingDifferences: true) { [weak self] in
-
-                let newestMessage = snapshot.itemIdentifiers.first
-                if hasNewInsertions && newestMessage?.isSentByCurrentUser == true {
-                    self?.listView.scrollToMostRecentMessage()
-                }
-
-                // When new message is inserted, update the previous message to hide the timestamp if needed.
-                if hasNewInsertions, let previousMessage = snapshot.itemIdentifiers[safe: 1] {
-                    let indexPath = IndexPath(row: 1, section: 0)
-                    // The completion block from `apply()` should always be called on main thread,
-                    // but on iOS 14 this doesn't seem to be the case, and it crashes.
-                    DispatchQueue.main.async {
-                        self?.updateMessagesSnapshot(
-                            with: [.update(previousMessage, index: indexPath)],
-                            completion: nil
-                        )
-                    }
-                }
-
-                // When there are deletions, we should update the previous message, so that we add the avatar image back.
-                // Because we have an inverted list, the previous message has the same index of the deleted message after
-                // the deletion has been executed.
-                let previousRemovedMessages = removedMessages.compactMap { _, row -> (ChatMessage, IndexPath)? in
-                    guard let message = snapshot.itemIdentifiers[safe: row] else { return nil }
-                    return (message, IndexPath(row: row, section: 0))
-                }
-                if !previousRemovedMessages.isEmpty {
-                    DispatchQueue.main.async {
-                        self?.updateMessagesSnapshot(
-                            with: previousRemovedMessages.map { ListChange.update($0, index: $1) },
-                            completion: nil
-                        )
-                    }
-                }
-
-                completion?()
-            }
-        }
     }
 }
 

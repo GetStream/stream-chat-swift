@@ -1055,6 +1055,9 @@
 		ADCDDD0825AE2F4A004E15FB /* InputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */; };
 		ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE2A2779EC8A003B3B07 /* Atlantis */; };
 		ADEED08127F202C100A42B52 /* yoda_with_long_file_name.txt in Resources */ = {isa = PBXBuildFile; fileRef = ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */; };
+		ADEF27862886FDD000011372 /* ChatLayout in Frameworks */ = {isa = PBXBuildFile; productRef = ADEF27852886FDD000011372 /* ChatLayout */; settings = {ATTRIBUTES = (Required, ); }; };
+		ADEF278F2886FF9D00011372 /* ChatMessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEF278E2886FF9D00011372 /* ChatMessageList.swift */; };
+		ADEF27902886FF9D00011372 /* ChatMessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEF278E2886FF9D00011372 /* ChatMessageList.swift */; };
 		ADF34F8A25CDC58900AD637C /* ConnectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34F6A25CD6A1D00AD637C /* ConnectionController.swift */; };
 		ADF34F9E25CDD8E600AD637C /* ConnectionController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34F9D25CDD8E600AD637C /* ConnectionController+SwiftUI.swift */; };
 		ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */; };
@@ -3172,6 +3175,7 @@
 		ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chewbacca.jpg; sourceTree = "<group>"; };
 		ADEA7F22261D2F8C00CA2289 /* r2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = r2.jpg; sourceTree = "<group>"; };
 		ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = yoda_with_long_file_name.txt; sourceTree = "<group>"; };
+		ADEF278E2886FF9D00011372 /* ChatMessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageList.swift; sourceTree = "<group>"; };
 		ADF34F6A25CD6A1D00AD637C /* ConnectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionController.swift; sourceTree = "<group>"; };
 		ADF34F9D25CDD8E600AD637C /* ConnectionController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+SwiftUI.swift"; sourceTree = "<group>"; };
 		ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+Combine.swift"; sourceTree = "<group>"; };
@@ -3603,6 +3607,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADEF27862886FDD000011372 /* ChatLayout in Frameworks */,
 				E334B386282468F2002E9640 /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3851,6 +3856,7 @@
 		7908830C2548707B00896F03 /* ChatMessageList */ = {
 			isa = PBXGroup;
 			children = (
+				ADEF278E2886FF9D00011372 /* ChatMessageList.swift */,
 				ADA5A0F7276790C100E1C465 /* ChatMessageListDateSeparatorView.swift */,
 				69736BF126413E5D00090B67 /* ChatMessageListScrollOverlayView.swift */,
 				BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */,
@@ -7593,6 +7599,7 @@
 			name = StreamChat;
 			packageProductDependencies = (
 				E334B385282468F2002E9640 /* Sentry */,
+				ADEF27852886FDD000011372 /* ChatLayout */,
 			);
 			productName = Sources;
 			productReference = 799C941B247D2F80001F1104 /* StreamChat.framework */;
@@ -7911,6 +7918,7 @@
 				A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */,
 				C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */,
 				E334B384282468F2002E9640 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				ADEF27842886FDD000011372 /* XCRemoteSwiftPackageReference "ChatLayout" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -8436,6 +8444,7 @@
 				A3C50224284F9CF70048753E /* PerfomanceLog.swift in Sources */,
 				C1FC2F7827416E150062530F /* ImageDecoding.swift in Sources */,
 				CFBF8D512847C57700EEB7D3 /* MarkdownFormatter.swift in Sources */,
+				ADEF278F2886FF9D00011372 /* ChatMessageList.swift in Sources */,
 				C1FC2F8227416E150062530F /* ImagePipelineTask.swift in Sources */,
 				A3EA3328276C904700C84A52 /* ObjcAssociatedWeakObject.swift in Sources */,
 				F6E5E3472627A372007FA51F /* CGRect+Extensions.swift in Sources */,
@@ -9869,6 +9878,7 @@
 				C121EBA82746A1E800023E4C /* ChatChannelAvatarView.swift in Sources */,
 				C121EBA92746A1E800023E4C /* ChatChannelAvatarView+SwiftUI.swift in Sources */,
 				C121EBAA2746A1E800023E4C /* ChatUserAvatarView.swift in Sources */,
+				ADEF27902886FF9D00011372 /* ChatMessageList.swift in Sources */,
 				C121EBAB2746A1E800023E4C /* CurrentChatUserAvatarView.swift in Sources */,
 				C121EBAC2746A1E800023E4C /* InputChatMessageView.swift in Sources */,
 				C121EBAD2746A1E800023E4C /* InputTextView.swift in Sources */,
@@ -10476,7 +10486,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10508,7 +10518,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10540,7 +10550,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10924,7 +10934,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10958,7 +10968,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -11536,7 +11546,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -12294,6 +12304,14 @@
 				version = 1.16.0;
 			};
 		};
+		ADEF27842886FDD000011372 /* XCRemoteSwiftPackageReference "ChatLayout" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ekazaev/ChatLayout";
+			requirement = {
+				kind = exactVersion;
+				version = 1.2.0;
+			};
+		};
 		C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/dani-gavrilov/GDPerformanceView-Swift";
@@ -12393,6 +12411,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */;
 			productName = Atlantis;
+		};
+		ADEF27852886FDD000011372 /* ChatLayout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADEF27842886FDD000011372 /* XCRemoteSwiftPackageReference "ChatLayout" */;
+			productName = ChatLayout;
 		};
 		C139335E275E7BD800225E7A /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

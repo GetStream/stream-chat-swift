@@ -152,6 +152,7 @@ open class ChatMessageLayoutOptionsResolver {
         messageIndexPath: IndexPath,
         messages: AnyRandomAccessCollection<ChatMessage>
     ) -> Bool {
+        return true
         let messageIndex = messages.index(messages.startIndex, offsetBy: messageIndexPath.item)
         guard let message = messages[safe: messageIndex] else {
             indexNotFoundAssertion()

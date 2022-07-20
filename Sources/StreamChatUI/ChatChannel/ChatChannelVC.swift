@@ -9,8 +9,8 @@ import UIKit
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelVC: _ViewController,
     ThemeProvider,
-    ChatMessageListVCDataSource,
-    ChatMessageListVCDelegate,
+    ChatMessageListDataSource,
+    ChatMessageListDelegate,
     ChatChannelControllerDelegate {
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
@@ -35,9 +35,7 @@ open class ChatChannelVC: _ViewController,
     )
 
     /// The message list component responsible to render the messages.
-    open lazy var messageListVC: ChatMessageListVC = components
-        .messageListVC
-        .init()
+    open lazy var messageListVC: ChatMessageList = ChatMessageList()
 
     /// Controller that handles the composer view
     open private(set) lazy var messageComposerVC = components
@@ -60,7 +58,7 @@ open class ChatChannelVC: _ViewController,
     /// A boolean value indicating wether the last message is fully visible or not.
     /// If the value is `true` it means the message list is fully scrolled to the bottom.
     open var isLastMessageFullyVisible: Bool {
-        messageListVC.listView.isLastCellFullyVisible
+        messageListVC.collectionView.isLastCellFullyVisible
     }
 
     private var isLoadingPreviousMessages: Bool = false
@@ -154,20 +152,20 @@ open class ChatChannelVC: _ViewController,
         Array(channelController.messages)
     }
     
-    open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
+    open func channel(for vc: ChatMessageList) -> ChatChannel? {
         channelController.channel
     }
 
-    open func numberOfMessages(in vc: ChatMessageListVC) -> Int {
+    open func numberOfMessages(in vc: ChatMessageList) -> Int {
         channelController.messages.count
     }
 
-    open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
+    open func chatMessageListVC(_ vc: ChatMessageList, messageAt indexPath: IndexPath) -> ChatMessage? {
         channelController.messages[safe: indexPath.item]
     }
 
     open func chatMessageListVC(
-        _ vc: ChatMessageListVC,
+        _ vc: ChatMessageList,
         messageLayoutOptionsAt indexPath: IndexPath
     ) -> ChatMessageLayoutOptions {
         guard let channel = channelController.channel else { return [] }
@@ -183,24 +181,25 @@ open class ChatChannelVC: _ViewController,
     // MARK: - ChatMessageListVCDelegate
 
     open func chatMessageListVC(
-        _ vc: ChatMessageListVC,
+        _ vc: ChatMessageList,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if channelController.state != .remoteDataFetched {
+        guard channelController.state == .remoteDataFetched else {
             return
         }
 
-        guard messageListVC.listView.isTrackingOrDecelerating else {
+        guard messageListVC.collectionView.isTrackingOrDecelerating else {
             return
         }
 
-        if indexPath.row < channelController.messages.count - 10 {
+        guard indexPath.row < 10 else {
             return
         }
 
         guard !isLoadingPreviousMessages else {
             return
         }
+
         isLoadingPreviousMessages = true
 
         channelController.loadPreviousMessages { [weak self] _ in
@@ -209,7 +208,7 @@ open class ChatChannelVC: _ViewController,
     }
 
     open func chatMessageListVC(
-        _ vc: ChatMessageListVC,
+        _ vc: ChatMessageList,
         didTapOnAction actionItem: ChatMessageActionItem,
         for message: ChatMessage
     ) {
@@ -231,7 +230,7 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
-    open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
+    open func chatMessageListVC(_ vc: ChatMessageList, scrollViewDidScroll scrollView: UIScrollView) {
         if isLastMessageFullyVisible {
             channelController.markRead()
 
@@ -240,8 +239,8 @@ open class ChatChannelVC: _ViewController,
     }
 
     open func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        didTapOnMessageListView messageListView: ChatMessageListView,
+        _ vc: ChatMessageList,
+        didTapOnMessageListView messageListView: ChatMessageListCollectionView,
         with gestureRecognizer: UITapGestureRecognizer
     ) {
         messageComposerVC.dismissSuggestions()

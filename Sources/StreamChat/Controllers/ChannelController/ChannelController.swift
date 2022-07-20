@@ -350,7 +350,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 return nil
             }
             guard let cid = self.cid else { return nil }
-            let sortAscending = self.messageOrdering == .topToBottom ? false : true
+            let sortAscending = self.messageOrdering == .topToBottom ? true : false
             var deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
             var shouldShowShadowedMessages: Bool?
             self.client.databaseContainer.viewContext.performAndWait { [weak self] in
