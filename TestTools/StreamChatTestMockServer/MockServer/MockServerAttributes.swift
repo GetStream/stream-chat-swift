@@ -31,6 +31,9 @@ public enum MockFile: String {
     case wsUserEvent = "ws_events_user"
     case wsReaction = "ws_reaction"
     case wsHealthCheck = "ws_health_check"
+    
+    case youtube = "http_youtube_link"
+    case unsplash = "http_unsplash_link"
 
     var filePath: String {
         "\(Bundle.testTools.pathToJSONsFolder)\(rawValue)"
@@ -194,4 +197,9 @@ public enum Attachments {
     public static let image = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
     public static let video = "https://download.samplelib.com/mp4/sample-5s.mp4"
     public static let file = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+}
+
+public enum Links {
+    public static let youtube = "youtube.com/"
+    public static let unsplash = "unsplash.com/"
 }

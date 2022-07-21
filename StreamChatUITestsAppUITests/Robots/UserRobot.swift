@@ -206,13 +206,14 @@ extension UserRobot {
     @discardableResult
     func openThread(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        MessageListPage.Attributes.threadButton(in: messageCell).wait().safeTap()
+        let threadButton = MessageListPage.Attributes.threadButton(in: messageCell)
+        if threadButton.exists {
+            threadButton.safeTap()
+        } else {
+            selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: messageCellIndex)
+        }
+        ThreadPage.alsoSendInChannelCheckbox.wait()
         return self
-    }
-
-    @discardableResult
-    func showThread(forMessageAt index: Int = 0) -> Self {
-        selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: index)
     }
     
     @discardableResult
@@ -244,7 +245,7 @@ extension UserRobot {
     ) -> Self {
         let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
         if !threadCheckbox.exists {
-            showThread(forMessageAt: messageCellIndex)
+            openThread(messageCellIndex: messageCellIndex)
         }
         if alsoSendInChannel {
             threadCheckbox.wait().safeTap()
@@ -325,7 +326,7 @@ extension UserRobot {
     ) -> Self {
         let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
         if !threadCheckbox.exists {
-            showThread(forMessageAt: messageCellIndex)
+            openThread(messageCellIndex: messageCellIndex)
         }
         if alsoSendInChannel {
             threadCheckbox.wait().safeTap()
