@@ -1,6 +1,13 @@
 # StreamChat iOS SDK CHANGELOG
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+# Upcoming
+
+### 🔄 Changed
+
+# [4.19.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.19.0)
+_July 21, 2022_
+
 ## StreamChat
 ### ✅ Added
 - Add hide history option when adding a new member [#2155](https://github.com/GetStream/stream-chat-swift/issues/2155)
