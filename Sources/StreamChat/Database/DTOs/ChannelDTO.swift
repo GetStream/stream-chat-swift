@@ -68,7 +68,19 @@ class ChannelDTO: NSManagedObject {
         guard !isDeleted else {
             return
         }
-        
+
+        // Change to the `truncatedAt` value have effect on messages, we need to mark them dirty manually
+        // to triggers related FRC updates
+        if changedValues().keys.contains("truncatedAt") {
+            messages
+                .filter { !$0.hasChanges }
+                .forEach {
+                    // Simulate an update
+                    $0.willChangeValue(for: \.id)
+                    $0.didChangeValue(for: \.id)
+                }
+        }
+
         // Update the date for sorting every time new message in this channel arrive.
         // This will ensure that the channel list is updated/sorted when new message arrives.
         let lastDate = lastMessageAt ?? createdAt
