@@ -636,7 +636,6 @@ final class MessageUpdater_Tests: XCTestCase {
         // Create message authored by current user in the database
         try database.createMessage(id: messageId, authorId: currentUserId)
         
-        
         // Simulate message on a state where it failed to be sent due to moderation
         try database.writeSynchronously { session in
             guard let messageDTO = session.message(id: messageId) else { return }
