@@ -960,6 +960,116 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(unreadCount.mentions, 1)
     }
     
+    func test_channelCleansMessageState_whenMessageFailedToBeEditedDueToModeration() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        
+        let currentUserPayload: CurrentUserPayload = .dummy(userId: currentUserId, role: .user)
+
+        let messagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: currentUserId
+        )
+
+        let channelPayload = ChannelPayload(
+            channel: .dummy(cid: .unique),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserPayload)],
+            membership: .dummy(user: currentUserPayload),
+            messages: [messagePayload],
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false
+        )
+        
+        // Save channel and updated message to be failedToBeEditedDueToModeration
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveChannel(payload: channelPayload)
+            
+            guard let messageDTO = session.message(id: messageId) else { return }
+            
+            messageDTO.isBounced = true
+            messageDTO.localMessageState = .syncingFailed
+        }
+        
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert message failed to be edited due to moderation
+        XCTAssertEqual(message.failedToBeEditedDueToModeration, true)
+
+        // Clean state of messages that failed to be edited due to moderation
+        try database.writeSynchronously { session in
+            if let channelDTO = session.channel(cid: channelPayload.channel.cid) {
+                channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
+            }
+        }
+        
+        // Load the message
+        let updatedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert message is properly cleaned
+        XCTAssertEqual(updatedMessage.isBounced, false)
+        XCTAssertNil(updatedMessage.localMessageState)
+    }
+    
+    func test_channelDoesNotCleanMessageState_whenMessageFailedToBeSentDueToModeration() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        
+        let currentUserPayload: CurrentUserPayload = .dummy(userId: currentUserId, role: .user)
+
+        let messagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: currentUserId
+        )
+
+        let channelPayload = ChannelPayload(
+            channel: .dummy(cid: .unique),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserPayload)],
+            membership: .dummy(user: currentUserPayload),
+            messages: [messagePayload],
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false
+        )
+        
+        // Save channel and update message to be failedToBeSentDueToModeration
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveChannel(payload: channelPayload)
+            
+            guard let messageDTO = session.message(id: messageId) else { return }
+            
+            messageDTO.isBounced = true
+            messageDTO.localMessageState = .sendingFailed
+        }
+        
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert message failed to be sent due to moderation
+        XCTAssertEqual(message.failedToBeSentDueToModeration, true)
+
+        // Clean state of messages that failed to be edited due to moderation
+        try database.writeSynchronously { session in
+            if let channelDTO = session.channel(cid: channelPayload.channel.cid) {
+                channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
+            }
+        }
+        
+        // Load the message
+        let updatedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert message is not cleaned because it didn't failed to be edited due to moderation
+        XCTAssertEqual(updatedMessage.isBounced, true)
+        XCTAssertEqual(updatedMessage.localMessageState, .sendingFailed)
+    }
+    
     func test_typingUsers_areCleared_onResetEphemeralValues() throws {
         let cid: ChannelId = .unique
         let userId: UserId = .unique
