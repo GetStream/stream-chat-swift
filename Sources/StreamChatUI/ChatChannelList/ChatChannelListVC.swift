@@ -75,15 +75,6 @@ open class ChatChannelListVC: _ViewController,
     
     private let numberOfItemsWhenLoading: Int = 99
     
-    /// Boolean value that indicates if Channel list is currently in loading state.
-    var isLoading: Bool = true {
-        didSet {
-            if !isLoading {
-                collectionView.reloadData()
-            }
-        }
-    }
-    
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
     ///   - controller: Your created `ChatChannelListController` with required query
@@ -195,32 +186,26 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        /*isLoading ? numberOfItemsWhenLoading :*/ controller.channels.count
+        controller.channels.count
     }
     
     open func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        /*if isLoading {
-            collectionView.isScrollEnabled = false
-            let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewSkeletonCell.self, for: indexPath)
-            return cell
-        } else {*/
-            let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
-            guard let channel = getChannel(at: indexPath) else { return cell }
-
-            cell.components = components
-            cell.itemView.content = .init(channel: channel, currentUserId: controller.client.currentUserId)
-
-            cell.swipeableView.delegate = self
-            cell.swipeableView.indexPath = { [weak cell, weak self] in
-                guard let cell = cell else { return nil }
-                return self?.collectionView.indexPath(for: cell)
-            }
-            
-            return cell
-        /*}*/
+        let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
+        guard let channel = getChannel(at: indexPath) else { return cell }
+        
+        cell.components = components
+        cell.itemView.content = .init(channel: channel, currentUserId: controller.client.currentUserId)
+        
+        cell.swipeableView.delegate = self
+        cell.swipeableView.indexPath = { [weak cell, weak self] in
+            guard let cell = cell else { return nil }
+            return self?.collectionView.indexPath(for: cell)
+        }
+        
+        return cell
     }
     
     open func collectionView(
@@ -374,6 +359,7 @@ open class ChatChannelListVC: _ViewController,
         }
         
         let shouldHideEmptyView: Bool
+        let isLoading: Bool
         
         switch state {
         case .initialized, .localDataFetched, .remoteDataFetched:
@@ -392,6 +378,12 @@ open class ChatChannelListVC: _ViewController,
         
         emptyView.isHidden = shouldHideEmptyView
         skeletonListView.isHidden = !isLoading
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            if !self.emptyView.isHidden {
+                self.skeletonListView.isHidden = true
+            }
+        }
     }
 
     private func getChannel(at indexPath: IndexPath) -> ChatChannel? {

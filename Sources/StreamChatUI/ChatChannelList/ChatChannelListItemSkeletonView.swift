@@ -8,7 +8,7 @@
 
 import UIKit
 
-open class ChatChannelListItemSkeletonView: /*ChatChannelListItemView,*/ _View, ThemeProvider, SkeletonLoadable {
+open class ChatChannelListItemSkeletonView: _View, ThemeProvider, SkeletonLoadable {
 
     open private(set) lazy var avatarView: ChatChannelAvatarView = components
         .channelAvatarView
