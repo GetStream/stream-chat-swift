@@ -47,6 +47,10 @@ open class ChatChannelListVC: _ViewController,
         return view
     }()
     
+    /// View which will be shown when loading the Channel list.
+    open private(set) lazy var skeletonListView: ChatChannelListSkeletonView = .init()
+        .withoutAutoresizingMaskConstraints
+
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
     open private(set) lazy var userAvatarView: CurrentChatUserAvatarView = components
         .currentUserAvatarView.init()
@@ -127,11 +131,6 @@ open class ChatChannelListVC: _ViewController,
             forSupplementaryViewOfKind: ListCollectionViewLayout.separatorKind,
             withReuseIdentifier: separatorReuseIdentifier
         )
-        
-        collectionView.register(
-            components.channelListCollectionViewSkeletonCell.self,
-            forCellWithReuseIdentifier: collectionViewSkeletonCellReuseIdentifier
-        )
 
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -168,6 +167,7 @@ open class ChatChannelListVC: _ViewController,
         super.setUpLayout()
         view.embed(collectionView)
         view.embed(emptyView)
+        view.embed(skeletonListView)
         emptyView.isHidden = true
         
         view.addSubview(channelListErrorView)
@@ -195,19 +195,18 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        isLoading ? numberOfItemsWhenLoading : controller.channels.count
+        /*isLoading ? numberOfItemsWhenLoading :*/ controller.channels.count
     }
     
     open func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        if isLoading {
+        /*if isLoading {
             collectionView.isScrollEnabled = false
             let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewSkeletonCell.self, for: indexPath)
             return cell
-        } else {
-            collectionView.isScrollEnabled = true
+        } else {*/
             let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
             guard let channel = getChannel(at: indexPath) else { return cell }
 
@@ -221,7 +220,7 @@ open class ChatChannelListVC: _ViewController,
             }
             
             return cell
-        }
+        /*}*/
     }
     
     open func collectionView(
@@ -370,39 +369,29 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        
-        // TODO: - Check alternative with Nuno
-        switch state {
-        case .initialized, .localDataFetched:
-            if self.controller.channels.isEmpty {
-                isLoading = true
-            } else {
-                isLoading = false
-            }
-        default:
-            isLoading = false
-        }
-        
         if !channelListErrorView.isHidden {
             hideErrorView()
         }
         
         let shouldHideEmptyView: Bool
-
+        
         switch state {
-        case .initialized:
-            shouldHideEmptyView = true
-//            isLoading = true
-        case .localDataFetched, .remoteDataFetched:
-            shouldHideEmptyView = !self.controller.channels.isEmpty
-//            isLoading = false
+        case .initialized, .localDataFetched, .remoteDataFetched:
+            if self.controller.channels.isEmpty {
+                isLoading = true
+                shouldHideEmptyView = false
+            } else {
+                isLoading = false
+                shouldHideEmptyView = true
+            }
         case .localDataFetchFailed, .remoteDataFetchFailed:
             shouldHideEmptyView = emptyView.isHidden
+            isLoading = false
             showErrorView()
-//            isLoading = false
         }
-
+        
         emptyView.isHidden = shouldHideEmptyView
+        skeletonListView.isHidden = !isLoading
     }
 
     private func getChannel(at indexPath: IndexPath) -> ChatChannel? {

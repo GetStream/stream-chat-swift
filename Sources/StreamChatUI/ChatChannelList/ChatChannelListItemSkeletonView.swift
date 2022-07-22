@@ -107,11 +107,10 @@ open class ChatChannelListItemSkeletonView: /*ChatChannelListItemView,*/ _View, 
         ])
         
         mainContainer.alignment = .center
-        mainContainer.isLayoutMarginsRelativeArrangement = true
         
         timestampLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
-        embed(mainContainer)
+        embed(mainContainer, insets: .init(top: 8, leading: 8, bottom: 8, trailing: 8))
     }
     
     override open func layoutSubviews() {
@@ -120,7 +119,7 @@ open class ChatChannelListItemSkeletonView: /*ChatChannelListItemView,*/ _View, 
         avatarViewLayer.frame = avatarView.bounds
         avatarViewLayer.cornerRadius = titleLabel.bounds.height / 2
 
-        titleLabelLayer.frame = titleLabel.textRect(forBounds: titleLabel.bounds, limitedToNumberOfLines: 1)
+        titleLabelLayer.frame = titleLabel.textRect(forBounds: bounds, limitedToNumberOfLines: 1)
         titleLabelLayer.cornerRadius = titleLabel.bounds.height / 2
 
         subtitleLabelLayer.frame = subtitleLabel.bounds
