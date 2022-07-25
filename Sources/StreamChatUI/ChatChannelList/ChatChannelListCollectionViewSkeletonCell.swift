@@ -1,15 +1,10 @@
 //
-//  ChatChannelListCollectionViewSkeletonCell.swift
-//  StreamChat
-//
-//  Created by Hugo Bernal on 18/07/22.
-//  Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 
 open class ChatChannelListCollectionViewSkeletonCell: _TableViewCell, ThemeProvider, SkeletonLoadable {
-    
     /// The `ChatChannelListItemSkeletonView` instance used as content view.
     open private(set) lazy var itemSkeletonView: ChatChannelListItemSkeletonView = components
         .channelListSkeletonItemView
@@ -27,6 +22,12 @@ open class ChatChannelListCollectionViewSkeletonCell: _TableViewCell, ThemeProvi
         contentView.addSubview(itemSkeletonView)
         itemSkeletonView.pin(to: contentView)
     }
+    
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+        
+        itemSkeletonView.layoutSubviews()
+    }
 }
 
 // MARK: - Skeleton animation group
@@ -34,7 +35,6 @@ open class ChatChannelListCollectionViewSkeletonCell: _TableViewCell, ThemeProvi
 protocol SkeletonLoadable {}
 
 extension SkeletonLoadable {
-    
     func makeAnimationGroup(previousGroup: CAAnimationGroup? = nil) -> CAAnimationGroup {
         let animDuration: CFTimeInterval = 1.5
         let animation1 = CABasicAnimation(keyPath: #keyPath(CAGradientLayer.backgroundColor))

@@ -176,6 +176,28 @@ final class ChatChannelListVC_Tests: XCTestCase {
 
         XCTAssert(channelListVC.collectionViewLayout is OtherCollectionLayout)
     }
+    
+    func test_didChangeState_whenRemoteDataFetchedAndChannelsAreEmpty_thenEmptyViewIsShown() {
+        // GIVEN
+        let emptyViewHidden = false
+        
+        // WHEN
+        vc.controller(vc.controller, didChangeState: .remoteDataFetched)
+        
+        // THEN
+        XCTAssertEqual(emptyViewHidden, vc.emptyView.isHidden)
+    }
+    
+    func test_didChangeState_whenRemoteDataFetchedFailed_thenErrorViewIsShown() {
+        // GIVEN
+        let errorViewHidden = false
+        
+        // WHEN
+        vc.controller(vc.controller, didChangeState: .remoteDataFetchFailed(ClientError()))
+        
+        // THEN
+        XCTAssertEqual(errorViewHidden, vc.channelListErrorView.isHidden)
+    }
 }
 
 // MARK: - Tests for temporary fix for channel list changes crash

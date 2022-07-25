@@ -73,8 +73,6 @@ open class ChatChannelListVC: _ViewController,
     /// Value of `channelListErrorView` height constraint.
     var channelListErrorViewHeight: CGFloat { 88 }
     
-    private let numberOfItemsWhenLoading: Int = 99
-    
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
     ///   - controller: Your created `ChatChannelListController` with required query
@@ -131,6 +129,7 @@ open class ChatChannelListVC: _ViewController,
         
         channelListErrorView.refreshButtonAction = { [weak self] in
             self?.controller.synchronize()
+            self?.hideErrorView()
         }
     }
 
@@ -354,22 +353,15 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if !channelListErrorView.isHidden {
-            hideErrorView()
-        }
-        
-        let shouldHideEmptyView: Bool
-        let isLoading: Bool
+        var shouldHideEmptyView = true
+        var isLoading = true
         
         switch state {
-        case .initialized, .localDataFetched, .remoteDataFetched:
-            if self.controller.channels.isEmpty {
-                isLoading = true
-                shouldHideEmptyView = false
-            } else {
-                isLoading = false
-                shouldHideEmptyView = true
-            }
+        case .initialized, .localDataFetched:
+            isLoading = self.controller.channels.isEmpty
+        case .remoteDataFetched:
+            isLoading = false
+            shouldHideEmptyView = !self.controller.channels.isEmpty
         case .localDataFetchFailed, .remoteDataFetchFailed:
             shouldHideEmptyView = emptyView.isHidden
             isLoading = false
@@ -378,12 +370,6 @@ open class ChatChannelListVC: _ViewController,
         
         emptyView.isHidden = shouldHideEmptyView
         skeletonListView.isHidden = !isLoading
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            if !self.emptyView.isHidden {
-                self.skeletonListView.isHidden = true
-            }
-        }
     }
 
     private func getChannel(at indexPath: IndexPath) -> ChatChannel? {

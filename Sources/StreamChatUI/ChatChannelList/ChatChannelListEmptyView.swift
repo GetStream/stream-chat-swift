@@ -1,22 +1,17 @@
 //
-//  ChatChannelListEmptyView.swift
-//  StreamChat
-//
-//  Created by Hugo Bernal on 5/07/22.
-//  Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 
 open class ChatChannelListEmptyView: _View, ThemeProvider {
-    
     /// Container which holds all elements except action button in this view.
     open private(set) lazy var container: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     /// Icon ImageView which is displayed above the title label.
     open private(set) lazy var iconView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
     /// Title label which displays the main message for the empty view.
     open private(set) lazy var titleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    /// Subtitle label which displays additional information for the empty view..
+    /// Subtitle label which displays additional information for the empty view.
     open private(set) lazy var subtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     /// Button for an additional action on the empty view. E.g. start a new chat.
     open private(set) lazy var actionButton: UIButton = UIButton(type: .system).withoutAutoresizingMaskConstraints

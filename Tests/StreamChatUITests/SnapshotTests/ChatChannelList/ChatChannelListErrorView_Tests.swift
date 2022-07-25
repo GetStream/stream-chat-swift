@@ -1,9 +1,5 @@
 //
-//  ChatChannelListErrorView_Tests.swift
-//  StreamChat
-//
-//  Created by Hugo Bernal on 12/07/22.
-//  Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat

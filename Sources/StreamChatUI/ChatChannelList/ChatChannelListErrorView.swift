@@ -1,15 +1,10 @@
 //
-//  ChatChannelListErrorView.swift
-//  StreamChat
-//
-//  Created by Hugo Bernal on 12/07/22.
-//  Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 
 open class ChatChannelListErrorView: _View, ThemeProvider {
-    
     /// Container which holds the elements on the error banner.
     open private(set) lazy var container: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     /// Label describing there has been an error.

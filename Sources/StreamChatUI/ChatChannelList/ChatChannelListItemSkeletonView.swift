@@ -1,15 +1,11 @@
 //
-//  ChatChannelListItemSkeletonView.swift
-//  StreamChat
-//
-//  Created by Hugo Bernal on 18/07/22.
-//  Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 
+/// The view of the `ChatChannelListCollectionViewSkeletonCell` cells, which contains the UI elements being animated with a shimmer.
 open class ChatChannelListItemSkeletonView: _View, ThemeProvider, SkeletonLoadable {
-
     open private(set) lazy var avatarView: ChatChannelAvatarView = components
         .channelAvatarView
         .init()
