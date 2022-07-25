@@ -236,38 +236,23 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
     
-    func test_typingIndicatorShown_whenParticipantStartsTyping() {
-        linkToScenario(withId: 72)
-        
-        GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-                .sendMessage("Hey")
-        }
-        WHEN("participant starts typing") {
-            participantRobot.startTyping()
-        }
-        THEN("user observes typing indicator is shown") {
-            let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
-            userRobot.assertTypingIndicatorShown(typingUserName: typingUserName)
-        }
-    }
-    
-    func test_typingIndicatorHidden_whenParticipantStopsTyping() {
+    func test_typingIndicator() {
         linkToScenario(withId: 73)
         
         GIVEN("user opens the channel") {
             userRobot
                 .login()
                 .openChannel()
-                .sendMessage("Hey")
         }
         WHEN("participant starts typing") {
-            participantRobot.startTyping()
+            participantRobot.wait(2).startTyping()
         }
-        AND("participant stops typing") {
-            participantRobot.stopTyping()
+        THEN("user observes typing indicator is shown") {
+            let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
+            userRobot.assertTypingIndicatorShown(typingUserName: typingUserName)
+        }
+        WHEN("participant stops typing") {
+            participantRobot.wait(2).stopTyping()
         }
         THEN("user observes typing indicator has disappeared") {
             userRobot.assertTypingIndicatorHidden()
@@ -521,6 +506,70 @@ extension MessageList_Tests {
             userRobot.assertMentionWasApplied()
         }
     }
+    
+    func test_addMessageWithLinkToUnsplash() {
+        linkToScenario(withId: 59)
+        
+        let message = "https://unsplash.com/photos/1_2d3MRbI9c"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a message with YouTube link") {
+            userRobot.sendMessage(message)
+        }
+        THEN("user observes a preview of the image with description") {
+            userRobot.assertLinkPreview()
+        }
+    }
+    
+    func test_addMessageWithLinkToYoutube() {
+        linkToScenario(withId: 60)
+        
+        let message = "https://youtube.com/watch?v=xOX7MsrbaPY"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a message with YouTube link") {
+            userRobot.sendMessage(message)
+        }
+        THEN("user observes a preview of the video with description") {
+            userRobot.assertLinkPreview(alsoVerifyServiceName: "YouTube")
+        }
+    }
+    
+    func test_participantAddsMessageWithLinkToUnsplash() {
+        linkToScenario(withId: 280)
+        
+        let message = "https://unsplash.com/photos/1_2d3MRbI9c"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a message with YouTube link") {
+            participantRobot.sendMessage(message)
+        }
+        THEN("user observes a preview of the image with description") {
+            userRobot.assertLinkPreview()
+        }
+    }
+    
+    func test_participantAddsMessageWithLinkToYoutube() {
+        linkToScenario(withId: 281)
+        
+        let message = "https://youtube.com/watch?v=xOX7MsrbaPY"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a message with YouTube link") {
+            participantRobot.sendMessage(message)
+        }
+        THEN("user observes a preview of the video with description") {
+            userRobot.assertLinkPreview(alsoVerifyServiceName: "YouTube")
+        }
+    }
 }
 
 // MARK: - Thread replies
@@ -630,7 +679,7 @@ extension MessageList_Tests {
         }
         AND("user observes the thread reply removed in thread") {
             userRobot
-                .showThread(forMessageAt: 1)
+                .openThread(messageCellIndex: 1)
                 .assertDeletedMessage()
         }
     }
@@ -692,53 +741,30 @@ extension MessageList_Tests {
         }
         AND("user observes the thread reply removed in thread") {
             userRobot
-                .showThread(forMessageAt: 1)
+                .openThread(messageCellIndex: 1)
                 .assertDeletedMessage()
         }
     }
     
-    func test_threadTypingIndicatorShown_whenParticipantStartsTyping() {
+    func test_threadTypingIndicatorHidden_whenParticipantStopsTyping() {
         linkToScenario(withId: 243)
         
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("user sends a message") {
-            userRobot.sendMessage("Hey")
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
         }
         AND("user opens the thread") {
-            userRobot.showThread()
+            userRobot.openThread()
         }
         WHEN("participant starts typing in thread") {
-            participantRobot.wait(1).startTypingInThread()
+            participantRobot.wait(2).startTypingInThread()
         }
         THEN("user observes typing indicator is shown") {
             let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
             userRobot.assertTypingIndicatorShown(typingUserName: typingUserName)
         }
-    }
-    
-    func test_threadTypingIndicatorHidden_whenParticipantStopsTyping() {
-        linkToScenario(withId: 244)
-        
-        GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("user sends a message") {
-            userRobot.sendMessage("Hey")
-        }
-        AND("user opens the thread") {
-            userRobot.showThread()
-        }
-        WHEN("participant starts typing in thread") {
-            participantRobot.wait(1).startTypingInThread()
-        }
-        AND("participant stops typing in thread") {
-            participantRobot.stopTypingInThread()
+        WHEN("participant stops typing in thread") {
+            participantRobot.wait(2).stopTypingInThread()
         }
         THEN("user observes typing indicator has disappeared") {
             userRobot.assertTypingIndicatorHidden()

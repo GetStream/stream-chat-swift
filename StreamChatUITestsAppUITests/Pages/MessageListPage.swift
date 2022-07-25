@@ -241,6 +241,28 @@ class MessageListPage {
         static func videoPlayer() -> XCUIElement {
             app.otherElements["PlayerView"]
         }
+        
+        enum LinkPreview {
+            static func link(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.links["textView"].links.firstMatch
+            }
+            
+            static func image(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.images["imagePreview"]
+            }
+            
+            static func serviceName(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.staticTexts["authorLabel"]
+            }
+            
+            static func title(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.staticTexts["titleLabel"]
+            }
+            
+            static func description(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.textViews["bodyTextView"]
+            }
+        }
     }
     
     enum PopUpButtons {
