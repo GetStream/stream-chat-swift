@@ -62,7 +62,33 @@ final class DebugMenu {
                                                     message: channelController.channel?.lastActiveMembers.map(\.name).debugDescription,
                                                     actions: []
                                   )
-                        })
+                              }),
+                        .init(title: "Truncate channel w/o message",
+                              style: .default,
+                              handler: { _ in
+                                channelController.truncateChannel { [unowned self] error in
+                                    if let error = error {
+                                        self.presentAlert(in: viewController,
+                                                          title: "Couldn't truncate channel",
+                                                          message: "\(error.localizedDescription)",
+                                                          actions: []
+                                        )
+                                    }
+                                }
+                              }),
+                        .init(title: "Truncate channel with message",
+                              style: .default,
+                              handler: { _ in
+                                channelController.truncateChannel(systemMessage: "Channel truncated") { [unowned self] error in
+                                    if let error = error {
+                                        self.presentAlert(in: viewController,
+                                                          title: "Couldn't truncate channel",
+                                                          message: "\(error.localizedDescription)",
+                                                          actions: []
+                                        )
+                                    }
+                                }
+                              })
                      ])
     }
 

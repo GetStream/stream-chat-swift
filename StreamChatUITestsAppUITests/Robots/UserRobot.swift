@@ -206,7 +206,7 @@ extension UserRobot {
     @discardableResult
     func openThread(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        let threadButton = MessageListPage.Attributes.threadButton(in: messageCell)
+        let threadButton = MessageListPage.Attributes.threadReplyCountButton(in: messageCell)
         if threadButton.exists {
             threadButton.safeTap()
         } else {
@@ -231,6 +231,12 @@ extension UserRobot {
     @discardableResult
     func tapOnMessageList() -> Self {
         MessageListPage.list.safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func tapOnScrollToBottomButton() -> Self {
+        MessageListPage.scrollToBottomButton.safeTap()
         return self
     }
     
@@ -384,13 +390,14 @@ extension UserRobot {
 extension UserRobot {
 
     @discardableResult
-    func tapOnDebugMenu() -> Self {
+    private func tapOnDebugMenu() -> Self {
         MessageListPage.NavigationBar.debugMenu.safeTap()
         return self
     }
 
     @discardableResult
     func addParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
+        tapOnDebugMenu()
         debugAlert.addMember.firstMatch.safeTap()
         debugAlert.addMemberTextField.firstMatch
             .obtainKeyboardFocus()
@@ -401,8 +408,20 @@ extension UserRobot {
 
     @discardableResult
     func removeParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
+        tapOnDebugMenu()
         debugAlert.removeMember.firstMatch.safeTap()
         debugAlert.selectMember(withUserId: userId).firstMatch.safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func truncateChannel(withMessage: Bool) -> Self {
+        tapOnDebugMenu()
+        if withMessage {
+            debugAlert.truncateWithMessage.safeTap()
+        } else {
+            debugAlert.truncateWithoutMessage.safeTap()
+        }
         return self
     }
 }

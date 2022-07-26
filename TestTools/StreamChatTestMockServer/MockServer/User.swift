@@ -5,6 +5,8 @@
 @testable import StreamChat
 import Swifter
 
+public let userKey = UserPayloadsCodingKeys.self
+
 public extension StreamMockServer {
 
     func setUpUser(
@@ -21,13 +23,13 @@ public extension StreamMockServer {
             let user = UserDetails.userTuple(withUserId: $0)
             var member = TestData.toJson(.httpMember)
             member[JSONKey.userId] = user.id
-            member[UserPayloadsCodingKeys.id.rawValue] = user.name
-            member[UserPayloadsCodingKeys.name.rawValue] = user.name
+            member[userKey.id.rawValue] = user.name
+            member[userKey.name.rawValue] = user.name
 
             if var userJSON = member[JSONKey.user] as? [String: Any] {
-                userJSON[UserPayloadsCodingKeys.id.rawValue] = user.id
-                userJSON[UserPayloadsCodingKeys.name.rawValue] = user.name
-                userJSON[UserPayloadsCodingKeys.imageURL.rawValue] = user.url
+                userJSON[userKey.id.rawValue] = user.id
+                userJSON[userKey.name.rawValue] = user.name
+                userJSON[userKey.imageURL.rawValue] = user.url
                 member[JSONKey.user] = userJSON
             }
             return member

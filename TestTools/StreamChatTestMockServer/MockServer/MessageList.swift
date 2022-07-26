@@ -9,9 +9,8 @@ public extension StreamMockServer {
     
     func saveMessage(_ message: [String: Any]?) {
         guard let newMessage = message else { return }
-        let idKey = MessagePayloadsCodingKeys.id.rawValue
         if let index = messageList.firstIndex(where: { (message) -> Bool in
-            (newMessage[idKey] as? String) == (message[idKey] as? String)
+            (newMessage[messageKey.id.rawValue] as? String) == (message[messageKey.id.rawValue] as? String)
         }) {
             messageList[index] = newMessage
         } else {
@@ -42,25 +41,27 @@ public extension StreamMockServer {
     func findMessagesByParrentId(_ parentId: String) -> [[String: Any]] {
         _ = waitForMessageWithId(parentId)
         return messageList.filter {
-            ($0[MessagePayloadsCodingKeys.parentId.rawValue] as? String) == parentId
+            ($0[messageKey.parentId.rawValue] as? String) == parentId
         }
     }
     
     func findMessagesByChannelId(_ channelId: String) -> [[String: Any]] {
-        let cid = MessagePayloadsCodingKeys.cid.rawValue
         return messageList.filter {
-            String(describing: $0[cid]).contains(":\(channelId)")
+            String(describing: $0[messageKey.cid.rawValue]).contains(":\(channelId)")
+        }
+    }
+    
+    func removeMessage(_ deletedMessage: [String: Any]?) {
+        if let deletedIndex = messageList.firstIndex(where: { (message) -> Bool in
+            (message[messageKey.id.rawValue] as? String) == (deletedMessage?[messageKey.id.rawValue] as? String)
+        }) {
+            messageList.remove(at: deletedIndex)
         }
     }
     
     func removeMessage(id: String) {
         let deletedMessage = try? XCTUnwrap(waitForMessageWithId(id))
-        let idKey = MessagePayloadsCodingKeys.id.rawValue
-        if let deletedIndex = messageList.firstIndex(where: { (message) -> Bool in
-            (message[idKey] as? String) == (deletedMessage?[idKey] as? String)
-        }) {
-            messageList.remove(at: deletedIndex)
-        }
+        removeMessage(deletedMessage)
     }
     
     @discardableResult
@@ -75,7 +76,7 @@ public extension StreamMockServer {
         var newMessageList: [[String: Any]] = []
         while newMessageList.isEmpty && endTime > TestData.currentTimeInterval {
             newMessageList = messageList.filter {
-                ($0[MessagePayloadsCodingKeys.id.rawValue] as? String) == id
+                ($0[messageKey.id.rawValue] as? String) == id
             }
         }
         return newMessageList.first
@@ -86,8 +87,8 @@ public extension StreamMockServer {
         var newMessageList: [[String: Any]] = []
         while newMessageList.isEmpty && endTime > TestData.currentTimeInterval {
             newMessageList = messageList.filter {
-                let user = $0[MessagePayloadsCodingKeys.user.rawValue] as? [String: Any]
-                return (user?[UserPayloadsCodingKeys.id.rawValue] as? String) == userId
+                let user = $0[messageKey.user.rawValue] as? [String: Any]
+                return (user?[userKey.id.rawValue] as? String) == userId
             }
         }
         return newMessageList.first
