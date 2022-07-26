@@ -488,8 +488,7 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
-        let previewImage = attributes.LinkPreview.image(in: messageCell).wait()
-        let previewTitle = attributes.LinkPreview.title(in: messageCell)
+        let previewTitle = attributes.LinkPreview.title(in: messageCell).wait()
         let previewDescription = attributes.LinkPreview.description(in: messageCell)
         let link = attributes.LinkPreview.link(in: messageCell)
         
@@ -498,7 +497,11 @@ extension UserRobot {
             XCTAssertEqual(actualServiceName, expectedServiceName)
         }
         
-        XCTAssertTrue(previewImage.isHittable, "Preview image is not clickable")
+        if ProcessInfo().operatingSystemVersion.majorVersion > 14 {
+            // There is no image preview element details in the hierarchy tree on iOS < 15
+            let previewImage = attributes.LinkPreview.image(in: messageCell)
+            XCTAssertTrue(previewImage.isHittable, "Preview image is not clickable")
+        }
         XCTAssertTrue(previewTitle.isHittable, "Preview title is not clickable")
         XCTAssertTrue(previewDescription.isHittable, "Preview description is not clickable")
         XCTAssertTrue(link.isHittable, "Link itself is not clickable")
