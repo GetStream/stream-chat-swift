@@ -16,7 +16,6 @@
         "uikit/theming",
         "uikit/custom-components",
         "uikit/data-formatting",
-        "uikit/extra-data",
         {
           "Controllers and Delegates": [
             "uikit/controllers/controllers-overview",
@@ -81,6 +80,8 @@
         },
         {
           "Message Components": [
+            "swiftui/message-components/message-display-options",
+            "swiftui/message-components/message-background",
             "swiftui/message-components/custom-avatar",
             "swiftui/message-components/attachments",
             "swiftui/message-components/message-reactions",
