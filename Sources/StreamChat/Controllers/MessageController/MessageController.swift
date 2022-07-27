@@ -169,7 +169,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         startObserversIfNeeded()
         
-        messageUpdater.getMessage(cid: cid, messageId: messageId) { error in
+        messageUpdater.getMessage(cid: cid, messageId: messageId) { result in
+            let error = result.error
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }

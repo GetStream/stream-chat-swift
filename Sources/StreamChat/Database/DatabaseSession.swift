@@ -104,7 +104,7 @@ protocol MessageDatabaseSession {
         for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
-    ) throws -> MessageDTO?
+    ) throws -> MessageDTO
     
     /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
     /// Throws an error if the save fails.
@@ -120,7 +120,7 @@ protocol MessageDatabaseSession {
     ) throws -> MessageDTO
 
     @discardableResult
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO?
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO
 
     func addReaction(
         to messageId: MessageId,

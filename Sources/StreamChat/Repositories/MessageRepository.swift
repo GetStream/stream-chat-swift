@@ -87,9 +87,7 @@ class MessageRepository {
     ) {
         var messageModel: ChatMessage?
         database.write({
-            guard let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil) else {
-                return
-            }
+            let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
                 messageDTO.locallyCreatedAt = nil
                 messageDTO.localMessageState = nil
@@ -153,14 +151,41 @@ class MessageRepository {
                 syncOwnReactions: false,
                 cache: nil
             )
-            deletedMessage?.localMessageState = nil
+            deletedMessage.localMessageState = nil
 
-            if messageDTO.isHardDeleted, let message = deletedMessage {
-                session.delete(message: message)
+            if messageDTO.isHardDeleted {
+                session.delete(message: deletedMessage)
             }
         }, completion: {
             completion?($0)
         })
+    }
+
+    /// Fetches the message from the backend and saves it into the database
+    /// - Parameters:
+    ///   - cid: The channel identifier the message relates to.
+    ///   - messageId: The message identifier.
+    ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
+    func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
+        apiClient.request(endpoint: endpoint) {
+            switch $0 {
+            case let .success(boxed):
+                var message: ChatMessage?
+                self.database.write({ session in
+                    message = try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true, cache: nil).asModel()
+                }, completion: { error in
+                    if let message = message {
+                        completion?(.success(message))
+                    } else {
+                        let error = error ?? ClientError.MessagePayloadSavingFailure("Missing message or error")
+                        completion?(.failure(error))
+                    }
+                })
+            case let .failure(error):
+                completion?(.failure(error))
+            }
+        }
     }
 
     func updateMessage(withID id: MessageId, localState: LocalMessageState?, isBounced: Bool? = nil, completion: @escaping () -> Void) {

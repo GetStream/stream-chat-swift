@@ -21,20 +21,8 @@ class MessageUpdater: Worker {
     ///   - cid: The channel identifier the message relates to.
     ///   - messageId: The message identifier.
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
-    func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
-        let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
-        apiClient.request(endpoint: endpoint) {
-            switch $0 {
-            case let .success(boxed):
-                self.database.write({ session in
-                    try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true, cache: nil)
-                }, completion: { error in
-                    completion?(error)
-                })
-            case let .failure(error):
-                completion?(error)
-            }
-        }
+    func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        repository.getMessage(cid: cid, messageId: messageId, completion: completion)
     }
     
     /// Deletes the message.
@@ -608,7 +596,7 @@ private extension MessageUpdater {
             exists ? completion(nil) : self.getMessage(
                 cid: cid,
                 messageId: messageId,
-                completion: completion
+                completion: { completion($0.error) }
             )
         }
     }
