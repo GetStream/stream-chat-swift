@@ -9,7 +9,7 @@ import XCTest
 final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var getMessage_cid: ChannelId?
     @Atomic var getMessage_messageId: MessageId?
-    @Atomic var getMessage_completion: ((Error?) -> Void)?
+    @Atomic var getMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
 
     @Atomic var deleteMessage_messageId: MessageId?
     @Atomic var deleteMessage_completion: ((Error?) -> Void)?
@@ -171,7 +171,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         translate_completion = nil
     }
     
-    override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+    override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         getMessage_cid = cid
         getMessage_messageId = messageId
         getMessage_completion = completion

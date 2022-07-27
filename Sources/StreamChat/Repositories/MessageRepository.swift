@@ -175,10 +175,12 @@ class MessageRepository {
                 self.database.write({ session in
                     message = try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true, cache: nil).asModel()
                 }, completion: { error in
-                    if let message = message {
+                    if let error = error {
+                        completion?(.failure(error))
+                    } else if let message = message {
                         completion?(.success(message))
                     } else {
-                        let error = error ?? ClientError.MessagePayloadSavingFailure("Missing message or error")
+                        let error = ClientError.MessagePayloadSavingFailure("Missing message or error")
                         completion?(.failure(error))
                     }
                 })

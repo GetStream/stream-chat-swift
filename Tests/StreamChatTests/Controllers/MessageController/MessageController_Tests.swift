@@ -87,7 +87,7 @@ final class MessageController_Tests: XCTestCase {
         
         // Simulate network response with the error
         let networkError = TestError()
-        env.messageUpdater.getMessage_completion?(networkError)
+        env.messageUpdater.getMessage_completion?(.failure(networkError))
         
         AssertAsync {
             // Assert network error is propagated
@@ -117,7 +117,7 @@ final class MessageController_Tests: XCTestCase {
         controller = nil
         
         // Simulate network response with the error
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.getMessage_completion = nil
         
@@ -182,7 +182,7 @@ final class MessageController_Tests: XCTestCase {
         )
         
         // Simulate updater completion call
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         
         XCTAssertEqual(controller.message?.id, messageId)
         XCTAssertEqual(controller.replies.count, 10)
@@ -582,7 +582,7 @@ final class MessageController_Tests: XCTestCase {
         controller.synchronize()
             
         // Simulate network call response
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -610,7 +610,7 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
         }
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         
         // Assert `create` entity change is received by the delegate
         AssertAsync {
@@ -647,7 +647,7 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
         }
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         
         // Assert `update` entity change is received by the delegate
         AssertAsync {
@@ -683,7 +683,7 @@ final class MessageController_Tests: XCTestCase {
         
         var replyModel: ChatMessage?
         try client.databaseContainer.writeSynchronously { session in
-            replyModel = try session.saveMessage(payload: reply, for: self.cid, syncOwnReactions: true, cache: nil)!.asModel()
+            replyModel = try session.saveMessage(payload: reply, for: self.cid, syncOwnReactions: true, cache: nil).asModel()
         }
     
         // Assert `insert` entity change is received by the delegate
