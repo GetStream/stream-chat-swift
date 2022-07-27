@@ -19,7 +19,11 @@ final class DebugMenu {
                                               title: "Enter user id",
                                               textFieldPlaceholder: "User ID") { id in
                                 guard let id = id, !id.isEmpty else {
-                                    self.presentAlert(in: viewController, title: "User ID is not valid", actions: [])
+                                    self.presentAlert(
+                                        in: viewController,
+                                        title: "User ID is not valid",
+                                        actions: []
+                                    )
                                     return
                                 }
                                 channelController.addMembers(userIds: [id]) { [unowned self] error in
@@ -50,17 +54,20 @@ final class DebugMenu {
                                               }
                                           }
                                       }} ?? []
-                                  self.presentAlert(in: viewController,
-                                                    title: "Select a member",
-                                                    actions: actions)
+                                  self.presentAlert(
+                                    in: viewController,
+                                    title: "Select a member",
+                                    actions: actions
+                                  )
                               }),
                         .init(title: "Show Members",
                               style: .default,
                               handler: { [unowned self] _ in
-                                  self.presentAlert(in: viewController,
-                                                    title: "Members",
-                                                    message: channelController.channel?.lastActiveMembers.map(\.name).debugDescription,
-                                                    actions: []
+                                  self.presentAlert(
+                                    in: viewController,
+                                    title: "Members",
+                                    message: channelController.channel?.lastActiveMembers.map(\.name).debugDescription,
+                                    actions: []
                                   )
                               }),
                         .init(title: "Truncate channel w/o message",
@@ -68,10 +75,11 @@ final class DebugMenu {
                               handler: { _ in
                                 channelController.truncateChannel { [unowned self] error in
                                     if let error = error {
-                                        self.presentAlert(in: viewController,
-                                                          title: "Couldn't truncate channel",
-                                                          message: "\(error.localizedDescription)",
-                                                          actions: []
+                                        self.presentAlert(
+                                            in: viewController,
+                                            title: "Couldn't truncate channel",
+                                            message: "\(error.localizedDescription)",
+                                            actions: []
                                         )
                                     }
                                 }
@@ -81,10 +89,11 @@ final class DebugMenu {
                               handler: { _ in
                                 channelController.truncateChannel(systemMessage: "Channel truncated") { [unowned self] error in
                                     if let error = error {
-                                        self.presentAlert(in: viewController,
-                                                          title: "Couldn't truncate channel",
-                                                          message: "\(error.localizedDescription)",
-                                                          actions: []
+                                        self.presentAlert(
+                                            in: viewController,
+                                            title: "Couldn't truncate channel",
+                                            message: "\(error.localizedDescription)",
+                                            actions: []
                                         )
                                     }
                                 }
