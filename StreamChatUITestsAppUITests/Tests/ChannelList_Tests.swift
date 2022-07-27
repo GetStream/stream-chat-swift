@@ -258,15 +258,21 @@ extension ChannelList_Tests {
 // MARK: - Truncate channel
 
 extension ChannelList_Tests {
-    func test_channelPreviewIsUpdatedIsTruncatedWithoutMessage() {
+    func test_messageList_and_channelPreview_AreUpdatedWhenChannelTruncatedWithoutMessage() {
         linkToScenario(withId: 200)
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 42)
             userRobot.login().openChannel()
         }
-        WHEN("user truncates the channel with the system message") {
-            userRobot.truncateChannel(withMessage: false).tapOnBackButton()
+        WHEN("user truncates the channel without system message") {
+            userRobot.truncateChannel(withMessage: false)
+        }
+        THEN("previous messages are no longer visible") {
+            userRobot.assertMessageCount(0)
+        }
+        WHEN("user goes to channel list") {
+            userRobot.tapOnBackButton()
         }
         THEN("the channel preview shows No messages") {
             userRobot.assertLastMessageInChannelPreview(message)
@@ -276,7 +282,7 @@ extension ChannelList_Tests {
         }
     }
     
-    func test_channelPreviewIsUpdatedIsTruncatedWithMessage() {
+    func test_messageList_and_channelPreview_AreUpdatedWhenChannelTruncatedWithMessage() {
         linkToScenario(withId: 201)
         
         let message = "Channel truncated"
@@ -285,27 +291,7 @@ extension ChannelList_Tests {
             backendRobot.generateChannels(count: 1, messagesCount: 42)
             userRobot.login().openChannel()
         }
-        WHEN("user truncates the channel with the system message") {
-            userRobot.truncateChannel(withMessage: true).tapOnBackButton()
-        }
-        THEN("the channel preview shows system message") {
-            userRobot.assertLastMessageInChannelPreview(message)
-        }
-        AND("last message timestamp is shown") {
-            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: false)
-        }
-    }
-    
-    func test_messageListIsUpdatedWhenChannelIsTruncatedWithMessage() {
-        linkToScenario(withId: 204)
-
-        let message = "Channel truncated"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 42)
-            userRobot.login().openChannel()
-        }
-        WHEN("user truncates the channel with the system message") {
+        WHEN("user truncates the channel with system message") {
             userRobot.truncateChannel(withMessage: true)
         }
         THEN("user observes only the system message") {
@@ -314,20 +300,14 @@ extension ChannelList_Tests {
         AND("previous messages are no longer visible") {
             userRobot.assertMessageCount(1)
         }
-    }
-    
-    func test_messageListIsUpdatedWhenChannelIsTruncatedWithoutMessage() {
-        linkToScenario(withId: 282)
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 42)
-            userRobot.login().openChannel()
+        WHEN("user goes to channel list") {
+            userRobot.tapOnBackButton()
         }
-        WHEN("user truncates the channel with the system message") {
-            userRobot.truncateChannel(withMessage: false)
+        THEN("the channel preview shows system message") {
+            userRobot.assertLastMessageInChannelPreview(message)
         }
-        THEN("previous messages are no longer visible") {
-            userRobot.assertMessageCount(0)
+        AND("last message timestamp is shown") {
+            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: false)
         }
     }
 }
