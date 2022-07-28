@@ -22,7 +22,10 @@ public extension StreamMockServer {
         channelId: String,
         parentMessageId: String? = nil
     ) -> Self {
-        let json = websocketEventJSON(eventType, user: user, channelId: channelId, parentMessageId: parentMessageId)
+        let json = websocketEventJSON(eventType,
+                                      user: user,
+                                      channelId: channelId,
+                                      parentMessageId: parentMessageId)
         writeText(json.jsonToString())
         return self
     }
@@ -72,15 +75,8 @@ public extension StreamMockServer {
         
         switch eventType {
         case .messageNew:
-            var message = json[JSONKey.message] as? [String: Any]
-            if messageType == .ephemeral {
-                var attachments = message?[MessagePayloadsCodingKeys.attachments.rawValue] as? [[String: Any]]
-                attachments?[0][GiphyAttachmentSpecificCodingKeys.actions.rawValue] = nil
-                message?[MessagePayloadsCodingKeys.attachments.rawValue] = attachments
-                message?[MessagePayloadsCodingKeys.type.rawValue] = MessageType.regular.rawValue
-            }
             mockedMessage = mockMessage(
-                message,
+                json[JSONKey.message] as? [String: Any],
                 channelId: channelId,
                 messageId: messageId,
                 text: text,
@@ -89,6 +85,12 @@ public extension StreamMockServer {
                 updatedAt: timestamp
             )
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
+            if messageType == .ephemeral {
+                var attachments = mockedMessage?[MessagePayloadsCodingKeys.attachments.rawValue] as? [[String: Any]]
+                attachments?[0][GiphyAttachmentSpecificCodingKeys.actions.rawValue] = nil
+                mockedMessage?[MessagePayloadsCodingKeys.attachments.rawValue] = attachments
+                mockedMessage?[MessagePayloadsCodingKeys.type.rawValue] = MessageType.regular.rawValue
+            }
             saveMessage(mockedMessage)
         case .messageDeleted:
             let message = findMessageById(messageId)

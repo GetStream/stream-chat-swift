@@ -29,6 +29,9 @@ The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application
 ## SwiftUI SDK
 The **StreamChatSwiftUI SDK** is our UI SDK for SwiftUI components. If your application only needs to support iOS 14 and above, this is the right UI SDK for you. This SDK is available in another repository **[stream-chat-swiftui](https://github.com/GetStream/stream-chat-swiftui)**.
 
+## Using Xcode 14 beta?
+We don't provide full support for beta versions, but you can use our `xcode14` branch. It will be evolving as new versions come out to help those using it.
+
 ---
 
 ## Main Features

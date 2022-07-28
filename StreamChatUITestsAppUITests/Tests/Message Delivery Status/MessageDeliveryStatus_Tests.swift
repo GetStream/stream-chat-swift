@@ -228,7 +228,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         WHEN("user previews thread for message: \(message)") {
-            userRobot.showThread()
+            userRobot.openThread()
         }
         THEN("user spots single checkmark below the message") {
             userRobot
@@ -275,7 +275,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         AND("user previews thread for read message: \(message)") {
-            userRobot.showThread()
+            userRobot.openThread()
         }
         WHEN("the message is read by participant") {
             participantRobot.readMessage()
