@@ -18,16 +18,6 @@
   },
   "testTargets" : [
     {
-      "skippedTests" : [
-        "Attachments_Tests",
-        "Ephemeral_Messages_Tests",
-        "MessageDeliveryStatus_ChannelList_Tests",
-        "MessageDeliveryStatus_Tests",
-        "MessageList_Tests",
-        "Reactions_Tests",
-        "SlowMode_Tests",
-        "StreamTestCase"
-      ],
       "target" : {
         "containerPath" : "container:StreamChat.xcodeproj",
         "identifier" : "A34407DB27D8C3400044F150",
