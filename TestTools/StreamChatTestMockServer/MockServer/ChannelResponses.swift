@@ -382,15 +382,12 @@ public extension StreamMockServer {
     }
     
     private func truncateChannel(_ id: String, truncatedAt: String, truncatedBy: [String: Any]?) {
-        var channel = findChannelById(id)
         let channelMessages = findMessagesByChannelId(id)
-        
-        removeChannel(id)
-        
         for message in channelMessages {
             removeMessage(message)
         }
         
+        var channel = findChannelById(id)
         var channelDetails = channel?[JSONKey.channel] as? [String: Any]
         channelDetails?[JSONKey.Channel.truncatedBy] = truncatedBy
         channelDetails?[channelKey.truncatedAt.rawValue] = truncatedAt
@@ -399,6 +396,7 @@ public extension StreamMockServer {
         channel?[JSONKey.messages] = []
         
         if var channels = channelList[JSONKey.channels] as? [[String: Any]?] {
+            removeChannel(id)
             channels.append(channel)
             channelList[JSONKey.channels] = channels
         }
@@ -418,6 +416,7 @@ public extension StreamMockServer {
     }
     
     private func channelTruncation(_ request: HttpRequest) -> HttpResponse? {
+        waitForChannelQueryUpdate()
         guard let channelId = request.params[EndpointQuery.channelId] else { return .badRequest(nil) }
         var json = TestData.toJson(.httpTruncate)
         var truncatedMessage: [String: Any]?
