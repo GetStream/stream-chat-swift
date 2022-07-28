@@ -272,6 +272,7 @@ extension ChannelList_Tests {
             userRobot.assertMessageCount(0)
         }
         WHEN("user goes to channel list") {
+            participantRobot.wait(2)
             userRobot.tapOnBackButton()
         }
         THEN("the channel preview shows No messages") {
