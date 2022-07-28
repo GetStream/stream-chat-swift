@@ -275,7 +275,7 @@ extension ChannelList_Tests {
             userRobot.tapOnBackButton()
         }
         THEN("the channel preview shows No messages") {
-            userRobot.assertLastMessageInChannelPreview(message)
+            userRobot.assertLastMessageInChannelPreview("No messages")
         }
         AND("last message timestamp is hidden") {
             userRobot.assertLastMessageTimestampInChannelPreview(isHidden: true)
