@@ -4,11 +4,9 @@
 
 import UIKit
 
-open class ChatChannelListCollectionViewSkeletonCell: _TableViewCell, ThemeProvider, SkeletonLoadable {
-    /// The `ChatChannelListItemSkeletonView` instance used as content view.
-    open private(set) lazy var itemSkeletonView: ChatChannelListItemSkeletonView = components
-        .channelListSkeletonItemView
-        .init()
+open class ChatChannelListLoadingViewCell: _TableViewCell, ThemeProvider, SkeletonLoadable {
+    /// The `ChatChannelListLoadingViewCellContentView` instance used as content view.
+    open private(set) lazy var chatChannelListLoadingViewCellContentView: ChatChannelListLoadingViewCellContentView = .init()
         .withoutAutoresizingMaskConstraints
     
     override open func setUp() {
@@ -19,14 +17,14 @@ open class ChatChannelListCollectionViewSkeletonCell: _TableViewCell, ThemeProvi
     override open func setUpLayout() {
         super.setUpLayout()
 
-        contentView.addSubview(itemSkeletonView)
-        itemSkeletonView.pin(to: contentView)
+        contentView.addSubview(chatChannelListLoadingViewCellContentView)
+        chatChannelListLoadingViewCellContentView.pin(to: contentView)
     }
     
-    override open func setUpAppearance() {
-        super.setUpAppearance()
+    override open func layoutSubviews() {
+        super.layoutSubviews()
         
-        itemSkeletonView.layoutSubviews()
+        chatChannelListLoadingViewCellContentView.layoutSubviews()
     }
 }
 

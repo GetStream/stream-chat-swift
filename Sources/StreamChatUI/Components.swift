@@ -309,15 +309,12 @@ public struct Components {
     /// View that shows that some error occurred on ChatChannelList.
     public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
     
-    /// The `UICollectionViewCell` subclass that shows while loading the channel list.guard let self = self else { return }
-    public var channelListCollectionViewSkeletonCell: ChatChannelListCollectionViewSkeletonCell.Type = ChatChannelListCollectionViewSkeletonCell.self
+    /// View that shows when loading the Channel list.
+    public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
     
-    /// View that shows the loading state of a channel list item
-    public var channelListSkeletonItemView: ChatChannelListItemSkeletonView.Type = ChatChannelListItemSkeletonView.self
-    
-    /// A boolean value that determines whether the loading state on Channel list is shown as a Skeleton view.
-    /// True by default. If set to false, default loading indicator is shown instead.
-    public var isSkeletonViewEnabled = true
+    /// A boolean value that determines whether the Channel list default loading states (empty, error and loading views) are shown in Channel list.
+    /// False by default not showing empty or error views and just showing a spinner indicator for loading state. If set true, default empty, error and shimmer loading views are shown instead.
+    public var isChatChannelListDefaultLoadingStatesEnabled = false
 
     // MARK: - Composer components
 

@@ -19,9 +19,9 @@ open class ChatChannelListVC: _ViewController,
 
     private var isPaginatingChannels: Bool = false
     
-    /// A boolean value that determines if the loading state is shown as a Skeleton view.
-    open var isSkeletonViewEnabled: Bool {
-        components.isSkeletonViewEnabled
+    /// A boolean value that determines if the chat channel list loading view is shown for loading state.
+    open var isChatChannelListDefaultLoadingStatesEnabled: Bool {
+        components.isChatChannelListDefaultLoadingStatesEnabled
     }
     
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
@@ -60,8 +60,10 @@ open class ChatChannelListVC: _ViewController,
         return view
     }()
     
-    /// View which will be shown when loading the Channel list.
-    open private(set) lazy var skeletonListView: ChatChannelListSkeletonView = .init()
+    /// View that shows when loading the Channel list.
+    open private(set) lazy var chatChannelListLoadingView: ChatChannelListLoadingView = components
+        .chatChannelListLoadingView
+        .init()
         .withoutAutoresizingMaskConstraints
 
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
@@ -74,9 +76,6 @@ open class ChatChannelListVC: _ViewController,
     
     /// Reuse identifier of `collectionViewCell`
     open var collectionViewCellReuseIdentifier: String { String(describing: ChatChannelListCollectionViewCell.self) }
-    
-    /// Reuse identifier of `collectionViewCell`
-    open var collectionViewSkeletonCellReuseIdentifier: String { String(describing: ChatChannelListCollectionViewSkeletonCell.self) }
 
     /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a view.
     private lazy var listChangeUpdater: ListChangeUpdater = CollectionViewListChangeUpdater(
@@ -166,15 +165,14 @@ open class ChatChannelListVC: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
         view.embed(collectionView)
-        view.embed(emptyView)
-        emptyView.isHidden = true
         
-        view.addSubview(channelListErrorView)
-        channelListErrorView.pin(anchors: [.leading, .trailing, .bottom], to: view)
-        channelListErrorView.hide()
-        
-        if isSkeletonViewEnabled {
-            view.embed(skeletonListView)
+        if isChatChannelListDefaultLoadingStatesEnabled {
+            view.embed(chatChannelListLoadingView)
+            view.embed(emptyView)
+            emptyView.isHidden = true
+            view.addSubview(channelListErrorView)
+            channelListErrorView.pin(anchors: [.leading, .trailing, .bottom], to: view)
+            channelListErrorView.hide()
         } else {
             collectionView.addSubview(loadingIndicator)
             loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
@@ -197,6 +195,12 @@ open class ChatChannelListVC: _ViewController,
                 height: 64
             )
         }
+    }
+    
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        chatChannelListLoadingView.updateContent()
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -347,7 +351,7 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if isSkeletonViewEnabled {
+        if isChatChannelListDefaultLoadingStatesEnabled {
             var shouldHideEmptyView = true
             var isLoading = true
             
@@ -364,7 +368,7 @@ open class ChatChannelListVC: _ViewController,
             }
             
             emptyView.isHidden = shouldHideEmptyView
-            skeletonListView.isHidden = !isLoading
+            chatChannelListLoadingView.isHidden = !isLoading
         } else {
             switch state {
             case .initialized, .localDataFetched:

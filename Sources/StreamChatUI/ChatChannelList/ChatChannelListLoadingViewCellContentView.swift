@@ -4,8 +4,8 @@
 
 import UIKit
 
-/// The view of the `ChatChannelListCollectionViewSkeletonCell` cells, which contains the UI elements being animated with a shimmer.
-open class ChatChannelListItemSkeletonView: _View, ThemeProvider, SkeletonLoadable {
+/// The view of the `ChatChannelListLoadingViewCell`, which contains the UI elements being animated with a shimmer.
+open class ChatChannelListLoadingViewCellContentView: _View, ThemeProvider, SkeletonLoadable {
     open private(set) lazy var avatarView: ChatChannelAvatarView = components
         .channelAvatarView
         .init()

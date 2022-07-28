@@ -60,6 +60,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
     }
 
     func test_emptyAppearance() {
+        vc.components.isChatChannelListDefaultLoadingStatesEnabled = true
         vc.executeLifecycleMethods()
         mockedChannelListController.simulate(state: .remoteDataFetched)
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
@@ -89,7 +90,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         }
 
         var components = Components.mock
-        components.isSkeletonViewEnabled = false
+        components.isChatChannelListDefaultLoadingStatesEnabled = false
         components.channelCellSeparator = TestView.self
         vc.components = components
 
@@ -181,6 +182,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
     func test_didChangeState_whenRemoteDataFetchedAndChannelsAreEmpty_thenEmptyViewIsShown() {
         // GIVEN
         let emptyViewHidden = false
+        vc.components.isChatChannelListDefaultLoadingStatesEnabled = true
         
         // WHEN
         vc.controller(vc.controller, didChangeState: .remoteDataFetched)
@@ -192,6 +194,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
     func test_didChangeState_whenRemoteDataFetchedFailed_thenErrorViewIsShown() {
         // GIVEN
         let errorViewHidden = false
+        vc.components.isChatChannelListDefaultLoadingStatesEnabled = true
         
         // WHEN
         vc.controller(vc.controller, didChangeState: .remoteDataFetchFailed(ClientError()))
