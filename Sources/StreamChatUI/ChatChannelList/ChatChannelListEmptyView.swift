@@ -30,7 +30,7 @@ open class ChatChannelListEmptyView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
         
-        directionalLayoutMargins = .init(top: 8, leading: 30, bottom: 8, trailing: 30)
+        directionalLayoutMargins = .init(top: 8, leading: 32, bottom: 8, trailing: 32)
         
         addSubview(container)
         container.pin(anchors: [.centerX, .centerY], to: self)

@@ -16,6 +16,9 @@ open class ChatChannelListErrorView: _View, ThemeProvider {
     
     open var refreshButtonAction: (() -> Void)?
     
+    /// Value of `channelListErrorView` height constraint.
+    var channelListErrorViewHeight: CGFloat { 88 }
+    
     override open func setUp() {
         super.setUp()
 
@@ -34,7 +37,8 @@ open class ChatChannelListErrorView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
-        directionalLayoutMargins = .init(top: 18, leading: 16, bottom: 18, trailing: 16)
+        heightAnchor.pin(equalToConstant: channelListErrorViewHeight).isActive = true
+        directionalLayoutMargins = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
         addSubview(container)
         container.pin(anchors: [.leading, .trailing, .top], to: layoutMarginsGuide)
         container.bottomAnchor.pin(lessThanOrEqualTo: safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -45,5 +49,27 @@ open class ChatChannelListErrorView: _View, ThemeProvider {
 
     @objc open func didTapRetryButton() {
         refreshButtonAction?()
+    }
+    
+    /// Shows the error view.
+    open func show() {
+        center = .init(x: center.x, y: center.y + channelListErrorViewHeight)
+        isHidden = false
+        
+        UIView.animate(withDuration: 0.5) {
+            self.center = .init(x: self.center.x, y: self.center.y - self.channelListErrorViewHeight)
+            self.layoutSubviews()
+        }
+    }
+    
+    /// Hides the error view.
+    open func hide() {
+        if isHidden { return }
+        UIView.animate(withDuration: 0.5) {
+            self.center = .init(x: self.center.x, y: self.center.y + self.channelListErrorViewHeight)
+            self.layoutSubviews()
+        } completion: { _ in
+            self.isHidden = true
+        }
     }
 }

@@ -70,9 +70,6 @@ open class ChatChannelListVC: _ViewController,
         collectionView: collectionView
     )
     
-    /// Value of `channelListErrorView` height constraint.
-    var channelListErrorViewHeight: CGFloat { 88 }
-    
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
     ///   - controller: Your created `ChatChannelListController` with required query
@@ -129,7 +126,7 @@ open class ChatChannelListVC: _ViewController,
         
         channelListErrorView.refreshButtonAction = { [weak self] in
             self?.controller.synchronize()
-            self?.hideErrorView()
+            self?.channelListErrorView.hide()
         }
     }
 
@@ -161,9 +158,8 @@ open class ChatChannelListVC: _ViewController,
         emptyView.isHidden = true
         
         view.addSubview(channelListErrorView)
-        channelListErrorView.topAnchor.pin(equalTo: view.bottomAnchor).isActive = true
-        channelListErrorView.heightAnchor.pin(equalToConstant: channelListErrorViewHeight).isActive = true
-        channelListErrorView.pin(anchors: [.leading, .trailing], to: view)
+        channelListErrorView.pin(anchors: [.leading, .trailing, .bottom], to: view)
+        channelListErrorView.hide()
     }
     
     override open func setUpAppearance() {
@@ -257,27 +253,6 @@ open class ChatChannelListVC: _ViewController,
             self?.isPaginatingChannels = false
         }
     }
-    
-    /// Shows the error view.
-    open func showErrorView() {
-        channelListErrorView.isHidden = false
-        
-        UIView.animate(withDuration: 0.5) {
-            self.channelListErrorView.center = .init(x: self.channelListErrorView.center.x, y: self.channelListErrorView.center.y - self.channelListErrorViewHeight)
-            self.view.layoutSubviews()
-        }
-    }
-    
-    /// Hides the error view.
-    open func hideErrorView() {
-        if channelListErrorView.isHidden { return }
-        UIView.animate(withDuration: 0.5) {
-            self.channelListErrorView.center = .init(x: self.channelListErrorView.center.x, y: self.channelListErrorView.center.y + self.channelListErrorViewHeight)
-            self.view.layoutSubviews()
-        } completion: { _ in
-            self.channelListErrorView.isHidden = true
-        }
-    }
 
     open func swipeableViewWillShowActionViews(for indexPath: IndexPath) {
         // Close other open cells
@@ -365,7 +340,7 @@ open class ChatChannelListVC: _ViewController,
         case .localDataFetchFailed, .remoteDataFetchFailed:
             shouldHideEmptyView = emptyView.isHidden
             isLoading = false
-            showErrorView()
+            channelListErrorView.show()
         }
         
         emptyView.isHidden = shouldHideEmptyView
