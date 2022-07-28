@@ -439,10 +439,15 @@ public extension StreamMockServer {
         var json = TestData.toJson(.httpTruncate)
         var truncatedMessage: [String: Any]?
         var channel = json[JSONKey.channel] as? [String: Any]
-        let findChannelById = findChannelById(channelId)
-        let channelDetails = findChannelById?[JSONKey.channel] as? [String: Any]
+        let channelDetails = findChannelById(channelId)?[JSONKey.channel] as? [String: Any]
         let truncatedby = channelDetails?[channelKey.createdBy.rawValue] as? [String: Any]
         let truncatedAt = TestData.currentDate
+        
+        truncateChannel(
+            channelId,
+            truncatedAt: truncatedAt,
+            truncatedBy: truncatedby
+        )
         
         channel?[channelKey.id.rawValue] = channelId
         channel?[channelKey.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
@@ -455,12 +460,6 @@ public extension StreamMockServer {
             user: truncatedby,
             channelId: channelId,
             channel: channel
-        )
-        
-        truncateChannel(
-            channelId,
-            truncatedAt: truncatedAt,
-            truncatedBy: truncatedby
         )
         
         if let message = TestData.toJson(request.body)[JSONKey.message] as? [String: Any] {
