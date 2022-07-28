@@ -39,10 +39,12 @@ final class UserRobot: Robot {
         if !cells.firstMatch.exists {
             for _ in 0...3 {
                 app.terminate()
+                server.stop()
+                server.start(port: in_port_t(MockServerConfiguration.port))
                 app.launch()
                 login()
-                cells.waitCount(minExpectedCount, timeout: 10)
-                break
+                cells.waitCount(minExpectedCount)
+                if cells.firstMatch.exists { break }
             }
         }
         
