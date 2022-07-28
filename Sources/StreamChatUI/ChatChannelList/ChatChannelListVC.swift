@@ -19,6 +19,19 @@ open class ChatChannelListVC: _ViewController,
 
     private var isPaginatingChannels: Bool = false
     
+    /// A boolean value that determines if the loading state is shown as a Skeleton view.
+    open var isSkeletonViewEnabled: Bool {
+        components.isSkeletonViewEnabled
+    }
+    
+    open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
+        if #available(iOS 13.0, *) {
+            return UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
+        } else {
+            return UIActivityIndicatorView(style: .whiteLarge).withoutAutoresizingMaskConstraints
+        }
+    }()
+    
     /// A router object responsible for handling navigation actions of this view controller.
     open lazy var router: ChatChannelListRouter = components
         .channelListRouter
@@ -154,12 +167,18 @@ open class ChatChannelListVC: _ViewController,
         super.setUpLayout()
         view.embed(collectionView)
         view.embed(emptyView)
-        view.embed(skeletonListView)
         emptyView.isHidden = true
         
         view.addSubview(channelListErrorView)
         channelListErrorView.pin(anchors: [.leading, .trailing, .bottom], to: view)
         channelListErrorView.hide()
+        
+        if isSkeletonViewEnabled {
+            view.embed(skeletonListView)
+        } else {
+            collectionView.addSubview(loadingIndicator)
+            loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
+        }
     }
     
     override open func setUpAppearance() {
@@ -328,23 +347,36 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        var shouldHideEmptyView = true
-        var isLoading = true
-        
-        switch state {
-        case .initialized, .localDataFetched:
-            isLoading = self.controller.channels.isEmpty
-        case .remoteDataFetched:
-            isLoading = false
-            shouldHideEmptyView = !self.controller.channels.isEmpty
-        case .localDataFetchFailed, .remoteDataFetchFailed:
-            shouldHideEmptyView = emptyView.isHidden
-            isLoading = false
-            channelListErrorView.show()
+        if isSkeletonViewEnabled {
+            var shouldHideEmptyView = true
+            var isLoading = true
+            
+            switch state {
+            case .initialized, .localDataFetched:
+                isLoading = self.controller.channels.isEmpty
+            case .remoteDataFetched:
+                isLoading = false
+                shouldHideEmptyView = !self.controller.channels.isEmpty
+            case .localDataFetchFailed, .remoteDataFetchFailed:
+                shouldHideEmptyView = emptyView.isHidden
+                isLoading = false
+                channelListErrorView.show()
+            }
+            
+            emptyView.isHidden = shouldHideEmptyView
+            skeletonListView.isHidden = !isLoading
+        } else {
+            switch state {
+            case .initialized, .localDataFetched:
+                if self.controller.channels.isEmpty {
+                    loadingIndicator.startAnimating()
+                } else {
+                    loadingIndicator.stopAnimating()
+                }
+            default:
+                loadingIndicator.stopAnimating()
+            }
         }
-        
-        emptyView.isHidden = shouldHideEmptyView
-        skeletonListView.isHidden = !isLoading
     }
 
     private func getChannel(at indexPath: IndexPath) -> ChatChannel? {

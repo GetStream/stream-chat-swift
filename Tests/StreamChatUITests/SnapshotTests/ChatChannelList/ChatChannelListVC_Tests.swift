@@ -89,6 +89,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         }
 
         var components = Components.mock
+        components.isSkeletonViewEnabled = false
         components.channelCellSeparator = TestView.self
         vc.components = components
 

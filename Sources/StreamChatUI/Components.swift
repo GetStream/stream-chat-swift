@@ -314,6 +314,10 @@ public struct Components {
     
     /// View that shows the loading state of a channel list item
     public var channelListSkeletonItemView: ChatChannelListItemSkeletonView.Type = ChatChannelListItemSkeletonView.self
+    
+    /// A boolean value that determines whether the loading state on Channel list is shown as a Skeleton view.
+    /// True by default. If set to false, default loading indicator is shown instead.
+    public var isSkeletonViewEnabled = true
 
     // MARK: - Composer components
 

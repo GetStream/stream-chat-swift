@@ -59,6 +59,7 @@ public extension Appearance {
         public var bigConfirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm_big")
         public var folder: UIImage = loadImageSafely(with: "folder")
         public var restart: UIImage = loadImageSafely(with: "restart")
+        public var emptyChannelListMessageBubble: UIImage = loadImageSafely(with: "empty_channel_list_message_bubble")
         public var download: UIImage = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "icloud.and.arrow.down")!
@@ -66,7 +67,6 @@ public extension Appearance {
                 return loadImageSafely(with: "download")
             }
         }()
-        public var emptyChannelListMessageBubble: UIImage = loadImageSafely(with: "empty_channel_list_message_bubble")
 
         // MARK: - Message Receipts
         
