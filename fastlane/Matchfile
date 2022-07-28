@@ -2,8 +2,6 @@ git_url("git@github.com:GetStream/ios-certificates.git")
 
 storage_mode("git")
 
-username("bahadir.onc@icloud.com")
-
 team_id("EHV7XZLAHA")
 
 # app_identifier(["tools.fastlane.app", "tools.fastlane.app2"])
