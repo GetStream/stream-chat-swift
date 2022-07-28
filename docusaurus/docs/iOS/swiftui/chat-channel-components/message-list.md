@@ -1,90 +1,342 @@
 ---
-title: Message List View
+title: Message List
 ---
 
-## Message List Overview
+## What is the Message List?
 
-The message list view in the SwiftUI SDK allows several customization options. The default message list view implementation in the SDK follows the style of messaging apps such as Apple's Messages, Facebook Messenger, WhatsApp, Viber etc. In this kind of apps, the current sender's messages are displayed on the right side, while the other participants' messages are displayed on the left side. 
+![Depiction of the message list.](../../assets/message-list-view.png)
 
-If you are developing an app with this use-case, you can customize the [message avatars](../custom-avatar), [reactions](../message-reactions), [theming and presentation logic](../../getting-started) and the different types of [attachments](../attachments).
+The message list is the place to show a list of the messages of a specific channel.
+
+A message can come in **many different forms**. If you are looking for the different types of messages and how to customize them the place to look for is the [Message Components](../message-components/custom-avatar) section. The Message List is really handling the **list of the messages** that a channel contains.
+
+The **default message list implementation** in the SDK follows the style of **other messaging apps** such as Apple's iMessage, Facebook Messenger, WhatsApp, Viber, and many other. In these kinds of apps, the **current sender's messages** are displayed on the **right side**, while the **other participants' messages** are displayed on the **left side**. In addition to that, there is an **avatar** of the user sending a message shown.
+
+## Customization options
+
+For general customizations, the best place to start is the `MessageListConfig`. This is a configuration file that can be used in the `Utils` class that is handed to the `StreamChat` object upon initialization. The [Message List Configuration](#message-list-configuration) chapter is handling everything related to this type of customization.
+
+:::note
+Reminder: The configuration of the `StreamChat` object is recommended to be happening in the `AppDelegate` file. A guide on how to do this can be found [here](../getting-started.md).
+:::
+
+It is also possible to replace the screen that is shown when there are no messages yet in the current channel. This can be achieved by overriding the `makeEmptyMessagesView` function in the `ViewFactory`. Read more in the [No Messages](#no-messages-view) section.
+
+In order to change the background of the Message List the `makeMessageListBackground` function in the `ViewFactory` can be overridden. A more detailed explanation together with an example can be found in the [Message List Background](#message-list-background) section.
+
+Another option is to create a custom `ViewModifier` that is applied to the message list using the `makeMessageListModifier` function in the `ViewFactory`. This offers a lot of freedom and more details, togther with an example implementatino can be found in the [Custom modifier for the Message List](#custom-modifier-for-the-message-list) section.
 
 ## Message List Configuration
 
-You can control the display of the helper views around the message (date indicators, avatars) and paddings, via the `MessageListConfig`'s properties `MessageDisplayOptions` and `MessagePaddings`. The `MessageListConfig` is part of the `Utils` class in `StreamChat`. Here's an example on how to hide the date indicators and avatars, while also increasing the horizontal padding.
+The `MessageListConfig` is a helper struct that allows customization of the `MessageList` in a unified, straightforward manner. The way this is done is by handing it into the `Utils` class that is then handed to the `StreamChat` initializer upon creation.
+
+Here is an example of how to do this:
 
 ```swift
-let messageDisplayOptions = MessageDisplayOptions(showAvatars: false, showMessageDate: false)
-let messagePaddings = MessagePaddings(horizontal: 16)
+let messageListConfig = MessageListConfig()
+let utils = Utils(messageListConfig: messageListConfig)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+:::note
+This code snippet is normally located in the `AppDelegate.swift` file inside of the `didFinishLaunchingWithOptions` function. If you are unsure of where to put that, you can follow the [Getting Started](../getting-started.md) for a detailed description.
+:::
+
+This does **not** do any customization as it only uses the default parameters from the `MessageListConfig`. Due to the fact that there are default parameters for every option it is easy to only specify the customization options that are needed in the specific use-case.
+
+Every one of them is discussed in the next chapters, but here is an overview over all the options that are configureable in the `MessageListConfig` together with their types and default values (click on the parameter name to jump directly to the section where they are explained in more detail):
+
+| Parameter                                                                       | Type                       | Default                          |
+| ------------------------------------------------------------------------------- | -------------------------- | -------------------------------- |
+| [messageListType](#messagelisttype)                                             | `MessageListType`          | `.messaging`                     |
+| [typingIndicatorPlacement](#typingindicatorplacement)                           | `TypingIndicatorPlacement` | `.bottomOverlay`                 |
+| [groupMessages](#groupmessages)                                                 | `Bool`                     | `true`                           |
+| [messageDisplayOptions](#messagedisplayoptions)                                 | `MessageDisplayOptions`    | `MessageDisplayOptions()`        |
+| [messagePaddings](#messagepaddings)                                             | `MessagePaddings`          | `MessagePaddings(horizontal: 8)` |
+| [dateIndicatorPlacement](#dateindicatorplacement)                               | `DateIndicatorPlacement`   | `.overlay`                       |
+| [pageSize](#pagesize)                                                           | `Int`                      | `50`                             |
+| [messagePopoverEnabled](#messagepopoverenabled)                                 | `Bool`                     | `true`                           |
+| [doubleTapOverlayEnabled](#doubletapoverlayenabled)                             | `Bool`                     | `false`                          |
+| [becomesFirstResponderOnOpen](#becomesfirstresponderonopen)                     | `Bool`                     | `false`                          |
+| [maxTimeIntervalBetweenMessagesInGroup](#maxtimeintervalbetweenmessagesingroup) | `TimeInterval`             | `60`                             |
+| [cacheSizeOnChatDismiss](#cachesizeonchatdismiss)                               | `Int`                      | `1024 * 1024 * 100`              |
+
+The next sections will go through these values and discuss the impact they have when altered.
+
+### messageListType
+
+The `MessageListType` enum has four cases:
+
+- `.messaging`
+- `.team`
+- `.livestream`
+- `.commerce`
+
+The goal with that is to have an easy configuration option to support different types of chat interfaces that are tailored towards specific use-cases.
+
+Currently, the only one supported is the `.messaging` case, which is also the default. The documentation will be updated once the other cases are supported as well.
+
+### typingIndicatorPlacement
+
+When the user is located in the message list and another user is typing a message an indicator is shown. The SDK allows for two different configuration options in this case.
+
+The default is the `.bottomOverlay`. Here, the typing indicator is shown in the bottom part of the message list. The alternate option, `.navigationBar`, is showing the typing indicator in the navigation bar, as the name suggests.
+
+Here is an example for both of the options:
+
+![Depiction of the different options of the typing indicator options.](../../assets/typing-indicator.png)
+
+In case you want to set the `.navigationBar` option here is a snippet of code that achieves that. This goes into the `didFinishLaunchingWithOptions` function of the `AppDelegate.swift` file:
+
+```swift
 let messageListConfig = MessageListConfig(
-    messageListType: .messaging,
-    typingIndicatorPlacement: .navigationBar,
-    groupMessages: true,
-    messageDisplayOptions: messageDisplayOptions,
-    messagePaddings: messagePaddings
+// highlight-start
+    typingIndicatorPlacement: .navigationBar
+// highlight-end
+)
+let utils = Utils(
+    messageListConfig: messageListConfig
+)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+### groupMessages
+
+The SDK offers the option to group messages of a user together to show them in a more compact way. The `groupMessages` parameter specifies if this behavior is wanted or not.
+
+The default value is `true`, an example for both looks can be seen below:
+
+![Examples of grouped an non-grouped messages.](../../assets/group-messages.png)
+
+:::note
+To identify which messages to group together the SDK uses the `maxTimeIntervalBetweenMessagesInGroup` parameter that is also part of the `MessageListConfig`. For more details on this parameter the [`maxTimeIntervalBetweenMessagesInGroup`](#maxtimeintervalbetweenmessagesingroup) section is provided.
+:::
+
+### messageDisplayOptions
+
+The `messageDisplayOptions` parameter allows to customize the overall behavior and appearance of messages in the message list.
+
+For more details on what you can change and customize with the `MessageDisplayOptions` object, go to the [Message Display Options](../../message-components/message-display-options) page in the Message Components section.
+
+It has the following parameters:
+
+- **showAvatars**: `Bool`
+- **showMessageDate**: `Bool`
+- **showAuthorName**: `Bool`
+- **animateChanges**: `Bool`
+- **dateLabelSize**: `CGFloat`
+- **lastInGroupHeaderSize**: `CGFloat`
+- **minimumSwipeGestureDistance**: `CGFloat`
+- **currentUserMessageTransition**: `AnyTransition`
+- **otherUserMessageTransition**: `AnyTransition`
+- **shouldAnimateReactions**: `Bool`
+- **messageLinkDisplayResolver**: `(ChatMessage) -> [NSAttributedString.Key: Any]`
+
+In order to set the `messageDisplayOptions` in the `MessageListConfig` here is an example (with an empty `MessageDisplayOptions` object):
+
+```swift
+let messageListConfig = MessageListConfig(
+// highlight-start
+    messageDisplayOptions: MessageDisplayOptions()
+// highlight-end
 )
 let utils = Utils(messageListConfig: messageListConfig)
 streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
 
-Other config options you can enable or disable via the `MessageListConfig` are:
-- `messagePopoverEnabled` - the default value is true. If set to false, it will disable the message popover.
-- `doubleTapOverlayEnabled` - the default value is false. If set to true, you can show the message popover also with double tap.
-- `becomesFirstResponderOnOpen` - the default value is false. If set to true, the channel will open the keyboard on view appearance.
+### messagePaddings
 
-With the `MessageDisplayOptions`, you can also customize the transitions applied to the message views. The default message view transition in the SDK is `identity`. You can use the other default ones, such as `scale`, `opacity` and `slide`, or you can create your own custom transitions. Here's an example how to do this:
+The `messagePaddings` parameter is intended to be able to specify horizontal padding (left & right) to all messages. This can be done by intialization of a `MessagePaddings` object with the only parameter being `horizontal`. The default value it has is `8` and any other `CGFloat` can be specified.
+
+An example of how to set the padding to e.g. a value of `40` can be found here:
 
 ```swift
-var customTransition: AnyTransition {
-    .scale.combined(with:
-        AnyTransition.asymmetric(
-            insertion: .move(edge: .trailing),
-            removal: .move(edge: .leading)
-        )
-    )
-}
-
-let messageDisplayOptions = MessageDisplayOptions(
-    currentUserMessageTransition: customTransition,
-    otherUserMessageTransition: customTransition
+let messageListConfig = MessageListConfig(
+// highlight-start
+    messagePaddings: MessagePaddings(horizontal: 40)
+// highlight-end
 )
-```
-
-For link attachments, you can control the link text attributes (font, font weight, color) based on the message. Here's an example of how to change the link color based on the message sender, with the `messageLinkDisplayResolver`:
-
-```swift
-let messageDisplayOptions = MessageDisplayOptions(messageLinkDisplayResolver: { message in
-    let color = message.isSentByCurrentUser ? UIColor.red : UIColor.green
-    
-    return [
-        NSAttributedString.Key.foregroundColor: color
-    ]
-})
-let messageListConfig = MessageListConfig(messageDisplayOptions: messageDisplayOptions)
 let utils = Utils(messageListConfig: messageListConfig)
-        
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+### dateIndicatorPlacement
+
+The date indicator describes an element that displays the date in the message list. It must not be confused with the date of a specific message (TODO: link to the docs here.) The SDK supports three types of date indicators
+
+- floating overlay (`.overlay`)
+- date separators in-between the messages (`.messageList`)
+- show no date indicators (`.none`)
+
+![The different options how to set the dateIndicatorPlacement variable of the MessageListConfig](../../assets/date-indicator-placement.png)
+
+This feature can be configured via the `dateIndicatorPlacement` in the `MessageListConfig`. With the floating overlay option (`.overlay`), the date indicator is shown for a short time whenever a new message appears and during scrolling. On the other hand, in order to always show the date between messages, similarly to Apple Messages and WhatsApp, the `.messageList` option should be used. Both options can be turned off by using the `.none` option.
+
+The default option is `.overlay`. In order to change that e.g. to the `messageList` option, this code can be used:
+
+```swift
+let messageListConfig = MessageListConfig(
+// highlight-start
+    dateIndicatorPlacement: .messageList
+// highlight-end
+)
+let utils = Utils(messageListConfig: messageListConfig)
 let streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
 
-## Date Indicators
+### pageSize
 
-The SDK supports two types of date indicators - floating overlay and date separators in-between the messages. This feature can be configured via the `dateIndicatorPlacement` in the `MessageListConfig`. With the floating overlay option (`.overlay`), the date indicator is shown for a short time whenever a new message appears. On the other hand, if you want to always show the date between messages, similarly to Apple Messages and WhatsApp, you should use the `.messageList` option. You can turn off both options by using the `.none` option. Here's an example of how to set up the `messageList` option:
+The `pageSize` parameter specifies how many messages are loaded by the SDK in a chunk before requesting new messages. The default value of `50` specifies that 50 messages are loaded when entering the channel. When the user scrolls to previous messages and the first 50 are passed the next chunk of 50 messages are loaded again.
+
+This value can be changed to any other `Int`. It should be considered, however, that there might be performance and networking considerations to take into account when changing up this value.
+
+In order to change this value e.g. to have a `pageSize` of `100`, this code can be used:
 
 ```swift
-let utils = Utils(messageListConfig: MessageListConfig(dateIndicatorPlacement: .messageList))
-let streamChat = StreamChat(chatClient: chatClient, utils: utils)
+let messageListConfig = MessageListConfig(
+// highlight-start
+    pageSize: 100
+// highlight-end
+)
+let utils = Utils(messageListConfig: messageListConfig)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
 
-If you want to replace the separating date indicator view, you need to implement the `makeMessageListDateIndicator` method. You can control the size of this view with the `overlayDateLabelSize` in the `MessageDisplayOptions`.
+### messagePopoverEnabled
+
+The `messagePopoverEnabled` parameter allows for an easy configuration option to allow to have things like reactions, threads, and other options available when users long-press a message. These options are available when the value is set to `true` (the default) and are disabled when set to `false`.
+
+When set to `true` the following example shows when a user is long-pressing a GIF inside of the message list (works the same with any other type of message):
+
+![When the messagePopoverEnabled parameter is set to true a long-press on a message of any type opens this menu.](../../assets/message-popover-enabled.png)
+
+When `messagePopoverEnabled` is set to `false`, this menu does not show up. Here is the code to set this configuration:
 
 ```swift
-public func makeMessageListDateIndicator(date: Date) -> some View {
-    DateIndicatorView(date: date)
+let messageListConfig = MessageListConfig(
+// highlight-start
+    messagePopoverEnabled: false
+// highlight-end
+)
+let utils = Utils(messageListConfig: messageListConfig)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+### doubleTapOverlayEnabled
+
+The `doubleTapOverlayEnabled` parameter is related to the [`messagePopoverEnabled`](#messagepopoverenabled) parameter. If `doubleTapOverlayEnabled` is set to true, the user can also summon the message overlay menu on a double tap in addition to the regularly enabled long-press gesture.
+
+:::note
+If unsure what kind of overlay is meant here, feel free to check the section about the [`messagePopoverEnabled`](#messagepopoverenabled) to see an example how it looks.
+:::
+
+The default is set to `false` so that the menu overlay is not showing up on a double tap. To set this to `true` the following code can be used:
+
+```swift
+let messageListConfig = MessageListConfig(
+// highlight-start
+    doubleTapOverlayEnabled: true
+// highlight-end
+)
+let utils = Utils(messageListConfig: messageListConfig)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+### becomesFirstResponderOnOpen
+
+The `becomesFirstResponderOnOpen` parameter describes if the composer is active once the user is entering the chat channel screen. If set to `true` the keyboard will open and the user is directly ready to enter a message.
+
+If set to `false` (the default) the keyboard will not be active and it requires another tap from the user onto the composer. However, the entire list of messages is present, showing more messages initially.
+
+Here, the different options are shown when a user enters a channel:
+
+![The state of entering the chat channel screen when either of the two options for becomesFirstResponderOnOpen are set.](../../assets/becomes-first-responder-on-open.png)
+
+In order to set this option e.g. to `true`, the following code can be used:
+
+```swift
+let messageListConfig = MessageListConfig(
+// highlight-start
+    becomesFirstResponderOnOpen: true
+// highlight-end
+)
+let utils = Utils(messageListConfig: messageListConfig)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+### maxTimeIntervalBetweenMessagesInGroup
+
+The messages in the message list are grouped based on the `maxTimeIntervalBetweenMessagesInGroup` value in the `MessageListConfig` (if the [`groupMessages`](#groupmessages) option is set to `true`). It specifies a `TimeInterval` which determines how far apart messages can maximally be to be grouped together.
+
+The default value of this property is 60 seconds, which means messages that are 60 seconds (or less) apart, will be grouped together. Messages that are farther apart are not grouped together and appear as standalone messages. An example for that can be seen in the [groupMessages](#groupmessages) section.
+
+To change it up from the default value (`60` seconds) a different value (in this case: `20` seconds) can be specified like this:
+
+```swift
+let messageListConfig = MessageListConfig(
+// highlight-start
+    maxTimeIntervalBetweenMessagesInGroup: 20
+// highlight-end
+)
+let utils = Utils(messageListConfig: messageListConfig)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+### cacheSizeOnChatDismiss
+
+The `cacheSizeOnChatDismiss` parameter specifies how large the image cache is after leaving a channel. The default is set to `1024 * 1024 * 100` bytes and it means that when the user is leaving a channel, the image cache that [Nuke](https://github.com/kean/Nuke) uses is trimmed down to that size so that it doesn't take up too much memory.
+
+:::note
+Changing this parameter needs careful consideration of memory allocation limits, so this should only be changed when knowing the exact impacts of it.
+:::
+
+In case this is required to be changed however, here is a code example on how to do it (limiting the cache size to half of what it is per default):
+
+```swift
+let messageListConfig = MessageListConfig(
+// highlight-start
+    cacheSizeOnChatDismiss: 1024 * 1024 * 50
+// highlight-end
+)
+let utils = Utils(messageListConfig: messageListConfig)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
+## No Messages View
+
+When there are no messages available in the channel, a custom view can be provided. In order to do this, the `makeEmptyMessagesView` method needs to be implemented in the `ViewFactory`. In this method, the `channel` is provided as a parameter, allowing for a personalized message for starting a conversation. The `colors` are provided as a parameter too. The default implementation in the SDK just shows the message list background in this slot.
+
+In order to change this up, here is an example usage of an override in the custom `ViewFactory`:
+
+```swift
+func makeEmptyMessagesView(for channel: ChatChannel, colors: ColorPalette) -> some View {
+    Text("No messages yet, enter the first one by tapping on the composer at the bottom of the screen.")
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .stroke(Color(UIColor.secondarySystemBackground), lineWidth: 2)
+        )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
 }
 ```
+
+Here's how that custom implementation looks compared to the default one:
+
+![Comparison of the default look of the empty message list and the custom example shown in the code above.](../../assets/empty-message-list.png)
+
+:::info
+Reminder: the custom `ViewFactory` needs to be injected into e.g. the `ChatChannelListView`. If unsure how to do that, there is a more detailed explanation in the [Getting started](../../getting-started) page.
+:::
 
 ## Message List Background
 
-You can also modify the background of the message list to any SwiftUI `View` (`Color`, `LinearGradient`, `Image` etc.). In order to do this, you would need to implement the `makeMessageListBackground` method in the `ViewFactory`.
+It is possible to change the background of the Message List entirely. This can be done by creating a custom `View` that allows for complete freedom of handing it whatever object that is desired.
+
+The way to do this is to override the `makeMessageListBackground` function in the `ViewFactory` (see [Getting started](../../getting-started) on how to add a custom `ViewFactory` to your app).
+
+The function gets two parameters. The first one is `colors` which is the `ColorPalette` of the app that can be used to customize the background to match the color theme of the applocation itself. The second one is a `Boolean` called `isInThread`, and it specifies whether or not the message list is part of a message thread.
+
+Here is an example on how to create a gradient background for the background of the Message List (the code goes inside of the custom `ViewFactory` of the app):
 
 ```swift
 func makeMessageListBackground(
@@ -92,206 +344,38 @@ func makeMessageListBackground(
     isInThread: Bool
 ) -> some View {
     LinearGradient(gradient: Gradient(
-        colors: [.white, .red, .black]), 
-        startPoint: .top, 
-        endPoint: .bottom
+        colors: [.blue, .red, .white]),
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
     )
 }
 ```
 
-In this method, you receive the `colors` used in the SDK, but you can also use your own colors like in the example above. If you want to have a different background for message threads, use the `isInThread` value to distinguish between a regular message list and a thread.
+See how this looks compared to the default Message List background:
 
-If you want to change the background of the message bubbles, you can update the `messageCurrentUserBackground` and `messageOtherUserBackground` in the `ColorPalette` on `StreamChat` setup. These values are arrays of `UIColor` - if you want to have a gradient background just provide all the colors that the gradient should be consisted of.
+![Comparison of the default Message List background compared to a custom implementation.](../../assets/message-list-background.png)
+
+## Custom modifier for the Message List
+
+It is possible to customize the message list further by creating a custom view modifier for it using the `makeMessageListModifier` function in the `ViewFactory`. This gives complete freedom over the type of implementation and customization that will be applied to the message list.
+
+The first step in order to implement this is to create a custom `ViewModifier`. In this example this adds a vertical padding to the `View`;
 
 ```swift
-var colors = ColorPalette()
-colors.messageCurrentUserBackground = [UIColor.red, UIColor.white]
-colors.messageOtherUserBackground = [UIColor.white, UIColor.red]
-        
-let appearance = Appearance(colors: colors)
-        
-streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
+struct VerticalPaddingViewModifier: ViewModifier {
+    public func body(content: Content) -> some View {
+        content
+            .padding(.vertical, 8)
+    }
+}
 ```
 
-## Applying Custom Modifier
-
-You can customize the message list further, by applying your own custom view modifier. In order to do this, you need to implement the method `makeMessageListModifier`, which by default doesn't apply anything additional to the view. Here's an example how to add vertical padding to the message list:
+This modifier can then be applied in the custom `ViewFactory` by overriding the `makeMessageListModifier` function:
 
 ```swift
 func makeMessageListModifier() -> some ViewModifier {
     VerticalPaddingViewModifier()
 }
-
-struct VerticalPaddingViewModifier: ViewModifier {
-    
-    public func body(content: Content) -> some View {
-        content
-            .padding(.vertical, 8)
-    }
-    
-}
 ```
 
-You can also apply a custom modifier to the message view. This comes in handy if you want to change the bubbles UI, such as the corner radius, the direction of the bubbles, paddings or even remove the bubble altogether. In order to do this, you will need to implement the `makeMessageViewModifier` in the `ViewFactory`. The default implementation returns the bubble that is used throughout our demo app. The following snippet shows how to create your own message view modifier:
-
-```swift
-func makeMessageViewModifier(for messageModifierInfo: MessageModifierInfo) -> some ViewModifier {
-    CustomMessageBubbleModifier(
-        message: messageModifierInfo.message,
-        isFirst: messageModifierInfo.isFirst,
-        injectedBackgroundColor: messageModifierInfo.injectedBackgroundColor,
-        cornerRadius: messageModifierInfo.cornerRadius,
-        forceLeftToRight: messageModifierInfo.forceLeftToRight
-    )
-}
-```
-
-In this method, the `MessageModifierInfo` is provided. This struct contains information that is needed to the modifier to apply the needed styling. It contains the following properties:
-- `message`: The message that will be displayed.
-- `isFirst`: Whether the message is first in the group. Ignore this value if you want to avoid message grouping.
-- `injectedBackgroundColor`: Possibility to inject custom background color, based on the different types of message cells. You can provide your own color logic here as well.
-- `cornerRadius`: The corner radius for rounding the cells. 
-- `forceLeftToRight`: Use this value if you want to force the direction of the bubble to be left to right.   
-
-## Custom Message Container View
-
-However, if you are building a livestream app similar to Twitch, you will need a different type of user interface for the message views. The SwiftUI SDK allows swapping the message container view with your own implementation, without needing to implement the whole message list, the composer or the reactions. In order to do this, you need to implement the method `makeMessageContainerView` in the `ViewFactory` protocol.
-
-For example, if you need a simple text message view, alligned on the left, you can do it like this:
-
-```swift
-public func makeMessageContainerView(
-    channel: ChatChannel,
-    message: ChatMessage,
-    width: CGFloat?,
-    showsAllInfo: Bool,
-    isInThread: Bool,
-    scrolledId: Binding<String?>,
-    quotedMessage: Binding<ChatMessage?>,
-    onLongPress: @escaping (MessageDisplayInfo) -> (),
-    isLast: Bool
-) -> some View {
-    HStack {
-        Text(message.text)
-        Spacer()
-    }
-    .padding(.horizontal, 8)
-    .padding(.bottom, showsAllInfo ? 8 : 2)
-    .padding(.top, isLast ? 8 : 0)
-}
-```
-
-The parameters that you can use in this method are:
-- `channel`: the chat channel where the message was sent.
-- `message`: the chat message that's going to be displayed.
-- `width`: the available width for the message.
-- `showsAllInfo`: whether all info is shown for the message (i.e. whether is part of a group or a leading message).
-- `isInThread`: whether the message is part of a message thread.
-- `scrolledId`: binding of the currently scrolled id. Use it to force scrolling to the particular message.
-- `quotedMessage`: binding of an optional quoted message.
-- `onLongPress`: called when the message is long pressed.
-- `isLast`: whether it is the last message (e.g. to apply extra padding).
-
-## Grouping Messages
-
-The messages are grouped based on the `maxTimeIntervalBetweenMessagesInGroup` value in the `MessageListConfig`. The default value of this property is 60 seconds, which means messages that are 60 seconds (or less) apart, will be grouped together. You can change this value when you initialize the `MessageListConfig`.
-
-## System Messages 
-
-If you are using the default implementation of the message container view, you can customize the system messages. These are messages that are not sent by the participants, but they represent some system events (like people added to the channel and similar). In order to change the UI of the system messages, you need to implement the `makeSystemMessageView` in the `ViewFactory` protocol.
-
-```swift
-public func makeSystemMessageView(
-        message: ChatMessage
-) -> some View {
-    SystemMessageView(message: message.text)
-}
-```
-
-The only parameter you receive in this method is the system `ChatMessage` that's going to be displayed. Note, if you are using custom implementation of the message container, you will need to explicitly add handling for the system messages.
-
-## Author and Date View
-
-When a message is sent by the current user or another user in a direct channel, the date of the sent message is displayed below the message. In order to swap this view, you need to implement the `makeMessageDateView` in the `ViewFactory`:
-
-```swift
-func makeMessageDateView(for message: ChatMessage) -> some View {
-    MessageDateView(message: message)
-}
-```
-
-If a message is sent by another user, in a group conversation, the author's name is shown before the date. In order to customize this behaviour, you need to implement your own version of this view, with the `makeMessageAuthorAndDateView` method:
-
-```swift
-func makeMessageAuthorAndDateView(for message: ChatMessage) -> some View {
-    MessageAuthorAndDateView(message: message)
-}
-```
-
-In some chat apps, the author's name is shown above the oldest message in a group. You can accomplish this by implementing the `makeLastInGroupHeaderView` in the `ViewFactory`:
-
-```swift
-public func makeLastInGroupHeaderView(for message: ChatMessage) -> some View {
-    HStack {
-        MessageAuthorView(message: message)
-        Spacer()
-    }
-    .padding(.leading, 60)
-}
-```
-
-When using this method, you also need to specify the size of this view in the message list config, with the `lastInGroupHeaderSize` in the `MessageListConfig`: 
-
-```swift
-let utils = Utils(
-    messageListConfig: MessageListConfig(
-        messageDisplayOptions: MessageDisplayOptions(showAuthorName: false, lastInGroupHeaderSize: 16),
-        dateIndicatorPlacement: .messageList
-    )
-)
-let streamChat = StreamChat(chatClient: chatClient, utils: utils)
-```
-
-Note that we're also setting the `showAuthorName` to false here, to hide the default author view shown at the bottom.
-
-## No Messages View
-
-When there are no messages available in the channel, you can provide your own custom view. To do this, you will need to implement the `makeEmptyMessagesView` method in the `ViewFactory`. In this method, the `channel` is provided as a parameter, allowing you to provide a personalized message for starting a conversation. The `colors` are provided as a parameter too. The default implementation in the SDK just shows the message list background in this slot.
-
-Here's an example usage:
-
-```swift
-public func makeEmptyMessagesView(
-    for channel: ChatChannel,
-    colors: ColorPalette
-) -> some View {
-    Color(colors.background)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-}
-```   
-
-Finally, don't forget to inject your custom factory to our view hierarchy.
-
-```swift
-var body: some Scene {
-    WindowGroup {
-        ChatChannelListView(viewFactory: CustomFactory.shared)
-    }
-}
-```
-
-## Minimum Swipe Gesture Distance For Replying to Messages
-
-The minimum swipe gesture distance needed to trigger a reply response can be personalized. This allows to fine tune the overall message list experience.
- 
- This setup is done when the `StreamChat` object is being created, usually at the start of the app (e.g. in the `AppDelegate`).
- 
- Here's an example usage:
-
-```swift
-let messageDisplayOptions = MessageDisplayOptions(minimumSwipeGestureDistance: 20)
-let messageListConfig = MessageListConfig(messageDisplayOptions: messageDisplayOptions)
-let utils = Utils(messageListConfig: messageListConfig)
-
-let streamChat = StreamChat(chatClient: chatClient, utils: utils)
-```
+Having this kind of freedom allows for more complex modifiers as well.

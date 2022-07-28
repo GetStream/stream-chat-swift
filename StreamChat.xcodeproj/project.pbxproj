@@ -332,6 +332,9 @@
 		825A32CB27DBB463000402A9 /* MessageListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825A32CA27DBB463000402A9 /* MessageListPage.swift */; };
 		825A32CD27DBB46F000402A9 /* ChannelListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825A32CC27DBB46F000402A9 /* ChannelListPage.swift */; };
 		825A32CF27DBB48D000402A9 /* StartPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825A32CE27DBB48D000402A9 /* StartPage.swift */; };
+		826B1C3528895AFD005DDF13 /* http_youtube_link.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C3428895AFD005DDF13 /* http_youtube_link.json */; };
+		826B1C3728895BB5005DDF13 /* http_unsplash_link.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C3628895BB5005DDF13 /* http_unsplash_link.json */; };
+		826B1C39288FD756005DDF13 /* http_truncate.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C38288FD756005DDF13 /* http_truncate.json */; };
 		829CD5C52848C2EA003C3877 /* ParticipantRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5C32848C25F003C3877 /* ParticipantRobot.swift */; };
 		829CD5C72848C71B003C3877 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5C62848C71B003C3877 /* Settings.swift */; };
 		829CD5CC2848C8D6003C3877 /* BackendRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5CB2848C8D6003C3877 /* BackendRobot.swift */; };
@@ -2573,6 +2576,9 @@
 		825A32CC27DBB46F000402A9 /* ChannelListPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListPage.swift; sourceTree = "<group>"; };
 		825A32CE27DBB48D000402A9 /* StartPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartPage.swift; sourceTree = "<group>"; };
 		8261340927F20B7A0034AC37 /* StreamChatUITestsApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatUITestsApp.xctestplan; sourceTree = "<group>"; };
+		826B1C3428895AFD005DDF13 /* http_youtube_link.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_youtube_link.json; sourceTree = "<group>"; };
+		826B1C3628895BB5005DDF13 /* http_unsplash_link.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_unsplash_link.json; sourceTree = "<group>"; };
+		826B1C38288FD756005DDF13 /* http_truncate.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_truncate.json; sourceTree = "<group>"; };
 		8298C8E827D22C3E004082D3 /* UserRobot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRobot.swift; sourceTree = "<group>"; };
 		829CD5C32848C25F003C3877 /* ParticipantRobot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantRobot.swift; sourceTree = "<group>"; };
 		829CD5C62848C71B003C3877 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -6245,6 +6251,9 @@
 				A3C049CC2840BDA700E25E38 /* http_message.json */,
 				A3C049CA2840BDA700E25E38 /* http_reaction.json */,
 				82E43AC028637651007BB6CD /* http_attachment.json */,
+				826B1C3428895AFD005DDF13 /* http_youtube_link.json */,
+				826B1C3628895BB5005DDF13 /* http_unsplash_link.json */,
+				826B1C38288FD756005DDF13 /* http_truncate.json */,
 				A3C049D22840BDA700E25E38 /* ws_events_channel.json */,
 				A3C049CB2840BDA700E25E38 /* ws_events_member.json */,
 				A3C049C82840BDA700E25E38 /* ws_events_user.json */,
@@ -8175,17 +8184,20 @@
 			files = (
 				A3C049DB2840BDA700E25E38 /* ws_health_check.json in Resources */,
 				A3C049DF2840BDA700E25E38 /* http_channels.json in Resources */,
+				826B1C3728895BB5005DDF13 /* http_unsplash_link.json in Resources */,
 				A3C049DE2840BDA700E25E38 /* ws_events_channel.json in Resources */,
 				A3C049D52840BDA700E25E38 /* http_events.json in Resources */,
 				A3C049DD2840BDA700E25E38 /* ws_events.json in Resources */,
 				A3C049D42840BDA700E25E38 /* ws_events_user.json in Resources */,
 				A3C049DA2840BDA700E25E38 /* ws_reaction.json in Resources */,
 				A3C049D72840BDA700E25E38 /* ws_events_member.json in Resources */,
+				826B1C3528895AFD005DDF13 /* http_youtube_link.json in Resources */,
 				82E43AC128637651007BB6CD /* http_attachment.json in Resources */,
 				A3C049D82840BDA700E25E38 /* http_message.json in Resources */,
 				A3B68B07284503AD00DF4321 /* http_message_ephemeral.json in Resources */,
 				A3C049D62840BDA700E25E38 /* http_reaction.json in Resources */,
 				A3C049D92840BDA700E25E38 /* http_member.json in Resources */,
+				826B1C39288FD756005DDF13 /* http_truncate.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

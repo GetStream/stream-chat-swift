@@ -119,9 +119,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .assertMessageReadCount(readBy: 1)
         }
         WHEN("new participant is added to the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .addParticipant()
+            userRobot.addParticipant()
         }
         THEN("user spots double checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -151,9 +149,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .assertMessageReadCount(readBy: 1)
         }
         WHEN("participant is removed from the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .removeParticipant(withUserId: participantOne)
+            userRobot.removeParticipant(withUserId: participantOne)
         }
         THEN("user spots single checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -228,7 +224,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         WHEN("user previews thread for message: \(message)") {
-            userRobot.showThread()
+            userRobot.openThread()
         }
         THEN("user spots single checkmark below the message") {
             userRobot
@@ -275,7 +271,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         AND("user previews thread for read message: \(message)") {
-            userRobot.showThread()
+            userRobot.openThread()
         }
         WHEN("the message is read by participant") {
             participantRobot.readMessage()
@@ -375,9 +371,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.replyToMessageInThread(threadReply)
         }
         WHEN("new participant is added to the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .addParticipant()
+            userRobot.addParticipant()
         }
         THEN("user spots double checkmark below the thread reply") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -410,9 +404,7 @@ extension MessageDeliveryStatus_Tests {
                 .assertMessageReadCount(readBy: 1)
         }
         WHEN("participant is removed from the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .removeParticipant(withUserId: participantOne)
+            userRobot.removeParticipant(withUserId: participantOne)
         }
         THEN("user spots single checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -606,9 +598,7 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.readMessage()
         }
         WHEN("new participant is added to the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .addParticipant()
+            userRobot.addParticipant()
         }
         THEN("delivery status is hidden") {
             userRobot
@@ -636,9 +626,7 @@ extension MessageDeliveryStatus_Tests {
                 .readMessage()
         }
         WHEN("participant is removed from the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .removeParticipant(withUserId: participantOne)
+            userRobot.removeParticipant(withUserId: participantOne)
         }
         AND("delivery status is hidden") {
             userRobot.assertMessageDeliveryStatus(nil)

@@ -110,6 +110,23 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         }
     }
     
+    func test_deliveryStatusHidden_whenEphemeralMessageShownInThread() {
+        linkToScenario(withId: 183)
+
+        GIVEN("user opens a channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        WHEN("user runs a giphy command in thread") {
+            userRobot.openThread().sendGiphy(send: false)
+        }
+        THEN("delivery status is hidden for ephemeral messages") {
+            userRobot
+                .assertMessageDeliveryStatus(nil)
+                .assertMessageReadCount(readBy: 0)
+        }
+    }
+    
     func test_userObservesAnimatedGiphy_afterShufflingAndSendingGiphyMessage() throws {
         linkToScenario(withId: 277)
         

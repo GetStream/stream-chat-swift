@@ -1,0 +1,213 @@
+{
+  "duration": "32.66ms",
+  "channel": {
+    "id": "general",
+    "type": "messaging",
+    "cid": "messaging:general",
+    "last_message_at": "0001-01-01T00:00:00Z",
+    "created_at": "2022-07-25T16:10:03.267149Z",
+    "updated_at": "2022-07-25T16:10:52.303461Z",
+    "created_by": {
+      "id": "luke_skywalker",
+      "role": "user",
+      "created_at": "2020-12-07T11:36:47.059906Z",
+      "updated_at": "2022-07-25T14:36:43.3034Z",
+      "last_active": "2022-07-25T16:10:50.350095156Z",
+      "banned": false,
+      "online": true,
+      "name": "Luke Skywalker",
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "testing": false,
+      "extraData": {},
+      "birthland": "Tatooine",
+      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "testing-this": 3.14,
+      "yetAnotherField": "40",
+      "extra_data": {}
+    },
+    "frozen": false,
+    "disabled": false,
+    "members": [
+      {
+        "user_id": "count_dooku",
+        "user": {
+          "id": "count_dooku",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:39.487938Z",
+          "updated_at": "2022-02-03T11:36:17.626315Z",
+          "last_active": "2022-03-28T18:11:22.920214284Z",
+          "banned": false,
+          "online": true,
+          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
+          "name": "Count Dooku",
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
+          "birthland": "Serenno",
+          "extraData": {}
+        },
+        "created_at": "2022-03-28T18:09:34.877085Z",
+        "updated_at": "2022-03-28T18:09:34.877085Z",
+        "banned": false,
+        "shadow_banned": false,
+        "role": "owner",
+        "channel_role": "channel_member"
+      },
+      {
+        "user_id": "han_solo",
+        "user": {
+          "id": "han_solo",
+          "role": "user",
+          "created_at": "2020-12-07T11:37:34.230369Z",
+          "updated_at": "2022-03-21T15:23:04.466699Z",
+          "last_active": "2022-03-28T17:49:21.522571744Z",
+          "banned": false,
+          "online": false,
+          "name": "Han Solo",
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+          "birthland": "Corellia",
+          "extraData": {},
+          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+        },
+        "created_at": "2022-03-28T18:09:34.877085Z",
+        "updated_at": "2022-03-28T18:09:34.877085Z",
+        "banned": false,
+        "shadow_banned": false,
+        "role": "member",
+        "channel_role": "channel_member"
+      },
+      {
+        "user_id": "luke_skywalker",
+        "user": {
+          "id": "luke_skywalker",
+          "role": "user",
+          "created_at": "2020-12-07T11:36:47.059906Z",
+          "updated_at": "2022-03-28T14:20:19.0046Z",
+          "last_active": "2022-03-28T18:08:01.824736Z",
+          "banned": false,
+          "online": true,
+          "yetAnotherField": "40",
+          "name": "Luke Skywalker",
+          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+          "testing": false,
+          "birthland": "Tatooine",
+          "extraData": {},
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+          "extra_data": {},
+          "testing-this": 3.14
+        },
+        "created_at": "2022-03-28T18:09:34.877085Z",
+        "updated_at": "2022-03-28T18:09:34.877085Z",
+        "banned": false,
+        "shadow_banned": false,
+        "role": "member",
+        "channel_role": "channel_member"
+      }
+    ],
+    "member_count": 3,
+    "config": {
+      "created_at": "2021-03-01T19:26:18.406502Z",
+      "updated_at": "2022-06-22T11:15:43.22284Z",
+      "name": "messaging",
+      "typing_events": true,
+      "read_events": true,
+      "connect_events": true,
+      "search": true,
+      "reactions": true,
+      "replies": true,
+      "quotes": true,
+      "mutes": true,
+      "uploads": true,
+      "url_enrichment": true,
+      "custom_events": true,
+      "push_notifications": true,
+      "reminders": false,
+      "message_retention": "infinite",
+      "max_message_length": 5000,
+      "automod": "AI",
+      "automod_behavior": "block",
+      "blocklist": "profanity_en_2020_v1",
+      "blocklist_behavior": "block",
+      "automod_thresholds": {
+        "explicit": {
+          "flag": 0.85,
+          "block": 0.9
+        },
+        "spam": {
+          "flag": 0.85,
+          "block": 0.9
+        },
+        "toxic": {
+          "flag": 0.85,
+          "block": 0.9
+        }
+      },
+      "commands": [
+        {
+          "name": "giphy",
+          "description": "Post a random gif to the channel",
+          "args": "[text]",
+          "set": "fun_set"
+        }
+      ]
+    },
+    "truncated_at": "2022-07-25T16:10:52.298435Z",
+    "truncated_by": {
+      "id": "luke_skywalker",
+      "role": "user",
+      "created_at": "2020-12-07T11:36:47.059906Z",
+      "updated_at": "2022-07-25T14:36:43.3034Z",
+      "last_active": "2022-07-25T16:10:50.350095156Z",
+      "banned": false,
+      "online": true,
+      "birthland": "Tatooine",
+      "name": "Luke Skywalker",
+      "yetAnotherField": "40",
+      "extraData": {},
+      "extra_data": {},
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "testing-this": 3.14,
+      "testing": false
+    },
+    "name": "The water cooler"
+  },
+  "message": {
+    "id": "5381069f-0ca6-476c-8e91-cf18e6b80b49",
+    "text": "Channel truncated",
+    "html": "<p>Channel truncated</p>\n",
+    "type": "system",
+    "user": {
+      "id": "luke_skywalker",
+      "role": "user",
+      "created_at": "2020-12-07T11:36:47.059906Z",
+      "updated_at": "2022-07-25T14:36:43.3034Z",
+      "last_active": "2022-07-25T16:10:50.350095156Z",
+      "banned": false,
+      "online": true,
+      "extra_data": {},
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "testing-this": 3.14,
+      "testing": false,
+      "birthland": "Tatooine",
+      "name": "Luke Skywalker",
+      "yetAnotherField": "40",
+      "extraData": {}
+    },
+    "attachments": [],
+    "latest_reactions": [],
+    "own_reactions": [],
+    "reaction_counts": {},
+    "reaction_scores": {},
+    "reply_count": 0,
+    "cid": "messaging:general",
+    "created_at": "2022-07-25T16:10:52.298436Z",
+    "updated_at": "2022-07-25T16:10:52.298436Z",
+    "shadowed": false,
+    "mentioned_users": [],
+    "silent": false,
+    "pinned": false,
+    "pinned_at": null,
+    "pinned_by": null,
+    "pin_expires": null
+  }
+}

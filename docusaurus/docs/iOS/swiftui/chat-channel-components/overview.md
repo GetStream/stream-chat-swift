@@ -38,7 +38,7 @@ There is more content to be found on our [Youtube channel](https://www.youtube.c
 
 ## Showing a Channel programmatically
 
-While the general use case is that users navigate from a Channel List to a chat channel, there can be exceptions to that. In some cases, it is required to directly show a channel. Not only that, but it can also be helpful to have the option to programmatically navigate to a certain channel.
+While the general use-case is that users navigate from a Channel List to a chat channel there can be exceptions to that. In some cases, it is required to directly show a channel. Not only that, it can also be helpful to have the option to programmatically navigate to a certain channel.
 
 The SDK makes this easy as it exposes the `ChatChannelView` as the view that holds the UI and logic for showing the chat channel. It requires two parameters:
 

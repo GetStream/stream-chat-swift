@@ -110,6 +110,6 @@ public extension StreamMockServer {
 
     func setCooldown(in channel: inout [String: Any]) {
         let cooldown = channelConfigs.coolDown
-        channel[ChannelCodingKeys.cooldownDuration.rawValue] = cooldown.isEnabled ? cooldown.duration : nil
+        channel[channelKey.cooldownDuration.rawValue] = cooldown.isEnabled ? cooldown.duration : nil
     }
 }

@@ -1,13 +1,27 @@
 # StreamChat iOS SDK CHANGELOG
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+# Upcoming
+
+### 🐞 Fixed
+- Fix crash in ListDatabaseObserver.startObserving() [#2177](https://github.com/GetStream/stream-chat-swift/pull/2177)
+- Make BaseOperation thread safe [#2198](https://github.com/GetStream/stream-chat-swift/pull/2198)
+
+# [4.19.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.19.0)
+_July 21, 2022_
+
 ## StreamChat
 ### ✅ Added
 - Add hide history option when adding a new member [#2155](https://github.com/GetStream/stream-chat-swift/issues/2155)
+- Add Extra Data Usage Improvements [#2174](https://github.com/GetStream/stream-chat-swift/pull/2174)
+  - For more details please read the documentation [here](https://getstream.io/chat/docs/sdk/ios/uikit/extra-data).
 ### 🐞 Fixed
 - Avoid triggering CoreData updates in willSave() [#2156](https://github.com/GetStream/stream-chat-swift/pull/2156)
-- Fix Channel missing messages from NSE push updates [#2166](https://github.com/GetStream/stream-chat-swift/pull/2166)
 - Sync active channels when no channel list [#2163](https://github.com/GetStream/stream-chat-swift/pull/2163)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix Channel missing messages from NSE push updates [#2166](https://github.com/GetStream/stream-chat-swift/pull/2166)
 
 # [4.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.18.0)
 _July 05, 2022_

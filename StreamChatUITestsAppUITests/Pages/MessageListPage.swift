@@ -23,6 +23,10 @@ class MessageListPage {
         app.otherElements["TypingIndicatorView"].staticTexts.firstMatch
     }
     
+    static var scrollToBottomButton: XCUIElement {
+        app.buttons["ScrollToLatestMessageButton"]
+    }
+    
     enum NavigationBar {
         
         static var header: XCUIElement { app.otherElements["ChatChannelHeaderView"] }
@@ -61,6 +65,10 @@ class MessageListPage {
             // Show member info
             static var showMemberInfo: XCUIElement { alert.buttons["Show Members"] }
             static var dismissMemberInfo: XCUIElement { app.alerts["Members"].buttons["Cancel"] }
+            
+            // Truncate channel
+            static var truncateWithMessage: XCUIElement { alert.buttons["Truncate channel with message"] }
+            static var truncateWithoutMessage: XCUIElement { alert.buttons["Truncate channel w/o message"] }
         }
     }
     
@@ -154,7 +162,7 @@ class MessageListPage {
             messageCell.buttons["ChatMessageReactionItemView"]
         }
         
-        static func threadButton(in messageCell: XCUIElement) -> XCUIElement {
+        static func threadReplyCountButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["threadReplyCountButton"]
         }
         
@@ -240,6 +248,28 @@ class MessageListPage {
         
         static func videoPlayer() -> XCUIElement {
             app.otherElements["PlayerView"]
+        }
+        
+        enum LinkPreview {
+            static func link(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.links["textView"].links.firstMatch
+            }
+            
+            static func image(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.images["imagePreview"]
+            }
+            
+            static func serviceName(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.staticTexts["authorLabel"]
+            }
+            
+            static func title(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.staticTexts["titleLabel"]
+            }
+            
+            static func description(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.textViews["bodyTextView"]
+            }
         }
     }
     

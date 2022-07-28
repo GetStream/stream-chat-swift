@@ -39,10 +39,12 @@ final class UserRobot: Robot {
         if !cells.firstMatch.exists {
             for _ in 0...3 {
                 app.terminate()
+                server.stop()
+                server.start(port: in_port_t(MockServerConfiguration.port))
                 app.launch()
                 login()
-                cells.waitCount(minExpectedCount, timeout: 10)
-                break
+                cells.waitCount(minExpectedCount)
+                if cells.firstMatch.exists { break }
             }
         }
         
@@ -206,13 +208,14 @@ extension UserRobot {
     @discardableResult
     func openThread(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        MessageListPage.Attributes.threadButton(in: messageCell).wait().safeTap()
+        let threadButton = MessageListPage.Attributes.threadReplyCountButton(in: messageCell)
+        if threadButton.exists {
+            threadButton.safeTap()
+        } else {
+            selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: messageCellIndex)
+        }
+        ThreadPage.alsoSendInChannelCheckbox.wait()
         return self
-    }
-
-    @discardableResult
-    func showThread(forMessageAt index: Int = 0) -> Self {
-        selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: index)
     }
     
     @discardableResult
@@ -228,6 +231,18 @@ extension UserRobot {
     }
     
     @discardableResult
+    func tapOnMessageList() -> Self {
+        MessageListPage.list.safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func tapOnScrollToBottomButton() -> Self {
+        MessageListPage.scrollToBottomButton.safeTap()
+        return self
+    }
+    
+    @discardableResult
     func replyToMessageInThread(
         _ text: String,
         alsoSendInChannel: Bool = false,
@@ -238,7 +253,7 @@ extension UserRobot {
     ) -> Self {
         let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
         if !threadCheckbox.exists {
-            showThread(forMessageAt: messageCellIndex)
+            openThread(messageCellIndex: messageCellIndex)
         }
         if alsoSendInChannel {
             threadCheckbox.wait().safeTap()
@@ -319,7 +334,7 @@ extension UserRobot {
     ) -> Self {
         let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
         if !threadCheckbox.exists {
-            showThread(forMessageAt: messageCellIndex)
+            openThread(messageCellIndex: messageCellIndex)
         }
         if alsoSendInChannel {
             threadCheckbox.wait().safeTap()
@@ -377,13 +392,14 @@ extension UserRobot {
 extension UserRobot {
 
     @discardableResult
-    func tapOnDebugMenu() -> Self {
+    private func tapOnDebugMenu() -> Self {
         MessageListPage.NavigationBar.debugMenu.safeTap()
         return self
     }
 
     @discardableResult
     func addParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
+        tapOnDebugMenu()
         debugAlert.addMember.firstMatch.safeTap()
         debugAlert.addMemberTextField.firstMatch
             .obtainKeyboardFocus()
@@ -394,8 +410,20 @@ extension UserRobot {
 
     @discardableResult
     func removeParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
+        tapOnDebugMenu()
         debugAlert.removeMember.firstMatch.safeTap()
         debugAlert.selectMember(withUserId: userId).firstMatch.safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func truncateChannel(withMessage: Bool) -> Self {
+        tapOnDebugMenu()
+        if withMessage {
+            debugAlert.truncateWithMessage.safeTap()
+        } else {
+            debugAlert.truncateWithoutMessage.safeTap()
+        }
         return self
     }
 }

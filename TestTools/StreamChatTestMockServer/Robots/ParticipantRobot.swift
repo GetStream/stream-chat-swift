@@ -32,7 +32,7 @@ public class ParticipantRobot {
     
     @discardableResult
     public func startTypingInThread() -> Self {
-        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
+        let parentId = threadParentId ?? (server.lastMessage?[messageKey.id.rawValue] as? String)
         server.websocketEvent(
             .userStartTyping,
             user: participant(),
@@ -54,7 +54,7 @@ public class ParticipantRobot {
     
     @discardableResult
     public func stopTypingInThread() -> Self {
-        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
+        let parentId = threadParentId ?? (server.lastMessage?[messageKey.id.rawValue] as? String)
         server.websocketEvent(
             .userStopTyping,
             user: participant(),
@@ -133,7 +133,7 @@ public class ParticipantRobot {
     
     @discardableResult
     public func editMessage(_ text: String) -> Self {
-        let messageId = server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let messageId = server.lastMessage?[messageKey.id.rawValue] as? String
         server.websocketMessage(
             text,
             channelId: server.currentChannelId,
@@ -147,11 +147,9 @@ public class ParticipantRobot {
     @discardableResult
     public func deleteMessage() -> Self {
         let user = participant()
-        guard let userId = user?[UserPayloadsCodingKeys.id.rawValue] as? String else {
-            return self
-        }
+        guard let userId = user?[userKey.id.rawValue] as? String else { return self }
         let message = server.findMessageByUserId(userId)
-        let messageId = message?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let messageId = message?[messageKey.id.rawValue] as? String
         server.websocketMessage(
             channelId: server.currentChannelId,
             messageId: messageId,
@@ -187,7 +185,7 @@ public class ParticipantRobot {
         stopTyping()
         
         let quotedMessage = server.lastMessage
-        let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let quotedMessageId = quotedMessage?[messageKey.id.rawValue] as? String
         server.websocketMessage(
             text,
             channelId: server.currentChannelId,
@@ -195,8 +193,8 @@ public class ParticipantRobot {
             eventType: .messageNew,
             user: participant()
         ) { message in
-            message?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
-            message?[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
+            message?[messageKey.quotedMessageId.rawValue] = quotedMessageId
+            message?[messageKey.quotedMessage.rawValue] = quotedMessage
             return message
         }
         return self
@@ -207,7 +205,7 @@ public class ParticipantRobot {
         startTypingInThread()
         stopTypingInThread()
         
-        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
+        let parentId = threadParentId ?? (server.lastMessage?[messageKey.id.rawValue] as? String)
         server.websocketMessage(
             text,
             channelId: server.currentChannelId,
@@ -215,8 +213,8 @@ public class ParticipantRobot {
             eventType: .messageNew,
             user: participant()
         ) { message in
-            message?[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
-            message?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = alsoSendInChannel
+            message?[messageKey.parentId.rawValue] = parentId
+            message?[messageKey.showReplyInChannel.rawValue] = alsoSendInChannel
             return message
         }
         return self
@@ -251,7 +249,7 @@ public class ParticipantRobot {
         stopTyping()
         
         let quotedMessage = server.lastMessage
-        let quotedMessageId = quotedMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String
+        let quotedMessageId = quotedMessage?[messageKey.id.rawValue] as? String
         server.websocketMessage(
             channelId: server.currentChannelId,
             messageId: TestData.uniqueId,
@@ -259,8 +257,8 @@ public class ParticipantRobot {
             eventType: .messageNew,
             user: participant()
         ) { message in
-            message?[MessagePayloadsCodingKeys.quotedMessageId.rawValue] = quotedMessageId
-            message?[MessagePayloadsCodingKeys.quotedMessage.rawValue] = quotedMessage
+            message?[messageKey.quotedMessageId.rawValue] = quotedMessageId
+            message?[messageKey.quotedMessage.rawValue] = quotedMessage
             return message
         }
         return self
@@ -271,7 +269,7 @@ public class ParticipantRobot {
         startTypingInThread()
         stopTypingInThread()
         
-        let parentId = threadParentId ?? (server.lastMessage?[MessagePayloadsCodingKeys.id.rawValue] as? String)
+        let parentId = threadParentId ?? (server.lastMessage?[messageKey.id.rawValue] as? String)
         server.websocketMessage(
             channelId: server.currentChannelId,
             messageId: TestData.uniqueId,
@@ -279,8 +277,8 @@ public class ParticipantRobot {
             eventType: .messageNew,
             user: participant()
         ) { message in
-            message?[MessagePayloadsCodingKeys.parentId.rawValue] = parentId
-            message?[MessagePayloadsCodingKeys.showReplyInChannel.rawValue] = alsoSendInChannel
+            message?[messageKey.parentId.rawValue] = parentId
+            message?[messageKey.showReplyInChannel.rawValue] = alsoSendInChannel
             return message
         }
         return self
@@ -344,7 +342,7 @@ public class ParticipantRobot {
                 attachments.append(file)
             }
             
-            message?[MessagePayloadsCodingKeys.attachments.rawValue] = attachments
+            message?[messageKey.attachments.rawValue] = attachments
             return message
         }
         
