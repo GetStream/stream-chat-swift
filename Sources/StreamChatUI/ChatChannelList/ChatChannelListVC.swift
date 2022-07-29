@@ -20,8 +20,8 @@ open class ChatChannelListVC: _ViewController,
     private var isPaginatingChannels: Bool = false
     
     /// A boolean value that determines if the chat channel list loading view is shown for loading state.
-    open var isChatChannelListDefaultLoadingStatesEnabled: Bool {
-        components.isChatChannelListDefaultLoadingStatesEnabled
+    open var isChatChannelListStatesEnabled: Bool {
+        components.isChatChannelListStatesEnabled
     }
     
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
@@ -166,7 +166,7 @@ open class ChatChannelListVC: _ViewController,
         super.setUpLayout()
         view.embed(collectionView)
         
-        if isChatChannelListDefaultLoadingStatesEnabled {
+        if isChatChannelListStatesEnabled {
             view.embed(chatChannelListLoadingView)
             view.embed(emptyView)
             emptyView.isHidden = true
@@ -351,7 +351,7 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if isChatChannelListDefaultLoadingStatesEnabled {
+        if isChatChannelListStatesEnabled {
             var shouldHideEmptyView = true
             var isLoading = true
             

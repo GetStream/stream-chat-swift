@@ -17,7 +17,7 @@ open class ChatChannelListErrorView: _View, ThemeProvider {
     open var refreshButtonAction: (() -> Void)?
     
     /// Value of `channelListErrorView` height constraint.
-    var channelListErrorViewHeight: CGFloat { 88 }
+    open var channelListErrorViewHeight: CGFloat { 88 }
     
     override open func setUp() {
         super.setUp()

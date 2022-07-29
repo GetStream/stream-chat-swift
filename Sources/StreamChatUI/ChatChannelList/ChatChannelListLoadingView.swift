@@ -9,6 +9,7 @@ open class ChatChannelListLoadingView: _View, ThemeProvider, UITableViewDataSour
     open private(set) lazy var tableView = UITableView()
         .withoutAutoresizingMaskConstraints
 
+    /// Int value that determines the number of cells that are layout when the `ChatChannelListLoadingView` is shown.
     open var numberOfCells = 15
 
     override open func setUp() {

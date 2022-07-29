@@ -111,21 +111,42 @@ class ViewController: ChatChannelListVC {
 }
 ```
 
-### Loading states
+### Channel List States
 
 You can opt to show an empty, error and loading view by setting the following flag to true in the `Components` config:
 
 ```swift
-Components.isChatChannelListDefaultLoadingStatesEnabled = true
+Components.isChatChannelListStatesEnabled = true
 ```
 
-This feature is disabled by default. By setting this feature on, you can use show views for each state with no extra code.
+This feature is disabled by default, having just the standard loading indicator for the loading state. By enabling this feature, the StreamChat SDK will handle the channel list view states automatically for you.
 
 | Empty | Error | Loading |
 | ------------- | ------------- | ------------- |
 | ![Empty View](../../assets/channel-list-empty-view.png) | ![Error View](../../assets/channel-list-error-view.png) | ![Loading View](../../assets/channel-list-loading-view.png) |
 
-You can further customize or add your own implementation of an empty, error or loading view by subclassing `ChatChannelListEmptyView`, `ChatChannelListErrorView` or `ChatChannelListLoadingView` respectively, add your custom views as properties and overriding our custom life cycle methods `setUp()`, `setUpAppearance()`, `setUpLayout()` and `updateContent()` to configure your custom views.
+You can further customize or add your own implementation of an empty, error or loading view by subclassing `ChatChannelListEmptyView`, `ChatChannelListErrorView` or `ChatChannelListLoadingView` respectively.
+
+Let's see how you can customize our error view:
+
+```swift
+class CustomChatChannelListVC: ChatChannelListVC {
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+
+        channelListErrorView.backgroundColor = .red
+        channelListErrorView.layer.cornerRadius = 20
+        channelListErrorView.titleLabel.text = "Data unavailable"
+        channelListErrorView.titleLabel.textColor = .black
+        channelListErrorView.retryButton.setImage(.init(systemName: "hourglass.circle"), for: .normal)
+    }
+}
+```
+
+![Empty View](../../assets/channel-list-custom-error-view.png)
+
+Also, let's see an example of how you can totally replace pur error view with your own implementation.
 
 ```swift
 class CustomChannelLoadingView: ChatChannelListLoadingView {
@@ -158,7 +179,19 @@ class CustomChannelLoadingView: ChatChannelListLoadingView {
 Also, don't forget to set you custom implementation in the `Components` class.
 
 ```swift
-Components.chatChannelListLoadingView = CustomChannelLoadingView.self
+Components.default.chatChannelListLoadingView = CustomChannelLoadingView.self
+```
+
+You can set your custom views for the channel list loading states when configuring your Components instance by replacing the following views as shown above:
+
+```swift
+// In Components.swift:
+
+public var channelListEmptyView: ChatChannelListEmptyView.Type = ChatChannelListEmptyView.self
+    
+public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
+    
+public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
 ```
 
 ## Navigation

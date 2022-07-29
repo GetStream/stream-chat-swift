@@ -1694,6 +1694,8 @@
 		CF38F5B3287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF38F5B1287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift */; };
 		CF38F5B4287DB64B00E24D10 /* ChatChannelListErrorView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF38F5B1287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift */; };
 		CF5DCBC42837F11000CCA48C /* ScheduledStreamTimer_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFAA6CBF2834B0B700EBF57A /* ScheduledStreamTimer_Mock.swift */; };
+		CF62AD9928944D4700392893 /* SkeletonLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF62AD9828944D4700392893 /* SkeletonLoadable.swift */; };
+		CF62AD9A28944D4700392893 /* SkeletonLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF62AD9828944D4700392893 /* SkeletonLoadable.swift */; };
 		CF8268B92800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8268B82800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift */; };
 		CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
 		CFA41B6827DA952300427602 /* SystemEnvironment+XStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */; };
@@ -3329,6 +3331,7 @@
 		CF33B3AB28171BE500C84CDB /* CooldownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooldownView.swift; sourceTree = "<group>"; };
 		CF38F5AE287DB53E00E24D10 /* ChatChannelListErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListErrorView.swift; sourceTree = "<group>"; };
 		CF38F5B1287DB5E000E24D10 /* ChatChannelListErrorView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListErrorView_Tests.swift; sourceTree = "<group>"; };
+		CF62AD9828944D4700392893 /* SkeletonLoadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonLoadable.swift; sourceTree = "<group>"; };
 		CF6E489E282341F2008416DC /* CountdownTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownTracker.swift; sourceTree = "<group>"; };
 		CF8268B82800A54D00E300E7 /* ChatChannelHeaderView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelHeaderView_Tests.swift; sourceTree = "<group>"; };
 		CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemEnvironment+XStreamClient.swift"; sourceTree = "<group>"; };
@@ -4695,6 +4698,7 @@
 				AD87D095263C74A4008B466C /* ShrinkInputButton */,
 				AD4473F6263AC4A50030E583 /* Suggestions */,
 				ADA35730269C9B3B004AD8E9 /* TitleContainerView */,
+				CF62AD9828944D4700392893 /* SkeletonLoadable.swift */,
 			);
 			path = CommonViews;
 			sourceTree = "<group>";
@@ -8378,6 +8382,7 @@
 				883051742630366E0069D731 /* CACornerMask+Extensions.swift in Sources */,
 				AD876B4727288DF700317314 /* ChatMessageReactionAuthorsFlowLayout.swift in Sources */,
 				F86DA1B026413A2B006A7CCA /* MessageActionsTransitionController.swift in Sources */,
+				CF62AD9928944D4700392893 /* SkeletonLoadable.swift in Sources */,
 				847DD2D82670F75F0084E14B /* VideoAttachmentComposerPreview.swift in Sources */,
 				847D60292679EDD300FB701D /* GalleryCollectionViewCell.swift in Sources */,
 				C1FC2F7B27416E150062530F /* DataLoader.swift in Sources */,
@@ -9970,6 +9975,7 @@
 				C121EBD62746A1EA00023E4C /* ChatMessageReactionAppearance.swift in Sources */,
 				C121EBD72746A1EA00023E4C /* ChatMessageReactions+Types.swift in Sources */,
 				CF38F5B0287DB53E00E24D10 /* ChatChannelListErrorView.swift in Sources */,
+				CF62AD9A28944D4700392893 /* SkeletonLoadable.swift in Sources */,
 				C121EBD82746A1EA00023E4C /* ChatMessageReactionsView.swift in Sources */,
 				C121EBD92746A1EA00023E4C /* ChatMessageReactionsPickerVC.swift in Sources */,
 				C121EBDA2746A1EA00023E4C /* ChatReactionPickerBubbleView.swift in Sources */,
