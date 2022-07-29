@@ -111,6 +111,56 @@ class ViewController: ChatChannelListVC {
 }
 ```
 
+### Loading states
+
+You can opt to show an empty, error and loading view by setting the following flag to true in the `Components` config:
+
+```swift
+Components.isChatChannelListDefaultLoadingStatesEnabled = true
+```
+
+This feature is disabled by default. By setting this feature on, you can use show views for each state with no extra code.
+
+| Empty | Error | Loading |
+| ------------- | ------------- | ------------- |
+| ![Empty View](../../assets/channel-list-empty-view.png) | ![Error View](../../assets/channel-list-error-view.png) | ![Loading View](../../assets/channel-list-loading-view.png) |
+
+You can further customize or add your own implementation of an empty, error or loading view by subclassing `ChatChannelListEmptyView`, `ChatChannelListErrorView` or `ChatChannelListLoadingView` respectively, add your custom views as properties and overriding our custom life cycle methods `setUp()`, `setUpAppearance()`, `setUpLayout()` and `updateContent()` to configure your custom views.
+
+```swift
+class CustomChannelLoadingView: ChatChannelListLoadingView {
+
+    lazy var customLoadingView: CustomLoadingView = {
+        // You implementation...
+    }()
+
+    // ...
+
+    override open func setUp() {
+        // Set up your custom views.
+        // Don't call super.setUp()
+    }
+
+    override open func setUpAppearance() {
+        // Set up the appearance of your custom views.
+        // Don't call super.setUpAppearance()
+    }
+
+    override open func setUpLayout() {
+        // Set up the layout of your custom views.
+        // Don't call super.setUpLayout()
+    }
+
+    // ...
+}
+```
+
+Also, don't forget to set you custom implementation in the `Components` class.
+
+```swift
+Components.chatChannelListLoadingView = CustomChannelLoadingView.self
+```
+
 ## Navigation
 
 This component uses the [`ChannelListRouter`](../../common-content/reference-docs/stream-chat-ui/navigation/chat-channel-list-router.md) navigation component, you can customize this by providing your own.
