@@ -12299,7 +12299,7 @@
 			repositoryURL = "https://github.com/ProxymanApp/atlantis";
 			requirement = {
 				kind = exactVersion;
-				version = 1.16.0;
+				version = 1.17.0;
 			};
 		};
 		C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */ = {
