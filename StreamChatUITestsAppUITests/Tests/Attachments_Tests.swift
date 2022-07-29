@@ -60,7 +60,7 @@ final class Attachments_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant uploads a file") {
-            participantRobot.uploadAttachment(type: .file, waitBeforeSending: 0.5)
+            participantRobot.uploadAttachment(type: .file, waitBeforeSending: 2)
         }
         THEN("user can see uploaded file") {
             userRobot.assertFile(isPresent: true)

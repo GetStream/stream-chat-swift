@@ -317,7 +317,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 channelController.truncateChannel(systemMessage: "Channel truncated") { [unowned self] error in
                     if let error = error {
                         self.rootViewController.presentAlert(
-                            title: "Couldn't freeze channel \(cid)",
+                            title: "Couldn't truncate channel \(cid)",
                             message: "\(error.localizedDescription)"
                         )
                     }

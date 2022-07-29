@@ -75,7 +75,7 @@ public extension StreamMockServer {
             mockedMessage?[messageKey.id.rawValue] = messageId
         }
         if let attachments = attachments {
-            mockedMessage?[MessagePayloadsCodingKeys.attachments.rawValue] = attachments as? [[String: Any]]
+            mockedMessage?[messageKey.attachments.rawValue] = attachments as? [[String: Any]]
         }
         if let text = text {
             mockedMessage?[messageKey.text.rawValue] = text
@@ -84,10 +84,10 @@ public extension StreamMockServer {
             if [Links.youtube, Links.unsplash].contains(where: {text.contains($0)}) {
                 let jsonWithLink = text.contains(Links.youtube) ? MockFile.youtube : MockFile.unsplash
                 let json = TestData.toJson(jsonWithLink)[JSONKey.message] as? [String: Any]
-                let linkAttachments =  json?[MessagePayloadsCodingKeys.attachments.rawValue]
+                let linkAttachments =  json?[messageKey.attachments.rawValue]
                 var updatedAttachments = attachments as? [[String: Any]] ?? []
                 updatedAttachments += linkAttachments as? [[String: Any]] ?? []
-                mockedMessage?[MessagePayloadsCodingKeys.attachments.rawValue] = updatedAttachments
+                mockedMessage?[messageKey.attachments.rawValue] = updatedAttachments
             }
         }
         if let command = command {
@@ -96,7 +96,7 @@ public extension StreamMockServer {
         if let channelId = channelId {
             let channelType = ChannelType.messaging.rawValue
             mockedMessage?[messageKey.cid.rawValue] = "\(channelType):\(channelId)"
-            mockedMessage?[EventPayload.CodingKeys.channelId.rawValue] = channelId
+            mockedMessage?[eventKey.channelId.rawValue] = channelId
         }
         if let parentId = parentId {
             mockedMessage?[messageKey.parentId.rawValue] = parentId
@@ -242,8 +242,8 @@ public extension StreamMockServer {
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
         let user = setUpUser(source: responseMessage, details: UserDetails.lukeSkywalker)
-        let attachments = message?[MessagePayloadsCodingKeys.attachments.rawValue]
-            ?? responseMessage?[MessagePayloadsCodingKeys.attachments.rawValue]
+        let attachments = message?[messageKey.attachments.rawValue]
+            ?? responseMessage?[messageKey.attachments.rawValue]
         
         let mockedMessage = mockMessage(
             responseMessage,
@@ -289,8 +289,8 @@ public extension StreamMockServer {
         let timestamp: String = TestData.currentDate
         let user = setUpUser(source: responseMessage, details: UserDetails.lukeSkywalker)
         let quotedMessage = findMessageById(quotedMessageId)
-        let attachments = message?[MessagePayloadsCodingKeys.attachments.rawValue]
-            ?? responseMessage?[MessagePayloadsCodingKeys.attachments.rawValue]
+        let attachments = message?[messageKey.attachments.rawValue]
+            ?? responseMessage?[messageKey.attachments.rawValue]
         
         let mockedMessage = mockMessage(
             responseMessage,
@@ -338,8 +338,8 @@ public extension StreamMockServer {
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
         let user = setUpUser(source: responseMessage, details: UserDetails.lukeSkywalker)
-        let attachments = message?[MessagePayloadsCodingKeys.attachments.rawValue]
-            ?? responseMessage?[MessagePayloadsCodingKeys.attachments.rawValue]
+        let attachments = message?[messageKey.attachments.rawValue]
+            ?? responseMessage?[messageKey.attachments.rawValue]
         
         let mockedMessage = mockMessage(
             responseMessage,
@@ -389,8 +389,8 @@ public extension StreamMockServer {
         let timestamp: String = TestData.currentDate
         let user = setUpUser(source: responseMessage, details: UserDetails.lukeSkywalker)
         let quotedMessage = findMessageById(quotedMessageId)
-        let attachments = message?[MessagePayloadsCodingKeys.attachments.rawValue]
-            ?? responseMessage?[MessagePayloadsCodingKeys.attachments.rawValue]
+        let attachments = message?[messageKey.attachments.rawValue]
+            ?? responseMessage?[messageKey.attachments.rawValue]
         
         
         let mockedMessage = mockMessage(
@@ -437,7 +437,7 @@ public extension StreamMockServer {
             let parentMessage = findMessageById(parentId)
             websocketMessage(
                 parentMessage?[messageKey.text.rawValue] as? String,
-                channelId: httpMessage?[EventPayload.CodingKeys.channelId.rawValue] as? String,
+                channelId: httpMessage?[eventKey.channelId.rawValue] as? String,
                 messageId: parentId,
                 timestamp: parentMessage?[messageKey.createdAt.rawValue] as? String,
                 eventType: .messageUpdated,
@@ -450,7 +450,7 @@ public extension StreamMockServer {
         
         websocketMessage(
             messageText,
-            channelId: httpMessage?[EventPayload.CodingKeys.channelId.rawValue] as? String,
+            channelId: httpMessage?[eventKey.channelId.rawValue] as? String,
             messageId: httpMessage?[messageKey.id.rawValue] as? String,
             timestamp: messageTimestamp,
             messageType: messageType,
@@ -464,7 +464,7 @@ public extension StreamMockServer {
                 message?[messageKey.showReplyInChannel.rawValue] = showReplyInChannel
             }
             if let attachments = httpMessage?[messageKey.attachments.rawValue] as? [[String: Any]] {
-                message?[MessagePayloadsCodingKeys.attachments.rawValue] = attachments
+                message?[messageKey.attachments.rawValue] = attachments
             }
             if let quotedMessageId = httpMessage?[messageKey.quotedMessageId.rawValue] as? String {
                 let quotedMessage = self.findMessageById(quotedMessageId)
