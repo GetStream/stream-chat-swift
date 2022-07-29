@@ -4,9 +4,6 @@ on:
   schedule:
     # Runs "At 03:00 every night"
     - cron: '0 3 * * *'
-  push:
-    branches:
-      - "feature/BW-split-up-truncation-test"
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
@@ -63,38 +60,38 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure()
 
-  # build-and-test-debug:
-  #   name: Test LLC (Debug)
-  #   strategy:
-  #     matrix:
-  #       xcode: [13.4.1, 13.1]
-  #       os: [macos-12]
-  #       include:
-  #         - xcode: 12.5.1
-  #           os: macos-11
-  #     fail-fast: false
-  #   runs-on: ${{ matrix.os }}
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: ./.github/actions/bootstrap
-  #   - name: Run LLC Tests (Debug)
-  #     run: bundle exec fastlane test cron:true device:"iPhone 8"
-  #     timeout-minutes: 30
-  #     env:
-  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       GITHUB_EVENT: ${{ toJson(github.event) }}
-  #       XCODE_VERSION: ${{ matrix.xcode }}
-  #   - uses: test-summary/action@v1
-  #     with:
-  #       paths: fastlane/test_output/report.junit
-  #     if: failure()
-  #   - uses: 8398a7/action-slack@v3
-  #     with:
-  #       status: ${{ job.status }}
-  #       text: "You shall not pass!"
-  #       job_name: "${{ github.workflow }}: ${{ github.job }}"
-  #       fields: message,commit,author,action,workflow,job,took
-  #     env:
-  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-  #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
-  #     if: failure()
+  build-and-test-debug:
+    name: Test LLC (Debug)
+    strategy:
+      matrix:
+        xcode: [13.4.1, 13.1]
+        os: [macos-12]
+        include:
+          - xcode: 12.5.1
+            os: macos-11
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/bootstrap
+    - name: Run LLC Tests (Debug)
+      run: bundle exec fastlane test cron:true device:"iPhone 8"
+      timeout-minutes: 30
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+        XCODE_VERSION: ${{ matrix.xcode }}
+    - uses: test-summary/action@v1
+      with:
+        paths: fastlane/test_output/report.junit
+      if: failure()
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        job_name: "${{ github.workflow }}: ${{ github.job }}"
+        fields: message,commit,author,action,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: failure()
