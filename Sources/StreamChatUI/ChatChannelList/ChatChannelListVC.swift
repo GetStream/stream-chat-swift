@@ -19,7 +19,7 @@ open class ChatChannelListVC: _ViewController,
 
     private var isPaginatingChannels: Bool = false
     
-    /// A boolean value that determines if the chat channel list loading view is shown for loading state.
+    /// A boolean value that determines if the chat channel list view states are shown and handled by the SDK.
     open var isChatChannelListStatesEnabled: Bool {
         components.isChatChannelListStatesEnabled
     }
