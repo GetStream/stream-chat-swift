@@ -2680,7 +2680,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let savedMessage = try session.saveMessage(payload: message, for: channelId, syncOwnReactions: true, cache: nil)
             if isHardDeleted {
-                savedMessage?.isHardDeleted = isHardDeleted
+                savedMessage.isHardDeleted = isHardDeleted
             }
         }
 

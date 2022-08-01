@@ -13,6 +13,7 @@ final class MessageRepository_Spy: MessageRepository, Spy {
 
     var sendMessageResult: Result<ChatMessage, MessageRepositoryError>?
     var sendMessageCalls: [MessageId: (Result<ChatMessage, MessageRepositoryError>) -> Void] = [:]
+    var getMessageResult: Result<ChatMessage, Error>?
     var saveSuccessfullyDeletedMessageError: Error?
     let lock = NSLock()
     var updatedMessageLocalState: LocalMessageState?
@@ -45,6 +46,11 @@ final class MessageRepository_Spy: MessageRepository, Spy {
     override func saveSuccessfullyEditedMessage(for id: MessageId, completion: @escaping () -> Void) {
         record()
         completion()
+    }
+
+    override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        record()
+        getMessageResult.map { completion?($0) }
     }
 
     override func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: ((Error?) -> Void)? = nil) {

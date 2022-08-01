@@ -690,7 +690,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         for cid: ChannelId?,
         syncOwnReactions: Bool = true,
         cache: PreWarmedCache?
-    ) throws -> MessageDTO? {
+    ) throws -> MessageDTO {
         guard payload.channel != nil || cid != nil else {
             throw ClientError.MessagePayloadSavingFailure("""
             Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
@@ -710,23 +710,22 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         } else if let cid = cid {
             channelDTO = ChannelDTO.load(cid: cid, context: self)
         } else {
-            log.assertionFailure("Should never happen because either `cid` or `payload.channel` should be present.")
-            return nil
+            let description = "Should never happen because either `cid` or `payload.channel` should be present."
+            log.assertionFailure(description)
+            throw ClientError.MessagePayloadSavingFailure(description)
         }
 
         guard let channel = channelDTO else {
-            log.assertionFailure("Should never happen, a channel should have been fetched.")
-            return nil
+            let description = "Should never happen, a channel should have been fetched."
+            log.assertionFailure(description)
+            throw ClientError.MessagePayloadSavingFailure(description)
         }
         
         return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
     }
     
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO? {
-        guard let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache) else {
-            return nil
-        }
-
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+        let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
     }

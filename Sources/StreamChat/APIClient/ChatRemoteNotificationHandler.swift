@@ -83,12 +83,14 @@ public class ChatRemoteNotificationHandler {
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let database: DatabaseContainer
     let syncRepository: SyncRepository
+    let messageRepository: MessageRepository
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
         self.content = content
         database = client.databaseContainer
         syncRepository = client.syncRepository
+        messageRepository = client.messageRepository
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
@@ -127,14 +129,9 @@ public class ChatRemoteNotificationHandler {
     }
 
     private func getMessageAndSync(cid: ChannelId, messageId: String, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
-        let controller = client.messageController(cid: cid, messageId: messageId)
         let database = self.database
-        controller.synchronize { [weak self] error in
-            if let error = error {
-                log.error(error)
-                completion(nil, nil)
-            }
-            guard let message = controller.message else {
+        messageRepository.getMessage(cid: cid, messageId: messageId) { [weak self] result in
+            guard case let .success(message) = result else {
                 completion(nil, nil)
                 return
             }
