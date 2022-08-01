@@ -176,7 +176,7 @@ class CustomChannelLoadingView: ChatChannelListLoadingView {
 }
 ```
 
-Also, don't forget to set you custom implementation in the `Components` class.
+Don't forget to set your custom implementation in the `Components` class:
 
 ```swift
 Components.default.chatChannelListLoadingView = CustomChannelLoadingView.self
