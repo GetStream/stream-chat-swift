@@ -378,6 +378,41 @@ open class ChatMessageListVC: _ViewController,
         return isDifferentDay
     }
 
+    /// Show the actions that can be performed in a debounced message.
+    open func showActions(forDebouncedMessage message: ChatMessage) {
+        guard let cid = message.cid else {
+            return log.error("Message cid not found.")
+        }
+
+        let messageController = client.messageController(
+            cid: cid,
+            messageId: message.id
+        )
+
+        messageActionsVC = components.messageActionsVC.init()
+        messageActionsVC?.messageController = messageController
+        messageActionsVC?.channelConfig = dataSource?.channel(for: self)?.config
+        messageActionsVC?.delegate = self
+
+        guard let messageActions = messageActionsVC?.messageActionsForAlertMenu else {
+            return log.error("messageActionsVC: messageActionsForAlertMenu not found.")
+        }
+
+        let alert = UIAlertController(title: L10n.Message.Moderation.title, message: L10n.Message.Moderation.message, preferredStyle: .alert)
+
+        messageActions.forEach { messageAction in
+            alert.addAction(UIAlertAction(title: messageAction.title, style: messageAction.isDestructive ? .destructive : .default) { _ in
+                messageAction.action(messageAction)
+            })
+        }
+
+        alert.addAction(UIAlertAction(title: L10n.Alert.Actions.cancel, style: .destructive) { _ in
+            self.messageActionsVC = nil
+        })
+
+        navigationController?.present(alert, animated: true)
+    }
+
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     open func numberOfSections(in tableView: UITableView) -> Int {
@@ -462,42 +497,12 @@ open class ChatMessageListVC: _ViewController,
             return log.error("DataSource not found for the message list.")
         }
         
-        guard message.isBounced else {
-            didSelectMessageCell(at: indexPath)
+        if message.isBounced {
+            showActions(forDebouncedMessage: message)
             return
         }
-        
-        guard let cid = message.cid else {
-            return log.error("Message cid not found.")
-        }
-        
-        let messageController = client.messageController(
-            cid: cid,
-            messageId: message.id
-        )
 
-        messageActionsVC = components.messageActionsVC.init()
-        messageActionsVC?.messageController = messageController
-        messageActionsVC?.channelConfig = dataSource?.channel(for: self)?.config
-        messageActionsVC?.delegate = self
-        
-        guard let messageActions = messageActionsVC?.messageActionsForAlertMenu else {
-            return log.error("messageActionsVC: messageActionsForAlertMenu not found.")
-        }
-        
-        let alert = UIAlertController(title: L10n.Message.Moderation.title, message: L10n.Message.Moderation.message, preferredStyle: .alert)
-        
-        messageActions.forEach { messageAction in
-            alert.addAction(UIAlertAction(title: messageAction.title, style: messageAction.isDestructive ? .destructive : .default) { _ in
-                messageAction.action(messageAction)
-            })
-        }
-        
-        alert.addAction(UIAlertAction(title: L10n.Alert.Actions.cancel, style: .destructive) { _ in
-            self.messageActionsVC = nil
-        })
-                
-        navigationController?.present(alert, animated: true)
+        didSelectMessageCell(at: indexPath)
     }
 
     open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?) {
