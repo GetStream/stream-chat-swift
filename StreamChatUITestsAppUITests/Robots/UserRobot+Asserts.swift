@@ -53,14 +53,19 @@ extension UserRobot {
     }
     
     @discardableResult
-    func assertLastMessageTimestampInChannelPreviewIsHidden(
+    func assertLastMessageTimestampInChannelPreview(
+        isHidden: Bool,
         at cellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
         let cell = channelCell(withIndex: cellIndex, file: file, line: line)
         let timestamp = channelAttributes.lastMessageTime(in: cell)
-        XCTAssertFalse(timestamp.exists, "Timestamp is visible", file: file, line: line)
+        if isHidden {
+            XCTAssertFalse(timestamp.exists, "Timestamp is visible", file: file, line: line)
+        } else {
+            XCTAssertTrue(timestamp.wait().exists, "Timestamp is not visible", file: file, line: line)
+        }
         return self
     }
 
@@ -176,6 +181,21 @@ extension UserRobot {
         let message = attributes.text(in: messageCell).wait()
         let actualText = message.waitForText(text).text
         XCTAssertEqual(text, actualText, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertMessageCount(
+        _ expectedCount: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        if expectedCount == 0 {
+            cells.firstMatch.waitForDisappearance()
+        } else {
+            cells.waitCount(expectedCount - 1)
+        }
+        XCTAssertEqual(expectedCount, cells.count, file: file, line: line)
         return self
     }
 
@@ -615,6 +635,21 @@ extension UserRobot {
     func assertSendButtonIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
         let sendButton = MessageListPage.Composer.sendButton.waitForDisappearance()
         XCTAssertFalse(sendButton.exists, "Send button is visible", file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertThreadReplyCountButton(
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let threadReplyCountButton = attributes.threadReplyCountButton(in: messageCell).wait()
+        XCTAssertTrue(threadReplyCountButton.exists,
+                      "There is no thread reply count button",
+                      file: file,
+                      line: line)
         return self
     }
 }

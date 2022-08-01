@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix crash in ListDatabaseObserver.startObserving() [#2177](https://github.com/GetStream/stream-chat-swift/pull/2177)
 - Make BaseOperation thread safe [#2198](https://github.com/GetStream/stream-chat-swift/pull/2198)
+- Fix build issues in Xcode 14 beta [#2202](https://github.com/GetStream/stream-chat-swift/pull/2202)
 
 ## StramChatUI
 ### ✅ Added
