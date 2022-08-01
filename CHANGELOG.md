@@ -11,8 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Make BaseOperation thread safe [#2198](https://github.com/GetStream/stream-chat-swift/pull/2198)
 - Fix build issues in Xcode 14 beta [#2202](https://github.com/GetStream/stream-chat-swift/pull/2202)
 
-## StramChatUI
+## StreamChatUI
 ### ✅ Added
+- Add channel list states; empty, error and loading views [#2187](https://github.com/GetStream/stream-chat-swift/pull/2187)
 - Support for message moderation (NNBB) [#2103](https://github.com/GetStream/stream-chat-swift/pull/2103/files)
 
 # [4.19.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.19.0)

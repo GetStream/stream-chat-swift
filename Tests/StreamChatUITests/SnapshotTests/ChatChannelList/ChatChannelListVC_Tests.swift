@@ -60,10 +60,9 @@ final class ChatChannelListVC_Tests: XCTestCase {
     }
 
     func test_emptyAppearance() {
-        mockedChannelListController.simulateInitial(
-            channels: [],
-            state: .remoteDataFetched
-        )
+        vc.components.isChatChannelListStatesEnabled = true
+        vc.executeLifecycleMethods()
+        mockedChannelListController.simulate(state: .remoteDataFetched)
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
     
@@ -91,6 +90,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         }
 
         var components = Components.mock
+        components.isChatChannelListStatesEnabled = false
         components.channelCellSeparator = TestView.self
         vc.components = components
 
@@ -177,6 +177,30 @@ final class ChatChannelListVC_Tests: XCTestCase {
         channelListVC.components = components
 
         XCTAssert(channelListVC.collectionViewLayout is OtherCollectionLayout)
+    }
+    
+    func test_didChangeState_whenRemoteDataFetchedAndChannelsAreEmpty_thenEmptyViewIsShown() {
+        // GIVEN
+        let emptyViewHidden = false
+        vc.components.isChatChannelListStatesEnabled = true
+        
+        // WHEN
+        vc.controller(vc.controller, didChangeState: .remoteDataFetched)
+        
+        // THEN
+        XCTAssertEqual(emptyViewHidden, vc.emptyView.isHidden)
+    }
+    
+    func test_didChangeState_whenRemoteDataFetchedFailed_thenErrorViewIsShown() {
+        // GIVEN
+        let errorViewHidden = false
+        vc.components.isChatChannelListStatesEnabled = true
+        
+        // WHEN
+        vc.controller(vc.controller, didChangeState: .remoteDataFetchFailed(ClientError()))
+        
+        // THEN
+        XCTAssertEqual(errorViewHidden, vc.channelListErrorView.isHidden)
     }
 }
 

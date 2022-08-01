@@ -141,6 +141,7 @@ private extension DemoAppCoordinator {
         let channelListVC = DemoChatChannelListVC.make(with: controller)
         channelListVC.demoRouter?.onLogout = onLogout
         channelListVC.selectedChannel = selectedChannel
+        channelListVC.components.isChatChannelListStatesEnabled = true
         return channelListVC
     }
     
