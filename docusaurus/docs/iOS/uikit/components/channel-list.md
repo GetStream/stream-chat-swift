@@ -182,7 +182,7 @@ Don't forget to set your custom implementation in the `Components` class:
 Components.default.chatChannelListLoadingView = CustomChannelLoadingView.self
 ```
 
-You can set your custom views for the channel list loading states when configuring your Components instance by replacing the following views as shown above:
+You can set your custom views for the channel list states when configuring your Components instance by replacing the following views as shown above:
 
 ```swift
 // In Components.swift:
