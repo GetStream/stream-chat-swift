@@ -706,8 +706,12 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertTrue(message.failedToBeSentDueToModeration)
         
         // Delete second message
-        messageUpdater.deleteMessage(messageId: secondMessageId, hard: false)
-        
+        let expectation = expectation(description: "deleteMessage completes")
+        messageUpdater.deleteMessage(messageId: secondMessageId, hard: false) { _ in
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 0.1)
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         
         // Assert channel preview is updated with the previous message
