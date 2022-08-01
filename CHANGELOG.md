@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### ✅ Added
-- Add channel list states; empty, error and loading views.
+- Add channel list states; empty, error and loading views [#2187](https://github.com/GetStream/stream-chat-swift/pull/2187)
 
 # [4.19.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.19.0)
 _July 21, 2022_
