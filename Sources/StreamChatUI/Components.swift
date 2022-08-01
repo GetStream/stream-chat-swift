@@ -313,7 +313,7 @@ public struct Components {
     public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
     
     /// A boolean value that determines whether the Channel list default loading states (empty, error and loading views) are handled by the Stream SDK. It is false by default.
-    /// By default it is false, it does not show empty or error views and just shows a spinner indicator for the loading state. If set to true, the empty, error and shimmer loading views are shown instead.
+    /// If it is false, it does not show empty or error views and just shows a spinner indicator for the loading state. If set to true, the empty, error and shimmer loading views are shown instead.
     public var isChatChannelListStatesEnabled = false
 
     // MARK: - Composer components
