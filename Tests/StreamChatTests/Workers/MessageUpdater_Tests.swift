@@ -572,6 +572,148 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(messageAfterHardDelete?.isHardDeleted, false)
     }
     
+    func test_deleteBouncedMessage_isDeletedLocally_whenLocalStateIsSendingFailed() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+
+        // Flush the database
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create message authored by current user in the database
+        try database.createMessage(id: messageId, authorId: currentUserId)
+        
+        // Simulate message on a state where it failed to be sent due to moderation
+        try database.writeSynchronously { session in
+            guard let messageDTO = session.message(id: messageId) else { return }
+            
+            messageDTO.isBounced = true
+            messageDTO.localMessageState = .sendingFailed
+        }
+
+        // Simulate `deleteMessage(messageId:)` call
+        messageUpdater.deleteMessage(messageId: messageId, hard: false)
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert Bounced Message Gets marked as failedToBeSentDueToModeration as expected
+        AssertAsync.willBeEqual(message.failedToBeSentDueToModeration, true)
+
+        // Assert Bounced Message Gets locally deleted
+        AssertAsync.willBeEqual(message.type, MessageType.deleted.rawValue)
+        
+        // The message is marked has being hard deleted
+        XCTAssertEqual(message.isHardDeleted, true)
+    }
+    
+    func test_deleteBouncedMessage_isNotDeletedLocally_whenLocalStateIsNotSendingFailed() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+
+        // Flush the database
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create message authored by current user in the database
+        try database.createMessage(id: messageId, authorId: currentUserId)
+        
+        // Simulate message on a state where it failed to be sent due to moderation
+        try database.writeSynchronously { session in
+            guard let messageDTO = session.message(id: messageId) else { return }
+            
+            messageDTO.isBounced = true
+        }
+
+        // Simulate `deleteMessage(messageId:)` call
+        messageUpdater.deleteMessage(messageId: messageId, hard: false)
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert Bounced Message is not marked as failedToBeSentDueToModeration
+        AssertAsync.willBeEqual(message.failedToBeSentDueToModeration, false)
+
+        // Assert Bounced Message Does not get deleted locally
+        AssertAsync.willBeEqual(message.type, MessageType.regular.rawValue)
+    }
+    
+    func test_deleteBouncedMessage_updatesChannelPreviewCorrectly() throws {
+        let firstMessageId: MessageId = .unique
+        let secondMessageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let emptyChannelPayload: ChannelPayload = .dummy(channel: .dummy(cid: cid))
+
+        // Flush the database
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
+        
+        let firstPreviewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: firstMessageId,
+            authorUserId: .unique
+        )
+        
+        let secondPreviewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: secondMessageId,
+            authorUserId: .unique
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: emptyChannelPayload.channel,
+            messages: [firstPreviewMessage, secondPreviewMessage]
+        )
+        
+        // Save channel information to database and mark message as failedToBeSentDueToModeration
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            
+            guard let messageDTO = session.message(id: secondMessageId) else { return }
+            
+            messageDTO.isBounced = true
+            messageDTO.localMessageState = .sendingFailed
+        }
+        
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: secondMessageId))
+        
+        // Assert message is marked as failedToBeSentDueToModeration
+        XCTAssertTrue(message.failedToBeSentDueToModeration)
+        
+        // Delete second message
+        messageUpdater.deleteMessage(messageId: secondMessageId, hard: false)
+        
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        
+        // Assert channel preview is updated with the previous message
+        XCTAssertEqual(channelDTO.previewMessage?.id, firstPreviewMessage.id)
+    }
+    
     // MARK: Get message
     
     func test_getMessage_makesCorrectAPICall() {

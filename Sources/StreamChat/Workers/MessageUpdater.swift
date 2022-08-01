@@ -60,13 +60,24 @@ class MessageUpdater: Worker {
                 // to try to delete the message on the backend.
                 return
             }
-
-            messageDTO.isHardDeleted = hard
             
-            if messageDTO.existsOnlyLocally && !isLocalStorageEnabled {
+            // Hard Deleting is necessary for bounced messages, since these messages are never stored on the cloud
+            // an apiClient request to delete them would never be triggered.
+            let shouldBeHardDeleted = hard || messageDTO.failedToBeSentDueToModeration
+            let shouldAllowLocallyStoredMessagesToBeDeleted = !isLocalStorageEnabled || messageDTO.failedToBeSentDueToModeration
+            
+            messageDTO.isHardDeleted = shouldBeHardDeleted
+            
+            if messageDTO.existsOnlyLocally && shouldAllowLocallyStoredMessagesToBeDeleted {
                 messageDTO.type = MessageType.deleted.rawValue
                 messageDTO.deletedAt = DBDate()
                 shouldDeleteOnBackend = false
+                
+                // Ensures bounced message deletion updates the channel preview. Bounced messages are not stored on the backend,
+                // so there would be no incoming websocket payload event `.messageDeleted` to trigger that update.
+                if let channelDTO = messageDTO.previewOfChannel, let channelId = try? ChannelId(cid: channelDTO.cid) {
+                    channelDTO.previewMessage = session.preview(for: channelId)
+                }
             } else {
                 messageDTO.localMessageState = .deleting
             }
@@ -215,6 +226,10 @@ class MessageUpdater: Worker {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
+                    if let channelDTO = session.channel(cid: cid) {
+                        channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
+                    }
+                    
                     session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
                 }, completion: { error in
                     if let error = error {

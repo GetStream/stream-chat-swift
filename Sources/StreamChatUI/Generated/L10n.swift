@@ -192,6 +192,12 @@ internal enum L10n {
         internal static var confirmationTitle: String { L10n.tr("Localizable", "message.actions.flag.confirmation-title") }
       }
     }
+    internal enum Moderation {
+      /// Please select any of the following options to proceed
+      internal static var message: String { L10n.tr("Localizable", "message.moderation.message") }
+      /// This message has been moderated
+      internal static var title: String { L10n.tr("Localizable", "message.moderation.title") }
+    }
     internal enum Sending {
       /// UPLOADING FAILED
       internal static var attachmentUploadingFailed: String { L10n.tr("Localizable", "message.sending.attachment-uploading-failed") }

@@ -54,7 +54,7 @@ final class RequestDecoder_Tests: XCTestCase {
     
     func test_decodingResponseWithServerError() throws {
         // Prepare test data to simulate error payload from the server
-        let errorPayload = ErrorPayload(code: 0, message: "Test", statusCode: 400)
+        let errorPayload = ErrorPayload(code: 0, message: "Test", statusCode: 400, details: [])
         let data = try JSONEncoder.stream.encode(errorPayload)
         let response = HTTPURLResponse(url: .unique(), statusCode: 400, httpVersion: nil, headerFields: nil)
         
@@ -68,7 +68,7 @@ final class RequestDecoder_Tests: XCTestCase {
     
     func test_decodingResponseWithServerError_containingExpiredToken() throws {
         // Prepare test data to simulate the "token expired" server error
-        let errorPayload = ErrorPayload(code: 40, message: "Test", statusCode: 400)
+        let errorPayload = ErrorPayload(code: 40, message: "Test", statusCode: 400, details: [])
         let data = try JSONEncoder.stream.encode(errorPayload)
         let response = HTTPURLResponse(url: .unique(), statusCode: 400, httpVersion: nil, headerFields: nil)
         

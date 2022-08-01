@@ -491,7 +491,22 @@ extension ChatChannel {
     }
 }
 
-// Helpers
+// MARK: - Helpers
+
+extension ChannelDTO {
+    /// Whenever a synced message fails being edited due to moderation it remains on a stale state, this ensures to restore messages to a clean state.
+    func cleanMessagesThatFailedToBeEditedDueToModeration() {
+        let failedEditAttempts = messages.filter { $0.failedToBeEditedDueToModeration }
+        
+        failedEditAttempts.forEach {
+            $0.isBounced = false
+            $0.localMessageState = nil
+        }
+    }
+}
+
+// MARK: - Private Helpers
+
 private extension ChannelDTO {
     /// Updates the `oldestMessageAt` of the channel. It should only updates if the current `messages: [Message]`
     /// is older than the current `ChannelDTO.oldestMessageAt`, unless the current `ChannelDTO.oldestMessageAt`

@@ -411,7 +411,7 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
 
         // Simulate WebSocketConnection change to "disconnected"
-        let error = ClientError(with: ErrorPayload(code: 40, message: "", statusCode: 200))
+        let error = ClientError(with: ErrorPayload(code: 40, message: "", statusCode: 200, details: []))
         testEnv.webSocketClient?
             .connectionStateDelegate?
             .webSocketClient(

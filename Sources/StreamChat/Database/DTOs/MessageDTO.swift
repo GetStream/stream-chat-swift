@@ -22,6 +22,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var showReplyInChannel: Bool
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data?
+    @NSManaged var isBounced: Bool
     @NSManaged var isSilent: Bool
     @NSManaged var isShadowed: Bool
     @NSManaged var reactionScores: [String: Int]
@@ -427,11 +428,23 @@ class MessageDTO: NSManagedObject {
     }
 }
 
+// MARK: - State Helpers
+
 extension MessageDTO {
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     var localMessageState: LocalMessageState? {
         get { localMessageStateRaw.flatMap(LocalMessageState.init(rawValue:)) }
         set { localMessageStateRaw = newValue?.rawValue }
+    }
+    
+    /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
+    var failedToBeEditedDueToModeration: Bool {
+        localMessageState == .syncingFailed && isBounced == true
+    }
+    
+    /// When a message fails to get synced because it was bounced by the moderation API it will return true to this state.
+    var failedToBeSentDueToModeration: Bool {
+        localMessageState == .sendingFailed && isBounced == true
     }
 }
 
@@ -905,6 +918,7 @@ private extension ChatMessage {
         parentMessageId = dto.parentMessageId
         showReplyInChannel = dto.showReplyInChannel
         replyCount = Int(dto.replyCount)
+        isBounced = dto.isBounced
         isSilent = dto.isSilent
         isShadowed = dto.isShadowed
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
