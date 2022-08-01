@@ -670,7 +670,7 @@ final class MessageUpdater_Tests: XCTestCase {
             }
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 1)
+        waitForExpectations(timeout: 0.1)
         
         let firstPreviewMessage: MessagePayload = .dummy(
             type: .regular,
