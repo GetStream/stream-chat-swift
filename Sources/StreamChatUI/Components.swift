@@ -302,6 +302,19 @@ public struct Components {
 
     /// The view that shows a number of unread messages in channel.
     public var channelUnreadCountView: ChatChannelUnreadCountView.Type = ChatChannelUnreadCountView.self
+    
+    /// The view that is displayed when there are no channels on the list, i.e. when is on empty state.
+    public var channelListEmptyView: ChatChannelListEmptyView.Type = ChatChannelListEmptyView.self
+    
+    /// View that shows that some error occurred on ChatChannelList.
+    public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
+    
+    /// View that shows when loading the Channel list.
+    public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
+    
+    /// A boolean value that determines whether the Channel list default loading states (empty, error and loading views) are handled by the Stream SDK. It is false by default.
+    /// If it is false, it does not show empty or error views and just shows a spinner indicator for the loading state. If set to true, the empty, error and shimmer loading views are shown instead.
+    public var isChatChannelListStatesEnabled = false
 
     // MARK: - Composer components
 
