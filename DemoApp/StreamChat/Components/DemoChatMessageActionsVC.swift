@@ -12,7 +12,6 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
     override var messageActions: [ChatMessageActionItem] {
         var actions = super.messageActions
         if message?.isSentByCurrentUser == true {
-            
             if message?.isBounced == false {
                 actions.append(pinMessageActionItem())
             }
