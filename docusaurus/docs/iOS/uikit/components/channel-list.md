@@ -146,7 +146,7 @@ class CustomChatChannelListVC: ChatChannelListVC {
 
 ![Empty View](../../assets/channel-list-custom-error-view.png)
 
-Also, let's see an example of how you can totally replace pur error view with your own implementation.
+Now, let's see an example of how you can totally replace our loading view with your own implementation.
 
 ```swift
 class CustomChannelLoadingView: ChatChannelListLoadingView {
