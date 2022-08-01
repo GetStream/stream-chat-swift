@@ -149,7 +149,7 @@ class CustomChatChannelListVC: ChatChannelListVC {
 Now, let's see an example of how you can totally replace our loading view with your own implementation.
 
 ```swift
-class CustomChannelLoadingView: ChatChannelListLoadingView {
+class CustomChannelListLoadingView: ChatChannelListLoadingView {
 
     lazy var customLoadingView: CustomLoadingView = {
         // You implementation...
