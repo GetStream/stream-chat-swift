@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Make BaseOperation thread safe [#2198](https://github.com/GetStream/stream-chat-swift/pull/2198)
 - Fix build issues in Xcode 14 beta [#2202](https://github.com/GetStream/stream-chat-swift/pull/2202)
 - Improve consistency when retrieving Message after Push Notification [#2200](https://github.com/GetStream/stream-chat-swift/pull/2200)
+- Make sure ChannelDTO is still valid when accessing Lazy blocks [#2204](https://github.com/GetStream/stream-chat-swift/pull/2204)
 
 ## StreamChatUI
 ### ✅ Added
