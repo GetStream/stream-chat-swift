@@ -5,10 +5,6 @@
 import UIKit
 
 /// Stream's custom transitioning delegate to handle a modal presentation.
-///
-/// This should be used if you are presenting the ``ChatChannelVC`` in a modal.
-/// The reason this custom transition should be used instead of the native one is because we use an inverted
-/// `UITableView` for the message list component which it doesn't play well with the native modal transition.
 open class StreamModalTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
     public func presentationController(
         forPresented presented: UIViewController,

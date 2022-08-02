@@ -159,9 +159,9 @@ open class ChatMessageLayoutOptionsResolver {
         }
 
         // The current message is the last message so it's either a standalone or last in sequence.
-        guard messageIndexPath.item > 0 else { return true }
+        guard messageIndexPath.item < messages.count - 1 else { return true }
 
-        let nextMessageIndex = messages.index(before: messageIndex)
+        let nextMessageIndex = messages.index(after: messageIndex)
         guard let nextMessage = messages[safe: nextMessageIndex] else {
             indexNotFoundAssertion()
             return true

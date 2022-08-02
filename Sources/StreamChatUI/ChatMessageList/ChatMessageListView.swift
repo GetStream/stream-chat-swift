@@ -29,7 +29,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     open func setUp() {
         keyboardDismissMode = .onDrag
         separatorStyle = .none
-        transform = .mirrorY
+        contentInsetAdjustmentBehavior = .never
     }
     
     open func setUpAppearance() { /* default empty implementation */ }
@@ -113,36 +113,26 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             guard let cell = cell else { return nil }
             return self?.indexPath(for: cell)
         }
-        
-        cell.contentView.transform = .mirrorY
 
         return cell
     }
     
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
-        let rowsRange = 0..<numberOfRows(inSection: 0)
-        let lastMessageIndexPath = IndexPath(row: 0, section: 0)
-        let prevMessageIndexPath = IndexPath(row: 1, section: 0)
-
-        if rectForRow(at: prevMessageIndexPath).minY < contentOffset.y,
-           rowsRange.contains(prevMessageIndexPath.row) {
-            scrollToRow(at: prevMessageIndexPath, at: .top, animated: animated)
-        }
-        
-        if rowsRange.contains(lastMessageIndexPath.row) {
-            scrollToRow(at: lastMessageIndexPath, at: .top, animated: animated)
-        }
+        let numberOfRows = numberOfRows(inSection: 0)
+        guard numberOfRows > 1 else { return }
+        let lastMessageIndexPath = IndexPath(row: numberOfRows - 1, section: 0)
+        scrollToRow(at: lastMessageIndexPath, at: .bottom, animated: animated)
     }
     
     /// A Boolean that returns true if the bottom cell is fully visible.
     /// Which is also means that the collection view is fully scrolled to the boom.
     open var isLastCellFullyVisible: Bool {
-        guard numberOfRows(inSection: 0) > 0 else { return false }
-        
-        let cellRect = rectForRow(at: .init(row: 0, section: 0))
-        
-        return cellRect.minY >= contentOffset.y
+        let numberOfRows = numberOfRows(inSection: 0)
+        guard numberOfRows > 0 else { return false }
+
+        let lastIndexPath = IndexPath(item: numberOfRows - 1, section: 0)
+        return indexPathsForVisibleRows?.contains(lastIndexPath) == true
     }
     
     /// Updates the table view data with given `changes`.
@@ -154,8 +144,4 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             completion?()
         }
     }
-}
-
-private extension CGAffineTransform {
-    static let mirrorY = Self(scaleX: 1, y: -1)
 }

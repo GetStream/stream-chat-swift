@@ -117,9 +117,7 @@ open class ChatMessageListVC: _ViewController,
 
         view.addSubview(listView)
         listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
-        // Add a top padding to the table view so that the top message is not in the edge of the nav bar
-        // Note: we use "bottom" because the table view is inverted.
-        listView.contentInset = .init(top: 0, left: 0, bottom: 8, right: 0)
+        listView.contentInset = .init(top: 8, left: 0, bottom: 0, right: 0)
 
         view.addSubview(typingIndicatorView)
         typingIndicatorView.isHidden = true
@@ -334,7 +332,7 @@ open class ChatMessageListVC: _ViewController,
             return false
         }
         
-        let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
+        let previousIndexPath = IndexPath(row: indexPath.row - 1, section: indexPath.section)
         guard let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) else {
             // If previous message doesn't exist show the separator as well.
             return true

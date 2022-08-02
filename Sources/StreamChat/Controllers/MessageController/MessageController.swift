@@ -601,7 +601,7 @@ private extension ChatMessageController {
                 return nil
             }
 
-            let sortAscending = self.listOrdering == .topToBottom ? false : true
+            let sortAscending = self.listOrdering == .topToBottom ? true : false
             let deletedMessageVisibility = self.client.databaseContainer.viewContext
                 .deletedMessagesVisibility ?? .visibleForCurrentUser
             let shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages ?? false
