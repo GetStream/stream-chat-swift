@@ -382,8 +382,27 @@ open class ChatMessageListVC: _ViewController,
         return cell
     }
 
+    private var cellHeightsCache: [MessageId: CGFloat] = [:]
+
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if isFirstLoad {
+            scrollToMostRecentMessage(animated: false)
+            isFirstLoad = false
+        }
+
+        if let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) {
+            cellHeightsCache[message.id] = cell.bounds.size.height
+        }
+
         delegate?.chatMessageListVC(self, willDisplayMessageAt: indexPath)
+    }
+
+    open func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        if let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) {
+            return cellHeightsCache[message.id] ?? UITableView.automaticDimension
+        }
+
+        return UITableView.automaticDimension
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
