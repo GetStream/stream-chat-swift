@@ -148,6 +148,23 @@ open class ChatChannelVC: _ViewController,
         keyboardHandler.stop()
     }
 
+    /// Handles loading the previous messages.
+    open func loadPreviousMessages() {
+        guard channelController.state == .remoteDataFetched else {
+            return
+        }
+        guard !isLoadingPreviousMessages else {
+            return
+        }
+        isLoadingPreviousMessages = true
+
+        messageListVC.showLoadingPreviousMessagesView()
+        channelController.loadPreviousMessages { [weak self] _ in
+            self?.isLoadingPreviousMessages = false
+            self?.messageListVC.hideLoadingPreviousMessagesView()
+        }
+    }
+
     // MARK: - ChatMessageListVCDataSource
     
     public var messages: [ChatMessage] {
@@ -186,26 +203,7 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if channelController.state != .remoteDataFetched {
-            return
-        }
-
-        guard messageListVC.listView.isTrackingOrDecelerating else {
-            return
-        }
-
-        if indexPath.row < channelController.messages.count - 10 {
-            return
-        }
-
-        guard !isLoadingPreviousMessages else {
-            return
-        }
-        isLoadingPreviousMessages = true
-
-        channelController.loadPreviousMessages { [weak self] _ in
-            self?.isLoadingPreviousMessages = false
-        }
+        // No-op
     }
 
     open func chatMessageListVC(
@@ -245,6 +243,10 @@ open class ChatChannelVC: _ViewController,
         with gestureRecognizer: UITapGestureRecognizer
     ) {
         messageComposerVC.dismissSuggestions()
+    }
+
+    open func chatMessageListVCShouldLoadPreviousMessages(_ vc: ChatMessageListVC) {
+        loadPreviousMessages()
     }
 
     // MARK: - ChatChannelControllerDelegate

@@ -46,4 +46,11 @@ public protocol ChatMessageListVCDelegate: AnyObject {
         didTapOnMessageListView messageListView: ChatMessageListView,
         with gestureRecognizer: UITapGestureRecognizer
     )
+
+    /// Tells the delegate to load more messages.
+    /// - Parameters:
+    ///   - vc: The message list  informing the delegate of this event.
+    func chatMessageListVCShouldLoadPreviousMessages(
+        _ vc: ChatMessageListVC
+    )
 }

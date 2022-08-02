@@ -74,11 +74,31 @@ open class ChatMessageListVC: _ViewController,
         .init()
         .withoutAutoresizingMaskConstraints
 
+    open private(set) lazy var loadingPreviousMessagesView: UIView = {
+        let spinner: UIActivityIndicatorView
+        if #available(iOS 13.0, *) {
+            spinner = UIActivityIndicatorView(style: .medium)
+        } else {
+            spinner = UIActivityIndicatorView(style: .white)
+        }
+        spinner.startAnimating()
+        spinner.frame = .init(x: 0, y: 0, width: listView.bounds.width, height: 60)
+        return spinner
+    }()
+
     /// A Boolean value indicating wether the scroll to bottom button is visible.
     open var isScrollToBottomButtonVisible: Bool {
-        let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
+        let numberOfRows = listView.numberOfRows(inSection: 0)
+        guard numberOfRows > 0 else { return false }
 
-        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
+        // The reason we use 3rd message, and not the 1st (Newest message)
+        // is avoid flickering when inserting new messages since for a short moment
+        // the newest message being inserted is not fully visible
+        let thirdMessageIndexPath = IndexPath(item: numberOfRows - 2, section: 0)
+        let isThirdMessageFullyVisible = listView.indexPathsForVisibleRows?.contains(thirdMessageIndexPath) == true
+
+        let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
+        return !isThirdMessageFullyVisible && isMoreContentThanOnePage
     }
 
     /// A formatter that converts the message date to textual representation.
@@ -94,6 +114,10 @@ open class ChatMessageListVC: _ViewController,
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
     }
+
+    /// A boolean flag to check if the first loading has been done.
+    /// If it is the first loading, we want to scroll to the bottom.
+    internal var isFirstLoad = true
     
     override open func setUp() {
         super.setUp()
@@ -119,6 +143,10 @@ open class ChatMessageListVC: _ViewController,
         listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
         listView.contentInset = .init(top: 8, left: 0, bottom: 0, right: 0)
 
+        // Setup loading previous messages view
+        listView.tableHeaderView = loadingPreviousMessagesView
+        hideLoadingPreviousMessagesView()
+
         view.addSubview(typingIndicatorView)
         typingIndicatorView.isHidden = true
         typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
@@ -142,6 +170,14 @@ open class ChatMessageListVC: _ViewController,
         }
     }
 
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if isFirstLoad {
+            scrollToMostRecentMessage(animated: false)
+        }
+    }
+
     override open func setUpAppearance() {
         super.setUpAppearance()
         
@@ -156,6 +192,7 @@ open class ChatMessageListVC: _ViewController,
         listView.delegate = self
         listView.dataSource = self
 
+        if listView.window != nil {
             listView.reloadData()
         }
     }
@@ -164,6 +201,16 @@ open class ChatMessageListVC: _ViewController,
         super.traitCollectionDidChange(previousTraitCollection)
 
         view.layoutIfNeeded()
+    }
+
+    /// Shows the loading view when fetching previous messages.
+    open func showLoadingPreviousMessagesView() {
+        listView.tableHeaderView = loadingPreviousMessagesView
+    }
+
+    /// Hides the loading view when fetching previous messages.
+    open func hideLoadingPreviousMessagesView() {
+        listView.tableHeaderView = nil
     }
     
     /// Returns layout options for the message on given `indexPath`.
@@ -212,18 +259,37 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToMostRecentMessage(animated: animated)
     }
 
-    /// Updates the collection view data with given `changes`.
+    /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-            // Because we use an inverted table view, we need to avoid animations since they look odd.
-            UIView.performWithoutAnimation {
-                listView.updateMessages(with: changes) { [weak self] in
-                    if let newMessageInserted = changes.first(where: { ($0.isInsertion || $0.isMoved) && $0.indexPath.row == 0 })?.item {
-                        if newMessageInserted.isSentByCurrentUser {
-                            self?.listView.scrollToMostRecentMessage()
-                        }
-                    }
-                    completion?()
+        let numberOfMessages = dataSource?.numberOfMessages(in: self) ?? 1
+        let loadedPreviousMessages = changes.first(where: { $0.isInsertion && $0.indexPath.row == 0 }) != nil
+        let previousContentOffset = listView.contentOffset
+        let previousContentSize = listView.contentSize
+        let isLastCellFullyVisibleBeforeUpdate = listView.isLastCellFullyVisible
+        UIView.performWithoutAnimation {
+            listView.updateMessages(with: changes) { [weak self] in
+                if loadedPreviousMessages {
+                    // When loading messages at top, reset the contentOffset to where it was before
+                    self?.resetContentOffset(
+                        previousContentOffset: previousContentOffset,
+                        previousContentSize: previousContentSize
+                    )
                 }
+
+                let isNewestChangeInsertionOrMove: (ListChange<ChatMessage>) -> Bool = {
+                    ($0.isInsertion || $0.isMove) && $0.indexPath.row == numberOfMessages - 1
+                }
+                if let newestMessage = changes.first(where: isNewestChangeInsertionOrMove)?.item,
+                   newestMessage.isSentByCurrentUser {
+                    // If newest message is inserted or it was moved (Giphy publish) by the current user,
+                    // then scroll to the bottom.
+                    self?.listView.scrollToMostRecentMessage()
+                } else if isLastCellFullyVisibleBeforeUpdate {
+                    // For every other updates, if the last message was visible, keep the message list to the bottom
+                    self?.listView.scrollToMostRecentMessage()
+                }
+
+                completion?()
             }
         }
     }
@@ -409,6 +475,10 @@ open class ChatMessageListVC: _ViewController,
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
 
         setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
+
+        if scrollView.contentOffset.y < 0 {
+            delegate?.chatMessageListVCShouldLoadPreviousMessages(self)
+        }
     }
 
     // MARK: - ChatMessageListScrollOverlayDataSource
@@ -584,11 +654,20 @@ open class ChatMessageListVC: _ViewController,
     }
 }
 
+private extension ChatMessageListVC {
+    func resetContentOffset(previousContentOffset: CGPoint, previousContentSize: CGSize) {
+        let afterContentOffset = listView.contentOffset
+        let afterContentSize = listView.contentSize
+        let newContentSize = CGPoint(
+            x: afterContentOffset.x,
+            y: previousContentOffset.y + (afterContentSize.height - previousContentSize.height)
+        )
+        listView.setContentOffset(newContentSize, animated: false)
     }
 }
 
 private extension ListChange {
-    var isMoved: Bool {
+    var isMove: Bool {
         switch self {
         case .move:
             return true
