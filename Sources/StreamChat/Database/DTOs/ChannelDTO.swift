@@ -381,7 +381,7 @@ extension ChatChannel {
         let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }
         
         let unreadCount: () -> ChannelUnreadCount = {
-            guard let currentUser = context.currentUser else { return .noUnread }
+            guard dto.isValid, let currentUser = context.currentUser else { return .noUnread }
             
             let currentUserRead = reads.first(where: { $0.user.id == currentUser.user.id })
             
@@ -412,7 +412,8 @@ extension ChatChannel {
         }
         
         let fetchMessages: () -> [ChatMessage] = {
-            MessageDTO
+            guard dto.isValid else { return [] }
+            return MessageDTO
                 .load(
                     for: dto.cid,
                     limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
@@ -424,7 +425,7 @@ extension ChatChannel {
         }
         
         let fetchLatestMessageFromUser: () -> ChatMessage? = {
-            guard let currentUser = context.currentUser else { return nil }
+            guard dto.isValid, let currentUser = context.currentUser else { return nil }
             
             return try? MessageDTO
                 .loadLastMessage(
