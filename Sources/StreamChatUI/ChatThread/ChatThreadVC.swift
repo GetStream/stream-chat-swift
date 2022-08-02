@@ -160,7 +160,7 @@ open class ChatThreadVC: _ViewController,
         let replies = Array(messageController.replies)
 
         if let threadRootMessage = messageController.message {
-            return replies + [threadRootMessage]
+            return [threadRootMessage] + replies
         }
 
         return replies
@@ -204,13 +204,19 @@ open class ChatThreadVC: _ViewController,
     }
 
     open func loadPreviousMessages() {
+        guard messageController.state == .remoteDataFetched else {
+            return
+        }
+
         guard !isLoadingPreviousMessages else {
             return
         }
         isLoadingPreviousMessages = true
 
+        messageListVC.showLoadingPreviousMessagesView()
         messageController.loadPreviousReplies { [weak self] _ in
             self?.isLoadingPreviousMessages = false
+            self?.messageListVC.hideLoadingPreviousMessagesView()
         }
     }
 
@@ -220,15 +226,7 @@ open class ChatThreadVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if messageController.state != .remoteDataFetched {
-            return
-        }
-
-        if indexPath.row < replies.count - 10 {
-            return
-        }
-        
-        loadPreviousMessages()
+        // No-op
     }
 
     open func chatMessageListVC(
@@ -266,22 +264,26 @@ open class ChatThreadVC: _ViewController,
         messageComposerVC.dismissSuggestions()
     }
 
+    open func chatMessageListVCShouldLoadPreviousMessages(_ vc: ChatMessageListVC) {
+        loadPreviousMessages()
+    }
+
     // MARK: - ChatMessageControllerDelegate
 
     open func messageController(
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        let indexPath = IndexPath(row: messageController.replies.count, section: 0)
+        let indexPathOfThreadParent = IndexPath(row: 0, section: 0)
 
         let listChange: ListChange<ChatMessage>
         switch change {
         case let .create(item):
-            listChange = .insert(item, index: indexPath)
+            listChange = .insert(item, index: indexPathOfThreadParent)
         case let .update(item):
-            listChange = .update(item, index: indexPath)
+            listChange = .update(item, index: indexPathOfThreadParent)
         case let .remove(item):
-            listChange = .remove(item, index: indexPath)
+            listChange = .remove(item, index: indexPathOfThreadParent)
         }
 
         messageListVC.updateMessages(with: [listChange])
@@ -291,6 +293,27 @@ open class ChatThreadVC: _ViewController,
         _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
+        /// Right now that we don't have an inverted table view anymore, the changes reported by FRC
+        /// are not correct. The reason is that FRC doesn't now about the thread parent message.
+        /// Previously there were was no problem because the replies were inverted, so insertions would
+        /// always come from the bottom, starting at index 0, now they start that index count < 1, so for
+        /// now we need to map all the list changes and increment by 1 to account the parent message.
+        let changes = changes.map { (change: ListChange<ChatMessage>) -> ListChange<ChatMessage> in
+            switch change {
+            case let .insert(item, index):
+                return .insert(item, index: IndexPath(item: index.item + 1, section: index.section))
+            case let .move(item, fromIndex, toIndex):
+                return .move(
+                    item,
+                    fromIndex: IndexPath(item: fromIndex.item + 1, section: fromIndex.section),
+                    toIndex: IndexPath(item: toIndex.item + 1, section: toIndex.section)
+                )
+            case let .update(item, index):
+                return .update(item, index: IndexPath(item: index.item + 1, section: index.section))
+            case let .remove(item, index):
+                return .remove(item, index: IndexPath(item: index.item + 1, section: index.section))
+            }
+        }
         messageListVC.updateMessages(with: changes)
     }
     
