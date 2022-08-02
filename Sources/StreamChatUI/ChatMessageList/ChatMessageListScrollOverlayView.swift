@@ -48,9 +48,6 @@ open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
                 else { return }
                 
                 let overlayText = self.dataSource?.scrollOverlay(self, textForItemAt: indexPath)
-                
-                // If we have no date we have no reason to display `dateView`
-                self.isHidden = (overlayText ?? "").isEmpty
                 self.content = overlayText
                 
                 // Apple's naming is quite weird as actually this property should rather be named `isScrolling`
@@ -62,6 +59,15 @@ open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
                 // so this handler is not called, this is handled by `scrollStateChanged`
                 // that reacts on `panGestureRecognizer` states and can handle this case properly
                 if !tb.isDragging {
+                    self.setAlpha(0)
+                } else {
+                    self.setAlpha(1)
+                }
+
+                /// If the date separators are enabled per cell, don't show the overlay
+                /// for the the top cell since the top cell has always a list date separator.
+                let isDateSeparatorEnabled = self.components.messageListDateSeparatorEnabled
+                if isDateSeparatorEnabled, refPointInListView.y < tb.rectForRow(at: indexPath).height {
                     self.setAlpha(0)
                 }
             }
@@ -105,6 +111,7 @@ open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
     open func setAlpha(_ alpha: CGFloat) {
         Animate(isAnimated: true) {
             self.alpha = alpha
+            self.isHidden = alpha == 0
         }
     }
 }
