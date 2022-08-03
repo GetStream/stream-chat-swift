@@ -114,35 +114,18 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         linkToScenario(withId: 183)
 
         GIVEN("user opens a channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         WHEN("user runs a giphy command in thread") {
-            userRobot.openThread().sendGiphy(send: false)
+            userRobot
+                .sendMessage("test")
+                .openThread()
+                .sendGiphy(send: false)
         }
         THEN("delivery status is hidden for ephemeral messages") {
             userRobot
                 .assertMessageDeliveryStatus(nil)
                 .assertMessageReadCount(readBy: 0)
-        }
-    }
-    
-    func test_userObservesAnimatedGiphy_afterShufflingAndSendingGiphyMessage() throws {
-        linkToScenario(withId: 277)
-        
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2054] Giphy is not loaded")
-
-        GIVEN("user opens a channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        WHEN("user sends a giphy using giphy command") {
-            userRobot.sendGiphy(shuffle: true)
-        }
-        THEN("user observes the animated gif") {
-            userRobot.assertGiphyImage()
         }
     }
     
