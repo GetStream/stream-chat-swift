@@ -188,6 +188,8 @@ private_lane :update_spm do |options|
         line.gsub(/(checksum: ")[a-z0-9]+(")/, "\\1#{stream_chat_checksum}\\2")
       when "StreamChatUI"
         line.gsub(/(checksum: ")[a-z0-9]+(")/, "\\1#{stream_chat_ui_checksum}\\2")
+      else
+        line
       end
 
     url_pattern = %r{(releases/download/)[.0-9]+(/)}
