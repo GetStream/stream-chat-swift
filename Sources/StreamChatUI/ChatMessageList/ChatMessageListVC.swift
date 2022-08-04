@@ -215,7 +215,7 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToMostRecentMessage(animated: animated)
     }
 
-    /// Updates the collection view data with given `changes`.
+    /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         // Because we use an inverted table view, we need to avoid animations since they look odd.
         UIView.performWithoutAnimation {

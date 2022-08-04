@@ -625,6 +625,12 @@ private extension ChatMessageController {
                 { try $0.asModel() as ChatMessage },
                 NSFetchedResultsController<MessageDTO>.self
             )
+            observer.onWillChange = { [weak self] in
+                self?.delegateCallback {
+                    guard let self = self else { return }
+                    $0.messageControllerWillChangeReplies(self)
+                }
+            }
             observer.onChange = { [weak self] changes in
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {
@@ -647,7 +653,10 @@ private extension ChatMessageController {
 public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>)
-    
+
+    /// The controller is notifying that the replies will be updated after this call.
+    func messageControllerWillChangeReplies(_ controller: ChatMessageController)
+
     /// The controller observed changes in the replies of the observed `ChatMessage`.
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>])
 
@@ -657,6 +666,8 @@ public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
 
 public extension ChatMessageControllerDelegate {
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {}
+
+    func messageControllerWillChangeReplies(_ controller: ChatMessageController) {}
     
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {}
 

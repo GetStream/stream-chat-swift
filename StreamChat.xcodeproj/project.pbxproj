@@ -1036,6 +1036,7 @@
 		ADA5A0F9276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA5A0F7276790C100E1C465 /* ChatMessageListDateSeparatorView.swift */; };
 		ADAA377125E43C3700C31528 /* ChatSuggestionsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsVC_Tests.swift */; };
 		ADAC47AA275A7C960027B672 /* ChatMessageContentView_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAC47A9275A7C960027B672 /* ChatMessageContentView_Documentation_Tests.swift */; };
+		ADB1ED4F289A8EEB009188B2 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = ADB1ED4E289A8EEB009188B2 /* DifferenceKit */; };
 		ADB22F7C25F1626200853C92 /* OnlineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB22F7A25F1626200853C92 /* OnlineIndicatorView.swift */; };
 		ADB22F7D25F1626200853C92 /* ChatPresenceAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB22F7B25F1626200853C92 /* ChatPresenceAvatarView.swift */; };
 		ADB4166C26208F1C00E623E3 /* AttachmentPreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */; };
@@ -3633,6 +3634,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADB1ED4F289A8EEB009188B2 /* DifferenceKit in Frameworks */,
 				E334B386282468F2002E9640 /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7634,6 +7636,7 @@
 			name = StreamChat;
 			packageProductDependencies = (
 				E334B385282468F2002E9640 /* Sentry */,
+				ADB1ED4E289A8EEB009188B2 /* DifferenceKit */,
 			);
 			productName = Sources;
 			productReference = 799C941B247D2F80001F1104 /* StreamChat.framework */;
@@ -7952,6 +7955,7 @@
 				A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */,
 				C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */,
 				E334B384282468F2002E9640 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				ADB1ED4D289A8EEB009188B2 /* XCRemoteSwiftPackageReference "DifferenceKit" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -12346,6 +12350,14 @@
 				version = 1.8.2;
 			};
 		};
+		ADB1ED4D289A8EEB009188B2 /* XCRemoteSwiftPackageReference "DifferenceKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ra1028/DifferenceKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ProxymanApp/atlantis";
@@ -12448,6 +12460,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
+		};
+		ADB1ED4E289A8EEB009188B2 /* DifferenceKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADB1ED4D289A8EEB009188B2 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
+			productName = DifferenceKit;
 		};
 		ADDFDE2A2779EC8A003B3B07 /* Atlantis */ = {
 			isa = XCSwiftPackageProductDependency;

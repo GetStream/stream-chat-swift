@@ -293,6 +293,10 @@ open class ChatThreadVC: _ViewController,
         messageListVC.updateMessages(with: [listChange])
     }
 
+    public func messageControllerWillChangeReplies(
+        _ controller: ChatMessageController
+    ) {}
+
     open func messageController(
         _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]

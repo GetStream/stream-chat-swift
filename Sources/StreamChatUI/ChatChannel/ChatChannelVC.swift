@@ -2,6 +2,7 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+import DifferenceKit
 import StreamChat
 import UIKit
 
@@ -149,9 +150,15 @@ open class ChatChannelVC: _ViewController,
     }
 
     // MARK: - ChatMessageListVCDataSource
-    
+
+    private var _messages: [DiffChatMessage] = []
+
     public var messages: [ChatMessage] {
-        Array(channelController.messages)
+        if _messages.isEmpty {
+            return Array(channelController.messages)
+        }
+
+        return _messages.map(\.message)
     }
     
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
@@ -159,11 +166,11 @@ open class ChatChannelVC: _ViewController,
     }
 
     open func numberOfMessages(in vc: ChatMessageListVC) -> Int {
-        channelController.messages.count
+        messages.count
     }
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
-        channelController.messages[safe: indexPath.item]
+        messages[safe: indexPath.item]
     }
 
     open func chatMessageListVC(
@@ -249,14 +256,75 @@ open class ChatChannelVC: _ViewController,
 
     // MARK: - ChatChannelControllerDelegate
 
+    var previousMessagesSnapshot: [DiffChatMessage] = []
+
+    open func channelControllerWillUpdateMessages(_ channelController: ChatChannelController) {
+        previousMessagesSnapshot = channelController.messages.map(DiffChatMessage.init)
+    }
+
     open func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
+        let target = Array(channelController.messages).map(DiffChatMessage.init)
+        let changeset = StagedChangeset(
+            source: previousMessagesSnapshot,
+            target: target
+        )
+
         if isLastMessageFullyVisible {
             channelController.markRead()
         }
-        messageListVC.updateMessages(with: changes)
+//        messageListVC.updateMessages(with: changes)
+
+//        messageListVC.listView.reload(
+//            using: changeset,
+//            with: .fade,
+//            setData: { [weak self] newData in
+//                self?._messages = newData
+//            },
+//            completion: {
+//                if changeset.first?.elementInserted.contains(.init(element: 0, section: 0)) == true {
+//                    self.messageListVC.listView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .bottom, animated: true)
+//                }
+//            }
+//        )
+
+        let newMessageInserted = changeset.first?.elementInserted.contains(.init(element: 0, section: 0)) == true
+
+        let reload = {
+            self.messageListVC.listView.reload(
+                using: changeset,
+                with: .fade,
+                setData: { [weak self] newData in
+                    self?._messages = newData
+                }
+            )
+        }
+
+        if messageListVC.listView.isLastCellFullyVisible {
+            UIView.performWithoutAnimation {
+                reload()
+            }
+        } else {
+            reload()
+        }
+
+        if newMessageInserted && messageListVC.listView.isLastCellFullyVisible {
+            UIView.performWithoutAnimation {
+                self.messageListVC.listView.reloadRows(at: [IndexPath(item: 1, section: 0)], with: .none)
+            }
+        }
+
+        if newMessageInserted && target.first?.message.isSentByCurrentUser == true {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.messageListVC.listView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .bottom, animated: true)
+            }
+        }
+
+//        if changeset.first?.elementInserted.contains(.init(element: 0, section: 0)) == true {
+//            messageListVC.listView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .bottom, animated: true)
+//        }
     }
 
     open func channelController(
@@ -289,5 +357,53 @@ open class ChatChannelVC: _ViewController,
     @objc func appMovedToForeground() {
         channelController.delegate = self
         messageListVC.dataSource = self
+    }
+}
+
+struct DiffChatMessage: Hashable, Differentiable {
+    let message: ChatMessage
+
+    func isContentEqual(to source: DiffChatMessage) -> Bool {
+        message.text == source.message.text
+            && message.type == source.message.type
+            && message.command == source.message.command
+            && message.arguments == source.message.arguments
+            && message.parentMessageId == source.message.parentMessageId
+            && message.showReplyInChannel == source.message.showReplyInChannel
+            && message.replyCount == source.message.replyCount
+            && message.extraData == source.message.extraData
+            && message.quotedMessage == source.message.quotedMessage
+            && message.isShadowed == source.message.isShadowed
+            && message.reactionCounts.count == source.message.reactionCounts.count
+            && message.reactionScores.count == source.message.reactionScores.count
+            && message.threadParticipants.count == source.message.threadParticipants.count
+            && message.attachmentCounts.count == source.message.attachmentCounts.count
+            && message.giphyAttachments == source.message.giphyAttachments
+            && message.localState == source.message.localState
+            && message.isFlaggedByCurrentUser == source.message.isFlaggedByCurrentUser
+            && message.readBy == source.message.readBy
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.message.id == rhs.message.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(message.id)
+    }
+}
+
+extension UITableView {
+    func reload<C>(
+        using stagedChangeset: StagedChangeset<C>,
+        with animation: @autoclosure () -> RowAnimation,
+        interrupt: ((Changeset<C>) -> Bool)? = nil,
+        setData: (C) -> Void,
+        completion: (() -> Void)? = nil
+    ) {
+        CATransaction.begin()
+        CATransaction.setCompletionBlock(completion)
+        reload(using: stagedChangeset, with: animation(), setData: setData)
+        CATransaction.commit()
     }
 }

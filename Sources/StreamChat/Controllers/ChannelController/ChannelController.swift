@@ -379,12 +379,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 ),
                 itemCreator: { try $0.asModel() as ChatMessage }
             )
+            observer.onWillChange = { [weak self] in
+                self?.delegateCallback {
+                    guard let self = self else { return }
+                    $0.channelControllerWillUpdateMessages(self)
+                }
+            }
             observer.onChange = { [weak self] changes in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
+                self?.delegateCallback {
+                    guard let self = self else { return }
                     log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
                     $0.channelController(self, didUpdateMessages: changes)
                 }
@@ -1378,6 +1381,11 @@ public protocol ChatChannelControllerDelegate: DataControllerStateDelegate {
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     )
+
+    /// The controller is notifying that the messages will be updated after this call.
+    func channelControllerWillUpdateMessages(
+        _ channelController: ChatChannelController
+    )
     
     /// The controller observed changes in the `Messages` of the observed channel.
     func channelController(
@@ -1399,6 +1407,10 @@ public extension ChatChannelControllerDelegate {
     func channelController(
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
+    ) {}
+
+    func channelControllerWillUpdateMessages(
+        _ channelController: ChatChannelController
     ) {}
     
     func channelController(
