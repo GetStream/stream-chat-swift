@@ -129,7 +129,7 @@ lane :publish_release do |options|
   push_pods(sync: options[:sync])
   # TODO: Update stream-chat-swift-integration-apps
 
-  UI.success("🎉🎉🎉🎉🎉 Github releases successfully created:\n 👉 stream-chat-swift: #{github_release['html_url']}\n👉 stream-chat-swift-spm: #{spm_github_release_url}")
+  UI.success("🎉🎉🎉🎉🎉🎉 Github releases successfully created:\n 👉 stream-chat-swift: #{github_release['html_url']}\n👉 stream-chat-swift-spm: #{spm_github_release_url}")
 end
 
 desc 'Read CHANGELOG'
