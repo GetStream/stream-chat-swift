@@ -189,14 +189,21 @@ extension NSManagedObjectContext {
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount)
-        dto.truncatedAt = payload.truncatedAt?.bridgeDate
-        // We don't always set `truncatedAt` directly since we also use this property as `hiddenAt`
-        // when a channel is hidden with `clearHistory`
-        // Backend doesn't send `truncatedAt` for this case and we reset it, causing the hidden messages to re-appear
-        // It's not possible to set `truncatedAt` to `nil` once it's set on backend side
-        // so it's safe to keep client-side changes when backend sends `nil`
-        if payload.truncatedAt != nil {
-            dto.truncatedAt = payload.truncatedAt?.bridgeDate
+
+        // Because `truncatedAt` is used, client side, for both truncation and channel hiding cases, we need to avoid using the
+        // value returned by the Backend in some cases.
+        //
+        // Whenever our Backend is not returning a value for `truncatedAt`, we simply do nothing. It is possible that our
+        // DTO already has a value for it if it has been hidden in the past, but we are not touching it.
+        //
+        // Whenever we do receive a value from our Backend, we have 2 options:
+        //  1. If we don't have a value for `truncatedAt` in the DTO -> We set the date from the payload
+        //  2. If we have a value for `truncatedAt` in the DTO -> We pick the latest date.
+        if let newTruncatedAt = payload.truncatedAt {
+            let canUpdateTruncatedAt = dto.truncatedAt.map { $0.bridgeDate < newTruncatedAt } ?? true
+            if canUpdateTruncatedAt {
+                dto.truncatedAt = newTruncatedAt.bridgeDate
+            }
         }
 
         dto.isFrozen = payload.isFrozen
