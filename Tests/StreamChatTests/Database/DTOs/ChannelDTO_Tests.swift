@@ -278,7 +278,7 @@ final class ChannelDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: newPayload, query: nil, cache: nil)
         }
-        g
+
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, newTruncatedAt.bridgeDate)
     }
 
