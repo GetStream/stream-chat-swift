@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.20.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.20.0)
+_August 02, 2022_
+
 ## StreamChat
 ### ✅ Added
 - Support for message moderation (NNBB) [#2103](https://github.com/GetStream/stream-chat-swift/pull/2103/files)
