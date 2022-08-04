@@ -240,7 +240,69 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.reads, [readToBeSaved])
         XCTAssertNil(readToBeRemoved)
     }
-    
+
+    func test_saveChannel_updatesTruncatedAt_whenExistingIsNil() throws {
+        let channelId: ChannelId = .unique
+        let originalPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: nil)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: originalPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertNil(database.viewContext.channel(cid: channelId)?.truncatedAt)
+
+        let newTruncatedAt = Date().addingTimeInterval(1200)
+        let newPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: newTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, newTruncatedAt.bridgeDate)
+    }
+
+    func test_saveChannel_updatesTruncatedAt_whenItsOlderThanExisting() throws {
+        let channelId: ChannelId = .unique
+        let originalTruncatedAt = Date()
+        let originalPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: originalTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: originalPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, originalTruncatedAt.bridgeDate)
+
+        let newTruncatedAt = Date().addingTimeInterval(1200)
+        let newPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: newTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newPayload, query: nil, cache: nil)
+        }
+        g
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, newTruncatedAt.bridgeDate)
+    }
+
+    func test_saveChannel_doesNotUpdateTruncatedAt_whenItsEarlierThanExisting() throws {
+        let channelId: ChannelId = .unique
+        let originalTruncatedAt = Date().addingTimeInterval(1200)
+        let originalPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: originalTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: originalPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, originalTruncatedAt.bridgeDate)
+
+        let newTruncatedAt = Date()
+        let newPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: newTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, originalTruncatedAt.bridgeDate)
+    }
+
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
     
