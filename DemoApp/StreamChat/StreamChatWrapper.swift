@@ -163,11 +163,3 @@ extension StreamChatWrapper {
         try? ChatPushNotificationInfo(content: response.notification.request.content)
     }
 }
-
-// MARK: Develop configuration
-
-extension StreamChatWrapper {
-    func setMessageDiffingEnabled(_ isEnabled: Bool) {
-        Components.default._messageListDiffingEnabled = isEnabled
-    }
-}
