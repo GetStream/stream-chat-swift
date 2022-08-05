@@ -9,10 +9,23 @@ import UIKit
 open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
-    /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a view.
-    private lazy var listChangeUpdater: ListChangeUpdater = TableViewListChangeUpdater(
-        tableView: self
-    )
+
+    // MARK: - Difference Kit Snapshot Handling
+
+    // The internal properties below is to handle the DifferenceKit API. Currently it is
+    // internal because these should actually be handled in the `ChatMessageListVC` but
+    // that would make this class obsolete especially the `updateMessages(changes:)` and
+    // it would require a lot of breaking changes. So for now, the Diff logic will live here.
+
+    /// The previous messages snapshot before the next update.
+    internal var previousMessagesSnapshot: [ChatMessage] = []
+    /// The new messages snapshot reported by the channel or message controller.
+    internal var newMessagesSnapshot: [ChatMessage] = []
+    /// This closure is to update the dataSource when DifferenceKit
+    /// reports the data source should be updated.
+    internal var onNewDataSource: (([ChatMessage]) -> Void)?
+
+    // MARK: Lifecycle
 
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -36,6 +49,8 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+
+    // MARK: Public API
     
     /// Calculates the cell reuse identifier for the given options.
     /// - Parameters:
@@ -151,8 +166,75 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
-        listChangeUpdater.performUpdate(with: changes) { _ in
-            completion?()
+        let reload = {
+            self.reloadMessages(
+                previousSnapshot: self.previousMessagesSnapshot,
+                newSnapshot: self.newMessagesSnapshot,
+                with: .fade,
+                completion: { [weak self] in
+                    if let newMessageInserted = changes.first(where: { ($0.isInsertion || $0.isMove) && $0.indexPath.row == 0 })?.item {
+                        // Scroll to the bottom if the new message was sent by the current user
+                        if newMessageInserted.isSentByCurrentUser {
+                            self?.scrollToMostRecentMessage()
+                        }
+                    }
+                    completion?()
+                }
+            )
+        }
+
+        let reloadPreviousMessage = {
+            self.reloadRows(
+                at: [IndexPath(item: 1, section: 0)],
+                with: .none
+            )
+        }
+
+        // When inserting new messages, we want to avoid weird animation
+        // but when these messages are not visible we actually want the animation
+        // because they avoid the message list jumps.
+        if isLastCellFullyVisible {
+            UIView.performWithoutAnimation {
+                reload()
+                reloadPreviousMessage()
+            }
+        } else {
+            reload()
+        }
+    }
+}
+
+// MARK: Helpers
+
+private extension ListChange {
+    var isMove: Bool {
+        switch self {
+        case .move:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isInsertion: Bool {
+        switch self {
+        case .insert:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var indexPath: IndexPath {
+        switch self {
+        case let .insert(_, index):
+            return index
+        case let .move(_, _, toIndex):
+            return toIndex
+        case let .update(_, index):
+            return index
+        case let .remove(_, index):
+            return index
         }
     }
 }

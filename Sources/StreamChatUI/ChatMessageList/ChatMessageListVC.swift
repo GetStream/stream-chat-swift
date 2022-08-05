@@ -217,17 +217,11 @@ open class ChatMessageListVC: _ViewController,
 
     /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        // Because we use an inverted table view, we need to avoid animations since they look odd.
-        UIView.performWithoutAnimation {
-            listView.updateMessages(with: changes) { [weak self] in
-                if let newMessageInserted = changes.first(where: { ($0.isInsertion || $0.isMoved) && $0.indexPath.row == 0 })?.item {
-                    if newMessageInserted.isSentByCurrentUser {
-                        self?.listView.scrollToMostRecentMessage()
-                    }
-                }
-                completion?()
-            }
+        listView.onNewDataSource = { [weak self] messages in
+            self?.dataSource?.messages = messages
         }
+
+        listView.updateMessages(with: changes, completion: completion)
     }
 
     /// Handles tap action on the table view.
@@ -626,38 +620,5 @@ open class ChatMessageListVC: _ViewController,
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
-    }
-}
-
-private extension ListChange {
-    var isMoved: Bool {
-        switch self {
-        case .move:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    var isInsertion: Bool {
-        switch self {
-        case .insert:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var indexPath: IndexPath {
-        switch self {
-        case let .insert(_, index):
-            return index
-        case let .move(_, _, toIndex):
-            return toIndex
-        case let .update(_, index):
-            return index
-        case let .remove(_, index):
-            return index
-        }
     }
 }

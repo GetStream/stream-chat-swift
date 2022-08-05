@@ -79,6 +79,9 @@ open class ChatThreadVC: _ViewController,
         messageController.delegate = self
         channelEventsController.delegate = self
 
+        // Set the initial data
+        messages = getRepliesWithThreadRootMessage(from: messageController)
+
         let completeSetUp: (ChatMessage?) -> Void = { [messageController, messageComposerVC] message in
             if messageComposerVC.content.threadMessage == nil,
                let message = messageController?.message {
@@ -146,43 +149,28 @@ open class ChatThreadVC: _ViewController,
     // MARK: - ChatMessageListVCDataSource
 
     public var messages: [ChatMessage] {
-        replies
-    }
-
-    open var replies: [ChatMessage] {
-        /*
-         Thread replies are evaluated from DTOs when converting `messageController.replies` to an array.
-         Adding thread root message into replies would require `insert/append` API on lazy map which should
-         update both source collection and a cache to not break the indexing and keep 1-1 match with evaluated
-         and non-evaluated elements.
-
-         We have evaluated thread root message in `messageController.message` but to get keep lazy map
-         working after an insert we also need an underlaying DTO to be added to source collection and it's getting
-         hard since the information about source collection `Element` type is available only during lazy map
-         initialization and does not get stored for later use.
-
-         It could be addressed on LLC side by tweaking an observer to fetch thread root message along with replies.
-         */
-        let replies = Array(messageController.replies)
-
-        if let threadRootMessage = messageController.message {
-            return replies + [threadRootMessage]
+        get {
+            replies
         }
-
-        return replies
+        set {
+            replies = newValue
+        }
     }
+
+    // This property is a bit redundant after the difference kit changes. Should be removed in v5.
+    open var replies: [ChatMessage] = []
 
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }
 
     open func numberOfMessages(in vc: ChatMessageListVC) -> Int {
-        replies.count
+        messages.count
     }
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
-        guard indexPath.item < replies.count else { return nil }
-        guard let reply = replies[safe: indexPath.item] else {
+        guard indexPath.item < messages.count else { return nil }
+        guard let reply = messages[safe: indexPath.item] else {
             indexNotFoundAssertion()
             return nil
         }
@@ -295,12 +283,17 @@ open class ChatThreadVC: _ViewController,
 
     public func messageControllerWillChangeReplies(
         _ controller: ChatMessageController
-    ) {}
+    ) {
+        let messages = getRepliesWithThreadRootMessage(from: controller)
+        messageListVC.listView.previousMessagesSnapshot = messages
+    }
 
     open func messageController(
         _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
+        let messages = getRepliesWithThreadRootMessage(from: controller)
+        messageListVC.listView.newMessagesSnapshot = messages
         messageListVC.updateMessages(with: changes)
     }
     
@@ -333,5 +326,13 @@ open class ChatThreadVC: _ViewController,
     @objc func appMovedToForeground() {
         messageController.delegate = self
         messageListVC.dataSource = self
+    }
+
+    private func getRepliesWithThreadRootMessage(from messageController: ChatMessageController) -> [ChatMessage] {
+        var messages = Array(messageController.replies)
+        if let threadRootMessage = messageController.message {
+            messages.append(threadRootMessage)
+        }
+        return messages
     }
 }
