@@ -81,6 +81,11 @@ open class ChatChannelListVC: _ViewController,
     private lazy var listChangeUpdater: ListChangeUpdater = CollectionViewListChangeUpdater(
         collectionView: collectionView
     )
+
+    /// Currently there are some performance problems in the Channel List which
+    /// is impacting the message list performance as well, so we skip channel list
+    /// updates when the channel list is not visible in the window.
+    private var skippedRendering = false
     
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
@@ -139,6 +144,15 @@ open class ChatChannelListVC: _ViewController,
         channelListErrorView.refreshButtonAction = { [weak self] in
             self?.controller.synchronize()
             self?.channelListErrorView.hide()
+        }
+    }
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if skippedRendering {
+            collectionView.reloadData()
+            skippedRendering = false
         }
     }
 
@@ -335,6 +349,11 @@ open class ChatChannelListVC: _ViewController,
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
+        if viewIfLoaded?.window == nil {
+            skippedRendering = true
+            return
+        }
+
         listChangeUpdater.performUpdate(with: changes)
     }
 
