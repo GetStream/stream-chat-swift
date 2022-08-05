@@ -258,44 +258,6 @@ extension ChannelList_Tests {
 // MARK: - Truncate channel
 
 extension ChannelList_Tests {
-    func test_messageListIsUpdatedWhenChannelTruncatedWithoutMessage() {
-        linkToScenario(withId: 200)
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 42)
-            userRobot.login().openChannel()
-        }
-        WHEN("user truncates the channel without system message") {
-            userRobot.truncateChannel(withMessage: false)
-        }
-        THEN("previous messages are no longer visible") {
-            userRobot.assertMessageCount(0)
-        }
-    }
-    
-    func test_channelPreviewIsUpdatedWhenChannelTruncatedWithoutMessage() {
-        linkToScenario(withId: 206)
-
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        AND("user sends a message") {
-            userRobot.sendMessage(message)
-        }
-        WHEN("user truncates the channel without system message") {
-            userRobot.truncateChannel(withMessage: false)
-        }
-        AND("user goes to channel list") {
-            userRobot.tapOnBackButton()
-        }
-        THEN("the channel preview shows No messages") {
-            userRobot.assertLastMessageInChannelPreview("No messages")
-        }
-        AND("last message timestamp is hidden") {
-            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: true)
-        }
-    }
-    
     func test_messageList_and_channelPreview_AreUpdatedWhenChannelTruncatedWithMessage() {
         linkToScenario(withId: 201)
         

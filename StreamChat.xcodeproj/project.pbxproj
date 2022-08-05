@@ -10455,7 +10455,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
+				CODE_SIGN_IDENTITY = "Apple Development: Pol Quintana (Y4M5756C5C)";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
@@ -10502,7 +10502,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
+				CODE_SIGN_IDENTITY = "Apple Development: Pol Quintana (Y4M5756C5C)";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
@@ -10738,7 +10738,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DemoApp/ChatSample.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
+				CODE_SIGN_IDENTITY = "Apple Development: Pol Quintana (Y4M5756C5C)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
@@ -10795,7 +10795,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DemoApp/ChatSample.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
+				CODE_SIGN_IDENTITY = "Apple Development: Pol Quintana (Y4M5756C5C)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
