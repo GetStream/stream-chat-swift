@@ -16,6 +16,7 @@
         "uikit/theming",
         "uikit/custom-components",
         "uikit/data-formatting",
+        "uikit/extra-data",
         {
           "Controllers and Delegates": [
             "uikit/controllers/controllers-overview",
