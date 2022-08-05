@@ -190,16 +190,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             )
         }
 
-        // When inserting new messages, we want to avoid weird animation
-        // but when these messages are not visible we actually want the animation
-        // because they avoid the message list jumps.
-        if isLastCellFullyVisible {
-            UIView.performWithoutAnimation {
-                reload()
+        UIView.performWithoutAnimation {
+            reload()
+            if self.isLastCellFullyVisible {
                 reloadPreviousMessage()
             }
-        } else {
-            reload()
         }
     }
 }
