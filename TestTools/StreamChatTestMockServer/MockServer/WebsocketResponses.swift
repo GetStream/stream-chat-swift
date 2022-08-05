@@ -57,6 +57,7 @@ public extension StreamMockServer {
         eventType: EventType,
         user: [String: Any]?,
         channel: [String: Any]? = nil,
+        hardDelete: Bool = false,
         intercept: ((inout [String: Any]?) -> [String: Any]?)? = nil
     ) -> Self {
         guard let messageId = messageId else { return self }
@@ -89,7 +90,11 @@ public extension StreamMockServer {
             let message = findMessageById(messageId)
             mockedMessage = mockDeletedMessage(message, user: user)
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
-            saveMessage(mockedMessage)
+            if hardDelete {
+                removeMessage(id: messageId)
+            } else {
+                saveMessage(mockedMessage)
+            }
         case .messageUpdated:
             let message = findMessageById(messageId)
             mockedMessage = mockMessage(
@@ -119,6 +124,7 @@ public extension StreamMockServer {
         json[JSONKey.message] = mockedMessage
         json[messageKey.createdAt.rawValue] = TestData.currentDate
         json[messageKey.type.rawValue] = eventType.rawValue
+        if hardDelete { json[eventKey.hardDelete.rawValue] = true }
         
         writeText(json.jsonToString())
         if eventType == .messageNew { latestWebsocketMessage = text ?? "" }

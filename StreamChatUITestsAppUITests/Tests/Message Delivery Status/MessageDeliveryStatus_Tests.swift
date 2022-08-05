@@ -555,8 +555,8 @@ extension MessageDeliveryStatus_Tests {
         }
         AND("delivery status is hidden") {
             userRobot
-            .assertMessageDeliveryStatus(nil)
-            .assertMessageReadCount(readBy: 0)
+                .assertMessageDeliveryStatus(nil)
+                .assertMessageReadCount(readBy: 0)
         }
     }
 

@@ -10,6 +10,7 @@ enum Settings: String {
     case setConnectivity
     case isConnected
     case isLocalStorageEnabled
+    case staysConnectedInBackground
 
     var element: XCUIElement { app.switches[rawValue] }
 }

@@ -82,7 +82,6 @@ class MessageListPage {
         static var cooldown: XCUIElement { app.staticTexts["cooldownLabel"] }
         static var placeholder: XCUIElement { textView.staticTexts.firstMatch }
         static var selectAllButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Select All'")).firstMatch }
-        static var pasteButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Paste'")).firstMatch }
     }
     
     enum Reactions {
@@ -111,6 +110,7 @@ class MessageListPage {
         case mute
         case edit
         case delete
+        case hardDelete
         case resend
         case block
         case unblock
@@ -133,6 +133,8 @@ class MessageListPage {
                 return Element.edit
             case .delete:
                 return Element.delete
+            case .hardDelete:
+                return Element.hardDelete
             case .resend:
                 return Element.resend
             case .block:
@@ -152,6 +154,7 @@ class MessageListPage {
             static var unmute: XCUIElement { app.otherElements["UnmuteUserActionItem"] }
             static var edit: XCUIElement { app.otherElements["EditActionItem"] }
             static var delete: XCUIElement { app.otherElements["DeleteActionItem"] }
+            static var hardDelete: XCUIElement { app.otherElements["HardDeleteActionItem"] }
             static var resend: XCUIElement { app.otherElements["ResendActionItem"] }
             static var block: XCUIElement { app.otherElements["BlockUserActionItem"] }
             static var unblock: XCUIElement { app.otherElements["UnblockUserActionItem"] }

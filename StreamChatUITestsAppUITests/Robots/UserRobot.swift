@@ -65,9 +65,7 @@ extension UserRobot {
 
     @discardableResult
     func openContextMenu(messageCellIndex: Int = 0) -> Self {
-        let iosMajorVersion = ProcessInfo().operatingSystemVersion.majorVersion
-        let duration: TimeInterval = iosMajorVersion == 16 ? 2 : 1
-        messageCell(withIndex: messageCellIndex).safePress(forDuration: duration)
+        messageCell(withIndex: messageCellIndex).safePress(forDuration: 1)
         return self
     }
     
@@ -112,9 +110,10 @@ extension UserRobot {
     }
     
     @discardableResult
-    func deleteMessage(messageCellIndex: Int = 0) -> Self {
+    func deleteMessage(messageCellIndex: Int = 0, hard: Bool = false) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
-        contextMenu.delete.element.wait().safeTap()
+        let deleteButton = hard ? contextMenu.hardDelete : contextMenu.delete
+        deleteButton.element.wait().safeTap()
         MessageListPage.PopUpButtons.delete.wait().safeTap()
         return self
     }
@@ -122,9 +121,6 @@ extension UserRobot {
     @discardableResult
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
         composer.inputField.obtainKeyboardFocus()
-        if ProcessInfo().operatingSystemVersion.majorVersion == 16 && composer.pasteButton.exists {
-            composer.inputField.tap()
-        }
         openContextMenu(messageCellIndex: messageCellIndex)
         contextMenu.edit.element.wait().safeTap()
         clearComposer()
@@ -439,6 +435,11 @@ extension UserRobot {
     @discardableResult
     func setIsLocalStorageEnabled(to state: SwitchState) -> Self {
         setSwitchState(Settings.isLocalStorageEnabled.element, state: state)
+    }
+    
+    @discardableResult
+    func setStaysConnectedInBackground(to state: SwitchState) -> Self {
+        setSwitchState(Settings.staysConnectedInBackground.element, state: state)
     }
     
 }
