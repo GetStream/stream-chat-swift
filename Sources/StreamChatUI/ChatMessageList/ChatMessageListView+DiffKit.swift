@@ -46,11 +46,10 @@ extension ChatMessage: Differentiable {
             && reactionCounts.count == source.reactionCounts.count
             && reactionScores.count == source.reactionScores.count
             && threadParticipants.count == source.threadParticipants.count
-            && attachmentCounts.count == source.attachmentCounts.count
             && giphyAttachments == source.giphyAttachments
             && localState == source.localState
             && isFlaggedByCurrentUser == source.isFlaggedByCurrentUser
-            && readBy == source.readBy
+            && readBy.count == source.readBy.count
             && imageAttachments.map(\.uploadingState) == source.imageAttachments.map(\.uploadingState)
             && videoAttachments.map(\.uploadingState) == source.videoAttachments.map(\.uploadingState)
             && fileAttachments.map(\.uploadingState) == source.fileAttachments.map(\.uploadingState)
