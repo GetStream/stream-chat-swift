@@ -82,6 +82,7 @@ class MessageListPage {
         static var cooldown: XCUIElement { app.staticTexts["cooldownLabel"] }
         static var placeholder: XCUIElement { textView.staticTexts.firstMatch }
         static var selectAllButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Select All'")).firstMatch }
+        static var pasteButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Paste'")).firstMatch }
     }
     
     enum Reactions {

@@ -65,7 +65,9 @@ extension UserRobot {
 
     @discardableResult
     func openContextMenu(messageCellIndex: Int = 0) -> Self {
-        messageCell(withIndex: messageCellIndex).safePress(forDuration: 1)
+        let iosMajorVersion = ProcessInfo().operatingSystemVersion.majorVersion
+        let duration: TimeInterval = iosMajorVersion == 16 ? 2 : 1
+        messageCell(withIndex: messageCellIndex).safePress(forDuration: duration)
         return self
     }
     
@@ -120,6 +122,9 @@ extension UserRobot {
     @discardableResult
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
         composer.inputField.obtainKeyboardFocus()
+        if ProcessInfo().operatingSystemVersion.majorVersion == 16 && composer.pasteButton.exists {
+            composer.inputField.tap()
+        }
         openContextMenu(messageCellIndex: messageCellIndex)
         contextMenu.edit.element.wait().safeTap()
         clearComposer()
@@ -300,7 +305,7 @@ extension UserRobot {
     }
     
     @discardableResult
-    func sendGiphy(useComposerCommand: Bool = false, shuffle: Bool = false, send: Bool = true) -> Self {
+    func sendGiphy(useComposerCommand: Bool = false, send: Bool = true) -> Self {
         let giphyText = "Test"
         if useComposerCommand {
             openComposerCommands()
@@ -309,26 +314,20 @@ extension UserRobot {
         } else {
             sendMessage("/giphy\(giphyText)", waitForAppearance: false)
         }
-        if shuffle { tapOnShuffleGiphyButton() }
         if send { tapOnSendGiphyButton() }
         return self
     }
     
     @discardableResult
-    func replyWithGiphy(
-        useComposerCommand: Bool = false,
-        shuffle: Bool = false,
-        messageCellIndex: Int = 0
-    ) -> Self {
+    func replyWithGiphy(useComposerCommand: Bool = false, messageCellIndex: Int = 0) -> Self {
         return self
             .selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
-            .sendGiphy(useComposerCommand: useComposerCommand, shuffle: shuffle)
+            .sendGiphy(useComposerCommand: useComposerCommand)
     }
     
     @discardableResult
     func replyWithGiphyInThread(
         useComposerCommand: Bool = false,
-        shuffle: Bool = false,
         alsoSendInChannel: Bool = false,
         messageCellIndex: Int = 0
     ) -> Self {
@@ -339,27 +338,13 @@ extension UserRobot {
         if alsoSendInChannel {
             threadCheckbox.wait().safeTap()
         }
-        return sendGiphy(useComposerCommand: useComposerCommand, shuffle: shuffle)
+        return sendGiphy(useComposerCommand: useComposerCommand)
     }
     
     @discardableResult
     func tapOnSendGiphyButton(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphySendButton(in: messageCell).wait().safeTap()
-        return self
-    }
-    
-    @discardableResult
-    func tapOnShuffleGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let messageCell = messageCell(withIndex: messageCellIndex)
-        MessageListPage.Attributes.giphyShuffleButton(in: messageCell).wait().safeTap()
-        return self
-    }
-    
-    @discardableResult
-    func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let messageCell = messageCell(withIndex: messageCellIndex)
-        MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
         return self
     }
     
