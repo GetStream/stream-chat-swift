@@ -17,10 +17,39 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     // that would make this class obsolete especially the `updateMessages(changes:)` and
     // it would require a lot of breaking changes. So for now, the Diff logic will live here.
 
+    /// When inserting messages at the bottom, if the user is scrolled up,
+    /// we skip adding the message to the UI until the user scrolls back
+    /// to the bottom. This is to avoid message list jumps.
+    internal var skippedMessages: Set<MessageId> = [] {
+        didSet {
+            if skippedMessages.isEmpty {
+                newMessagesSnapshot = _newMessagesSnapshotWithSkipped
+            }
+        }
+    }
+
     /// The previous messages snapshot before the next update.
-    internal var previousMessagesSnapshot: [ChatMessage] = []
+    internal var previousMessagesSnapshot: [ChatMessage] = [] {
+        didSet {
+            let isNotSkippedMessage: (ChatMessage) -> Bool = {
+                !self.skippedMessages.contains($0.id)
+            }
+            previousMessagesSnapshot = previousMessagesSnapshot.filter(isNotSkippedMessage)
+        }
+    }
+
     /// The new messages snapshot reported by the channel or message controller.
-    internal var newMessagesSnapshot: [ChatMessage] = []
+    private var _newMessagesSnapshotWithSkipped: [ChatMessage] = []
+    internal var newMessagesSnapshot: [ChatMessage] = [] {
+        didSet {
+            _newMessagesSnapshotWithSkipped = newMessagesSnapshot
+            let isNotSkippedMessage: (ChatMessage) -> Bool = {
+                !self.skippedMessages.contains($0.id)
+            }
+            newMessagesSnapshot = newMessagesSnapshot.filter(isNotSkippedMessage)
+        }
+    }
+
     /// This closure is to update the dataSource when DifferenceKit
     /// reports the data source should be updated.
     internal var onNewDataSource: (([ChatMessage]) -> Void)?
@@ -166,34 +195,38 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
-        let reload = {
-            self.reloadMessages(
-                previousSnapshot: self.previousMessagesSnapshot,
-                newSnapshot: self.newMessagesSnapshot,
+        let bottomChange = changes.first(where: { $0.indexPath.item == 0 })
+        if !isLastCellFullyVisible && bottomChange?.isInsertion == true && bottomChange?.item.isSentByCurrentUser == false {
+            changes.filter(\.isInsertion).forEach {
+                skippedMessages.insert($0.item.id)
+            }
+            // Don't update UI if we are skipping the inserted messages
+            return
+        }
+
+        UIView.performWithoutAnimation {
+            reloadMessages(
+                previousSnapshot: previousMessagesSnapshot,
+                newSnapshot: newMessagesSnapshot,
                 with: .fade,
                 completion: { [weak self] in
-                    if let newMessageInserted = changes.first(where: { ($0.isInsertion || $0.isMove) && $0.indexPath.row == 0 })?.item {
-                        // Scroll to the bottom if the new message was sent by the current user
-                        if newMessageInserted.isSentByCurrentUser {
+                    let bottomChangeIsInsertionOrMove = bottomChange?.isInsertion == true || bottomChange?.isMove == true
+                    if bottomChangeIsInsertionOrMove, let newMessage = bottomChange?.item {
+                        // Scroll to the bottom if the new message was sent by
+                        // the current user, or moved by the current user
+                        if newMessage.isSentByCurrentUser {
                             self?.scrollToMostRecentMessage()
                         }
                     }
                     completion?()
                 }
             )
-        }
 
-        let reloadPreviousMessage = {
-            self.reloadRows(
-                at: [IndexPath(item: 1, section: 0)],
-                with: .none
-            )
-        }
-
-        UIView.performWithoutAnimation {
-            reload()
+            // If we are inserting messages at the bottom, update the previous cell
+            // to hide the timestamp of the previous message if needed.
             if self.isLastCellFullyVisible {
-                reloadPreviousMessage()
+                let previousMessageIndexPath = IndexPath(item: 1, section: 0)
+                self.reloadRows(at: [previousMessageIndexPath], with: .none)
             }
         }
     }

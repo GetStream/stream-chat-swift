@@ -435,6 +435,12 @@ open class ChatMessageListVC: _ViewController,
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
 
         setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
+
+        // If the user scrolled to the bottom, update the UI for the skipped messages
+        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty {
+            listView.skippedMessages = []
+            listView.updateMessages(with: [])
+        }
     }
 
     // MARK: - ChatMessageListScrollOverlayDataSource

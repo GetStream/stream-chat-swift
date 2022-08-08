@@ -237,11 +237,6 @@ open class ChatChannelVC: _ViewController,
             channelController.markRead()
 
             messageListVC.scrollToLatestMessageButton.content = .noUnread
-
-            skippedMessages = []
-            if messages.count != channelController.messages.count {
-                channelController(channelController, didUpdateMessages: [])
-            }
         }
     }
 
@@ -255,10 +250,8 @@ open class ChatChannelVC: _ViewController,
 
     // MARK: - ChatChannelControllerDelegate
 
-    var skippedMessages: Set<MessageId> = []
-
     open func channelControllerWillUpdateMessages(_ channelController: ChatChannelController) {
-        messageListVC.listView.previousMessagesSnapshot = channelController.messages.filter { !skippedMessages.contains($0.id) }
+        messageListVC.listView.previousMessagesSnapshot = Array(channelController.messages)
     }
 
     open func channelController(
@@ -269,17 +262,7 @@ open class ChatChannelVC: _ViewController,
             channelController.markRead()
         }
 
-        debugPrint("Insertions:", changes.filter(\.isInsertion).map(\.indexPath))
-        if !isLastMessageFullyVisible && changes.first(where: { $0.indexPath.item == 0 }) != nil {
-            changes.filter(\.isInsertion).forEach {
-                skippedMessages.insert($0.item.id)
-            }
-            // Don't update messages if we are skipping
-            return
-        }
-
-        let newMessages = channelController.messages.filter { !skippedMessages.contains($0.id) }
-        messageListVC.listView.newMessagesSnapshot = newMessages
+        messageListVC.listView.newMessagesSnapshot = Array(channelController.messages)
         messageListVC.updateMessages(with: changes)
     }
 
