@@ -195,7 +195,7 @@ open class ChatChannelVC: _ViewController,
             return
         }
 
-        if indexPath.row < channelController.messages.count - 10 {
+        if indexPath.row < messages.count - 10 {
             return
         }
 
