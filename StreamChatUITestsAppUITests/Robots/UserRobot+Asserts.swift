@@ -120,7 +120,9 @@ extension UserRobot {
                        file: file,
                        line: line)
         
-        let endTime = Date().timeIntervalSince1970 * 1000 + XCUIElement.waitTimeout * 1000
+        let iosVersion = ProcessInfo().operatingSystemVersion.majorVersion
+        let duration = iosVersion >= 16 ? 20 : XCUIElement.waitTimeout
+        let endTime = Date().timeIntervalSince1970 * 1000 + duration * 1000
         while !expectedChannelExist && endTime > Date().timeIntervalSince1970 * 1000 {
             ChannelListPage.list.swipeUp()
             expectedChannelExist = expectedChannel.exists
