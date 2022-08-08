@@ -201,39 +201,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
 // MARK: Helpers
 
-private extension ListChange {
-    var isMove: Bool {
-        switch self {
-        case .move:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var isInsertion: Bool {
-        switch self {
-        case .insert:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var indexPath: IndexPath {
-        switch self {
-        case let .insert(_, index):
-            return index
-        case let .move(_, _, toIndex):
-            return toIndex
-        case let .update(_, index):
-            return index
-        case let .remove(_, index):
-            return index
-        }
-    }
-}
-
 private extension CGAffineTransform {
     static let mirrorY = Self(scaleX: 1, y: -1)
 }

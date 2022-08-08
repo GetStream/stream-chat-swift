@@ -64,6 +64,60 @@ extension ListChange {
             return item
         }
     }
+
+    /// Returns true if the change is a move.
+    public var isMove: Bool {
+        switch self {
+        case .move:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Returns true if the change is an insertions.
+    public var isInsertion: Bool {
+        switch self {
+        case .insert:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Returns true if the change is a remove.
+    public var isRemove: Bool {
+        switch self {
+        case .remove:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Returns true if the change is an update.
+    public var isUpdate: Bool {
+        switch self {
+        case .update:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// The IndexPath of the change.
+    public var indexPath: IndexPath {
+        switch self {
+        case let .insert(_, index):
+            return index
+        case let .move(_, _, toIndex):
+            return toIndex
+        case let .update(_, index):
+            return index
+        case let .remove(_, index):
+            return index
+        }
+    }
     
     /// Returns `ListChange` of the same type but for the specific `Item` field.
     func fieldChange<Value>(_ path: KeyPath<Item, Value>) -> ListChange<Value> {
