@@ -217,6 +217,13 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                         if newMessage.isSentByCurrentUser {
                             self?.scrollToMostRecentMessage()
                         }
+
+                        // When a Giphy moves to the bottom, we need to also trigger a reload
+                        // Since a move doesn't trigger a reload of the cell.
+                        if bottomChange?.isMove == true {
+                            let movedIndexPath = IndexPath(item: 0, section: 0)
+                            self?.reloadRows(at: [movedIndexPath], with: .none)
+                        }
                     }
                     completion?()
                 }
