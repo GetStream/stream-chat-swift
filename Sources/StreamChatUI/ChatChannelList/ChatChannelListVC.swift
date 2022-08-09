@@ -349,7 +349,8 @@ open class ChatChannelListVC: _ViewController,
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
-        if viewIfLoaded?.window == nil {
+        let isViewNotVisible = viewIfLoaded?.window == nil
+        if isViewNotVisible {
             skippedRendering = true
             return
         }

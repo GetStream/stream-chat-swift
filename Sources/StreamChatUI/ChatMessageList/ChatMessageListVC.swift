@@ -97,6 +97,11 @@ open class ChatMessageListVC: _ViewController,
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
     }
+
+    /// The message cell height caches. This makes sure that the message list doesn't
+    /// need to recalculate the cell height every time. This improve the scrolling
+    /// experience since the content size calculation is more precise.
+    private var cellHeightsCache: [MessageId: CGFloat] = [:]
     
     override open func setUp() {
         super.setUp()
@@ -412,8 +417,6 @@ open class ChatMessageListVC: _ViewController,
 
         return cell
     }
-
-    private var cellHeightsCache: [MessageId: CGFloat] = [:]
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) {
