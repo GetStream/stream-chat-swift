@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix hidden channels showing past history [#2216](https://github.com/GetStream/stream-chat-swift/pull/2216)
 
+## StreamChatUI
+### 🔄 Changed
+- New Message List Diffing Implementation [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+- `_messageListDiffingEnabled` flag has been removed [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+### 🐞 Fixed
+- Fix jumps in Message List [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+- Fix image flickers when adding image attachment to a message [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+
 # [4.20.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.20.0)
 _August 02, 2022_
 
