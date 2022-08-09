@@ -27,6 +27,8 @@ This SDK tries to keep the list of external dependencies to a minimum, these are
 
 - [Nuke](https://github.com/kean/Nuke) for loading images  
 - [SwiftyGif](https://github.com/kirualex/SwiftyGif) for high performance GIF rendering
+- [SwiftyMarkdown](https://github.com/SimonFairbairn/SwiftyMarkdown) for markdown rendering
+- [DifferenceKit](https://github.com/ra1028/DifferenceKit) for handling diffing updates
 - StreamChat, the low-level client to Stream Chat API
 
 #### StreamChat
