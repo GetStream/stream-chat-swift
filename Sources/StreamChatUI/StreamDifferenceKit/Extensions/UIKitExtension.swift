@@ -1,7 +1,3 @@
-//
-// Copyright © 2022 Stream.io Inc. All rights reserved.
-//
-
 #if os(iOS) || os(tvOS)
 import UIKit
 
@@ -24,7 +20,7 @@ extension UITableView {
         with animation: @autoclosure () -> RowAnimation,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C) -> Void
-    ) {
+        ) {
         reload(
             using: stagedChangeset,
             deleteSectionsAnimation: animation(),
@@ -66,7 +62,7 @@ extension UITableView {
         reloadRowsAnimation: @autoclosure () -> RowAnimation,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C) -> Void
-    ) {
+        ) {
         if case .none = window, let data = stagedChangeset.last?.data {
             setData(data)
             return reloadData()
@@ -119,7 +115,8 @@ extension UITableView {
     private func _performBatchUpdates(_ updates: () -> Void) {
         if #available(iOS 11.0, tvOS 11.0, *) {
             performBatchUpdates(updates)
-        } else {
+        }
+        else {
             beginUpdates()
             updates()
             endUpdates()
@@ -144,7 +141,7 @@ extension UICollectionView {
         using stagedChangeset: StagedChangeset<C>,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C) -> Void
-    ) {
+        ) {
         if case .none = window, let data = stagedChangeset.last?.data {
             setData(data)
             return reloadData()

@@ -1,11 +1,11 @@
 /// Represents the path to a specific element in a tree of nested collections.
 ///
 /// - Note: `Foundation.IndexPath` is disadvantageous in performance.
-struct ElementPath: Hashable {
+public struct ElementPath: Hashable {
     /// The element index (or offset) of this path.
-    var element: Int
+    public var element: Int
     /// The section index (or offset) of this path.
-    var section: Int
+    public var section: Int
 
     /// Creates a new `ElementPath`.
     ///
@@ -19,7 +19,7 @@ struct ElementPath: Hashable {
 }
 
 extension ElementPath: CustomDebugStringConvertible {
-    var debugDescription: String {
-        "[element: \(element), section: \(section)]"
+    public var debugDescription: String {
+        return "[element: \(element), section: \(section)]"
     }
 }

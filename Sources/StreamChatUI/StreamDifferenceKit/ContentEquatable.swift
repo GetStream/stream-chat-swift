@@ -1,5 +1,5 @@
 /// Represents a value that can compare whether the content are equal.
-protocol ContentEquatable {
+public protocol ContentEquatable {
     /// Indicate whether the content of `self` is equals to the content of
     /// the given source value.
     ///
@@ -22,7 +22,7 @@ extension ContentEquatable where Self: Equatable {
     ///            to the content of the given source value.
     @inlinable
     func isContentEqual(to source: Self) -> Bool {
-        self == source
+        return self == source
     }
 }
 
@@ -37,7 +37,7 @@ extension Optional: ContentEquatable where Wrapped: ContentEquatable {
     /// - Returns: A Boolean value indicating whether the content of `self` is equals
     ///            to the content of the given source value.
     @inlinable
-    func isContentEqual(to source: Wrapped?) -> Bool {
+    public func isContentEqual(to source: Wrapped?) -> Bool {
         switch (self, source) {
         case let (lhs?, rhs?):
             return lhs.isContentEqual(to: rhs)
@@ -61,8 +61,8 @@ extension Array: ContentEquatable where Element: ContentEquatable {
     /// - Returns: A Boolean value indicating whether the content of `self` is equals
     ///            to the content of the given source value.
     @inlinable
-    func isContentEqual(to source: [Element]) -> Bool {
-        count == source.count
+    public func isContentEqual(to source: [Element]) -> Bool {
+        return count == source.count
             && zip(self, source).allSatisfy { $0.isContentEqual(to: $1) }
     }
 }

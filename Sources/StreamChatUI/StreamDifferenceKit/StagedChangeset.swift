@@ -52,22 +52,22 @@ extension StagedChangeset: RandomAccessCollection, RangeReplaceableCollection, M
 
     @inlinable
     var startIndex: Int {
-        changesets.startIndex
+        return changesets.startIndex
     }
 
     @inlinable
     var endIndex: Int {
-        changesets.endIndex
+        return changesets.endIndex
     }
 
     @inlinable
     func index(after i: Int) -> Int {
-        changesets.index(after: i)
+        return changesets.index(after: i)
     }
 
     @inlinable
     subscript(position: Int) -> Changeset<Collection> {
-        get { changesets[position] }
+        get { return changesets[position] }
         set { changesets[position] = newValue }
     }
 
@@ -80,7 +80,7 @@ extension StagedChangeset: RandomAccessCollection, RangeReplaceableCollection, M
 extension StagedChangeset: Equatable where Collection: Equatable {
     @inlinable
     static func == (lhs: StagedChangeset, rhs: StagedChangeset) -> Bool {
-        lhs.changesets == rhs.changesets
+        return lhs.changesets == rhs.changesets
     }
 }
 
@@ -92,7 +92,7 @@ extension StagedChangeset: ExpressibleByArrayLiteral {
 }
 
 extension StagedChangeset: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         guard !isEmpty else { return "[]" }
 
         return "[\n\(map { "    \($0.debugDescription.split(separator: "\n").joined(separator: "\n    "))" }.joined(separator: ",\n"))\n]"

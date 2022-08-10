@@ -62,16 +62,16 @@ do
 		'public func isContentEqual(to source: Wrapped?) -> Bool {' \
 		$f
 
-		replaceDeclaration 'func isContentEqual(to source: [Element]) -> Bool {' \
-		'public func isContentEqual(to source: [Element]) -> Bool {' \
+		# This replacement is not actually working, and I don't know why,
+		# for now, I did this change manually.
+		replaceDeclaration 'func isContentEqual(to source: [Element]) -> Bool' \
+		'public func isContentEqual(to source: [Element]) -> Bool' \
 		$f
 
 		replaceDeclaration 'extension ContentIdentifiable where Self: Hashable {' \
 		'public extension ContentIdentifiable where Self: Hashable {' \
 		$f
 		
-		replaceDeclaration 'typealias Differentiable = ContentIdentifiable & ContentEquatable' \
-		'public typealias Differentiable = ContentIdentifiable & ContentEquatable' \
-		$f
+		replaceDeclaration 'typealias Differentiable =' 'public typealias Differentiable =' $f
 	fi
 done

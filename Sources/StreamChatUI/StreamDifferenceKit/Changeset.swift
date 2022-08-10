@@ -48,7 +48,7 @@ struct Changeset<Collection: Swift.Collection> {
         elementInserted: [ElementPath] = [],
         elementUpdated: [ElementPath] = [],
         elementMoved: [(source: ElementPath, target: ElementPath)] = []
-    ) {
+        ) {
         self.data = data
         self.sectionDeleted = sectionDeleted
         self.sectionInserted = sectionInserted
@@ -65,7 +65,7 @@ extension Changeset {
     /// The number of section changes.
     @inlinable
     var sectionChangeCount: Int {
-        sectionDeleted.count
+        return sectionDeleted.count
             + sectionInserted.count
             + sectionUpdated.count
             + sectionMoved.count
@@ -74,7 +74,7 @@ extension Changeset {
     /// The number of element changes.
     @inlinable
     var elementChangeCount: Int {
-        elementDeleted.count
+        return elementDeleted.count
             + elementInserted.count
             + elementUpdated.count
             + elementMoved.count
@@ -83,31 +83,31 @@ extension Changeset {
     /// The number of all changes.
     @inlinable
     var changeCount: Int {
-        sectionChangeCount + elementChangeCount
+        return sectionChangeCount + elementChangeCount
     }
 
     /// A Boolean value indicating whether has section changes.
     @inlinable
     var hasSectionChanges: Bool {
-        sectionChangeCount > 0
+        return sectionChangeCount > 0
     }
 
     /// A Boolean value indicating whether has element changes.
     @inlinable
     var hasElementChanges: Bool {
-        elementChangeCount > 0
+        return elementChangeCount > 0
     }
 
     /// A Boolean value indicating whether has changes.
     @inlinable
     var hasChanges: Bool {
-        changeCount > 0
+        return changeCount > 0
     }
 }
 
 extension Changeset: Equatable where Collection: Equatable {
     static func == (lhs: Changeset, rhs: Changeset) -> Bool {
-        lhs.data == rhs.data
+        return lhs.data == rhs.data
             && Set(lhs.sectionDeleted) == Set(rhs.sectionDeleted)
             && Set(lhs.sectionInserted) == Set(rhs.sectionInserted)
             && Set(lhs.sectionUpdated) == Set(rhs.sectionUpdated)
@@ -120,7 +120,7 @@ extension Changeset: Equatable where Collection: Equatable {
 }
 
 extension Changeset: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         guard !data.isEmpty || hasChanges else {
             return """
             Changeset(

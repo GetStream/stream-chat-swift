@@ -26,13 +26,13 @@ struct AnyDifferentiable: Differentiable {
     /// The value wrapped by this instance.
     @inlinable
     var base: Any {
-        box.base
+        return box.base
     }
 
     /// A type-erased identifier value for difference calculation.
     @inlinable
     var differenceIdentifier: AnyHashable {
-        box.differenceIdentifier
+        return box.differenceIdentifier
     }
 
     @usableFromInline
@@ -45,7 +45,8 @@ struct AnyDifferentiable: Differentiable {
     init<D: Differentiable>(_ base: D) {
         if let anyDifferentiable = base as? AnyDifferentiable {
             self = anyDifferentiable
-        } else {
+        }
+        else {
             box = DifferentiableBox(base)
         }
     }
@@ -59,13 +60,13 @@ struct AnyDifferentiable: Differentiable {
     ///            to the content of `base` of the given source value.
     @inlinable
     func isContentEqual(to source: AnyDifferentiable) -> Bool {
-        box.isContentEqual(to: source.box)
+        return box.isContentEqual(to: source.box)
     }
 }
 
 extension AnyDifferentiable: CustomDebugStringConvertible {
-    var debugDescription: String {
-        "AnyDifferentiable(\(String(reflecting: base)))"
+    public var debugDescription: String {
+        return "AnyDifferentiable(\(String(reflecting: base)))"
     }
 }
 
@@ -84,12 +85,12 @@ internal struct DifferentiableBox<Base: Differentiable>: AnyDifferentiableBox {
 
     @inlinable
     internal var base: Any {
-        baseComponent
+        return baseComponent
     }
 
     @inlinable
     internal var differenceIdentifier: AnyHashable {
-        baseComponent.differenceIdentifier
+        return baseComponent.differenceIdentifier
     }
 
     @usableFromInline

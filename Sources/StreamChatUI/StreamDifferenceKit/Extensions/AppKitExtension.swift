@@ -1,7 +1,3 @@
-//
-// Copyright © 2022 Stream.io Inc. All rights reserved.
-//
-
 #if os(macOS)
 import AppKit
 
@@ -25,7 +21,7 @@ extension NSTableView {
         with animation: @autoclosure () -> NSTableView.AnimationOptions,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C) -> Void
-    ) {
+        ) {
         reload(
             using: stagedChangeset,
             deleteRowsAnimation: animation(),
@@ -58,7 +54,7 @@ extension NSTableView {
         reloadRowsAnimation: @autoclosure () -> NSTableView.AnimationOptions,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C) -> Void
-    ) {
+        ) {
         if case .none = window, let data = stagedChangeset.last?.data {
             setData(data)
             return reloadData()
@@ -74,15 +70,15 @@ extension NSTableView {
             setData(changeset.data)
 
             if !changeset.elementDeleted.isEmpty {
-                removeRows(at: IndexSet(changeset.elementDeleted.map(\.element)), withAnimation: deleteRowsAnimation())
+                removeRows(at: IndexSet(changeset.elementDeleted.map { $0.element }), withAnimation: deleteRowsAnimation())
             }
 
             if !changeset.elementUpdated.isEmpty {
-                reloadData(forRowIndexes: IndexSet(changeset.elementUpdated.map(\.element)), columnIndexes: IndexSet(0..<tableColumns.count))
+                reloadData(forRowIndexes: IndexSet(changeset.elementUpdated.map { $0.element }), columnIndexes: IndexSet(0..<tableColumns.count))
             }
 
             if !changeset.elementMoved.isEmpty {
-                let insertionIndices = IndexSet(changeset.elementInserted.map(\.element))
+                let insertionIndices = IndexSet(changeset.elementInserted.map { $0.element })
                 var movedSourceIndices = IndexSet()
 
                 for (source, target) in changeset.elementMoved {
@@ -94,7 +90,7 @@ extension NSTableView {
             }
 
             if !changeset.elementInserted.isEmpty {
-                insertRows(at: IndexSet(changeset.elementInserted.map(\.element)), withAnimation: insertRowsAnimation())
+                insertRows(at: IndexSet(changeset.elementInserted.map { $0.element }), withAnimation: insertRowsAnimation())
             }
 
             endUpdates()
@@ -120,7 +116,7 @@ extension NSCollectionView {
         using stagedChangeset: StagedChangeset<C>,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C) -> Void
-    ) {
+        ) {
         if case .none = window, let data = stagedChangeset.last?.data {
             setData(data)
             return reloadData()

@@ -11,7 +11,7 @@ struct ArraySection<Model: Differentiable, Element: Differentiable>: Differentia
     /// An identifier value that of model for difference calculation.
     @inlinable
     var differenceIdentifier: Model.DifferenceIdentifier {
-        model.differenceIdentifier
+        return model.differenceIdentifier
     }
 
     /// Creates a section with the model and the elements.
@@ -46,19 +46,19 @@ struct ArraySection<Model: Differentiable, Element: Differentiable>: Differentia
     ///            to the content of the given source section.
     @inlinable
     func isContentEqual(to source: ArraySection) -> Bool {
-        model.isContentEqual(to: source.model)
+        return model.isContentEqual(to: source.model)
     }
 }
 
 extension ArraySection: Equatable where Model: Equatable, Element: Equatable {
     static func == (lhs: ArraySection, rhs: ArraySection) -> Bool {
-        lhs.model == rhs.model && lhs.elements == rhs.elements
+        return lhs.model == rhs.model && lhs.elements == rhs.elements
     }
 }
 
 extension ArraySection: CustomDebugStringConvertible {
-    var debugDescription: String {
-        """
+    public var debugDescription: String {
+        return """
         ArraySection(
             model: \(model),
             elements: \(elements)
