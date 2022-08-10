@@ -22,7 +22,8 @@ final class StreamChatWrapper {
         self.userCredentials = userCredentials
 
         var config = ChatClientConfig(apiKey: .init(apiKey))
-        config.isLocalStorageEnabled = false
+        config.isLocalStorageEnabled = settings.isLocalStorageEnabled.isOn
+        config.staysConnectedInBackground = settings.staysConnectedInBackground.isOn
 
         // Customization
         var components = Components.default
@@ -31,6 +32,7 @@ final class StreamChatWrapper {
         components.channelVC = ChannelVC.self
         components.threadVC = ThreadVC.self
         Components.default = components
+        Components.default.messageActionsVC = MessageActionsVC.self
 
         // create an instance of ChatClient and share it using the singleton
         let environment = ChatClient.Environment()

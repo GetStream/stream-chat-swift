@@ -120,9 +120,7 @@ extension UserRobot {
                        file: file,
                        line: line)
         
-        let iosVersion = ProcessInfo().operatingSystemVersion.majorVersion
-        let duration = iosVersion >= 16 ? 20 : XCUIElement.waitTimeout
-        let endTime = Date().timeIntervalSince1970 * 1000 + duration * 1000
+        let endTime = Date().timeIntervalSince1970 * 1000 + XCUIElement.waitTimeout * 1000
         while !expectedChannelExist && endTime > Date().timeIntervalSince1970 * 1000 {
             ChannelListPage.list.swipeUp()
             expectedChannelExist = expectedChannel.exists
@@ -255,15 +253,17 @@ extension UserRobot {
 
     @discardableResult
     func assertHardDeletedMessage(
+        withText deletedText: String,
         at messageCellIndex: Int = 0,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
-        let message = attributes.text(in: messageCell).wait()
-        let expectedMessage = attributes.deletedMessagePlaceholder
-        let actualMessage = message.waitForText(expectedMessage).text
-        XCTAssertEqual(expectedMessage, actualMessage, "Text is wrong", file: file, line: line)
+        if MessageListPage.cells.count > 0 {
+            let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+            let actualText = attributes.text(in: messageCell).waitForTextDisappearance(deletedText).text
+            XCTAssertNotEqual(attributes.deletedMessagePlaceholder, actualText, file: file, line: line)
+            XCTAssertNotEqual(deletedText, actualText, file: file, line: line)
+        }
         return self
     }
 

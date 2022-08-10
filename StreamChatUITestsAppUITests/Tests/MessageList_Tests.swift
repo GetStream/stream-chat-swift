@@ -99,25 +99,6 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
     
-    func test_deletesMessage() throws {
-        linkToScenario(withId: 37)
-        
-        let message = "test message"
-        
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        WHEN("user sends the message: '\(message)'") {
-            userRobot.sendMessage(message)
-        }
-        AND("user deletes the message: '\(message)'") {
-            userRobot.deleteMessage()
-        }
-        THEN("the message is deleted") {
-            userRobot.assertDeletedMessage()
-        }
-    }
-    
     func test_receivesMessage() throws {
         linkToScenario(withId: 64)
         
@@ -132,25 +113,6 @@ final class MessageList_Tests: StreamTestCase {
         }
         THEN("the message is delivered") {
             userRobot.assertMessageAuthor(author)
-        }
-    }
-    
-    func test_messageDeleted_whenParticipantDeletesMessage() throws {
-        linkToScenario(withId: 38)
-        
-        let message = "test message"
-        
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        WHEN("participant sends the message: '\(message)'") {
-            participantRobot.sendMessage(message)
-        }
-        AND("participant deletes the message: '\(message)'") {
-            participantRobot.deleteMessage()
-        }
-        THEN("the message is deleted") {
-            userRobot.assertDeletedMessage()
         }
     }
     
@@ -365,6 +327,89 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.assertComposerCommands(shouldBeVisible: false)
         }
     }
+    
+    func test_offlineMessageInTheMessageList() {
+        linkToScenario(withId: 34)
+        
+        let message = "test message"
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 40)
+            userRobot
+                .setConnectivitySwitchVisibility(to: .on)
+                .login()
+                .openChannel()
+        }
+        AND("user becomes offline") {
+            userRobot.setConnectivity(to: .off)
+        }
+        WHEN("participant sends a new message") {
+            participantRobot.sendMessage(message)
+        }
+        AND("user becomes online") {
+            userRobot.setConnectivity(to: .on)
+        }
+        THEN("user observes a new message from participant") {
+            userRobot.assertMessage(message)
+        }
+    }
+    
+    func test_addMessageWhileOffline() {
+        linkToScenario(withId: 36)
+        
+        let message = "test message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .setIsLocalStorageEnabled(to: .on)
+                .setConnectivitySwitchVisibility(to: .on)
+                .login()
+                .openChannel()
+        }
+        AND("user becomes offline") {
+            userRobot.setConnectivity(to: .off)
+        }
+        WHEN("user sends a new message") {
+            userRobot.sendMessage(message, waitForAppearance: false)
+        }
+        THEN("error indicator is shown for the message") {
+            userRobot.assertMessageFailedToBeSent()
+        }
+        WHEN("user becomes online") {
+            userRobot.setConnectivity(to: .on)
+        }
+        THEN("new message is delivered") {
+            userRobot
+                .assertMessage(message)
+                .assertMessageDeliveryStatus(.sent, at: 0)
+        }
+    }
+    
+    func test_offlineRecoveryWithinSession() {
+        linkToScenario(withId: 207)
+        
+        let message = "test message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .setIsLocalStorageEnabled(to: .on)
+                .setStaysConnectedInBackground(to: .on)
+                .login()
+                .openChannel()
+        }
+        AND("user goes to the background") {
+            deviceRobot.moveApplication(to: .background)
+        }
+        WHEN("participant sends a new message") {
+            participantRobot.wait(1).sendMessage(message)
+        }
+        AND("user comes back to the foreground") {
+            deviceRobot.moveApplication(to: .foreground)
+        }
+        THEN("new message is delivered") {
+            userRobot.assertMessage(message)
+        }
+    }
 }
 
 // MARK: Quoted messages
@@ -409,46 +454,6 @@ extension MessageList_Tests {
         }
         THEN("user observes the reply in message list") {
             userRobot.assertQuotedMessage(replyText: quotedMessage, quotedText: message)
-        }
-    }
-    
-    func test_quotedReplyIsDeletedByParticipant_deletedMessageIsShown() {
-        linkToScenario(withId: 108)
-
-        let quotedMessage = "quoted reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        AND("participant adds a quoted reply") {
-            participantRobot.replyToMessage(quotedMessage)
-        }
-        WHEN("participant deletes a quoted message") {
-            participantRobot.deleteMessage()
-        }
-        THEN("user observes Message deleted") {
-            userRobot.assertDeletedMessage()
-        }
-    }
-    
-    func test_quotedReplyIsDeletedByUser_deletedMessageIsShown() {
-        linkToScenario(withId: 109)
-        
-        let quotedMessage = "quoted reply"
-        
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        AND("user adds a quoted reply") {
-            userRobot.replyToMessage(quotedMessage)
-        }
-        WHEN("user deletes a quoted message") {
-            userRobot.deleteMessage()
-        }
-        THEN("deleted message is shown") {
-            userRobot.assertDeletedMessage()
         }
     }
     
@@ -654,131 +659,6 @@ extension MessageList_Tests {
                 .assertMessage(threadReply)
         }
     }
-
-    func test_threadReplyIsRemovedEverywhere_whenParticipantRemovesItFromChannel() {
-        linkToScenario(withId: 112)
-
-        let threadReply = "thread reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        AND("participant adds a thread reply and sends it also to main channel") {
-            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
-        }
-        WHEN("participant removes the thread reply from channel") {
-            participantRobot.deleteMessage()
-        }
-        THEN("user observes the thread reply removed in channel") {
-            userRobot.assertDeletedMessage()
-        }
-        AND("user observes the thread reply removed in thread") {
-            userRobot
-                .openThread(messageCellIndex: 1)
-                .assertDeletedMessage()
-        }
-    }
-
-    func test_threadReplyIsRemovedEverywhere_whenUserRemovesItFromChannel() {
-        linkToScenario(withId: 114)
-
-        let threadReply = "thread reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        AND("user adds a thread reply and sends it also to main channel") {
-            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
-        }
-        WHEN("user removes thread reply from thread") {
-            userRobot.deleteMessage()
-        }
-        THEN("user observes the thread reply removed in thread") {
-            userRobot.assertDeletedMessage()
-        }
-        AND("user observes the thread reply removed in channel") {
-            userRobot
-                .tapOnBackButton()
-                .assertDeletedMessage()
-        }
-    }
-
-    func test_threadReplyIsRemovedEverywhere_whenUserRemovesItFromThread() {
-        linkToScenario(withId: 115)
-
-        let threadReply = "thread reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        AND("user adds a thread reply and sends it also to main channel") {
-            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
-        }
-        WHEN("user goes back to channel and removes thread reply") {
-            userRobot
-                .tapOnBackButton()
-                .deleteMessage()
-        }
-        THEN("user observes the thread reply removed in channel") {
-            userRobot.assertDeletedMessage()
-        }
-        AND("user observes the thread reply removed in thread") {
-            userRobot
-                .openThread(messageCellIndex: 1)
-                .assertDeletedMessage()
-        }
-    }
-    
-    func test_userRemovesThreadReply() {
-        linkToScenario(withId: 53)
-
-        let threadReply = "thread reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        AND("user adds a thread reply") {
-            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: false)
-        }
-        WHEN("user removes the thread reply") {
-            userRobot.deleteMessage()
-        }
-        THEN("user observes the thread reply removed in thread") {
-            userRobot.assertDeletedMessage()
-        }
-        AND("user observes a thread reply count button in channel") {
-            userRobot
-                .tapOnBackButton()
-                .assertThreadReplyCountButton()
-        }
-    }
-    
-    func test_participantRemovesThreadReply() {
-        linkToScenario(withId: 54)
-
-        let threadReply = "thread reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        AND("participant adds a thread reply") {
-            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: false)
-        }
-        WHEN("participant removes the thread reply") {
-            participantRobot.deleteMessage()
-        }
-        THEN("user observes a thread reply count button in channel") {
-            userRobot.assertThreadReplyCountButton()
-        }
-        THEN("user observes the thread reply removed in thread") {
-            userRobot.openThread().assertDeletedMessage()
-        }
-    }
     
     func test_threadTypingIndicatorHidden_whenParticipantStopsTyping() {
         linkToScenario(withId: 243)
@@ -855,6 +735,256 @@ extension MessageList_Tests {
         }
         THEN("messages are not grouped, 1st message shows the timestamp") {
             userRobot.assertMessageHasTimestamp(at: 1)
+        }
+    }
+}
+
+// MARK: Deleted messages
+
+extension MessageList_Tests {
+    func test_deletesMessage() throws {
+        linkToScenario(withId: 37)
+        
+        let message = "test message"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends the message: '\(message)'") {
+            userRobot.sendMessage(message)
+        }
+        AND("user deletes the message: '\(message)'") {
+            userRobot.deleteMessage()
+        }
+        THEN("the message is deleted") {
+            userRobot.assertDeletedMessage()
+        }
+    }
+    
+    func test_messageDeleted_whenParticipantDeletesMessage() throws {
+        linkToScenario(withId: 38)
+        
+        let message = "test message"
+        
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("participant sends the message: '\(message)'") {
+            participantRobot.sendMessage(message)
+        }
+        AND("participant deletes the message: '\(message)'") {
+            participantRobot.deleteMessage()
+        }
+        THEN("the message is deleted") {
+            userRobot.assertDeletedMessage()
+        }
+    }
+    
+    func test_quotedReplyIsDeletedByParticipant_deletedMessageIsShown() {
+        linkToScenario(withId: 108)
+
+        let quotedMessage = "quoted reply"
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("participant adds a quoted reply") {
+            participantRobot.replyToMessage(quotedMessage)
+        }
+        WHEN("participant deletes a quoted message") {
+            participantRobot.deleteMessage()
+        }
+        THEN("user observes Message deleted") {
+            userRobot.assertDeletedMessage()
+        }
+    }
+    
+    func test_quotedReplyIsDeletedByUser_deletedMessageIsShown() {
+        linkToScenario(withId: 109)
+        
+        let quotedMessage = "quoted reply"
+        
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("user adds a quoted reply") {
+            userRobot.replyToMessage(quotedMessage)
+        }
+        WHEN("user deletes a quoted message") {
+            userRobot.deleteMessage()
+        }
+        THEN("deleted message is shown") {
+            userRobot.assertDeletedMessage()
+        }
+    }
+
+    func test_threadReplyIsRemovedEverywhere_whenParticipantRemovesItFromChannel() {
+        linkToScenario(withId: 112)
+
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("participant adds a thread reply and sends it also to main channel") {
+            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        WHEN("participant removes the thread reply from channel") {
+            participantRobot.deleteMessage()
+        }
+        THEN("user observes the thread reply removed in channel") {
+            userRobot.assertDeletedMessage()
+        }
+        AND("user observes the thread reply removed in thread") {
+            userRobot
+                .openThread(messageCellIndex: 1)
+                .assertDeletedMessage()
+        }
+    }
+
+    func test_threadReplyIsRemovedEverywhere_whenUserRemovesItFromChannel() {
+        linkToScenario(withId: 114)
+
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("user adds a thread reply and sends it also to main channel") {
+            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        WHEN("user removes thread reply from thread") {
+            userRobot.deleteMessage()
+        }
+        THEN("user observes the thread reply removed in thread") {
+            userRobot.assertDeletedMessage()
+        }
+        AND("user observes the thread reply removed in channel") {
+            userRobot
+                .tapOnBackButton()
+                .assertDeletedMessage()
+        }
+    }
+    
+    func test_participantRemovesThreadReply() {
+        linkToScenario(withId: 54)
+
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("participant adds a thread reply") {
+            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: false)
+        }
+        WHEN("participant removes the thread reply") {
+            participantRobot.deleteMessage()
+        }
+        THEN("user observes a thread reply count button in channel") {
+            userRobot.assertThreadReplyCountButton()
+        }
+        THEN("user observes the thread reply removed in thread") {
+            userRobot.openThread().assertDeletedMessage()
+        }
+    }
+    
+    func test_threadReplyIsRemovedEverywhere_whenUserRemovesItFromThread() {
+        linkToScenario(withId: 115)
+
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("user adds a thread reply and sends it also to main channel") {
+            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        WHEN("user goes back to channel and removes thread reply") {
+            userRobot
+                .tapOnBackButton()
+                .deleteMessage()
+        }
+        THEN("user observes the thread reply removed in channel") {
+            userRobot.assertDeletedMessage()
+        }
+        AND("user observes the thread reply removed in thread") {
+            userRobot
+                .openThread(messageCellIndex: 1)
+                .assertDeletedMessage()
+        }
+    }
+    
+    func test_userRemovesThreadReply() {
+        linkToScenario(withId: 53)
+
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("user adds a thread reply") {
+            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: false)
+        }
+        WHEN("user removes the thread reply") {
+            userRobot.deleteMessage()
+        }
+        THEN("user observes the thread reply removed in thread") {
+            userRobot.assertDeletedMessage()
+        }
+        AND("user observes a thread reply count button in channel") {
+            userRobot
+                .tapOnBackButton()
+                .assertThreadReplyCountButton()
+        }
+    }
+    
+    func test_hardDeletesMessage() throws {
+        linkToScenario(withId: 234)
+        
+        let message = "test message"
+        
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends the message: '\(message)'") {
+            userRobot.sendMessage(message)
+        }
+        AND("user hard-deletes the message: '\(message)'") {
+            userRobot.deleteMessage(hard: true)
+        }
+        THEN("the message is hard-deleted") {
+            userRobot.assertHardDeletedMessage(withText: message)
+        }
+    }
+    
+    func test_messageDeleted_whenParticipantHardDeletesMessage() throws {
+        linkToScenario(withId: 235)
+        
+        let message = "test message"
+        
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        WHEN("participant sends the message: '\(message)'") {
+            participantRobot.sendMessage(message)
+        }
+        AND("the message is delivered") {
+            userRobot.assertMessage(message)
+        }
+        AND("participant hard-deletes the message: '\(message)'") {
+            participantRobot.deleteMessage(hard: true)
+        }
+        THEN("the message is hard-deleted") {
+            userRobot.assertHardDeletedMessage(withText: message)
         }
     }
 }
