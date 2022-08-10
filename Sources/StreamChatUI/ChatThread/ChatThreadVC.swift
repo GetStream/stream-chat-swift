@@ -284,7 +284,7 @@ open class ChatThreadVC: _ViewController,
     public func messageControllerWillChangeReplies(
         _ controller: ChatMessageController
     ) {
-        messageListVC.listView.previousMessagesSnapshot = messages
+        messageListVC.setPreviousMessagesSnapshot(messages)
     }
 
     open func messageController(
@@ -292,7 +292,7 @@ open class ChatThreadVC: _ViewController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         let messages = getRepliesWithThreadRootMessage(from: controller)
-        messageListVC.listView.newMessagesSnapshot = messages
+        messageListVC.setNewMessagesSnapshot(messages)
         messageListVC.updateMessages(with: changes)
     }
     

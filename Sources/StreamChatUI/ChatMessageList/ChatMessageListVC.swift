@@ -383,6 +383,15 @@ open class ChatMessageListVC: _ViewController,
         navigationController?.present(alert, animated: true)
     }
 
+    internal func setPreviousMessagesSnapshot(_ messages: [ChatMessage]) {
+        listView.previousMessagesSnapshot = messages
+    }
+
+    internal func setNewMessagesSnapshot(_ messages: [ChatMessage]) {
+        listView.currentMessagesFromDataSource = messages
+        listView.newMessagesSnapshot = messages
+    }
+
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     open func numberOfSections(in tableView: UITableView) -> Int {
@@ -441,8 +450,7 @@ open class ChatMessageListVC: _ViewController,
 
         // If the user scrolled to the bottom, update the UI for the skipped messages
         if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty {
-            listView.skippedMessages = []
-            listView.updateMessages(with: [])
+            listView.reloadSkippedMessages()
         }
     }
 

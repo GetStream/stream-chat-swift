@@ -20,28 +20,26 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// The previous messages snapshot before the next update.
     internal var previousMessagesSnapshot: [ChatMessage] = []
 
+    /// The current messages from the data source, including skipped messages.
+    /// This property is especially useful when resetting the skipped messages
+    /// since we want to reload the data and insert back the skipped messages, for this,
+    /// we update the messages data with the one originally reported by the data controller.
+    internal var currentMessagesFromDataSource: [ChatMessage] = []
+
     /// The new messages snapshot reported by the channel or message controller.
-    private var _newMessagesSnapshotWithSkipped: [ChatMessage] = []
+    /// If messages are being skipped, this snapshot doesn't include skipped messages.
     internal var newMessagesSnapshot: [ChatMessage] = [] {
         didSet {
-            _newMessagesSnapshotWithSkipped = newMessagesSnapshot
-            let isNotSkippedMessage: (ChatMessage) -> Bool = {
+            newMessagesSnapshot = newMessagesSnapshot.filter {
                 !self.skippedMessages.contains($0.id)
             }
-            newMessagesSnapshot = newMessagesSnapshot.filter(isNotSkippedMessage)
         }
     }
-    
+
     /// When inserting messages at the bottom, if the user is scrolled up,
     /// we skip adding the message to the UI until the user scrolls back
     /// to the bottom. This is to avoid message list jumps.
-    internal var skippedMessages: Set<MessageId> = [] {
-        didSet {
-            if skippedMessages.isEmpty {
-                newMessagesSnapshot = _newMessagesSnapshotWithSkipped
-            }
-        }
-    }
+    internal var skippedMessages: Set<MessageId> = []
 
     /// This closure is to update the dataSource when DifferenceKit
     /// reports the data source should be updated.
@@ -237,6 +235,12 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 self.reloadRows(at: [previousMessageIndexPath], with: .none)
             }
         }
+    }
+
+    func reloadSkippedMessages() {
+        skippedMessages = []
+        newMessagesSnapshot = currentMessagesFromDataSource
+        updateMessages(with: [])
     }
 }
 

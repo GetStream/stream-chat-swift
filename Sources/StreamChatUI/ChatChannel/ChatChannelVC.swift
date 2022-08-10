@@ -251,7 +251,7 @@ open class ChatChannelVC: _ViewController,
     // MARK: - ChatChannelControllerDelegate
 
     open func channelControllerWillUpdateMessages(_ channelController: ChatChannelController) {
-        messageListVC.listView.previousMessagesSnapshot = messages
+        messageListVC.setPreviousMessagesSnapshot(messages)
     }
 
     open func channelController(
@@ -262,7 +262,7 @@ open class ChatChannelVC: _ViewController,
             channelController.markRead()
         }
 
-        messageListVC.listView.newMessagesSnapshot = Array(channelController.messages)
+        messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
         messageListVC.updateMessages(with: changes)
     }
 
