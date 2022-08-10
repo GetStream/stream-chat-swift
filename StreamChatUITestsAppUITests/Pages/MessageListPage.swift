@@ -23,6 +23,10 @@ class MessageListPage {
         app.otherElements["TypingIndicatorView"].staticTexts.firstMatch
     }
     
+    static var scrollToBottomButton: XCUIElement {
+        app.buttons["ScrollToLatestMessageButton"]
+    }
+    
     enum NavigationBar {
         
         static var header: XCUIElement { app.otherElements["ChatChannelHeaderView"] }
@@ -61,6 +65,10 @@ class MessageListPage {
             // Show member info
             static var showMemberInfo: XCUIElement { alert.buttons["Show Members"] }
             static var dismissMemberInfo: XCUIElement { app.alerts["Members"].buttons["Cancel"] }
+            
+            // Truncate channel
+            static var truncateWithMessage: XCUIElement { alert.buttons["Truncate channel with message"] }
+            static var truncateWithoutMessage: XCUIElement { alert.buttons["Truncate channel w/o message"] }
         }
     }
     
@@ -102,6 +110,7 @@ class MessageListPage {
         case mute
         case edit
         case delete
+        case hardDelete
         case resend
         case block
         case unblock
@@ -124,6 +133,8 @@ class MessageListPage {
                 return Element.edit
             case .delete:
                 return Element.delete
+            case .hardDelete:
+                return Element.hardDelete
             case .resend:
                 return Element.resend
             case .block:
@@ -143,6 +154,7 @@ class MessageListPage {
             static var unmute: XCUIElement { app.otherElements["UnmuteUserActionItem"] }
             static var edit: XCUIElement { app.otherElements["EditActionItem"] }
             static var delete: XCUIElement { app.otherElements["DeleteActionItem"] }
+            static var hardDelete: XCUIElement { app.otherElements["HardDeleteActionItem"] }
             static var resend: XCUIElement { app.otherElements["ResendActionItem"] }
             static var block: XCUIElement { app.otherElements["BlockUserActionItem"] }
             static var unblock: XCUIElement { app.otherElements["UnblockUserActionItem"] }
@@ -154,7 +166,7 @@ class MessageListPage {
             messageCell.buttons["ChatMessageReactionItemView"]
         }
         
-        static func threadButton(in messageCell: XCUIElement) -> XCUIElement {
+        static func threadReplyCountButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["threadReplyCountButton"]
         }
         
@@ -191,11 +203,15 @@ class MessageListPage {
         }
 
         static func statusCheckmark(for status: MessageDeliveryStatus?, in messageCell: XCUIElement) -> XCUIElement {
-            var identifier = "imageView"
+            var identifier = "There is no status checkmark"
             if let status = status {
-                identifier = "\(identifier)_\(status.rawValue)"
+                identifier = "imageView_\(status.rawValue)"
             }
             return messageCell.images[identifier]
+        }
+        
+        static func giphyButtons(in messageCell: XCUIElement) -> XCUIElementQuery {
+            messageCell.buttons.matching(NSPredicate(format: "identifier LIKE 'ActionButton'"))
         }
         
         static func giphySendButton(in messageCell: XCUIElement) -> XCUIElement {
@@ -215,8 +231,7 @@ class MessageListPage {
         }
         
         private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {
-            messageCell.buttons.matching(NSPredicate(
-                format: "identifier LIKE 'ActionButton' AND label LIKE '\(label)'")).firstMatch
+            giphyButtons(in: messageCell).matching(NSPredicate(format: "label LIKE '\(label)'")).firstMatch
         }
         
         static var deletedMessagePlaceholder: String {
@@ -237,6 +252,28 @@ class MessageListPage {
         
         static func videoPlayer() -> XCUIElement {
             app.otherElements["PlayerView"]
+        }
+        
+        enum LinkPreview {
+            static func link(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.links["textView"].links.firstMatch
+            }
+            
+            static func image(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.images["imagePreview"]
+            }
+            
+            static func serviceName(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.staticTexts["authorLabel"]
+            }
+            
+            static func title(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.staticTexts["titleLabel"]
+            }
+            
+            static func description(in messageCell: XCUIElement) -> XCUIElement {
+                messageCell.textViews["bodyTextView"]
+            }
         }
     }
     

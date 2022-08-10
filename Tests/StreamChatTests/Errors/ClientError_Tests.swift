@@ -12,7 +12,8 @@ final class ClientError_Tests: XCTestCase {
         let error = ErrorPayload(
             code: .random(in: ClosedRange.tokenInvalidErrorCodes),
             message: .unique,
-            statusCode: .unique
+            statusCode: .unique,
+            details: []
         )
         
         // Assert `isInvalidTokenError` returns true
@@ -30,7 +31,8 @@ final class ClientError_Tests: XCTestCase {
         let error = ErrorPayload(
             code: ClosedRange.tokenInvalidErrorCodes.lowerBound - 1,
             message: .unique,
-            statusCode: .unique
+            statusCode: .unique,
+            details: []
         )
         
         // Assert `isInvalidTokenError` returns false
@@ -41,5 +43,29 @@ final class ClientError_Tests: XCTestCase {
         
         // Assert `isInvalidTokenError` returns false
         XCTAssertFalse(clientError.isInvalidTokenError)
+    }
+    
+    func test_isBouncedMessageError_whenUnderlayingErrorIsAccurate_returnsTrue() {
+        let error = ErrorPayload(
+            code: 73,
+            message: .unique,
+            statusCode: .unique,
+            details: []
+        )
+        
+        // Assert `isBouncedMessageError` returns true
+        XCTAssertTrue(error.isBouncedMessageError)
+    }
+    
+    func test_isBouncedMessageError_whenUnderlayingErrorIsNotAccurate_returnsFalse() {
+        let error = ErrorPayload(
+            code: 72,
+            message: .unique,
+            statusCode: .unique,
+            details: []
+        )
+        
+        // Assert `isBouncedMessageError` returns false
+        XCTAssertFalse(error.isBouncedMessageError)
     }
 }

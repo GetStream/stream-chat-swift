@@ -572,91 +572,190 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(messageAfterHardDelete?.isHardDeleted, false)
     }
     
-    // MARK: Get message
-    
-    func test_getMessage_makesCorrectAPICall() {
-        let cid: ChannelId = .unique
-        let messageId: MessageId = .unique
-        
-        // Simulate `getMessage(cid:, messageId:)` call
-        messageUpdater.getMessage(cid: cid, messageId: messageId)
-
-        // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
-    }
-    
-    func test_getMessage_propogatesRequestError() {
-        // Simulate `getMessage(cid:, messageId:)` call
-        var completionCalledError: Error?
-        messageUpdater.getMessage(cid: .unique, messageId: .unique) {
-            completionCalledError = $0
-        }
-        
-        // Simulate API response with failure
-        let error = TestError()
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(error))
-
-        // Assert the completion is called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
-    }
-    
-    func test_getMessage_propogatesDatabaseError() throws {
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: .unique, authorUserId: .unique)
-        )
-        let channelId = ChannelId.unique
-
-        // Create channel in the database
-        try database.createChannel(cid: channelId)
-        
-        // Update database container to throw the error on write
-        let testError = TestError()
-        database.write_errorResponse = testError
-        
-        // Simulate `getMessage(cid:, messageId:)` call
-        var completionCalledError: Error?
-        messageUpdater.getMessage(cid: channelId, messageId: messagePayload.message.id) {
-            completionCalledError = $0
-        }
-        
-        // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
-
-        // Assert database error is propogated
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
-    }
-    
-    func test_getMessage_savesMessageToDatabase() throws {
+    func test_deleteBouncedMessage_isDeletedLocally_whenLocalStateIsSendingFailed() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
-        let cid: ChannelId = .unique
+
+        // Flush the database
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
 
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
+
+        // Create message authored by current user in the database
+        try database.createMessage(id: messageId, authorId: currentUserId)
         
-        // Create channel in the database
-        try database.createChannel(cid: cid)
-        
-        // Simulate `getMessage(cid:, messageId:)` call
-        var completionCalled = false
-        messageUpdater.getMessage(cid: cid, messageId: messageId) { _ in
-            completionCalled = true
+        // Simulate message on a state where it failed to be sent due to moderation
+        try database.writeSynchronously { session in
+            guard let messageDTO = session.message(id: messageId) else { return }
+            
+            messageDTO.isBounced = true
+            messageDTO.localMessageState = .sendingFailed
         }
+
+        // Simulate `deleteMessage(messageId:)` call
+        messageUpdater.deleteMessage(messageId: messageId, hard: false)
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
         
-        // Simulate API response with success
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
-        )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        // Assert Bounced Message Gets marked as failedToBeSentDueToModeration as expected
+        AssertAsync.willBeEqual(message.failedToBeSentDueToModeration, true)
+
+        // Assert Bounced Message Gets locally deleted
+        AssertAsync.willBeEqual(message.type, MessageType.deleted.rawValue)
         
-        // Assert completion is called
-        AssertAsync.willBeTrue(completionCalled)
-        
-        // Assert fetched message is saved to the database
-        XCTAssertNotNil(database.viewContext.message(id: messageId))
+        // The message is marked has being hard deleted
+        XCTAssertEqual(message.isHardDeleted, true)
     }
     
+    func test_deleteBouncedMessage_isNotDeletedLocally_whenLocalStateIsNotSendingFailed() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+
+        // Flush the database
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create message authored by current user in the database
+        try database.createMessage(id: messageId, authorId: currentUserId)
+        
+        // Simulate message on a state where it failed to be sent due to moderation
+        try database.writeSynchronously { session in
+            guard let messageDTO = session.message(id: messageId) else { return }
+            
+            messageDTO.isBounced = true
+        }
+
+        // Simulate `deleteMessage(messageId:)` call
+        messageUpdater.deleteMessage(messageId: messageId, hard: false)
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert Bounced Message is not marked as failedToBeSentDueToModeration
+        AssertAsync.willBeEqual(message.failedToBeSentDueToModeration, false)
+
+        // Assert Bounced Message Does not get deleted locally
+        AssertAsync.willBeEqual(message.type, MessageType.regular.rawValue)
+    }
+    
+    func test_deleteBouncedMessage_updatesChannelPreviewCorrectly() throws {
+        let firstMessageId: MessageId = .unique
+        let secondMessageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let emptyChannelPayload: ChannelPayload = .dummy(channel: .dummy(cid: cid))
+
+        // Flush the database
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 0.1)
+        
+        let firstPreviewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: firstMessageId,
+            authorUserId: .unique
+        )
+        
+        let secondPreviewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: secondMessageId,
+            authorUserId: .unique
+        )
+        
+        let channelPayload: ChannelPayload = .dummy(
+            channel: emptyChannelPayload.channel,
+            messages: [firstPreviewMessage, secondPreviewMessage]
+        )
+        
+        // Save channel information to database and mark message as failedToBeSentDueToModeration
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            
+            guard let messageDTO = session.message(id: secondMessageId) else { return }
+            
+            messageDTO.isBounced = true
+            messageDTO.localMessageState = .sendingFailed
+        }
+        
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: secondMessageId))
+        
+        // Assert message is marked as failedToBeSentDueToModeration
+        XCTAssertTrue(message.failedToBeSentDueToModeration)
+        
+        // Delete second message
+        let expectation = expectation(description: "deleteMessage completes")
+        messageUpdater.deleteMessage(messageId: secondMessageId, hard: false) { _ in
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 0.1)
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        
+        // Assert channel preview is updated with the previous message
+        XCTAssertEqual(channelDTO.previewMessage?.id, firstPreviewMessage.id)
+    }
+    
+    // MARK: Get message
+    
+    func test_getMessage_shouldForwardSuccess() {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let message = ChatMessage.unique
+
+        messageRepository.getMessageResult = .success(message)
+        // Simulate `getMessage(cid:, messageId:)` call
+        var result: Result<ChatMessage, Error>!
+        let expectation = self.expectation(description: "getMessage completes")
+        messageUpdater.getMessage(cid: cid, messageId: messageId) {
+            result = $0
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 0.1)
+        XCTAssertEqual(result.value, message)
+    }
+
+    func test_getMessage_shouldForwardError() {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let error = ClientError.ConnectionError()
+
+        messageRepository.getMessageResult = .failure(error)
+        // Simulate `getMessage(cid:, messageId:)` call
+        var result: Result<ChatMessage, Error>!
+        let expectation = self.expectation(description: "getMessage completes")
+        messageUpdater.getMessage(cid: cid, messageId: messageId) {
+            result = $0
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 0.1)
+        XCTAssertEqual(result.error, error)
+    }
+
     // MARK: - Create new reply
     
     func test_createNewReply_savesMessageToDatabase() throws {
@@ -958,27 +1057,30 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Create channel in the database.
         try database.createChannel(cid: cid)
-        
+
+        // Simulate message response with success.
+        messageRepository.getMessageResult = .success(.mock(id: messageId, cid: cid, text: "", author: .mock(id: currentUserId)))
+
         // Simulate `flagMessage` call.
         var flagCompletionCalled = false
         messageUpdater.flagMessage(true, with: messageId, in: cid) { error in
             XCTAssertNil(error)
             flagCompletionCalled = true
         }
-        
-        // Assert message endpoint is called.
-        let messageEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
-        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(messageEndpoint))
-        
-        // Simulate message response with success.
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
-        )
-        apiClient.test_simulateResponse(.success(messagePayload))
-        
+
         // Assert flag endpoint is called.
         let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
+
+        // Add it to DB as it is as expected after a successful getMessage call
+        try database.writeSynchronously { session in
+            try session.saveMessage(
+                payload: MessagePayload.dummy(messageId: messageId, authorUserId: currentUserId),
+                for: cid,
+                syncOwnReactions: true,
+                cache: nil
+            )
+        }
         
         // Simulate flag API response.
         let flagMessagePayload = FlagMessagePayload(
@@ -986,39 +1088,36 @@ final class MessageUpdater_Tests: XCTestCase {
             flaggedMessageId: messageId
         )
         apiClient.test_simulateResponse(.success(flagMessagePayload))
-        
-        // Assert flag completion is called.
-        AssertAsync.willBeTrue(flagCompletionCalled)
 
         // Load the message.
         var messageDTO: MessageDTO? {
             database.viewContext.message(id: messageId)
         }
-        
+
         AssertAsync {
             // Assert current user has the message flagged.
             Assert.willBeTrue(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? false)
             // Assert message is flagged by current user.
             Assert.willBeEqual(messageDTO?.flaggedBy, currentUserDTO)
         }
-        
+
         // Simulate `unflagMessage` call.
         var unflagCompletionCalled = false
         messageUpdater.flagMessage(false, with: messageId, in: cid) { error in
             XCTAssertNil(error)
             unflagCompletionCalled = true
         }
-        
+
         // Assert unflag endpoint is called.
         let unflagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(false, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(unflagEndpoint))
-        
+
         // Simulate unflag API response.
         apiClient.test_simulateResponse(.success(flagMessagePayload))
-        
+
         // Assert unflag completion is called.
         AssertAsync.willBeTrue(unflagCompletionCalled)
-        
+
         AssertAsync {
             // Assert current user doesn't have the message as flagged.
             Assert.willBeFalse(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? true)
@@ -1027,60 +1126,23 @@ final class MessageUpdater_Tests: XCTestCase {
         }
     }
     
-    func test_flagMessage_propagatesMessageNetworkError() {
-        let messageId: MessageId = .unique
-        let cid: ChannelId = .unique
-        
-        // Simulate `flagMessage` call and catch the error.
-        var completionCalledError: Error?
-        messageUpdater.flagMessage(true, with: messageId, in: cid) {
-            completionCalledError = $0
-        }
-        
-        // Assert message endpoint is called.
-        let messageEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
-        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(messageEndpoint))
-        
-        // Simulate message response with failure.
-        let networkError = TestError()
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(networkError))
-        
-        // Assert the message network error is propogated.
-        AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
-    }
-    
-    func test_flagMessage_propagatesMessageDatabaseError() throws {
-        let currentUserId: UserId = .unique
+    func test_flagMessage_propagatesError() {
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
 
-        // Create channel in the database
-        try database.createChannel(cid: cid)
-        
-        // Update database to throw the error on write.
-        let databaseError = TestError()
-        database.write_errorResponse = databaseError
-        
+        let networkError = TestError()
+        messageRepository.getMessageResult = .failure(networkError)
+
         // Simulate `flagMessage` call and catch the error.
         var completionCalledError: Error?
         messageUpdater.flagMessage(true, with: messageId, in: cid) {
             completionCalledError = $0
         }
-        
-        // Assert message endpoint is called.
-        let messageEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
-        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(messageEndpoint))
-        
-        // Simulate message response with success.
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
-        )
-        apiClient.test_simulateResponse(.success(messagePayload))
-        
-        // Assert the message database error is propogated.
-        AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
+
+        // Assert the message network error is propogated.
+        AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
     }
-    
+
     func test_flagMessage_propagatesFlagNetworkError() throws {
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique

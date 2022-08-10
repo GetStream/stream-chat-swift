@@ -15,7 +15,8 @@ final class ErrorPayload_Tests: XCTestCase {
             let error = ErrorPayload(
                 code: code,
                 message: .unique,
-                statusCode: .unique
+                statusCode: .unique,
+                details: []
             )
             
             // Assert `isInvalidTokenError` returns true
@@ -36,7 +37,8 @@ final class ErrorPayload_Tests: XCTestCase {
             let error = ErrorPayload(
                 code: code,
                 message: .unique,
-                statusCode: .unique
+                statusCode: .unique,
+                details: []
             )
             
             // Assert `isInvalidTokenError` returns false
@@ -53,7 +55,8 @@ final class ErrorPayload_Tests: XCTestCase {
             let error = ErrorPayload(
                 code: .unique,
                 message: .unique,
-                statusCode: code
+                statusCode: code,
+                details: []
             )
             
             // Assert `isClientError` returns true
@@ -74,7 +77,8 @@ final class ErrorPayload_Tests: XCTestCase {
             let error = ErrorPayload(
                 code: .unique,
                 message: .unique,
-                statusCode: code
+                statusCode: code,
+                details: []
             )
             
             // Assert `isClientError` returns false

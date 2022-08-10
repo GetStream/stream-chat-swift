@@ -1,5 +1,5 @@
 ---
-title: Message composer
+title: Message Composer
 ---
 
 ## Message Composer Overview
@@ -9,7 +9,7 @@ The message composer is the component that allows you to send messages consistin
 - Leading composer view - displayed in the left part of the component. The default implementation shows buttons for displaying media picker and giphy commands.
 - Composer input view - the view that displays the input for the message. The default component allows adding text, as well as images, files and videos.
 - Trailing composer view - displayed in the right part of the component. Usually used for sending the message.
-- Attachment picker view - component that allows you to pick several different types of attachments. The default component has three types of attachments (images and videos from the photo library, files and camera input). When an attachment is selected, by default it is added to the composer's input view. You can inject custom views (alternative pickers) in the component itself as well. 
+- Attachment picker view - component that allows you to pick several different types of attachments. The default component has three types of attachments (images and videos from the photo library, files and camera input). When an attachment is selected, by default it is added to the composer's input view. You can inject custom views (alternative pickers) in the component itself as well.
 
 ## Applying a Custom Modifier
 
@@ -21,7 +21,7 @@ func makeComposerViewModifier() -> some ViewModifier {
 }
 
 struct BackgroundViewModifier: ViewModifier {
-    
+
     public func body(content: Content) -> some View {
         content
             .background(Color.red)
@@ -31,13 +31,13 @@ struct BackgroundViewModifier: ViewModifier {
 
 ## Customizing the Leading Composer View
 
-You can completely swap the leading composer view with your own implementation. This might be useful if you want to change the behaviour of the attachment picker (provide a different one), or even just hide the component. 
+You can completely swap the leading composer view with your own implementation. This might be useful if you want to change the behaviour of the attachment picker (provide a different one), or even just hide the component.
 
 In order to do this, you need to implement the `makeLeadingComposerView`, which receives a binding of the `PickerTypeState`. Having the `PickerTypeState` as a parameter allows you to control the visibility of the attachment picker view. The `PickerTypeState` has two states - expanded and collapsed. If the state is collapsed, the composer is in the minimal mode (only the text input and leading and trailing areas are shown). If the enum state is expanded, it has associated value with it, which is of type `AttachmentPickerType`. This defines the type of picker which is currently displayed in the attachment picker view. The possible states are `none` (nothing is selected), `media` (media picker is selected), `giphy` (giphy commands picker is shown) and custom (for your own custom pickers).
 
 Apart from the `PickerTypeState`, you also receive the `ChannelConfig` as a parameter. This config allows you to control the display of some elements from the channel response from the backend, such as enabling / disabling of the attachments, max message length, typing indicators, etc. More details about the available settings in the channel config can be found [here](https://getstream.io/chat/docs/ios-swift/channel_features/?language=swift).
 
-Here's an example on how to provide a view for the leading composer view: 
+Here's an example on how to provide a view for the leading composer view:
 
 ```swift
 public func makeLeadingComposerView(
@@ -53,11 +53,12 @@ public func makeLeadingComposerView(
 
 ## Customizing the AttachmentPickerTypeView
 
-The `AttachmentPickerTypeView` comes with a lot of functionalities, in terms of image and video picker, file picker and selecting media from the camera. While you can just swap this component if it doesn't fit your needs (like shown above), it's also possible to extend it with additional message attachment types to fit your needs. 
+The `AttachmentPickerTypeView` comes with a lot of functionalities, in terms of image and video picker, file picker and selecting media from the camera. While you can just swap this component if it doesn't fit your needs (like shown above), it's also possible to extend it with additional message attachment types to fit your needs.
 
 For example, let's say we want to add additional contacts picker, which will allow us to send contacts via the chat. We also want to keep the existing functionalities, therefore we will explore ways to customize the existing component.
 
-There are few things we need to do in order to accomplish this: 
+There are few things we need to do in order to accomplish this:
+
 - Introduce a new type of payload for contacts
 - Create a new contact attachment type component
 - Enable the new contact component to be selectable from the attachment types picker
@@ -88,11 +89,11 @@ Since we will go through the attachments in a scrollable list, we also need to c
 
 ```swift
 extension ContactAttachmentPayload: Identifiable {
-    
+
     var id: String {
         "\(name)-\(phoneNumber)"
     }
-    
+
 }
 ```
 
@@ -104,7 +105,7 @@ Next, we need to create the component that will be displayed in the slot for cus
 class CustomAttachmentsFactory: ViewFactory {
 
 	@Injected(\.chatClient) var chatClient: ChatClient
-    
+
     private let mockContacts = [
         CustomAttachment(
             id: "123",
@@ -138,21 +139,21 @@ The `CustomContactAttachmentView` shows a list of the contacts, as well as an in
 
 ```swift
 struct CustomContactAttachmentView: View {
-    
+
     @Injected(\.fonts) var fonts
     @Injected(\.colors) var colors
-    
+
     let contacts: [CustomAttachment]
     let addedContacts: [CustomAttachment]
     var onCustomAttachmentTap: (CustomAttachment) -> Void
-        
+
     var body: some View {
         AttachmentTypeContainer {
             VStack(alignment: .leading) {
                 Text("Contacts")
                     .font(fonts.headlineBold)
                     .standardPadding()
-                
+
                 ScrollView {
                     VStack {
                         ForEach(contacts) { contact in
@@ -173,7 +174,7 @@ struct CustomContactAttachmentView: View {
             }
         }
     }
-        
+
 }
 ```
 
@@ -181,16 +182,16 @@ In order to be consistent with the other attachment types, we're wrapping the vi
 
 ```swift
 struct CustomContactAttachmentPreview: View {
-    
+
     @Injected(\.fonts) var fonts
     @Injected(\.colors) var colors
-    
+
     let contact: CustomAttachment
     let payload: ContactAttachmentPayload
     var onCustomAttachmentTap: (CustomAttachment) -> Void
     var isAttachmentSelected: Bool
     var hasSpacing = true
-        
+
     var body: some View {
         Button {
             withAnimation {
@@ -201,7 +202,7 @@ struct CustomContactAttachmentPreview: View {
                 Image(systemName: "person.crop.circle")
                     .renderingMode(.template)
                     .foregroundColor(Color(colors.textLowEmphasis))
-                
+
                 VStack(alignment: .leading) {
                     Text(payload.name)
                         .font(fonts.bodyBold)
@@ -210,25 +211,25 @@ struct CustomContactAttachmentPreview: View {
                         .font(fonts.footnote)
                         .foregroundColor(Color(colors.textLowEmphasis))
                 }
-                
+
                 if hasSpacing {
                     Spacer()
                 }
-                
+
                 if isAttachmentSelected {
                     Image(systemName: "checkmark")
                         .renderingMode(.template)
                         .foregroundColor(Color(colors.textLowEmphasis))
                 }
             }
-            
+
         }
     }
-    
+
 }
 ```
 
-### Make the Component Selectable in the Attachment Type Picker 
+### Make the Component Selectable in the Attachment Type Picker
 
 Next, we need to swap the current attachment picker, with a new one that will provide access to the custom component. To do this, we need to use the `makeAttachmentSourcePickerView` from the `ViewFactory` protocol. The method provides information about the selected `AttachmentPickerState`, as well as a callback that you should call when you want to switch the state. Here, we will return a new view, which will be of type `CustomAttachmentSourcePickerView`.
 
@@ -248,12 +249,12 @@ The `CustomAttachmentSourcePickerView` is an HStack of the default `AttachmentPi
 
 ```swift
 struct CustomAttachmentSourcePickerView: View {
-    
+
     @Injected(\.colors) var colors
-    
+
     var selected: AttachmentPickerState
     var onTap: (AttachmentPickerState) -> Void
-    
+
     var body: some View {
         HStack(alignment: .center, spacing: 24) {
             AttachmentPickerButton(
@@ -262,35 +263,35 @@ struct CustomAttachmentSourcePickerView: View {
                 isSelected: selected == .photos,
                 onTap: onTap
             )
-            
+
             AttachmentPickerButton(
                 iconName: "folder",
                 pickerType: .files,
                 isSelected: selected == .files,
                 onTap: onTap
             )
-            
+
             AttachmentPickerButton(
                 iconName: "camera",
                 pickerType: .camera,
                 isSelected: selected == .camera,
                 onTap: onTap
             )
-            
+
             AttachmentPickerButton(
                 iconName: "person.crop.circle",
                 pickerType: .custom,
                 isSelected: selected == .custom,
                 onTap: onTap
             )
-            
+
             Spacer()
         }
         .padding(.horizontal, 16)
         .frame(height: 56)
         .background(Color(colors.background1))
     }
-    
+
 }
 ```
 
@@ -308,18 +309,18 @@ func makeCustomAttachmentPreviewView(
     CustomContactAttachmentComposerPreview(
         addedCustomAttachments: addedCustomAttachments,
         onCustomAttachmentTap: onCustomAttachmentTap
-    )    
+    )
 }
 ```
 
-In this view, we will just re-use the `CustomContactAttachmentPreview` we've created above (only without the checkmark functionality). In addition, we are adding the `DiscardAttachmentButton` from the SDK, to allow the possibility to remove the attachment from the composer's input view. You can provide your own version of this button, if needed. 
+In this view, we will just re-use the `CustomContactAttachmentPreview` we've created above (only without the checkmark functionality). In addition, we are adding the `DiscardAttachmentButton` from the SDK, to allow the possibility to remove the attachment from the composer's input view. You can provide your own version of this button, if needed.
 
 ```swift
 struct CustomContactAttachmentComposerPreview: View {
-    
+
     var addedCustomAttachments: [CustomAttachment]
     var onCustomAttachmentTap: (CustomAttachment) -> Void
-    
+
     var body: some View {
         VStack {
             ForEach(addedCustomAttachments) { contact in
@@ -332,9 +333,9 @@ struct CustomContactAttachmentComposerPreview: View {
                             isAttachmentSelected: false
                         )
                         .padding(.leading, 8)
-                        
+
                         Spacer()
-                        
+
                         DiscardAttachmentButton(
                             attachmentIdentifier: payload.id,
                             onDiscard: { _ in
@@ -349,7 +350,7 @@ struct CustomContactAttachmentComposerPreview: View {
             }
         }
     }
-    
+
 }
 ```
 
@@ -357,16 +358,16 @@ This is a good example on how to use composition to create new views while re-us
 
 ### Updating the Message Resolving Logic
 
-Next, we need to go to the message list and update its rendering logic, in order for it to support displaying the newly created type of attachment. First, we need to update how messages are resolved based on their attachment types. The SDK supports displaying custom attachments via its `MessageTypeResolving` protocol. In our case, we need to create a new implementation of this protocol, specifically the `hasCustomAttachment` method. 
+Next, we need to go to the message list and update its rendering logic, in order for it to support displaying the newly created type of attachment. First, we need to update how messages are resolved based on their attachment types. The SDK supports displaying custom attachments via its `MessageTypeResolving` protocol. In our case, we need to create a new implementation of this protocol, specifically the `hasCustomAttachment` method.
 
 ```swift
 class CustomMessageTypeResolver: MessageTypeResolving {
-    
+
     func hasCustomAttachment(message: ChatMessage) -> Bool {
         let contactAttachments = message.attachments(payloadType: ContactAttachmentPayload.self)
         return contactAttachments.count > 0
     }
-    
+
 }
 ```
 
@@ -375,7 +376,7 @@ In this method, we are saying the custom attachment views should be rendered if 
 ```swift
 let messageTypeResolver = CustomMessageTypeResolver()
 let utils = Utils(messageTypeResolver: messageTypeResolver)
-         
+
 streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
 

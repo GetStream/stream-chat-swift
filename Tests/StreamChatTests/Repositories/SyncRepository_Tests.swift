@@ -400,7 +400,7 @@ final class SyncRepository_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(cid: .unique), query: query, cache: nil)
         }
 
-        let expectedError = ErrorPayload(code: 1, message: "Too many events", statusCode: 400)
+        let expectedError = ErrorPayload(code: 1, message: "Too many events", statusCode: 400, details: [])
         let result = getSyncExistingChannelEventsResult(requestResult: .failure(ClientError(with: expectedError)))
 
         guard let value = result.value else {

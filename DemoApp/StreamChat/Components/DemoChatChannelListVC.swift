@@ -43,6 +43,11 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         ]
         createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
         hiddenChannelsButton.addTarget(self, action: #selector(didTapHiddenChannelsButton), for: .touchUpInside)
+        
+        emptyView.actionButtonPressed = { [weak self] in
+            guard let self = self else { return }
+            self.didTapCreateNewChannel(self)
+        }
     }
 
     @objc private func didTapCreateNewChannel(_ sender: Any) {
@@ -57,6 +62,7 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     var selectedChannel: ChatChannel?
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
         let channel = controller.channels[indexPath.row]
         selectedChannel = controller.channels[indexPath.row]
         router.showChannel(for: channel.cid)

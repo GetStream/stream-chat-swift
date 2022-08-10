@@ -237,9 +237,7 @@ public class ChatClient {
     }
 
     /// Creates a new instance of `ChatClient`.
-    /// - Parameters:
-    ///   - config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
-    ///   - tokenProvider: In case of token expiration this closure is used to obtain a new token
+    /// - Parameter config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
     public convenience init(
         config: ChatClientConfig
     ) {

@@ -102,11 +102,18 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     private let environment: Environment
     
+    var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
-    lazy var basePublishers: BasePublishers = .init(controller: self)
+    var basePublishers: BasePublishers {
+        if let value = _basePublishers as? BasePublishers {
+            return value
+        }
+        _basePublishers = BasePublishers(controller: self)
+        return _basePublishers as? BasePublishers ?? .init(controller: self)
+    }
     
     /// A type-erased multicast delegate.
     var multicastDelegate: MulticastDelegate<ChatMessageControllerDelegate> = .init() {
@@ -162,7 +169,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         startObserversIfNeeded()
         
-        messageUpdater.getMessage(cid: cid, messageId: messageId) { error in
+        messageUpdater.getMessage(cid: cid, messageId: messageId) { result in
+            let error = result.error
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }

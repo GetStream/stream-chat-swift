@@ -58,14 +58,13 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
     func test_errorIndicatorShown_whenMessageFailedToBeSent() {
         linkToScenario(withId: 141)
 
-        GIVEN("user opens the channel") {
+        GIVEN("user becomes offline") {
             userRobot
                 .setConnectivitySwitchVisibility(to: .on)
                 .login()
+                .setConnectivity(to: .off)
                 .openChannel()
-        }
-        AND("user becomes offline") {
-            userRobot.setConnectivity(to: .off)
+                
         }
         WHEN("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)
@@ -120,9 +119,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .assertMessageReadCount(readBy: 1)
         }
         WHEN("new participant is added to the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .addParticipant()
+            userRobot.addParticipant()
         }
         THEN("user spots double checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -152,9 +149,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .assertMessageReadCount(readBy: 1)
         }
         WHEN("participant is removed from the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .removeParticipant(withUserId: participantOne)
+            userRobot.removeParticipant(withUserId: participantOne)
         }
         THEN("user spots single checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -229,7 +224,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         WHEN("user previews thread for message: \(message)") {
-            userRobot.showThread()
+            userRobot.openThread()
         }
         THEN("user spots single checkmark below the message") {
             userRobot
@@ -241,16 +236,14 @@ extension MessageDeliveryStatus_Tests {
     func test_errorIndicatorShown_whenMessageFailedToBeSent_andCantBePreviewedInThread() {
         linkToScenario(withId: 149)
 
-        GIVEN("user opens the channel") {
+        GIVEN("user becomes offline") {
             userRobot
                 .setConnectivitySwitchVisibility(to: .on)
                 .login()
+                .setConnectivity(to: .off)
                 .openChannel()
         }
-        WHEN("user becomes offline") {
-            userRobot.setConnectivity(to: .off)
-        }
-        AND("user sends a new message") {
+        WHEN("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)
         }
         THEN("error indicator is shown for the message") {
@@ -278,7 +271,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         AND("user previews thread for read message: \(message)") {
-            userRobot.showThread()
+            userRobot.openThread()
         }
         WHEN("the message is read by participant") {
             participantRobot.readMessage()
@@ -317,19 +310,15 @@ extension MessageDeliveryStatus_Tests {
     func test_errorIndicatorShown_whenThreadReplyFailedToBeSent() {
         linkToScenario(withId: 152)
 
-        GIVEN("user opens the channel") {
+        GIVEN("user becomes offline") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot
                 .setConnectivitySwitchVisibility(to: .on)
                 .login()
+                .setConnectivity(to: .off)
                 .openChannel()
         }
-        AND("user sends a new message") {
-            userRobot.sendMessage(message)
-        }
-        WHEN("user becomes offline") {
-            userRobot.setConnectivity(to: .off)
-        }
-        AND("user replies to message in thread") {
+        WHEN("user replies to message in thread") {
             userRobot.replyToMessageInThread(failedThreadReply, waitForAppearance: false)
         }
         THEN("error indicator is shown for the thread reply") {
@@ -382,9 +371,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.replyToMessageInThread(threadReply)
         }
         WHEN("new participant is added to the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .addParticipant()
+            userRobot.addParticipant()
         }
         THEN("user spots double checkmark below the thread reply") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -417,9 +404,7 @@ extension MessageDeliveryStatus_Tests {
                 .assertMessageReadCount(readBy: 1)
         }
         WHEN("participant is removed from the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .removeParticipant(withUserId: participantOne)
+            userRobot.removeParticipant(withUserId: participantOne)
         }
         THEN("user spots single checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -554,15 +539,13 @@ extension MessageDeliveryStatus_Tests {
     func test_errorIndicatorShown_whenMessageFailedToBeSentAndReadEventsIsDisabled() {
         linkToScenario(withId: 160)
 
-        GIVEN("user opens the channel") {
+        GIVEN("user becomes offline") {
             backendRobot.setReadEvents(to: false)
             userRobot
                 .setConnectivitySwitchVisibility(to: .on)
                 .login()
+                .setConnectivity(to: .off)
                 .openChannel()
-        }
-        AND("user becomes offline") {
-            userRobot.setConnectivity(to: .off)
         }
         WHEN("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)
@@ -572,8 +555,8 @@ extension MessageDeliveryStatus_Tests {
         }
         AND("delivery status is hidden") {
             userRobot
-            .assertMessageDeliveryStatus(nil)
-            .assertMessageReadCount(readBy: 0)
+                .assertMessageDeliveryStatus(nil)
+                .assertMessageReadCount(readBy: 0)
         }
     }
 
@@ -615,9 +598,7 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.readMessage()
         }
         WHEN("new participant is added to the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .addParticipant()
+            userRobot.addParticipant()
         }
         THEN("delivery status is hidden") {
             userRobot
@@ -645,9 +626,7 @@ extension MessageDeliveryStatus_Tests {
                 .readMessage()
         }
         WHEN("participant is removed from the channel") {
-            userRobot
-                .tapOnDebugMenu()
-                .removeParticipant(withUserId: participantOne)
+            userRobot.removeParticipant(withUserId: participantOne)
         }
         AND("delivery status is hidden") {
             userRobot.assertMessageDeliveryStatus(nil)

@@ -284,7 +284,7 @@ extension DatabaseContainer {
                     extraData: extraData
                 )
                 
-                let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true, cache: nil)!
+                let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true, cache: nil)
                 messageDTO.replies.insert(replyDTO)
             }
         }

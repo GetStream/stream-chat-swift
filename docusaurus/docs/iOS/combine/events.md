@@ -52,6 +52,7 @@ class YourCustomChannelListVC: ChatChannelListVC {
                 // do what you need with the event
                 print(messageNewEvent.messageId)
             }
+            .store(in: &cancellables)
     }
 }
 ```

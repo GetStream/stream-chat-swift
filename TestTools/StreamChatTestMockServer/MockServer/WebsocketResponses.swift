@@ -20,28 +20,22 @@ public extension StreamMockServer {
         _ eventType: EventType,
         user: [String: Any]?,
         channelId: String,
+        channel: [String: Any]? = nil,
         parentMessageId: String? = nil
     ) -> Self {
-        let json = websocketEventJSON(eventType, user: user, channelId: channelId, parentMessageId: parentMessageId)
+        var json = TestData.getMockResponse(fromFile: .wsChatEvent).json
+        json[eventKey.user.rawValue] = user
+        json[eventKey.createdAt.rawValue] = TestData.currentDate
+        json[eventKey.eventType.rawValue] = eventType.rawValue
+        json[eventKey.channelId.rawValue] = channelId
+        json[eventKey.channelType.rawValue] = ChannelType.messaging.rawValue
+        json[eventKey.parentId.rawValue] = parentMessageId
+        json[eventKey.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
+        
+        if let channel = channel { json[JSONKey.channel] = channel }
+        
         writeText(json.jsonToString())
         return self
-    }
-
-    private func websocketEventJSON(
-        _ eventType: EventType,
-        user: [String: Any]?,
-        channelId: String,
-        parentMessageId: String? = nil
-    ) -> [String: Any] {
-        var json = TestData.getMockResponse(fromFile: .wsChatEvent).json
-        json[EventPayload.CodingKeys.user.rawValue] = user
-        json[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
-        json[EventPayload.CodingKeys.eventType.rawValue] = eventType.rawValue
-        json[EventPayload.CodingKeys.channelId.rawValue] = channelId
-        json[EventPayload.CodingKeys.channelType.rawValue] = ChannelType.messaging.rawValue
-        json[EventPayload.CodingKeys.parentId.rawValue] = parentMessageId
-        json[EventPayload.CodingKeys.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
-        return json
     }
     
     /// Manages the lifecycle of the messages over a websocket connection
@@ -62,6 +56,8 @@ public extension StreamMockServer {
         messageType: MessageType = .regular,
         eventType: EventType,
         user: [String: Any]?,
+        channel: [String: Any]? = nil,
+        hardDelete: Bool = false,
         intercept: ((inout [String: Any]?) -> [String: Any]?)? = nil
     ) -> Self {
         guard let messageId = messageId else { return self }
@@ -72,15 +68,9 @@ public extension StreamMockServer {
         
         switch eventType {
         case .messageNew:
-            var message = json[JSONKey.message] as? [String: Any]
-            if messageType == .ephemeral {
-                var attachments = message?[MessagePayloadsCodingKeys.attachments.rawValue] as? [[String: Any]]
-                attachments?[0][GiphyAttachmentSpecificCodingKeys.actions.rawValue] = nil
-                message?[MessagePayloadsCodingKeys.attachments.rawValue] = attachments
-                message?[MessagePayloadsCodingKeys.type.rawValue] = MessageType.regular.rawValue
-            }
             mockedMessage = mockMessage(
-                message,
+                json[JSONKey.message] as? [String: Any],
+                messageType: messageType,
                 channelId: channelId,
                 messageId: messageId,
                 text: text,
@@ -89,21 +79,31 @@ public extension StreamMockServer {
                 updatedAt: timestamp
             )
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
+            if messageType == .ephemeral {
+                var attachments = mockedMessage?[messageKey.attachments.rawValue] as? [[String: Any]]
+                attachments?[0][GiphyAttachmentSpecificCodingKeys.actions.rawValue] = nil
+                mockedMessage?[messageKey.attachments.rawValue] = attachments
+                mockedMessage?[messageKey.type.rawValue] = MessageType.regular.rawValue
+            }
             saveMessage(mockedMessage)
         case .messageDeleted:
             let message = findMessageById(messageId)
             mockedMessage = mockDeletedMessage(message, user: user)
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
-            saveMessage(mockedMessage)
+            if hardDelete {
+                removeMessage(id: messageId)
+            } else {
+                saveMessage(mockedMessage)
+            }
         case .messageUpdated:
             let message = findMessageById(messageId)
             mockedMessage = mockMessage(
                 message,
                 channelId: channelId,
-                messageId: message?[MessagePayloadsCodingKeys.id.rawValue] as? String,
+                messageId: message?[messageKey.id.rawValue] as? String,
                 text: text,
                 user: user,
-                createdAt: message?[MessagePayloadsCodingKeys.createdAt.rawValue] as? String,
+                createdAt: message?[messageKey.createdAt.rawValue] as? String,
                 updatedAt: timestamp
             )
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
@@ -118,13 +118,17 @@ public extension StreamMockServer {
             json[JSONKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
         }
         
+        if let channel = channel { json[JSONKey.channel] = channel }
+        
         json[JSONKey.user] = user
         json[JSONKey.message] = mockedMessage
-        json[MessagePayloadsCodingKeys.createdAt.rawValue] = TestData.currentDate
-        json[MessagePayloadsCodingKeys.type.rawValue] = eventType.rawValue
+        json[messageKey.createdAt.rawValue] = TestData.currentDate
+        json[messageKey.type.rawValue] = eventType.rawValue
+        if hardDelete { json[eventKey.hardDelete.rawValue] = true }
         
         writeText(json.jsonToString())
         if eventType == .messageNew { latestWebsocketMessage = text ?? "" }
+        
         return self
     }
     
@@ -145,8 +149,8 @@ public extension StreamMockServer {
         var json = TestData.getMockResponse(fromFile: .wsReaction).json
         var reaction = json[JSONKey.reaction] as? [String: Any]
         var message = json[JSONKey.message] as? [String: Any]
-        let messageId = messageDetails?[MessagePayloadsCodingKeys.id.rawValue] as? String
-        let cid = messageDetails?[MessagePayloadsCodingKeys.cid.rawValue] as? String
+        let messageId = messageDetails?[messageKey.id.rawValue] as? String
+        let cid = messageDetails?[messageKey.cid.rawValue] as? String
         let channelId = cid?.split(separator: ":").last
         let timestamp = TestData.currentDate
         
@@ -170,9 +174,9 @@ public extension StreamMockServer {
         json[JSONKey.cid] = cid
         json[JSONKey.message] = message
         json[JSONKey.reaction] = reaction
-        json[MessageReactionPayload.CodingKeys.user.rawValue] = user
-        json[MessageReactionPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
-        json[MessageReactionPayload.CodingKeys.type.rawValue] = eventType.rawValue
+        json[reactionKey.user.rawValue] = user
+        json[reactionKey.createdAt.rawValue] = TestData.currentDate
+        json[reactionKey.type.rawValue] = eventType.rawValue
         
         saveMessage(message)
         writeText(json.jsonToString())
@@ -213,10 +217,10 @@ public extension StreamMockServer {
 
         if var channel = json[JSONKey.channel] as? [String: Any] {
             channel[JSONKey.members] = members
-            channel[ChannelCodingKeys.memberCount.rawValue] = members.count
+            channel[channelKey.memberCount.rawValue] = members.count
 
-            json[ChannelCodingKeys.members.rawValue] = members
-            json[ChannelCodingKeys.memberCount.rawValue] = members.count
+            json[channelKey.members.rawValue] = members
+            json[channelKey.memberCount.rawValue] = members.count
             json[JSONKey.channel] = channel
         }
 

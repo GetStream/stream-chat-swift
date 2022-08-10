@@ -25,15 +25,27 @@ final class UserRobot: Robot {
     }
     
     @discardableResult
+    func logout() -> Self {
+        ChannelListPage.userAvatar.safeTap()
+        return self
+    }
+    
+    @discardableResult
     func openChannel(channelCellIndex: Int = 0) -> Self {
         let minExpectedCount = channelCellIndex + 1
         let cells = ChannelListPage.cells.waitCount(minExpectedCount)
         
         // TODO: CIS-1737
-        if !cells.firstMatch.wait(timeout: 5).exists {
-            app.terminate()
-            app.launch()
-            login()
+        if !cells.firstMatch.exists {
+            for _ in 0...3 {
+                app.terminate()
+                server.stop()
+                server.start(port: in_port_t(MockServerConfiguration.port))
+                app.launch()
+                login()
+                cells.waitCount(minExpectedCount)
+                if cells.firstMatch.exists { break }
+            }
         }
         
         XCTAssertGreaterThanOrEqual(
@@ -98,9 +110,10 @@ extension UserRobot {
     }
     
     @discardableResult
-    func deleteMessage(messageCellIndex: Int = 0) -> Self {
+    func deleteMessage(messageCellIndex: Int = 0, hard: Bool = false) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
-        contextMenu.delete.element.wait().safeTap()
+        let deleteButton = hard ? contextMenu.hardDelete : contextMenu.delete
+        deleteButton.element.wait().safeTap()
         MessageListPage.PopUpButtons.delete.wait().safeTap()
         return self
     }
@@ -196,13 +209,14 @@ extension UserRobot {
     @discardableResult
     func openThread(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        MessageListPage.Attributes.threadButton(in: messageCell).wait().safeTap()
+        let threadButton = MessageListPage.Attributes.threadReplyCountButton(in: messageCell)
+        if threadButton.exists {
+            threadButton.safeTap()
+        } else {
+            selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: messageCellIndex)
+        }
+        ThreadPage.alsoSendInChannelCheckbox.wait()
         return self
-    }
-
-    @discardableResult
-    func showThread(forMessageAt index: Int = 0) -> Self {
-        selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: index)
     }
     
     @discardableResult
@@ -218,6 +232,18 @@ extension UserRobot {
     }
     
     @discardableResult
+    func tapOnMessageList() -> Self {
+        MessageListPage.list.safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func tapOnScrollToBottomButton() -> Self {
+        MessageListPage.scrollToBottomButton.safeTap()
+        return self
+    }
+    
+    @discardableResult
     func replyToMessageInThread(
         _ text: String,
         alsoSendInChannel: Bool = false,
@@ -228,7 +254,7 @@ extension UserRobot {
     ) -> Self {
         let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
         if !threadCheckbox.exists {
-            showThread(forMessageAt: messageCellIndex)
+            openThread(messageCellIndex: messageCellIndex)
         }
         if alsoSendInChannel {
             threadCheckbox.wait().safeTap()
@@ -275,7 +301,7 @@ extension UserRobot {
     }
     
     @discardableResult
-    func sendGiphy(useComposerCommand: Bool = false, shuffle: Bool = false, send: Bool = true) -> Self {
+    func sendGiphy(useComposerCommand: Bool = false, send: Bool = true) -> Self {
         let giphyText = "Test"
         if useComposerCommand {
             openComposerCommands()
@@ -284,59 +310,37 @@ extension UserRobot {
         } else {
             sendMessage("/giphy\(giphyText)", waitForAppearance: false)
         }
-        if shuffle { tapOnShuffleGiphyButton() }
         if send { tapOnSendGiphyButton() }
         return self
     }
     
     @discardableResult
-    func replyWithGiphy(
-        useComposerCommand: Bool = false,
-        shuffle: Bool = false,
-        messageCellIndex: Int = 0
-    ) -> Self {
+    func replyWithGiphy(useComposerCommand: Bool = false, messageCellIndex: Int = 0) -> Self {
         return self
             .selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
-            .sendGiphy(useComposerCommand: useComposerCommand, shuffle: shuffle)
+            .sendGiphy(useComposerCommand: useComposerCommand)
     }
     
     @discardableResult
     func replyWithGiphyInThread(
         useComposerCommand: Bool = false,
-        shuffle: Bool = false,
         alsoSendInChannel: Bool = false,
         messageCellIndex: Int = 0
     ) -> Self {
         let threadCheckbox = ThreadPage.alsoSendInChannelCheckbox
         if !threadCheckbox.exists {
-            showThread(forMessageAt: messageCellIndex)
+            openThread(messageCellIndex: messageCellIndex)
         }
         if alsoSendInChannel {
             threadCheckbox.wait().safeTap()
         }
-        return sendGiphy(useComposerCommand: useComposerCommand, shuffle: shuffle)
+        return sendGiphy(useComposerCommand: useComposerCommand)
     }
     
     @discardableResult
     func tapOnSendGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
+        let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphySendButton(in: messageCell).wait().safeTap()
-        return self
-    }
-    
-    @discardableResult
-    func tapOnShuffleGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let cells = MessageListPage.cells.waitCount(messageCellIndex + 1)
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
-        MessageListPage.Attributes.giphyShuffleButton(in: messageCell).wait().safeTap()
-        return self
-    }
-    
-    @discardableResult
-    func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
-        let messageCell = cells.allElementsBoundByIndex[messageCellIndex]
-        MessageListPage.Attributes.giphyCancelButton(in: messageCell).wait().safeTap()
         return self
     }
     
@@ -350,6 +354,18 @@ extension UserRobot {
         if send { sendMessage("", waitForAppearance: false) }
         return self
     }
+    
+    @discardableResult
+    func mentionParticipant(manually: Bool = false) -> Self {
+        let text = "@\(UserDetails.hanSoloId)"
+        if manually {
+            typeText(text)
+        } else {
+            typeText("\(text.prefix(3))")
+            MessageListPage.ComposerMentions.cells.firstMatch.wait().tap()
+        }
+        return self
+    }
 }
 
 // MARK: Debug menu
@@ -357,13 +373,14 @@ extension UserRobot {
 extension UserRobot {
 
     @discardableResult
-    func tapOnDebugMenu() -> Self {
+    private func tapOnDebugMenu() -> Self {
         MessageListPage.NavigationBar.debugMenu.safeTap()
         return self
     }
 
     @discardableResult
     func addParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
+        tapOnDebugMenu()
         debugAlert.addMember.firstMatch.safeTap()
         debugAlert.addMemberTextField.firstMatch
             .obtainKeyboardFocus()
@@ -374,8 +391,20 @@ extension UserRobot {
 
     @discardableResult
     func removeParticipant(withUserId userId: String = UserDetails.leiaOrganaId) -> Self {
+        tapOnDebugMenu()
         debugAlert.removeMember.firstMatch.safeTap()
         debugAlert.selectMember(withUserId: userId).firstMatch.safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func truncateChannel(withMessage: Bool) -> Self {
+        tapOnDebugMenu()
+        if withMessage {
+            debugAlert.truncateWithMessage.safeTap()
+        } else {
+            debugAlert.truncateWithoutMessage.safeTap()
+        }
         return self
     }
 }
@@ -406,6 +435,11 @@ extension UserRobot {
     @discardableResult
     func setIsLocalStorageEnabled(to state: SwitchState) -> Self {
         setSwitchState(Settings.isLocalStorageEnabled.element, state: state)
+    }
+    
+    @discardableResult
+    func setStaysConnectedInBackground(to state: SwitchState) -> Self {
+        setSwitchState(Settings.staysConnectedInBackground.element, state: state)
     }
     
 }

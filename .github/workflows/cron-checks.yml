@@ -11,7 +11,6 @@ env:
 jobs:
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
-    timeout-minutes: 90
     strategy:
       matrix:
         ios: [12.4, 13.7, 14.5, latest]
@@ -41,6 +40,7 @@ jobs:
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_e2e_mock cron:true device:"${{ matrix.device }}" ios:"${{ matrix.ios }}"
+      timeout-minutes: 90
     - name: Allure TestOps Upload
       if: success() || failure()
       run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
@@ -60,10 +60,8 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure()
 
-
   build-and-test-debug:
     name: Test LLC (Debug)
-    timeout-minutes: 30
     strategy:
       matrix:
         xcode: [13.4.1, 13.1]
@@ -78,6 +76,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test cron:true device:"iPhone 8"
+      timeout-minutes: 30
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}

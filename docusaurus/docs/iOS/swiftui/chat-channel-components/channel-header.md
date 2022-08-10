@@ -39,7 +39,9 @@ Below you can see the comparison of the before and after of this change.
 
 ![Depiction of the channel header namer comparison.](../../assets/channel-header-namer.png)
 
-> 💡 The best place to do this would be in the `AppDelegate` file of your project. Not sure how to set this one up? We got you covered in our [Getting started guide](../getting-started.md).
+:::note
+The best place to do this would be in the `AppDelegate` file of your project. Not sure how to set this one up? We got you covered in our [Getting started guide](../getting-started.md).
+:::
 
 ### Changing the color of the header
 

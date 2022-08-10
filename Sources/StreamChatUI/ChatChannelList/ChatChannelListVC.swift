@@ -18,7 +18,12 @@ open class ChatChannelListVC: _ViewController,
     public var controller: ChatChannelListController!
 
     private var isPaginatingChannels: Bool = false
-
+    
+    /// A boolean value that determines if the chat channel list view states are shown and handled by the SDK.
+    open var isChatChannelListStatesEnabled: Bool {
+        components.isChatChannelListStatesEnabled
+    }
+    
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
         if #available(iOS 13.0, *) {
             return UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
@@ -42,6 +47,25 @@ open class ChatChannelListVC: _ViewController,
             .withoutAutoresizingMaskConstraints
             .withAccessibilityIdentifier(identifier: "collectionView")
     
+    /// The view that is displayed when there are no channels on the list, i.e. when is on empty state.
+    open lazy var emptyView: ChatChannelListEmptyView = components.channelListEmptyView.init()
+        .withoutAutoresizingMaskConstraints
+    
+    /// View which will be shown at the bottom when an error occurs when fetching either local or remote channels.
+    /// This view has an action to retry the channel loading.
+    open private(set) lazy var channelListErrorView: ChatChannelListErrorView = {
+        let view = components.channelListErrorView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
+        return view
+    }()
+    
+    /// View that shows when loading the Channel list.
+    open private(set) lazy var chatChannelListLoadingView: ChatChannelListLoadingView = components
+        .chatChannelListLoadingView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
     open private(set) lazy var userAvatarView: CurrentChatUserAvatarView = components
         .currentUserAvatarView.init()
@@ -111,6 +135,11 @@ open class ChatChannelListVC: _ViewController,
         
         userAvatarView.controller = controller.client.currentUserController()
         userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
+        
+        channelListErrorView.refreshButtonAction = { [weak self] in
+            self?.controller.synchronize()
+            self?.channelListErrorView.hide()
+        }
     }
 
     open func collectionView(
@@ -136,8 +165,18 @@ open class ChatChannelListVC: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
         view.embed(collectionView)
-        collectionView.addSubview(loadingIndicator)
-        loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
+        
+        if isChatChannelListStatesEnabled {
+            view.embed(chatChannelListLoadingView)
+            view.embed(emptyView)
+            emptyView.isHidden = true
+            view.addSubview(channelListErrorView)
+            channelListErrorView.pin(anchors: [.leading, .trailing, .bottom], to: view)
+            channelListErrorView.hide()
+        } else {
+            collectionView.addSubview(loadingIndicator)
+            loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
+        }
     }
     
     override open func setUpAppearance() {
@@ -157,6 +196,12 @@ open class ChatChannelListVC: _ViewController,
             )
         }
     }
+    
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        chatChannelListLoadingView.updateContent()
+    }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         controller.channels.count
@@ -168,10 +213,10 @@ open class ChatChannelListVC: _ViewController,
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
         guard let channel = getChannel(at: indexPath) else { return cell }
-
+        
         cell.components = components
         cell.itemView.content = .init(channel: channel, currentUserId: controller.client.currentUserId)
-
+        
         cell.swipeableView.delegate = self
         cell.swipeableView.indexPath = { [weak cell, weak self] in
             guard let cell = cell else { return nil }
@@ -306,15 +351,35 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        switch state {
-        case .initialized, .localDataFetched:
-            if self.controller.channels.isEmpty {
-                loadingIndicator.startAnimating()
-            } else {
+        if isChatChannelListStatesEnabled {
+            var shouldHideEmptyView = true
+            var isLoading = true
+            
+            switch state {
+            case .initialized, .localDataFetched:
+                isLoading = self.controller.channels.isEmpty
+            case .remoteDataFetched:
+                isLoading = false
+                shouldHideEmptyView = !self.controller.channels.isEmpty
+            case .localDataFetchFailed, .remoteDataFetchFailed:
+                shouldHideEmptyView = emptyView.isHidden
+                isLoading = false
+                channelListErrorView.show()
+            }
+            
+            emptyView.isHidden = shouldHideEmptyView
+            chatChannelListLoadingView.isHidden = !isLoading
+        } else {
+            switch state {
+            case .initialized, .localDataFetched:
+                if self.controller.channels.isEmpty {
+                    loadingIndicator.startAnimating()
+                } else {
+                    loadingIndicator.stopAnimating()
+                }
+            default:
                 loadingIndicator.stopAnimating()
             }
-        default:
-            loadingIndicator.stopAnimating()
         }
     }
 

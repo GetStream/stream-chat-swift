@@ -58,6 +58,14 @@ open class ChatThreadVC: _ViewController,
     override open func setUp() {
         super.setUp()
 
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(appMovedToForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
@@ -76,9 +84,15 @@ open class ChatThreadVC: _ViewController,
                let message = messageController?.message {
                 messageComposerVC.content.threadMessage = message
             }
-            // We only need to load the replies
-            // when we don't already have all the replies
-            if let message = message, message.latestReplies.count != message.replyCount {
+            
+            guard let message = message else {
+                return
+            }
+            
+            let repliesContainsFailedEditedMessages = message.latestReplies.contains(where: { $0.failedToBeEditedDueToModeration == true })
+            
+            // Replies are only loaded when we don't have all available or when a reply has a stale state.
+            if message.latestReplies.count != message.replyCount || repliesContainsFailedEditedMessages {
                 self.loadPreviousMessages()
             }
         }
@@ -308,5 +322,12 @@ open class ChatThreadVC: _ViewController,
         default:
             break
         }
+    }
+
+    // When app becomes active, and channel is open, recreate the database observers and reload
+    // the data source so that any missed database updates from the NotificationService are refreshed.
+    @objc func appMovedToForeground() {
+        messageController.delegate = self
+        messageListVC.dataSource = self
     }
 }

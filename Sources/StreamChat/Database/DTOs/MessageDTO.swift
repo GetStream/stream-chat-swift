@@ -22,6 +22,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var showReplyInChannel: Bool
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data?
+    @NSManaged var isBounced: Bool
     @NSManaged var isSilent: Bool
     @NSManaged var isShadowed: Bool
     @NSManaged var reactionScores: [String: Int]
@@ -427,11 +428,23 @@ class MessageDTO: NSManagedObject {
     }
 }
 
+// MARK: - State Helpers
+
 extension MessageDTO {
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     var localMessageState: LocalMessageState? {
         get { localMessageStateRaw.flatMap(LocalMessageState.init(rawValue:)) }
         set { localMessageStateRaw = newValue?.rawValue }
+    }
+    
+    /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
+    var failedToBeEditedDueToModeration: Bool {
+        localMessageState == .syncingFailed && isBounced == true
+    }
+    
+    /// When a message fails to get synced because it was bounced by the moderation API it will return true to this state.
+    var failedToBeSentDueToModeration: Bool {
+        localMessageState == .sendingFailed && isBounced == true
     }
 }
 
@@ -677,7 +690,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         for cid: ChannelId?,
         syncOwnReactions: Bool = true,
         cache: PreWarmedCache?
-    ) throws -> MessageDTO? {
+    ) throws -> MessageDTO {
         guard payload.channel != nil || cid != nil else {
             throw ClientError.MessagePayloadSavingFailure("""
             Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
@@ -697,23 +710,22 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         } else if let cid = cid {
             channelDTO = ChannelDTO.load(cid: cid, context: self)
         } else {
-            log.assertionFailure("Should never happen because either `cid` or `payload.channel` should be present.")
-            return nil
+            let description = "Should never happen because either `cid` or `payload.channel` should be present."
+            log.assertionFailure(description)
+            throw ClientError.MessagePayloadSavingFailure(description)
         }
 
         guard let channel = channelDTO else {
-            log.assertionFailure("Should never happen, a channel should have been fetched.")
-            return nil
+            let description = "Should never happen, a channel should have been fetched."
+            log.assertionFailure(description)
+            throw ClientError.MessagePayloadSavingFailure(description)
         }
         
         return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
     }
     
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO? {
-        guard let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache) else {
-            return nil
-        }
-
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+        let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
     }
@@ -905,6 +917,7 @@ private extension ChatMessage {
         parentMessageId = dto.parentMessageId
         showReplyInChannel = dto.showReplyInChannel
         replyCount = Int(dto.replyCount)
+        isBounced = dto.isBounced
         isSilent = dto.isSilent
         isShadowed = dto.isShadowed
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }

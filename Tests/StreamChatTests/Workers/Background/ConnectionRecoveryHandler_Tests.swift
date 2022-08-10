@@ -399,7 +399,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
             with: ErrorPayload(
                 code: .unique,
                 message: .unique,
-                statusCode: ClosedRange.clientErrorCodes.lowerBound
+                statusCode: ClosedRange.clientErrorCodes.lowerBound,
+                details: []
             )
         )
         disconnectWebSocket(source: .serverInitiated(error: clientError))
@@ -422,7 +423,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
             with: ErrorPayload(
                 code: ClosedRange.tokenInvalidErrorCodes.lowerBound,
                 message: .unique,
-                statusCode: .unique
+                statusCode: .unique,
+                details: []
             )
         )
         disconnectWebSocket(source: .serverInitiated(error: tokenError))

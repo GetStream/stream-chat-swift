@@ -9,6 +9,7 @@ enum Setting: String, CaseIterable {
     case setConnectivity
     case isConnected
     case isLocalStorageEnabled
+    case staysConnectedInBackground
 }
 
 struct SettingValue {
@@ -25,10 +26,12 @@ struct Settings {
 
     // Config
     var isLocalStorageEnabled = SettingValue(setting: .isLocalStorageEnabled, isOn: false)
+    var staysConnectedInBackground = SettingValue(setting: .staysConnectedInBackground, isOn: false)
 
     var all: [SettingValue] {
         [
             isLocalStorageEnabled,
+            staysConnectedInBackground,
             showsConnectivity,
             setConnectivity,
             isConnected
@@ -51,6 +54,8 @@ struct Settings {
             showsConnectivity = setting
         case .isLocalStorageEnabled:
             isLocalStorageEnabled = setting
+        case .staysConnectedInBackground:
+            staysConnectedInBackground = setting
         }
     }
 }

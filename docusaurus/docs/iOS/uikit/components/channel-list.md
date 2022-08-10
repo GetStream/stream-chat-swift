@@ -111,6 +111,89 @@ class ViewController: ChatChannelListVC {
 }
 ```
 
+### Channel List States
+
+You can opt to show an empty, error and loading view by setting the following flag to true in the `Components` config:
+
+```swift
+Components.isChatChannelListStatesEnabled = true
+```
+
+This feature is disabled by default, having just the standard loading indicator for the loading state. By enabling this feature, the StreamChat SDK will handle the channel list view states automatically for you.
+
+| Empty | Error | Loading |
+| ------------- | ------------- | ------------- |
+| ![Empty View](../../assets/channel-list-empty-view.png) | ![Error View](../../assets/channel-list-error-view.png) | ![Loading View](../../assets/channel-list-loading-view.png) |
+
+You can further customize or add your own implementation of an empty, error or loading view by subclassing `ChatChannelListEmptyView`, `ChatChannelListErrorView` or `ChatChannelListLoadingView` respectively.
+
+Let's see how you can customize our error view:
+
+```swift
+class CustomChatChannelListVC: ChatChannelListVC {
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+
+        channelListErrorView.backgroundColor = .red
+        channelListErrorView.layer.cornerRadius = 20
+        channelListErrorView.titleLabel.text = "Data unavailable"
+        channelListErrorView.titleLabel.textColor = .black
+        channelListErrorView.retryButton.setImage(.init(systemName: "hourglass.circle"), for: .normal)
+    }
+}
+```
+
+![Empty View](../../assets/channel-list-custom-error-view.png)
+
+Now, let's see an example of how you can totally replace our loading view with your own implementation.
+
+```swift
+class CustomChannelListLoadingView: ChatChannelListLoadingView {
+
+    lazy var customLoadingView: CustomLoadingView = {
+        // You implementation...
+    }()
+
+    // ...
+
+    override open func setUp() {
+        // Set up your custom views.
+        // Don't call super.setUp()
+    }
+
+    override open func setUpAppearance() {
+        // Set up the appearance of your custom views.
+        // Don't call super.setUpAppearance()
+    }
+
+    override open func setUpLayout() {
+        // Set up the layout of your custom views.
+        // Don't call super.setUpLayout()
+    }
+
+    // ...
+}
+```
+
+Don't forget to set your custom implementation in the `Components` class:
+
+```swift
+Components.default.chatChannelListLoadingView = CustomChannelLoadingView.self
+```
+
+You can set your custom views for the channel list states when configuring your Components instance by replacing the following views as shown above:
+
+```swift
+// In Components.swift:
+
+public var channelListEmptyView: ChatChannelListEmptyView.Type = ChatChannelListEmptyView.self
+    
+public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
+    
+public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
+```
+
 ## Navigation
 
 This component uses the [`ChannelListRouter`](../../common-content/reference-docs/stream-chat-ui/navigation/chat-channel-list-router.md) navigation component, you can customize this by providing your own.

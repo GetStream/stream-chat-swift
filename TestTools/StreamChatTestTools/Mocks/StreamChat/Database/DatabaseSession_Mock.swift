@@ -158,9 +158,9 @@ extension DatabaseSession_Mock {
         for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
-    ) throws -> MessageDTO? {
+    ) throws -> MessageDTO {
         try throwErrorIfNeeded()
-        return try? underlyingSession.saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
+        return try underlyingSession.saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
     }
     
     func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool, cache: PreWarmedCache?) throws -> MessageDTO {
@@ -314,7 +314,7 @@ extension DatabaseSession_Mock {
         underlyingSession.delete(query: query)
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO? {
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(payload: payload, for: query, cache: cache)
     }

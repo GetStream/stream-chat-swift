@@ -1,12 +1,45 @@
 # StreamChat iOS SDK CHANGELOG
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+# Upcoming
+
+## StreamChat
+### 🐞 Fixed
+- Fix hidden channels showing past history [#2216](https://github.com/GetStream/stream-chat-swift/pull/2216)
+
+# [4.20.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.20.0)
+_August 02, 2022_
+
+## StreamChat
+### ✅ Added
+- Support for message moderation (NNBB) [#2103](https://github.com/GetStream/stream-chat-swift/pull/2103/files)
+### 🐞 Fixed
+- Fix crash in ListDatabaseObserver.startObserving() [#2177](https://github.com/GetStream/stream-chat-swift/pull/2177)
+- Make BaseOperation thread safe [#2198](https://github.com/GetStream/stream-chat-swift/pull/2198)
+- Fix build issues in Xcode 14 beta [#2202](https://github.com/GetStream/stream-chat-swift/pull/2202)
+- Improve consistency when retrieving Message after Push Notification [#2200](https://github.com/GetStream/stream-chat-swift/pull/2200)
+- Make sure ChannelDTO is still valid when accessing Lazy blocks [#2204](https://github.com/GetStream/stream-chat-swift/pull/2204)
+
+## StreamChatUI
+### ✅ Added
+- Add channel list states; empty, error and loading views [#2187](https://github.com/GetStream/stream-chat-swift/pull/2187)
+- Support for message moderation (NNBB) [#2103](https://github.com/GetStream/stream-chat-swift/pull/2103/files)
+
+# [4.19.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.19.0)
+_July 21, 2022_
+
 ## StreamChat
 ### ✅ Added
 - Add hide history option when adding a new member [#2155](https://github.com/GetStream/stream-chat-swift/issues/2155)
+- Add Extra Data Usage Improvements [#2174](https://github.com/GetStream/stream-chat-swift/pull/2174)
+  - For more details please read the documentation [here](https://getstream.io/chat/docs/sdk/ios/uikit/extra-data).
 ### 🐞 Fixed
 - Avoid triggering CoreData updates in willSave() [#2156](https://github.com/GetStream/stream-chat-swift/pull/2156)
 - Sync active channels when no channel list [#2163](https://github.com/GetStream/stream-chat-swift/pull/2163)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix Channel missing messages from NSE push updates [#2166](https://github.com/GetStream/stream-chat-swift/pull/2166)
 
 # [4.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.18.0)
 _July 05, 2022_
