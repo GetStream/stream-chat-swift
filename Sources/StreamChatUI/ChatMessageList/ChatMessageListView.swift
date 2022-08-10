@@ -17,26 +17,8 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     // that would make this class obsolete especially the `updateMessages(changes:)` and
     // it would require a lot of breaking changes. So for now, the Diff logic will live here.
 
-    /// When inserting messages at the bottom, if the user is scrolled up,
-    /// we skip adding the message to the UI until the user scrolls back
-    /// to the bottom. This is to avoid message list jumps.
-    internal var skippedMessages: Set<MessageId> = [] {
-        didSet {
-            if skippedMessages.isEmpty {
-                newMessagesSnapshot = _newMessagesSnapshotWithSkipped
-            }
-        }
-    }
-
     /// The previous messages snapshot before the next update.
-    internal var previousMessagesSnapshot: [ChatMessage] = [] {
-        didSet {
-            let isNotSkippedMessage: (ChatMessage) -> Bool = {
-                !self.skippedMessages.contains($0.id)
-            }
-            previousMessagesSnapshot = previousMessagesSnapshot.filter(isNotSkippedMessage)
-        }
-    }
+    internal var previousMessagesSnapshot: [ChatMessage] = []
 
     /// The new messages snapshot reported by the channel or message controller.
     private var _newMessagesSnapshotWithSkipped: [ChatMessage] = []
@@ -47,6 +29,17 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 !self.skippedMessages.contains($0.id)
             }
             newMessagesSnapshot = newMessagesSnapshot.filter(isNotSkippedMessage)
+        }
+    }
+    
+    /// When inserting messages at the bottom, if the user is scrolled up,
+    /// we skip adding the message to the UI until the user scrolls back
+    /// to the bottom. This is to avoid message list jumps.
+    internal var skippedMessages: Set<MessageId> = [] {
+        didSet {
+            if skippedMessages.isEmpty {
+                newMessagesSnapshot = _newMessagesSnapshotWithSkipped
+            }
         }
     }
 
@@ -200,8 +193,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             changes.filter(\.isInsertion).forEach {
                 skippedMessages.insert($0.item.id)
             }
-            // Don't update UI if we are skipping the inserted messages
-            return
+
+            // By setting the new snapshots to itself, it will
+            // trigger didSet and remove the newly skipped messages.
+            let newMessageSnapshot = newMessagesSnapshot
+            newMessagesSnapshot = newMessageSnapshot
         }
 
         UIView.performWithoutAnimation {

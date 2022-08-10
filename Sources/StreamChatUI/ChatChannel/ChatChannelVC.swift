@@ -251,7 +251,7 @@ open class ChatChannelVC: _ViewController,
     // MARK: - ChatChannelControllerDelegate
 
     open func channelControllerWillUpdateMessages(_ channelController: ChatChannelController) {
-        messageListVC.listView.previousMessagesSnapshot = Array(channelController.messages)
+        messageListVC.listView.previousMessagesSnapshot = messages
     }
 
     open func channelController(
