@@ -114,11 +114,11 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         linkToScenario(withId: 183)
 
         GIVEN("user opens a channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         WHEN("user runs a giphy command in thread") {
             userRobot
-                .sendMessage("test")
                 .openThread()
                 .sendGiphy(send: false)
         }

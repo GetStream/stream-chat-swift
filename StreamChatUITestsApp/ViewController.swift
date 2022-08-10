@@ -6,10 +6,11 @@ import UIKit
 import StreamChat
 import StreamChatUI
 
+var settings = Settings()
+
 final class ViewController: UIViewController {
 
     var streamChat = StreamChatWrapper()
-    var settings = Settings()
 
     var channelController: ChatChannelController?
     var router: CustomChannelListRouter?
@@ -113,10 +114,10 @@ final class ViewController: UIViewController {
 extension ViewController {
 
     func createIsConnectedSwitchIfNeeded() -> UISwitch? {
-        guard self.settings.showsConnectivity.isOn else { return nil }
+        guard settings.showsConnectivity.isOn else { return nil }
         let sw = UISwitch()
-        sw.isOn = self.settings.isConnected.isOn
-        sw.accessibilityIdentifier = self.settings.isConnected.setting.rawValue
+        sw.isOn = settings.isConnected.isOn
+        sw.accessibilityIdentifier = settings.isConnected.setting.rawValue
         sw.addTarget(self, action: #selector(self.valueChanged(_:)), for: .valueChanged)
 
         return sw
