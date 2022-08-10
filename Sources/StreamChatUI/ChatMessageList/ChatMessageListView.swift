@@ -188,8 +188,13 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
-        let bottomChange = changes.first(where: { $0.indexPath.item == 0 })
-        if !isLastCellFullyVisible && bottomChange?.isInsertion == true && bottomChange?.item.isSentByCurrentUser == false {
+        let newestChange = changes.first(where: { $0.indexPath.item == 0 })
+        let isNewestChangeInsertion = newestChange?.isInsertion == true
+        let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
+        let isNewestChangeNotVisible = !isLastCellFullyVisible
+        let shouldSkipMessagesInsertions = isNewestChangeNotVisible && isNewestChangeInsertion && isNewestChangeNotByCurrentUser
+
+        if shouldSkipMessagesInsertions {
             changes.filter(\.isInsertion).forEach {
                 skippedMessages.insert($0.item.id)
             }
@@ -206,8 +211,8 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 newSnapshot: newMessagesSnapshot,
                 with: .fade,
                 completion: { [weak self] in
-                    let bottomChangeIsInsertionOrMove = bottomChange?.isInsertion == true || bottomChange?.isMove == true
-                    if bottomChangeIsInsertionOrMove, let newMessage = bottomChange?.item {
+                    let newestChangeIsInsertionOrMove = isNewestChangeInsertion || newestChange?.isMove == true
+                    if newestChangeIsInsertionOrMove, let newMessage = newestChange?.item {
                         // Scroll to the bottom if the new message was sent by
                         // the current user, or moved by the current user
                         if newMessage.isSentByCurrentUser {
@@ -216,7 +221,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
                         // When a Giphy moves to the bottom, we need to also trigger a reload
                         // Since a move doesn't trigger a reload of the cell.
-                        if bottomChange?.isMove == true {
+                        if newestChange?.isMove == true {
                             let movedIndexPath = IndexPath(item: 0, section: 0)
                             self?.reloadRows(at: [movedIndexPath], with: .none)
                         }
