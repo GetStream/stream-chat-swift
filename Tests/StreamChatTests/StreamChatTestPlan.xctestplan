@@ -30,7 +30,16 @@
         "ChannelListPayload_Tests\/test_decode_bigChannelListPayload()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_empty()",
-        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_filled()"
+        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_filled()",
+        "ChannelUpdater_Tests\/test_hideChannel_successfulResponse_isPropagatedToCompletion()",
+        "MessageUpdater_Tests\/test_flagMessage_happyPath()",
+        "MessageSender_Tests\/test_senderSendsMessages_forMultipleChannelsInParalel_butStillInTheCorrectOrder()",
+        "MessageSender_Tests\/test_sender_doesNotRetainItself()",
+        "MessageSender_Tests\/test_senderSendsMessage_inTheOrderTheyWereCreatedLocally()",
+        "MessageSender_Tests\/test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments()",
+        "SyncRepository_Tests\/test_cancelRecoveryFlow_cancelsAllOperations()",
+        "APIClient_Tests\/test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests()",
+        "WebSocketClient_Tests\/test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching()"
       ],
       "target" : {
         "containerPath" : "container:StreamChat.xcodeproj",
