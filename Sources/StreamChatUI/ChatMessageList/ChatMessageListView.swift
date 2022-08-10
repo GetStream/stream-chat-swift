@@ -237,7 +237,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         }
     }
 
-    func reloadSkippedMessages() {
+    /// Reset the skipped messages and reload the message list
+    /// with the messages originally reported from the data source.
+    internal func reloadSkippedMessages() {
         skippedMessages = []
         newMessagesSnapshot = currentMessagesFromDataSource
         updateMessages(with: [])
