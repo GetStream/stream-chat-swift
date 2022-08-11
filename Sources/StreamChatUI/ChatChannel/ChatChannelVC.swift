@@ -176,7 +176,7 @@ open class ChatChannelVC: _ViewController,
         return components.messageLayoutOptionsResolver.optionsForMessage(
             at: indexPath,
             in: channel,
-            with: AnyRandomAccessCollection(channelController.messages),
+            with: AnyRandomAccessCollection(messages),
             appearance: appearance
         )
     }
