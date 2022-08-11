@@ -105,6 +105,10 @@ open class ChatMessageListVC: _ViewController,
     
     override open func setUp() {
         super.setUp()
+
+        listView.onNewDataSource = { [weak self] messages in
+            self?.dataSource?.messages = messages
+        }
         
         components.messageLayoutOptionsResolver.config = client.config
         
@@ -222,10 +226,6 @@ open class ChatMessageListVC: _ViewController,
 
     /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        listView.onNewDataSource = { [weak self] messages in
-            self?.dataSource?.messages = messages
-        }
-
         listView.updateMessages(with: changes, completion: completion)
     }
 
