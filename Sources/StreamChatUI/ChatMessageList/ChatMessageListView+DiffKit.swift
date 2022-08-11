@@ -40,7 +40,8 @@ extension ChatMessageListView {
 
 extension ChatMessage: Differentiable {
     public func isContentEqual(to source: ChatMessage) -> Bool {
-        text == source.text
+        id == source.id
+            && text == source.text
             && type == source.type
             && command == source.command
             && arguments == source.arguments
