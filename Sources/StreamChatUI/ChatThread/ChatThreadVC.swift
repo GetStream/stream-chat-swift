@@ -188,7 +188,7 @@ open class ChatThreadVC: _ViewController,
             .optionsForMessage(
                 at: indexPath,
                 in: channel,
-                with: AnyRandomAccessCollection(replies),
+                with: AnyRandomAccessCollection(messages),
                 appearance: appearance
             )
 
@@ -218,7 +218,7 @@ open class ChatThreadVC: _ViewController,
             return
         }
 
-        if indexPath.row < replies.count - 10 {
+        if indexPath.row < messages.count - 10 {
             return
         }
         
@@ -266,7 +266,7 @@ open class ChatThreadVC: _ViewController,
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        let indexPath = IndexPath(row: messageController.replies.count, section: 0)
+        let indexPath = IndexPath(row: messages.count, section: 0)
 
         let listChange: ListChange<ChatMessage>
         switch change {
