@@ -34,7 +34,10 @@ extension ChatMessageListView {
     internal func reloadSkippedMessages() {
         skippedMessages = []
         newMessagesSnapshot = currentMessagesFromDataSource
-        updateMessages(with: [])
+        reloadData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.scrollToMostRecentMessage()
+        }
     }
 }
 
