@@ -28,6 +28,14 @@ extension ChatMessageListView {
         }
         CATransaction.commit()
     }
+
+    /// Reset the skipped messages and reload the message list
+    /// with the messages originally reported from the data source.
+    internal func reloadSkippedMessages() {
+        skippedMessages = []
+        newMessagesSnapshot = currentMessagesFromDataSource
+        updateMessages(with: [])
+    }
 }
 
 extension ChatMessage: Differentiable {

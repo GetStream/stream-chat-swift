@@ -10,16 +10,15 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
 
-    // MARK: - Difference Kit Snapshot Handling
+    // MARK: - Difference Kit and Skipping messages Handling
 
-    // The internal properties below is to handle the DifferenceKit API. Currently it is
+    // The properties below is to handle the DifferenceKit API. Currently it is
     // internal because these should actually be handled in the `ChatMessageListVC` but
     // that would make this class obsolete especially the `updateMessages(changes:)` and
     // it would require a lot of breaking changes. So for now, the Diff logic will live here.
 
     /// The previous messages snapshot before the next update.
     internal var previousMessagesSnapshot: [ChatMessage] = []
-
     /// The current messages from the data source, including skipped messages.
     /// This property is especially useful when resetting the skipped messages
     /// since we want to reload the data and insert back the skipped messages, for this,
@@ -40,7 +39,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// we skip adding the message to the UI until the user scrolls back
     /// to the bottom. This is to avoid message list jumps.
     internal var skippedMessages: Set<MessageId> = []
-
     /// This closure is to update the dataSource when DifferenceKit
     /// reports the data source should be updated.
     internal var onNewDataSource: (([ChatMessage]) -> Void)?
@@ -235,14 +233,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 self.reloadRows(at: [previousMessageIndexPath], with: .none)
             }
         }
-    }
-
-    /// Reset the skipped messages and reload the message list
-    /// with the messages originally reported from the data source.
-    internal func reloadSkippedMessages() {
-        skippedMessages = []
-        newMessagesSnapshot = currentMessagesFromDataSource
-        updateMessages(with: [])
     }
 }
 

@@ -1025,6 +1025,8 @@
 		AD8D1809268F7290004E3A5C /* TypingSuggester.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D1808268F7290004E3A5C /* TypingSuggester.swift */; };
 		AD8D180B268F8ED4004E3A5C /* SlackComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */; };
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
+		AD91C35428A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */; };
+		AD91C35528A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */; };
 		AD99C904279B073B009DD9C5 /* MessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */; };
 		AD99C905279B0741009DD9C5 /* MessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */; };
 		AD99C908279B0E9A009DD9C5 /* MessageDateSeparatorFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */; };
@@ -3191,6 +3193,7 @@
 		AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackComposerVC.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
+		AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageListVC+DiffKit.swift"; sourceTree = "<group>"; };
 		AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTimestampFormatter.swift; sourceTree = "<group>"; };
 		AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDateSeparatorFormatter.swift; sourceTree = "<group>"; };
 		AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLastActivityFormatter.swift; sourceTree = "<group>"; };
@@ -3930,6 +3933,7 @@
 				69736BF126413E5D00090B67 /* ChatMessageListScrollOverlayView.swift */,
 				BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */,
 				DBC8A5752581476E00B20A82 /* ChatMessageListVC.swift */,
+				AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */,
 				AD470C9B26C6D8C60090759A /* ChatMessageListVCDataSource.swift */,
 				AD470C9D26C6D9030090759A /* ChatMessageListVCDelegate.swift */,
 				79088331254876C100896F03 /* ChatMessageListView.swift */,
@@ -8516,6 +8520,7 @@
 				64B059E22670EFFE0024CE90 /* ChatChannelVC+SwiftUI.swift in Sources */,
 				BDDD1EA32632C50200BA007B /* Appearance.swift in Sources */,
 				88CABC4425933EE70061BB67 /* ChatMessageDefaultReactionsBubbleView.swift in Sources */,
+				AD91C35428A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */,
 				79CCB66E259CBC4F0082F172 /* ChatChannelNamer.swift in Sources */,
 				43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */,
 				79F691B22604C10A000AE89B /* SystemEnvironment.swift in Sources */,
@@ -9942,6 +9947,7 @@
 				C121EB6D2746A1E600023E4C /* UIView+Extensions.swift in Sources */,
 				C121EB6E2746A1E600023E4C /* UILabel+Extensions.swift in Sources */,
 				C121EB6F2746A1E600023E4C /* CALayer+Extensions.swift in Sources */,
+				AD91C35528A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */,
 				C121EB702746A1E600023E4C /* ImageCDN.swift in Sources */,
 				C121EB712746A1E700023E4C /* UIColor+Extensions.swift in Sources */,
 				C121EB722746A1E700023E4C /* Bundle+Extensions.swift in Sources */,
