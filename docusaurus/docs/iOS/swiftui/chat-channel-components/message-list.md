@@ -121,6 +121,7 @@ For more details on what you can change and customize with the `MessageDisplayOp
 It has the following parameters:
 
 - **showAvatars**: `Bool`
+- **showAvatarsInGroups**: `Bool`
 - **showMessageDate**: `Bool`
 - **showAuthorName**: `Bool`
 - **animateChanges**: `Bool`
