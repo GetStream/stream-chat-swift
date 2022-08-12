@@ -75,7 +75,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
     - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test cron:true device:"iPhone 8"
+      run: bundle exec fastlane test device:"iPhone 8"
       timeout-minutes: 30
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
