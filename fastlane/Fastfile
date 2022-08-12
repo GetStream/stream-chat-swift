@@ -433,19 +433,28 @@ desc 'Runs tests in Debug config'
 lane :test do |options|
   next unless check_required?(:unit)
 
-  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatFlakyTests.xctestplan')
 
-  number_of_retries = options[:cron] ? 1 : 0
+  scan(
+    project: 'StreamChat.xcodeproj',
+    scheme: 'StreamChat',
+    testplan: 'StreamChatFlakyTests',
+    clean: true,
+    devices: options[:device],
+    build_for_testing: options[:build_for_testing],
+    number_of_retries: 5
+  )
+
+  next if options[:build_for_testing]
+
+  add_ci_env_var_to('../Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
 
   scan(
     project: 'StreamChat.xcodeproj',
     scheme: 'StreamChat',
     testplan: 'StreamChatTestPlan',
-    configuration: 'Debug',
-    clean: true,
     devices: options[:device],
-    build_for_testing: options[:build_for_testing],
-    number_of_retries: number_of_retries
+    skip_build: true
   )
 end
 
@@ -464,7 +473,6 @@ lane :test_e2e_mock do |options|
     project: 'StreamChat.xcodeproj',
     scheme: 'StreamChatUITestsApp',
     testplan: 'StreamChatUITestsApp',
-    configuration: 'Debug',
     devices: device,
     number_of_retries: number_of_retries
   }
@@ -507,7 +515,6 @@ lane :test_ui do |options|
     project: 'StreamChat.xcodeproj',
     scheme: 'StreamChatUI',
     testplan: 'StreamChatUITestPlan',
-    configuration: 'Debug',
     clean: true,
     devices: options[:device],
     build_for_testing: options[:build_for_testing]
@@ -569,7 +576,6 @@ lane :test_debug_macos do
     project: 'StreamChat.xcodeproj',
     scheme: 'StreamChat',
     testplan: 'StreamChatTestPlan',
-    configuration: 'Debug',
     clean: true,
     disable_xcpretty: true,
     destination: 'platform=macOS,arch=x86_64' # will select first from macOS and macOS Catalyst. Let's hope it always will be macOS
