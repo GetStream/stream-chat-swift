@@ -1333,6 +1333,38 @@ public extension ChatChannelController {
         
         return max(0, cooldownDuration - Int(currentTime))
     }
+
+    func createCall(id: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+        
+        updater.createCall(in: cid, id: id, type: type) {
+            switch $0 {
+            case let .success(messages):
+                self.callback {
+                    completion(.success(messages))
+                }
+            case let .failure(error):
+                self.callback {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    /// Returns the current cooldown time for the channel. Returns 0 in case there is no cooldown active.
+    func currentCooldownTime() -> Int {
+        guard let cooldownDuration = channel?.cooldownDuration,
+              let currentUserLastMessage = channel?.lastMessageFromCurrentUser else {
+            return 0
+        }
+        
+        let currentTime = Date().timeIntervalSince(currentUserLastMessage.createdAt)
+        
+        return max(0, cooldownDuration - Int(currentTime))
+    }
 }
 
 extension ChatChannelController {

@@ -496,4 +496,39 @@ class ChannelUpdater: Worker {
             }
         }
     }
+    
+    func createCall(in cid: ChannelId, id: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
+        apiClient.request(endpoint: .createCall(cid: cid, id: id, type: type)) { result in
+            switch result {
+            case let .success(payload):
+                var agoraCall: AgoraCall?
+                var hmsCall: HMSCall?
+
+                if let agora = payload.call.agora {
+                    agoraCall = .init(channel: agora.channel)
+                }
+
+                if let hms = payload.call.hms {
+                    hmsCall = .init(roomId: hms.roomId, roomName: hms.roomName)
+                }
+
+                let call = Call(
+                    id: payload.call.id,
+                    provider: payload.call.provider,
+                    agora: agoraCall,
+                    hms: hmsCall
+                )
+
+                let callWithToken = CallWithToken(
+                    call: call,
+                    token: payload.token,
+                    agoraUid: payload.agoraUid,
+                    agoraAppId: payload.agoraAppId
+                )
+                completion(.success(callWithToken))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
