@@ -1,0 +1,35 @@
+{
+  "configurations" : [
+    {
+      "id" : "998282BC-8EFC-48F6-999A-0BF82B19C122",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "MessageSender_Tests\/test_senderSendsMessages_forMultipleChannelsInParalel_butStillInTheCorrectOrder()",
+        "MessageSender_Tests\/test_sender_doesNotRetainItself()",
+        "MessageSender_Tests\/test_senderSendsMessage_inTheOrderTheyWereCreatedLocally()",
+        "MessageSender_Tests\/test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments()",
+        "SyncRepository_Tests\/test_cancelRecoveryFlow_cancelsAllOperations()",
+        "APIClient_Tests\/test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests()",
+        "WebSocketClient_Tests\/test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching()",
+        "ChannelUpdater_Tests\/test_hideChannel_successfulResponse_isPropagatedToCompletion()",
+        "MessageUpdater_Tests\/test_flagMessage_happyPath()"
+      ],
+      "target" : {
+        "containerPath" : "container:StreamChat.xcodeproj",
+        "identifier" : "799C9450247D59B1001F1104",
+        "name" : "StreamChatTests"
+      }
+    }
+  ],
+  "version" : 1
+}
