@@ -77,8 +77,6 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
 }
 
 class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
-    private(set) var items: LazyCachedMapCollection<Item> = []
-
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
     /// on its delegate.
     var onWillChange: (() -> Void)?
@@ -100,6 +98,23 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     private var releaseNotificationObservers: (() -> Void)?
 
     private let queue = DispatchQueue.global()
+
+    private var _items: [Item] = []
+    var items: LazyCachedMapCollection<Item> {
+        queue.sync { LazyCachedMapCollection(source: _items, map: { $0 }) }
+    }
+
+    private var _isInitialized: Bool = false
+    private var isInitialized: Bool {
+        get {
+            queue.sync { _isInitialized }
+        }
+        set {
+            queue.async(flags: .barrier) {
+                self._isInitialized = newValue
+            }
+        }
+    }
 
     deinit {
         releaseNotificationObservers?()
@@ -148,6 +163,11 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     ///
     /// - Throws: An error if the provided fetch request fails.
     func startObserving() throws {
+        guard !isInitialized else { return }
+        isInitialized = true
+
+        onWillChange?()
+
         do {
             try frc.performFetch()
         } catch {
@@ -156,14 +176,20 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
 
         frc.delegate = changeAggregator
-        items = []
-        if frc.fetchedObjects?.isEmpty == false {
-            processItems()
-        }
+
+        processItems()
     }
 
     private func notifyWillChange() {
-        onWillChange?()
+        DispatchQueue.main.async { [weak self] in
+            self?.onWillChange?()
+        }
+    }
+
+    private func notifyDidChange(changes: [ListChange<Item>]) {
+        DispatchQueue.main.async { [weak self] in
+            self?.onDidChange?(changes)
+        }
     }
 
     private func mapItems(completion: @escaping ([Item]) -> Void) {
@@ -188,11 +214,8 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
     private func processItems(_ changes: [ListChange<Item>] = []) {
         mapItems { [weak self] items in
-            #warning("Move to array")
-            self?.items = LazyCachedMapCollection(source: items, map: { $0 })
-            DispatchQueue.main.async {
-                self?.onDidChange?(changes)
-            }
+            self?._items = items
+            self?.notifyDidChange(changes: changes)
         }
     }
 
@@ -230,7 +253,9 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
             // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
             // calling `controllerDidChangeContent` so it properly reflects the state
-            self.items = []
+            self.queue.sync {
+                self._items = []
+            }
 
             // Publish the changes
             self.changeAggregator.controllerDidChangeContent(fetchResultsController)
