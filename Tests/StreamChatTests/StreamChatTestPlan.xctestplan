@@ -37,6 +37,7 @@
         "MessageSender_Tests\/test_sender_doesNotRetainItself()",
         "MessageSender_Tests\/test_senderSendsMessage_inTheOrderTheyWereCreatedLocally()",
         "MessageSender_Tests\/test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments()",
+        "MessageSender_Tests\/test_sender_sendsMessage_withBothNotUploadableAttachmentAndUploadedAttachments()",
         "SyncRepository_Tests\/test_cancelRecoveryFlow_cancelsAllOperations()",
         "APIClient_Tests\/test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests()",
         "WebSocketClient_Tests\/test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching()"
