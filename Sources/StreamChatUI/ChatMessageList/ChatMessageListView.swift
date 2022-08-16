@@ -178,14 +178,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         
         return cellRect.minY >= contentOffset.y
     }
-
-    func updatePreviousSnapshot(with previousSnapshot: [ChatMessage]) {
-        previousMessagesSnapshot = previousSnapshot
-    }
-
-    func updateNewSnapshot(with newSnapshot: [ChatMessage]) {
-        newMessagesSnapshot = newSnapshot
-    }
     
     /// Updates the table view data with given `changes`.
     open func updateMessages(

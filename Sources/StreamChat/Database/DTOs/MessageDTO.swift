@@ -1007,7 +1007,12 @@ private extension ChatMessage {
             }, dto.managedObjectContext)
         }
 
-        $_quotedMessage = ({ try? dto.quotedMessage?.asModel() }, dto.managedObjectContext)
+        $_quotedMessage = ({
+            nil
+//            try? dto.quotedMessage?.asModel()
+        }, dto.managedObjectContext)
+        #warning("Fix Stack overflow |  Loop because message1 -> quoted message -> replies -> message1")
+
         let readBy = {
             Set(dto.reads.compactMap { try? $0.user.asModel() })
         }

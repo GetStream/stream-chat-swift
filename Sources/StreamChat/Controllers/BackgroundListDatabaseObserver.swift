@@ -97,7 +97,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     /// When called, release the notification observers
     private var releaseNotificationObservers: (() -> Void)?
 
-    private let queue = DispatchQueue(label: "io.getstream.list-database-observer")
+    private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated)
 
     private var _items: [Item] = []
     var items: LazyCachedMapCollection<Item> {
