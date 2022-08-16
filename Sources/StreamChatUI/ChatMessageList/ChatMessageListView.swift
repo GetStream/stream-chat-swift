@@ -222,6 +222,17 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                             self?.reloadRows(at: [movedIndexPath], with: .none)
                         }
                     }
+
+                    // When there are deletions, we should update the previous message, so that we add the
+                    // avatar image back and the timestamp too. Since we have an inverted list, the previous
+                    // message has the same index of the deleted message after the deletion has been executed.
+                    let visibleRemoves = changes.filter {
+                        $0.isRemove && self?.indexPathsForVisibleRows?.contains($0.indexPath) == true
+                    }
+                    visibleRemoves.forEach {
+                        self?.reloadRows(at: [$0.indexPath], with: .none)
+                    }
+
                     completion?()
                 }
             )
