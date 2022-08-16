@@ -60,7 +60,7 @@ public struct ChatMessage {
     ///
     public var quotedMessage: ChatMessage? { _quotedMessage }
 
-    @CoreDataLazy internal var _quotedMessage: ChatMessage?
+    @KeptCoreDataLazy internal var _quotedMessage: ChatMessage?
     
     /// A flag indicating whether the message was bounced due to moderation.
     public let isBounced: Bool

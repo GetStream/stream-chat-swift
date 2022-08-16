@@ -246,7 +246,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// Database observers.
     /// Will be `nil` when observing channel with backend generated `id` is not yet created.
-    @Cached private var channelObserver: EntityDatabaseObserver<ChatChannel, ChannelDTO>?
+    private var channelObserver: TestOnly_EntityDatabaseObserver<ChatChannel, ChannelDTO>?
     private var messagesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
     
     private var eventObservers: [EventObserver] = []
@@ -314,7 +314,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
     
     private func setChannelObserver() {
-        _channelObserver.computeValue = { [weak self] in
+        channelObserver = { [weak self] in
             guard let self = self else {
                 log.warning("Callback called while self is nil")
                 return nil
@@ -323,8 +323,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             guard let cid = self.cid else {
                 return nil
             }
-            let observer = EntityDatabaseObserver(
-                context: self.client.databaseContainer.viewContext,
+            #warning("Changed thread here")
+            let observer = TestOnly_EntityDatabaseObserver(
+                context: self.client.databaseContainer.backgroundReadOnlyContext,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
             ).onChange { [weak self] change in
@@ -347,7 +348,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
 
             return observer
-        }
+        }()
     }
 
     private func setMessagesObserver() {
@@ -468,7 +469,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
     
     private func startChannelObserver() -> Error? {
-        _channelObserver.reset()
+//        _channelObserver.reset()
         
         do {
             try channelObserver?.startObserving()
