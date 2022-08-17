@@ -123,9 +123,12 @@ public extension StreamMockServer {
         let channelId = cid?.split(separator: ":").last.map { String($0) }
         switch request.method {
         case EndpointMethod.delete.rawValue:
+            let hardParam = request.queryParams.filter { $0.0 == JSONKey.hard }.first?.1
+            let hardDelete = (hardParam == "1")
             return messageDeletion(
                 messageId: messageId,
-                channelId: channelId
+                channelId: channelId,
+                hardDelete: hardDelete
             )
         case EndpointMethod.get.rawValue:
             return messageInfo(messageId: messageId)
@@ -475,7 +478,7 @@ public extension StreamMockServer {
         }
     }
     
-    private func messageDeletion(messageId: String, channelId: String?) -> HttpResponse {
+    private func messageDeletion(messageId: String, channelId: String?, hardDelete: Bool) -> HttpResponse {
         var json = TestData.toJson(.message)
         let message = findMessageById(messageId)
         let timestamp: String = TestData.currentDate
@@ -487,7 +490,8 @@ public extension StreamMockServer {
             messageId: messageId,
             timestamp: timestamp,
             eventType: .messageDeleted,
-            user: user
+            user: user,
+            hardDelete: hardDelete
         )
         
         json[JSONKey.message] = mockedMessage

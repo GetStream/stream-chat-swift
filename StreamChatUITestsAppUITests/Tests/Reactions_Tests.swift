@@ -187,4 +187,32 @@ final class Reactions_Tests: StreamTestCase {
         }
     }
     
+    func test_addReactionWhileOffline() {
+        linkToScenario(withId: 94)
+        
+        let message = "test message"
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .setIsLocalStorageEnabled(to: .on)
+                .setConnectivitySwitchVisibility(to: .on)
+                .login()
+                .openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        AND("user becomes offline") {
+            userRobot.setConnectivity(to: .off)
+        }
+        WHEN("participant adds a reaction") {
+            participantRobot.addReaction(type: .like)
+        }
+        AND("user becomes online") {
+            userRobot.setConnectivity(to: .on)
+        }
+        THEN("user observes a new reaction") {
+            userRobot.assertReaction(isPresent: true)
+        }
+    }
 }

@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "5358EB81-7D4D-42F7-B281-016C02706988",
+      "id" : "998282BC-8EFC-48F6-999A-0BF82B19C122",
       "name" : "Configuration 1",
       "options" : {
 
@@ -9,30 +9,11 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : {
-      "targets" : [
-        {
-          "containerPath" : "container:StreamChat.xcodeproj",
-          "identifier" : "799C941A247D2F80001F1104",
-          "name" : "StreamChat"
-        }
-      ]
-    },
-    "commandLineArgumentEntries" : [
-      {
-        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
-      }
-    ]
+
   },
   "testTargets" : [
     {
-      "skippedTests" : [
-        "ChannelListPayload_Tests\/test_decode_bigChannelListPayload()",
-        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()",
-        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_empty()",
-        "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_filled()",
-        "ChannelUpdater_Tests\/test_hideChannel_successfulResponse_isPropagatedToCompletion()",
-        "MessageUpdater_Tests\/test_flagMessage_happyPath()",
+      "selectedTests" : [
         "MessageSender_Tests\/test_senderSendsMessages_forMultipleChannelsInParalel_butStillInTheCorrectOrder()",
         "MessageSender_Tests\/test_sender_doesNotRetainItself()",
         "MessageSender_Tests\/test_senderSendsMessage_inTheOrderTheyWereCreatedLocally()",
@@ -40,7 +21,9 @@
         "MessageSender_Tests\/test_sender_sendsMessage_withBothNotUploadableAttachmentAndUploadedAttachments()",
         "SyncRepository_Tests\/test_cancelRecoveryFlow_cancelsAllOperations()",
         "APIClient_Tests\/test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests()",
-        "WebSocketClient_Tests\/test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching()"
+        "WebSocketClient_Tests\/test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching()",
+        "ChannelUpdater_Tests\/test_hideChannel_successfulResponse_isPropagatedToCompletion()",
+        "MessageUpdater_Tests\/test_flagMessage_happyPath()"
       ],
       "target" : {
         "containerPath" : "container:StreamChat.xcodeproj",
