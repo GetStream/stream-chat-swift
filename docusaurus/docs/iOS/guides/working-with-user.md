@@ -118,10 +118,19 @@ chatClient.currentUserController().reloadUserIfNeeded()
 ```
 to make sure `ChatClient` calls your `tokenProvider` closure and acquires a new token for the newly logged-in user.
 
-You don't need to "logout" in the common sense. Deallocating `ChatClient` instances for the currently logged-in user means the user will disconnect. If you want to keep your "ChatClient" instance (eg you're using a singleton for it) you can call:
+For logging out the user, you can call:
+
 ```swift
-chatClient.connectionController().disconnect()
+chatClient.logout { error in
+    if let error = error {
+        // Handle error
+    }
+
+    // Execute additional actions after logout succeeded such as going back to login view, etc.
+}
 ```
+
+This way the logged-in user will disconnect from the servers and any local stored data related to the user will be deleted.
 
 :::note
 For more information regarding connection & disconnection, please check [Connection Status guide](./connection-status.md).

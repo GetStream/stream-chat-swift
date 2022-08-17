@@ -373,6 +373,16 @@ public class ChatClient {
         }
         userConnectionProvider = nil
     }
+    
+    /// Disconnects the chat client form the chat servers and removes all the local data related.
+    ///
+    /// - Parameters:
+    ///   - completion: The completion. Will be called when the logout is completed successfully.
+    ///                 If request fails, the completion will be called with an error.
+    public func logout(completion: @escaping ((Error?) -> Void)) {
+        disconnect()
+        databaseContainer.removeAllData(force: true, completion: completion)
+    }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
         var currentUserId: UserId?
