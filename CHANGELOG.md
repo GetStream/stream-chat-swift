@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Fix hidden channels showing past history [#2216](https://github.com/GetStream/stream-chat-swift/pull/2216)
+
+## StreamChatUI
+### 🐞 Fixed
 - Fix message list scrolling when popping from navigation stack [#2239](https://github.com/GetStream/stream-chat-swift/pull/2239)
 
 # [4.20.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.20.0)
