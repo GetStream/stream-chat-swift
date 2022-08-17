@@ -187,7 +187,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         let newestChange = changes.first(where: { $0.indexPath.item == 0 })
         let isNewestChangeInsertion = newestChange?.isInsertion == true
         let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
-        let isNewestChangeNotVisible = !isLastCellFullyVisible
+        let isNewestChangeNotVisible = !isLastCellFullyVisible && !previousMessagesSnapshot.isEmpty
         let shouldSkipMessagesInsertions = isNewestChangeNotVisible && isNewestChangeInsertion && isNewestChangeNotByCurrentUser
 
         if shouldSkipMessagesInsertions {
