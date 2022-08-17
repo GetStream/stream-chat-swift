@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix jumps in Message List [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
 - Fix image flickers when adding image attachment to a message [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+- Fix message list scrolling when popping from navigation stack [#2239](https://github.com/GetStream/stream-chat-swift/pull/2239)
 
 # [4.20.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.20.0)
 _August 02, 2022_
