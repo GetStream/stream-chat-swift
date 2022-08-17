@@ -55,6 +55,8 @@ open class ChatThreadVC: _ViewController,
 
     private var isLoadingPreviousMessages: Bool = false
 
+    private var currentlyTypingUsers: Set<ChatUser> = []
+
     override open func setUp() {
         super.setUp()
 
@@ -266,7 +268,11 @@ open class ChatThreadVC: _ViewController,
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        let indexPath = IndexPath(row: messages.count, section: 0)
+        guard !messages.isEmpty else {
+            return
+        }
+
+        let indexPath = IndexPath(row: messages.count - 1, section: 0)
 
         let listChange: ListChange<ChatMessage>
         switch change {
@@ -278,22 +284,17 @@ open class ChatThreadVC: _ViewController,
             listChange = .remove(item, index: indexPath)
         }
 
-        messageListVC.updateMessages(with: [listChange])
+        updateMessages(with: [listChange])
     }
 
     open func messageController(
         _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
-        messageListVC.setPreviousMessagesSnapshot(self.messages)
-        let messages = getRepliesWithThreadRootMessage(from: controller)
-        messageListVC.setNewMessagesSnapshot(messages)
-        messageListVC.updateMessages(with: changes)
+        updateMessages(with: changes)
     }
     
     // MARK: - EventsControllerDelegate
-    
-    private var currentlyTypingUsers: Set<ChatUser> = []
     
     open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         switch event {
@@ -320,6 +321,13 @@ open class ChatThreadVC: _ViewController,
     @objc func appMovedToForeground() {
         messageController.delegate = self
         messageListVC.dataSource = self
+    }
+
+    private func updateMessages(with changes: [ListChange<ChatMessage>]) {
+        messageListVC.setPreviousMessagesSnapshot(self.messages)
+        let messages = getRepliesWithThreadRootMessage(from: messageController)
+        messageListVC.setNewMessagesSnapshot(messages)
+        messageListVC.updateMessages(with: changes)
     }
 
     private func getRepliesWithThreadRootMessage(from messageController: ChatMessageController) -> [ChatMessage] {
