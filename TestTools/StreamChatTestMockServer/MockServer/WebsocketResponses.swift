@@ -52,6 +52,7 @@ public extension StreamMockServer {
         _ text: String? = "",
         channelId: String?,
         messageId: String?,
+        parentId: String? = nil,
         timestamp: String? = TestData.currentDate,
         messageType: MessageType = .regular,
         eventType: EventType,
@@ -110,6 +111,15 @@ public extension StreamMockServer {
             saveMessage(mockedMessage)
         default:
             mockedMessage = [:]
+        }
+
+        if let parentMessageId = parentId {
+            var parentMessage = messageList.first { message in
+                (message[messageKey.id.rawValue] as? String) ?? "" == parentMessageId
+            }
+            let previousReplyCount = (parentMessage?[messageKey.replyCount.rawValue] as? Int) ?? 0
+            parentMessage?[messageKey.replyCount.rawValue] = previousReplyCount + 1
+            saveMessage(parentMessage)
         }
         
         if let channelId = channelId {
