@@ -114,7 +114,6 @@ public struct ChatMessage {
     /// A list of latest 25 replies to this message.
     ///
     /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
-
     public var latestReplies: [ChatMessage] { _latestReplies }
     #warning("Move to async")
     @CoreDataLazy(forceLazy: true) internal var _latestReplies: [ChatMessage]
