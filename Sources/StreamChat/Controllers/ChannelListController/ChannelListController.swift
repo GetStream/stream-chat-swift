@@ -121,40 +121,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         return observer
     }()
 
-    private(set) lazy var backgroundChannelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
-        let request = ChannelDTO.channelListFetchRequest(query: self.query)
-        let observer = BackgroundListDatabaseObserver<ChatChannel, ChannelDTO>(
-            context: client.databaseContainer.backgroundReadOnlyContext,
-            fetchRequest: request,
-            itemCreator: { try $0.asModel() }
-        )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
-                $0.controller(self, didChangeChannels: changes)
-            }
-            self?.handleLinkedChannels(changes)
-        }
-
-        observer.onWillChange = { [weak self] in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.controllerWillChangeChannels(self)
-            }
-        }
-
-        return observer
-    }()
-
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
