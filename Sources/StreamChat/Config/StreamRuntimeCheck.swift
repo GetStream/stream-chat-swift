@@ -12,11 +12,6 @@ public enum StreamRuntimeCheck {
 
     /// For *internal use* only
     ///
-    ///  Enables lazy mapping of DB models
-    public static var _isLazyMappingEnabled = false
-
-    /// For *internal use* only
-    ///
     ///  Enables background mapping of DB models
-    public static var _isBackgroundMappingEnabled = true
+    public static var _isBackgroundMappingEnabled = false
 }
