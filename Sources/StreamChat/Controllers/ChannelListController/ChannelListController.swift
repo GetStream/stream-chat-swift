@@ -73,7 +73,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
         let observer = ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>(
             isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
-            context: client.databaseContainer.backgroundReadOnlyContext,
+            database: client.databaseContainer,
             fetchRequest: request,
             itemCreator: { try $0.asModel() }
         )
@@ -109,7 +109,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let request = ChannelDTO.channelsFetchRequest(notLinkedTo: query)
         let observer = ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>(
             isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
-            context: client.databaseContainer.backgroundReadOnlyContext,
+            database: client.databaseContainer,
             fetchRequest: request,
             itemCreator: { try $0.asModel() }
         )

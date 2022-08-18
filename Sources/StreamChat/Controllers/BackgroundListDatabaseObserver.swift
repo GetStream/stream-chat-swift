@@ -11,10 +11,13 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
     let isBackground: Bool
 
     var items: LazyCachedMapCollection<Item> {
-        if isBackground {
-            return background!.items
+        if isBackground, let background = background {
+            return background.items
+        } else if let foreground = foreground {
+            return foreground.items
         } else {
-            return foreground!.items
+            assertionFailure()
+            return []
         }
     }
 
@@ -23,9 +26,9 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
     var onWillChange: (() -> Void)? {
         didSet {
             if isBackground {
-                background!.onWillChange = onWillChange
+                background?.onWillChange = onWillChange
             } else {
-                foreground!.onWillChange = onWillChange
+                foreground?.onWillChange = onWillChange
             }
         }
     }
@@ -35,16 +38,16 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
     var onDidChange: (([ListChange<Item>]) -> Void)? {
         didSet {
             if isBackground {
-                background!.onDidChange = onDidChange
+                background?.onDidChange = onDidChange
             } else {
-                foreground!.onChange = onDidChange
+                foreground?.onChange = onDidChange
             }
         }
     }
 
     init(
         isBackground: Bool,
-        context: NSManagedObjectContext,
+        database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
@@ -52,14 +55,14 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
         self.isBackground = isBackground
         if isBackground {
             background = BackgroundListDatabaseObserver(
-                context: context,
+                context: database.backgroundReadOnlyContext,
                 fetchRequest: fetchRequest,
                 itemCreator: itemCreator,
                 fetchedResultsControllerType: fetchedResultsControllerType
             )
         } else {
             foreground = ListDatabaseObserver(
-                context: context,
+                context: database.viewContext,
                 fetchRequest: fetchRequest,
                 itemCreator: itemCreator,
                 fetchedResultsControllerType: fetchedResultsControllerType
@@ -68,10 +71,12 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
     }
 
     func startObserving() throws {
-        if isBackground {
-            try background!.startObserving()
+        if isBackground, let background = background {
+            try background.startObserving()
+        } else if let foreground = foreground {
+            try foreground.startObserving()
         } else {
-            try foreground!.startObserving()
+            assertionFailure()
         }
     }
 }

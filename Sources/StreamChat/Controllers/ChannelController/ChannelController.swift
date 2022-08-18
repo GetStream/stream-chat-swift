@@ -371,7 +371,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
             let observer = ListDatabaseObserverWrapper(
                 isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
-                context: self.client.databaseContainer.backgroundReadOnlyContext,
+                database: client.databaseContainer,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
                     sortAscending: sortAscending,
@@ -480,8 +480,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
     
     private func startMessagesObserver() -> Error? {
-//        _messagesObserver.reset()
-        
         do {
             try messagesObserver?.startObserving()
             return nil
