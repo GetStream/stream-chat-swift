@@ -71,11 +71,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     private(set) lazy var channelListObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
-        let observer = ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>(
-            isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
-            database: client.databaseContainer,
-            fetchRequest: request,
-            itemCreator: { try $0.asModel() }
+        let observer = self.environment.createChannelListDatabaseObserver(
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            client.databaseContainer,
+            request,
+            { try $0.asModel() }
         )
 
         observer.onDidChange = { [weak self] changes in
@@ -106,12 +106,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     /// Used for observing the database for changes.
     private(set) lazy var updatedChannelObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
-        let request = ChannelDTO.channelsFetchRequest(notLinkedTo: query)
-        let observer = ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>(
-            isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
-            database: client.databaseContainer,
-            fetchRequest: request,
-            itemCreator: { try $0.asModel() }
+        let observer = self.environment.createChannelListDatabaseObserver(
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            client.databaseContainer,
+            ChannelDTO.channelsFetchRequest(notLinkedTo: query),
+            { try $0.asModel() }
         )
 
         observer.onDidChange = { [weak self] changes in
@@ -374,12 +373,13 @@ extension ChatChannelListController {
         ) -> ChannelListUpdater = ChannelListUpdater.init
 
         var createChannelListDatabaseObserver: (
-            _ context: NSManagedObjectContext,
+            _ isBackground: Bool,
+            _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
             _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel
         )
-            -> ListDatabaseObserver<ChatChannel, ChannelDTO> = {
-                ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
+            -> ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
+                ListDatabaseObserverWrapper(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3)
             }
     }
 }
