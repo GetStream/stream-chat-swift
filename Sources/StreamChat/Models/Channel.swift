@@ -107,7 +107,8 @@ public struct ChatChannel {
     ///
     /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
     public var latestMessages: [ChatMessage] { _latestMessages }
-    @CoreDataLazy private var _latestMessages: [ChatMessage]
+    #warning("Move to async")
+    @KeptCoreDataLazy private var _latestMessages: [ChatMessage]
     
     /// Latest message present on the channel sent by current user even if sent on a thread.
     ///
@@ -122,7 +123,8 @@ public struct ChatChannel {
     ///
     /// - Important: The `pinnedMessages` property is loaded and evaluated lazily to maintain high performance.
     public var pinnedMessages: [ChatMessage] { _pinnedMessages }
-    @CoreDataLazy private var _pinnedMessages: [ChatMessage]
+    #warning("Move to async")
+    @KeptCoreDataLazy private var _pinnedMessages: [ChatMessage]
     
     /// Read states of the users for this channel.
     ///
@@ -156,7 +158,8 @@ public struct ChatChannel {
     /// - Important: The `previewMessage` can differ from `latestMessages.first` (or even not be included into `latestMessages`)
     /// because the preview message is the last `non-deleted` message sent to the channel.
     public var previewMessage: ChatMessage? { _previewMessage }
-    @CoreDataLazy private var _previewMessage: ChatMessage?
+    #warning("Move to async?")
+    @KeptCoreDataLazy private var _previewMessage: ChatMessage?
     
     // MARK: - Internal
     
