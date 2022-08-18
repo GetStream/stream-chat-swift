@@ -480,6 +480,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
     
     private func startMessagesObserver() -> Error? {
+        setMessagesObserver()
+
         do {
             try messagesObserver?.startObserving()
             return nil
