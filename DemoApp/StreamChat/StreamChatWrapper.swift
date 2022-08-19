@@ -127,14 +127,7 @@ extension StreamChatWrapper {
             }
         }
 
-        client.logout { error in
-            if let error = error {
-                log.error("Logging out current user failed with error \(error)", subsystems: .all)
-                return
-            } else {
-                log.debug("Logging out current user successfully.", subsystems: .all)
-            }
-        }
+        client.logout()
         
         self.client = nil
     }
