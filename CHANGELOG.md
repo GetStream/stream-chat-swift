@@ -13,15 +13,6 @@ _August 02, 2022_
 - Support for message moderation (NNBB) [#2103](https://github.com/GetStream/stream-chat-swift/pull/2103/files)
 ### 🐞 Fixed
 - Fix crash in ListDatabaseObserver.startObserving() [#2177](https://github.com/GetStream/stream-chat-swift/pull/2177)
-- Make BaseOperation thread safe [#2198](https://github.com/GetStream/stream-chat-swift/pull/2198)
-- Fix build issues in Xcode 14 beta [#2202](https://github.com/GetStream/stream-chat-swift/pull/2202)
-- Improve consistency when retrieving Message after Push Notification [#2200](https://github.com/GetStream/stream-chat-swift/pull/2200)
-- Make sure ChannelDTO is still valid when accessing Lazy blocks [#2204](https://github.com/GetStream/stream-chat-swift/pull/2204)
-
-## StreamChatUI
-### ✅ Added
-- Add channel list states; empty, error and loading views [#2187](https://github.com/GetStream/stream-chat-swift/pull/2187)
-- Support for message moderation (NNBB) [#2103](https://github.com/GetStream/stream-chat-swift/pull/2103/files)
 
 # [4.19.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.19.0)
 _July 21, 2022_

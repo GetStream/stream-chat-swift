@@ -51,34 +51,25 @@ class AsyncOperation: BaseOperation {
 class BaseOperation: Operation {
     private var _finished = false
     private var _executing = false
-    private let stateQueue = DispatchQueue(label: "io.getstream.base-operation")
 
     override var isExecuting: Bool {
         get {
-            stateQueue.sync {
-                _executing
-            }
+            _executing
         }
         set {
             willChangeValue(for: \.isExecuting)
-            stateQueue.async(flags: .barrier) {
-                self._executing = newValue
-            }
+            _executing = newValue
             didChangeValue(for: \.isExecuting)
         }
     }
 
     override var isFinished: Bool {
         get {
-            stateQueue.sync {
-                _finished
-            }
+            _finished
         }
         set {
             willChangeValue(for: \.isFinished)
-            stateQueue.async(flags: .barrier) {
-                self._finished = newValue
-            }
+            _finished = newValue
             didChangeValue(for: \.isFinished)
         }
     }
