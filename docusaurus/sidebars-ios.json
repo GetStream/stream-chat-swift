@@ -113,7 +113,6 @@
         "guides/customize-message-actions",
         "guides/push-notifications",
         "guides/offline-support",
-        "guides/working-with-user",
         "guides/working-with-attachments",
         "guides/customize-message-composer",
         "guides/message-composer-custom-attachments",

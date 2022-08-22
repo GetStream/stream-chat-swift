@@ -89,7 +89,7 @@ You can create anonymous users without a unique identifier or a user token. Howe
 let tokenProvider = TokenProvider.anonymous
 ```
 
-## Login
+## Login & Logout
 
 In StreamChat context, "Logging In" means `ChatClient` has a valid JWT token for the user. For development apps, we suggest using static (hardcoded) tokens and development tokens, to be able to prototype quickly. For production apps, the hosting app owns the login/logout logic, so we suggest using backend generated tokens and `reloadUserIfNeeded` calls when necessary.
 
@@ -118,28 +118,20 @@ chatClient.currentUserController().reloadUserIfNeeded()
 ```
 to make sure `ChatClient` calls your `tokenProvider` closure and acquires a new token for the newly logged-in user.
 
-If you're using static tokens for developing quick prototypes and want to test login/logout, you can assign a new `tokenProvider` to the `ChatClient` and then call `reloadUserIfNeeded` to "login" using the new token:
-```swift
-chatClient.tokenProvider = .static(newToken)
-chatClient.currentUserController().reloadUserIfNeeded()
-```
-
-## Disconnect & Logout
-
-Whenever your users leave the chat component, you should use disconnect to stop receiving chat updates and events while using other features of your app. You disconnect by calling:
+You don't need to "logout" in the common sense. Deallocating `ChatClient` instances for the currently logged-in user means the user will disconnect. If you want to keep your "ChatClient" instance (eg you're using a singleton for it) you can call:
 ```swift
 chatClient.connectionController().disconnect()
-```
-
-If your users logout form their account you should use logout instead for completely logging out from the session. You logout by calling:
-
-```swift
-chatClient.logout()
 ```
 
 :::note
 For more information regarding connection & disconnection, please check [Connection Status guide](./connection-status.md).
 :::
+
+If you're using static tokens for developing quick prototypes and want to test login/logout, you can assign a new `tokenProvider` to the `ChatClient` and then call `reloadUserIfNeeded` to "login" using the new token:
+```swift
+chatClient.tokenProvider = .static(newToken)
+chatClient.currentUserController().reloadUserIfNeeded()
+```
 
 ## CurrentUser vs User
 
