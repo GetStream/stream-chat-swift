@@ -310,6 +310,30 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
+    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserPublishesGiphyThatIsNotLastMessage() {
+        linkToScenario(withId: 287)
+
+        let newMessage = "New message"
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a new ephemeral giphy") {
+            userRobot.sendGiphy(text: newMessage, send: false)
+        }
+        AND("participant sends some messages") {
+            participantRobot.sendMultipleMessages(repeatingText: "Some message", count: 12)
+            userRobot.scrollMessageListUpSlow()
+        }
+        AND("user publishes giphy") {
+            userRobot.tapOnSendGiphyButton(messageCellIndex: 12)
+        }
+        THEN("message list is scrolled down") {
+            userRobot.assertMessageIsVisible(newMessage)
+        }
+    }
+
     func test_commandsPopupDisappear_whenUserTapsOnMessageList() {
         linkToScenario(withId: 98)
 
