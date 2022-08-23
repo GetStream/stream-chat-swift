@@ -185,6 +185,10 @@ class MessageListPage {
         static func quotedText(_ text: String, in messageCell: XCUIElement) -> XCUIElement {
             messageCell.textViews.matching(NSPredicate(format: "value LIKE '\(text)'")).firstMatch
         }
+
+        static func text(_ text: String, in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.textViews.matching(NSPredicate(format: "value LIKE '\(text)'")).firstMatch
+        }
         
         static func deletedIcon(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.images["onlyVisibleToYouImageView"]
