@@ -245,6 +245,17 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             }
         }
     }
+
+    /// Reset the skipped messages and reload the message list
+    /// with the messages originally reported from the data source.
+    internal func reloadSkippedMessages() {
+        skippedMessages = []
+        newMessagesSnapshot = currentMessagesFromDataSource
+        reloadData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.scrollToMostRecentMessage()
+        }
+    }
 }
 
 // MARK: Helpers
