@@ -127,7 +127,8 @@ extension StreamChatWrapper {
             }
         }
 
-        client.disconnect()
+        client.logout()
+        
         self.client = nil
     }
 }
