@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Fix hidden channels showing past history [#2216](https://github.com/GetStream/stream-chat-swift/pull/2216)
+- Fix token not being refreshed because of parsing error [#2248](https://github.com/GetStream/stream-chat-swift/pull/2248)
 
 ## StreamChatUI
 ### 🐞 Fixed
