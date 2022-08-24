@@ -310,6 +310,30 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
+    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserPublishesGiphyThatIsNotLastMessage() {
+        linkToScenario(withId: 287)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a new ephemeral giphy") {
+            userRobot.sendGiphy(send: false)
+        }
+        AND("participant sends some messages") {
+            participantRobot.sendMultipleMessages(repeatingText: "Some message", count: 16)
+        }
+        AND("user scrolls up") {
+            userRobot.scrollMessageListUpSlow()
+        }
+        AND("user publishes giphy") {
+            userRobot.tapOnSendGiphyButton(messageCellIndex: 16)
+        }
+        THEN("message list is scrolled down") {
+            userRobot.assertMessageIsVisible(at: 0)
+        }
+    }
+
     func test_commandsPopupDisappear_whenUserTapsOnMessageList() {
         linkToScenario(withId: 98)
 
@@ -735,6 +759,30 @@ extension MessageList_Tests {
         }
         THEN("messages are not grouped, 1st message shows the timestamp") {
             userRobot.assertMessageHasTimestamp(at: 1)
+        }
+    }
+
+    func test_messageRendersTimestampAgain_whenMessageLastInGroupIsHardDeleted() {
+        linkToScenario(withId: 288)
+
+        GIVEN("user opens the channel") {
+            backendRobot
+                .generateChannels(count: 1, messagesCount: 1)
+            userRobot
+                .login()
+                .openChannel()
+        }
+        AND("user inserts 3 group messages") {
+            userRobot.sendMessage("Hey")
+            userRobot.sendMessage("Hey2")
+            userRobot.sendMessage("Hey3")
+            userRobot.assertMessageHasTimestamp()
+        }
+        WHEN("user deletes last message") {
+            userRobot.deleteMessage(hard: true)
+        }
+        THEN("previous message should re-render timestamp") {
+            userRobot.assertMessageHasTimestamp(at: 0)
         }
     }
 }
