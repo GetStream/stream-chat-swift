@@ -18,7 +18,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         
-        channelUpdater = ChannelUpdater(database: database, apiClient: apiClient)
+        channelUpdater = ChannelUpdater(callRepository: CallRepository(apiClient: apiClient), database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
