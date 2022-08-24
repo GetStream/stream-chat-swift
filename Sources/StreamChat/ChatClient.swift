@@ -90,6 +90,11 @@ public class ChatClient {
             apiClient
         )
     }()
+
+    /// A repository that handles all the executions needed to keep the Database in sync with remote.
+    public private(set) lazy var callRepository: CallRepository = {
+        environment.callRepositoryBuilder(apiClient)
+    }()
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
@@ -585,6 +590,12 @@ extension ChatClient {
                 apiClient: $6
             )
         }
+
+        var callRepositoryBuilder: (
+            _ apiClient: APIClient
+        ) -> CallRepository = {
+            CallRepository(apiClient: $0)
+        }
         
         var messageRepositoryBuilder: (
             _ database: DatabaseContainer,
@@ -741,23 +752,6 @@ extension ChatClient: ConnectionStateDelegate {
         }
         if shouldNotifyWaiters {
             connectionIdWaiters.forEach { $0.value(connectionId) }
-        }
-    }
-}
-
-extension ChatClient {
-    public func getCallToken(callId: String, completion: @escaping (Result<CallToken, Error>) -> Void) {
-        apiClient.request(endpoint: .getCallToken(callId: callId)) { result in
-            switch result {
-            case let .failure(error):
-                completion(.failure(error))
-            case let .success(tokenPayload):
-                completion(.success(.init(
-                    token: tokenPayload.token,
-                    agoraUid: tokenPayload.agoraUid,
-                    agoraAppId: tokenPayload.agoraAppId
-                )))
-            }
         }
     }
 }

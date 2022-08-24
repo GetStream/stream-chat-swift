@@ -4,13 +4,9 @@
 
 import Foundation
 
-public struct HMSCall: Encodable {
-    public let roomId: String
-    public let roomName: String
-}
-
-public struct AgoraCall: Encodable {
-    public let channel: String
+public struct CallToken {
+    public let token: String
+    public let agoraInfo: AgoraInfo?
 }
 
 public struct Call: Encodable {
@@ -23,12 +19,23 @@ public struct Call: Encodable {
 public struct CallWithToken: Encodable {
     public let call: Call
     public let token: String
-    public let agoraUid: UInt?
-    public let agoraAppId: String?
 }
 
-public struct CallToken {
-    public let token: String
-    public let agoraUid: UInt?
-    public let agoraAppId: String?
+// HMS
+
+public struct HMSCall: Encodable {
+    public let roomId: String
+    public let roomName: String
+}
+
+// Agora
+
+public struct AgoraCall: Encodable {
+    public let channel: String
+    public let agoraInfo: AgoraInfo?
+}
+
+public struct AgoraInfo: Encodable {
+    public let uid: UInt
+    public let appId: String
 }

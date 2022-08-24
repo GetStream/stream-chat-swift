@@ -222,6 +222,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
+        client.callRepository,
         client.databaseContainer,
         client.apiClient
     )
@@ -1339,8 +1340,8 @@ public extension ChatChannelController {
             channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
             return
         }
-        
-        updater.createCall(in: cid, id: id, type: type) {
+
+        updater.createCall(in: cid, callId: id, type: type) {
             switch $0 {
             case let .success(messages):
                 self.callback {
@@ -1353,23 +1354,12 @@ public extension ChatChannelController {
             }
         }
     }
-
-    /// Returns the current cooldown time for the channel. Returns 0 in case there is no cooldown active.
-    func currentCooldownTime() -> Int {
-        guard let cooldownDuration = channel?.cooldownDuration,
-              let currentUserLastMessage = channel?.lastMessageFromCurrentUser else {
-            return 0
-        }
-        
-        let currentTime = Date().timeIntervalSince(currentUserLastMessage.createdAt)
-        
-        return max(0, cooldownDuration - Int(currentTime))
-    }
 }
 
 extension ChatChannelController {
     struct Environment {
         var channelUpdaterBuilder: (
+            _ callRepository: CallRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init

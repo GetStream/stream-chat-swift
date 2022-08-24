@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct CreateCallRequestBody: Encodable {
+struct CallRequestBody: Encodable {
     private enum CodingKeys: String, CodingKey {
         case id
         case type

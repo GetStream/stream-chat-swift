@@ -15,13 +15,13 @@ extension Endpoint {
         )
     }
     
-    static func createCall(cid: ChannelId, id: String, type: String) -> Endpoint<CreateCallPayload> {
+    static func createCall(cid: ChannelId, callId: String, type: String) -> Endpoint<CreateCallPayload> {
         .init(
             path: .createCall(cid.apiPath),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: CreateCallRequestBody(id: id, type: type)
+            body: CallRequestBody(id: callId, type: type)
         )
     }
 }
