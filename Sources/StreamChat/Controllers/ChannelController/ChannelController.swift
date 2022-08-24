@@ -380,11 +380,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 itemCreator: { try $0.asModel() as ChatMessage }
             )
             observer.onChange = { [weak self] changes in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
+                self?.delegateCallback {
+                    guard let self = self else { return }
                     log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
                     $0.channelController(self, didUpdateMessages: changes)
                 }
@@ -1400,7 +1397,7 @@ public extension ChatChannelControllerDelegate {
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {}
-    
+
     func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]

@@ -201,13 +201,37 @@ extension UserRobot {
 
     @discardableResult
     func assertMessageIsVisible(
+        at messageCellIndex: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        XCTAssertTrue(messageCell.waitForHitPoint().isHittable, "Message is not visible", file: file, line: line)
+        return self
+    }
+
+    @discardableResult
+    func assertMessageIsVisible(
         _ text: String,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
-        XCTAssertTrue(messageCell.waitForHitPoint().isHittable, "Message is not visible", file: file, line: line)
+        let message = attributes.text(text, in: messageCell).wait()
+        let actualText = message.waitForText(text).text
+        XCTAssertEqual(text, actualText, file: file, line: line)
+        return self
+    }
+
+    @discardableResult
+    func assertMessageIsNotVisible(
+        at messageCellIndex: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        XCTAssertFalse(messageCell.isHittable, "Message is visible", file: file, line: line)
         return self
     }
 
@@ -219,7 +243,8 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
-        XCTAssertFalse(messageCell.isHittable, "Message is visible", file: file, line: line)
+        let message = attributes.text(text, in: messageCell).wait()
+        XCTAssertFalse(message.isHittable, "Message is visible", file: file, line: line)
         return self
     }
 

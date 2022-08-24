@@ -32,7 +32,6 @@ enum DemoAppConfiguration {
 
         configureAtlantisIfNeeded()
         trackPerformanceIfNeeded()
-        enableMessageDiffingIfNeeded()
     }
 
     // HTTP and WebSocket Proxy with Proxyman.app
@@ -50,10 +49,5 @@ enum DemoAppConfiguration {
             PerformanceMonitor.shared().performanceViewConfigurator.options = [.performance]
             PerformanceMonitor.shared().start()
         }
-    }
-
-    // Enable message diffing in Message List
-    private static func enableMessageDiffingIfNeeded() {
-        StreamChatWrapper.shared.setMessageDiffingEnabled(isStreamInternalConfiguration)
     }
 }

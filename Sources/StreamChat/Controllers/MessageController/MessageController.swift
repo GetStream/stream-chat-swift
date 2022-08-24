@@ -647,7 +647,7 @@ private extension ChatMessageController {
 public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>)
-    
+
     /// The controller observed changes in the replies of the observed `ChatMessage`.
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>])
 
