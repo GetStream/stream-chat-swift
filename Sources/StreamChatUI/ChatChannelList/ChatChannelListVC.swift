@@ -85,8 +85,8 @@ open class ChatChannelListVC: _ViewController,
     /// Currently there are some performance problems in the Channel List which
     /// is impacting the message list performance as well, so we skip channel list
     /// updates when the channel list is not visible in the window.
-    private var skippedRendering = false
-    
+    private(set) var skippedRendering = false
+
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
     ///   - controller: Your created `ChatChannelListController` with required query

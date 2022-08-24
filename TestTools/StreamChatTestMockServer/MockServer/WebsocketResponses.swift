@@ -52,11 +52,13 @@ public extension StreamMockServer {
         _ text: String? = "",
         channelId: String?,
         messageId: String?,
+        parentId: String? = nil,
         timestamp: String? = TestData.currentDate,
         messageType: MessageType = .regular,
         eventType: EventType,
         user: [String: Any]?,
         channel: [String: Any]? = nil,
+        hardDelete: Bool = false,
         intercept: ((inout [String: Any]?) -> [String: Any]?)? = nil
     ) -> Self {
         guard let messageId = messageId else { return self }
@@ -89,7 +91,11 @@ public extension StreamMockServer {
             let message = findMessageById(messageId)
             mockedMessage = mockDeletedMessage(message, user: user)
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
-            saveMessage(mockedMessage)
+            if hardDelete {
+                removeMessage(id: messageId)
+            } else {
+                saveMessage(mockedMessage)
+            }
         case .messageUpdated:
             let message = findMessageById(messageId)
             mockedMessage = mockMessage(
@@ -106,6 +112,15 @@ public extension StreamMockServer {
         default:
             mockedMessage = [:]
         }
+
+        if let parentMessageId = parentId {
+            var parentMessage = messageList.first { message in
+                (message[messageKey.id.rawValue] as? String) ?? "" == parentMessageId
+            }
+            let previousReplyCount = (parentMessage?[messageKey.replyCount.rawValue] as? Int) ?? 0
+            parentMessage?[messageKey.replyCount.rawValue] = previousReplyCount + 1
+            saveMessage(parentMessage)
+        }
         
         if let channelId = channelId {
             json[JSONKey.channelId] = channelId
@@ -119,6 +134,7 @@ public extension StreamMockServer {
         json[JSONKey.message] = mockedMessage
         json[messageKey.createdAt.rawValue] = TestData.currentDate
         json[messageKey.type.rawValue] = eventType.rawValue
+        if hardDelete { json[eventKey.hardDelete.rawValue] = true }
         
         writeText(json.jsonToString())
         if eventType == .messageNew { latestWebsocketMessage = text ?? "" }

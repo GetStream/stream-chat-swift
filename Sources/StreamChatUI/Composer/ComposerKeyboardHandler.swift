@@ -63,8 +63,18 @@ open class ComposerKeyboardHandler: KeyboardHandler {
               let frame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
               let curve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,
-              let composerParentView = composerParentVC?.view else {
+              let composerParentView = composerParentVC?.view,
+              let composerParentVC = composerParentVC else {
             return
+        }
+
+        // This fixes a UI Glitch when popping the channel from the navigation stack,
+        // which makes the table view size to change because the hide notification is triggered.
+        if let viewControllersInNavigationStack = composerParentVC.navigationController?.viewControllers {
+            let isBeingPopped = !viewControllersInNavigationStack.contains(composerParentVC)
+            if isBeingPopped {
+                return
+            }
         }
 
         // When hiding, we reset the bottom constraint to the original value

@@ -8,6 +8,28 @@ The SwiftUI SDK supports replying to messages in threads. The default "reply in 
 
 ## View Customizations
 
+### Changing the Message Replies View
+
+The `MessageRepliesView` is shown below a message, when there are thread replies to it. Tapping on it opens up the thread view.
+
+In order to customize the `MessageRepliesView`, you will need to implement the `makeMessageRepliesView` in the `ViewFactory`. Here's an example how to do that:
+
+```swift
+func makeMessageRepliesView(
+        channel: ChatChannel,
+        message: ChatMessage,
+        replyCount: Int
+) -> some View {
+    CustomMessageRepliesView(
+        channel: channel,
+        message: message,
+        replyCount: replyCount
+    )
+}
+```
+
+Note that this method swaps the whole view, including the navigation link. This gives you a chance to present the thread in different ways (e.g. push navigation - like the default behaviour, sheet, full screen cover, etc). 
+
 ### Changing the Thread Header
 
 The default header shows a static text, implying that you are in a thread. You can easily swap this header with your own implementation. To do this, you need to implement the `makeMessageThreadHeaderViewModifier` method in the `ViewFactory`. Here's how the default implementation looks like:

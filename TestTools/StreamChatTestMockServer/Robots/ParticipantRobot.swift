@@ -145,7 +145,7 @@ public class ParticipantRobot {
     }
     
     @discardableResult
-    public func deleteMessage() -> Self {
+    public func deleteMessage(hard: Bool = false) -> Self {
         let user = participant()
         guard let userId = user?[userKey.id.rawValue] as? String else { return self }
         let message = server.findMessageByUserId(userId)
@@ -154,7 +154,8 @@ public class ParticipantRobot {
             channelId: server.currentChannelId,
             messageId: messageId,
             eventType: .messageDeleted,
-            user: user
+            user: user,
+            hardDelete: hard
         )
         return self
     }
@@ -210,6 +211,7 @@ public class ParticipantRobot {
             text,
             channelId: server.currentChannelId,
             messageId: TestData.uniqueId,
+            parentId: parentId,
             eventType: .messageNew,
             user: participant()
         ) { message in
