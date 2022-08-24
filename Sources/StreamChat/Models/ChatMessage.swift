@@ -115,7 +115,7 @@ public struct ChatMessage {
     ///
     /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
     public var latestReplies: [ChatMessage] { _latestReplies }
-    #warning("Move to async")
+    // stream:annotation "Move to async"
     @CoreDataLazy(forceLazy: true) internal var _latestReplies: [ChatMessage]
     
     /// A possible additional local state of the message. Applies only for the messages of the current user.
