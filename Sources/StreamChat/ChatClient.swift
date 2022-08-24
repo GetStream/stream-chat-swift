@@ -92,7 +92,7 @@ public class ChatClient {
     }()
 
     /// A repository that handles all the executions needed to keep the Database in sync with remote.
-    public private(set) lazy var callRepository: CallRepository = {
+    private(set) lazy var callRepository: CallRepository = {
         environment.callRepositoryBuilder(apiClient)
     }()
     

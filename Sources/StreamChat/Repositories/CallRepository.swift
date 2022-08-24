@@ -4,14 +4,14 @@
 
 import Foundation
 
-public class CallRepository {
+class CallRepository {
     private let apiClient: APIClient
 
     init(apiClient: APIClient) {
         self.apiClient = apiClient
     }
 
-    public func getCallToken(callId: String, completion: @escaping (Result<CallToken, Error>) -> Void) {
+    func getCallToken(callId: String, completion: @escaping (Result<CallToken, Error>) -> Void) {
         apiClient.request(endpoint: .getCallToken(callId: callId)) { result in
             switch result {
             case let .failure(error):
