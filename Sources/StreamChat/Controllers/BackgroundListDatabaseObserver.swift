@@ -16,7 +16,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
         } else if let foreground = foreground {
             return foreground.items
         } else {
-            assertionFailure()
+            log.assertionFailure("Should have foreground or background observer")
             return []
         }
     }
@@ -76,7 +76,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
         } else if let foreground = foreground {
             try foreground.startObserving()
         } else {
-            assertionFailure()
+            log.assertionFailure("Should have foreground or background observer")
         }
     }
 }
