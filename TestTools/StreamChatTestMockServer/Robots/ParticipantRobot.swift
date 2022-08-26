@@ -211,6 +211,7 @@ public class ParticipantRobot {
             text,
             channelId: server.currentChannelId,
             messageId: TestData.uniqueId,
+            parentId: parentId,
             eventType: .messageNew,
             user: participant()
         ) { message in

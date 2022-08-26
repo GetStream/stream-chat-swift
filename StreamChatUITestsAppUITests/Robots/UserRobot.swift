@@ -291,6 +291,12 @@ extension UserRobot {
         MessageListPage.list.swipeDown()
         return self
     }
+
+    @discardableResult
+    func scrollMessageListUpSlow() -> Self {
+        MessageListPage.list.swipeDown(velocity: .slow)
+        return self
+    }
     
     @discardableResult
     func openComposerCommands() -> Self {
@@ -301,14 +307,13 @@ extension UserRobot {
     }
     
     @discardableResult
-    func sendGiphy(useComposerCommand: Bool = false, send: Bool = true) -> Self {
-        let giphyText = "Test"
+    func sendGiphy(text: String = "Test", useComposerCommand: Bool = false, send: Bool = true) -> Self {
         if useComposerCommand {
             openComposerCommands()
             MessageListPage.ComposerCommands.giphyImage.wait().safeTap()
-            sendMessage("\(giphyText)", waitForAppearance: false)
+            sendMessage("\(text)", waitForAppearance: false)
         } else {
-            sendMessage("/giphy\(giphyText)", waitForAppearance: false)
+            sendMessage("/giphy\(text)", waitForAppearance: false)
         }
         if send { tapOnSendGiphyButton() }
         return self

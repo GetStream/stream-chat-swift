@@ -572,6 +572,21 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(testEnv.clientUpdater!.disconnect_source, .userInitiated)
     }
     
+    func test_logout_disconnectsAndRemovesLocalData() {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        
+        // WHEN
+        client.logout()
+        
+        // THEN
+        XCTAssertTrue(testEnv.clientUpdater!.disconnect_called)
+        XCTAssertTrue(testEnv.databaseContainer!.removeAllData_called)
+    }
+    
     // MARK: - Background workers tests
     
     func test_productionClientIsInitalizedWithAllMandatoryBackgroundWorkers() {

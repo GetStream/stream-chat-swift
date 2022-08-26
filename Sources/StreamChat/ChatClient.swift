@@ -373,6 +373,19 @@ public class ChatClient {
         }
         userConnectionProvider = nil
     }
+    
+    /// Disconnects the chat client form the chat servers and removes all the local data related.
+    public func logout() {
+        disconnect()
+        databaseContainer.removeAllData(force: true) { error in
+            if let error = error {
+                log.error("Logging out current user failed with error \(error)", subsystems: .all)
+                return
+            } else {
+                log.debug("Logging out current user successfully.", subsystems: .all)
+            }
+        }
+    }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
         var currentUserId: UserId?

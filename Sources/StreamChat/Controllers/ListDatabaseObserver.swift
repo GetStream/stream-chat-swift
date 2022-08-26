@@ -64,6 +64,60 @@ extension ListChange {
             return item
         }
     }
+
+    /// Returns true if the change is a move.
+    public var isMove: Bool {
+        switch self {
+        case .move:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Returns true if the change is an insertions.
+    public var isInsertion: Bool {
+        switch self {
+        case .insert:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Returns true if the change is a remove.
+    public var isRemove: Bool {
+        switch self {
+        case .remove:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Returns true if the change is an update.
+    public var isUpdate: Bool {
+        switch self {
+        case .update:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// The IndexPath of the change.
+    public var indexPath: IndexPath {
+        switch self {
+        case let .insert(_, index):
+            return index
+        case let .move(_, _, toIndex):
+            return toIndex
+        case let .update(_, index):
+            return index
+        case let .remove(_, index):
+            return index
+        }
+    }
     
     /// Returns `ListChange` of the same type but for the specific `Item` field.
     func fieldChange<Value>(_ path: KeyPath<Item, Value>) -> ListChange<Value> {
@@ -182,19 +236,20 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             guard let frc = self?.frc,
                   let itemCreator = self?.itemCreator,
                   let context = self?.context else { return [] }
-            var result = LazyCachedMapCollection<Item?>()
+            var result = LazyCachedMapCollection<Item>()
             result = (frc.fetchedObjects ?? []).lazyCachedMap { dto in
-                var result: Item?
+                // `itemCreator` returns non-optional value, so we can use implicitly unwrapped optional
+                var result: Item!
                 context.performAndWait {
                     do {
                         result = try itemCreator(dto)
                     } catch {
-                        log.error("Unable to convert a DB entity to model: \(error.localizedDescription)")
+                        log.assertionFailure("Unable to convert a DB entity to model: \(error.localizedDescription)")
                     }
                 }
                 return result
             }
-            return .init(source: result.compactMap { $0 }, map: { $0 })
+            return result
         }
         
         try frc.performFetch()
