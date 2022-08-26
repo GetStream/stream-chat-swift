@@ -196,8 +196,7 @@ final class WebSocketClient_Tests: XCTestCase {
         let errorPayload = ErrorPayload(
             code: .unique,
             message: .unique,
-            statusCode: .unique,
-            details: []
+            statusCode: .unique
         )
         let engineError = WebSocketEngineError(
             reason: UUID().uuidString,

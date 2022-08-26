@@ -46,15 +46,18 @@ struct DefaultRequestDecoder: RequestDecoder {
         log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
         
         guard httpResponse.statusCode < 300 else {
-            guard let serverError = try? JSONDecoder.default.decode(ErrorPayload.self, from: data) else {
+            let serverError: ErrorPayload
+            do {
+                serverError = try JSONDecoder.default.decode(ErrorPayload.self, from: data)
+            } catch {
                 log
                     .error(
-                        "API request failed with status code: \(httpResponse.statusCode), response:\n\(data.debugPrettyPrintedJSON))",
+                        "Failed to decode API request error with status code: \(httpResponse.statusCode), \nerror:\n\(error) \nresponse:\n\(data.debugPrettyPrintedJSON))",
                         subsystems: .httpRequests
                     )
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
-            
+
             if serverError.isInvalidTokenError {
                 log.info("Request failed because of an experied token.", subsystems: .httpRequests)
                 throw ClientError.ExpiredToken()
