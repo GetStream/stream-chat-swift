@@ -1,46 +1,44 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+//  PerfomanceLog.swift
+//  SwiftyMarkdown
+//
+//  Created by Simon Fairbairn on 04/02/2020.
 //
 
 import Foundation
 import os.log
 
 class PerformanceLog {
-    var timer: TimeInterval = 0
-    let enablePerfomanceLog: Bool
-    let log: OSLog
-    let identifier: String
+	var timer : TimeInterval = 0
+	let enablePerfomanceLog : Bool
+	let log : OSLog
+	let identifier : String
 	
-    init(with environmentVariableName: String, identifier: String, log: OSLog) {
-        self.log = log
-        enablePerfomanceLog = (ProcessInfo.processInfo.environment[environmentVariableName] != nil)
-        self.identifier = identifier
-    }
+	init( with environmentVariableName : String, identifier : String, log : OSLog  ) {
+		self.log = log
+		self.enablePerfomanceLog = (ProcessInfo.processInfo.environment[environmentVariableName] != nil)
+		self.identifier = identifier
+	}
 	
-    func start() {
-        guard enablePerfomanceLog else { return }
-        timer = Date().timeIntervalSinceReferenceDate
-        os_log("--- TIMER %{public}@ began", log: log, type: .info, identifier)
-    }
+	func start() {
+		guard enablePerfomanceLog else { return }
+		self.timer = Date().timeIntervalSinceReferenceDate
+		os_log("--- TIMER %{public}@ began", log: self.log, type: .info, self.identifier)
+	}
 	
-    func tag(with string: String) {
-        guard enablePerfomanceLog else { return }
-        if timer == 0 {
-            start()
-        }
-        os_log("TIMER %{public}@: %f %@", log: log, type: .info, identifier, Date().timeIntervalSinceReferenceDate - timer, string)
-    }
+	func tag( with string : String) {
+		guard enablePerfomanceLog else { return }
+		if timer == 0 {
+			self.start()
+		}
+		os_log("TIMER %{public}@: %f %@", log: self.log, type: .info, self.identifier, Date().timeIntervalSinceReferenceDate - self.timer, string)
+	}
 	
-    func end() {
-        guard enablePerfomanceLog else { return }
-        timer = Date().timeIntervalSinceReferenceDate
-        os_log(
-            "--- TIMER %{public}@ finished. Total time: %f",
-            log: log,
-            type: .info,
-            identifier,
-            Date().timeIntervalSinceReferenceDate - timer
-        )
-        timer = 0
-    }
+	func end() {
+		guard enablePerfomanceLog else { return }
+		self.timer = Date().timeIntervalSinceReferenceDate
+		os_log("--- TIMER %{public}@ finished. Total time: %f", log: self.log, type: .info, self.identifier, Date().timeIntervalSinceReferenceDate - self.timer)
+		self.timer = 0
+
+	}
 }

@@ -127,7 +127,8 @@ extension StreamChatWrapper {
             }
         }
 
-        client.disconnect()
+        client.logout()
+        
         self.client = nil
     }
 }
@@ -161,13 +162,5 @@ extension StreamChatWrapper {
 
     func notificationInfo(for response: UNNotificationResponse) -> ChatPushNotificationInfo? {
         try? ChatPushNotificationInfo(content: response.notification.request.content)
-    }
-}
-
-// MARK: Develop configuration
-
-extension StreamChatWrapper {
-    func setMessageDiffingEnabled(_ isEnabled: Bool) {
-        Components.default._messageListDiffingEnabled = isEnabled
     }
 }
