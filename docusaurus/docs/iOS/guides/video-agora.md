@@ -51,7 +51,7 @@ This is the screen that you navigated to:
 
 ![View of the Stream Dashboard when an app was selected with the external video integration.](../assets/agora-guide-before.png)
 
-First, it is necessary to enable the integration through the toggle in the top right (red arrow in the image). Make sure that you can see the green **Agora Enabled** badge at the top.
+First, it is necessary to enable the integration through the toggle in the top right (red arrow in the image below). Make sure that you can see the green **Agora Enabled** badge at the top.
 
 Next, it is necessary to enter the credentials from the agora console. This is the place you need to enter the aforementioned `app id` and `app certificate` from the agora console.
 
