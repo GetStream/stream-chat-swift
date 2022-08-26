@@ -37,7 +37,8 @@ open class ComposerVC: _ViewController,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate,
-    InputTextViewClipboardAttachmentDelegate {
+    InputTextViewClipboardAttachmentDelegate,
+    ChatMessageMentionedUserDelegate {
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -468,6 +469,13 @@ open class ComposerVC: _ViewController,
             return
         }
         
+        if !content.mentionedUsers.isEmpty {
+            content.mentionedUsers.forEach {
+                let mention = "@\($0.name ?? "")"
+                self.composerView.inputMessageView.textView.hightlightMention(mention: mention)
+            }
+        }
+        
         // If we have files in attachments, do not allow images to be pasted in the text view.
         // This is due to the limitation of UI(files and images cannot be shown together)
         let filesExistInAttachments = content.attachments.contains(where: { $0.type == .file })
@@ -878,6 +886,11 @@ open class ComposerVC: _ViewController,
             cooldownTracker.start(with: currentCooldownTime)
         }
     }
+    
+    /// Handles tap on a mentioned user and forwards the action to the delegate.
+    open func didTapOnMentionedUser(_ mentionedUser: ChatUser?) {
+        // Intended to be overridden for custom behavior when tapping on a mentioned user.
+    }
 
     // MARK: - UITextViewDelegate
 
@@ -908,6 +921,17 @@ open class ComposerVC: _ViewController,
     ) -> Bool {
         guard let maxMessageLength = channelConfig?.maxMessageLength else { return true }
         return textView.text.count + (text.count - range.length) <= maxMessageLength
+    }
+    
+    public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        guard let text = textView.text,
+              let range = Range(characterRange, in: text)
+        else { return true }
+        
+        let string = String(text[range].replacingOccurrences(of: "@", with: ""))
+        let user = content.mentionedUsers.first(where: { $0.name == string })
+        didTapOnMentionedUser(user)
+        return true
     }
 
     // MARK: - UIImagePickerControllerDelegate

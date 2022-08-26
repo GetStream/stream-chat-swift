@@ -45,8 +45,12 @@ public extension ChatMessageContentViewDelegate {
     func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {}
 }
 
+public protocol ChatMessageMentionedUserDelegate: AnyObject {
+    func didTapOnMentionedUser(_ mentionedUser: ChatUser?)
+}
+
 /// A view that displays the message content.
-open class ChatMessageContentView: _View, ThemeProvider {
+open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// The current layout options of the view.
     /// When this value is set the subviews are instantiated and laid out just once based on
     /// the received options.
@@ -69,6 +73,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// The delegate responsible for action handling.
     public weak var delegate: ChatMessageContentViewDelegate?
+    
+    /// The delegate responsible for interactions with mentions.
+    public weak var mentionDelegate: ChatMessageMentionedUserDelegate?
 
     // TODO: Aggregate message and channel under one `struct Content` roof in v5
     /// The message this view displays.
@@ -596,6 +603,15 @@ open class ChatMessageContentView: _View, ThemeProvider {
             guard let channel = channel, let message = content else { return nil }
             return .init(message: message, channel: channel)
         }()
+        
+        // Mentions
+        guard let mentionedUsers = content?.mentionedUsers else { return }
+        mentionedUsers.forEach {
+            let mention = "@\($0.name ?? "")"
+            self.textView?.hightlightMention(mention: mention)
+        }
+        
+        textView?.delegate = self
     }
 
     override open func tintColorDidChange() {
@@ -612,6 +628,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         defer { attachmentViewInjector?.contentViewDidPrepareForReuse() }
 
         delegate = nil
+        mentionDelegate = nil
         indexPath = nil
     }
 
@@ -644,6 +661,19 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// Handles tap on `deliveryStatusView` and forwards the action to the delegate.
     @objc open func handleTapOnDeliveryStatusView() {
         delegate?.messageContentViewDidTapOnDeliveryStatusIndicator(indexPath?())
+    }
+    
+    // MARK: - UITextViewDelegate
+    
+    public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        guard let text = textView.text,
+              let range = Range(characterRange, in: text)
+        else { return true }
+        
+        let string = String(text[range].replacingOccurrences(of: "@", with: ""))
+        let user = content?.mentionedUsers.first(where: { $0.name == string })
+        mentionDelegate?.didTapOnMentionedUser(user)
+        return true
     }
 	
     // MARK: - Setups

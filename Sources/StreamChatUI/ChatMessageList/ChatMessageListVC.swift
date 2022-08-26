@@ -12,6 +12,7 @@ open class ChatMessageListVC: _ViewController,
     ChatMessageListScrollOverlayDataSource,
     ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
+    ChatMessageMentionedUserDelegate,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     FileActionContentViewDelegate,
@@ -641,6 +642,13 @@ open class ChatMessageListVC: _ViewController,
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
+    }
+    
+    // MARK: - Mentioned user delegate
+    
+    /// Handles tap on a mentioned user and forwards the action to the delegate.
+    open func didTapOnMentionedUser(_ mentionedUser: ChatUser?) {
+        // Intended to be overridden for custom behavior when tapping on a mentioned user.
     }
 }
 
