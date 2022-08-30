@@ -29,6 +29,7 @@ struct MemberContainerPayload: Decodable {
 struct MemberPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
+        case userId = "user_id"
         case role = "channel_role"
         case isBanned = "banned"
         case isShadowBanned = "shadow_banned"
@@ -39,8 +40,9 @@ struct MemberPayload: Decodable {
         case inviteAcceptedAt = "invite_accepted_at"
         case inviteRejectedAt = "invite_rejected_at"
     }
-    
-    let user: UserPayload
+
+    let userId: String
+    let user: UserPayload?
     let role: MemberRole?
     let createdAt: Date
     let updatedAt: Date
@@ -62,7 +64,8 @@ struct MemberPayload: Decodable {
     let inviteRejectedAt: Date?
     
     init(
-        user: UserPayload,
+        user: UserPayload?,
+        userId: String,
         role: MemberRole?,
         createdAt: Date,
         updatedAt: Date,
@@ -74,6 +77,7 @@ struct MemberPayload: Decodable {
         inviteRejectedAt: Date? = nil
     ) {
         self.user = user
+        self.userId = userId
         self.role = role
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -83,6 +87,26 @@ struct MemberPayload: Decodable {
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
+        role = try container.decodeIfPresent(MemberRole.self, forKey: .role)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        banExpiresAt = try container.decodeIfPresent(Date.self, forKey: .banExpiresAt)
+        isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned)
+        isShadowBanned = try container.decodeIfPresent(Bool.self, forKey: .isShadowBanned)
+        isInvited = try container.decodeIfPresent(Bool.self, forKey: .isInvited)
+        inviteAcceptedAt = try container.decodeIfPresent(Date.self, forKey: .inviteAcceptedAt)
+        inviteRejectedAt = try container.decodeIfPresent(Date.self, forKey: .inviteRejectedAt)
+
+        if let user = user {
+            userId = user.id
+        } else {
+            userId = try container.decode(String.self, forKey: .userId)
+        }
     }
 }
 
