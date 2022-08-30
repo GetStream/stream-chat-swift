@@ -232,6 +232,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     )
     
     private var markingRead: Bool = false
+    private var lastFetchedMessageId: MessageId?
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelControllerDelegate> = .init() {
@@ -408,8 +409,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelCreatedCallback: channelCreatedCallback
         ) { result in
             switch result {
-            case .success:
+            case let .success(value):
                 self.state = .remoteDataFetched
+                self.updateLastFetchedId(with: value)
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
@@ -734,8 +736,8 @@ public extension ChatChannelController {
             channelModificationFailed(completion)
             return
         }
-        
-        guard let messageId = messageId ?? messages.last?.id else {
+
+        guard let messageId = messageId ?? lastFetchedMessageId else {
             log.error(ClientError.ChannelEmptyMessages().localizedDescription)
             callback { completion?(ClientError.ChannelEmptyMessages()) }
             return
@@ -749,12 +751,18 @@ public extension ChatChannelController {
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
             switch result {
             case let .success(payload):
+                self.updateLastFetchedId(with: payload)
                 self.hasLoadedAllPreviousMessages = payload.messages.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
             }
         })
+    }
+
+    private func updateLastFetchedId(with payload: ChannelPayload) {
+        // Payload messages are ordered from oldest to newest
+        lastFetchedMessageId = payload.messages.first?.id
     }
     
     /// Loads next messages from backend.
