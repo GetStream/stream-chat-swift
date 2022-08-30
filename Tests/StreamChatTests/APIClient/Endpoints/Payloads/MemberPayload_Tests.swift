@@ -21,18 +21,18 @@ final class MemberPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.isShadowBanned, true)
         
         XCTAssertNotNil(payload.user)
-        XCTAssertEqual(payload.user.id, "broken-waterfall-5")
-        XCTAssertEqual(payload.user.isBanned, false)
-        XCTAssertEqual(payload.user.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
-        XCTAssertEqual(payload.user.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
-        XCTAssertEqual(payload.user.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.user.name, "Broken Waterfall")
+        XCTAssertEqual(payload.user!.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.user!.isBanned, false)
+        XCTAssertEqual(payload.user!.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
+        XCTAssertEqual(payload.user!.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
+        XCTAssertEqual(payload.user!.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
+        XCTAssertEqual(payload.user!.name, "Broken Waterfall")
         XCTAssertEqual(
-            payload.user.imageURL,
+            payload.user!.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
-        XCTAssertEqual(payload.user.role, .user)
-        XCTAssertEqual(payload.user.isOnline, true)
+        XCTAssertEqual(payload.user!.role, .user)
+        XCTAssertEqual(payload.user!.isOnline, true)
     }
     
     func test_memberJSON_channelRole_isCustomRole() throws {

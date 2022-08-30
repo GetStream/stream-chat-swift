@@ -41,6 +41,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         
         let payload: MemberPayload = .init(
             user: userPayload,
+            userId: userPayload.id,
             role: .moderator,
             createdAt: .unique,
             updatedAt: .unique,
@@ -67,15 +68,15 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.banExpiresAt, loadedMember?.banExpiresAt)
             Assert.willBeEqual(payload.isShadowBanned, loadedMember?.isShadowBannedFromChannel)
 
-            Assert.willBeEqual(payload.user.id, loadedMember?.id)
-            Assert.willBeEqual(payload.user.isOnline, loadedMember?.isOnline)
-            Assert.willBeEqual(payload.user.isBanned, loadedMember?.isBanned)
-            Assert.willBeEqual(payload.user.role, loadedMember?.userRole)
-            Assert.willBeEqual(payload.user.createdAt, loadedMember?.userCreatedAt)
-            Assert.willBeEqual(payload.user.updatedAt, loadedMember?.userUpdatedAt)
-            Assert.willBeEqual(payload.user.lastActiveAt, loadedMember?.lastActiveAt)
-            Assert.willBeEqual(payload.user.extraData, loadedMember?.extraData)
-            Assert.willBeEqual(Set(payload.user.teams), loadedMember?.teams)
+            Assert.willBeEqual(payload.user!.id, loadedMember?.id)
+            Assert.willBeEqual(payload.user!.isOnline, loadedMember?.isOnline)
+            Assert.willBeEqual(payload.user!.isBanned, loadedMember?.isBanned)
+            Assert.willBeEqual(payload.user!.role, loadedMember?.userRole)
+            Assert.willBeEqual(payload.user!.createdAt, loadedMember?.userCreatedAt)
+            Assert.willBeEqual(payload.user!.updatedAt, loadedMember?.userUpdatedAt)
+            Assert.willBeEqual(payload.user!.lastActiveAt, loadedMember?.lastActiveAt)
+            Assert.willBeEqual(payload.user!.extraData, loadedMember?.extraData)
+            Assert.willBeEqual(Set(payload.user!.teams), loadedMember?.teams)
         }
     }
     
@@ -99,6 +100,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         
         let payload: MemberPayload = .init(
             user: userPayload,
+            userId: userPayload.id,
             role: .moderator,
             createdAt: .unique,
             updatedAt: .unique

@@ -74,7 +74,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
             // Assert query is saved to the database.
             Assert.willBeTrue(queryDTO != nil)
             // Assert query members are saved to the database.
-            Assert.willBeEqual(Set(queryDTO?.members.map(\.user.id) ?? []), Set(payload.members.map(\.user.id)))
+            Assert.willBeEqual(Set(queryDTO?.members.map(\.user.id) ?? []), Set(payload.members.map(\.user!.id)))
         }
     }
     
@@ -129,7 +129,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
             // Assert query is saved to the database.
             Assert.willBeTrue(queryDTO != nil)
             // Assert query members are saved to the database.
-            Assert.willBeEqual(Set(queryDTO?.members.map(\.user.id) ?? []), Set(payload.members.map(\.user.id)))
+            Assert.willBeEqual(Set(queryDTO?.members.map(\.user.id) ?? []), Set(payload.members.map(\.user!.id)))
         }
     }
     
