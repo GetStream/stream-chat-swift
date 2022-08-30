@@ -8,7 +8,7 @@ import StreamChat
 /// The object that acts as the data source of the message list.
 public protocol ChatMessageListVCDataSource: AnyObject {
     /// Asks the data source to return all the available messages.
-    var messages: [ChatMessage] { get }
+    var messages: [ChatMessage] { get set }
 
     /// Asks the data source to return the channel for the given message list.
     /// - Parameter vc: The message list requesting the channel.

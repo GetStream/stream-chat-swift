@@ -14,8 +14,7 @@ final class ChatClientConnectionStatus_Tests: XCTestCase {
             with: ErrorPayload(
                 code: ClosedRange.tokenInvalidErrorCodes.lowerBound,
                 message: .unique,
-                statusCode: .unique,
-                details: []
+                statusCode: .unique
             )
         )
 
@@ -132,8 +131,7 @@ final class WebSocketConnectionState_Tests: XCTestCase {
         let invalidTokenError = ErrorPayload(
             code: ClosedRange.tokenInvalidErrorCodes.lowerBound,
             message: .unique,
-            statusCode: .unique,
-            details: []
+            statusCode: .unique
         )
         
         // Create disconnected state intiated by the server with invalid token error
@@ -150,8 +148,7 @@ final class WebSocketConnectionState_Tests: XCTestCase {
         let clientError = ErrorPayload(
             code: .unique,
             message: .unique,
-            statusCode: ClosedRange.clientErrorCodes.lowerBound,
-            details: []
+            statusCode: ClosedRange.clientErrorCodes.lowerBound
         )
         
         // Create disconnected state intiated by the server with client error

@@ -11,19 +11,27 @@
 args=("$@")
 directory=$1
 
+replaceDeclaration() {
+	original=$1
+	replacement=$2
+	file=$3
+	`sed -i '' -e "s/$original/$replacement/g" $file`
+}
+
 files=`find $directory -name "*.swift"`
 for f in $files
 do
-    `sed -i '' -e 's/public internal(set) //g' -e 's/open //g' $f`
-	`sed -i '' -e 's/public //g' -e 's/open //g' $f`
+	replaceDeclaration 'public internal(set) ' '' $f 
+	replaceDeclaration 'open ' '' $f
+	replaceDeclaration 'public ' '' $f
 
 	# Nuke
 	if [[ $directory == *"Nuke"* ]]; then
-		`sed -i '' -e 's/var log/var nukeLog/g' \
-			-e 's/log =/nukeLog =/g' \
-			-e 's/signpost(log/signpost(nukeLog/g' \
-			-e 's/ Cache(/ NukeCache(/g' \
-			-e 's/ Cache</ NukeCache</g' $f`
+		replaceDeclaration 'var log' 'var nukeLog' $f
+		replaceDeclaration 'log =' 'nukeLog =' $f
+		replaceDeclaration 'signpost(log' 'signpost(nukeLog' $f
+		replaceDeclaration ' Cache(' ' NukeCache(' $f
+		replaceDeclaration ' Cache<' ' NukeCache<' $f
 		
 		# Remove Cancellable interface duplicate
 		if [[ $f == *"DataLoader"* && `head -10 $f` == *"protocol Cancellable"* ]]; then
@@ -33,8 +41,37 @@ do
 
 	# Starscream
 	if [[ $directory == *"Starscream"* ]]; then
-		`sed -i '' -e 's/WebSocketClient/StarscreamWebSocketClient/g' $f`
-		`sed -i '' -e 's/ConnectionEvent/StarscreamConnectionEvent/g' $f`
-		`sed -i '' -e 's/: class {/: AnyObject {/g' $f`
+		replaceDeclaration 'WebSocketClient' 'StarscreamWebSocketClient' $f
+		replaceDeclaration 'ConnectionEvent' 'StarscreamConnectionEvent' $f
+		replaceDeclaration ': class {' ': AnyObject {' $f
+	fi
+
+	# DiffernceKit
+	if [[ $directory == *"DifferenceKit"* ]]; then
+		# For DifferenceKit we need to change some declarations to public
+		# because is uses the @inlinable attribute in some places
+
+		replaceDeclaration 'protocol ContentEquatable' 'public protocol ContentEquatable' $f
+		replaceDeclaration 'protocol ContentIdentifiable {' 'public protocol ContentIdentifiable {' $f
+		replaceDeclaration 'struct ElementPath: Hashable {' 'public struct ElementPath: Hashable {' $f
+		replaceDeclaration 'var element: Int' 'public var element: Int' $f
+		replaceDeclaration 'var section: Int' 'public var section: Int' $f
+		replaceDeclaration 'var debugDescription: String' 'public var debugDescription: String' $f
+		
+		replaceDeclaration 'func isContentEqual(to source: Wrapped?) -> Bool {' \
+		'public func isContentEqual(to source: Wrapped?) -> Bool {' \
+		$f
+
+		# This replacement is not actually working, and I don't know why,
+		# for now, I did this change manually.
+		replaceDeclaration 'func isContentEqual(to source: [Element]) -> Bool' \
+		'public func isContentEqual(to source: [Element]) -> Bool' \
+		$f
+
+		replaceDeclaration 'extension ContentIdentifiable where Self: Hashable {' \
+		'public extension ContentIdentifiable where Self: Hashable {' \
+		$f
+		
+		replaceDeclaration 'typealias Differentiable =' 'public typealias Differentiable =' $f
 	fi
 done
