@@ -204,7 +204,8 @@ open class ChatChannelVC: _ViewController,
         }
         isLoadingPreviousMessages = true
 
-        channelController.loadPreviousMessages { [weak self] _ in
+        let lastMessageId = messages.last?.id
+        channelController.loadPreviousMessages(before: lastMessageId) { [weak self] _ in
             self?.isLoadingPreviousMessages = false
         }
     }
