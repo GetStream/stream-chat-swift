@@ -737,7 +737,7 @@ public extension ChatChannelController {
             return
         }
 
-        guard let messageId = lastFetchedMessageId ?? messageId ?? messages.last?.id else {
+        guard let messageId = messageId ?? lastFetchedMessageId else {
             log.error(ClientError.ChannelEmptyMessages().localizedDescription)
             callback { completion?(ClientError.ChannelEmptyMessages()) }
             return
