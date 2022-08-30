@@ -342,6 +342,36 @@ final class ChatMessageContentView_Tests: XCTestCase {
         XCTAssertNotNil(reactionBubbleView)
         XCTAssert(reactionBubbleView is CustomChatReactionsBubbleView)
     }
+    
+    func test_appearance_whenMessageWithAMentionedUserIsSent() {
+        let channelWithReadsEnabled: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+        
+        let mentionedUser = myFriend
+        mentionedUser.name = "MyFriend"
+        let messageWithMention = "Hello @\(mentionedUser.name ?? "")!, how are you?"
+        
+        let sentMessageFromCurrentUser: ChatMessage = .mock(
+            id: .unique,
+            cid: channelWithReadsEnabled.cid,
+            text: messageWithMention,
+            author: me,
+            createdAt: createdAt,
+            mentionedUsers: [mentionedUser],
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+        
+        let view = contentView(
+            message: sentMessageFromCurrentUser,
+            channel: channelWithReadsEnabled
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
 }
 
 // MARK: - Helpers

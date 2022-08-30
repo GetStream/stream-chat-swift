@@ -33,7 +33,7 @@ extension UITextView {
         return layoutManager.usedRect(for: customTextContainer).size.height
     }
     
-    func hightlightMention(mention: String, color: UIColor = .systemBlue) {
+    func highlightMention(mention: String, color: UIColor = .systemBlue) {
         let attributeTxt = NSMutableAttributedString(attributedString: attributedText)
         let string = attributeTxt.string
         guard let range = string.range(of: mention, options: .caseInsensitive).map({ NSRange($0, in: string) }) else { return }

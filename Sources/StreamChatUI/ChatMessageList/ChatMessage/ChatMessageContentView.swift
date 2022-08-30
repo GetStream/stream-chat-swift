@@ -608,7 +608,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         guard let mentionedUsers = content?.mentionedUsers else { return }
         mentionedUsers.forEach {
             let mention = "@\($0.name ?? "")"
-            self.textView?.hightlightMention(mention: mention)
+            self.textView?.highlightMention(mention: mention)
         }
         
         textView?.delegate = self

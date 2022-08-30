@@ -28,4 +28,28 @@ final class ChatMessageListVC_Tests: XCTestCase {
             config.deletedMessagesVisibility
         )
     }
+    
+    func test_rightMentionedUserIsSend_whenDidTapOnMentionedUser() {
+        // GIVEN
+        class CustomChatMessageListVC: ChatMessageListVC {
+            var tappedMentionedUser: ChatUser?
+            
+            override func didTapOnMentionedUser(_ mentionedUser: ChatUser?) {
+                super.didTapOnMentionedUser(mentionedUser)
+                tappedMentionedUser = mentionedUser
+            }
+        }
+        
+        let sut = CustomChatMessageListVC()
+        sut.client = ChatClient(config: ChatClientConfig(apiKey: .init(.unique)))
+        sut.components = .mock
+        
+        let mentionedUser: ChatUser = .unique
+        
+        // WHEN
+        sut.didTapOnMentionedUser(mentionedUser)
+        
+        // THEN
+        XCTAssertEqual(mentionedUser, sut.tappedMentionedUser)
+    }
 }

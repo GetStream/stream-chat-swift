@@ -472,7 +472,7 @@ open class ComposerVC: _ViewController,
         if !content.mentionedUsers.isEmpty {
             content.mentionedUsers.forEach {
                 let mention = "@\($0.name ?? "")"
-                self.composerView.inputMessageView.textView.hightlightMention(mention: mention)
+                self.composerView.inputMessageView.textView.highlightMention(mention: mention)
             }
         }
         
