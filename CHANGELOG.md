@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix hidden channels showing past history [#2216](https://github.com/GetStream/stream-chat-swift/pull/2216)
 - Fix token not being refreshed because of parsing error [#2248](https://github.com/GetStream/stream-chat-swift/pull/2248)
 - Fix deadlock caused by ListDatabaseObserver.startObserving() changes [#2252](https://github.com/GetStream/stream-chat-swift/pull/2252)
+- Fix broken pagination when quoting or pinning old messages [#2258](https://github.com/GetStream/stream-chat-swift/pull/2258)
 
 ## StreamChatUI
 ### 🔄 Changed
