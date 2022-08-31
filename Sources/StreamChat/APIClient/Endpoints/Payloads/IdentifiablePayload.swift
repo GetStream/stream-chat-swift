@@ -200,7 +200,7 @@ extension MemberPayload: IdentifiablePayload {
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        user.fillIds(cache: &cache)
+        user?.fillIds(cache: &cache)
     }
 }
 

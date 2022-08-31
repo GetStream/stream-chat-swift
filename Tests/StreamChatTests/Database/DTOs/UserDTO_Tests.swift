@@ -287,6 +287,7 @@ final class UserDTO_Tests: XCTestCase {
 
         let payload: MemberPayload = .init(
             user: userPayload,
+            userId: userPayload.id,
             role: .moderator,
             createdAt: .init(timeIntervalSince1970: 4000),
             updatedAt: .init(timeIntervalSince1970: 5000)
