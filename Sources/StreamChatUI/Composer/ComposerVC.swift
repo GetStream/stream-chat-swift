@@ -37,8 +37,7 @@ open class ComposerVC: _ViewController,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate,
-    InputTextViewClipboardAttachmentDelegate,
-    ChatMessageMentionedUserDelegate {
+    InputTextViewClipboardAttachmentDelegate {
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -278,6 +277,9 @@ open class ComposerVC: _ViewController,
             shouldTriggerOnlyAtStart: true
         )
     )
+    
+    /// A handler for interactions with mentioned users.
+    open var textViewUserMentionsHandler: TextViewMentionedUsersHandler = .init()
 
     /// The view of the composer.
     open private(set) lazy var composerView: ComposerView = components
@@ -886,11 +888,6 @@ open class ComposerVC: _ViewController,
             cooldownTracker.start(with: currentCooldownTime)
         }
     }
-    
-    /// Handles tap on a mentioned user and forwards the action to the delegate.
-    open func didTapOnMentionedUser(_ mentionedUser: ChatUser?) {
-        // Intended to be overridden for custom behavior when tapping on a mentioned user.
-    }
 
     // MARK: - UITextViewDelegate
 
@@ -924,8 +921,15 @@ open class ComposerVC: _ViewController,
     }
     
     open func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        let detector = TextViewMentionedUserDetector()
-        detector.handleMentionedUserInteraction(on: textView, in: characterRange, content.mentionedUsers, onTap: didTapOnMentionedUser(_:))
+        guard !content.mentionedUsers.isEmpty else {
+            return false
+        }
+        
+        textViewUserMentionsHandler.handleInteraction(
+            on: textView,
+            in: characterRange,
+            withMentionedUsers: content.mentionedUsers
+        )
         return true
     }
 

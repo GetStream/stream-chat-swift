@@ -12,7 +12,6 @@ open class ChatMessageListVC: _ViewController,
     ChatMessageListScrollOverlayDataSource,
     ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
-    ChatMessageMentionedUserDelegate,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     FileActionContentViewDelegate,
@@ -412,7 +411,6 @@ open class ChatMessageListVC: _ViewController,
         cell.messageContentView?.delegate = self
         cell.messageContentView?.channel = channel
         cell.messageContentView?.content = message
-        cell.messageContentView?.mentionDelegate = self
 
         cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
         cell.dateSeparatorView.content = dateSeparatorFormatter.format(message.createdAt)

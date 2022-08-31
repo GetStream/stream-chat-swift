@@ -39,14 +39,14 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
     /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
     /// the content view is displayed outside the collection/table view.
     func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?)
+    
+    /// Handles tap on a mentioned user and forwards the action to the delegate.
+    /// - Parameter mentionedUser: The mentioned user that was tapped on.
+    func didTapOnMentionedUser(_ mentionedUser: ChatUser?)
 }
 
 public extension ChatMessageContentViewDelegate {
     func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {}
-}
-
-public protocol ChatMessageMentionedUserDelegate: AnyObject {
-    func didTapOnMentionedUser(_ mentionedUser: ChatUser?)
 }
 
 /// A view that displays the message content.
@@ -65,6 +65,9 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     open var isMarkdownEnabled: Bool {
         appearance.formatters.isMarkdownEnabled
     }
+    
+    /// A handler for interactions with mentioned users.
+    open var textViewUserMentionsHandler: TextViewMentionedUsersHandler = .init()
 
     // MARK: Content && Actions
 
@@ -73,9 +76,6 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
     /// The delegate responsible for action handling.
     public weak var delegate: ChatMessageContentViewDelegate?
-    
-    /// The delegate responsible for interactions with mentions.
-    public weak var mentionDelegate: ChatMessageMentionedUserDelegate?
 
     // TODO: Aggregate message and channel under one `struct Content` roof in v5
     /// The message this view displays.
@@ -628,7 +628,6 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         defer { attachmentViewInjector?.contentViewDidPrepareForReuse() }
 
         delegate = nil
-        mentionDelegate = nil
         indexPath = nil
     }
 
@@ -666,8 +665,16 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     // MARK: - UITextViewDelegate
     
     open func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        let detector = TextViewMentionedUserDetector()
-        detector.handleMentionedUserInteraction(on: textView, in: characterRange, content?.mentionedUsers, onTap: mentionDelegate?.didTapOnMentionedUser(_:))
+        guard let mentionedUsers = content?.mentionedUsers, !mentionedUsers.isEmpty else {
+            return false
+        }
+        
+        textViewUserMentionsHandler.onMentionedUserTap = delegate?.didTapOnMentionedUser(_:)
+        textViewUserMentionsHandler.handleInteraction(
+            on: textView,
+            in: characterRange,
+            withMentionedUsers: mentionedUsers
+        )
         return true
     }
 	
