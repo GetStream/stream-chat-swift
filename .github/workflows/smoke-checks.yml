@@ -164,29 +164,29 @@ jobs:
       run: echo "::set-output name=launch_id::${{env.LAUNCH_ID}}"
       if: env.LAUNCH_ID != ''
 
-  build-xcode13:
-    name: Build LLC + UI (Xcode 13)
-    runs-on: macos-12
-    if: ${{ github.event_name != 'push' }}
-    steps:
-    - uses: actions/checkout@v2
-    - uses: ./.github/actions/bootstrap
-    - name: List Xcode versions xcversion sees
-      run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
-    - name: Build LLC (Xcode 13)
-      run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true
-      timeout-minutes: 25
-      env:
-        XCODE_VERSION: "13"
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
-    - name: Build UI (Xcode 13)
-      run: bundle exec fastlane test_ui device:"iPhone 13" build_for_testing:true
-      timeout-minutes: 25
-      env:
-        XCODE_VERSION: "13"
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
+  # build-xcode13:
+  #   name: Build LLC + UI (Xcode 13)
+  #   runs-on: macos-12
+  #   if: ${{ github.event_name != 'push' }}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: List Xcode versions xcversion sees
+  #     run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
+  #   - name: Build LLC (Xcode 13)
+  #     run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true
+  #     timeout-minutes: 25
+  #     env:
+  #       XCODE_VERSION: "13"
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       GITHUB_EVENT: ${{ toJson(github.event) }}
+  #   - name: Build UI (Xcode 13)
+  #     run: bundle exec fastlane test_ui device:"iPhone 13" build_for_testing:true
+  #     timeout-minutes: 25
+  #     env:
+  #       XCODE_VERSION: "13"
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       GITHUB_EVENT: ${{ toJson(github.event) }}
 
   build-apps:
     name: Build Sample + Demo Apps
