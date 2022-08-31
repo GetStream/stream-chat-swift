@@ -665,14 +665,9 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     
     // MARK: - UITextViewDelegate
     
-    public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        guard let text = textView.text,
-              let range = Range(characterRange, in: text)
-        else { return true }
-        
-        let string = String(text[range].replacingOccurrences(of: "@", with: ""))
-        let user = content?.mentionedUsers.first(where: { $0.name == string })
-        mentionDelegate?.didTapOnMentionedUser(user)
+    open func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        let detector = TextViewMentionedUserDetector()
+        detector.handleMentionedUserInteraction(on: textView, in: characterRange, content?.mentionedUsers, onTap: mentionDelegate?.didTapOnMentionedUser(_:))
         return true
     }
 	
