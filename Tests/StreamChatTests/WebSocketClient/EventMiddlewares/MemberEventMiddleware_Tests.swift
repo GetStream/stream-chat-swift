@@ -136,14 +136,14 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         }
         
         // Assert that there's only 1 member linked to the query
-        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user.id])
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user!.id])
         
         // Simulate `MemberAddedEventDTO` event.
         _ = middleware.handle(event: event, session: database.viewContext)
         
         // Assert the new member is linked to the query
         XCTAssertEqual(memberListQueryDTO?.members.count, 2)
-        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user.id, newMemberId].sorted())
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user!.id, newMemberId].sorted())
     }
     
     func test_memberAddedEvent_marksChannelAsRead() throws {
@@ -171,7 +171,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // THEN
         XCTAssertEqual(mockSession.markChannelAsReadParams?.cid, event.cid)
-        XCTAssertEqual(mockSession.markChannelAsReadParams?.userId, event.member.user.id)
+        XCTAssertEqual(mockSession.markChannelAsReadParams?.userId, event.member.userId)
         XCTAssertEqual(mockSession.markChannelAsReadParams?.at, event.createdAt)
     }
     
@@ -467,14 +467,14 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         }
         
         // Assert that there's only 1 member linked to the query
-        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user.id])
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user!.id])
         
         // Simulate `NotificationAddedToChannelEvent` event.
         _ = middleware.handle(event: event, session: database.viewContext)
         
         // Assert the new member is linked to the query
         XCTAssertEqual(memberListQueryDTO?.members.count, 2)
-        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user.id, newMemberId].sorted())
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user!.id, newMemberId].sorted())
     }
     
     // MARK: - NotificationRemovedFromChannelEvent
@@ -603,14 +603,14 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         }
         
         // Assert that there's only 1 member linked to the query
-        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user.id])
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user!.id])
         
         // Simulate `NotificationInvitedEventDTO` event.
         _ = middleware.handle(event: event, session: database.viewContext)
         
         // Assert the new member is linked to the query
         XCTAssertEqual(memberListQueryDTO?.members.count, 2)
-        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user.id, newMemberId].sorted())
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user!.id, newMemberId].sorted())
     }
     
     // MARK: - NotificationInviteAcceptedEvent

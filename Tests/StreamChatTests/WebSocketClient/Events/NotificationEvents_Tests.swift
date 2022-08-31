@@ -94,7 +94,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     func test_removedFromChannel() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationRemovedFromChannel")
         let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEventDTO
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "91DC91CC-0"))
     }
     
     func test_channelDeleted() throws {
@@ -292,7 +292,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationRemovedFromChannelEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
+        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
     
@@ -352,7 +352,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationInvitedEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
+        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
     
@@ -387,7 +387,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationInviteAcceptedEvent)
         XCTAssertEqual(event.cid, eventPayload.channel?.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
+        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
     
@@ -422,7 +422,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationInviteRejectedEvent)
         XCTAssertEqual(event.cid, eventPayload.channel?.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
+        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
     

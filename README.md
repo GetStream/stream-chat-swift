@@ -21,15 +21,19 @@
 This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications. This library includes both a low-level SDK and a set of reusable UI components.
 
 ## Low Level Client (LLC)
+
 The **StreamChat SDK** is a low level client for Stream chat service that doesn't contain any UI components. It is meant to be used when you want to build a fully custom UI. For the majority of use cases though, we recommend using our highly customizable UI SDK's.
 
 ## UIKit SDK
+
 The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application needs to support iOS 13 and below, this is the right UI SDK for you.
 
 ## SwiftUI SDK
+
 The **StreamChatSwiftUI SDK** is our UI SDK for SwiftUI components. If your application only needs to support iOS 14 and above, this is the right UI SDK for you. This SDK is available in another repository **[stream-chat-swiftui](https://github.com/GetStream/stream-chat-swiftui)**.
 
 ## Using Xcode 14 beta?
+
 Since our 4.20.0 release, the SDK can be built using Xcode 14 beta versions. We are regularly testing the SDK when new betas are released, to ensure smooth transition to iOS 16. If you spot an issue, please create a ticket.
 
 ---
@@ -47,14 +51,14 @@ Since our 4.20.0 release, the SDK can be built using Xcode 14 beta versions. We 
 
 ## **Quick Links**
 
-* [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/): Learn how to use the SDK by following our simple tutorial.
-* [Register](https://getstream.io/chat/trial/): Register to get an API key for Stream Chat.
-* [Installation](https://getstream.io/chat/docs/sdk/ios/basics/integration): Learn more about how to install the SDK using CocoaPods, SPM or Carthage.
-  * Do you want to use Module Stable XCFrameworks? [Check this out](https://getstream.io/chat/docs/sdk/ios/basics/integration#xcframeworks)
-* [Documentation](https://getstream.io/chat/docs/sdk/ios/): An extensive documentation is available to help with you integration.
-* [SwiftUI](https://github.com/GetStream/stream-chat-swiftui): Check our SwiftUI SDK if you are developing with SwiftUI.
-* [Demo app](https://github.com/GetStream/stream-chat-swift/tree/main/DemoApp): This repo includes a fully functional demo app with example usage of the SDK.
-* [Example apps](https://github.com/GetStream/stream-chat-swift/tree/main/Examples): This section of the repo includes fully functional sample apps that you can use as reference.
+- [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/): Learn how to use the SDK by following our simple tutorial with UIKit (or [SwiftUI](https://getstream.io/tutorials/swiftui-chat/)).
+- [Register](https://getstream.io/chat/trial/): Register to get an API key for Stream Chat.
+- [Installation](https://getstream.io/chat/docs/sdk/ios/basics/integration): Learn more about how to install the SDK using CocoaPods, SPM or Carthage.
+  - Do you want to use Module Stable XCFrameworks? [Check this out](https://getstream.io/chat/docs/sdk/ios/basics/integration#xcframeworks)
+- [Documentation](https://getstream.io/chat/docs/sdk/ios/): An extensive documentation is available to help with you integration.
+- [SwiftUI](https://github.com/GetStream/stream-chat-swiftui): Check our SwiftUI SDK if you are developing with SwiftUI.
+- [Demo app](https://github.com/GetStream/stream-chat-swift/tree/main/DemoApp): This repo includes a fully functional demo app with example usage of the SDK.
+- [Example apps](https://github.com/GetStream/stream-chat-swift/tree/main/Examples): This section of the repo includes fully functional sample apps that you can use as reference.
 
 ## Free for Makers
 
@@ -62,13 +66,13 @@ Stream is free for most side and hobby projects. You can use Stream Chat for fre
 
 ## Main Principles
 
-* **Progressive disclosure:** The SDK can be used easily with very minimal knowledge of it. As you become more familiar with it, you can dig deeper and start customizing it on all levels.
+- **Progressive disclosure:** The SDK can be used easily with very minimal knowledge of it. As you become more familiar with it, you can dig deeper and start customizing it on all levels.
 
-* **Highly customizable:** Every element is designed to be easily customizable. You can modify the brand color by setting `tintColor`, apply appearance changes using custom UI rules, or subclass existing elements and inject them everywhere in the system, no matter how deep is the logic hierarchy.
+- **Highly customizable:** Every element is designed to be easily customizable. You can modify the brand color by setting `tintColor`, apply appearance changes using custom UI rules, or subclass existing elements and inject them everywhere in the system, no matter how deep is the logic hierarchy.
 
-* **`open` by default:** Everything is `open` unless there's a strong reason for it to not be. This means you can easily modify almost every behavior of the SDK such that it fits your needs.
+- **`open` by default:** Everything is `open` unless there's a strong reason for it to not be. This means you can easily modify almost every behavior of the SDK such that it fits your needs.
 
-* **Good platform citizen:** The UI elements behave like good platform citizens. They use existing iOS patterns; their behavior is predictable and matches system UI components; they respect `tintColor`, `layourMargins`, dynamic font sizes, and other system-defined UI constants.
+- **Good platform citizen:** The UI elements behave like good platform citizens. They use existing iOS patterns; their behavior is predictable and matches system UI components; they respect `tintColor`, `layourMargins`, dynamic font sizes, and other system-defined UI constants.
 
 ## Dependencies
 
@@ -81,6 +85,7 @@ Learn more about our dependencies [here](https://getstream.io/chat/docs/sdk/ios/
 ---
 
 ## We are hiring
+
 We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
 Our APIs are used by more than a billion end-users, and you'll have a chance to make a huge impact on the product within a team of the strongest engineers all over the world.
 Check out our current openings and apply via [Stream's website](https://getstream.io/team/#jobs).

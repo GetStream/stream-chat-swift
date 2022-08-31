@@ -35,23 +35,23 @@ final class ListChange_Tests: XCTestCase {
         let movedFrom = IndexPath(item: 5, section: 6)
         let movedTo = IndexPath(item: 7, section: 8)
 
-        let path = \MemberPayload.user.id
+        let path = \MemberPayload.user?.id
 
         XCTAssertEqual(
             ListChange.insert(insertedItem, index: insertedAt).fieldChange(path),
-            .insert(insertedItem.user.id, index: insertedAt)
+            .insert(insertedItem.user!.id, index: insertedAt)
         )
         XCTAssertEqual(
             ListChange.update(updatedItem, index: updatedAt).fieldChange(path),
-            .update(updatedItem.user.id, index: updatedAt)
+            .update(updatedItem.user!.id, index: updatedAt)
         )
         XCTAssertEqual(
             ListChange.remove(removedItem, index: removedAt).fieldChange(path),
-            .remove(removedItem.user.id, index: removedAt)
+            .remove(removedItem.user!.id, index: removedAt)
         )
         XCTAssertEqual(
             ListChange.move(movedItem, fromIndex: movedFrom, toIndex: movedTo).fieldChange(path),
-            .move(movedItem.user.id, fromIndex: movedFrom, toIndex: movedTo)
+            .move(movedItem.user!.id, fromIndex: movedFrom, toIndex: movedTo)
         )
     }
 
