@@ -2141,6 +2141,85 @@ final class ChannelController_Tests: XCTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+
+    func test_loadPreviousMessages_usesPassedMessageId() throws {
+        let expectation = self.expectation(description: "synchronize completes")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        let messages: [MessagePayload] = [
+            MessagePayload.dummy(messageId: "2", authorUserId: .unique),
+            MessagePayload.dummy(messageId: "1", authorUserId: .unique)
+        ]
+        let payload = ChannelPayload.dummy(messages: messages)
+        env.channelUpdater?.update_completion?(.success(payload))
+
+        waitForExpectations(timeout: 0.1)
+
+        let expectation2 = self.expectation(description: "loadPreviousMessage completes")
+        var receivedError: Error?
+        controller.loadPreviousMessages(before: "3") { error in
+            receivedError = error
+            expectation2.fulfill()
+        }
+
+        let error = TestError()
+        env.channelUpdater!.update_completion?(.failure(error))
+
+        waitForExpectations(timeout: 0.1)
+
+        let paginatonParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .lessThan(paginationMessageId) = paginatonParameter else {
+            XCTFail("Missing pagination parameter")
+            return
+        }
+        XCTAssertEqual(paginationMessageId, "3")
+        XCTAssertEqual(receivedError, error)
+    }
+
+    func test_loadPreviousMessages_usesLastFetchedId() throws {
+        let expectation = self.expectation(description: "synchronize completes")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        let messages: [MessagePayload] = [
+            MessagePayload.dummy(messageId: "6", authorUserId: .unique),
+            MessagePayload.dummy(messageId: "2", quotedMessage: .dummy(messageId: "3", authorUserId: .unique), authorUserId: .unique),
+            MessagePayload.dummy(messageId: "1", quotedMessage: .dummy(messageId: "30", authorUserId: .unique), authorUserId: .unique)
+        ]
+        let payload = ChannelPayload.dummy(messages: messages, pinnedMessages: [
+            MessagePayload.dummy(messageId: "25", authorUserId: .unique),
+            MessagePayload.dummy(messageId: "5", authorUserId: .unique),
+            MessagePayload.dummy(messageId: "4", quotedMessage: .dummy(messageId: "3", authorUserId: .unique), authorUserId: .unique)
+        ])
+        env.channelUpdater?.update_completion?(.success(payload))
+
+        waitForExpectations(timeout: 0.1)
+
+        let expectation2 = self.expectation(description: "loadPreviousMessage completes")
+        var receivedError: Error?
+        controller.loadPreviousMessages() { error in
+            receivedError = error
+            expectation2.fulfill()
+        }
+
+        let error = TestError()
+        env.channelUpdater!.update_completion?(.failure(error))
+
+        waitForExpectations(timeout: 0.1)
+
+        let paginatonParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .lessThan(paginationMessageId) = paginatonParameter else {
+            XCTFail("Missing pagination parameter")
+            return
+        }
+        XCTAssertEqual(paginationMessageId, "6")
+        XCTAssertEqual(receivedError, error)
+    }
     
     // MARK: - `loadNextMessages`
     
