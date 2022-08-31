@@ -16,6 +16,7 @@ extension MemberPayload {
     ) -> MemberPayload {
         .init(
             user: user,
+            userId: user.id,
             role: role,
             createdAt: createdAt,
             updatedAt: updatedAt,
