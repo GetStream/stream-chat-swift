@@ -17,7 +17,7 @@ struct MemberEventMiddleware: EventMiddleware {
                     let member = try session.saveMember(payload: event.member, channelId: event.cid)
                     
                     // Mark all messages in channel as read
-                    session.markChannelAsRead(cid: event.cid, userId: event.member.user.id, at: event.createdAt)
+                    session.markChannelAsRead(cid: event.cid, userId: event.member.userId, at: event.createdAt)
                     
                     insertMemberToMemberListQueries(channel, member)
                 }
@@ -60,9 +60,9 @@ struct MemberEventMiddleware: EventMiddleware {
                     break
                 }
                 
-                guard let member = channel.members.first(where: { $0.user.id == event.member.user.id }) else {
+                guard let member = channel.members.first(where: { $0.user.id == event.member.userId }) else {
                     // No need to throw MemberNotFound error here
-                    log.debug("Member \(event.member.user.id) not found for NotificationRemovedFromChannelEventDTO")
+                    log.debug("Member \(event.member.userId) not found for NotificationRemovedFromChannelEventDTO")
                     break
                 }
                 

@@ -237,6 +237,7 @@ extension XCTestCase {
                     teams: [],
                     extraData: [:]
                 ),
+                userId: .unique,
                 role: .member,
                 createdAt: .unique,
                 updatedAt: .unique
@@ -307,9 +308,10 @@ private extension MemberPayload {
     }
     
     static func withLastActivity(at date: Date) -> MemberPayload {
-        .init(
+        let userId = String.unique
+        return .init(
             user: .init(
-                id: .unique,
+                id: userId,
                 name: .unique,
                 imageURL: nil,
                 role: .admin,
@@ -322,6 +324,7 @@ private extension MemberPayload {
                 teams: [],
                 extraData: [:]
             ),
+            userId: userId,
             role: .moderator,
             createdAt: .unique,
             updatedAt: .unique
