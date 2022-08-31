@@ -2,7 +2,7 @@
 title: Getting Started
 ---
 
-This section provides a high-level overview of the library, core components, and how they fit together. It's a great starting point that you can follow along in your code editor. For a complete, step-by-step guide check our [iOS Chat tutorial](/tutorials/ios-chat/).
+This section provides a high-level overview of the library, core components, and how they fit together. It's a great starting point that you can follow along in your code editor. For a complete, step-by-step guide check our [iOS Chat tutorial](https://getstream.io/tutorials/ios-chat/).
 
 ## Your First App with Stream Chat
 
@@ -11,15 +11,16 @@ Before starting, make sure you have installed `StreamChatUI` as explained in the
 ### Chat Setup
 
 The first step to use the library is to create an instance of `ChatClient`. It's recommended to instantiate the `ChatClient` as early as possible and ensure that only one `ChatClient` instance is used across your application. For the sake of simplicity, we are going to show this using a singleton pattern:
+
 ```swift
 extension ChatClient {
     static let shared: ChatClient = {
         // You can grab your API Key from https://getstream.io/dashboard/
         let config = ChatClientConfig(apiKeyString: "<# Your API Key Here #>")
-        
+
         // Create an instance of the `ChatClient` with the given config
         let client = ChatClient(config: config)
-        
+
         return client
     }()
 }
@@ -30,6 +31,7 @@ extension ChatClient {
 The next step is to connect the `ChatClient` with a user. In order to connect, the chat client needs an authorization token.
 
 In case the **token does not expire**, the connection step can look as follows:
+
 ```swift
 // You can generate the token for this user from https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift
 // make sure to use the `leia_organa` as user id and the correct API Key Secret.
@@ -53,6 +55,7 @@ This example has the user and its token hard-coded. But the best practice is to 
 :::
 
 In case of a **token with an expiration date**, the chat client should be connected by giving the token provider that is invoked for initial connection and also to obtain the new token when the current token expires:
+
 ```swift
 // Create the user info to connect with
 let userInfo = UserInfo(
@@ -75,6 +78,7 @@ ChatClient.shared.connectUser(userInfo: userInfo, tokenProvider: tokenProvider) 
 ### Disconnect & Logout
 
 Whenever your users leave the chat component, you should use disconnect to stop receiving chat updates and events while using other features of your app. You disconnect by calling:
+
 ```swift
 chatClient.disconnect()
 ```
@@ -87,9 +91,10 @@ chatClient.logout()
 
 ### Show Channel List
 
-Once the `ChatClient` is connected, we can show the list of channels. 
+Once the `ChatClient` is connected, we can show the list of channels.
 
 To modally show the channel list screen, add the following code-snippet to your app (read more about presentation styles [here](./components/channel-list.md)):
+
 ```swift
 let query = ChannelListQuery(filter: .containMembers(userIds: [userId]))
 let controller = ChatClient.shared.channelListController(query: query)
@@ -100,16 +105,17 @@ rootViewController.present(channelListNVC)
 ```
 
 We also support loading the channel list screen from the storyboard by passing in the reference of the `UIStoryboard` and the identifier:
+
 ```swift
 let storyboard = UIStoryboard(name: "Main", bundle: /*bundle containing the storyboard*/)
 let channelListVC = ChatChannelList.make(
-    with: controller, 
-    storyboard: storyboard, 
+    with: controller,
+    storyboard: storyboard,
     storyboardId: "<# Storyboard ID Here #>"
 )
 ```
 
-The code snippets above will also create the `ChatChannelListController` with the specified query. `ChannelListQuery` allows us to define the channels to fetch and their order. Here we are listing channels where the current user is a member. In this case, the query will load all the channels the user is a member of. 
+The code snippets above will also create the `ChatChannelListController` with the specified query. `ChannelListQuery` allows us to define the channels to fetch and their order. Here we are listing channels where the current user is a member. In this case, the query will load all the channels the user is a member of.
 
 Read more about channel list query and low-level channel list controller [here](./controllers/channels.md).
 
