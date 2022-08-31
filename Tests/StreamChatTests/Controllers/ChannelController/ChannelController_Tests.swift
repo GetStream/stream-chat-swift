@@ -2170,8 +2170,8 @@ final class ChannelController_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1)
 
-        let paginatonParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
-        guard case let .lessThan(paginationMessageId) = paginatonParameter else {
+        let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .lessThan(paginationMessageId) = paginationParameter else {
             XCTFail("Missing pagination parameter")
             return
         }
@@ -2212,8 +2212,8 @@ final class ChannelController_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1)
 
-        let paginatonParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
-        guard case let .lessThan(paginationMessageId) = paginatonParameter else {
+        let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .lessThan(paginationMessageId) = paginationParameter else {
             XCTFail("Missing pagination parameter")
             return
         }
