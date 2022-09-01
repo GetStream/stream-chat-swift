@@ -10,7 +10,6 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
         case code
         case message
         case statusCode = "StatusCode"
-        case details
     }
     
     /// An error code.
@@ -19,9 +18,7 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
     public let message: String
     /// An HTTP status code.
     public let statusCode: Int
-    /// An array of specific details that compose the error.
-    public let details: [ErrorPayloadDetail]
-    
+
     public var errorDescription: String? {
         "Error #\(code): \(message)"
     }

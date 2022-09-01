@@ -22,14 +22,14 @@ final class MemberEvents_Tests: XCTestCase {
     func test_added() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberAdded")
         let event = try eventDecoder.decode(from: json) as? MemberAddedEventDTO
-        XCTAssertEqual(event?.member.user.id, "steep-moon-9")
+        XCTAssertEqual(event?.member.userId, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_9125"))
     }
     
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberUpdated")
         let event = try eventDecoder.decode(from: json) as? MemberUpdatedEventDTO
-        XCTAssertEqual(event?.member.user.id, "count_dooku")
+        XCTAssertEqual(event?.member.userId, "count_dooku")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
     
@@ -73,7 +73,7 @@ final class MemberEvents_Tests: XCTestCase {
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MemberAddedEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
+        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.member.memberRole, eventPayload.memberContainer?.member?.role)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
@@ -109,7 +109,7 @@ final class MemberEvents_Tests: XCTestCase {
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MemberUpdatedEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
+        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.member.memberRole, eventPayload.memberContainer?.member?.role)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
