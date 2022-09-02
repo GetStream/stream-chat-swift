@@ -666,16 +666,16 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     // MARK: - UITextViewDelegate
     
     open func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        guard let mentionedUsers = content?.mentionedUsers, !mentionedUsers.isEmpty else {
-            return false
+        if let mentionedUsers = content?.mentionedUsers, !mentionedUsers.isEmpty {
+            textViewUserMentionsHandler.onMentionedUserTap = { [weak self] user in
+                self?.delegate?.messageContentViewDidTapOnMentionedUser(user)
+            }
+            textViewUserMentionsHandler.handleInteraction(
+                on: textView,
+                in: characterRange,
+                withMentionedUsers: mentionedUsers
+            )
         }
-        
-        textViewUserMentionsHandler.onMentionedUserTap = delegate?.didTapOnMentionedUser(_:)
-        textViewUserMentionsHandler.handleInteraction(
-            on: textView,
-            in: characterRange,
-            withMentionedUsers: mentionedUsers
-        )
         return true
     }
 	
