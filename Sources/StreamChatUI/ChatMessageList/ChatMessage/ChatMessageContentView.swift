@@ -494,26 +494,40 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             setNeedsLayout()
         }
 
-        // Text
-        if isMarkdownEnabled, markdownFormatter.containsMarkdown(content?.textContent ?? "") {
-            let markdownText = markdownFormatter.format(content?.textContent ?? "")
+        var textColor = appearance.colorPalette.text
+        var textFont = appearance.fonts.body
+
+        if content?.isDeleted == true {
+            textColor = appearance.colorPalette.textLowEmphasis
+        } else if content?.shouldRenderAsJumbomoji == true {
+            textFont = appearance.fonts.emoji
+        } else if content?.type == .system || content?.type == .error {
+            textFont = appearance.fonts.caption1.bold
+            textColor = appearance.colorPalette.textLowEmphasis
+        }
+
+        let text = content?.text ?? ""
+        let attributedText = NSAttributedString(
+            string: text,
+            attributes: [
+                .foregroundColor: textColor,
+                .font: textFont
+            ]
+        )
+        textView?.attributedText = attributedText
+
+        // Markdown
+        if isMarkdownEnabled, markdownFormatter.containsMarkdown(text) {
+            let markdownText = markdownFormatter.format(text)
             textView?.attributedText = markdownText
-        } else {
-            var textColor = appearance.colorPalette.text
-            var textFont = appearance.fonts.body
-            
-            if content?.isDeleted == true {
-                textColor = appearance.colorPalette.textLowEmphasis
-            } else if content?.shouldRenderAsJumbomoji == true {
-                textFont = appearance.fonts.emoji
-            } else if content?.type == .system || content?.type == .error {
-                textFont = appearance.fonts.caption1.bold
-                textColor = appearance.colorPalette.textLowEmphasis
+        }
+
+        // Mentions
+        if let mentionedUsers = content?.mentionedUsers, !mentionedUsers.isEmpty {
+            mentionedUsers.forEach {
+                let mention = "@\($0.name ?? "")"
+                textView?.highlightMention(mention: mention)
             }
-            
-            textView?.textColor = textColor
-            textView?.font = textFont
-            textView?.text = content?.textContent
         }
         
         // Avatar
@@ -604,13 +618,6 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             guard let channel = channel, let message = content else { return nil }
             return .init(message: message, channel: channel)
         }()
-        
-        // Mentions
-        guard let mentionedUsers = content?.mentionedUsers else { return }
-        mentionedUsers.forEach {
-            let mention = "@\($0.name ?? "")"
-            self.textView?.highlightMention(mention: mention)
-        }
         
         textView?.delegate = self
     }
