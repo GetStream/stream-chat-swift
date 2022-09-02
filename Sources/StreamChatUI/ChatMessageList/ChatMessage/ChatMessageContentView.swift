@@ -40,13 +40,14 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
     /// the content view is displayed outside the collection/table view.
     func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?)
     
-    /// Handles tap on a mentioned user and forwards the action to the delegate.
+    /// Gets called when mentioned user is tapped.
     /// - Parameter mentionedUser: The mentioned user that was tapped on.
-    func didTapOnMentionedUser(_ mentionedUser: ChatUser?)
+    func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser?)
 }
 
 public extension ChatMessageContentViewDelegate {
     func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {}
+    func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser?) {}
 }
 
 /// A view that displays the message content.

@@ -533,6 +533,12 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
+    /// Gets called when mentioned user is tapped.
+    /// - Parameter mentionedUser: The mentioned user that was tapped on.
+    open func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser?) {
+        // Intended to be overridden for showing user profile.
+    }
+
     // MARK: - GalleryContentViewDelegate
 
     open func galleryMessageContentView(
@@ -628,12 +634,5 @@ open class ChatMessageListVC: _ViewController,
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
-    }
-    
-    // MARK: - Mentioned user delegate
-    
-    /// Handles tap on a mentioned user and forwards the action to the delegate.
-    open func didTapOnMentionedUser(_ mentionedUser: ChatUser?) {
-        // Intended to be overridden for custom behavior when tapping on a mentioned user.
     }
 }
