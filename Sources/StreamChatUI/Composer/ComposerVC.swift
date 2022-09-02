@@ -277,9 +277,6 @@ open class ComposerVC: _ViewController,
             shouldTriggerOnlyAtStart: true
         )
     )
-    
-    /// A handler for interactions with mentioned users.
-    open var textViewUserMentionsHandler: TextViewMentionedUsersHandler = .init()
 
     /// The view of the composer.
     open private(set) lazy var composerView: ComposerView = components
@@ -469,13 +466,6 @@ open class ComposerVC: _ViewController,
         if isMentionsEnabled, let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
             showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
             return
-        }
-        
-        if !content.mentionedUsers.isEmpty {
-            content.mentionedUsers.forEach {
-                let mention = "@\($0.name ?? "")"
-                self.composerView.inputMessageView.textView.highlightMention(mention: mention)
-            }
         }
         
         // If we have files in attachments, do not allow images to be pasted in the text view.
@@ -918,19 +908,6 @@ open class ComposerVC: _ViewController,
     ) -> Bool {
         guard let maxMessageLength = channelConfig?.maxMessageLength else { return true }
         return textView.text.count + (text.count - range.length) <= maxMessageLength
-    }
-    
-    open func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        guard !content.mentionedUsers.isEmpty else {
-            return false
-        }
-        
-        textViewUserMentionsHandler.handleInteraction(
-            on: textView,
-            in: characterRange,
-            withMentionedUsers: content.mentionedUsers
-        )
-        return true
     }
 
     // MARK: - UIImagePickerControllerDelegate
