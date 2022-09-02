@@ -83,7 +83,7 @@ public struct TypingSuggester {
         let charIndexBeforeSymbol = firstSymbolBeforeCaret.lowerBound - 1
         let charRangeBeforeSymbol = NSRange(location: charIndexBeforeSymbol, length: 1)
         let textBeforeSymbol = charIndexBeforeSymbol >= 0 ? text.substring(with: charRangeBeforeSymbol) : ""
-        guard textBeforeSymbol.isEmpty || textBeforeSymbol == " " else {
+        guard textBeforeSymbol.isEmpty || textBeforeSymbol == " " || textBeforeSymbol == "\n" else {
             return nil
         }
 
