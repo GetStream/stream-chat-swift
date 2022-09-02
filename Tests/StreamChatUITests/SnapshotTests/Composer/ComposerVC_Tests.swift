@@ -289,25 +289,4 @@ final class ComposerVC_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(mockedCooldownTracker.startCallCount, 1)
     }
-    
-    func test_rightMentionedUserIsSend_whenDidTapOnMentionedUser() {
-        // GIVEN
-        class CustomComposerVC: ComposerVC {
-            var tappedMentionedUser: ChatUser?
-            
-            override func didTapOnMentionedUser(_ mentionedUser: ChatUser?) {
-                super.didTapOnMentionedUser(mentionedUser)
-                tappedMentionedUser = mentionedUser
-            }
-        }
-        
-        let sut = CustomComposerVC()
-        let mentionedUser: ChatUser = .unique
-        
-        // WHEN
-        sut.didTapOnMentionedUser(mentionedUser)
-        
-        // THEN
-        XCTAssertEqual(mentionedUser, sut.tappedMentionedUser)
-    }
 }
