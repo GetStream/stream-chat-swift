@@ -360,7 +360,7 @@ final class MessageList_Tests: StreamTestCase {
         WHEN("user scrolls to the bottom") {
             userRobot.tapOnScrollToBottomButton()
         }
-        THEN("message list is scrolled down") {
+        THEN("skipped messages are reloaded") {
             userRobot.assertMessageIsVisible("Some message-16")
         }
     }
