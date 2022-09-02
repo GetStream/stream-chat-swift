@@ -341,6 +341,30 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
+    func test_reloadsSkippedMessages_whenScrolledToTheBottom() throws {
+        linkToScenario(withId: 289)
+
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2020] Scroll on message list does not work well enough")
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
+        }
+        AND("user scrolls up") {
+            userRobot.scrollMessageListUpSlow()
+        }
+        AND("participant sends some messages") {
+            participantRobot.sendMultipleMessages(repeatingText: "Some message", count: 16)
+        }
+        WHEN("user scrolls to the bottom") {
+            userRobot.tapOnScrollToBottomButton()
+        }
+        THEN("message list is scrolled down") {
+            userRobot.assertMessageIsVisible("Some message-16")
+        }
+    }
+
     func test_commandsPopupDisappear_whenUserTapsOnMessageList() {
         linkToScenario(withId: 98)
 
