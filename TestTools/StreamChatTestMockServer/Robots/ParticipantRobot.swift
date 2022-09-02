@@ -86,6 +86,8 @@ public class ParticipantRobot {
     
     @discardableResult
     public func sendMessage(_ text: String,
+                            withPushNotification: Bool = false,
+                            bundleIdForPushNotification: String = "",
                             waitForAppearance: Bool = true,
                             waitForChannelQuery: Bool = true,
                             waitBeforeSending: TimeInterval = 0,
@@ -102,16 +104,30 @@ public class ParticipantRobot {
         startTyping()
         stopTyping()
         
+        let messageId = TestData.uniqueId
+        
         server.websocketMessage(
             text,
             channelId: server.currentChannelId,
-            messageId: TestData.uniqueId,
+            messageId: messageId,
             eventType: .messageNew,
             user: participant()
         )
         
         if waitForAppearance {
             server.waitForWebsocketMessage(withText: text)
+        }
+        
+        if withPushNotification {
+            if let senderName = participant()?["name"] as? String {
+                server.pushNotification(
+                    senderName: senderName,
+                    text: text,
+                    messageId: messageId,
+                    cid: "\(ChannelType.messaging.rawValue):\(server.currentChannelId)",
+                    targetBundleId: bundleIdForPushNotification
+                )
+            }
         }
         return self
     }
