@@ -2,8 +2,8 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
-@testable import StreamChatTestTools
+@testable import StreamChat
+import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
@@ -71,6 +71,35 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedListView.reloadSkippedMessagesCallCount, 0)
     }
 
+    func test_updateMessages_whenLastCellIsFullyVisible_shouldReloadPreviousCell() {
+        let sut = ChatMessageListVC()
+        sut.components = .mock
+        sut.components.messageListView = ChatMessageListView_Mock.self
+
+        let mockedListView = sut.listView as! ChatMessageListView_Mock
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.previousMessagesSnapshot = [ChatMessage.mock(), ChatMessage.mock()]
+
+        sut.updateMessages(with: [])
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
+        XCTAssertEqual(mockedListView.reloadRowsCalledWith, [IndexPath(item: 1, section: 0)])
+    }
+
+    func test_updateMessages_whenLastCellIsFullyVisible_whenMessagesCountBelowTwo_shouldNotReloadPreviousCell() {
+        let sut = ChatMessageListVC()
+        sut.components = .mock
+        sut.components.messageListView = ChatMessageListView_Mock.self
+
+        let mockedListView = sut.listView as! ChatMessageListView_Mock
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.previousMessagesSnapshot = [ChatMessage.mock()]
+
+        sut.updateMessages(with: [])
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
+    }
+
     class ChatMessageListView_Mock: ChatMessageListView {
         var mockIsLastCellFullyVisible = false
         override var isLastCellFullyVisible: Bool {
@@ -80,6 +109,13 @@ final class ChatMessageListVC_Tests: XCTestCase {
         var reloadSkippedMessagesCallCount = 0
         override func reloadSkippedMessages() {
             reloadSkippedMessagesCallCount += 1
+        }
+
+        var reloadRowsCallCount = 0
+        var reloadRowsCalledWith: [IndexPath] = []
+        override func reloadRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
+            reloadRowsCallCount += 1
+            reloadRowsCalledWith = indexPaths
         }
     }
 }
