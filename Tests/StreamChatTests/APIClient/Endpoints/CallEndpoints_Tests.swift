@@ -1,5 +1,5 @@
 //
-//  Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -42,10 +42,8 @@ final class CallEndpoints_Tests: XCTestCase {
         // WHEN
         let endpoint: Endpoint<CreateCallPayload> = .createCall(cid: channedId, callId: callId, type: callType)
         
-        
         // THEN
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("channels/\(channedId.apiPath)/call", endpoint.path.value)
     }
 }
-

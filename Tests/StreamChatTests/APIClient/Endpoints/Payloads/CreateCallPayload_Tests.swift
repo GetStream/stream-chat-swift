@@ -1,14 +1,13 @@
 //
-//  Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
 import Foundation
-import XCTest
+@testable import StreamChat
 import StreamChatTestHelpers
+import XCTest
 
 final class CreateCallPayload_Tests: XCTestCase {
-    
     func test_createCallPayload_decodedCorrectly() throws {
         let id: String = .unique
         let provider: String = "agora"
