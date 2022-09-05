@@ -5,7 +5,7 @@
 @testable import StreamChat
 
 extension ChannelId {
-    static var unique: ChannelId {
+    static public var unique: ChannelId {
         ChannelId(
             type: .custom(String.unique.lowercased().replacingOccurrences(of: "-", with: "_")),
             id: .unique
