@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.21.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.1)
+_September 05, 2022_
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix message list crash when inserting message in empty list on iOS <15 [#2269](https://github.com/GetStream/stream-chat-swift/pull/2269)
