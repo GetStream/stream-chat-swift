@@ -68,37 +68,31 @@ final class DatabaseContainer_Tests: XCTestCase {
     }
 
     func test_removingAllData() throws {
-        // Test removing all data works for all persistent store types
-        let containerTypes: [DatabaseContainer.Kind] = [.inMemory, .onDisk(databaseFileURL: .newTemporaryFileURL())]
-        
-        try containerTypes.forEach { containerType in
-            
-            let container = DatabaseContainer(kind: containerType)
-            
-            // Add some random objects and for completion block
-            try container.writeSynchronously { session in
-                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
-                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
-                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+        let container = DatabaseContainer(kind: .inMemory)
+
+        // Add some random objects and for completion block
+        try container.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+        }
+
+        // Delete the data
+        let expectation = expectation(description: "removeAllData completion")
+        container.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
             }
-            
-            // Delete the data
-            let expectation = expectation(description: "removeAllData completion")
-            container.removeAllData { error in
-                if let error = error {
-                    XCTFail("removeAllData failed with \(error)")
-                }
-                expectation.fulfill()
-            }
-            
-            wait(for: [expectation], timeout: 1)
-            
-            // Assert the DB is empty by trying to fetch all possible entities
-            try container.managedObjectModel.entities.forEach { entityDescription in
-                let fetchRequrest = NSFetchRequest<NSManagedObject>(entityName: entityDescription.name!)
-                let fetchedObjects = try container.viewContext.fetch(fetchRequrest)
-                XCTAssertTrue(fetchedObjects.isEmpty)
-            }
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 2)
+
+        // Assert the DB is empty by trying to fetch all possible entities
+        try container.managedObjectModel.entities.forEach { entityDescription in
+            let fetchRequrest = NSFetchRequest<NSManagedObject>(entityName: entityDescription.name!)
+            let fetchedObjects = try container.viewContext.fetch(fetchRequrest)
+            XCTAssertTrue(fetchedObjects.isEmpty)
         }
     }
 

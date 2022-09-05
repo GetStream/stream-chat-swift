@@ -310,8 +310,15 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
-    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserPublishesGiphyThatIsNotLastMessage() {
+    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserPublishesGiphyThatIsNotLastMessage() throws {
         linkToScenario(withId: 287)
+
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2020] Scroll on message list does not work well enough")
+
+        throw XCTSkip(
+            "This test is flaky right now. We need to move to unit test or make it more precise."
+        )
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 30)
