@@ -3,8 +3,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix message list crash when inserting message in empty list on iOS <15 [#2269](https://github.com/GetStream/stream-chat-swift/pull/2269)
+
+# [4.21.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.0)
+_September 01, 2022_
+
+🚨 **Known Issue: There is a crash on iOS <15 when inserting messages in an empty list, please update to [4.21.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.1)**
+
 ## StreamChat
-### ✅ Added
+### 🔄 Changed
 - From now on, if you want to logout the user from the app, especially when switching users, you should call the `client.logout()` method instead of `client.disconnect()`. Read more [here](https://getstream.io/chat/docs/sdk/ios/uikit/getting-started/#disconnect--logout) [#2241](https://github.com/GetStream/stream-chat-swift/pull/2241)
 ### 🐞 Fixed
 - Fix hidden channels showing past history [#2216](https://github.com/GetStream/stream-chat-swift/pull/2216)
