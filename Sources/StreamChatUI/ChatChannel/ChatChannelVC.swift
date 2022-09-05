@@ -143,8 +143,8 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
-    override open func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    override open func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
 
         resignFirstResponder()
 

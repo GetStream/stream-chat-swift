@@ -79,7 +79,7 @@ open class ComposerKeyboardHandler: KeyboardHandler {
 
         // When hiding, we reset the bottom constraint to the original value
         // When showing, we set the bottom constraint equal to the keyboard height + original value
-        // The value is actually negative, so that the composer view goes up
+        // The value is actually negative, so that the composer view goes up.
 
         let isHidingKeyboard = notification.name == UIResponder.keyboardWillHideNotification
         if isHidingKeyboard {

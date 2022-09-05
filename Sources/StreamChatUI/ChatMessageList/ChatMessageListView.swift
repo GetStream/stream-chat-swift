@@ -251,10 +251,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     internal func reloadSkippedMessages() {
         skippedMessages = []
         newMessagesSnapshot = currentMessagesFromDataSource
+        onNewDataSource?(newMessagesSnapshot)
         reloadData()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.scrollToMostRecentMessage()
-        }
+        scrollToMostRecentMessage()
     }
 }
 
