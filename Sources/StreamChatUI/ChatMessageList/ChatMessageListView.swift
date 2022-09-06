@@ -239,7 +239,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
             // If we are inserting messages at the bottom, update the previous cell
             // to hide the timestamp of the previous message if needed.
-            if self.isLastCellFullyVisible, self.previousMessagesSnapshot.count > 1 {
+            if self.isLastCellFullyVisible, self.newMessagesSnapshot.count > 1 {
                 let previousMessageIndexPath = IndexPath(item: 1, section: 0)
                 self.reloadRows(at: [previousMessageIndexPath], with: .none)
             }
