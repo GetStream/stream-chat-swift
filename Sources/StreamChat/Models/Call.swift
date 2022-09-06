@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct CallToken {
+public struct CallToken: Equatable {
     public let token: String
     public let agoraInfo: AgoraInfo?
 }

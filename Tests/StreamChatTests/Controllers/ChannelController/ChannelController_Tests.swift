@@ -4272,6 +4272,7 @@ final class ChannelController_Tests: XCTestCase {
     }
     
     // MARK: Test creation of a call
+    
     func test_createCall_failsWhenChannelIsNotAlreadyCreated() {
         let controller = ChatChannelController(
             channelQuery: ChannelQuery(cid: channelId),

@@ -953,6 +953,7 @@
 		AC82033A28C60B100002EFDD /* CallEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC82033928C60B100002EFDD /* CallEndpoints_Tests.swift */; };
 		AC82033C28C61F640002EFDD /* CreateCallPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC82033B28C61F640002EFDD /* CreateCallPayload_Tests.swift */; };
 		AC82033F28C6598C0002EFDD /* CallRequestBody_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC82033E28C6598C0002EFDD /* CallRequestBody_Tests.swift */; };
+		AC889AA728C74D1200EDA0B9 /* CallRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC889AA628C74D1200EDA0B9 /* CallRepository_Tests.swift */; };
 		AC908384268B115F00ACFB8E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC908383268B115F00ACFB8E /* AppDelegate.swift */; };
 		AC90838D268B116000ACFB8E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC90838C268B116000ACFB8E /* Assets.xcassets */; };
 		AC908390268B116000ACFB8E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC90838E268B116000ACFB8E /* LaunchScreen.storyboard */; };
@@ -3135,6 +3136,7 @@
 		AC82033928C60B100002EFDD /* CallEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallEndpoints_Tests.swift; sourceTree = "<group>"; };
 		AC82033B28C61F640002EFDD /* CreateCallPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCallPayload_Tests.swift; sourceTree = "<group>"; };
 		AC82033E28C6598C0002EFDD /* CallRequestBody_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallRequestBody_Tests.swift; sourceTree = "<group>"; };
+		AC889AA628C74D1200EDA0B9 /* CallRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallRepository_Tests.swift; sourceTree = "<group>"; };
 		AC908381268B115F00ACFB8E /* YouTube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTube.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC908383268B115F00ACFB8E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AC90838C268B116000ACFB8E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -5652,6 +5654,7 @@
 				C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */,
 				C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */,
 				C186BFA927AA979B0099CCA6 /* SyncRepository_Tests.swift */,
+				AC889AA628C74D1200EDA0B9 /* CallRepository_Tests.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -9578,6 +9581,7 @@
 				BCE4831434E78C9538FA73F8 /* JSONDecoder_Tests.swift in Sources */,
 				BCE486580F913CFFDB3B5ECD /* JSONEncoder_Tests.swift in Sources */,
 				BCE48639FD7B6B05CD63A6AF /* FilterDecoding_Tests.swift in Sources */,
+				AC889AA728C74D1200EDA0B9 /* CallRepository_Tests.swift in Sources */,
 				C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */,
 				BCE484BA1EE03FF336034250 /* FilterEncoding_Tests.swift in Sources */,
 			);
