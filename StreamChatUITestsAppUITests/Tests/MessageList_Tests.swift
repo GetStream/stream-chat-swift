@@ -310,8 +310,15 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
-    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserPublishesGiphyThatIsNotLastMessage() {
+    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserPublishesGiphyThatIsNotLastMessage() throws {
         linkToScenario(withId: 287)
+
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2020] Scroll on message list does not work well enough")
+
+        throw XCTSkip(
+            "This test is flaky right now. We need to move to unit test or make it more precise."
+        )
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 30)
@@ -331,6 +338,30 @@ final class MessageList_Tests: StreamTestCase {
         }
         THEN("message list is scrolled down") {
             userRobot.assertMessageIsVisible(at: 0)
+        }
+    }
+
+    func test_reloadsSkippedMessages_whenScrolledToTheBottom() throws {
+        linkToScenario(withId: 289)
+
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2020] Scroll on message list does not work well enough")
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            userRobot.login().openChannel()
+        }
+        AND("user scrolls up") {
+            userRobot.scrollMessageListUpSlow()
+        }
+        AND("participant sends some messages") {
+            participantRobot.sendMultipleMessages(repeatingText: "Some message", count: 16)
+        }
+        WHEN("user scrolls to the bottom") {
+            userRobot.tapOnScrollToBottomButton()
+        }
+        THEN("skipped messages are reloaded") {
+            userRobot.assertMessageIsVisible("Some message-16")
         }
     }
 
