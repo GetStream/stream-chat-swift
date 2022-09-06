@@ -24,6 +24,22 @@ let streamChat = StreamChat(chatClient: chatClient, utils: utils)
 
 This setup is done when the `StreamChat` object is being created, usually at the start of the app (e.g. in the `AppDelegate`).
 
+### Typing Indicator Customizations
+
+You can swap the typing indicator view with your custom implementation, when the indicator is placed as a `.bottomOverlay`. In order to do this, you need to implement the `makeTypingIndicatorBottomView` method in the `ViewFactory`:
+
+```swift
+func makeTypingIndicatorBottomView(
+    channel: ChatChannel,
+    currentUserId: UserId?
+) -> some View {
+    let typingIndicatorString = channel.typingIndicatorString(currentUserId: currentUserId)
+    return TypingIndicatorBottomView(typingIndicatorString: typingIndicatorString)
+}
+```
+
+The method has two parameters, the `channel` where the typing occurs, and the id of the currently logged in user.
+
 ### Typing Indicator User Name String
 
 The user name string that is displayed on the typing indicator message can also be personalized. By default the displayed string in the typing indicator message is obtained from the `name` property in the `ChatUser` model, however this can be altered by creating a custom implementation of `ChatUserNamer`.
