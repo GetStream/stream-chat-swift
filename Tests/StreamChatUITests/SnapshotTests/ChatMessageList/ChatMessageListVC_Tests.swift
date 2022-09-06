@@ -78,7 +78,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         let mockedListView = sut.listView as! ChatMessageListView_Mock
         mockedListView.mockIsLastCellFullyVisible = true
-        mockedListView.previousMessagesSnapshot = [ChatMessage.mock(), ChatMessage.mock()]
+        mockedListView.newMessagesSnapshot = [ChatMessage.mock(), ChatMessage.mock()]
 
         sut.updateMessages(with: [])
 
@@ -93,7 +93,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         let mockedListView = sut.listView as! ChatMessageListView_Mock
         mockedListView.mockIsLastCellFullyVisible = true
-        mockedListView.previousMessagesSnapshot = [ChatMessage.mock()]
+        mockedListView.newMessagesSnapshot = [ChatMessage.mock()]
 
         sut.updateMessages(with: [])
 
