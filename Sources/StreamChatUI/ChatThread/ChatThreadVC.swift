@@ -140,12 +140,12 @@ open class ChatThreadVC: _ViewController,
         keyboardHandler.start()
     }
 
-    override open func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
-        resignFirstResponder()
+    override open func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
 
         keyboardHandler.stop()
+
+        resignFirstResponder()
     }
 
     // MARK: - ChatMessageListVCDataSource
