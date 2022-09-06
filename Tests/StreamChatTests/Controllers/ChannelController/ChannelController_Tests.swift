@@ -4270,6 +4270,72 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(client.activeChannelControllers.count == 1)
         XCTAssert(client.activeChannelControllers.allObjects.first === controller)
     }
+    
+    // MARK: Test creation of a call
+    func test_createCall_failsWhenChannelIsNotAlreadyCreated() {
+        let controller = ChatChannelController(
+            channelQuery: ChannelQuery(cid: channelId),
+            channelListQuery: nil,
+            client: ChatClient.mock,
+            isChannelAlreadyCreated: false
+        )
+        
+        let id: String = .unique
+        let type: String = "video"
+        var completionError: Error?
+        controller.createCall(id: id, type: type) { result in
+            completionError = result.error
+        }
+        
+        AssertAsync.willBeTrue(completionError != nil)
+    }
+    
+    func test_createCall_propagatesErrorFromUpdater() {
+        let id: String = .unique
+        let type: String = "video"
+        var completionError: Error?
+        
+        // Set completion handler
+        controller.createCall(id: id, type: type) { result in
+            completionError = result.error
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.createCall_completion!(.failure(testError))
+        
+        // Error is propagated to completion
+        AssertAsync.willBeEqual(completionError as? TestError, testError)
+    }
+    
+    func test_createCall_propagatesResultFromUpdater() {
+        let id: String = .unique
+        let provider: String = "agora"
+        let token: String = .unique
+        let type: String = "video"
+        
+        var resultingCallWithToken: CallWithToken?
+        let mockCallWithToken = CallWithToken(
+            call: Call(
+                id: id,
+                provider: provider,
+                agora: nil,
+                hms: nil
+            ),
+            token: token
+        )
+        
+        // Set completion handler
+        controller.createCall(id: id, type: type) { result in
+            resultingCallWithToken = result.value
+        }
+        
+        // Simulate successful completion
+        env.channelUpdater!.createCall_completion!(.success(mockCallWithToken))
+        
+        // Result is propagated to completion
+        AssertAsync.willBeEqual(resultingCallWithToken, mockCallWithToken)
+    }
 }
 
 // MARK: Test Helpers
