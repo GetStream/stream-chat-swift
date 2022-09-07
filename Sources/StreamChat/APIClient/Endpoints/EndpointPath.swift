@@ -44,6 +44,9 @@ enum EndpointPath: Codable {
     case flagMessage(Bool)
     case muteUser(Bool)
 
+    case callToken(String)
+    case createCall(String)
+
     var value: String {
         switch self {
         case .connect: return "connect"
@@ -84,6 +87,8 @@ enum EndpointPath: Codable {
         case let .flagUser(flag): return "moderation/\(flag ? "flag" : "unflag")"
         case let .flagMessage(flag): return "moderation/\(flag ? "flag" : "unflag")"
         case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
+        case let .callToken(callId): return "calls/\(callId)"
+        case let .createCall(queryString): return "channels/\(queryString)/call"
         }
     }
 
