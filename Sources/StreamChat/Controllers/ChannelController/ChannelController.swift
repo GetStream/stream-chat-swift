@@ -222,6 +222,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
+        client.callRepository,
         client.databaseContainer,
         client.apiClient
     )
@@ -1341,11 +1342,32 @@ public extension ChatChannelController {
         
         return max(0, cooldownDuration - Int(currentTime))
     }
+
+    func createCall(id: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+
+        updater.createCall(in: cid, callId: id, type: type) {
+            switch $0 {
+            case let .success(messages):
+                self.callback {
+                    completion(.success(messages))
+                }
+            case let .failure(error):
+                self.callback {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
 }
 
 extension ChatChannelController {
     struct Environment {
         var channelUpdaterBuilder: (
+            _ callRepository: CallRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
