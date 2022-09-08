@@ -6,18 +6,18 @@ import StreamChat
 import UIKit
 
 open class TextViewMentionedUsersHandler {
-    var onMentionedUserTap: ((ChatUser?) -> Void)?
-    
-    open func handleInteraction(
+    open func mentionedUserTapped(
         on textView: UITextView,
         in characterRange: NSRange,
         withMentionedUsers mentionedUsers: Set<ChatUser>
-    ) {
+    ) -> ChatUser? {
         guard let text = textView.text,
               let range = Range(characterRange, in: text)
-        else { return }
+        else {
+            return nil
+        }
         let string = String(text[range].replacingOccurrences(of: "@", with: ""))
         let user = mentionedUsers.first(where: { $0.name == string })
-        onMentionedUserTap?(user)
+        return user
     }
 }

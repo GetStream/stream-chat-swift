@@ -674,15 +674,22 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     
     open func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         if let mentionedUsers = content?.mentionedUsers, !mentionedUsers.isEmpty {
-            textViewUserMentionsHandler.onMentionedUserTap = { [weak self] user in
-                self?.delegate?.messageContentViewDidTapOnMentionedUser(user)
-            }
-            textViewUserMentionsHandler.handleInteraction(
+            let tappedMentionedUser = textViewUserMentionsHandler.mentionedUserTapped(
                 on: textView,
                 in: characterRange,
                 withMentionedUsers: mentionedUsers
             )
+            tappedMentionedUser.map {
+                delegate?.messageContentViewDidTapOnMentionedUser($0)
+            }
         }
+
+        // Long pressing a mentioned user, should not do anything by default.
+        let isMentionedUserInteraction = URL.absoluteString.isEmpty
+        if isMentionedUserInteraction {
+            return interaction == .invokeDefaultAction
+        }
+
         return true
     }
 	

@@ -14,7 +14,7 @@ extension UITextView {
         else {
             return
         }
-        
+
         attributeText.addAttribute(.link, value: "", range: range)
         attributedText = attributeText
     }
