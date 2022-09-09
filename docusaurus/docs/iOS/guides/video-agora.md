@@ -702,6 +702,28 @@ private func updateChannelCallState(to activeCall: Bool, with uid: UInt) {
 }
 ```
 
+Code-wise this is all that is needed. However there is one more setting that needs to be updated and that's for good reason.
+
+### Allowing regular users to update the channel state
+
+Executing the code above now would not do anything. It will return an error that the user is not allowed to perform this task. And that makes sense, as regular channel members are not allowed to update channel data by default.
+
+The Stream Chat SDK offers a fine-grained [roles and permissions system](https://getstream.io/chat/docs/other-rest/user_permissions/) that allows you to finetune which member is allowed to perform which actions. This is a safety measure to only give allowance to execute the tasks necessary for the respective user.
+
+It is easy to update those however and allow our users to perform the update channel action that the code above does. Head over to the [Stream Dashboard](https://dashboard.getstream.io/) and select your app.
+
+:::note
+If you follow the sample code in the repository the project that is setup already has these changes done, so you can skip to the next part if you are not using a custom project on your own.
+:::
+
+Now, head over to the **Roles & Permissions** tab and click the **Edit Button** (red arrow in the image below) for the **channel_member** role.
+
+![View of the Stream Dashboard in the Roles & Permissions tab with the edit button of the channel_member role marked with a red arrow.](../assets/agora-dashboard-roles.png)
+
+Next, for the **Current Scope** select `messaging` and in the **Available Permissions** search for `Update Channel`. Mark the option as checked and click on the blue arrow pointing towards the left. Make sure it shows up under **Grants** and hit **Save Changes** (red arrow in the image below).
+
+![View of the Stream Dashboard with the Update Channel permission selected to be moved to the Grants are.](../assets/agora-dashboard-set-permission.png)
+
 This is all the preparation you need. The updating of the call state will happen when calls are started and when the initiator of a call ends it. Both cases will be covered in the next chapter.
 
 ## 6. Integration of the Agora SDK
