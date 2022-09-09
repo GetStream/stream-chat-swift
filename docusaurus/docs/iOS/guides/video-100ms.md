@@ -509,29 +509,56 @@ There are two use cases you need to cover for sending and editing messages:
 
 ### Starting a Call and Sending the Message
 
-When the user hits the call button at the top right of the channel header a new message should be sent to the channel. Therefore, a new room needs to be created with the _100ms SDK_, which is happening on the backend. The `NetworkManager` that you added earlier has the `createRoom` function for that, which returns the necessary information (we’re only interested in the `roomId` for now). The ID will be a randomly created `UUID` from the client, but can also be created from the backend directly.
+When the user hits the call button at the top right of the channel header a new message should be sent to the channel. Therefore, a new room needs to be created with the _100ms SDK_, which is happening on the backend. The Stream Chat SDK offers native support for `100ms` so it's easy to create one and retrieve the necessary information (namely a `roomId`) with a single API call.
 
-After that, the `chatClient` can be used to get a `channelController` that you can use to call `createNewMessage`.
+In order to make the API work nicely with our `async/await` based architecture, we first extend the `ChatClient` to build upon the closure-based API from the SDK. Create a new file called `ChatClient+createCall.swift` and paste this code inside of it:
+
+```swift
+import StreamChat
+
+extension ChatClient {
+    func createCall(with id: String, in channelId: ChannelId) async throws -> CallWithToken {
+        try await withCheckedThrowingContinuation({ continuation in
+            channelController(for: channelId).createCall(id: id, type: "video") { result in
+                continuation.resume(with: result)
+            }
+        })
+    }
+}
+```
+
+We create a call with a given ID (that is randomly generated) in a channel with the `channelId` (of type `ChannelId`). Inside the SDK function of the `channelController` is called.
+
+:::note
+The only supported type for a call as of now is `"video"` so we hardcode this in the extension of the `ChatClient`.
+:::
+
+In order to initiate a call in the `CallViewModel` there is a few steps to take. First, it's necessary to make sure a valid `channelId` is present. Then the `createCall` function that was just created on the `chatClient` can be called. The room ID will be a randomly created `UUID` from the client-side, but can also be created from the backend directly.
+
+After we made sure that a valid room ID was received (and it is set on the viewModel), the `chatClient` can be used to get a `channelController` that you can use to call `createNewMessage`.
 
 Finally, you can start the call screen by setting `isCallScreenShown` to `true`.
 
-<aside>
-💡 You need to make sure that the call to <code>isCallScreenShown</code> is happening on the main thread, so it’s necessary to wrap it into an <code>await MainActor.run {}</code> call.
-</aside>
-
-<br />
+:::note
+You need to make sure that the call to <code>isCallScreenShown</code> is happening on the main thread, so it’s necessary to wrap it into an <code>await MainActor.run {}</code> call.
+:::
 
 Head over to the `CallViewModel` and create the `createCall` function:
 
 ```swift
 func createCall() async {
 	do {
-		let roomCreationResult = try await NetworkManager.shared.createRoom(with: UUID().uuidString)
-		self.roomId = roomCreationResult.roomId
-
 		guard let channelId = channelId else {
 			return
 		}
+
+		let callWithToken = try await chatClient.createCall(with: UUID().uuidString, in: channelId)
+		guard let roomId = callWithToken.call.hms?.roomId else {
+			return
+		}
+
+		self.roomId = roomId
+
 		chatClient
 			.channelController(for: channelId)
 			.createNewMessage(text: .callOngoing, extraData: createExtraData(with: roomCreationResult.roomId))
@@ -656,18 +683,23 @@ Do the exact same with the `// toggle video` and replace it with `viewModel.togg
 
 In order to join a call there are a few steps you need to do:
 
-1. Get an auth token (the `NetworkManager` offers the `getAuthToken` function)
-2. Create a `config` variable for the `hmsSDK` (of type `HMSConfig`)
-3. Call the `join` function of the `hmsSDK`
+1. Show the call screen by setting `isCallScreenShown` to `true`
+2. Get an auth token (we can re-use the `createCall` function of the `chatClient`)
+3. Create a `config` variable for the `hmsSDK` (of type `HMSConfig`) with the name of the current user (if available)
+4. Call the `join` function of the `hmsSDK`
 
 The following code snippet does exactly that, so add it to the `CallViewModel`:
 
 ```swift
 func joinCall(with roomId: String) async {
 	do {
-		let authTokenResult = try await NetworkManager.shared.getAuthToken(for: roomId)
+		isCallScreenShown = true
+		guard let channelId = channelId else {
+			return
+		}
 
-		let config = HMSConfig(userID: authTokenResult.userId, roomID: roomId, authToken: authTokenResult.token)
+		let callWithToken = try await chatClient.createCall(with: roomId, in: channelId)
+		let config = HMSConfig(userName: chatClient.currentUserController().currentUser?.name ?? "Unknown User", authToken: callWithToken.token)
 
 		hmsSDK.join(config: config, delegate: self)
 	} catch {
