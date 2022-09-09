@@ -793,13 +793,16 @@ With that explained, here is the code for it:
 
 ```swift
  private func agoraJoinCall(authTokenResult: CallWithToken, agoraChannelId: String, updateChannel: Bool) {
-	guard let uid = authTokenResult.agoraUid else {
-		print("AuthTokenResult did not contain the Agora UID")
+	guard let agoraCall = authTokenResult.call.agora else {
+		print("getCallToken did not return data as AgoraCall")
 		return
 	}
-
-	guard let appId = authTokenResult.agoraAppId else {
-		print("AuthTokenResult did not contain the Agora App ID")
+	guard let uid = agoraCall.agoraInfo?.uid else {
+		print("getCallToken did not return the Agora UID")
+		return
+	}
+	guard let appId = agoraCall.agoraInfo?.appId else {
+		print("getCallToken did not return the Agora UID")
 		return
 	}
 
