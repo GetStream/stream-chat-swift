@@ -110,10 +110,12 @@ extension NSManagedObjectContext {
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
     ) throws -> MemberDTO {
-        let dto = MemberDTO.loadOrCreate(userId: payload.user.id, channelId: channelId, context: self, cache: cache)
+        let dto = MemberDTO.loadOrCreate(userId: payload.userId, channelId: channelId, context: self, cache: cache)
         
         // Save user-part of member first
-        dto.user = try saveUser(payload: payload.user)
+        if let userPayload = payload.user {
+            dto.user = try saveUser(payload: userPayload)
+        }
         
         // Save member specific data
         if let role = payload.role {

@@ -222,6 +222,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
+        client.callRepository,
         client.databaseContainer,
         client.apiClient
     )
@@ -232,6 +233,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     )
     
     private var markingRead: Bool = false
+    private var lastFetchedMessageId: MessageId?
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelControllerDelegate> = .init() {
@@ -380,11 +382,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 itemCreator: { try $0.asModel() as ChatMessage }
             )
             observer.onChange = { [weak self] changes in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
+                self?.delegateCallback {
+                    guard let self = self else { return }
                     log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
                     $0.channelController(self, didUpdateMessages: changes)
                 }
@@ -411,8 +410,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelCreatedCallback: channelCreatedCallback
         ) { result in
             switch result {
-            case .success:
+            case let .success(value):
                 self.state = .remoteDataFetched
+                self.updateLastFetchedId(with: value)
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
@@ -737,8 +737,8 @@ public extension ChatChannelController {
             channelModificationFailed(completion)
             return
         }
-        
-        guard let messageId = messageId ?? messages.last?.id else {
+
+        guard let messageId = messageId ?? lastFetchedMessageId else {
             log.error(ClientError.ChannelEmptyMessages().localizedDescription)
             callback { completion?(ClientError.ChannelEmptyMessages()) }
             return
@@ -752,12 +752,18 @@ public extension ChatChannelController {
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
             switch result {
             case let .success(payload):
+                self.updateLastFetchedId(with: payload)
                 self.hasLoadedAllPreviousMessages = payload.messages.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
             }
         })
+    }
+
+    private func updateLastFetchedId(with payload: ChannelPayload) {
+        // Payload messages are ordered from oldest to newest
+        lastFetchedMessageId = payload.messages.first?.id
     }
     
     /// Loads next messages from backend.
@@ -1336,11 +1342,32 @@ public extension ChatChannelController {
         
         return max(0, cooldownDuration - Int(currentTime))
     }
+
+    func createCall(id: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+
+        updater.createCall(in: cid, callId: id, type: type) {
+            switch $0 {
+            case let .success(messages):
+                self.callback {
+                    completion(.success(messages))
+                }
+            case let .failure(error):
+                self.callback {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
 }
 
 extension ChatChannelController {
     struct Environment {
         var channelUpdaterBuilder: (
+            _ callRepository: CallRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
@@ -1400,7 +1427,7 @@ public extension ChatChannelControllerDelegate {
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {}
-    
+
     func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]

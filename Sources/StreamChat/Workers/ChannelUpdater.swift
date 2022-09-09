@@ -6,6 +6,13 @@ import Foundation
 
 /// Makes a channel query call to the backend and updates the local storage with the results.
 class ChannelUpdater: Worker {
+    private let callRepository: CallRepository
+
+    init(callRepository: CallRepository, database: DatabaseContainer, apiClient: APIClient) {
+        self.callRepository = callRepository
+        super.init(database: database, apiClient: apiClient)
+    }
+
     /// Makes a channel query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:
@@ -495,5 +502,9 @@ class ChannelUpdater: Worker {
                 completion(.failure(error))
             }
         }
+    }
+    
+    func createCall(in cid: ChannelId, callId: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
+        callRepository.createCall(in: cid, callId: callId, type: type, completion: completion)
     }
 }

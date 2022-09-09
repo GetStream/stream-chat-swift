@@ -145,7 +145,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         // Assert members order is correct
         XCTAssertEqual(
-            [member1.user.id, member2.user.id],
+            [member1.user!.id, member2.user!.id],
             fetchedMembers.map(\.user.id)
         )
     }
@@ -194,7 +194,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         // Assert members order is correct
         XCTAssertEqual(
-            [member2.user.id, member1.user.id],
+            [member2.user!.id, member1.user!.id],
             fetchedMembers.map(\.user.id)
         )
     }
@@ -243,7 +243,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         // Assert members order is correct
         XCTAssertEqual(
-            [member1.user.id, member2.user.id],
+            [member1.user!.id, member2.user!.id],
             fetchedMembers.map(\.user.id)
         )
     }
@@ -302,7 +302,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         // Assert members order is correct
         XCTAssertEqual(
-            [member1.user.id, member3.user.id, member2.user.id],
+            [member1.user!.id, member3.user!.id, member2.user!.id],
             fetchedMembers.map(\.user.id)
         )
     }
@@ -368,7 +368,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         // Assert members order is correct
         XCTAssertEqual(
-            [member1.user.id, member3.user.id, member2.user.id],
+            [member1.user!.id, member3.user!.id, member2.user!.id],
             fetchedMemberIDs
         )
     }

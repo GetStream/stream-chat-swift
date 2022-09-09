@@ -18,7 +18,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         
-        channelUpdater = ChannelUpdater(database: database, apiClient: apiClient)
+        channelUpdater = ChannelUpdater(callRepository: CallRepository(apiClient: apiClient), database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
@@ -56,8 +56,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
         let expectation = self.expectation(description: "Update completes")
+        var updateResult: Result<ChannelPayload, Error>!
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
-            XCTAssertNil(result.error)
+            updateResult = result
             expectation.fulfill()
         })
         
@@ -70,6 +71,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         
         let channel = database.viewContext.channel(cid: cid)
         XCTAssertNotNil(channel)
+        XCTAssertNil(updateResult.error)
         XCTAssertEqual(channel?.messages.count, 2)
     }
 

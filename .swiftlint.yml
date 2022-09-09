@@ -7,6 +7,7 @@ excluded:
   - Sources/StreamChatUI/StreamSwiftyMarkdown
   - Sources/StreamChatUI/StreamNuke
   - Sources/StreamChat/StreamStarscream
+  - Sources/StreamChatUI/StreamDifferenceKit
   - vendor
   - UISDKdocumentation
   - Tests

@@ -36,26 +36,6 @@ open class ChatMessageListVC: _ViewController,
     open lazy var router: ChatMessageListRouter = components
         .messageListRouter
         .init(rootViewController: self)
-
-    /// The diffing data sources are only used if iOS 13 is available and if the feature is enabled.
-    internal var isDiffingEnabled: Bool {
-        if #available(iOS 13.0, *) {
-            return self.components._messageListDiffingEnabled
-        }
-        return false
-    }
-
-    /// Strong reference of the `UITableViewDiffableDataSource`.
-    internal var _diffableDataSource: UITableViewDataSource?
-
-    /// Only stored properties support being marked with @available, so we need to maintain
-    /// a private _diffableDataSource property to keep the strong reference. This stored
-    /// property will cast the regular table view data source to the diffing one.
-    @available(iOS 13.0, *)
-    internal var diffableDataSource: UITableViewDiffableDataSource<Int, ChatMessage>? {
-        get { _diffableDataSource as? UITableViewDiffableDataSource }
-        set { _diffableDataSource = newValue }
-    }
     
     /// Strong reference of message actions view controller to allow performing async operations.
     private var messageActionsVC: ChatMessageActionsVC?
@@ -117,9 +97,18 @@ open class ChatMessageListVC: _ViewController,
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
     }
+
+    /// The message cell height caches. This makes sure that the message list doesn't
+    /// need to recalculate the cell height every time. This improve the scrolling
+    /// experience since the content size calculation is more precise.
+    private var cellHeightsCache: [MessageId: CGFloat] = [:]
     
     override open func setUp() {
         super.setUp()
+
+        listView.onNewDataSource = { [weak self] messages in
+            self?.dataSource?.messages = messages
+        }
         
         components.messageLayoutOptionsResolver.config = client.config
         
@@ -179,13 +168,8 @@ open class ChatMessageListVC: _ViewController,
         super.updateContent()
 
         listView.delegate = self
-
-        if #available(iOS 13.0, *), isDiffingEnabled {
-            setupDiffableDataSource(for: listView)
-        } else {
-            listView.dataSource = self
-            listView.reloadData()
-        }
+        listView.dataSource = self
+        listView.reloadData()
     }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -240,23 +224,23 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToMostRecentMessage(animated: animated)
     }
 
-    /// Updates the collection view data with given `changes`.
+    /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        if #available(iOS 13.0, *), isDiffingEnabled {
-            updateMessagesSnapshot(with: changes, completion: completion)
-        } else {
-            // Because we use an inverted table view, we need to avoid animations since they look odd.
-            UIView.performWithoutAnimation {
-                listView.updateMessages(with: changes) { [weak self] in
-                    if let newMessageInserted = changes.first(where: { ($0.isInsertion || $0.isMoved) && $0.indexPath.row == 0 })?.item {
-                        if newMessageInserted.isSentByCurrentUser {
-                            self?.listView.scrollToMostRecentMessage()
-                        }
-                    }
-                    completion?()
-                }
+        // There is an issue on iOS 12 that when the message list has 0 or 1 message,
+        // the UI is not updated for the next inserted messages.
+        guard #available(iOS 13.0, *) else {
+            if listView.previousMessagesSnapshot.count < 2 {
+                dataSource?.messages = listView.newMessagesSnapshot
+                listView.reloadData()
+                completion?()
+                return
             }
+
+            listView.updateMessages(with: changes, completion: completion)
+            return
         }
+
+        listView.updateMessages(with: changes, completion: completion)
     }
 
     /// Handles tap action on the table view.
@@ -449,13 +433,30 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) {
+            cellHeightsCache[message.id] = cell.bounds.size.height
+        }
+
         delegate?.chatMessageListVC(self, willDisplayMessageAt: indexPath)
+    }
+
+    open func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        if let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) {
+            return cellHeightsCache[message.id] ?? UITableView.automaticDimension
+        }
+
+        return UITableView.automaticDimension
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
 
         setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
+
+        // If the user scrolled to the bottom, update the UI for the skipped messages
+        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty {
+            listView.reloadSkippedMessages()
+        }
     }
 
     // MARK: - ChatMessageListScrollOverlayDataSource
@@ -641,165 +642,5 @@ open class ChatMessageListVC: _ViewController,
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
-    }
-}
-
-// MARK: - Backwards Compatibility DataSource Diffing
-
-@available(iOS 13.0, *)
-internal extension ChatMessageListVC {
-    /// Setup the `UITableViewDiffableDataSource`.
-    func setupDiffableDataSource(for listView: ChatMessageListView) {
-        let diffableDataSource = UITableViewDiffableDataSource<Int, ChatMessage>(
-            tableView: listView
-        ) { [weak self] _, indexPath, _ -> UITableViewCell? in
-            /// Re-use old `cellForRowAt` to maintain customer's customisations.
-            let cell = self?.tableView(listView, cellForRowAt: indexPath)
-            return cell
-        }
-
-        self.diffableDataSource = diffableDataSource
-        listView.dataSource = diffableDataSource
-
-        /// Populate the Initial messages data.
-        var snapshot = NSDiffableDataSourceSnapshot<Int, ChatMessage>()
-        snapshot.appendSections([0])
-        snapshot.appendItems(dataSource?.messages ?? [], toSection: 0)
-        diffableDataSource.apply(snapshot, animatingDifferences: false)
-    }
-
-    /// Transforms an array of changes to a diffable data source snapshot.
-    func updateMessagesSnapshot(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
-        var snapshot = diffableDataSource?.snapshot() ?? NSDiffableDataSourceSnapshot<Int, ChatMessage>()
-
-        let currentMessages: Set<ChatMessage> = Set(snapshot.itemIdentifiers)
-        var updatedMessages: [ChatMessage] = []
-        var insertedMessages: [(ChatMessage, row: Int)] = []
-        var removedMessages: [(ChatMessage, row: Int)] = []
-        var movedMessages: [(from: ChatMessage, to: ChatMessage)] = []
-
-        var hasNewInsertions = false
-        var hasInsertions = false
-
-        changes.forEach { change in
-            switch change {
-            case let .insert(message, indexPath):
-                hasInsertions = true
-                if !hasNewInsertions {
-                    hasNewInsertions = indexPath.row == 0
-                }
-                insertedMessages.append((message, row: indexPath.row))
-            case let .update(message, _):
-                // Check if it is a valid update. In rare occasions we get an update for a message which
-                // is not in the scope of the current pagination, although it is in the database.
-                guard currentMessages.contains(message) else { break }
-                updatedMessages.append(message)
-            case let .remove(message, indexPath):
-                removedMessages.append((message, row: indexPath.row))
-            case let .move(_, fromIndex, toIndex):
-                guard let fromMessage = snapshot.itemIdentifiers[safe: fromIndex.row] else { break }
-                guard let toMessage = snapshot.itemIdentifiers[safe: toIndex.row] else { break }
-                movedMessages.append((from: fromMessage, to: toMessage))
-            }
-        }
-
-        let sortedInsertedMessages = insertedMessages
-            .sorted(by: { $0.row < $1.row })
-            .map(\.0)
-
-        if hasNewInsertions, let currentFirstMessage = snapshot.itemIdentifiers.first {
-            // Insert new messages at the bottom.
-            snapshot.insertItems(sortedInsertedMessages, beforeItem: currentFirstMessage)
-        } else if hasInsertions, let currentLastMessage = snapshot.itemIdentifiers.last {
-            // Load new messages at the top.
-            snapshot.insertItems(sortedInsertedMessages, afterItem: currentLastMessage)
-        } else if hasInsertions {
-            snapshot.appendItems(sortedInsertedMessages)
-        }
-
-        snapshot.deleteItems(removedMessages.map(\.0))
-        snapshot.reloadItems(updatedMessages)
-
-        movedMessages.forEach {
-            snapshot.moveItem($0.from, afterItem: $0.to)
-            snapshot.reloadItems([$0.from, $0.to])
-        }
-
-        // The reason we call `performWithoutAnimation` and `animatingDifferences: true` at the same time
-        // is because we don't want animations, but on iOS 14 calling `animatingDifferences: false`
-        // is the same as calling `reloadData()`. Info: https://developer.apple.com/videos/play/wwdc2021/10252/?time=158
-        UIView.performWithoutAnimation {
-            diffableDataSource?.apply(snapshot, animatingDifferences: true) { [weak self] in
-
-                let newestMessage = snapshot.itemIdentifiers.first
-                if hasNewInsertions && newestMessage?.isSentByCurrentUser == true {
-                    self?.listView.scrollToMostRecentMessage()
-                }
-
-                // When new message is inserted, update the previous message to hide the timestamp if needed.
-                if hasNewInsertions, let previousMessage = snapshot.itemIdentifiers[safe: 1] {
-                    let indexPath = IndexPath(row: 1, section: 0)
-                    // The completion block from `apply()` should always be called on main thread,
-                    // but on iOS 14 this doesn't seem to be the case, and it crashes.
-                    DispatchQueue.main.async {
-                        self?.updateMessagesSnapshot(
-                            with: [.update(previousMessage, index: indexPath)],
-                            completion: nil
-                        )
-                    }
-                }
-
-                // When there are deletions, we should update the previous message, so that we add the avatar image back.
-                // Because we have an inverted list, the previous message has the same index of the deleted message after
-                // the deletion has been executed.
-                let previousRemovedMessages = removedMessages.compactMap { _, row -> (ChatMessage, IndexPath)? in
-                    guard let message = snapshot.itemIdentifiers[safe: row] else { return nil }
-                    return (message, IndexPath(row: row, section: 0))
-                }
-                if !previousRemovedMessages.isEmpty {
-                    DispatchQueue.main.async {
-                        self?.updateMessagesSnapshot(
-                            with: previousRemovedMessages.map { ListChange.update($0, index: $1) },
-                            completion: nil
-                        )
-                    }
-                }
-
-                completion?()
-            }
-        }
-    }
-}
-
-private extension ListChange {
-    var isMoved: Bool {
-        switch self {
-        case .move:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    var isInsertion: Bool {
-        switch self {
-        case .insert:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var indexPath: IndexPath {
-        switch self {
-        case let .insert(_, index):
-            return index
-        case let .move(_, _, toIndex):
-            return toIndex
-        case let .update(_, index):
-            return index
-        case let .remove(_, index):
-            return index
-        }
     }
 }

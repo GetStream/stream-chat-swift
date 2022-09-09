@@ -360,7 +360,7 @@ final class MemberListController_Tests: XCTestCase {
         
         // Update second member to be created earlier than the first one.
         try client.databaseContainer.writeSynchronously { session in
-            session.member(userId: member2.user.id, cid: self.query.cid)?.memberCreatedAt = DBDate()
+            session.member(userId: member2.user!.id, cid: self.query.cid)?.memberCreatedAt = DBDate()
         }
         
         // Assert `move` change is received for the second member.
@@ -371,32 +371,6 @@ final class MemberListController_Tests: XCTestCase {
                     (delegate.didUpdateMembers_changes ?? []).map { $0.fieldChange(\.id) }
                         .contains(.move(member2ID, fromIndex: [0, 1], toIndex: [0, 0]))
                 )
-        }
-        
-        // Simulate database flush
-        let exp = expectation(description: "removeAllData called")
-        client.databaseContainer.removeAllData { error in
-            if let error = error {
-                XCTFail("removeAllData failed with \(error)")
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1)
-
-        // Assert `remove` entity changes are received by the delegate.
-        AssertAsync {
-            Assert.willBeEqual(delegate.didUpdateMembers_changes?.count, 2)
-            Assert
-                .willBeTrue(
-                    (delegate.didUpdateMembers_changes ?? []).map { $0.fieldChange(\.id) }
-                        .contains(.remove(member1ID, index: [0, 1]))
-                )
-            Assert
-                .willBeTrue(
-                    (delegate.didUpdateMembers_changes ?? []).map { $0.fieldChange(\.id) }
-                        .contains(.remove(member2ID, index: [0, 0]))
-                )
-            Assert.willBeEqual(Array(self.controller.members), [])
         }
     }
     
