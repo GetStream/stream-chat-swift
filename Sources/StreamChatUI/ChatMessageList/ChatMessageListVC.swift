@@ -519,30 +519,30 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {
-        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        log
-            .info(
-                "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage. Path: \(indexPath)"
-            )
+        log.info(
+            "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage."
+        )
     }
 	
     open func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {
-        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        log
-            .info(
-                "Tapped an avatarView. To customize the behavior, override messageContentViewDidTapOnAvatarView. Path: \(indexPath)"
-            )
+        guard let indexPath = indexPath else {
+            return log.error("IndexPath is not available")
+        }
+
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+            return log.error("DataSource not found for the message list.")
+        }
+
+        router.showUser(message.author)
     }
     
     /// This method is triggered when delivery status indicator on the message at the given index path is tapped.
     /// - Parameter indexPath: The index path of the message cell.
     open func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {
-        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        
         log.info(
             """
             Tapped an delivery status view. To customize the behavior, override
-            messageContentViewDidTapOnDeliveryStatusIndicator. Path: \(indexPath)"
+            messageContentViewDidTapOnDeliveryStatusIndicator."
             """
         )
     }
@@ -550,7 +550,7 @@ open class ChatMessageListVC: _ViewController,
     /// Gets called when mentioned user is tapped.
     /// - Parameter mentionedUser: The mentioned user that was tapped on.
     open func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser) {
-        // Intended to be overridden for showing user profile.
+        router.showUser(mentionedUser)
     }
 
     // MARK: - GalleryContentViewDelegate

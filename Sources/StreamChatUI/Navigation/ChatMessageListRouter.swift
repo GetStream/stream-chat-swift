@@ -191,6 +191,17 @@ open class ChatMessageListRouter:
         rootViewController.present(galleryVC, animated: true)
     }
 
+    /// Shows the user profile view.
+    /// - Parameter user: The user profile to show.
+    open func showUser(_ user: ChatUser) {
+        log.info(
+            """
+            Performed action to show user profile view of \(user.name ?? user.id).
+            To provide your own profile view, please override ChatMessageRouter.showUser()"
+            """
+        )
+    }
+
     // MARK: - UIViewControllerTransitioningDelegate
 
     open func animationController(
