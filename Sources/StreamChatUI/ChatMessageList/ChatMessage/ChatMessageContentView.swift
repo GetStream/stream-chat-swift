@@ -42,12 +42,12 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
     
     /// Gets called when mentioned user is tapped.
     /// - Parameter mentionedUser: The mentioned user that was tapped on.
-    func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser?)
+    func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser)
 }
 
 public extension ChatMessageContentViewDelegate {
     func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {}
-    func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser?) {}
+    func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser) {}
 }
 
 /// A view that displays the message content.

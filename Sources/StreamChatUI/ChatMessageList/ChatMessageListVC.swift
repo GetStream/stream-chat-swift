@@ -549,7 +549,7 @@ open class ChatMessageListVC: _ViewController,
 
     /// Gets called when mentioned user is tapped.
     /// - Parameter mentionedUser: The mentioned user that was tapped on.
-    open func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser?) {
+    open func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser) {
         // Intended to be overridden for showing user profile.
     }
 
