@@ -37,10 +37,11 @@ final class UserRobot: Robot {
         
         // TODO: CIS-1737
         if !cells.firstMatch.exists {
-            for _ in 0...3 {
-                app.terminate()
+            for _ in 0...5 {
                 server.stop()
+                app.terminate()
                 server.start(port: in_port_t(MockServerConfiguration.port))
+                sleep(1)
                 app.launch()
                 login()
                 cells.waitCount(minExpectedCount)
@@ -240,6 +241,12 @@ extension UserRobot {
     @discardableResult
     func tapOnScrollToBottomButton() -> Self {
         MessageListPage.scrollToBottomButton.safeTap()
+        return self
+    }
+    
+    @discardableResult
+    func tapOnPushNotification() -> Self {
+        SpringBoard.notificationBanner.wait().safeTap()
         return self
     }
     

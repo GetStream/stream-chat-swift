@@ -90,6 +90,11 @@ public class ChatClient {
             apiClient
         )
     }()
+
+    /// A repository that handles all the executions needed to keep the Database in sync with remote.
+    private(set) lazy var callRepository: CallRepository = {
+        environment.callRepositoryBuilder(apiClient)
+    }()
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
@@ -584,6 +589,12 @@ extension ChatClient {
                 database: $5,
                 apiClient: $6
             )
+        }
+
+        var callRepositoryBuilder: (
+            _ apiClient: APIClient
+        ) -> CallRepository = {
+            CallRepository(apiClient: $0)
         }
         
         var messageRepositoryBuilder: (

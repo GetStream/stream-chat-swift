@@ -35,6 +35,8 @@ public enum MockFile: String {
     
     case youtube = "http_youtube_link"
     case unsplash = "http_unsplash_link"
+    
+    case pushNotification = "push_notification"
 
     var filePath: String {
         "\(Bundle.testTools.pathToJSONsFolder)\(rawValue)"
@@ -99,6 +101,17 @@ public enum JSONKey {
         public static let send = "send"
         public static let shuffle = "shuffle"
     }
+}
+
+public enum APNSKey {
+    public static let aps = "aps"
+    public static let alert = "alert"
+    public static let title = "title"
+    public static let body = "body"
+    public static let badge = "badge"
+    public static let stream = "stream"
+    public static let messageId = "id"
+    public static let cid = "cid"
 }
 
 public enum UserDetails {

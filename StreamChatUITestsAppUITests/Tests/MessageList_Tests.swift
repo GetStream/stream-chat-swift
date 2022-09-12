@@ -310,37 +310,6 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
-    func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserPublishesGiphyThatIsNotLastMessage() throws {
-        linkToScenario(withId: 287)
-
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2020] Scroll on message list does not work well enough")
-
-        throw XCTSkip(
-            "This test is flaky right now. We need to move to unit test or make it more precise."
-        )
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 30)
-            userRobot.login().openChannel()
-        }
-        WHEN("user sends a new ephemeral giphy") {
-            userRobot.sendGiphy(send: false)
-        }
-        AND("participant sends some messages") {
-            participantRobot.sendMultipleMessages(repeatingText: "Some message", count: 16)
-        }
-        AND("user scrolls up") {
-            userRobot.scrollMessageListUpSlow()
-        }
-        AND("user publishes giphy") {
-            userRobot.tapOnSendGiphyButton(messageCellIndex: 16)
-        }
-        THEN("message list is scrolled down") {
-            userRobot.assertMessageIsVisible(at: 0)
-        }
-    }
-
     func test_reloadsSkippedMessages_whenScrolledToTheBottom() throws {
         linkToScenario(withId: 289)
 
@@ -383,8 +352,11 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
     
-    func test_offlineMessageInTheMessageList() {
+    func test_offlineMessageInTheMessageList() throws {
         linkToScenario(withId: 34)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "This test is not stable enough on iOS 12")
         
         let message = "test message"
 

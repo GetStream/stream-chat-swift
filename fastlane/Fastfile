@@ -16,6 +16,10 @@ before_all do
   end
 end
 
+after_all do |lane|
+  stop_sinatra if lane == :test_e2e_mock
+end
+
 desc "Build .xcframeworks"
 lane :build_xcframeworks do
   output_directory = "#{Dir.pwd}/../Products"
@@ -458,9 +462,21 @@ lane :test do |options|
   )
 end
 
+desc 'Starts Sinatra web server'
+lane :start_sinatra do
+  sh('nohup bundle exec ruby sinatra.rb > sinatra_log.txt 2>&1 &')
+end
+
+desc 'Stops Sinatra web server'
+lane :stop_sinatra do
+  sh('lsof -t -i:4567 | xargs kill -9')
+end
+
 desc 'Runs e2e ui tests using mock server in Debug config'
 lane :test_e2e_mock do |options|
   next unless check_required?(:e2e)
+
+  start_sinatra
 
   add_ci_env_var_to('../StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan')
 

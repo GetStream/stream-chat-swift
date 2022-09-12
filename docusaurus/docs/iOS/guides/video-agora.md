@@ -19,17 +19,11 @@ First, let’s take a look at the end result of this project:
 In order to create this, follow these six steps:
 
 1. Set up an Agora account
-2. Create a server
+2. Stream Dashboard integration
 3. Set up a basic app architecture
 4. Layout UI
 5. Update the channel information to indicate an active call
 6. Hook up the agora SDK to the UI
-
-<aside>
-💡 On the second step of creating a server: we provide <a href="https://github.com/GetStream/iOS-video-integration-agora">a solution</a> for you that you can re-use but in case you’re interested we offer a guide on how to build one as well.
-</aside>
-
-<br />
 
 In order to not start from the beginning, [the tutorial for SwiftUI](https://getstream.io/tutorials/swiftui-chat/) from [our website](https://getstream.io) is set as the starting point. So, if you followed this one, you are ready to jump right in.
 
@@ -42,93 +36,30 @@ You need to set up an account on the [agora.io](http://agora.io) website. Once y
 
 Once you have these two available you can continue with this guide.
 
-## 2. Create a server
+## 2. Stream Dashboard integration
 
-This guide does not cover each and every step required to create a server. However, we do offer a custom solution in _node.js_ that you can use, that supports all necessary steps and APIs.
+In order for the integration of agora to work there needs to be a server component handling token generation and more. Normally this would require a custom server implementation but Stream offers first-class integration for agora relieving you of these duties.
 
-Go to the Github page (TODO: create a Github page with a guide) to see an integration guide. We will assume that you followed the following steps, to have a server up and running on your local machine:
+There is only a few setup-steps to go through in the Stream dashboard and this guide details all of them:
 
-1. Clone the repo and set up your machine to have it running (install node / npm)
-2. Get the credentials from the Dashboard and copy them into a local `.env` file
+1. Head over to the [Dashboard](https://dashboard.getstream.io) and login
+2. Create a new app or select your app by name
+3. In the sidebar on the left, select **Ext. Video Integration**
+4. Make sure the **Agora** tab is selected
 
-With the server running you can create a new class that takes care of the communication with it.
+This is the screen that you navigated to:
 
-Create a new Swift file called `NetworkManager`:
+![View of the Stream Dashboard when an app was selected with the external video integration.](../assets/agora-guide-before.png)
 
-```swift
-import Foundation
+First, it is necessary to enable the integration through the toggle in the top right (red arrow in the image below). Make sure that you can see the green **Agora Enabled** badge at the top.
 
-enum MyError: Error {
-	case urlCreationFailure(message: String), invalidServerResponse(message: String), unsupportedData
-}
+Next, it is necessary to enter the credentials from the agora console. This is the place you need to enter the aforementioned `app id` and `app certificate` from the agora console.
 
-struct AccessTokenResponse: Codable {
-	var token: String
-	var appId: String
-	var channelId: String
-	var uid: String
-}
+![View of the Stream Dashboard when the agora video integration was enabled.](../assets/agora-guide-after.png)
 
-class NetworkManager {
+With these steps being taken, the Stream Chat SDK will use these credentials internally to initiate calls without you needing to take additional steps.
 
-#if targetEnvironment(simulator)
-	// simulator code
-	let serverAddress: String = "http://localhost:3000"
-#else
-	// real device code (you need to check the IP address of your mac in network settings
-	let serverAddress: String = "http://192.168.178.132:3000"
-#endif
-
-	static let shared = NetworkManager()
-
-	private init() {}
-
-	func getAccessToken(for channel: String, with uid: UInt) async throws -> AccessTokenResponse {
-		var urlComponents = URLComponents(string: createRoomCreationUrlString())
-
-		// Add query parameters
-		urlComponents?.queryItems = [
-			URLQueryItem(name: "channelId", value: channel),
-			URLQueryItem(name: "uid", value: "\(uid)")
-		]
-
-		guard let url = urlComponents?.url else {
-			throw MyError.urlCreationFailure(message: "Access Token URL could not be created")
-		}
-
-		var request = URLRequest(url: url)
-		request.httpMethod = "GET"
-
-		print("=== \(request.url?.absoluteString ?? "unknown")")
-
-		let (data, response) = try await URLSession.shared.data(for: request)
-
-		guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-			throw MyError.invalidServerResponse(message: response.debugDescription)
-		}
-
-		if let responseObject = try? JSONDecoder().decode(AccessTokenResponse.self, from: data) {
-			print(responseObject)
-			return responseObject
-		} else {
-			throw MyError.unsupportedData
-		}
-	}
-
-	private func createRoomCreationUrlString() -> String {
-		return "\(serverAddress)/accessToken"
-	}
-}
-```
-
-<aside>
-💡 Note that you need to change the <code>serverAddress</code> variable on <b>line 21</b> to match the IP address of your Mac in order to connect your real device to the server.
-Not sure where to find the correct IP? <a href="https://www.hellotech.com/guide/for/how-to-find-ip-address-on-mac">Check out this guide</a>.
-</aside>
-
-<br />
-
-With that, the server is running and you have a helper class that allows you to interact with the backend without much need for customization.
+So, let's focus on the iOS implementation.
 
 ## 3. Set up basic app architecture
 
@@ -771,6 +702,28 @@ private func updateChannelCallState(to activeCall: Bool, with uid: UInt) {
 }
 ```
 
+Code-wise this is all that is needed. However there is one more setting that needs to be updated and that's for good reason.
+
+### Allowing regular users to update the channel state
+
+Executing the code above now would not do anything. It will return an error that the user is not allowed to perform this task. And that makes sense, as regular channel members are not allowed to update channel data by default.
+
+The Stream Chat SDK offers a fine-grained [roles and permissions system](https://getstream.io/chat/docs/other-rest/user_permissions/) that allows you to finetune which member is allowed to perform which actions. This is a safety measure to only give allowance to execute the tasks necessary for the respective user.
+
+It is easy to update those however and allow our users to perform the update channel action that the code above does. Head over to the [Stream Dashboard](https://dashboard.getstream.io/) and select your app.
+
+:::note
+If you follow the sample code in the repository the project that is setup already has these changes done, so you can skip to the next part if you are not using a custom project on your own.
+:::
+
+Now, head over to the **Roles & Permissions** tab and click the **Edit Button** (red arrow in the image below) for the **channel_member** role.
+
+![View of the Stream Dashboard in the Roles & Permissions tab with the edit button of the channel_member role marked with a red arrow.](../assets/agora-dashboard-roles.png)
+
+Next, for the **Current Scope** select `messaging` and in the **Available Permissions** search for `Update Channel`. Mark the option as checked and click on the blue arrow pointing towards the left. Make sure it shows up under **Grants** and hit **Save Changes** (red arrow in the image below).
+
+![View of the Stream Dashboard with the Update Channel permission selected to be moved to the Grants are.](../assets/agora-dashboard-set-permission.png)
+
 This is all the preparation you need. The updating of the call state will happen when calls are started and when the initiator of a call ends it. Both cases will be covered in the next chapter.
 
 ## 6. Integration of the Agora SDK
@@ -783,10 +736,10 @@ First, let’s have a look at the steps to do when joining a call:
 
 1. Get an `id` that identifies the user (you will use a random one here but it would make sense to combine that with your authentication solution in production)
 2. Get the current `channelId`
-3. Request an access token from your backend (you need the user id and the channel id for that and can then use the `NetworkManager` class)
+3. Request an auth token from the channel controller
 4. Join the call with the _Agora_ SDK
 
-Due to the `NetworkManager` using `async/await` you have to wrap the call to get an access token in a `Task {}`. With the asynchronous nature of that, it is then again necessary to call all UI-relevant code on the main thread. Therefore that will then be wrapped inside of a `[MainActor.run](http://MainActor.run){}` closure.
+Due to the calls functions using `async/await` you have to wrap the call to get an access token in a `Task {}`. With the asynchronous nature of that, it is then again necessary to call all UI-relevant code on the main thread. Therefore that will then be wrapped inside of a `MainActor.run {}` closure.
 
 In order to keep the code clean you’ll extract the _Agora_ SDK part of the code into its own function but here is the code of the `startCall` function:
 
@@ -794,17 +747,17 @@ In order to keep the code clean you’ll extract the _Agora_ SDK part of the cod
 func startCall(updateChannel: Bool = true) {
 	let uid: UInt = UInt.random(in: UInt.min ... 1000)
 
-	guard let channelId = channelController?.channel?.cid.id else {
+	guard let agoraChannelId = channelController?.cid.rawValue else {
 		print("Couldn't get channel id")
 		return
 	}
 
 	Task {
 		do {
-			let accessTokenResponse = try await NetworkManager.shared.getAccessToken(for: channelId, with: uid)
+			let authTokenResult = try await channelController.createCall(id: agoraChannelId, type: "video")
 
 			await MainActor.run {
-				agoraJoinCall(from: accessTokenResponse, with: uid, updateChannel: updateChannel)
+				agoraJoinCall(authTokenResult: authTokenResult, agoraChannelId: agoraChannelId, updateChannel: updateChannel)
 			}
 		} catch {
 			print(error.localizedDescription)
@@ -814,7 +767,21 @@ func startCall(updateChannel: Bool = true) {
 }
 ```
 
-The code works exactly the way it was described. You have not yet created the `agoraJoinCall` function, so that’s up next.
+The code works exactly the way it was described. In order to use the `async/await` pattern for the `createCall` function of the `ChatChannelController` we need to extend it to allow us to use it instead of the closure based function:
+
+```swift
+extension ChatChannelController {
+    func createCall(id: String, type: String) async throws -> CallWithToken {
+        try await withCheckedThrowingContinuation { continuation in
+            createCall(id: id, type: type) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+}
+```
+
+You have not yet created the `agoraJoinCall` function, so that’s up next.
 
 It will again do a few things. First, it will set up the _agora_ SDK and enable video capabilities. Then, you will call the `joinChannel` function with the token you received and the rest of the necessary information.
 
@@ -825,11 +792,24 @@ Also, the published properties of `isCallScreenShown` as well as the `ownUid` ar
 With that explained, here is the code for it:
 
 ```swift
-private func agoraJoinCall(from accessTokenResponse: AccessTokenResponse, with uid: UInt, updateChannel: Bool) {
-	agoraKit = AgoraRtcEngineKit.sharedEngine(withAppId: accessTokenResponse.appId, delegate: self)
+ private func agoraJoinCall(authTokenResult: CallWithToken, agoraChannelId: String, updateChannel: Bool) {
+	guard let agoraCall = authTokenResult.call.agora else {
+		print("getCallToken did not return data as AgoraCall")
+		return
+	}
+	guard let uid = agoraCall.agoraInfo?.uid else {
+		print("getCallToken did not return the Agora UID")
+		return
+	}
+	guard let appId = agoraCall.agoraInfo?.appId else {
+		print("getCallToken did not return the Agora UID")
+		return
+	}
+
+	agoraKit = AgoraRtcEngineKit.sharedEngine(withAppId: appId, delegate: self)
 	agoraKit?.enableVideo()
 
-	agoraKit?.joinChannel(byToken: accessTokenResponse.token, channelId: accessTokenResponse.channelId, info: nil, uid: uid, joinSuccess: { [unowned self] (channel, uid, elapsed) in
+	agoraKit?.joinChannel(byToken: authTokenResult.token, channelId: agoraChannelId, info: nil, uid: uid, joinSuccess: { [unowned self] (channel, uid, elapsed) in
 
 		// setup local video
 		let videoCanvas = AgoraRtcVideoCanvas()

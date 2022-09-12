@@ -289,6 +289,31 @@ func makeReactionsUsersView(
 }
 ```
 
+The background of the reactions overlay is a blurred snapshot of the current channel view. You can customize it by implementing the `makeReactionsBackgroundView` method in the `ViewFactory`. For example, you can remove the blur, change the opacity, or even return an `EmptyView`. Here's an example implementation of this method:
+
+```swift
+func makeReactionsBackgroundView(
+    currentSnapshot: UIImage,
+    popInAnimationInProgress: Bool
+) -> some View {
+    Image(uiImage: currentSnapshot)
+        .overlay(Color.black.opacity(popInAnimationInProgress ? 0 : 0.1))
+        .blur(radius: popInAnimationInProgress ? 0 : 4)
+}
+```
+
+The `currentSnapshot` parameter returns the current snapshot of the whole view displaying the chat channel. The `popInAnimationInProgress` parameter tells whether the animation is already popped in and can be used to transition between animation states.
+
+You can customize the snapshot generation logic. In order to do this, you will need to provide your implementation of the `SnapshotCreator` protocol, which has one method `func makeSnapshot(for view: AnyView) -> UIImage`. The `view` parameter is the SwiftUI view which invokes the reactions overlay presentation (the `ChatChannelView`), while the generated `UIImage` is used in the `makeReactionsBackgroundView` method above.
+
+In case you want to implement your own implementation of this protocol, you will need to inject it in our `Utils` class.
+
+```swift
+let snapshotCreator = CustomSnapshotCreator()
+let utils = Utils(snapshotCreator: snapshotCreator)
+let streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
 Finally, you can swap the whole `ReactionsOverlayView` with your own implementation. In order to do this, you need to implement the `makeReactionsOverlayView` method in the `ViewFactory`. The current snapshot of the message list is provided to you, in case you want to blur it or apply any other effects.
 
 ```swift
