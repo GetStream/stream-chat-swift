@@ -270,6 +270,8 @@ GEM
     multi_json (1.15.0)
     multipart-post (2.0.0)
     mustache (1.1.1)
+    mustermann (2.0.2)
+      ruby2_keywords (~> 0.0.1)
     nanaimo (0.3.0)
     nap (1.1.0)
     naturally (2.2.1)
@@ -293,6 +295,9 @@ GEM
       method_source (~> 1.0)
     public_suffix (4.0.7)
     racc (1.6.0)
+    rack (2.2.4)
+    rack-protection (2.2.2)
+      rack
     rainbow (3.1.1)
     rake (13.0.6)
     rchardet (1.8.0)
@@ -339,6 +344,11 @@ GEM
     simctl (1.6.8)
       CFPropertyList
       naturally
+    sinatra (2.2.2)
+      mustermann (~> 2.0)
+      rack (~> 2.2)
+      rack-protection (= 2.2.2)
+      tilt (~> 2.0)
     slather (2.7.2)
       CFPropertyList (>= 2.2, < 4)
       activesupport
@@ -349,6 +359,7 @@ GEM
     terminal-notifier (2.0.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
+    tilt (2.0.11)
     trailblazer-option (0.1.2)
     tty-cursor (0.7.1)
     tty-screen (0.8.1)
@@ -403,6 +414,7 @@ DEPENDENCIES
   rubocop (= 1.12.1)
   rubocop-performance
   rubocop-require_tools
+  sinatra
   slather
   xcode-install
   xctest_list

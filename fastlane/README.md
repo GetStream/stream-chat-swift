@@ -142,6 +142,22 @@ Get next PR number from github to be used in CHANGELOG
 
 Runs tests in Debug config
 
+### start_sinatra
+
+```sh
+[bundle exec] fastlane start_sinatra
+```
+
+Starts Sinatra web server
+
+### stop_sinatra
+
+```sh
+[bundle exec] fastlane stop_sinatra
+```
+
+Stops Sinatra web server
+
 ### test_e2e_mock
 
 ```sh
