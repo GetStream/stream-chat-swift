@@ -506,7 +506,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             textColor = appearance.colorPalette.textLowEmphasis
         }
 
-        let text = content?.text ?? ""
+        let text = content?.textContent ?? ""
         let attributedText = NSAttributedString(
             string: text,
             attributes: [
