@@ -289,6 +289,21 @@ func makeReactionsUsersView(
 }
 ```
 
+The background of the reactions overlay is a blurred snapshot of the current channel view. You can customize it by implementing the `makeReactionsBackgroundView` method in the `ViewFactory`. For example, you can remove the blur, change the opacity, or even return an `EmptyView`. Here's an example implementation of this method:
+
+```swift
+func makeReactionsBackgroundView(
+    currentSnapshot: UIImage,
+    popInAnimationInProgress: Bool
+) -> some View {
+    Image(uiImage: currentSnapshot)
+        .overlay(Color.black.opacity(popInAnimationInProgress ? 0 : 0.1))
+        .blur(radius: popInAnimationInProgress ? 0 : 4)
+}
+```
+
+The `currentSnapshot` parameter returns the current snapshot of the whole view displaying the chat channel. The `popInAnimationInProgress` parameter tells whether the animation is already popped in and can be used to transition between animation states.
+
 Finally, you can swap the whole `ReactionsOverlayView` with your own implementation. In order to do this, you need to implement the `makeReactionsOverlayView` method in the `ViewFactory`. The current snapshot of the message list is provided to you, in case you want to blur it or apply any other effects.
 
 ```swift
