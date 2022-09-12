@@ -94,13 +94,13 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     private let itemCreator: (DTO) throws -> Item
 
     /// Used for observing the changes in the DB.
-    private let frc: NSFetchedResultsController<DTO>
+    let frc: NSFetchedResultsController<DTO>
 
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
-    private let changeAggregator: ListChangeAggregator<DTO, Item>
+    let changeAggregator: ListChangeAggregator<DTO, Item>
 
     /// When called, release the notification observers
-    private var releaseNotificationObservers: (() -> Void)?
+    private(set) var releaseNotificationObservers: (() -> Void)?
 
     private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated)
 
@@ -282,6 +282,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
             // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
             do {
+                self.isInitialized = false
                 try self.startObserving()
             } catch {
                 log.error("Error when starting observing: \(error)")
