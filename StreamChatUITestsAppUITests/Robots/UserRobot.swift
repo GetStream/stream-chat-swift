@@ -245,6 +245,12 @@ extension UserRobot {
     }
     
     @discardableResult
+    func tapOnPushNotification() -> Self {
+        SpringBoard.notificationBanner.wait().safeTap()
+        return self
+    }
+    
+    @discardableResult
     func replyToMessageInThread(
         _ text: String,
         alsoSendInChannel: Bool = false,

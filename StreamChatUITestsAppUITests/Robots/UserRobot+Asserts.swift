@@ -185,6 +185,41 @@ extension UserRobot {
     }
     
     @discardableResult
+    func assertPushNotification(
+        withText text: String,
+        from sender: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let pushNotificationContent = SpringBoard.notificationBanner.wait().text
+        XCTAssertTrue(pushNotificationContent.contains(text),
+                      "\(pushNotificationContent) does not contain \(text)",
+                      file: file,
+                      line: line)
+        XCTAssertTrue(pushNotificationContent.contains(sender),
+                      "\(pushNotificationContent) does not contain \(sender)",
+                      file: file,
+                      line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertAppIconBadge(
+        shouldBeVisible: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        SpringBoard.notificationBanner.wait()
+        let appIconValue = SpringBoard.appIcon.value as? String
+        XCTAssertEqual(appIconValue?.contains("1"),
+                       shouldBeVisible,
+                       "Badge should be visible: \(shouldBeVisible)",
+                       file: file,
+                       line: line)
+        return self
+    }
+    
+    @discardableResult
     func assertMessageCount(
         _ expectedCount: Int,
         file: StaticString = #filePath,
