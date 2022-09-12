@@ -681,13 +681,8 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             )
             if let mentionedUser = tappedMentionedUser {
                 delegate?.messageContentViewDidTapOnMentionedUser(mentionedUser)
+                return false // There's no URL to open, so return false
             }
-        }
-
-        // Long pressing a mentioned user, should not do anything by default.
-        let isMentionedUserInteraction = URL.absoluteString.isEmpty
-        if isMentionedUserInteraction {
-            return interaction == .invokeDefaultAction
         }
 
         return true
