@@ -67,7 +67,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         appearance.formatters.isMarkdownEnabled
     }
     
-    /// A handler for interactions with mentioned users.
+    /// The component responsible to get the tapped mentioned user in a UITextView
     open var textViewUserMentionsHandler: TextViewMentionedUsersHandler = .init()
 
     // MARK: Content && Actions
