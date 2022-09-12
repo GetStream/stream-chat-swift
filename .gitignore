@@ -80,6 +80,8 @@ Sample/Cocoapods/Podfile.lock
 docusaurus/.env
 reports/
 .scannerwork/
+push_payload.json
+sinatra_log.txt
 
 # Ignore Products folder
 Products/
