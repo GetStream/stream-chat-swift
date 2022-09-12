@@ -679,8 +679,8 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 in: characterRange,
                 withMentionedUsers: mentionedUsers
             )
-            tappedMentionedUser.map {
-                delegate?.messageContentViewDidTapOnMentionedUser($0)
+            if let mentionedUser = tappedMentionedUser {
+                delegate?.messageContentViewDidTapOnMentionedUser(mentionedUser)
             }
         }
 
