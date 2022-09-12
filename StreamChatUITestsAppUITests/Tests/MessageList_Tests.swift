@@ -352,8 +352,11 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
     
-    func test_offlineMessageInTheMessageList() {
+    func test_offlineMessageInTheMessageList() throws {
         linkToScenario(withId: 34)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "This test is not stable enough on iOS 12")
         
         let message = "test message"
 

@@ -27,10 +27,12 @@ _Add relevant screenshots and/or videos/gifs to easily see what this PR changes,
 _Explain how this change can be tested manually, if applicable._
 
 ### ☑️ Contributor Checklist
+
 - [ ] I have signed the [Stream CLA](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform) (required)
+- [ ] This change follows zero ⚠️ policy (required)
+- [x] This change should be manually QAed
 - [ ] Changelog is updated with client-facing changes
 - [ ] New code is covered by unit tests
-- [ ] This change follows zero ⚠️ policy (required)
 - [ ] Comparison screenshots added for visual changes
 - [ ] Affected documentation updated (docusaurus, tutorial, CMS)
 
