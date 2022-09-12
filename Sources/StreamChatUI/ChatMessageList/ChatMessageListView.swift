@@ -239,7 +239,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
             // If we are inserting messages at the bottom, update the previous cell
             // to hide the timestamp of the previous message if needed.
-            if self.isLastCellFullyVisible {
+            if self.isLastCellFullyVisible, self.newMessagesSnapshot.count > 1 {
                 let previousMessageIndexPath = IndexPath(item: 1, section: 0)
                 self.reloadRows(at: [previousMessageIndexPath], with: .none)
             }
@@ -251,10 +251,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     internal func reloadSkippedMessages() {
         skippedMessages = []
         newMessagesSnapshot = currentMessagesFromDataSource
+        onNewDataSource?(newMessagesSnapshot)
         reloadData()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.scrollToMostRecentMessage()
-        }
+        scrollToMostRecentMessage()
     }
 }
 

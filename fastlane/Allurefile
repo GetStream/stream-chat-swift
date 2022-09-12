@@ -9,8 +9,9 @@ desc 'Upload test results to Allure TestOps'
 lane :allure_upload do |options|
   branch = github_run_details['head_branch']
   allure_args = "-e #{allure_endpoint} --project-id #{allure_project_id} --launch-id #{options[:launch_id]}"
-  sh("./xcresults export test_output/StreamChatUITestsApp.xcresult #{allure_results_path}")
-  sh("env BRANCH_NAME='#{branch}' ./allurectl upload #{allure_args} #{allure_results_path}")
+  sh("./xcresults export test_output/StreamChatUITestsApp.xcresult #{allure_results_path} || true")
+  sh("./allurectl launch reopen #{options[:launch_id]} || true") # to prevent allure from uploading results to a closed launch
+  sh("env BRANCH_NAME='#{branch}' ./allurectl upload #{allure_args} #{allure_results_path} || true")
   UI.success("Check out test results in Allure TestOps: #{allure_endpoint}/launch/#{options[:launch_id]} 🎉")
 end
 
