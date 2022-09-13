@@ -344,11 +344,10 @@ public extension ChatMessage {
         }
     }
 
-    var isAvailableServerSide: Bool {
-        // If we don't have local state it means the message does not have any pending actions and it is
+    var isLocalOnly: Bool {
+        // If we don't have local state it means the message does not have any pending actions and its state is
         // replicated in both server and local.
-        guard let localState = localState else { return true }
-        return !localState.isLocalOnly
+        localState?.isLocalOnly ?? false
     }
 }
 

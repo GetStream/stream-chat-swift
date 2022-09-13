@@ -739,7 +739,7 @@ public extension ChatChannelController {
         }
 
         let lastLocalMessageId: () -> MessageId? = {
-            self.messages.last { $0.isAvailableServerSide }?.id
+            self.messages.last { !$0.isLocalOnly }?.id
         }
 
         guard let messageId = messageId ?? lastFetchedMessageId ?? lastLocalMessageId() else {
