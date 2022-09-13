@@ -24,7 +24,6 @@ open class TextViewMentionedUsersHandler {
             return nil
         }
         let name = String(text[range].replacingOccurrences(of: "@", with: ""))
-        let user = mentionedUsers.first(where: { $0.name == name })
-        return user
+        return mentionedUsers.first(where: { $0.name == name })
     }
 }
