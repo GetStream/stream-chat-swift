@@ -197,7 +197,7 @@ open class ChatMessageListRouter:
         log.info(
             """
             Performed action to show user profile view of \(user.name ?? user.id).
-            To provide your own profile view, please override ChatMessageRouter.showUser()"
+            To provide your own profile view, please override ChatMessageListRouter.showUser()"
             """
         )
     }
