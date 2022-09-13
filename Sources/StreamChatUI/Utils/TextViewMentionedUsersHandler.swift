@@ -16,7 +16,7 @@ class TextViewMentionedUsersHandler {
     func mentionedUserTapped(
         on textView: UITextView,
         in characterRange: NSRange,
-        withMentionedUsers mentionedUsers: Set<ChatUser>
+        with mentionedUsers: Set<ChatUser>
     ) -> ChatUser? {
         guard let text = textView.text,
               let range = Range(characterRange, in: text)

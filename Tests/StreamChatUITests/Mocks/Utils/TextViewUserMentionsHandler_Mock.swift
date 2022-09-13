@@ -12,7 +12,7 @@ class TextViewUserMentionsHandler_Mock: TextViewMentionedUsersHandler {
     override func mentionedUserTapped(
         on textView: UITextView,
         in characterRange: NSRange,
-        withMentionedUsers mentionedUsers: Set<ChatUser>
+        with mentionedUsers: Set<ChatUser>
     ) -> ChatUser? {
         mockMentionedUser
     }
