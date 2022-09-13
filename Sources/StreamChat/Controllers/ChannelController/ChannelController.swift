@@ -739,8 +739,7 @@ public extension ChatChannelController {
         }
 
         let lastLocalMessageId: () -> MessageId? = {
-            log.assertionFailure("We should not need to fallback to local database messages")
-            return self.messages.last { $0.isAvailableServerSide }?.id
+            self.messages.last { $0.isAvailableServerSide }?.id
         }
 
         guard let messageId = messageId ?? lastFetchedMessageId ?? lastLocalMessageId() else {
