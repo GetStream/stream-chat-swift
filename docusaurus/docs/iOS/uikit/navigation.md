@@ -14,7 +14,7 @@ The navigation of StreamChatUI SDK is handled by `NavigationRouter`'s. Currently
 
 ### Presenting a custom user profile view
 
-Currently, the StreamChatUI SDK does not come with a user profile view out of the box, since most apps already have their own user profile view. If you want to show your user profile view whenever the the user clicks on an avatar or clicks on a user mention, you can do so my customizing the `ChatMessageListRouter`.
+Currently, the StreamChatUI SDK does not come with a user profile view out of the box, since most apps already have their own user profile view. If you want to show your user profile view whenever the user clicks on an avatar or clicks on a user mention, you can do so my customizing the `ChatMessageListRouter`.
 
 ```swift
 import Foundation
