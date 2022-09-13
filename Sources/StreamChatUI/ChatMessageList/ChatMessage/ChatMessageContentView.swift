@@ -68,7 +68,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     }
     
     /// The component responsible to get the tapped mentioned user in a UITextView
-    open var textViewUserMentionsHandler: TextViewMentionedUsersHandler = .init()
+    var textViewUserMentionsHandler = TextViewMentionedUsersHandler()
 
     // MARK: Content && Actions
 

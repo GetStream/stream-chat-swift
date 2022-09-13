@@ -6,14 +6,14 @@ import StreamChat
 import UIKit
 
 /// The component responsible to get the tapped mentioned user in a `UITextView`.
-open class TextViewMentionedUsersHandler {
+class TextViewMentionedUsersHandler {
     /// Get the tapped mentioned user in a text view.
     /// - Parameters:
     ///   - textView: The `UITextView` being tapped.
     ///   - characterRange: The location where the tap was performed.
     ///   - mentionedUsers: The current mentioned users in the message.
     /// - Returns: The `ChatUser` in case it tapped a mentioned user.
-    open func mentionedUserTapped(
+    func mentionedUserTapped(
         on textView: UITextView,
         in characterRange: NSRange,
         withMentionedUsers mentionedUsers: Set<ChatUser>
