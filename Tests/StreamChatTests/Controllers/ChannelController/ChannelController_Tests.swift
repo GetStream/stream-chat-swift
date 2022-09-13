@@ -2220,6 +2220,53 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(paginationMessageId, "6")
         XCTAssertEqual(receivedError, error)
     }
+
+    func test_loadPreviousMessages_usesLastLocalId_whenThereIsNot_lastFetchedId() throws {
+        // We purposefully don't perform a synchronize. We are trying to simulate a case where a synchronize call fails.
+        // We store some messages in the database so those can be used to try to paginate.
+        let oldestPendingId = "oldest-pending"
+        let newestId = "newest-notpending"
+        let messages: [MessagePayload] = [
+            .dummy(
+                messageId: oldestPendingId,
+                authorUserId: "1",
+                updatedAt: Date().addingTimeInterval(100)
+            ),
+            .dummy(
+                messageId: newestId,
+                authorUserId: "1",
+                updatedAt: Date()
+            )
+        ]
+        let payload = dummyPayload(with: channelId, messages: messages)
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+            let pendingMessage = session.message(id: oldestPendingId)
+            pendingMessage?.localMessageState = .pendingSend
+        }
+
+        let expectation2 = expectation(description: "loadPreviousMessage completes")
+        var receivedError: Error?
+        controller.loadPreviousMessages() { error in
+            receivedError = error
+            expectation2.fulfill()
+        }
+
+        let error = TestError()
+        env.channelUpdater!.update_completion?(.failure(error))
+
+        waitForExpectations(timeout: 0.1)
+
+        let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .lessThan(paginationMessageId) = paginationParameter else {
+            XCTFail("Missing pagination parameter")
+            return
+        }
+
+        // Should use the latest message in database that is also available on the server
+        XCTAssertEqual(paginationMessageId, newestId)
+        XCTAssertEqual(receivedError, error)
+    }
     
     // MARK: - `loadNextMessages`
     

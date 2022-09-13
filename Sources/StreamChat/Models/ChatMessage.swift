@@ -343,6 +343,12 @@ public extension ChatMessage {
             return readByCount > 0 ? .read : .sent
         }
     }
+
+    var isLocalOnly: Bool {
+        // If we don't have local state it means the message does not have any pending actions and its state is
+        // replicated in both server and local.
+        localState?.isLocalOnly ?? false
+    }
 }
 
 extension ChatMessage: Hashable {

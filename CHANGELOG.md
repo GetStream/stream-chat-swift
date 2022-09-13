@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+## StreamChat
+### 🐞 Fixed
+- Fixed pagination in message list not working when synchronize does not succeed [#2241](https://github.com/GetStream/stream-chat-swift/pull/2241)
 
 ## StreamChatUI
 ### ✅ Added
