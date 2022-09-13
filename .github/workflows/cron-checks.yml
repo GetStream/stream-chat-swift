@@ -66,9 +66,9 @@ jobs:
       matrix:
         xcode: [13.4.1, 13.1]
         os: [macos-12]
-        include:
-          - xcode: 12.5.1
-            os: macos-11
+        # include: // CIS-2167
+        #   - xcode: 12.5.1
+        #     os: macos-11
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
