@@ -1,3 +1,0 @@
----
-title: Channel List Router
----
