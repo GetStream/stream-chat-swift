@@ -45,7 +45,8 @@
             "uikit/views/avatar",
             "uikit/views/reactions"
           ]
-        }
+        },
+        "uikit/navigation"
       ]
     },
     {
