@@ -35,9 +35,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func registerForPushNotifications() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
-            guard granted else { return }
-            self?.getNotificationSettings()
+        if #available(iOS 14, *) {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
+                guard granted else { return }
+                self?.getNotificationSettings()
+            }
         }
     }
     
