@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - User mentions suggestions would not show when typing in a new line [#2253](https://github.com/GetStream/stream-chat-swift/pull/2253)
 - User mentions suggestions would stop showing when typing a space [#2253](https://github.com/GetStream/stream-chat-swift/pull/2253)
+- Fix Thread not loading more replies [#2297](https://github.com/GetStream/stream-chat-swift/pull/2297)
+- Fix Channel and Thread pagination not working when initialized offline [#2297](https://github.com/GetStream/stream-chat-swift/pull/2297)
 
 # [4.21.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.1)
 _September 06, 2022_
