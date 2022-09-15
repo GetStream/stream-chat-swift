@@ -59,8 +59,7 @@ public struct ChatMessage {
     /// If message is inline reply this property will contain the message quoted by this reply.
     ///
     public var quotedMessage: ChatMessage? { _quotedMessage }
-
-    @CoreDataLazy internal var _quotedMessage: ChatMessage?
+    @CoreDataLazy(forceLazy: true) internal var _quotedMessage: ChatMessage?
     
     /// A flag indicating whether the message was bounced due to moderation.
     public let isBounced: Bool
@@ -116,8 +115,8 @@ public struct ChatMessage {
     ///
     /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
     public var latestReplies: [ChatMessage] { _latestReplies }
-    
-    @CoreDataLazy internal var _latestReplies: [ChatMessage]
+    // stream:annotation "Move to async"
+    @CoreDataLazy(forceLazy: true) internal var _latestReplies: [ChatMessage]
     
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
@@ -164,7 +163,7 @@ public struct ChatMessage {
     /// it's recommended to use `readByCount` instead of `readBy.count` for better performance.
     public var readBy: Set<ChatUser> { _readBy }
     
-    @CoreDataLazy internal var _readBy: Set<ChatUser>
+    @CoreDataLazy(forceLazy: true) internal var _readBy: Set<ChatUser>
     
     /// For the message authored by the current user this field contains number of channel members
     /// who has read this message (excluding the current user).
@@ -172,7 +171,7 @@ public struct ChatMessage {
     /// - Note: For the message authored by other channel members this field always returns `0`.
     public var readByCount: Int { readBy.count }
     
-    @CoreDataLazy internal var _readByCount: Int
+    @CoreDataLazy(forceLazy: true) internal var _readByCount: Int
     
     internal init(
         id: MessageId,
