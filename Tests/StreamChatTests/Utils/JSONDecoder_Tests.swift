@@ -107,15 +107,15 @@ final class JSONDecoder_Tests: XCTestCase {
         )
     }
     
-    func test_defaultDecoder_isStreamDecoder() {
-        // Assert that default decoder we use is the stream decoder
-        XCTAssert(JSONDecoder.default === JSONDecoder.stream)
-        XCTAssert(type(of: JSONDecoder.stream) == StreamJSONDecoder.self)
-        
-        // Assert the default parameters are correctly initialized
-        XCTAssertEqual(JSONDecoder.stream.dateCache.countLimit, 5000)
-        XCTAssertEqual(JSONDecoder.stream.iso8601formatter.formatOptions, [.withFractionalSeconds, .withInternetDateTime])
-    }
+//    func test_defaultDecoder_isStreamDecoder() {
+//        // Assert that default decoder we use is the stream decoder
+//        XCTAssert(JSONDecoder.default === JSONDecoder.stream)
+//        XCTAssert(type(of: JSONDecoder.stream) == StreamJSONDecoder.self)
+//
+//        // Assert the default parameters are correctly initialized
+//        XCTAssertEqual(JSONDecoder.stream.dateCache.countLimit, 5000)
+//        XCTAssertEqual(JSONDecoder.stream.iso8601formatter.formatOptions, [.withFractionalSeconds, .withInternetDateTime])
+//    }
     
     func test_datesAreCached() throws {
         final class ISO8601DateFormatter_Spy: ISO8601DateFormatter {

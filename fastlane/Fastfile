@@ -778,7 +778,7 @@ lane :rubocop do
 end
 
 def check_required?(type)
-  return true # if ENV['GITHUB_EVENT_NAME'] != 'pull_request'
+  return true if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
 
   sources = {
     e2e: %w[Sources StreamChatUITestsAppUITests StreamChatUITestsApp StreamChat.xcodeproj],
