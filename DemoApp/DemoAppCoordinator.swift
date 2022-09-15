@@ -62,6 +62,7 @@ private extension DemoAppCoordinator {
         }
         
         set(rootViewController: chatVC, animated: animated)
+        DemoAppConfiguration.showPerformanceTracker()
     }
     
     func showLogin(animated: Bool) {

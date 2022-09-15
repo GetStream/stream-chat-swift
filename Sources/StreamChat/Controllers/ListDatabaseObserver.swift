@@ -263,7 +263,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             onChange = nil
         }
     }
-    
+
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
     /// are received.
     private func listenForRemoveAllDataNotifications() {
