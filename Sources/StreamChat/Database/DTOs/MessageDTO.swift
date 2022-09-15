@@ -1008,6 +1008,7 @@ private extension ChatMessage {
         }
 
         $_quotedMessage = ({ try? dto.quotedMessage?.asModel() }, dto.managedObjectContext)
+
         let readBy = {
             Set(dto.reads.compactMap { try? $0.user.asModel() })
         }
