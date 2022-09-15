@@ -18,7 +18,7 @@ runs:
         ios_version_dash=${ios_version//./-} # ex: 12.4 -> 12-4
 
         ls /Applications | grep Xcode
-        sudo xcode-select -s /Applications/Xcode_$xcode_version.app
+        sudo xcode-select -s /Applications/Xcode_$xcode_version.app/Contents/Developer
 
         sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
         sudo ln -s /Applications/Xcode_$xcode_version.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ $ios_version.simruntime
