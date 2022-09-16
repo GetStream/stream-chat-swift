@@ -187,10 +187,6 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if channelController.state != .remoteDataFetched {
-            return
-        }
-
         guard messageListVC.listView.isTrackingOrDecelerating else {
             return
         }

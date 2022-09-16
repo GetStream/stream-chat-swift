@@ -1074,7 +1074,6 @@ final class MessageController_Tests: XCTestCase {
     }
     
     func test_loadPreviousReplies_callsMessageUpdater_withCorrectValues() {
-        // Simulate `loadNextReplies` call
         controller.loadPreviousReplies()
         
         // Assert message updater is called with correct values
@@ -1083,34 +1082,34 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25))
     }
     
-    func test_loadPreviousReplies_noMessageIdPassed_properlyHandlesPagination() {
-        // Simulate `loadNextReplies` call
-        controller.loadPreviousReplies(
-            limit: 21,
-            completion: nil
-        )
-        
-        // Pagination should not have a parameter because this is the first call
-        XCTAssertNil(env.messageUpdater.loadReplies_pagination?.parameter)
-        
+    func test_loadPreviousReplies_noMessageIdPassed_noLastMessageFetched_usesLastMessageFromDB() {
+        // Create observers
+        controller.synchronize()
+
         // Call `loadPreviousReplies`, this time since the first batch was received already it should
         // pass the last message id
         env.messageUpdater.loadReplies_completion?(
             .success(
                 .init(
-                    messages: (0...30).map {
-                        _ in MessagePayload.dummy(messageId: .unique, authorUserId: .unique)
-                    }
+                    messages: []
                 )
             )
         )
         _ = controller.replies
         env.repliesObserver.items_mock = [
             .mock(
+                id: "first message", cid: .unique, text: .unique, author: .unique
+            ),
+            .mock(
                 id: "last message", cid: .unique, text: .unique, author: .unique
+            ),
+            // The last message used for pagination, needs to be in the server as well,
+            // so this one should not be used
+            .mock(
+                id: "last message only local", cid: .unique, text: .unique, author: .unique, localState: .pendingSync
             )
         ]
-        
+
         controller.loadPreviousReplies(
             limit: 21,
             completion: nil
@@ -1121,9 +1120,39 @@ final class MessageController_Tests: XCTestCase {
             .lessThan("last message")
         )
     }
+
+    func test_loadPreviousReplies_noMessageIdPassed_usesLastFetchedId() {
+        controller.loadPreviousReplies(
+            limit: 21,
+            completion: nil
+        )
+
+        // Pagination should not have a parameter because this is the first call
+        XCTAssertNil(env.messageUpdater.loadReplies_pagination?.parameter)
+
+        // The last fetched message id, is actually the first from the payload
+        var messages: [MessagePayload] = [MessagePayload.dummy(messageId: "last message", authorUserId: .unique)]
+        messages += (0...30).map { _ in
+            MessagePayload.dummy(messageId: .unique, authorUserId: .unique)
+        }
+
+        env.messageUpdater.loadReplies_completion?(
+            .success(.init(messages: messages))
+        )
+        _ = controller.replies
+
+        controller.loadPreviousReplies(
+            limit: 21,
+            completion: nil
+        )
+
+        XCTAssertEqual(
+            env.messageUpdater.loadReplies_pagination?.parameter,
+            .lessThan("last message")
+        )
+    }
     
     func test_loadPreviousReplies_messageIdPassed_properlyHandlesPagination() {
-        // Simulate `loadNextReplies` call
         controller.loadPreviousReplies(
             before: "last message",
             limit: 21,
