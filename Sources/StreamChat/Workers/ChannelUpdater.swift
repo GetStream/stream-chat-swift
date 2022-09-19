@@ -39,11 +39,10 @@ class ChannelUpdater: Worker {
                 let payload = try result.get()
                 channelCreatedCallback?(payload.channel.cid)
                 database?.write { session in
-                    if let channelDTO = session.channel(cid: payload.channel.cid) {
-                        channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
-                    }
-                    
-                    if isFirstPage, let channelDTO = session.channel(cid: payload.channel.cid) {
+                    let channelDTO = session.channel(cid: payload.channel.cid)
+                    channelDTO?.cleanMessagesThatFailedToBeEditedDueToModeration()
+
+                    if isFirstPage, let channelDTO = channelDTO {
                         channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
                     }
 
