@@ -3,10 +3,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
-
 # [4.21.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.2)
 _September 19, 2022_
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix the Message List cell not updating when a Reaction of the same type was updated but from the current user [#2304](https://github.com/GetStream/stream-chat-swift/pull/2304)
+- Fix the Message List cell not updating when the number of reactions of the same type changed [#2304](https://github.com/GetStream/stream-chat-swift/pull/2304)
 
 # [4.21.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.1)
 _September 06, 2022_
