@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fixed pagination in message list not working when synchronize does not succeed [#2241](https://github.com/GetStream/stream-chat-swift/pull/2241)
 - Do not mark channels as read when the controller is not on screen [#2288](https://github.com/GetStream/stream-chat-swift/pull/2288)
+- Do not show old messages not belonging to the history when paginating [#2298](https://github.com/GetStream/stream-chat-swift/pull/2298)). Caveat: [Explained here](https://github.com/GetStream/stream-chat-swift/pull/2298)
 
 ## StreamChatUI
 ### ✅ Added
