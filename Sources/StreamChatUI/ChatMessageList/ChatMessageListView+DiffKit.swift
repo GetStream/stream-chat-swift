@@ -43,8 +43,9 @@ extension ChatMessage: Differentiable {
             && extraData == source.extraData
             && quotedMessage == source.quotedMessage
             && isShadowed == source.isShadowed
-            && reactionCounts.count == source.reactionCounts.count
-            && reactionScores.count == source.reactionScores.count
+            && currentUserReactions.count == source.currentUserReactions.count
+            && reactionCounts == source.reactionCounts
+            && reactionScores == source.reactionScores
             && threadParticipants.count == source.threadParticipants.count
             && localState == source.localState
             && isFlaggedByCurrentUser == source.isFlaggedByCurrentUser
