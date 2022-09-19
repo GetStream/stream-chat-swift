@@ -244,6 +244,13 @@ final class ChatChannelVC_Tests: XCTestCase {
         // Load the view with the initial messages
         _ = vc.view
 
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight],
+            suffix: "before-current-user-reaction"
+        )
+
         // Fake an update of the message, to add a reaction of the same type from the current user
         channelControllerMock.messages_mock = [
             .mock(
@@ -261,7 +268,8 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(
             vc,
             isEmbeddedInNavigationController: true,
-            variants: [.defaultLight]
+            variants: [.defaultLight],
+            suffix: "after-current-user-reaction"
         )
     }
 
