@@ -51,7 +51,7 @@ class AsyncOperation: BaseOperation {
 class BaseOperation: Operation {
     private var _finished = false
     private var _executing = false
-    private let stateQueue = DispatchQueue(label: "io.getstream.base-operation")
+    private let stateQueue = DispatchQueue(label: "io.getstream.base-operation", attributes: .concurrent)
 
     override var isExecuting: Bool {
         get {
