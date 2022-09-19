@@ -5,7 +5,7 @@
 import Foundation
 
 final class ThreadSafeWeakCollection<T: AnyObject> {
-    private let queue = DispatchQueue(label: "io.stream.com.weak-collection")
+    private let queue = DispatchQueue(label: "io.stream.com.weak-collection", attributes: .concurrent)
     private let storage = NSHashTable<T>.weakObjects()
 
     var allObjects: [T] {

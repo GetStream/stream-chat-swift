@@ -81,12 +81,6 @@ open class ChatChannelVC: _ViewController,
         messageListVC.client = client
         
         messageComposerVC.userSearchController = userSuggestionSearchController
-        
-        func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
-            guard messageComposerVC.channelController == nil else { return }
-            let composerChannelController = channelController.cid.map { client.channelController(for: $0) }
-            messageComposerVC.channelController = composerChannelController
-        }
 
         setChannelControllerToComposerIfNeeded(cid: channelController.cid)
 
@@ -95,12 +89,17 @@ open class ChatChannelVC: _ViewController,
             if let error = error {
                 log.error("Error when synchronizing ChannelController: \(error)")
             }
-            setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
+            self?.setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
             self?.messageComposerVC.updateContent()
         }
 
         // Initial messages data
         messages = Array(channelController.messages)
+    }
+
+    private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
+        guard messageComposerVC.channelController == nil, let cid = cid else { return }
+        messageComposerVC.channelController = client.channelController(for: cid)
     }
 
     override open func setUpLayout() {

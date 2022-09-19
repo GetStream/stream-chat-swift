@@ -1705,7 +1705,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 }
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 1)
+            wait(for: [exp], timeout: 2)
 
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
