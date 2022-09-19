@@ -225,7 +225,46 @@ final class ChatChannelVC_Tests: XCTestCase {
             variants: [.defaultLight]
         )
     }
-    
+
+    func test_whenReactionIsAddedByCurrentUserWithSameType_shouldUpdateReactionColor() {
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(
+                    id: "1",
+                    text: "One",
+                    reactionScores: ["love": 1],
+                    reactionCounts: ["love": 1],
+                    latestReactions: [.mock(type: "love")]
+                )
+            ],
+            state: .localDataFetched
+        )
+
+        // Load the view with the initial messages
+        _ = vc.view
+
+        // Fake an update of the message, to add a reaction of the same type from the current user
+        channelControllerMock.messages_mock = [
+            .mock(
+                id: "1",
+                text: "One",
+                reactionScores: ["love": 2],
+                reactionCounts: ["love": 2],
+                latestReactions: [.mock(type: "love"), .mock(type: "love")],
+                currentUserReactions: [.mock(type: "love")]
+            )
+        ]
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+
+        // Verify that the reaction was updated
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
     // MARK: - Message grouping
     
     private var maxTimeInterval: TimeInterval { 60 }
