@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.21.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.2)
+_September 19, 2022_
+
 # [4.21.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.1)
 _September 06, 2022_
 
