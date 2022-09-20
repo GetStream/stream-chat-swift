@@ -220,7 +220,7 @@ class MessageDTO: NSManagedObject {
 
         let messageTypePredicate = NSCompoundPredicate(format: "type IN %@", validTypes)
 
-        // Some pinned messages might be in the local database, but should not be fetched
+        // Some quoted/pinned messages might be in the local database, but should not be fetched
         // if they do not belong to the regular channel query.
         let ignoreOlderMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             .init(format: "channel.oldestMessageAt == nil"),
