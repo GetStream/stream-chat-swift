@@ -18,6 +18,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix Thread not loading more replies [#2297](https://github.com/GetStream/stream-chat-swift/pull/2297)
 - Fix Channel and Thread pagination not working when initialized offline [#2297](https://github.com/GetStream/stream-chat-swift/pull/2297)
 
+# [4.21.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.2)
+_September 19, 2022_
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix Message List cell not updating when an existing reaction of the same type was updated from the current user [#2304](https://github.com/GetStream/stream-chat-swift/pull/2304)
+- Fix Message List cell not updating when the number of reactions of the same type changed [#2304](https://github.com/GetStream/stream-chat-swift/pull/2304)
+
 # [4.21.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.1)
 _September 06, 2022_
 
