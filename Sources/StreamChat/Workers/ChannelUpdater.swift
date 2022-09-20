@@ -31,7 +31,7 @@ class ChannelUpdater: Worker {
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
-        let clearMessageHistory = channelQuery.pagination?.parameter == nil
+        let isFirstPage = channelQuery.pagination?.parameter == nil
         let isChannelCreate = channelCreatedCallback != nil
 
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
@@ -39,15 +39,14 @@ class ChannelUpdater: Worker {
                 let payload = try result.get()
                 channelCreatedCallback?(payload.channel.cid)
                 database?.write { session in
-                    if let channelDTO = session.channel(cid: payload.channel.cid) {
-                        channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
-                    }
-                    
-                    if clearMessageHistory, let channelDTO = session.channel(cid: payload.channel.cid) {
+                    let channelDTO = session.channel(cid: payload.channel.cid)
+                    channelDTO?.cleanMessagesThatFailedToBeEditedDueToModeration()
+
+                    if isFirstPage, let channelDTO = channelDTO {
                         channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
                     }
 
-                    try session.saveChannel(payload: payload)
+                    try session.saveChannel(payload: payload, isPaginatedPayload: !isFirstPage)
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -425,7 +424,7 @@ class ChannelUpdater: Worker {
                     }
                     // In any case (backend reported another page of watchers or no watchers)
                     // we should save the payload as it's the latest state of the channel
-                    try session.saveChannel(payload: payload)
+                    try session.saveChannel(payload: payload, isPaginatedPayload: false)
                 } completion: { error in
                     completion?(error)
                 }

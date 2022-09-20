@@ -23,6 +23,18 @@ final class DatabaseSession_Mock: DatabaseSession {
 
 // Here start the boilerplate that forwards and intercepts the session calls if needed
 
+extension DatabaseSession {
+    @discardableResult
+    func saveChannel(
+        payload: ChannelPayload,
+        isPaginatedPayload: Bool = false,
+        query: ChannelListQuery? = nil,
+        cache: PreWarmedCache? = nil
+    ) throws -> ChannelDTO {
+        return try saveChannel(payload: payload, query: query, isPaginatedPayload: isPaginatedPayload, cache: cache)
+    }
+}
+
 extension DatabaseSession_Mock {
     func addReaction(
         to messageId: MessageId,
@@ -59,7 +71,7 @@ extension DatabaseSession_Mock {
     func saveChannelList(payload: ChannelListPayload, query: ChannelListQuery?) -> [ChannelDTO] {
         return underlyingSession.saveChannelList(payload: payload, query: query)
     }
-    
+
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?,
@@ -248,16 +260,17 @@ extension DatabaseSession_Mock {
     func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
         underlyingSession.loadAllChannelListQueries()
     }
-    
+
     func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?,
+        isPaginatedPayload: Bool,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveChannel(payload: payload, query: query, cache: cache)
+        return try underlyingSession.saveChannel(payload: payload, query: query, isPaginatedPayload: isPaginatedPayload, cache: cache)
     }
-    
+
     func channel(cid: ChannelId) -> ChannelDTO? {
         underlyingSession.channel(cid: cid)
     }
