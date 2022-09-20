@@ -19,8 +19,7 @@ public extension StreamMockServer {
             try self?.messageUpdate(request)
         }
         server.register(MockEndpoint.replies) { [weak self] request in
-            let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
-            return self?.mockMessageReplies(messageId)
+            try self?.limitReplies(request)
         }
         server.register(MockEndpoint.action) { [weak self] request in
             let json = TestData.toJson(request.body)
@@ -63,7 +62,8 @@ public extension StreamMockServer {
         showReplyInChannel: Bool? = nil,
         quotedMessageId: String? = nil,
         quotedMessage: [String: Any]? = nil,
-        attachments: Any? = nil
+        attachments: Any? = nil,
+        replyCount: Int? = 0
     ) -> [String: Any]? {
         var mockedMessage = message
         mockedMessage?[messageKey.type.rawValue] = messageType.rawValue
@@ -112,6 +112,9 @@ public extension StreamMockServer {
         }
         if let user = user {
             mockedMessage?[messageKey.user.rawValue] = user
+        }
+        if let replyCount = replyCount {
+            mockedMessage?[messageKey.replyCount.rawValue] = replyCount
         }
         return mockedMessage
     }
@@ -534,9 +537,61 @@ public extension StreamMockServer {
         return .ok(.json(json))
     }
     
-    private func mockMessageReplies(_ messageId: String) -> HttpResponse {
+    private func limitReplies(_ request: HttpRequest) throws -> HttpResponse {
+        let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
         var json = "{\"\(JSONKey.messages)\":[]}".json
-        let messages = findMessagesByParrentId(messageId)
+        var messages = findMessagesByParrentId(messageId)
+        
+        guard
+            let limitQueryParam = request.queryParams.first(where: { $0.0 == MessagesPagination.CodingKeys.pageSize.rawValue })
+        else {
+            json[JSONKey.messages] = messages
+            return .ok(.json(json))
+        }
+        
+        let limit = (limitQueryParam.1 as NSString).integerValue
+        if let idLt = request.queryParams.first(where: { $0.0 == PaginationParameter.CodingKeys.lessThan.rawValue })?.1 {
+            let messageIndex = messages.firstIndex {
+                idLt == $0[messageKey.id.rawValue] as? String
+            }
+            if let messageIndex = messageIndex {
+                let startWith = messageIndex - limit > 0 ? messageIndex - limit : 0
+                let endWith = messageIndex - 1 > 0 ? messageIndex - 1 : 0
+                messages = Array(messages[startWith...endWith])
+            }
+        } else if let idGt = request.queryParams.first(where: { $0.0 == PaginationParameter.CodingKeys.greaterThan.rawValue })?.1 {
+            let messageIndex = messages.firstIndex {
+                idGt == $0[messageKey.id.rawValue] as? String
+            }
+            if let messageIndex = messageIndex {
+                let messageCount = messages.count - 1
+                let plusLimit = messageIndex + limit
+                let endWith = plusLimit < messageCount ? plusLimit : messageCount
+                messages = Array(messages[messageIndex + 1...endWith])
+            }
+        } else if let idLte = request.queryParams.first(where: { $0.0 == PaginationParameter.CodingKeys.lessThanOrEqual.rawValue })?.1 {
+            let messageIndex = messages.firstIndex {
+                idLte == $0[messageKey.id.rawValue] as? String
+            }
+            if let messageIndex = messageIndex {
+                let minusLimit = messageIndex - limit
+                let startWith = minusLimit > 0 ? minusLimit : 0
+                messages = Array(messages[startWith + 1...messageIndex])
+            }
+        } else if let idGte = request.queryParams.first(where: { $0.0 == PaginationParameter.CodingKeys.greaterThanOrEqual.rawValue })?.1 {
+            let messageIndex = messages.firstIndex {
+                idGte == $0[messageKey.id.rawValue] as? String
+            }
+            if let messageIndex = messageIndex {
+                let messageCount = messages.count - 1
+                let plusLimit = messageIndex + limit
+                let endWith = plusLimit < messageCount ? plusLimit - 1 : messageCount
+                messages = Array(messages[messageIndex...endWith])
+            }
+        } else {
+            messages = Array(messages.suffix(limit))
+        }
+        
         json[JSONKey.messages] = messages
         return .ok(.json(json))
     }

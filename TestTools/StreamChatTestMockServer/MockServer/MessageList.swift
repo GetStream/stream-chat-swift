@@ -18,6 +18,17 @@ public extension StreamMockServer {
         }
     }
     
+    func saveReply(_ message: [String: Any]?) {
+        guard let newMessage = message else { return }
+        if let index = threadList.firstIndex(where: { (message) -> Bool in
+            (newMessage[messageKey.id.rawValue] as? String) == (message[messageKey.id.rawValue] as? String)
+        }) {
+            threadList[index] = newMessage
+        } else {
+            threadList.append(newMessage)
+        }
+    }
+    
     var firstMessage: [String: Any]? {
         try? XCTUnwrap(waitForMessageList().first)
     }
@@ -40,7 +51,7 @@ public extension StreamMockServer {
     
     func findMessagesByParrentId(_ parentId: String) -> [[String: Any]] {
         _ = waitForMessageWithId(parentId)
-        return messageList.filter {
+        return (messageList + threadList).filter {
             ($0[messageKey.parentId.rawValue] as? String) == parentId
         }
     }

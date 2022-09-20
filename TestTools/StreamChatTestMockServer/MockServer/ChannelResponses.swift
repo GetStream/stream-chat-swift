@@ -314,6 +314,7 @@ public extension StreamMockServer {
     func mockChannels(
         count: Int,
         messagesCount: Int,
+        replyCount: Int = 0,
         author: [String: Any]?,
         members: [[String: Any]],
         sampleChannel: [String: Any]
@@ -338,19 +339,29 @@ public extension StreamMockServer {
             
             if messagesCount > 0 {
                 for messageIndex in 1...messagesCount {
-                    let timeInterval = TimeInterval(messageIndex * 1000 - 123_456_789)
-                    let timestamp = TestData.stringTimestamp(Date(timeIntervalSinceNow: timeInterval))
-                    let message = mockMessage(
-                        TestData.toJson(.message)[JSONKey.message] as? [String : Any],
-                        channelId: channelDetails?[channelKey.id.rawValue] as? String,
-                        messageId: TestData.uniqueId,
-                        text: String(messageIndex),
-                        user: author,
-                        createdAt: timestamp,
-                        updatedAt: timestamp
+                    let channelId = channelDetails?[channelKey.id.rawValue] as? String
+                    let messageId = TestData.uniqueId
+                    let newMessage = generateMessage(
+                        withIndex: messageIndex,
+                        withId: messageId,
+                        channelId: channelId,
+                        author: author,
+                        replyCount: replyCount
                     )
-                    messages.append(message)
-                    saveMessage(message)
+                    messages.append(newMessage)
+                    
+                    if replyCount > 0 {
+                        for replyIndex in 1...replyCount {
+                            generateMessage(
+                                withIndex: replyIndex,
+                                withId: TestData.uniqueId,
+                                inThread: true,
+                                parentId: messageId,
+                                channelId: channelId,
+                                author: author
+                            )
+                        }
+                    }
                 }
             }
             
@@ -360,6 +371,33 @@ public extension StreamMockServer {
         }
         
         return channels
+    }
+    
+    @discardableResult
+    private func generateMessage(
+        withIndex index: Int,
+        withId id: String?,
+        inThread: Bool = false,
+        parentId: String? = nil,
+        channelId: String?,
+        author: [String: Any]?,
+        replyCount: Int? = 0
+    ) -> [String : Any]? {
+        let timeInterval = TimeInterval(index * 1000 - 123_456_789)
+        let timestamp = TestData.stringTimestamp(Date(timeIntervalSinceNow: timeInterval))
+        let message = mockMessage(
+            TestData.toJson(.message)[JSONKey.message] as? [String : Any],
+            channelId: channelId,
+            messageId: id,
+            text: String(index),
+            user: author,
+            createdAt: timestamp,
+            updatedAt: timestamp,
+            parentId: parentId,
+            replyCount: replyCount
+        )
+        inThread ? saveReply(message) : saveMessage(message)
+        return message
     }
     
     private func mockChannelDetails(

@@ -16,6 +16,7 @@ public final class StreamMockServer {
     public private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
     private var channelConfigs = ChannelConfigs()
+    public var threadList: [[String: Any]] = []
     public var messageList: [[String: Any]] = []
     public var channelList = TestData.toJson(.httpChannels)
     public var currentChannelId = ""
