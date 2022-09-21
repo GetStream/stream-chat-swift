@@ -213,6 +213,7 @@ public class ChatClient {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = false
         config.httpAdditionalHeaders = sessionHeaders
+        config.timeoutIntervalForRequest = 30
         return config
     }
     
