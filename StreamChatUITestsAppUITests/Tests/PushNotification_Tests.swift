@@ -49,16 +49,17 @@ final class PushNotification_Tests: StreamTestCase {
     func test_pushNotification_optionalValuesAreEmpty() throws {
         linkToScenario(withId: 293)
 
-        mockPushNotification(body: message,
-                 title: "",
-                 badge: 0,
-                 mutableContent: 0,
-                 category: "",
-                 type: "",
-                 sender: "",
-                 version: "",
-                 messageId: "",
-                 cid: ""
+        mockPushNotification(
+            body: message,
+            title: "",
+            badge: 0,
+            mutableContent: 0,
+            category: "",
+            type: "",
+            sender: "",
+            version: "",
+            messageId: "",
+            cid: ""
          )
         
         GIVEN("user goes to message list") {
@@ -70,16 +71,18 @@ final class PushNotification_Tests: StreamTestCase {
     func test_pushNotification_optionalValuesContainIncorrectType() throws {
         linkToScenario(withId: 294)
 
-        mockPushNotification(body: message,
-                             title: 42,
-                             badge: "test",
-                             mutableContent: "test",
-                             category: 42,
-                             type: 42,
-                             sender: 42,
-                             version: 42,
-                             messageId: 42,
-                             cid: 42)
+        mockPushNotification(
+            body: message,
+            title: 42,
+            badge: "test",
+            mutableContent: "test",
+            category: 42,
+            type: 42,
+            sender: 42,
+            version: 42,
+            messageId: 42,
+            cid: 42
+        )
         
         GIVEN("user goes to message list") {
             userRobot.login().openChannel()
@@ -90,16 +93,18 @@ final class PushNotification_Tests: StreamTestCase {
     func test_pushNotification_optionalValuesContainIncorrectData() throws {
         linkToScenario(withId: 295)
 
-        mockPushNotification(body: message,
-                             title: -1,
-                             badge: -1,
-                             mutableContent: -1,
-                             category: "test",
-                             type: "test",
-                             sender: "test",
-                             version: "test",
-                             messageId: "test",
-                             cid: "test")
+        mockPushNotification(
+            body: message,
+            title: -1,
+            badge: -1,
+            mutableContent: -1,
+            category: "test",
+            type: "test",
+            sender: "test",
+            version: "test",
+            messageId: "test",
+            cid: "test"
+        )
         
         GIVEN("user goes to message list") {
             userRobot.login().openChannel()
@@ -234,9 +239,11 @@ final class PushNotification_Tests: StreamTestCase {
             deviceRobot.moveApplication(to: .background)
         }
         AND("participant sends a message") {
-            participantRobot.wait(2).sendMessage(message,
-                                                 withPushNotification: true,
-                                                 bundleIdForPushNotification: app.bundleId())
+            participantRobot.wait(2).sendMessage(
+                message,
+                withPushNotification: true,
+                bundleIdForPushNotification: app.bundleId()
+            )
         }
         THEN("user receives a push notification") {
             userRobot.assertPushNotification(withText: message, from: sender)
