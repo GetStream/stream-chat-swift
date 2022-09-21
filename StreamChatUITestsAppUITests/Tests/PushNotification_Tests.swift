@@ -50,15 +50,16 @@ final class PushNotification_Tests: StreamTestCase {
         linkToScenario(withId: 293)
 
         mockPushNotification(body: message,
-                             title: "",
-                             badge: 0,
-                             mutableContent: 0,
-                             category: "",
-                             type: "",
-                             sender: "",
-                             version: "",
-                             messageId: "",
-                             cid: "")
+                 title: "",
+                 badge: 0,
+                 mutableContent: 0,
+                 category: "",
+                 type: "",
+                 sender: "",
+                 version: "",
+                 messageId: "",
+                 cid: ""
+         )
         
         GIVEN("user goes to message list") {
             userRobot.login().openChannel()
