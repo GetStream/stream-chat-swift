@@ -63,7 +63,7 @@ jobs:
       run: bundle exec fastlane rubocop
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
-      timeout-minutes: 25
+      timeout-minutes: 30
     - name: Get branch name
       id: get_branch_name
       run: echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
