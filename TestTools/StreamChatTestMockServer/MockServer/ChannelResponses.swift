@@ -54,7 +54,7 @@ public extension StreamMockServer {
             let channelId = try XCTUnwrap(request.params[EndpointQuery.channelId])
             self?.channelQueryEndpointWasCalled = true
             self?.updateChannel(withId: channelId)
-            return self?.limitQuery(request)
+            return self?.mockChannelQuery(request)
         }
         server.register(MockEndpoint.channels) { [weak self] request in
             self?.channelsEndpointWasCalled = true
@@ -172,7 +172,7 @@ public extension StreamMockServer {
         return .ok(.json(limitedChannelList))
     }
     
-    private func limitQuery(_ request: HttpRequest) -> HttpResponse {
+    private func mockChannelQuery(_ request: HttpRequest) -> HttpResponse {
         let json = TestData.toJson(request.body)
         let messages = json[JSONKey.messages] as? [String: Any]
         
@@ -181,51 +181,15 @@ public extension StreamMockServer {
         guard let limit = messages?[MessagesPagination.CodingKeys.pageSize.rawValue] as? Int else {
             return .ok(.json(channel))
         }
-        var messageList = findMessagesByChannelId(id)
         
-        if let idLt = messages?[PaginationParameter.CodingKeys.lessThan.rawValue] {
-            let messageIndex = messageList.firstIndex {
-                idLt as? String == $0[messageKey.id.rawValue] as? String
-            }
-            if let messageIndex = messageIndex {
-                let startWith = messageIndex - limit > 0 ? messageIndex - limit : 0
-                let endWith = messageIndex - 1 > 0 ? messageIndex - 1 : 0
-                messageList = Array(messageList[startWith...endWith])
-            }
-        } else if let idGt = messages?[PaginationParameter.CodingKeys.greaterThan.rawValue] {
-            let messageIndex = messageList.firstIndex {
-                idGt as? String == $0[messageKey.id.rawValue] as? String
-            }
-            if let messageIndex = messageIndex {
-                let messageCount = messageList.count - 1
-                let plusLimit = messageIndex + limit
-                let endWith = plusLimit < messageCount ? plusLimit : messageCount
-                messageList = Array(messageList[messageIndex + 1...endWith])
-            }
-        } else if let idLte = messages?[PaginationParameter.CodingKeys.lessThanOrEqual.rawValue] {
-            let messageIndex = messageList.firstIndex {
-                idLte as? String == $0[messageKey.id.rawValue] as? String
-            }
-            if let messageIndex = messageIndex {
-                let minusLimit = messageIndex - limit
-                let startWith = minusLimit > 0 ? minusLimit : 0
-                messageList = Array(messageList[startWith + 1...messageIndex])
-            }
-        } else if let idGte = messages?[PaginationParameter.CodingKeys.greaterThanOrEqual.rawValue] {
-            let messageIndex = messageList.firstIndex {
-                idGte as? String == $0[messageKey.id.rawValue] as? String
-            }
-            if let messageIndex = messageIndex {
-                let messageCount = messageList.count - 1
-                let plusLimit = messageIndex + limit
-                let endWith = plusLimit < messageCount ? plusLimit - 1 : messageCount
-                messageList = Array(messageList[messageIndex...endWith])
-            }
-        } else {
-            messageList = Array(messageList.suffix(limit))
-        }
-        
-        channel[channelPayloadKey.messages.rawValue] = messageList
+        channel[channelPayloadKey.messages.rawValue] = mockMessagePagination(
+            messageList: findMessagesByChannelId(id),
+            limit: limit,
+            idLt: messages?[paginationKey.lessThan.rawValue] as? String,
+            idGt: messages?[paginationKey.greaterThan.rawValue] as? String,
+            idLte: messages?[paginationKey.lessThanOrEqual.rawValue] as? String,
+            idGte: messages?[paginationKey.greaterThanOrEqual.rawValue] as? String
+        )
         return .ok(.json(channel))
     }
 

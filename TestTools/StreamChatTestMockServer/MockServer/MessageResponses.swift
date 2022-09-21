@@ -7,6 +7,7 @@ import Swifter
 import XCTest
 
 public let messageKey = MessagePayloadsCodingKeys.self
+public let paginationKey = PaginationParameter.CodingKeys.self
 
 public extension StreamMockServer {
     
@@ -540,59 +541,24 @@ public extension StreamMockServer {
     private func mockMessageReplies(_ request: HttpRequest) throws -> HttpResponse {
         let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
         var json = "{\"\(JSONKey.messages)\":[]}".json
-        var messages = findMessagesByParentId(messageId)
         
         guard
             let limitQueryParam = request.queryParams.first(where: { $0.0 == MessagesPagination.CodingKeys.pageSize.rawValue })
         else {
-            json[JSONKey.messages] = messages
+            json[JSONKey.messages] = findMessagesByParentId(messageId)
             return .ok(.json(json))
         }
         
         let limit = (limitQueryParam.1 as NSString).integerValue
-        if let idLt = request.queryParams.first(where: { $0.0 == PaginationParameter.CodingKeys.lessThan.rawValue })?.1 {
-            let messageIndex = messages.firstIndex {
-                idLt == $0[messageKey.id.rawValue] as? String
-            }
-            if let messageIndex = messageIndex {
-                let startWith = messageIndex - limit > 0 ? messageIndex - limit : 0
-                let endWith = messageIndex - 1 > 0 ? messageIndex - 1 : 0
-                messages = Array(messages[startWith...endWith])
-            }
-        } else if let idGt = request.queryParams.first(where: { $0.0 == PaginationParameter.CodingKeys.greaterThan.rawValue })?.1 {
-            let messageIndex = messages.firstIndex {
-                idGt == $0[messageKey.id.rawValue] as? String
-            }
-            if let messageIndex = messageIndex {
-                let messageCount = messages.count - 1
-                let plusLimit = messageIndex + limit
-                let endWith = plusLimit < messageCount ? plusLimit : messageCount
-                messages = Array(messages[messageIndex + 1...endWith])
-            }
-        } else if let idLte = request.queryParams.first(where: { $0.0 == PaginationParameter.CodingKeys.lessThanOrEqual.rawValue })?.1 {
-            let messageIndex = messages.firstIndex {
-                idLte == $0[messageKey.id.rawValue] as? String
-            }
-            if let messageIndex = messageIndex {
-                let minusLimit = messageIndex - limit
-                let startWith = minusLimit > 0 ? minusLimit : 0
-                messages = Array(messages[startWith + 1...messageIndex])
-            }
-        } else if let idGte = request.queryParams.first(where: { $0.0 == PaginationParameter.CodingKeys.greaterThanOrEqual.rawValue })?.1 {
-            let messageIndex = messages.firstIndex {
-                idGte == $0[messageKey.id.rawValue] as? String
-            }
-            if let messageIndex = messageIndex {
-                let messageCount = messages.count - 1
-                let plusLimit = messageIndex + limit
-                let endWith = plusLimit < messageCount ? plusLimit - 1 : messageCount
-                messages = Array(messages[messageIndex...endWith])
-            }
-        } else {
-            messages = Array(messages.suffix(limit))
-        }
         
-        json[JSONKey.messages] = messages
+        json[JSONKey.messages] = mockMessagePagination(
+            messageList: findMessagesByParentId(messageId),
+            limit: limit,
+            idLt: request.queryParams.first(where: { $0.0 == paginationKey.lessThan.rawValue })?.1,
+            idGt: request.queryParams.first(where: { $0.0 == paginationKey.greaterThan.rawValue })?.1,
+            idLte: request.queryParams.first(where: { $0.0 == paginationKey.lessThanOrEqual.rawValue })?.1,
+            idGte: request.queryParams.first(where: { $0.0 == paginationKey.greaterThanOrEqual.rawValue })?.1
+        )
         return .ok(.json(json))
     }
 

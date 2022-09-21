@@ -128,4 +128,57 @@ public extension StreamMockServer {
             print("Waiting for http message with text: '\(text)'")
         }
     }
+    
+    func mockMessagePagination(
+        messageList: [[String: Any]],
+        limit: Int,
+        idLt: String?,
+        idGt: String?,
+        idLte: String?,
+        idGte: String?
+    ) -> [[String: Any]] {
+        var newMessageList: [[String: Any]] = []
+        if let idLt = idLt {
+            let messageIndex = messageList.firstIndex {
+                idLt == $0[messageKey.id.rawValue] as? String
+            }
+            if let messageIndex = messageIndex {
+                let startWith = messageIndex - limit > 0 ? messageIndex - limit : 0
+                let endWith = messageIndex - 1 > 0 ? messageIndex - 1 : 0
+                newMessageList = Array(messageList[startWith...endWith])
+            }
+        } else if let idGt = idGt {
+            let messageIndex = messageList.firstIndex {
+                idGt == $0[messageKey.id.rawValue] as? String
+            }
+            if let messageIndex = messageIndex {
+                let messageCount = messageList.count - 1
+                let plusLimit = messageIndex + limit
+                let endWith = plusLimit < messageCount ? plusLimit : messageCount
+                newMessageList = Array(messageList[messageIndex + 1...endWith])
+            }
+        } else if let idLte = idLte {
+            let messageIndex = messageList.firstIndex {
+                idLte == $0[messageKey.id.rawValue] as? String
+            }
+            if let messageIndex = messageIndex {
+                let minusLimit = messageIndex - limit
+                let startWith = minusLimit > 0 ? minusLimit : 0
+                newMessageList = Array(messageList[startWith + 1...messageIndex])
+            }
+        } else if let idGte = idGte {
+            let messageIndex = messageList.firstIndex {
+                idGte == $0[messageKey.id.rawValue] as? String
+            }
+            if let messageIndex = messageIndex {
+                let messageCount = messageList.count - 1
+                let plusLimit = messageIndex + limit
+                let endWith = plusLimit < messageCount ? plusLimit - 1 : messageCount
+                newMessageList = Array(messageList[messageIndex...endWith])
+            }
+        } else {
+            newMessageList = Array(messageList.suffix(limit))
+        }
+        return newMessageList
+    }
 }
