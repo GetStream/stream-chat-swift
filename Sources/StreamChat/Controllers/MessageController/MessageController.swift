@@ -94,8 +94,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
     
-    /// Shows whether the controller has received first batch of replies from remote
-    private var loadedRepliesHead = false
+    /// The id of the last fetched reply
+    private var lastFetchedMessageId: MessageId?
     
     /// A Boolean value that returns wether pagination is finished
     public private(set) var hasLoadedAllPreviousReplies: Bool = false
@@ -296,8 +296,12 @@ public extension ChatMessageController {
             completion?(nil)
             return
         }
+
+        let lastLocalMessageId: () -> MessageId? = {
+            self.replies.last { !$0.isLocalOnly }?.id
+        }
         
-        let lastMessageId = messageId ?? (loadedRepliesHead ? replies.last?.id : nil)
+        let lastMessageId = messageId ?? lastFetchedMessageId ?? lastLocalMessageId()
         
         messageUpdater.loadReplies(
             cid: cid,
@@ -306,8 +310,8 @@ public extension ChatMessageController {
         ) { result in
             switch result {
             case let .success(payload):
-                self.loadedRepliesHead = true
                 self.hasLoadedAllPreviousReplies = payload.messages.count < limit
+                self.updateLastFetchedReplyId(with: payload)
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -638,6 +642,11 @@ private extension ChatMessageController {
 
             return observer
         }
+    }
+
+    func updateLastFetchedReplyId(with payload: MessageRepliesPayload) {
+        // Payload messages are ordered from oldest to newest
+        lastFetchedMessageId = payload.messages.first?.id
     }
 }
 

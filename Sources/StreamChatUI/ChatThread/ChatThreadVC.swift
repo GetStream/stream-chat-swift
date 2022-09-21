@@ -216,10 +216,6 @@ open class ChatThreadVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if messageController.state != .remoteDataFetched {
-            return
-        }
-
         if indexPath.row < messages.count - 10 {
             return
         }

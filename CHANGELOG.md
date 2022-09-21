@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Fixed pagination in message list not working when synchronize does not succeed [#2241](https://github.com/GetStream/stream-chat-swift/pull/2241)
+- Do not mark channels as read when the controller is not on screen [#2288](https://github.com/GetStream/stream-chat-swift/pull/2288)
+- Do not show old messages not belonging to the history when paginating [#2298](https://github.com/GetStream/stream-chat-swift/pull/2298)). Caveat: [Explained here](https://github.com/GetStream/stream-chat-swift/pull/2298)
 
 ## StreamChatUI
 ### ✅ Added
@@ -13,6 +15,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - User mentions suggestions would not show when typing in a new line [#2253](https://github.com/GetStream/stream-chat-swift/pull/2253)
 - User mentions suggestions would stop showing when typing a space [#2253](https://github.com/GetStream/stream-chat-swift/pull/2253)
+- Fix Thread not loading more replies [#2297](https://github.com/GetStream/stream-chat-swift/pull/2297)
+- Fix Channel and Thread pagination not working when initialized offline [#2297](https://github.com/GetStream/stream-chat-swift/pull/2297)
+
+# [4.21.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.2)
+_September 19, 2022_
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix Message List cell not updating when an existing reaction of the same type was updated from the current user [#2304](https://github.com/GetStream/stream-chat-swift/pull/2304)
+- Fix Message List cell not updating when the number of reactions of the same type changed [#2304](https://github.com/GetStream/stream-chat-swift/pull/2304)
 
 # [4.21.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.1)
 _September 06, 2022_
