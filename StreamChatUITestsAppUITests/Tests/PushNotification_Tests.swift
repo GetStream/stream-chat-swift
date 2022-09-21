@@ -4,6 +4,7 @@
 
 import XCTest
 
+// Requires running a standalone Sinatra server
 final class PushNotification_Tests: StreamTestCase {
     
     let sender = "Han Solo"

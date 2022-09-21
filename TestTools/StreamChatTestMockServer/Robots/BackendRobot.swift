@@ -41,6 +41,7 @@ public class BackendRobot {
     func generateChannels(
         count: Int,
         messagesCount: Int = 0,
+        replyCount: Int = 0,
         authorDetails: [String: String] = UserDetails.lukeSkywalker,
         memberDetails: [[String: String]] = [
             UserDetails.lukeSkywalker,
@@ -63,6 +64,7 @@ public class BackendRobot {
         let channels = server.mockChannels(
             count: count,
             messagesCount: messagesCount,
+            replyCount: replyCount,
             author: author,
             members: members,
             sampleChannel: sampleChannel

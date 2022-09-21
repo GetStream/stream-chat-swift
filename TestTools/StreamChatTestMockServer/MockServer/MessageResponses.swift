@@ -7,6 +7,7 @@ import Swifter
 import XCTest
 
 public let messageKey = MessagePayloadsCodingKeys.self
+public let paginationKey = PaginationParameter.CodingKeys.self
 
 public extension StreamMockServer {
     
@@ -19,8 +20,7 @@ public extension StreamMockServer {
             try self?.messageUpdate(request)
         }
         server.register(MockEndpoint.replies) { [weak self] request in
-            let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
-            return self?.mockMessageReplies(messageId)
+            try self?.mockMessageReplies(request)
         }
         server.register(MockEndpoint.action) { [weak self] request in
             let json = TestData.toJson(request.body)
@@ -63,7 +63,8 @@ public extension StreamMockServer {
         showReplyInChannel: Bool? = nil,
         quotedMessageId: String? = nil,
         quotedMessage: [String: Any]? = nil,
-        attachments: Any? = nil
+        attachments: Any? = nil,
+        replyCount: Int? = 0
     ) -> [String: Any]? {
         var mockedMessage = message
         mockedMessage?[messageKey.type.rawValue] = messageType.rawValue
@@ -112,6 +113,9 @@ public extension StreamMockServer {
         }
         if let user = user {
             mockedMessage?[messageKey.user.rawValue] = user
+        }
+        if let replyCount = replyCount {
+            mockedMessage?[messageKey.replyCount.rawValue] = replyCount
         }
         return mockedMessage
     }
@@ -539,10 +543,27 @@ public extension StreamMockServer {
         return .ok(.json(json))
     }
     
-    private func mockMessageReplies(_ messageId: String) -> HttpResponse {
+    private func mockMessageReplies(_ request: HttpRequest) throws -> HttpResponse {
+        let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
         var json = "{\"\(JSONKey.messages)\":[]}".json
-        let messages = findMessagesByParrentId(messageId)
-        json[JSONKey.messages] = messages
+        
+        guard
+            let limitQueryParam = request.queryParams.first(where: { $0.0 == MessagesPagination.CodingKeys.pageSize.rawValue })
+        else {
+            json[JSONKey.messages] = findMessagesByParentId(messageId)
+            return .ok(.json(json))
+        }
+        
+        let limit = (limitQueryParam.1 as NSString).integerValue
+        
+        json[JSONKey.messages] = mockMessagePagination(
+            messageList: findMessagesByParentId(messageId),
+            limit: limit,
+            idLt: request.queryParams.first(where: { $0.0 == paginationKey.lessThan.rawValue })?.1,
+            idGt: request.queryParams.first(where: { $0.0 == paginationKey.greaterThan.rawValue })?.1,
+            idLte: request.queryParams.first(where: { $0.0 == paginationKey.lessThanOrEqual.rawValue })?.1,
+            idGte: request.queryParams.first(where: { $0.0 == paginationKey.greaterThanOrEqual.rawValue })?.1
+        )
         return .ok(.json(json))
     }
 
