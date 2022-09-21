@@ -157,6 +157,10 @@ public struct ChatClientConfig {
     /// For more information, please check "Shadow Bans" docs.
     public var shouldShowShadowedMessages = false
 
+    /// The timeout interval determines the network request timeout interval for all tasks within sessions based on this configuration.
+    /// It controls how long (in seconds) a network task should wait for additional data to arrive before giving up
+    public var timeoutIntervalForRequest: TimeInterval = 30
+
     public init(apiKey: APIKey) {
         self.apiKey = apiKey
         isClientInActiveMode = !Bundle.main.isAppExtension
