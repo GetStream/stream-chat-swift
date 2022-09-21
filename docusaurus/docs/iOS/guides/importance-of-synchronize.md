@@ -35,4 +35,4 @@ Additionally, as with all StreamChat Controllers, `ChannelController` has `state
 func controller(_ controller: DataController, didChangeState state: DataController.State)
 ```
 
-You can use this delegate function to show any error states you might see. For more information, see [DataController Overview](404).
+You can use this delegate function to show any error states you might see. For more information, see [DataControllerStateDelegate Overview](../common-content/reference-docs/stream-chat/controllers/data-controller-state-delegate.md).
