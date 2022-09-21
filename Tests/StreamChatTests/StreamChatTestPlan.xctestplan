@@ -28,6 +28,7 @@
     {
       "skippedTests" : [
         "APIClient_Tests\/test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests()",
+        "ChannelController_Tests\/test_createCall_propagatesResultFromUpdater()",
         "ChannelListPayload_Tests\/test_decode_bigChannelListPayload()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_empty()",
