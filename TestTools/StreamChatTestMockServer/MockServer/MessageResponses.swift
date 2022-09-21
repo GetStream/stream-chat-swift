@@ -19,7 +19,7 @@ public extension StreamMockServer {
             try self?.messageUpdate(request)
         }
         server.register(MockEndpoint.replies) { [weak self] request in
-            try self?.limitReplies(request)
+            try self?.mockMessageReplies(request)
         }
         server.register(MockEndpoint.action) { [weak self] request in
             let json = TestData.toJson(request.body)
@@ -537,10 +537,10 @@ public extension StreamMockServer {
         return .ok(.json(json))
     }
     
-    private func limitReplies(_ request: HttpRequest) throws -> HttpResponse {
+    private func mockMessageReplies(_ request: HttpRequest) throws -> HttpResponse {
         let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
         var json = "{\"\(JSONKey.messages)\":[]}".json
-        var messages = findMessagesByParrentId(messageId)
+        var messages = findMessagesByParentId(messageId)
         
         guard
             let limitQueryParam = request.queryParams.first(where: { $0.0 == MessagesPagination.CodingKeys.pageSize.rawValue })

@@ -9,10 +9,13 @@ public extension StreamMockServer {
     
     func saveMessage(_ message: [String: Any]?) {
         guard let newMessage = message else { return }
-        if let index = messageList.firstIndex(where: { (message) -> Bool in
-            (newMessage[messageKey.id.rawValue] as? String) == (message[messageKey.id.rawValue] as? String)
+        
+        let newMessageId = newMessage[messageKey.id.rawValue] as? String
+        if let messageIndex = messageList.firstIndex(where: { (message) -> Bool in
+            let existedMessageId = message[messageKey.id.rawValue] as? String
+            return newMessageId == existedMessageId
         }) {
-            messageList[index] = newMessage
+            messageList[messageIndex] = newMessage
         } else {
             messageList.append(newMessage)
         }
@@ -20,10 +23,13 @@ public extension StreamMockServer {
     
     func saveReply(_ message: [String: Any]?) {
         guard let newMessage = message else { return }
-        if let index = threadList.firstIndex(where: { (message) -> Bool in
-            (newMessage[messageKey.id.rawValue] as? String) == (message[messageKey.id.rawValue] as? String)
+        
+        let newMessageId = newMessage[messageKey.id.rawValue] as? String
+        if let messageIndex = threadList.firstIndex(where: { (message) -> Bool in
+            let existedMessageId = message[messageKey.id.rawValue] as? String
+            return newMessageId == existedMessageId
         }) {
-            threadList[index] = newMessage
+            threadList[messageIndex] = newMessage
         } else {
             threadList.append(newMessage)
         }
@@ -49,7 +55,7 @@ public extension StreamMockServer {
         try? XCTUnwrap(waitForMessageWithUserId(userId))
     }
     
-    func findMessagesByParrentId(_ parentId: String) -> [[String: Any]] {
+    func findMessagesByParentId(_ parentId: String) -> [[String: Any]] {
         _ = waitForMessageWithId(parentId)
         return (messageList + threadList).filter {
             ($0[messageKey.parentId.rawValue] as? String) == parentId

@@ -355,7 +355,6 @@ public extension StreamMockServer {
                             generateMessage(
                                 withIndex: replyIndex,
                                 withId: TestData.uniqueId,
-                                inThread: true,
                                 parentId: messageId,
                                 channelId: channelId,
                                 author: author
@@ -377,7 +376,6 @@ public extension StreamMockServer {
     private func generateMessage(
         withIndex index: Int,
         withId id: String?,
-        inThread: Bool = false,
         parentId: String? = nil,
         channelId: String?,
         author: [String: Any]?,
@@ -396,7 +394,7 @@ public extension StreamMockServer {
             parentId: parentId,
             replyCount: replyCount
         )
-        inThread ? saveReply(message) : saveMessage(message)
+        parentId == nil ? saveMessage(message) : saveReply(message)
         return message
     }
     
