@@ -26,6 +26,7 @@ public final class StreamMockServer {
     public var latestWebsocketMessage = ""
     public var latestHttpMessage = ""
     public let forbiddenWords: Set<String> = ["wth"]
+    public var pushNotificationPayload: [String: Any] = [:]
 
     public init() {}
 

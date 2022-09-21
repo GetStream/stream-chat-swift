@@ -112,6 +112,11 @@ public enum APNSKey {
     public static let stream = "stream"
     public static let messageId = "id"
     public static let cid = "cid"
+    public static let mutableContent = "mutable-content"
+    public static let category = "category"
+    public static let sender = "sender"
+    public static let type = "type"
+    public static let version = "version"
 }
 
 public enum UserDetails {

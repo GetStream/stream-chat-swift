@@ -191,7 +191,13 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let pushNotificationContent = SpringBoard.notificationBanner.wait().text
+        let pushNotification = SpringBoard.notificationBanner.wait()
+        XCTAssertTrue(pushNotification.exists,
+                      "Push notification should appear",
+                      file: file,
+                      line: line)
+        
+        let pushNotificationContent = pushNotification.text
         XCTAssertTrue(pushNotificationContent.contains(text),
                       "\(pushNotificationContent) does not contain \(text)",
                       file: file,
@@ -200,6 +206,15 @@ extension UserRobot {
                       "\(pushNotificationContent) does not contain \(sender)",
                       file: file,
                       line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertPushNotificationDoesNotAppear(file: StaticString = #filePath, line: UInt = #line) -> Self {
+        XCTAssertFalse(SpringBoard.notificationBanner.exists,
+                       "Push notification should not appear",
+                       file: file,
+                       line: line)
         return self
     }
     
