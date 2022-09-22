@@ -18,6 +18,16 @@ final class ChannelEvents_Tests: XCTestCase {
         super.tearDown()
         eventDecoder = nil
     }
+
+    func test_created() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelCreated")
+        do {
+            _ = try eventDecoder.decode(from: json)
+            XCTFail("Should not be able to decode it")
+        } catch {
+            XCTAssertTrue(error is ClientError.UnsupportedEventType)
+        }
+    }
     
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelUpdated")
