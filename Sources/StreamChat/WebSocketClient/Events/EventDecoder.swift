@@ -15,6 +15,8 @@ struct EventDecoder {
             return try decoder.decode(UnknownChannelEvent.self, from: data)
         } catch is ClientError.UnknownUserEvent {
             return try decoder.decode(UnknownUserEvent.self, from: data)
+        } catch let error as ClientError.UnsupportedEventType {
+            throw error
         }
     }
 }

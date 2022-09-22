@@ -42,6 +42,8 @@ public extension EventType {
     // MARK: Channel Events
     
     /// When a channel was updated.
+    static let channelCreated: Self = "channel.created"
+    /// When a channel was updated.
     static let channelUpdated: Self = "channel.updated"
     /// When a channel was deleted.
     static let channelDeleted: Self = "channel.deleted"
@@ -120,6 +122,7 @@ extension EventType {
         case .userBanned: return try UserBannedEventDTO(from: response)
         case .userUnbanned: return try UserUnbannedEventDTO(from: response)
         
+        case .channelCreated: throw ClientError.UnsupportedEventType()
         case .channelUpdated: return try ChannelUpdatedEventDTO(from: response)
         case .channelDeleted: return try ChannelDeletedEventDTO(from: response)
         case .channelHidden: return try ChannelHiddenEventDTO(from: response)

@@ -173,7 +173,11 @@ extension Array where Element == EventPayload {
             do {
                 return try $0.event()
             } catch {
-                log.error("Failed to decode event from event payload: \($0), error: \(error)")
+                if error is ClientError.UnsupportedEventType {
+                    log.info("Skipping unsupported event type: \($0.eventType)")
+                } else {
+                    log.error("Failed to decode event from event payload: \($0), error: \(error)")
+                }
                 return nil
             }
         }
