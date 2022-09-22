@@ -501,6 +501,26 @@ extension MessageList_Tests {
         }
     }
     
+    func test_paginationOnThread() throws {
+        linkToScenario(withId: 55)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "[CIS-2020] Scroll on message list does not work well enough")
+        
+        let replyCount = 60
+        
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1, replyCount: replyCount)
+            userRobot.login().openChannel()
+        }
+        WHEN("user opens the thread") {
+            userRobot.openThread()
+        }
+        THEN("user makes sure that thread history is loaded") {
+            userRobot.assertMessageListPagination(messagesCount: replyCount + 1)
+        }
+    }
+    
     func test_addingCommandHidesLeftButtons() {
         linkToScenario(withId: 104)
         

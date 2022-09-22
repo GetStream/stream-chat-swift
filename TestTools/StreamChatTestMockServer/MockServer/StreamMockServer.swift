@@ -16,6 +16,7 @@ public final class StreamMockServer {
     public private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
     private var channelConfigs = ChannelConfigs()
+    public var threadList: [[String: Any]] = []
     public var messageList: [[String: Any]] = []
     public var channelList = TestData.toJson(.httpChannels)
     public var currentChannelId = ""
@@ -25,6 +26,7 @@ public final class StreamMockServer {
     public var latestWebsocketMessage = ""
     public var latestHttpMessage = ""
     public let forbiddenWords: Set<String> = ["wth"]
+    public var pushNotificationPayload: [String: Any] = [:]
 
     public init() {}
 
