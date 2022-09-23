@@ -16,6 +16,12 @@ final class PushNotification_Tests: StreamTestCase {
         try super.setUpWithError()
     }
     
+    override func tearDownWithError() throws {
+        if ProcessInfo().operatingSystemVersion.majorVersion >= 14 {
+            try super.tearDownWithError()
+        }
+    }
+    
     func test_goToBackgroundFromMessageList_and_tapOnPushNotification() throws {
         linkToScenario(withId: 95)
         
