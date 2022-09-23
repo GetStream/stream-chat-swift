@@ -58,7 +58,21 @@ final class UserEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
     }
-    
+
+    func test_userGloballyBannedEvent() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "UserGloballyBanned")
+        let event = try eventDecoder.decode(from: json) as? UserGloballyBannedEventDTO
+        XCTAssertEqual(event?.user.id, "c-3po")
+        XCTAssertEqual(event?.createdAt.description, "2022-09-22 07:59:24 +0000")
+    }
+
+    func test_userGloballyUnbannedEvent() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "UserGloballyUnbanned")
+        let event = try eventDecoder.decode(from: json) as? UserGloballyUnbannedEventDTO
+        XCTAssertEqual(event?.user.id, "c-3po")
+        XCTAssertEqual(event?.createdAt.description, "2022-09-22 08:00:15 +0000")
+    }
+
     // MARK: DTO -> Event
     
     func test_userPresenceChangedEventDTO_toDomainEvent() throws {
