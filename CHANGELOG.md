@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Do not mark channels as read when the controller is not on screen [#2288](https://github.com/GetStream/stream-chat-swift/pull/2288)
 - Do not show old messages not belonging to the history when paginating [#2298](https://github.com/GetStream/stream-chat-swift/pull/2298)). Caveat: [Explained here](https://github.com/GetStream/stream-chat-swift/pull/2298)
 - Fix logic to determine errors related to connectivity [#2311](https://github.com/GetStream/stream-chat-swift/pull/2311)
+- Stop logging false positive errors for 'channel.created' events [#2314](https://github.com/GetStream/stream-chat-swift/pull/2314)
 - Properly handle Global Ban events [#2312](https://github.com/GetStream/stream-chat-swift/pull/2312)
 
 ## StreamChatUI

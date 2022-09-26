@@ -15,12 +15,14 @@ struct EventDecoder {
             return try decoder.decode(UnknownChannelEvent.self, from: data)
         } catch is ClientError.UnknownUserEvent {
             return try decoder.decode(UnknownUserEvent.self, from: data)
+        } catch let error as ClientError.IgnoredEventType {
+            throw error
         }
     }
 }
 
 extension ClientError {
-    public class UnsupportedEventType: ClientError {
+    public class IgnoredEventType: ClientError {
         override public var localizedDescription: String { "The incoming event type is not supported. Ignoring." }
     }
     
