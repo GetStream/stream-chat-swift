@@ -142,6 +142,7 @@ extension XCTestCase {
             createdAt: XCTestCase.channelCreatedDate,
             updatedAt: .unique
         ),
+        ownCapabilities: [String] = [],
         channelExtraData: [String: RawJSON] = [:],
         truncatedAt: Date? = nil,
         cooldownDuration: Int? = nil
@@ -172,6 +173,7 @@ extension XCTestCase {
                     truncatedAt: truncatedAt,
                     createdBy: dummyUser,
                     config: channelConfig,
+                    ownCapabilities: ownCapabilities,
                     isFrozen: true,
                     isHidden: nil,
                     members: members,
@@ -281,6 +283,7 @@ extension XCTestCase {
                         createdAt: XCTestCase.channelCreatedDate,
                         updatedAt: .unique
                     ),
+                    ownCapabilities: [],
                     isFrozen: true,
                     isHidden: nil,
                     members: nil,

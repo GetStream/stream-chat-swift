@@ -37,4 +37,17 @@ final class ChatChannel_Tests: XCTestCase {
         
         XCTAssertFalse(channel.isUnread)
     }
+
+    func test_ownCapabilities() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            ownCapabilities: [.banChannelMembers, .createCall, .deleteAnyMessage],
+            unreadCount: .noUnread
+        )
+
+        XCTAssertTrue(channel.ownCapabilities.contains(.banChannelMembers))
+        XCTAssertTrue(channel.ownCapabilities.contains(.createCall))
+        XCTAssertTrue(channel.ownCapabilities.contains(.deleteAnyMessage))
+        XCTAssertFalse(channel.ownCapabilities.contains(.freezeChannel))
+    }
 }

@@ -32,6 +32,8 @@ public enum ChannelCodingKeys: String, CodingKey, CaseIterable {
     case hidden
     /// A channel config.
     case config
+    /// The channel own capabilities.
+    case ownCapabilities = "own_capabilities"
     /// A frozen flag.
     case frozen
     /// Members.

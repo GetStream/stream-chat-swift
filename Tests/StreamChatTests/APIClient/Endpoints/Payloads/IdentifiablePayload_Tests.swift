@@ -304,6 +304,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 truncatedAt: nil,
                 createdBy: owner,
                 config: .mock(),
+                ownCapabilities: [],
                 isFrozen: true,
                 isHidden: false,
                 members: users.map { MemberPayload.dummy(user: $0) },
