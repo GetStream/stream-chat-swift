@@ -96,7 +96,8 @@ struct ChannelDetailPayload {
     /// A config.
     let config: ChannelConfig
     /// The list of actions that the current user can perform in a channel.
-    let ownCapabilities: [String]
+    /// It is optional, since not all events contain the own capabilities property for performance reasons.
+    let ownCapabilities: [String]?
     /// Checks if the channel is frozen.
     let isFrozen: Bool
     
@@ -149,7 +150,7 @@ extension ChannelDetailPayload: Decodable {
             truncatedAt: try container.decodeIfPresent(Date.self, forKey: .truncatedAt),
             createdBy: try container.decodeIfPresent(UserPayload.self, forKey: .createdBy),
             config: try container.decode(ChannelConfig.self, forKey: .config),
-            ownCapabilities: try container.decodeIfPresent([String].self, forKey: .ownCapabilities) ?? [],
+            ownCapabilities: try container.decodeIfPresent([String].self, forKey: .ownCapabilities),
             isFrozen: try container.decode(Bool.self, forKey: .frozen),
             // For `hidden`, we don't fallback to `false`
             // since this field is not sent for all API calls and for events

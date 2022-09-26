@@ -184,7 +184,9 @@ extension NSManagedObjectContext {
         }
         dto.typeRawValue = payload.typeRawValue
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
-        dto.ownCapabilities = payload.ownCapabilities
+        if let ownCapabilities = payload.ownCapabilities {
+            dto.ownCapabilities = ownCapabilities
+        }
         dto.createdAt = payload.createdAt.bridgeDate
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
