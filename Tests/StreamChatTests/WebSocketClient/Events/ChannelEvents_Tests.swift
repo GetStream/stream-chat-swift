@@ -25,7 +25,7 @@ final class ChannelEvents_Tests: XCTestCase {
             _ = try eventDecoder.decode(from: json)
             XCTFail("Should not be able to decode it")
         } catch {
-            XCTAssertTrue(error is ClientError.UnsupportedEventType)
+            XCTAssertTrue(error is ClientError.IgnoredEventType)
         }
     }
     

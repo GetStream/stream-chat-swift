@@ -122,7 +122,7 @@ extension EventType {
         case .userBanned: return try UserBannedEventDTO(from: response)
         case .userUnbanned: return try UserUnbannedEventDTO(from: response)
         
-        case .channelCreated: throw ClientError.UnsupportedEventType()
+        case .channelCreated: throw ClientError.IgnoredEventType()
         case .channelUpdated: return try ChannelUpdatedEventDTO(from: response)
         case .channelDeleted: return try ChannelDeletedEventDTO(from: response)
         case .channelHidden: return try ChannelHiddenEventDTO(from: response)

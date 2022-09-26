@@ -197,7 +197,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
             } else {
                 eventsBatcher.append(event)
             }
-        } catch is ClientError.UnsupportedEventType {
+        } catch is ClientError.IgnoredEventType {
             log.info("Skipping unsupported event type with payload: \(message)", subsystems: .webSocket)
         } catch {
             // Check if the message contains an error object from the server
