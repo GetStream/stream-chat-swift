@@ -1635,6 +1635,8 @@
 		C15C8838286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */; };
 		C15C8839286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */; };
 		C1616DB428DC9F0B00FF993B /* ChannelCreated.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB328DC9F0B00FF993B /* ChannelCreated.json */; };
+		C1616DB128DC4D7F00FF993B /* UserGloballyUnbanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */; };
+		C1616DB228DC4D7F00FF993B /* UserGloballyBanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
@@ -3350,6 +3352,8 @@
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundListDatabaseObserver.swift; sourceTree = "<group>"; };
 		C1616DB328DC9F0B00FF993B /* ChannelCreated.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelCreated.json; sourceTree = "<group>"; };
+		C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyUnbanned.json; sourceTree = "<group>"; };
+		C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyBanned.json; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
 		C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Array.swift"; sourceTree = "<group>"; };
 		C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload.swift; sourceTree = "<group>"; };
@@ -4899,6 +4903,8 @@
 			isa = PBXGroup;
 			children = (
 				8A0C3BC224C0AD8300CAFD19 /* UserBanned.json */,
+				C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */,
+				C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */,
 				8A0C3BBD24C0AC6400CAFD19 /* UserPresence.json */,
 				8A62706024BE31C30040BFD6 /* UserStartTyping.json */,
 				43BAAD482664F59600323D8E /* UserStartTypingThread.json */,
@@ -8201,6 +8207,7 @@
 				A311B3F427E8B99800CFCF6D /* ChannelUpdated.json in Resources */,
 				A311B42627E8B9CE00CFCF6D /* MessageReactionPayload+DefaultExtraData.json in Resources */,
 				A311B3FC27E8B9A800CFCF6D /* MessageUpdated.json in Resources */,
+				C1616DB228DC4D7F00FF993B /* UserGloballyBanned.json in Resources */,
 				A311B3DC27E8B98C00CFCF6D /* MessagePayload.json in Resources */,
 				A311B3D427E8B98C00CFCF6D /* Channel.json in Resources */,
 				A311B3F627E8B9A200CFCF6D /* MemberAdded.json in Resources */,
@@ -8227,6 +8234,7 @@
 				A368E71627F33E16009063C1 /* MissingEventsPayload-IncompleteChannel.json in Resources */,
 				A311B40B27E8B9AD00CFCF6D /* NotificationMessageNew.json in Resources */,
 				A311B41027E8B9B300CFCF6D /* ReactionNew.json in Resources */,
+				C1616DB128DC4D7F00FF993B /* UserGloballyUnbanned.json in Resources */,
 				A311B40327E8B9AD00CFCF6D /* NotificationInviteAccepted.json in Resources */,
 				A311B3D327E8B98C00CFCF6D /* Message.json in Resources */,
 				A311B3E427E8B98C00CFCF6D /* MessagePayloadWithCustom.json in Resources */,
