@@ -34,7 +34,7 @@ final class DemoAppCoordinator: NSObject {
     }
 
     func handlePushNotificationResponse() {
-        pushNotifications.onNotificationResponse = { [weak self] response in
+        pushNotifications.listenToNotificationsResponse { [weak self] response in
             guard case UNNotificationDefaultActionIdentifier = response.actionIdentifier else {
                 return
             }
@@ -62,6 +62,7 @@ private extension DemoAppCoordinator {
         }
         
         set(rootViewController: chatVC, animated: animated)
+        DemoAppConfiguration.showPerformanceTracker()
     }
     
     func showLogin(animated: Bool) {
@@ -127,10 +128,10 @@ private extension DemoAppCoordinator {
             splitVC.preferredDisplayMode = .oneBesideSecondary
             splitVC.viewControllers = [channelListNVC, tuple.channelNVC].compactMap { $0 }
             return splitVC
-        } else {
-            tuple.channelVC.map { channelListNVC.pushViewController($0, animated: false) }
-            return channelListNVC
+        } else if let channelVC = tuple.channelVC {
+            channelListNVC.pushViewController(channelVC, animated: false)
         }
+        return channelListNVC
     }
     
     func makeChannelListVC(
@@ -141,6 +142,7 @@ private extension DemoAppCoordinator {
         let channelListVC = DemoChatChannelListVC.make(with: controller)
         channelListVC.demoRouter?.onLogout = onLogout
         channelListVC.selectedChannel = selectedChannel
+        channelListVC.components.isChatChannelListStatesEnabled = true
         return channelListVC
     }
     

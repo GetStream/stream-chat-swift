@@ -82,7 +82,6 @@ class NotificationService: UNNotificationServiceExtension {
         }
 
         var config = ChatClientConfig(apiKey: .init(apiKeyString))
-//        config.isLocalStorageEnabled = false
         config.applicationGroupIdentifier = applicationGroupIdentifier
 
         let client = ChatClient(config: config)

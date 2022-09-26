@@ -9,6 +9,12 @@
 "channel.item.typing-singular" = "is typing ...";
 "channel.item.typing-plural" = "are typing ...";
 
+"channelList.empty.title" = "Let's start chatting!";
+"channelList.empty.subtitle" = "How about sending your first message to a friend?";
+"channelList.empty.button" = "Start a chat";
+
+"channelList.error.message" = "Error loading channels";
+
 "message.actions.inline-reply" = "Reply";
 "message.actions.thread-reply" = "Thread Reply";
 "message.actions.edit" = "Edit Message";
@@ -57,6 +63,9 @@
 "message.title.online" = "Online";
 "message.title.offline" = "Offline";
 "message.title.group" = "%d members, %d online";
+
+"message.moderation.title" = "This message has been moderated";
+"message.moderation.message" = "Please select any of the following options to proceed";
 
 "current-selection" = "%d of %d";
 

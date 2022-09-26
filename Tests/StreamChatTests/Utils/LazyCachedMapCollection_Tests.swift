@@ -68,4 +68,22 @@ final class LazyCachedMapCollection_Tests: XCTestCase {
         // Assert: Resulting sequences are equal
         XCTAssertEqual(s1, s2)
     }
+
+    func test_notLazy_whenBackgroundMappingEnabled() {
+        StreamRuntimeCheck._isBackgroundMappingEnabled = true
+        var transformationCount = 0
+        let collection = LazyCachedMapCollection(source: Array(0...10)) { item -> Int in
+            transformationCount += 1
+            return item
+        }
+
+        // Transformed on init
+        XCTAssertEqual(transformationCount, 11)
+
+        transformationCount = 0
+        _ = collection[1]
+        _ = collection[5]
+        XCTAssertEqual(transformationCount, 0)
+        StreamRuntimeCheck._isBackgroundMappingEnabled = false
+    }
 }

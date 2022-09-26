@@ -18,7 +18,7 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
     public let message: String
     /// An HTTP status code.
     public let statusCode: Int
-    
+
     public var errorDescription: String? {
         "Error #\(code): \(message)"
     }
@@ -29,6 +29,10 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
 }
 
 extension ErrorPayload {
+    private enum ErrorCodes: Int {
+        case bouncedMessage = 73
+    }
+    
     /// Returns `true` if code is withing invalid token codes range.
     var isInvalidTokenError: Bool {
         ClosedRange.tokenInvalidErrorCodes ~= code
@@ -38,6 +42,11 @@ extension ErrorPayload {
     var isClientError: Bool {
         ClosedRange.clientErrorCodes ~= statusCode
     }
+    
+    /// Returns `true` if internal status code is related to a moderation bouncing error.
+    var isBouncedMessageError: Bool {
+        code == ErrorCodes.bouncedMessage.rawValue
+    }
 }
 
 extension ClosedRange where Bound == Int {
@@ -46,4 +55,17 @@ extension ClosedRange where Bound == Int {
     
     /// The range of HTTP request status codes for client errors.
     static let clientErrorCodes: Self = 400...499
+}
+
+/// A parsed server response error detail.
+public struct ErrorPayloadDetail: LocalizedError, Codable, Equatable {
+    private enum CodingKeys: String, CodingKey {
+        case code
+        case messages
+    }
+    
+    /// An error code.
+    public let code: Int
+    /// An array of  message strings that better describe the error detail.
+    public let messages: [String]
 }

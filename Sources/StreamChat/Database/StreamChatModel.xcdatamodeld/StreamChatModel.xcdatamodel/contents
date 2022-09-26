@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -187,6 +187,7 @@
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
+        <attribute name="isBounced" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isHardDeleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isShadowed" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isSilent" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -339,7 +340,7 @@
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="179"/>
         <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="89"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="239"/>
-        <element name="MessageDTO" positionX="160" positionY="192" width="128" height="644"/>
+        <element name="MessageDTO" positionX="160" positionY="192" width="128" height="689"/>
         <element name="MessageReactionDTO" positionX="160" positionY="192" width="128" height="179"/>
         <element name="MessageSearchQueryDTO" positionX="9" positionY="162" width="128" height="59"/>
         <element name="QueuedRequestDTO" positionX="90" positionY="171" width="128" height="74"/>

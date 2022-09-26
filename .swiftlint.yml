@@ -1,13 +1,13 @@
 excluded:
   - Scripts
   - Package.swift
-  - DocsSnippets
   - Dependencies
   - Sources/StreamChatUI/Generated
   - Sources/StreamChatUI/StreamSwiftyGif
   - Sources/StreamChatUI/StreamSwiftyMarkdown
   - Sources/StreamChatUI/StreamNuke
   - Sources/StreamChat/StreamStarscream
+  - Sources/StreamChatUI/StreamDifferenceKit
   - vendor
   - UISDKdocumentation
   - Tests

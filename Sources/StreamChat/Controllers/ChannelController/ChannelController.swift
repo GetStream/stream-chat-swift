@@ -222,6 +222,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
+        client.callRepository,
         client.databaseContainer,
         client.apiClient
     )
@@ -232,6 +233,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     )
     
     private var markingRead: Bool = false
+    private var lastFetchedMessageId: MessageId?
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelControllerDelegate> = .init() {
@@ -247,7 +249,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Database observers.
     /// Will be `nil` when observing channel with backend generated `id` is not yet created.
     @Cached private var channelObserver: EntityDatabaseObserver<ChatChannel, ChannelDTO>?
-    @Cached private var messagesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var messagesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
     
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
@@ -271,11 +273,18 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
     
+    var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
-    lazy var basePublishers: BasePublishers = .init(controller: self)
+    var basePublishers: BasePublishers {
+        if let value = _basePublishers as? BasePublishers {
+            return value
+        }
+        _basePublishers = BasePublishers(controller: self)
+        return _basePublishers as? BasePublishers ?? .init(controller: self)
+    }
 
     /// Creates a new `ChannelController`
     /// - Parameters:
@@ -344,7 +353,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     private func setMessagesObserver() {
-        _messagesObserver.computeValue = { [weak self] in
+        messagesObserver = { [weak self] in
             guard let self = self else {
                 log.warning("Callback called while self is nil")
                 return nil
@@ -362,8 +371,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages
             }
 
-            let observer = ListDatabaseObserver(
-                context: self.client.databaseContainer.viewContext,
+            let observer = ListDatabaseObserverWrapper(
+                isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+                database: client.databaseContainer,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
                     sortAscending: sortAscending,
@@ -372,19 +382,16 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 ),
                 itemCreator: { try $0.asModel() as ChatMessage }
             )
-            observer.onChange = { [weak self] changes in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
+            observer.onDidChange = { [weak self] changes in
+                self?.delegateCallback {
+                    guard let self = self else { return }
                     log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
                     $0.channelController(self, didUpdateMessages: changes)
                 }
             }
 
             return observer
-        }
+        }()
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -404,8 +411,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelCreatedCallback: channelCreatedCallback
         ) { result in
             switch result {
-            case .success:
+            case let .success(value):
                 self.state = .remoteDataFetched
+                self.updateLastFetchedId(with: value)
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
@@ -475,8 +483,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
     
     private func startMessagesObserver() -> Error? {
-        _messagesObserver.reset()
-        
+        setMessagesObserver()
+
         do {
             try messagesObserver?.startObserving()
             return nil
@@ -730,8 +738,12 @@ public extension ChatChannelController {
             channelModificationFailed(completion)
             return
         }
-        
-        guard let messageId = messageId ?? messages.last?.id else {
+
+        let lastLocalMessageId: () -> MessageId? = {
+            self.messages.last { !$0.isLocalOnly }?.id
+        }
+
+        guard let messageId = messageId ?? lastFetchedMessageId ?? lastLocalMessageId() else {
             log.error(ClientError.ChannelEmptyMessages().localizedDescription)
             callback { completion?(ClientError.ChannelEmptyMessages()) }
             return
@@ -745,12 +757,18 @@ public extension ChatChannelController {
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
             switch result {
             case let .success(payload):
+                self.updateLastFetchedId(with: payload)
                 self.hasLoadedAllPreviousMessages = payload.messages.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
             }
         })
+    }
+
+    private func updateLastFetchedId(with payload: ChannelPayload) {
+        // Payload messages are ordered from oldest to newest
+        lastFetchedMessageId = payload.messages.first?.id
     }
     
     /// Loads next messages from backend.
@@ -945,17 +963,18 @@ public extension ChatChannelController {
     ///
     /// - Parameters:
     ///   - users: Users Id to add to a channel.
+    ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func addMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+    func addMembers(userIds: Set<UserId>, hideHistory: Bool = false, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
         
-        updater.addMembers(cid: cid, userIds: userIds) { error in
+        updater.addMembers(cid: cid, userIds: userIds, hideHistory: hideHistory) { error in
             self.callback {
                 completion?(error)
             }
@@ -1319,7 +1338,7 @@ public extension ChatChannelController {
     
     /// Returns the current cooldown time for the channel. Returns 0 in case there is no cooldown active.
     func currentCooldownTime() -> Int {
-        guard let cooldownDuration = channel?.cooldownDuration,
+        guard let cooldownDuration = channel?.cooldownDuration, cooldownDuration > 0,
               let currentUserLastMessage = channel?.lastMessageFromCurrentUser else {
             return 0
         }
@@ -1328,11 +1347,32 @@ public extension ChatChannelController {
         
         return max(0, cooldownDuration - Int(currentTime))
     }
+
+    func createCall(id: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+
+        updater.createCall(in: cid, callId: id, type: type) {
+            switch $0 {
+            case let .success(messages):
+                self.callback {
+                    completion(.success(messages))
+                }
+            case let .failure(error):
+                self.callback {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
 }
 
 extension ChatChannelController {
     struct Environment {
         var channelUpdaterBuilder: (
+            _ callRepository: CallRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
@@ -1392,7 +1432,7 @@ public extension ChatChannelControllerDelegate {
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {}
-    
+
     func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]

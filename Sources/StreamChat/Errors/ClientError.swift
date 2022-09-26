@@ -72,4 +72,8 @@ extension ClientError {
     var isInvalidTokenError: Bool {
         (underlyingError as? ErrorPayload)?.isInvalidTokenError == true
     }
+    
+    var isBouncedMessageError: Bool {
+        (underlyingError as? ErrorPayload)?.isBouncedMessageError == true
+    }
 }

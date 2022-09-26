@@ -20,7 +20,7 @@ final class SyncContext {
 private let syncOperationsMaximumRetries = 2
 
 final class GetChannelIdsOperation: AsyncOperation {
-    init(database: DatabaseContainer, context: SyncContext) {
+    init(database: DatabaseContainer, context: SyncContext, activeChannelIds: [ChannelId]) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
             guard let database = database else {
                 done(.continue)
@@ -31,7 +31,7 @@ final class GetChannelIdsOperation: AsyncOperation {
                     .flatMap(\.channels)
                     .compactMap { try? ChannelId(cid: $0.cid) }
                 log.info("0. Retrieved channels from existing queries from DB. Count \(cids.count)", subsystems: .offlineSupport)
-                context.localChannelIds = cids
+                context.localChannelIds = Array(Set(cids + activeChannelIds))
                 done(.continue)
             }
         }
@@ -68,12 +68,6 @@ final class WatchChannelOperation: AsyncOperation {
     init(controller: ChatChannelController, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak controller] _, done in
             guard let controller = controller, controller.canBeRecovered else {
-                done(.continue)
-                return
-            }
-
-            // Reset only if it needs recovery
-            if let cid = controller.cid, context.synchedChannelIds.contains(cid) {
                 done(.continue)
                 return
             }

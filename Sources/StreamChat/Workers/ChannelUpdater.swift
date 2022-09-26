@@ -6,6 +6,13 @@ import Foundation
 
 /// Makes a channel query call to the backend and updates the local storage with the results.
 class ChannelUpdater: Worker {
+    private let callRepository: CallRepository
+
+    init(callRepository: CallRepository, database: DatabaseContainer, apiClient: APIClient) {
+        self.callRepository = callRepository
+        super.init(database: database, apiClient: apiClient)
+    }
+
     /// Makes a channel query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:
@@ -24,7 +31,7 @@ class ChannelUpdater: Worker {
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
-        let clearMessageHistory = channelQuery.pagination?.parameter == nil
+        let isFirstPage = channelQuery.pagination?.parameter == nil
         let isChannelCreate = channelCreatedCallback != nil
 
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
@@ -32,11 +39,14 @@ class ChannelUpdater: Worker {
                 let payload = try result.get()
                 channelCreatedCallback?(payload.channel.cid)
                 database?.write { session in
-                    if clearMessageHistory, let channelDTO = session.channel(cid: payload.channel.cid) {
+                    let channelDTO = session.channel(cid: payload.channel.cid)
+                    channelDTO?.cleanMessagesThatFailedToBeEditedDueToModeration()
+
+                    if isFirstPage, let channelDTO = channelDTO {
                         channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
                     }
 
-                    try session.saveChannel(payload: payload)
+                    try session.saveChannel(payload: payload, isPaginatedPayload: !isFirstPage)
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -266,9 +276,10 @@ class ChannelUpdater: Worker {
     /// - Parameters:
     ///   - cid: The Id of the channel where you want to add the users.
     ///   - users: User Ids to add to the channel.
+    ///   - hideHistory: Hide the history of the channel to the added member.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func addMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .addMembers(cid: cid, userIds: userIds)) {
+    func addMembers(cid: ChannelId, userIds: Set<UserId>, hideHistory: Bool, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .addMembers(cid: cid, userIds: userIds, hideHistory: hideHistory)) {
             completion?($0.error)
         }
     }
@@ -413,7 +424,7 @@ class ChannelUpdater: Worker {
                     }
                     // In any case (backend reported another page of watchers or no watchers)
                     // we should save the payload as it's the latest state of the channel
-                    try session.saveChannel(payload: payload)
+                    try session.saveChannel(payload: payload, isPaginatedPayload: false)
                 } completion: { error in
                     completion?(error)
                 }
@@ -490,5 +501,9 @@ class ChannelUpdater: Worker {
                 completion(.failure(error))
             }
         }
+    }
+    
+    func createCall(in cid: ChannelId, callId: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
+        callRepository.createCall(in: cid, callId: callId, type: type, completion: completion)
     }
 }

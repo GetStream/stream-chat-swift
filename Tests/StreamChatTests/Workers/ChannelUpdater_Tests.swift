@@ -18,7 +18,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         
-        channelUpdater = ChannelUpdater(database: database, apiClient: apiClient)
+        channelUpdater = ChannelUpdater(callRepository: CallRepository(apiClient: apiClient), database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
@@ -56,8 +56,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
         let expectation = self.expectation(description: "Update completes")
+        var updateResult: Result<ChannelPayload, Error>!
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
-            XCTAssertNil(result.error)
+            updateResult = result
             expectation.fulfill()
         })
         
@@ -70,6 +71,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         
         let channel = database.viewContext.channel(cid: cid)
         XCTAssertNotNil(channel)
+        XCTAssertNil(updateResult.error)
         XCTAssertEqual(channel?.messages.count, 2)
     }
 
@@ -830,8 +832,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
-    // TODO: Disabling flaky test temporarily
-    func _test_hideChannel_successfulResponse_isPropagatedToCompletion() throws {
+    func test_hideChannel_successfulResponse_isPropagatedToCompletion() throws {
         // This part is for the case where the channel is already hidden on backend
         // But SDK is not aware of this (so channel.hiddenAt is not set)
         // Consecutive `hideChannel` calls won't generate `channel.hidden` events
@@ -947,10 +948,10 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `addMembers(cid:, mute:, userIds:)` call
-        channelUpdater.addMembers(cid: channelID, userIds: userIds)
+        channelUpdater.addMembers(cid: channelID, userIds: userIds, hideHistory: false)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(cid: channelID, userIds: userIds)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(cid: channelID, userIds: userIds, hideHistory: false)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -960,7 +961,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         
         // Simulate `addMembers(cid:, mute:, userIds:)` call
         var completionCalled = false
-        channelUpdater.addMembers(cid: channelID, userIds: userIds) { error in
+        channelUpdater.addMembers(cid: channelID, userIds: userIds, hideHistory: false) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -981,7 +982,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         
         // Simulate `muteChannel(cid:, mute:, completion:)` call
         var completionCalledError: Error?
-        channelUpdater.addMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
+        channelUpdater.addMembers(cid: channelID, userIds: userIds, hideHistory: false) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()

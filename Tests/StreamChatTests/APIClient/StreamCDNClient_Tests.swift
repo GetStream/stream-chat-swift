@@ -202,8 +202,4 @@ final class StreamCDNClient_Tests: XCTestCase {
             body: multipartFormData.getMultipartFormData()
         )
     }
-    
-    func test_maxAttachmentSize() {
-        XCTAssertEqual(StreamCDNClient.maxAttachmentSize, 20 * 1024 * 1024)
-    }
 }

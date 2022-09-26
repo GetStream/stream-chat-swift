@@ -83,7 +83,7 @@ public struct TypingSuggester {
         let charIndexBeforeSymbol = firstSymbolBeforeCaret.lowerBound - 1
         let charRangeBeforeSymbol = NSRange(location: charIndexBeforeSymbol, length: 1)
         let textBeforeSymbol = charIndexBeforeSymbol >= 0 ? text.substring(with: charRangeBeforeSymbol) : ""
-        guard textBeforeSymbol.isEmpty || textBeforeSymbol == " " else {
+        guard textBeforeSymbol.isEmpty || textBeforeSymbol == " " || textBeforeSymbol == "\n" else {
             return nil
         }
 
@@ -100,17 +100,10 @@ public struct TypingSuggester {
             return nil
         }
 
-        // Fetch the suggestion text. The suggestions can't have spaces.
-        // valid example: "@luke_skywa..."
-        // invalid example: "@luke skywa..."
-        let suggestionLocation = NSRange(location: suggestionStart, length: suggestionEnd - suggestionStart)
-        let suggestionText = text.substring(with: suggestionLocation)
-        guard !suggestionText.contains(" ") else {
-            return nil
-        }
-
         // A minimum number of characters can be provided to only show
         // suggestions after the customer has input enough characters.
+        let suggestionLocation = NSRange(location: suggestionStart, length: suggestionEnd - suggestionStart)
+        let suggestionText = text.substring(with: suggestionLocation)
         guard suggestionText.count >= options.minimumRequiredCharacters else {
             return nil
         }

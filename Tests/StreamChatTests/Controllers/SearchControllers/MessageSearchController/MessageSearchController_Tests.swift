@@ -174,6 +174,10 @@ final class MessageSearchController_Tests: XCTestCase {
         AssertAsync.willBeEqual(controller.messages.count, 1)
         // Check if delegate method is called
         AssertAsync.willBeEqual(delegate.didChangeMessages_changes, [.insert(message, index: [0, 0])])
+        
+        if #available(iOS 13, *) {
+            XCTAssert(controller.basePublishers.controller === controller)
+        }
     }
     
     /// This test simulates a bug where the `message` field was not updated if it wasn't

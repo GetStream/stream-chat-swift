@@ -930,27 +930,6 @@ final class ChannelController_Tests: XCTestCase {
         // Both outgoing and incoming messages should be visible
         XCTAssertEqual(Set(controller.messages.map(\.id)), Set([outgoingDeletedMessage.id, incomingDeletedMessage.id]))
     }
-
-    func test_truncatedMessages_areNotVisible() throws {
-        // Prepare channel with 10 messages
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId, numberOfMessages: 10))
-        }
-
-        // Simulate `synchronize` call and check all messages are fetched
-        controller.synchronize()
-        XCTAssertEqual(controller.messages.count, 10)
-
-        // Set channel `truncatedAt` date before the 5th message
-        let truncatedAtDate = controller.messages[4].createdAt.addingTimeInterval(-0.1)
-        try client.databaseContainer.writeSynchronously {
-            $0.channel(cid: self.channelId)?.truncatedAt = truncatedAtDate.bridgeDate
-        }
-
-        // Check only the 5 messages after the truncatedAt date are visible
-        XCTAssertEqual(controller.messages.count, 5)
-        XCTAssert(controller.messages.allSatisfy { $0.createdAt > truncatedAtDate })
-    }
     
     func test_shadowedMessages_whenVisible() throws {
         // Simulate the config setting
@@ -2161,6 +2140,132 @@ final class ChannelController_Tests: XCTestCase {
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_loadPreviousMessages_usesPassedMessageId() throws {
+        let expectation = self.expectation(description: "synchronize completes")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        let messages: [MessagePayload] = [
+            MessagePayload.dummy(messageId: "2", authorUserId: .unique),
+            MessagePayload.dummy(messageId: "1", authorUserId: .unique)
+        ]
+        let payload = ChannelPayload.dummy(messages: messages)
+        env.channelUpdater?.update_completion?(.success(payload))
+
+        waitForExpectations(timeout: 0.1)
+
+        let expectation2 = self.expectation(description: "loadPreviousMessage completes")
+        var receivedError: Error?
+        controller.loadPreviousMessages(before: "3") { error in
+            receivedError = error
+            expectation2.fulfill()
+        }
+
+        let error = TestError()
+        env.channelUpdater!.update_completion?(.failure(error))
+
+        waitForExpectations(timeout: 0.1)
+
+        let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .lessThan(paginationMessageId) = paginationParameter else {
+            XCTFail("Missing pagination parameter")
+            return
+        }
+        XCTAssertEqual(paginationMessageId, "3")
+        XCTAssertEqual(receivedError, error)
+    }
+
+    func test_loadPreviousMessages_usesLastFetchedId() throws {
+        let expectation = self.expectation(description: "synchronize completes")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        let messages: [MessagePayload] = [
+            MessagePayload.dummy(messageId: "6", authorUserId: .unique),
+            MessagePayload.dummy(messageId: "2", quotedMessage: .dummy(messageId: "3", authorUserId: .unique), authorUserId: .unique),
+            MessagePayload.dummy(messageId: "1", quotedMessage: .dummy(messageId: "30", authorUserId: .unique), authorUserId: .unique)
+        ]
+        let payload = ChannelPayload.dummy(messages: messages, pinnedMessages: [
+            MessagePayload.dummy(messageId: "25", authorUserId: .unique),
+            MessagePayload.dummy(messageId: "5", authorUserId: .unique),
+            MessagePayload.dummy(messageId: "4", quotedMessage: .dummy(messageId: "3", authorUserId: .unique), authorUserId: .unique)
+        ])
+        env.channelUpdater?.update_completion?(.success(payload))
+
+        waitForExpectations(timeout: 0.1)
+
+        let expectation2 = self.expectation(description: "loadPreviousMessage completes")
+        var receivedError: Error?
+        controller.loadPreviousMessages() { error in
+            receivedError = error
+            expectation2.fulfill()
+        }
+
+        let error = TestError()
+        env.channelUpdater!.update_completion?(.failure(error))
+
+        waitForExpectations(timeout: 0.1)
+
+        let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .lessThan(paginationMessageId) = paginationParameter else {
+            XCTFail("Missing pagination parameter")
+            return
+        }
+        XCTAssertEqual(paginationMessageId, "6")
+        XCTAssertEqual(receivedError, error)
+    }
+
+    func test_loadPreviousMessages_usesLastLocalId_whenThereIsNot_lastFetchedId() throws {
+        // We purposefully don't perform a synchronize. We are trying to simulate a case where a synchronize call fails.
+        // We store some messages in the database so those can be used to try to paginate.
+        let oldestPendingId = "oldest-pending"
+        let newestId = "newest-notpending"
+        let messages: [MessagePayload] = [
+            .dummy(
+                messageId: oldestPendingId,
+                authorUserId: "1",
+                updatedAt: Date().addingTimeInterval(100)
+            ),
+            .dummy(
+                messageId: newestId,
+                authorUserId: "1",
+                updatedAt: Date()
+            )
+        ]
+        let payload = dummyPayload(with: channelId, messages: messages)
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+            let pendingMessage = session.message(id: oldestPendingId)
+            pendingMessage?.localMessageState = .pendingSend
+        }
+
+        let expectation2 = expectation(description: "loadPreviousMessage completes")
+        var receivedError: Error?
+        controller.loadPreviousMessages() { error in
+            receivedError = error
+            expectation2.fulfill()
+        }
+
+        let error = TestError()
+        env.channelUpdater!.update_completion?(.failure(error))
+
+        waitForExpectations(timeout: 0.1)
+
+        let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .lessThan(paginationMessageId) = paginationParameter else {
+            XCTFail("Missing pagination parameter")
+            return
+        }
+
+        // Should use the latest message in database that is also available on the server
+        XCTAssertEqual(paginationMessageId, newestId)
+        XCTAssertEqual(receivedError, error)
     }
     
     // MARK: - `loadNextMessages`
@@ -4212,6 +4317,73 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(client.activeChannelControllers.count == 1)
         XCTAssert(client.activeChannelControllers.allObjects.first === controller)
     }
+    
+    // MARK: Test creation of a call
+    
+    func test_createCall_failsWhenChannelIsNotAlreadyCreated() {
+        let controller = ChatChannelController(
+            channelQuery: ChannelQuery(cid: channelId),
+            channelListQuery: nil,
+            client: ChatClient.mock,
+            isChannelAlreadyCreated: false
+        )
+        
+        let id: String = .unique
+        let type: String = "video"
+        var completionError: Error?
+        controller.createCall(id: id, type: type) { result in
+            completionError = result.error
+        }
+        
+        AssertAsync.willBeTrue(completionError != nil)
+    }
+    
+    func test_createCall_propagatesErrorFromUpdater() {
+        let id: String = .unique
+        let type: String = "video"
+        var completionError: Error?
+        
+        // Set completion handler
+        controller.createCall(id: id, type: type) { result in
+            completionError = result.error
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.createCall_completion!(.failure(testError))
+        
+        // Error is propagated to completion
+        AssertAsync.willBeEqual(completionError as? TestError, testError)
+    }
+    
+    func test_createCall_propagatesResultFromUpdater() {
+        let id: String = .unique
+        let provider: String = "agora"
+        let token: String = .unique
+        let type: String = "video"
+        
+        var resultingCallWithToken: CallWithToken?
+        let mockCallWithToken = CallWithToken(
+            call: Call(
+                id: id,
+                provider: provider,
+                agora: nil,
+                hms: nil
+            ),
+            token: token
+        )
+        
+        // Set completion handler
+        controller.createCall(id: id, type: type) { result in
+            resultingCallWithToken = result.value
+        }
+        
+        // Simulate successful completion
+        env.channelUpdater!.createCall_completion!(.success(mockCallWithToken))
+        
+        // Result is propagated to completion
+        AssertAsync.willBeEqual(resultingCallWithToken, mockCallWithToken)
+    }
 }
 
 // MARK: Test Helpers
@@ -4311,7 +4483,7 @@ private class TestEnvironment {
 
     lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
-            self.channelUpdater = ChannelUpdater_Mock(database: $0, apiClient: $1)
+            self.channelUpdater = ChannelUpdater_Mock(callRepository: $0, database: $1, apiClient: $2)
             return self.channelUpdater!
         },
         eventSenderBuilder: { [unowned self] in

@@ -32,7 +32,7 @@ module Fastlane
           end
         end
 
-        tests = Hash.new([])
+        tests = {}
         test_targets.each do |xctestrun_config|
           testable_name = xctestrun_config['TestableName']
           xctest_path = xctest_bundle_path(xctestrun_rootpath, xctestrun_config)
@@ -53,7 +53,7 @@ module Fastlane
           end
           if test_identifiers.empty?
             UI.error("No tests found in '#{xctest_path}'!")
-            UI.important("Is the Build Setting, `ENABLE_TESTABILITY` enabled for the test target #{testable_name}?")
+            UI.important("Check `ENABLE_TESTABILITY` build setting in `#{testable_name}` test target.")
           end
           tests[testable_name] = test_identifiers.map { |test_identifier| "#{testable_name}/#{test_identifier}" }
         end

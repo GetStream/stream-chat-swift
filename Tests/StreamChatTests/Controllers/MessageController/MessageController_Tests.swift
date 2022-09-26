@@ -87,7 +87,7 @@ final class MessageController_Tests: XCTestCase {
         
         // Simulate network response with the error
         let networkError = TestError()
-        env.messageUpdater.getMessage_completion?(networkError)
+        env.messageUpdater.getMessage_completion?(.failure(networkError))
         
         AssertAsync {
             // Assert network error is propagated
@@ -117,7 +117,7 @@ final class MessageController_Tests: XCTestCase {
         controller = nil
         
         // Simulate network response with the error
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.getMessage_completion = nil
         
@@ -182,7 +182,7 @@ final class MessageController_Tests: XCTestCase {
         )
         
         // Simulate updater completion call
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         
         XCTAssertEqual(controller.message?.id, messageId)
         XCTAssertEqual(controller.replies.count, 10)
@@ -582,7 +582,7 @@ final class MessageController_Tests: XCTestCase {
         controller.synchronize()
             
         // Simulate network call response
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -610,7 +610,7 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
         }
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         
         // Assert `create` entity change is received by the delegate
         AssertAsync {
@@ -647,7 +647,7 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
         }
-        env.messageUpdater.getMessage_completion?(nil)
+        env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
         
         // Assert `update` entity change is received by the delegate
         AssertAsync {
@@ -683,7 +683,7 @@ final class MessageController_Tests: XCTestCase {
         
         var replyModel: ChatMessage?
         try client.databaseContainer.writeSynchronously { session in
-            replyModel = try session.saveMessage(payload: reply, for: self.cid, syncOwnReactions: true, cache: nil)!.asModel()
+            replyModel = try session.saveMessage(payload: reply, for: self.cid, syncOwnReactions: true, cache: nil).asModel()
         }
     
         // Assert `insert` entity change is received by the delegate
@@ -1074,7 +1074,6 @@ final class MessageController_Tests: XCTestCase {
     }
     
     func test_loadPreviousReplies_callsMessageUpdater_withCorrectValues() {
-        // Simulate `loadNextReplies` call
         controller.loadPreviousReplies()
         
         // Assert message updater is called with correct values
@@ -1083,34 +1082,34 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25))
     }
     
-    func test_loadPreviousReplies_noMessageIdPassed_properlyHandlesPagination() {
-        // Simulate `loadNextReplies` call
-        controller.loadPreviousReplies(
-            limit: 21,
-            completion: nil
-        )
-        
-        // Pagination should not have a parameter because this is the first call
-        XCTAssertNil(env.messageUpdater.loadReplies_pagination?.parameter)
-        
+    func test_loadPreviousReplies_noMessageIdPassed_noLastMessageFetched_usesLastMessageFromDB() {
+        // Create observers
+        controller.synchronize()
+
         // Call `loadPreviousReplies`, this time since the first batch was received already it should
         // pass the last message id
         env.messageUpdater.loadReplies_completion?(
             .success(
                 .init(
-                    messages: (0...30).map {
-                        _ in MessagePayload.dummy(messageId: .unique, authorUserId: .unique)
-                    }
+                    messages: []
                 )
             )
         )
         _ = controller.replies
         env.repliesObserver.items_mock = [
             .mock(
+                id: "first message", cid: .unique, text: .unique, author: .unique
+            ),
+            .mock(
                 id: "last message", cid: .unique, text: .unique, author: .unique
+            ),
+            // The last message used for pagination, needs to be in the server as well,
+            // so this one should not be used
+            .mock(
+                id: "last message only local", cid: .unique, text: .unique, author: .unique, localState: .pendingSync
             )
         ]
-        
+
         controller.loadPreviousReplies(
             limit: 21,
             completion: nil
@@ -1121,9 +1120,39 @@ final class MessageController_Tests: XCTestCase {
             .lessThan("last message")
         )
     }
+
+    func test_loadPreviousReplies_noMessageIdPassed_usesLastFetchedId() {
+        controller.loadPreviousReplies(
+            limit: 21,
+            completion: nil
+        )
+
+        // Pagination should not have a parameter because this is the first call
+        XCTAssertNil(env.messageUpdater.loadReplies_pagination?.parameter)
+
+        // The last fetched message id, is actually the first from the payload
+        var messages: [MessagePayload] = [MessagePayload.dummy(messageId: "last message", authorUserId: .unique)]
+        messages += (0...30).map { _ in
+            MessagePayload.dummy(messageId: .unique, authorUserId: .unique)
+        }
+
+        env.messageUpdater.loadReplies_completion?(
+            .success(.init(messages: messages))
+        )
+        _ = controller.replies
+
+        controller.loadPreviousReplies(
+            limit: 21,
+            completion: nil
+        )
+
+        XCTAssertEqual(
+            env.messageUpdater.loadReplies_pagination?.parameter,
+            .lessThan("last message")
+        )
+    }
     
     func test_loadPreviousReplies_messageIdPassed_properlyHandlesPagination() {
-        // Simulate `loadNextReplies` call
         controller.loadPreviousReplies(
             before: "last message",
             limit: 21,

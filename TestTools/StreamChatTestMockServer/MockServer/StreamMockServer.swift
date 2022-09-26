@@ -10,18 +10,23 @@ public final class StreamMockServer {
 
     // Delays all HTTP responses by given time interval, 0 by default
     public static var httpResponseDelay: TimeInterval = 0.0
+    // Waits for all HTTP and Websocket responses during given time interval, 10 by default
+    public static var waitTimeout = 10.0
 
     public private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?
     private var channelConfigs = ChannelConfigs()
+    public var threadList: [[String: Any]] = []
     public var messageList: [[String: Any]] = []
     public var channelList = TestData.toJson(.httpChannels)
     public var currentChannelId = ""
     public var channelsEndpointWasCalled = false
     public var channelQueryEndpointWasCalled = false
+    public var allChannelsWereLoaded = false
     public var latestWebsocketMessage = ""
     public var latestHttpMessage = ""
     public let forbiddenWords: Set<String> = ["wth"]
+    public var pushNotificationPayload: [String: Any] = [:]
 
     public init() {}
 
@@ -107,6 +112,6 @@ public extension StreamMockServer {
 
     func setCooldown(in channel: inout [String: Any]) {
         let cooldown = channelConfigs.coolDown
-        channel[ChannelCodingKeys.cooldownDuration.rawValue] = cooldown.isEnabled ? cooldown.duration : nil
+        channel[channelKey.cooldownDuration.rawValue] = cooldown.isEnabled ? cooldown.duration : nil
     }
 }

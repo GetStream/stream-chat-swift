@@ -15,13 +15,17 @@ final class PushNotifications: NSObject {
         [.alert, .sound, .badge]
     }
 
-    var onNotificationResponse: ((UNNotificationResponse) -> Void)?
+    private var onNotificationResponse: ((UNNotificationResponse) -> Void)?
+
+    func listenToNotificationsResponse(with onNotificationResponse: @escaping (UNNotificationResponse) -> Void) {
+        center.delegate = self
+        self.onNotificationResponse = onNotificationResponse
+    }
 
     func registerForPushNotifications() {
         center.requestAuthorization(options: authorizationOptions) { [weak self] granted, _ in
             print("Permission granted: \(granted)")
             self?.getNotificationSettings()
-            self?.center.delegate = self
         }
     }
 

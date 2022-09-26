@@ -68,17 +68,19 @@ open class ChatChannelVC: _ViewController,
     override open func setUp() {
         super.setUp()
 
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(appMovedToForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
         
         messageComposerVC.userSearchController = userSuggestionSearchController
-        
-        func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
-            guard messageComposerVC.channelController == nil else { return }
-            let composerChannelController = channelController.cid.map { client.channelController(for: $0) }
-            messageComposerVC.channelController = composerChannelController
-        }
 
         setChannelControllerToComposerIfNeeded(cid: channelController.cid)
 
@@ -87,9 +89,17 @@ open class ChatChannelVC: _ViewController,
             if let error = error {
                 log.error("Error when synchronizing ChannelController: \(error)")
             }
-            setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
+            self?.setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
             self?.messageComposerVC.updateContent()
         }
+
+        // Initial messages data
+        messages = Array(channelController.messages)
+    }
+
+    private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
+        guard messageComposerVC.channelController == nil, let cid = cid else { return }
+        messageComposerVC.channelController = client.channelController(for: cid)
     }
 
     override open func setUpLayout() {
@@ -132,30 +142,28 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
-    override open func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
-        resignFirstResponder()
+    override open func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
 
         keyboardHandler.stop()
+
+        resignFirstResponder()
     }
 
     // MARK: - ChatMessageListVCDataSource
-    
-    public var messages: [ChatMessage] {
-        Array(channelController.messages)
-    }
+
+    public var messages: [ChatMessage] = []
     
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }
 
     open func numberOfMessages(in vc: ChatMessageListVC) -> Int {
-        channelController.messages.count
+        messages.count
     }
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
-        channelController.messages[safe: indexPath.item]
+        messages[safe: indexPath.item]
     }
 
     open func chatMessageListVC(
@@ -167,7 +175,7 @@ open class ChatChannelVC: _ViewController,
         return components.messageLayoutOptionsResolver.optionsForMessage(
             at: indexPath,
             in: channel,
-            with: AnyRandomAccessCollection(channelController.messages),
+            with: AnyRandomAccessCollection(messages),
             appearance: appearance
         )
     }
@@ -178,15 +186,11 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if channelController.state != .remoteDataFetched {
-            return
-        }
-
         guard messageListVC.listView.isTrackingOrDecelerating else {
             return
         }
 
-        if indexPath.row < channelController.messages.count - 10 {
+        if indexPath.row < messages.count - 10 {
             return
         }
 
@@ -248,6 +252,9 @@ open class ChatChannelVC: _ViewController,
         if isLastMessageFullyVisible {
             channelController.markRead()
         }
+
+        messageListVC.setPreviousMessagesSnapshot(messages)
+        messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
         messageListVC.updateMessages(with: changes)
     }
 
@@ -274,5 +281,12 @@ open class ChatChannelVC: _ViewController,
         } else {
             messageListVC.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
         }
+    }
+
+    // When app becomes active, and channel is open, recreate the database observers and reload
+    // the data source so that any missed database updates from the NotificationService are refreshed.
+    @objc func appMovedToForeground() {
+        channelController.delegate = self
+        messageListVC.dataSource = self
     }
 }

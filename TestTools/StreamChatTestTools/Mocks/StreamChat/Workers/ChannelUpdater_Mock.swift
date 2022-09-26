@@ -37,6 +37,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     
     @Atomic var addMembers_cid: ChannelId?
     @Atomic var addMembers_userIds: Set<UserId>?
+    @Atomic var addMembers_hideHistory: Bool?
     @Atomic var addMembers_completion: ((Error?) -> Void)?
     
     @Atomic var inviteMembers_cid: ChannelId?
@@ -96,6 +97,9 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var loadPinnedMessages_cid: ChannelId?
     @Atomic var loadPinnedMessages_query: PinnedMessagesQuery?
     @Atomic var loadPinnedMessages_completion: ((Result<[ChatMessage], Error>) -> Void)?
+    
+    @Atomic var createCall_cid: ChannelId?
+    @Atomic var createCall_completion: ((Result<CallWithToken, Error>) -> Void)?
     
     // Cleans up all recorded values
     func cleanUp() {
@@ -181,6 +185,9 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadPinnedMessages_cid = nil
         loadPinnedMessages_query = nil
         loadPinnedMessages_completion = nil
+        
+        createCall_cid = nil
+        createCall_completion = nil
     }
     
     override func update(
@@ -262,9 +269,10 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createNewMessage_completion = completion
     }
     
-    override func addMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+    override func addMembers(cid: ChannelId, userIds: Set<UserId>, hideHistory: Bool, completion: ((Error?) -> Void)? = nil) {
         addMembers_cid = cid
         addMembers_userIds = userIds
+        addMembers_hideHistory = hideHistory
         addMembers_completion = completion
     }
     
@@ -357,5 +365,15 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadPinnedMessages_cid = cid
         loadPinnedMessages_query = query
         loadPinnedMessages_completion = completion
+    }
+    
+    override func createCall(
+        in cid: ChannelId,
+        callId: String,
+        type: String,
+        completion: @escaping ((Result<CallWithToken, Error>) -> Void)
+    ) {
+        createCall_cid = cid
+        createCall_completion = completion
     }
 }

@@ -8,11 +8,11 @@ import Foundation
 public extension ChatMessage {
     /// Creates a new `ChatMessage` object from the provided data.
     static func mock(
-        id: MessageId,
-        cid: ChannelId,
-        text: String,
+        id: MessageId = .unique,
+        cid: ChannelId = .unique,
+        text: String = .unique,
         type: MessageType = .reply,
-        author: ChatUser,
+        author: ChatUser = .unique,
         command: String? = nil,
         createdAt: Date = Date(timeIntervalSince1970: 113),
         locallyCreatedAt: Date? = nil,
@@ -24,6 +24,7 @@ public extension ChatMessage {
         showReplyInChannel: Bool = false,
         replyCount: Int = 0,
         extraData: [String: RawJSON] = [:],
+        isBounced: Bool = false,
         isSilent: Bool = false,
         isShadowed: Bool = false,
         reactionScores: [MessageReactionType: Int] = [:],
@@ -56,6 +57,7 @@ public extension ChatMessage {
             replyCount: replyCount,
             extraData: extraData,
             quotedMessage: { quotedMessage },
+            isBounced: isBounced,
             isSilent: isSilent,
             isShadowed: isShadowed,
             reactionScores: reactionScores,

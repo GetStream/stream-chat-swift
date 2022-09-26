@@ -68,17 +68,17 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             startChannelListObserverIfNeeded()
         }
     }
-    
-    /// Used for observing the database for changes.
-    private(set) lazy var channelListObserver: ListDatabaseObserver<ChatChannel, ChannelDTO> = {
+
+    private(set) lazy var channelListObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
         let observer = self.environment.createChannelListDatabaseObserver(
-            client.databaseContainer.viewContext,
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            client.databaseContainer,
             request,
             { try $0.asModel() }
         )
-        
-        observer.onChange = { [weak self] changes in
+
+        observer.onDidChange = { [weak self] changes in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
                     log.warning("Callback called while self is nil")
@@ -103,26 +103,35 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
         return observer
     }()
-    
-    lazy var updatedChannelObserver: ListDatabaseObserver<ChatChannel, ChannelDTO> = {
+
+    /// Used for observing the database for changes.
+    private(set) lazy var updatedChannelObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
         let observer = self.environment.createChannelListDatabaseObserver(
-            client.databaseContainer.viewContext,
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            client.databaseContainer,
             ChannelDTO.channelsFetchRequest(notLinkedTo: query),
             { try $0.asModel() }
         )
-        
-        observer.onChange = { [weak self] changes in
+
+        observer.onDidChange = { [weak self] changes in
             self?.handleUnlinkedChannels(changes)
         }
-        
+
         return observer
     }()
 
+    var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
-    lazy var basePublishers: BasePublishers = .init(controller: self)
+    var basePublishers: BasePublishers {
+        if let value = _basePublishers as? BasePublishers {
+            return value
+        }
+        _basePublishers = BasePublishers(controller: self)
+        return _basePublishers as? BasePublishers ?? .init(controller: self)
+    }
     
     private let filter: ((ChatChannel) -> Bool)?
     private let environment: Environment
@@ -364,12 +373,13 @@ extension ChatChannelListController {
         ) -> ChannelListUpdater = ChannelListUpdater.init
 
         var createChannelListDatabaseObserver: (
-            _ context: NSManagedObjectContext,
+            _ isBackground: Bool,
+            _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
             _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel
         )
-            -> ListDatabaseObserver<ChatChannel, ChannelDTO> = {
-                ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
+            -> ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
+                ListDatabaseObserverWrapper(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3)
             }
     }
 }

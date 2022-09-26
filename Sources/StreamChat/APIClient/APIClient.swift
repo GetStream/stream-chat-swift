@@ -258,12 +258,7 @@ class APIClient {
 
     private func isConnectionError(_ error: Error) -> Bool {
         // We only retry transient errors like connectivity stuff or HTTP 5xx errors
-        guard ClientError.isEphemeral(error: error) else {
-            return false
-        }
-
-        let offlineErrorCodes: Set<Int> = [NSURLErrorDataNotAllowed, NSURLErrorNotConnectedToInternet]
-        return offlineErrorCodes.contains((error as NSError).code)
+        ClientError.isEphemeral(error: error)
     }
 
     func uploadAttachment(

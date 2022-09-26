@@ -9,19 +9,22 @@ desc 'Upload test results to Allure TestOps'
 lane :allure_upload do |options|
   branch = github_run_details['head_branch']
   allure_args = "-e #{allure_endpoint} --project-id #{allure_project_id} --launch-id #{options[:launch_id]}"
-  sh("./xcresults export test_output/StreamChatUITestsApp.xcresult #{allure_results_path}")
-  sh("env BRANCH_NAME='#{branch}' ./allurectl upload #{allure_args} #{allure_results_path}")
+  sh("./xcresults export test_output/StreamChatUITestsApp.xcresult #{allure_results_path} || true")
+  sh("./allurectl launch reopen #{options[:launch_id]} || true") # to prevent allure from uploading results to a closed launch
+  sh("env BRANCH_NAME='#{branch}' ./allurectl upload #{allure_args} #{allure_results_path} || true")
   UI.success("Check out test results in Allure TestOps: #{allure_endpoint}/launch/#{options[:launch_id]} 🎉")
 end
 
 desc 'Create launch on Allure TestOps'
-lane :allure_launch do
-  next unless testing_required?(:e2e)
+lane :allure_launch do |options|
+  next unless check_required?(:e2e)
 
   tags = []
   github_run = github_run_details
   launch_name =
-    if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
+    if options[:cron]
+      'Cron checks'
+    elsif ENV['GITHUB_EVENT_NAME'] == 'pull_request'
       pull_request = JSON.parse(ENV['GITHUB_EVENT'])['pull_request']
       tags = pull_request['labels'].map { |label| { name: label['name'] } }
       pull_request['title']
@@ -59,7 +62,7 @@ lane :allure_start_regression do |options|
   UI.user_error!('Release version has to be provided ⚠️') if options[:release_version].nil?
 
   response = allure_api(path: "/testplan/?projectId=#{allure_project_id}", http_method: 'GET')
-  testplan_id = response['content'].filter { |plan| plan['name'] == allure_regression_testplan }.first['id']
+  testplan_id = response['content'].find { |plan| plan['name'] == allure_regression_testplan }['id']
 
   allure_api(path: "/testplan/#{testplan_id}/sync", http_method: 'POST')
   UI.success("#{rocket}\nTestplan with id #{testplan_id} synced successfully 🎉")

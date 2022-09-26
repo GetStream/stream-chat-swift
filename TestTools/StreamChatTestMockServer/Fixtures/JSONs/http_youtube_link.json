@@ -1,0 +1,56 @@
+{
+  "message": {
+    "id": "e86ad1f8-42c0-42f2-aec5-e802be4e489b",
+    "text": "https://www.youtube.com/watch?v=xOX7MsrbaPY&t=1s",
+    "html": "<p><a href=\"https://www.youtube.com/watch?v=xOX7MsrbaPY&amp;t=1s\" rel=\"nofollow\">https://www.youtube.com/watch?v=xOX7MsrbaPY&amp;t=1s</a></p>\n",
+    "type": "regular",
+    "user": {
+      "id": "luke_skywalker",
+      "role": "user",
+      "created_at": "2020-12-07T11:36:47.059906Z",
+      "updated_at": "2022-07-21T05:57:09.410796Z",
+      "last_active": "2022-07-21T10:01:04.280648228Z",
+      "banned": false,
+      "online": true,
+      "birthland": "Tatooine",
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "extraData": {},
+      "extra_data": {},
+      "testing-this": 3.14,
+      "testing": false,
+      "yetAnotherField": "40",
+      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "name": "Luke Skywalker"
+    },
+    "attachments": [
+      {
+        "type": "video",
+        "author_name": "YouTube",
+        "title": "Introducing MotionScape: Prototype SwiftUI Animation Easings",
+        "title_link": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
+        "text": "MotionScape is your SwiftUI animation's playground as a developer. You can see all animations and their parameters in effect with beautifully designed and handcrafted animation examples. Best of all: directly preview and export your settings as production-ready SwiftUI code that you can use in your apps as-is.\n\nSupercharge your apps with animations and get to know how to use them - with MotionScape!\n\nDownload MotionScape from the Mac AppStore: \nhttps://gstrm.io/motionscape-yt\n\nWebpage:\nhttps://getstream.github.io/motionscape-app/\n\nSwiftUI chat messaging:\nhttps://getstream.io/chat/sdk/swiftui/\n...",
+        "image_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
+        "thumb_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
+        "asset_url": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
+        "og_scrape_url": "https://www.youtube.com/watch?v=xOX7MsrbaPY&t=1s"
+      }
+    ],
+    "latest_reactions": [],
+    "own_reactions": [],
+    "reaction_counts": {},
+    "reaction_scores": {},
+    "reply_count": 0,
+    "cid": "messaging:general",
+    "created_at": "2022-07-21T10:01:33.998705Z",
+    "updated_at": "2022-07-21T10:01:33.998705Z",
+    "shadowed": false,
+    "mentioned_users": [],
+    "silent": false,
+    "before_message_send_failed": true,
+    "pinned": false,
+    "pinned_at": null,
+    "pinned_by": null,
+    "pin_expires": null
+  },
+  "duration": "140.76ms"
+}

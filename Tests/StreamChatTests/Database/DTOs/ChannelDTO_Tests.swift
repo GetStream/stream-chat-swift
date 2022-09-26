@@ -138,7 +138,7 @@ final class ChannelDTO_Tests: XCTestCase {
         
         let anotherMember: MemberPayload = .dummy(user: .dummy(userId: .unique))
         let anotherMemberRead: ChannelReadPayload = .init(
-            user: anotherMember.user,
+            user: anotherMember.user!,
             lastReadAt: .init(),
             unreadMessagesCount: 0
         )
@@ -154,7 +154,7 @@ final class ChannelDTO_Tests: XCTestCase {
             authorUserId: currentUser.id,
             createdAt: anotherMemberRead.lastReadAt.addingTimeInterval(-20),
             pinned: true,
-            pinnedByUserId: anotherMember.user.id
+            pinnedByUserId: anotherMember.user!.id
         )
         
         let channelPayload: ChannelPayload = .dummy(
@@ -185,8 +185,8 @@ final class ChannelDTO_Tests: XCTestCase {
         // THEN
         //
         // Messages have reads.
-        XCTAssertTrue(loadedOwnMessage.readBy.contains { $0.id == anotherMember.user.id })
-        XCTAssertTrue(loadedOwnPinnedMessage.readBy.contains { $0.id == anotherMember.user.id })
+        XCTAssertTrue(loadedOwnMessage.readBy.contains { $0.id == anotherMember.user!.id })
+        XCTAssertTrue(loadedOwnPinnedMessage.readBy.contains { $0.id == anotherMember.user!.id })
     }
     
     func test_saveChannel_removesReadsNotPresentInPayload() throws {
@@ -240,7 +240,69 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.reads, [readToBeSaved])
         XCTAssertNil(readToBeRemoved)
     }
-    
+
+    func test_saveChannel_updatesTruncatedAt_whenExistingIsNil() throws {
+        let channelId: ChannelId = .unique
+        let originalPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: nil)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: originalPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertNil(database.viewContext.channel(cid: channelId)?.truncatedAt)
+
+        let newTruncatedAt = Date().addingTimeInterval(1200)
+        let newPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: newTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, newTruncatedAt.bridgeDate)
+    }
+
+    func test_saveChannel_updatesTruncatedAt_whenItsOlderThanExisting() throws {
+        let channelId: ChannelId = .unique
+        let originalTruncatedAt = Date()
+        let originalPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: originalTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: originalPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, originalTruncatedAt.bridgeDate)
+
+        let newTruncatedAt = Date().addingTimeInterval(1200)
+        let newPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: newTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, newTruncatedAt.bridgeDate)
+    }
+
+    func test_saveChannel_doesNotUpdateTruncatedAt_whenItsEarlierThanExisting() throws {
+        let channelId: ChannelId = .unique
+        let originalTruncatedAt = Date().addingTimeInterval(1200)
+        let originalPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: originalTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: originalPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, originalTruncatedAt.bridgeDate)
+
+        let newTruncatedAt = Date()
+        let newPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: newTruncatedAt)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, originalTruncatedAt.bridgeDate)
+    }
+
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
     
@@ -313,17 +375,17 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.members[0].createdAt, loadedChannel.lastActiveMembers.first?.memberCreatedAt)
             Assert.willBeEqual(payload.members[0].updatedAt, loadedChannel.lastActiveMembers.first?.memberUpdatedAt)
             
-            Assert.willBeEqual(payload.members[0].user.id, loadedChannel.lastActiveMembers.first?.id)
-            Assert.willBeEqual(payload.members[0].user.createdAt, loadedChannel.lastActiveMembers.first?.userCreatedAt)
-            Assert.willBeEqual(payload.members[0].user.updatedAt, loadedChannel.lastActiveMembers.first?.userUpdatedAt)
-            Assert.willBeEqual(payload.members[0].user.lastActiveAt, loadedChannel.lastActiveMembers.first?.lastActiveAt)
-            Assert.willBeEqual(payload.members[0].user.isOnline, loadedChannel.lastActiveMembers.first?.isOnline)
-            Assert.willBeEqual(payload.members[0].user.isBanned, loadedChannel.lastActiveMembers.first?.isBanned)
-            Assert.willBeEqual(payload.members[0].user.role, loadedChannel.lastActiveMembers.first?.userRole)
-            Assert.willBeEqual(payload.members[0].user.extraData, loadedChannel.lastActiveMembers.first?.extraData)
+            Assert.willBeEqual(payload.members[0].user!.id, loadedChannel.lastActiveMembers.first?.id)
+            Assert.willBeEqual(payload.members[0].user!.createdAt, loadedChannel.lastActiveMembers.first?.userCreatedAt)
+            Assert.willBeEqual(payload.members[0].user!.updatedAt, loadedChannel.lastActiveMembers.first?.userUpdatedAt)
+            Assert.willBeEqual(payload.members[0].user!.lastActiveAt, loadedChannel.lastActiveMembers.first?.lastActiveAt)
+            Assert.willBeEqual(payload.members[0].user!.isOnline, loadedChannel.lastActiveMembers.first?.isOnline)
+            Assert.willBeEqual(payload.members[0].user!.isBanned, loadedChannel.lastActiveMembers.first?.isBanned)
+            Assert.willBeEqual(payload.members[0].user!.role, loadedChannel.lastActiveMembers.first?.userRole)
+            Assert.willBeEqual(payload.members[0].user!.extraData, loadedChannel.lastActiveMembers.first?.extraData)
 
             // Membership
-            Assert.willBeEqual(payload.membership!.user.id, loadedChannel.membership?.id)
+            Assert.willBeEqual(payload.membership!.user!.id, loadedChannel.membership?.id)
 
             // Messages
             Assert.willBeEqual(payload.messages[0].id, loadedChannel.latestMessages.first?.id)
@@ -452,7 +514,7 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertNearlySameDate(channel?.oldestMessageAt?.bridgeDate, payload.messages.map(\.createdAt).min())
     }
 
-    func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_oldestMessageAtIsNotUpdated() throws {
+    func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_whenIsNotAPaginatedResponse_oldestMessageAtIsNotUpdated() throws {
         let channelId: ChannelId = .unique
         let oldMessageCreatedAt = Date.unique
         let payload = dummyPayload(with: channelId, messages: [
@@ -460,7 +522,7 @@ final class ChannelDTO_Tests: XCTestCase {
         ])
 
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: payload)
+            try session.saveChannel(payload: payload, isPaginatedPayload: false)
         }
 
         let newerMessageCreatedAt = oldMessageCreatedAt.addingTimeInterval(300)
@@ -469,11 +531,47 @@ final class ChannelDTO_Tests: XCTestCase {
         ])
 
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: newerPayload)
+            try session.saveChannel(payload: newerPayload, isPaginatedPayload: false)
+        }
+
+        let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
+        XCTAssertEqual(channel?.oldestMessageAt?.bridgeDate, newerMessageCreatedAt)
+    }
+
+    func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_whenIsAPaginatedResponse_oldestMessageAtIsUpdated() throws {
+        let channelId: ChannelId = .unique
+        let oldMessageCreatedAt = Date.unique
+        let payload = dummyPayload(with: channelId, messages: [
+            .dummy(messageId: .unique, authorUserId: .unique, createdAt: oldMessageCreatedAt)
+        ])
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, isPaginatedPayload: true)
+        }
+
+        let newerMessageCreatedAt = oldMessageCreatedAt.addingTimeInterval(300)
+        let newerPayload = dummyPayload(with: channelId, messages: [
+            .dummy(messageId: .unique, authorUserId: .unique, createdAt: newerMessageCreatedAt)
+        ])
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newerPayload, isPaginatedPayload: true)
         }
 
         let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
         XCTAssertEqual(channel?.oldestMessageAt?.bridgeDate, oldMessageCreatedAt)
+    }
+
+    func test_channelPayload_whenSavingAPayloadWithoutMessage_oldestMessageAtIsNotUpdated() throws {
+        let channelId: ChannelId = .unique
+        let payload = dummyPayload(with: channelId, messages: [])
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, isPaginatedPayload: false)
+        }
+
+        let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
+        XCTAssertNil(channel?.oldestMessageAt?.bridgeDate)
     }
     
     func test_channelPayload_truncatedMessagesAreIgnored() throws {
@@ -609,9 +707,9 @@ final class ChannelDTO_Tests: XCTestCase {
 
         XCTAssertEqual(
             channel.lastActiveMembers.map(\.id),
-            allMembers.sorted { $0.user.lastActiveAt! > $1.user.lastActiveAt! }
+            allMembers.sorted { $0.user!.lastActiveAt! > $1.user!.lastActiveAt! }
                 .prefix(memberLimit)
-                .map(\.user.id)
+                .map(\.user!.id)
         )
     }
     
@@ -958,6 +1056,116 @@ final class ChannelDTO_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(unreadCount.messages, unreadMessages)
         XCTAssertEqual(unreadCount.mentions, 1)
+    }
+    
+    func test_channelCleansMessageState_whenMessageFailedToBeEditedDueToModeration() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        
+        let currentUserPayload: CurrentUserPayload = .dummy(userId: currentUserId, role: .user)
+
+        let messagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: currentUserId
+        )
+
+        let channelPayload = ChannelPayload(
+            channel: .dummy(cid: .unique),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserPayload)],
+            membership: .dummy(user: currentUserPayload),
+            messages: [messagePayload],
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false
+        )
+        
+        // Save channel and updated message to be failedToBeEditedDueToModeration
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveChannel(payload: channelPayload)
+            
+            guard let messageDTO = session.message(id: messageId) else { return }
+            
+            messageDTO.isBounced = true
+            messageDTO.localMessageState = .syncingFailed
+        }
+        
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert message failed to be edited due to moderation
+        XCTAssertEqual(message.failedToBeEditedDueToModeration, true)
+
+        // Clean state of messages that failed to be edited due to moderation
+        try database.writeSynchronously { session in
+            if let channelDTO = session.channel(cid: channelPayload.channel.cid) {
+                channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
+            }
+        }
+        
+        // Load the message
+        let updatedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert message is properly cleaned
+        XCTAssertEqual(updatedMessage.isBounced, false)
+        XCTAssertNil(updatedMessage.localMessageState)
+    }
+    
+    func test_channelDoesNotCleanMessageState_whenMessageFailedToBeSentDueToModeration() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        
+        let currentUserPayload: CurrentUserPayload = .dummy(userId: currentUserId, role: .user)
+
+        let messagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: currentUserId
+        )
+
+        let channelPayload = ChannelPayload(
+            channel: .dummy(cid: .unique),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserPayload)],
+            membership: .dummy(user: currentUserPayload),
+            messages: [messagePayload],
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false
+        )
+        
+        // Save channel and update message to be failedToBeSentDueToModeration
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveChannel(payload: channelPayload)
+            
+            guard let messageDTO = session.message(id: messageId) else { return }
+            
+            messageDTO.isBounced = true
+            messageDTO.localMessageState = .sendingFailed
+        }
+        
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert message failed to be sent due to moderation
+        XCTAssertEqual(message.failedToBeSentDueToModeration, true)
+
+        // Clean state of messages that failed to be edited due to moderation
+        try database.writeSynchronously { session in
+            if let channelDTO = session.channel(cid: channelPayload.channel.cid) {
+                channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
+            }
+        }
+        
+        // Load the message
+        let updatedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        // Assert message is not cleaned because it didn't failed to be edited due to moderation
+        XCTAssertEqual(updatedMessage.isBounced, true)
+        XCTAssertEqual(updatedMessage.localMessageState, .sendingFailed)
     }
     
     func test_typingUsers_areCleared_onResetEphemeralValues() throws {

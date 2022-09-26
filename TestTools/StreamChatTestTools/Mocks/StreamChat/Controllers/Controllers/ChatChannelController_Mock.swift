@@ -40,7 +40,7 @@ public class ChatChannelController_Mock: ChatChannelController {
         channel_mock ?? super.channel
     }
     
-    public private(set) var messages_mock: [ChatMessage]?
+    public var messages_mock: [ChatMessage]?
     override public var messages: LazyCachedMapCollection<ChatMessage> {
         messages_mock.map { $0.lazyCachedMap { $0 } } ?? super.messages
     }

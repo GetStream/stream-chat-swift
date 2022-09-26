@@ -46,6 +46,10 @@ class AttachmentDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
+        guard !isDeleted && !message.isDeleted else {
+            return
+        }
+
         // When attachment changed, we need to propagate this change up to holding message
         if hasPersistentChangedValues, !message.hasChanges {
             // this will not change object, but mark it as dirty, triggering updates

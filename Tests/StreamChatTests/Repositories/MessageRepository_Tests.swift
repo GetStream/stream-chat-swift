@@ -226,6 +226,91 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertNil(dbMessage?.localState)
     }
 
+    // MARK: Get message
+
+    func test_getMessage_makesCorrectAPICall() {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Simulate `getMessage(cid:, messageId:)` call
+        repository.getMessage(cid: cid, messageId: messageId)
+
+        // Assert correct endpoint is called
+        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_getMessage_propogatesRequestError() {
+        // Simulate `getMessage(cid:, messageId:)` call
+        var completionCalledError: Error?
+        repository.getMessage(cid: .unique, messageId: .unique) {
+            completionCalledError = $0.error
+        }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    func test_getMessage_propogatesDatabaseError() throws {
+        let messagePayload: MessagePayload.Boxed = .init(
+            message: .dummy(messageId: .unique, authorUserId: .unique)
+        )
+        let channelId = ChannelId.unique
+
+        // Create channel in the database
+        try database.createChannel(cid: channelId)
+
+        // Update database container to throw the error on write
+        let testError = TestError()
+        database.write_errorResponse = testError
+
+        // Simulate `getMessage(cid:, messageId:)` call
+        var completionCalledError: Error?
+        repository.getMessage(cid: channelId, messageId: messagePayload.message.id) {
+            completionCalledError = $0.error
+        }
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+
+        // Assert database error is propogated
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_getMessage_savesMessageToDatabase() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+
+        // Simulate `getMessage(cid:, messageId:)` call
+        var completionCalled = false
+        repository.getMessage(cid: cid, messageId: messageId) { _ in
+            completionCalled = true
+        }
+
+        // Simulate API response with success
+        let messagePayload: MessagePayload.Boxed = .init(
+            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+        )
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+
+        // Assert fetched message is saved to the database
+        XCTAssertNotNil(database.viewContext.message(id: messageId))
+    }
+
     // MARK: markMessage
 
     func test_markMessage_nil() throws {

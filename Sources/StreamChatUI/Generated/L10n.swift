@@ -56,6 +56,21 @@ internal enum L10n {
     }
   }
 
+  internal enum ChannelList {
+    internal enum Empty {
+      /// Start a chat
+      internal static var button: String { L10n.tr("Localizable", "channelList.empty.button") }
+      /// How about sending your first message to a friend?
+      internal static var subtitle: String { L10n.tr("Localizable", "channelList.empty.subtitle") }
+      /// Let's start chatting!
+      internal static var title: String { L10n.tr("Localizable", "channelList.empty.title") }
+    }
+    internal enum Error {
+      /// Error loading channels
+      internal static var message: String { L10n.tr("Localizable", "channelList.error.message") }
+    }
+  }
+
   internal enum Composer {
     internal enum Checkmark {
       /// Also send in channel
@@ -176,6 +191,12 @@ internal enum L10n {
         /// Flag Message
         internal static var confirmationTitle: String { L10n.tr("Localizable", "message.actions.flag.confirmation-title") }
       }
+    }
+    internal enum Moderation {
+      /// Please select any of the following options to proceed
+      internal static var message: String { L10n.tr("Localizable", "message.moderation.message") }
+      /// This message has been moderated
+      internal static var title: String { L10n.tr("Localizable", "message.moderation.title") }
     }
     internal enum Sending {
       /// UPLOADING FAILED

@@ -52,7 +52,7 @@ private_lane :slack_sonarcloud_metrics do |options|
   metrics = sonarcloud_metric_kit(
     project_key: project_key,
     quality_gate: true,
-    branch: options[:branch]
+    branch: sonar_branch
   )
   new_period = sonar_branch == 'main' ? options[:version_number] : sonar_branch
   new_coverage = metrics[:new_coverage].to_f.round(2)
@@ -68,7 +68,7 @@ private_lane :slack_sonarcloud_metrics do |options|
   security_status = "Total: _#{vulnerabilities}_\nNew: _#{new_vulnerabilities}_ #{new_vulnerabilities.positive? ? '⚠️' : '✅'}"
 
   slack(
-    message: "[StreamChat](https://sonarcloud.io/summary/new_code?id=#{project_key}&branch=#{options[:branch]})",
+    message: "[StreamChat](https://sonarcloud.io/summary/new_code?id=#{project_key}&branch=#{sonar_branch})",
     attachment_properties: {
       thumb_url: 'https://pbs.twimg.com/profile_images/955394530806829056/LC7DAYM3_400x400.jpg',
       fields: [

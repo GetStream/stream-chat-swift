@@ -2,6 +2,105 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+## StreamChat
+### ✅ Added
+- Added `timeoutIntervalForRequest` to ChatClientConfig to control URLSession's timeout [#2311](https://github.com/GetStream/stream-chat-swift/pull/2311)
+
+### 🐞 Fixed
+- Fixed pagination in message list not working when synchronize does not succeed [#2241](https://github.com/GetStream/stream-chat-swift/pull/2241)
+- Do not mark channels as read when the controller is not on screen [#2288](https://github.com/GetStream/stream-chat-swift/pull/2288)
+- Do not show old messages not belonging to the history when paginating [#2298](https://github.com/GetStream/stream-chat-swift/pull/2298)). Caveat: [Explained here](https://github.com/GetStream/stream-chat-swift/pull/2298)
+- Fix logic to determine errors related to connectivity [#2311](https://github.com/GetStream/stream-chat-swift/pull/2311)
+- Stop logging false positive errors for 'channel.created' events [#2314](https://github.com/GetStream/stream-chat-swift/pull/2314)
+- Properly handle Global Ban events [#2312](https://github.com/GetStream/stream-chat-swift/pull/2312)
+
+## StreamChatUI
+### ✅ Added
+- Highlighted user mentions support [#2253](https://github.com/GetStream/stream-chat-swift/pull/2253)
+- New `ChatMessageListRouter.showUser()` to easily provide a custom profile view when user clicks on an avatar or user mention [#2253](https://github.com/GetStream/stream-chat-swift/pull/2253)
+
+### 🐞 Fixed
+- User mentions suggestions would not show when typing in a new line [#2253](https://github.com/GetStream/stream-chat-swift/pull/2253)
+- User mentions suggestions would stop showing when typing a space [#2253](https://github.com/GetStream/stream-chat-swift/pull/2253)
+- Fix Thread not loading more replies [#2297](https://github.com/GetStream/stream-chat-swift/pull/2297)
+- Fix Channel and Thread pagination not working when initialized offline [#2297](https://github.com/GetStream/stream-chat-swift/pull/2297)
+
+# [4.21.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.2)
+_September 19, 2022_
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix Message List cell not updating when an existing reaction of the same type was updated from the current user [#2304](https://github.com/GetStream/stream-chat-swift/pull/2304)
+- Fix Message List cell not updating when the number of reactions of the same type changed [#2304](https://github.com/GetStream/stream-chat-swift/pull/2304)
+
+# [4.21.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.1)
+_September 06, 2022_
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix message list crash when inserting message in empty list on iOS <15 [#2269](https://github.com/GetStream/stream-chat-swift/pull/2269)
+
+# [4.21.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.0)
+_September 01, 2022_
+
+🚨 **Known Issue: There is a crash on iOS <15 when inserting messages in an empty list, please update to [4.21.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.21.1)**
+
+## StreamChat
+### 🔄 Changed
+- From now on, if you want to logout the user from the app, especially when switching users, you should call the `client.logout()` method instead of `client.disconnect()`. Read more [here](https://getstream.io/chat/docs/sdk/ios/uikit/getting-started/#disconnect--logout) [#2241](https://github.com/GetStream/stream-chat-swift/pull/2241)
+### 🐞 Fixed
+- Fix hidden channels showing past history [#2216](https://github.com/GetStream/stream-chat-swift/pull/2216)
+- Fix token not being refreshed because of parsing error [#2248](https://github.com/GetStream/stream-chat-swift/pull/2248)
+- Fix deadlock caused by ListDatabaseObserver.startObserving() changes [#2252](https://github.com/GetStream/stream-chat-swift/pull/2252)
+- Fix parsing `member` field in `notification.removed_from_channel` event [#2259](https://github.com/GetStream/stream-chat-swift/pull/2259)
+- Fix broken pagination when quoting or pinning old messages [#2258](https://github.com/GetStream/stream-chat-swift/pull/2258)
+
+## StreamChatUI
+### 🔄 Changed
+- New Message List Diffing Implementation [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+- `_messageListDiffingEnabled` flag has been removed [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+### 🐞 Fixed
+- Fix jumps in Message List [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+- Fix image flickers when adding image attachment to a message [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+- Fix message list scrolling when popping from navigation stack [#2239](https://github.com/GetStream/stream-chat-swift/pull/2239)
+- Fix message timestamp not appearing after hard deleting the last message in the group [#2226](https://github.com/GetStream/stream-chat-swift/pull/2226)
+
+# [4.20.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.20.0)
+_August 02, 2022_
+
+## StreamChat
+### ✅ Added
+- Support for message moderation (NNBB) [#2103](https://github.com/GetStream/stream-chat-swift/pull/2103/files)
+### 🐞 Fixed
+- Fix crash in ListDatabaseObserver.startObserving() [#2177](https://github.com/GetStream/stream-chat-swift/pull/2177)
+- Make BaseOperation thread safe [#2198](https://github.com/GetStream/stream-chat-swift/pull/2198)
+- Fix build issues in Xcode 14 beta [#2202](https://github.com/GetStream/stream-chat-swift/pull/2202)
+- Improve consistency when retrieving Message after Push Notification [#2200](https://github.com/GetStream/stream-chat-swift/pull/2200)
+- Make sure ChannelDTO is still valid when accessing Lazy blocks [#2204](https://github.com/GetStream/stream-chat-swift/pull/2204)
+
+## StreamChatUI
+### ✅ Added
+- Add channel list states; empty, error and loading views [#2187](https://github.com/GetStream/stream-chat-swift/pull/2187)
+- Support for message moderation (NNBB) [#2103](https://github.com/GetStream/stream-chat-swift/pull/2103/files)
+
+# [4.19.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.19.0)
+_July 21, 2022_
+
+## StreamChat
+### ✅ Added
+- Add hide history option when adding a new member [#2155](https://github.com/GetStream/stream-chat-swift/issues/2155)
+- Add Extra Data Usage Improvements [#2174](https://github.com/GetStream/stream-chat-swift/pull/2174)
+  - For more details please read the documentation [here](https://getstream.io/chat/docs/sdk/ios/uikit/extra-data).
+### 🐞 Fixed
+- Avoid triggering CoreData updates in willSave() [#2156](https://github.com/GetStream/stream-chat-swift/pull/2156)
+- Sync active channels when no channel list [#2163](https://github.com/GetStream/stream-chat-swift/pull/2163)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix Channel missing messages from NSE push updates [#2166](https://github.com/GetStream/stream-chat-swift/pull/2166)
+
+# [4.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.18.0)
+_July 05, 2022_
 
 ## StreamChat
 ### ✅ Added
@@ -11,10 +110,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Chat SDK now leverages `chat.stream-io-api.com` endpoint by default [#2125](https://github.com/GetStream/stream-chat-swift/pull/2125)
 - JSON decoding performance is futher increased, parsing time reduced by another %50 [#2128](https://github.com/GetStream/stream-chat-swift/issues/2128)
 - Better errors in case JSON decoding fails [#2126](https://github.com/GetStream/stream-chat-swift/issues/2126)
+- File upload size limit is increased to 100MB [#2136](https://github.com/GetStream/stream-chat-swift/pull/2136)
 
 ### 🐞 Fixed
 - Allow sending giphy messages programmatically [#2124](https://github.com/GetStream/stream-chat-swift/pull/2124)
 - JSON decoding is now more robust, single incomplete/broken object won't disable whole channel list [#2126](https://github.com/GetStream/stream-chat-swift/issues/2126)
+
+## StreamChatUI
+### 🐞 Fixed
+- Allow scroll automatically to the bottom when sending a giphy from the middle of the message list [#2130](https://github.com/GetStream/stream-chat-swift/pull/2130)
 
 # [4.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.17.0)
 _June 22, 2022_

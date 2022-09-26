@@ -118,14 +118,6 @@ If `readonly: false`, recreates all Profiles necessary for development and ad-ho
 
 Register new device, regenerates profiles, updates them remotely and locally
 
-### distribute_demo_app
-
-```sh
-[bundle exec] fastlane distribute_demo_app
-```
-
-Builds the latest version of Demo app and uploads it to Firebase
-
 ### testflight_build
 
 ```sh
@@ -149,6 +141,22 @@ Get next PR number from github to be used in CHANGELOG
 ```
 
 Runs tests in Debug config
+
+### start_sinatra
+
+```sh
+[bundle exec] fastlane start_sinatra
+```
+
+Starts Sinatra web server
+
+### stop_sinatra
+
+```sh
+[bundle exec] fastlane stop_sinatra
+```
+
+Stops Sinatra web server
 
 ### test_e2e_mock
 
@@ -262,14 +270,6 @@ Builds MessengerClone app
 
 Builds YouTubeClone app
 
-### build_docs_snippets
-
-```sh
-[bundle exec] fastlane build_docs_snippets
-```
-
-Build Docs Snippets target
-
 ### spm_integration
 
 ```sh
@@ -293,6 +293,14 @@ Test CocoaPods Integration
 ```
 
 Build and upload DemoApp to Emerge
+
+### rubocop
+
+```sh
+[bundle exec] fastlane rubocop
+```
+
+Run fastlane linting
 
 ----
 

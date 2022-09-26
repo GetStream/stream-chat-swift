@@ -94,19 +94,26 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
     
-    /// Shows whether the controller has received first batch of replies from remote
-    private var loadedRepliesHead = false
+    /// The id of the last fetched reply
+    private var lastFetchedMessageId: MessageId?
     
     /// A Boolean value that returns wether pagination is finished
     public private(set) var hasLoadedAllPreviousReplies: Bool = false
 
     private let environment: Environment
     
+    var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
-    lazy var basePublishers: BasePublishers = .init(controller: self)
+    var basePublishers: BasePublishers {
+        if let value = _basePublishers as? BasePublishers {
+            return value
+        }
+        _basePublishers = BasePublishers(controller: self)
+        return _basePublishers as? BasePublishers ?? .init(controller: self)
+    }
     
     /// A type-erased multicast delegate.
     var multicastDelegate: MulticastDelegate<ChatMessageControllerDelegate> = .init() {
@@ -162,7 +169,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         startObserversIfNeeded()
         
-        messageUpdater.getMessage(cid: cid, messageId: messageId) { error in
+        messageUpdater.getMessage(cid: cid, messageId: messageId) { result in
+            let error = result.error
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -288,8 +296,12 @@ public extension ChatMessageController {
             completion?(nil)
             return
         }
+
+        let lastLocalMessageId: () -> MessageId? = {
+            self.replies.last { !$0.isLocalOnly }?.id
+        }
         
-        let lastMessageId = messageId ?? (loadedRepliesHead ? replies.last?.id : nil)
+        let lastMessageId = messageId ?? lastFetchedMessageId ?? lastLocalMessageId()
         
         messageUpdater.loadReplies(
             cid: cid,
@@ -298,8 +310,8 @@ public extension ChatMessageController {
         ) { result in
             switch result {
             case let .success(payload):
-                self.loadedRepliesHead = true
                 self.hasLoadedAllPreviousReplies = payload.messages.count < limit
+                self.updateLastFetchedReplyId(with: payload)
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -631,6 +643,11 @@ private extension ChatMessageController {
             return observer
         }
     }
+
+    func updateLastFetchedReplyId(with payload: MessageRepliesPayload) {
+        // Payload messages are ordered from oldest to newest
+        lastFetchedMessageId = payload.messages.first?.id
+    }
 }
 
 // MARK: - Delegate
@@ -639,7 +656,7 @@ private extension ChatMessageController {
 public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>)
-    
+
     /// The controller observed changes in the replies of the observed `ChatMessage`.
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>])
 

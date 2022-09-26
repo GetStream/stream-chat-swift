@@ -65,6 +65,10 @@ class ChannelDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
+        guard !isDeleted else {
+            return
+        }
+
         // Change to the `truncatedAt` value have effect on messages, we need to mark them dirty manually
         // to triggers related FRC updates
         if changedValues().keys.contains("truncatedAt") {
@@ -76,7 +80,7 @@ class ChannelDTO: NSManagedObject {
                     $0.didChangeValue(for: \.id)
                 }
         }
-        
+
         // Update the date for sorting every time new message in this channel arrive.
         // This will ensure that the channel list is updated/sorted when new message arrives.
         let lastDate = lastMessageAt ?? createdAt
@@ -155,7 +159,7 @@ extension NSManagedObjectContext {
         }
 
         return payload.channels.compactMapLoggingError { channelPayload in
-            try saveChannel(payload: channelPayload, query: query, cache: cache)
+            try saveChannel(payload: channelPayload, query: query, isPaginatedPayload: false, cache: cache)
         }
     }
     
@@ -185,14 +189,21 @@ extension NSManagedObjectContext {
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount)
-        dto.truncatedAt = payload.truncatedAt?.bridgeDate
-        // We don't always set `truncatedAt` directly since we also use this property as `hiddenAt`
-        // when a channel is hidden with `clearHistory`
-        // Backend doesn't send `truncatedAt` for this case and we reset it, causing the hidden messages to re-appear
-        // It's not possible to set `truncatedAt` to `nil` once it's set on backend side
-        // so it's safe to keep client-side changes when backend sends `nil`
-        if payload.truncatedAt != nil {
-            dto.truncatedAt = payload.truncatedAt?.bridgeDate
+
+        // Because `truncatedAt` is used, client side, for both truncation and channel hiding cases, we need to avoid using the
+        // value returned by the Backend in some cases.
+        //
+        // Whenever our Backend is not returning a value for `truncatedAt`, we simply do nothing. It is possible that our
+        // DTO already has a value for it if it has been hidden in the past, but we are not touching it.
+        //
+        // Whenever we do receive a value from our Backend, we have 2 options:
+        //  1. If we don't have a value for `truncatedAt` in the DTO -> We set the date from the payload
+        //  2. If we have a value for `truncatedAt` in the DTO -> We pick the latest date.
+        if let newTruncatedAt = payload.truncatedAt {
+            let canUpdateTruncatedAt = dto.truncatedAt.map { $0.bridgeDate < newTruncatedAt } ?? true
+            if canUpdateTruncatedAt {
+                dto.truncatedAt = newTruncatedAt.bridgeDate
+            }
         }
 
         dto.isFrozen = payload.isFrozen
@@ -227,6 +238,7 @@ extension NSManagedObjectContext {
     func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?,
+        isPaginatedPayload: Bool,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query, cache: cache)
@@ -245,7 +257,7 @@ extension NSManagedObjectContext {
             dto.previewMessage = preview(for: payload.channel.cid)
         }
 
-        dto.updateOldestMessageAt(payload: payload)
+        dto.updateOldestMessageAt(payload: payload, isPaginatedPayload: isPaginatedPayload)
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
@@ -299,6 +311,7 @@ extension NSManagedObjectContext {
             channelDTO.members.removeAll()
             channelDTO.pinnedMessages.removeAll()
             channelDTO.reads.removeAll()
+            channelDTO.oldestMessageAt = nil
         }
     }
 
@@ -377,7 +390,7 @@ extension ChatChannel {
         let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }
         
         let unreadCount: () -> ChannelUnreadCount = {
-            guard let currentUser = context.currentUser else { return .noUnread }
+            guard dto.isValid, let currentUser = context.currentUser else { return .noUnread }
             
             let currentUserRead = reads.first(where: { $0.user.id == currentUser.user.id })
             
@@ -406,9 +419,10 @@ extension ChatChannel {
                 return .noUnread
             }
         }
-        
+
         let fetchMessages: () -> [ChatMessage] = {
-            MessageDTO
+            guard dto.isValid else { return [] }
+            return MessageDTO
                 .load(
                     for: dto.cid,
                     limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
@@ -420,7 +434,7 @@ extension ChatChannel {
         }
         
         let fetchLatestMessageFromUser: () -> ChatMessage? = {
-            guard let currentUser = context.currentUser else { return nil }
+            guard dto.isValid, let currentUser = context.currentUser else { return nil }
             
             return try? MessageDTO
                 .loadLastMessage(
@@ -487,20 +501,40 @@ extension ChatChannel {
     }
 }
 
-// Helpers
-private extension ChannelDTO {
-    /// Updates the `oldestMessageAt` of the channel. It should only updates if the current `messages: [Message]`
-    /// is older than the current `ChannelDTO.oldestMessageAt`, unless the current `ChannelDTO.oldestMessageAt`
-    /// is the default one, which is by default a very old date, so are sure the first messages are always fetched.
-    func updateOldestMessageAt(payload: ChannelPayload) {
-        if let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() {
-            let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
-            if isOlderThanCurrentOldestMessage {
-                oldestMessageAt = payloadOldestMessageAt.bridgeDate
-            }
+// MARK: - Helpers
+
+extension ChannelDTO {
+    /// Whenever a synced message fails being edited due to moderation it remains on a stale state, this ensures to restore messages to a clean state.
+    func cleanMessagesThatFailedToBeEditedDueToModeration() {
+        let failedEditAttempts = messages.filter { $0.failedToBeEditedDueToModeration }
+        
+        failedEditAttempts.forEach {
+            $0.isBounced = false
+            $0.localMessageState = nil
         }
     }
-    
+}
+
+// MARK: - Private Helpers
+
+private extension ChannelDTO {
+    /// Updates the `oldestMessageAt` of the channel. It should only updates if the current `messages: [Message]`
+    /// is older than the current `ChannelDTO.oldestMessageAt`.
+    /// If the response is not paginated, we need to reset `oldestMessageAt` to the oldest message in the payload.
+    func updateOldestMessageAt(payload: ChannelPayload, isPaginatedPayload: Bool) {
+        guard let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() else { return }
+
+        guard isPaginatedPayload else {
+            oldestMessageAt = payloadOldestMessageAt.bridgeDate
+            return
+        }
+
+        let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
+        if isOlderThanCurrentOldestMessage {
+            oldestMessageAt = payloadOldestMessageAt.bridgeDate
+        }
+    }
+
     /// Returns `true` if the payload holds messages sent after the current channel preview.
     func needsPreviewUpdate(_ payload: ChannelPayload) -> Bool {
         guard let preview = previewMessage else {

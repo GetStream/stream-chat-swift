@@ -507,10 +507,7 @@ private class TestEnvironment {
 
     lazy var environment: ChatChannelWatcherListController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
-            self.watcherListUpdater = .init(
-                database: $0,
-                apiClient: $1
-            )
+            self.watcherListUpdater = .init(callRepository: $0, database: $1, apiClient: $2)
             return self.watcherListUpdater!
         },
         watcherListObserverBuilder: { [unowned self] in

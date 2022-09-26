@@ -19,3 +19,5 @@ A list of names and terms used in the framework and documentation.
 - **Watcher:** If a channel is public, it's visible to all users. A user that actively observes a channel is called a "watcher". 
 
 - **Controller:** Controller objects are the primary way of interacting with the chat service. Controller objects are lightweight and can be easily created and destroyed as needed. Controllers can be used for both, continuous data observation, and for quick data mutations. It's possible (and very common) that you have multiple controllers representing a single entity.
+
+- **ExtraData:** Extra Data is additional information that can be added to the default data of Stream. It is a dictionary of key-value pairs that can be attached to messages, users, channels, and pretty much almost every domain model in the Stream SDK.

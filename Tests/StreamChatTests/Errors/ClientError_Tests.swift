@@ -42,4 +42,71 @@ final class ClientError_Tests: XCTestCase {
         // Assert `isInvalidTokenError` returns false
         XCTAssertFalse(clientError.isInvalidTokenError)
     }
+    
+    func test_isBouncedMessageError_whenUnderlayingErrorIsAccurate_returnsTrue() {
+        let error = ErrorPayload(
+            code: 73,
+            message: .unique,
+            statusCode: .unique
+        )
+        
+        // Assert `isBouncedMessageError` returns true
+        XCTAssertTrue(error.isBouncedMessageError)
+    }
+    
+    func test_isBouncedMessageError_whenUnderlayingErrorIsNotAccurate_returnsFalse() {
+        let error = ErrorPayload(
+            code: 72,
+            message: .unique,
+            statusCode: .unique
+        )
+        
+        // Assert `isBouncedMessageError` returns false
+        XCTAssertFalse(error.isBouncedMessageError)
+    }
+
+    func test_rateLimitError_isEphemeralError() {
+        let errorPayload = ErrorPayload(
+            code: 9,
+            message: .unique,
+            statusCode: 429
+        )
+
+        let error = ClientError(with: errorPayload)
+
+        // Assert `isRateLimitError` returns true
+        XCTAssertTrue(error.isRateLimitError)
+        XCTAssertTrue(ClientError.isEphemeral(error: error))
+    }
+
+    func test_temporaryErrors_areEphemeralError() {
+        [
+            NSURLErrorCancelled,
+            NSURLErrorNetworkConnectionLost,
+            NSURLErrorTimedOut,
+            NSURLErrorCannotFindHost,
+            NSURLErrorCannotConnectToHost,
+            NSURLErrorNetworkConnectionLost,
+            NSURLErrorDNSLookupFailed,
+            NSURLErrorNotConnectedToInternet,
+            NSURLErrorBadServerResponse,
+            NSURLErrorUserCancelledAuthentication,
+            NSURLErrorCannotLoadFromNetwork,
+            NSURLErrorDataNotAllowed
+        ].forEach {
+            let error = NSError(domain: NSURLErrorDomain, code: $0)
+            XCTAssertTrue(ClientError.isEphemeral(error: error))
+        }
+    }
+
+    func test_otherNSURLErrors_areNotEphemeralError() {
+        [
+            NSURLErrorUnknown,
+            NSURLErrorUnsupportedURL,
+            NSURLErrorCannotParseResponse
+        ].forEach {
+            let error = NSError(domain: NSURLErrorDomain, code: $0)
+            XCTAssertFalse(ClientError.isEphemeral(error: error))
+        }
+    }
 }

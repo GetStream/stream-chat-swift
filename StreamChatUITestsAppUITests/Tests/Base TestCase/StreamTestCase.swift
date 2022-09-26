@@ -25,14 +25,17 @@ class StreamTestCase: XCTestCase {
         userRobot = UserRobot(server)
 
         try super.setUpWithError()
+        alertHandler()
         useMockServer()
         app.launch()
     }
 
     override func tearDownWithError() throws {
+        takeElementTree()
         app.terminate()
         server.stop()
         server = nil
+        backendRobot.delayServerResponse(byTimeInterval: 0.0)
         
         try super.tearDownWithError()
         app.launchArguments.removeAll()
@@ -52,5 +55,23 @@ extension StreamTestCase {
             .httpHost: "\(MockServerConfiguration.httpHost)",
             .port: "\(MockServerConfiguration.port)"
         ])
+    }
+    
+    private func takeElementTree() {
+        let attachment = XCTAttachment(string: app.debugDescription)
+        attachment.lifetime = .deleteOnSuccess
+        add(attachment)
+    }
+    
+    private func alertHandler() {
+        let title = "Push Notification Alert"
+        _ = addUIInterruptionMonitor(withDescription: title) { (alert: XCUIElement) -> Bool in
+            let allowButton = alert.buttons["Allow"]
+            if allowButton.exists {
+                allowButton.tap()
+                return true
+            }
+            return false
+        }
     }
 }

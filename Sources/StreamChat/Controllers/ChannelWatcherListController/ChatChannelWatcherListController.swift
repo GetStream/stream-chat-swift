@@ -32,11 +32,18 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         return watchersObserver.items
     }
     
+    var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
-    lazy var basePublishers: BasePublishers = .init(controller: self)
+    var basePublishers: BasePublishers {
+        if let value = _basePublishers as? BasePublishers {
+            return value
+        }
+        _basePublishers = BasePublishers(controller: self)
+        return _basePublishers as? BasePublishers ?? .init(controller: self)
+    }
     
     /// The type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelWatcherListControllerDelegate> = .init() {
@@ -53,6 +60,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
+        client.callRepository,
         client.databaseContainer,
         client.apiClient
     )
@@ -124,6 +132,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
 extension ChatChannelWatcherListController {
     struct Environment {
         var channelUpdaterBuilder: (
+            _ callRepository: CallRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init

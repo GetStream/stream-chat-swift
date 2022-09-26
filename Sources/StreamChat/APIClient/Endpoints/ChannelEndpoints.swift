@@ -114,13 +114,17 @@ extension Endpoint {
         )
     }
     
-    static func addMembers(cid: ChannelId, userIds: Set<UserId>) -> Endpoint<EmptyResponse> {
-        .init(
+    static func addMembers(cid: ChannelId, userIds: Set<UserId>, hideHistory: Bool) -> Endpoint<EmptyResponse> {
+        let body: [String: AnyEncodable] = [
+            "add_members": AnyEncodable(userIds),
+            "hide_history": AnyEncodable(hideHistory)
+        ]
+        return .init(
             path: .channelUpdate(cid.apiPath),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["add_members": userIds]
+            body: body
         )
     }
     

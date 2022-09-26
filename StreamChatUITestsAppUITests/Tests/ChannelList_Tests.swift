@@ -57,6 +57,20 @@ final class ChannelList_Tests: StreamTestCase {
             userRobot.assertLastMessageInChannelPreview(message)
         }
     }
+    
+    func test_paginationOnChannelList() {
+        linkToScenario(withId: 276)
+        
+        let channelsCount = 30
+        
+        WHEN("user opens the channel list") {
+            backendRobot.generateChannels(count: channelsCount)
+            userRobot.login()
+        }
+        THEN("user makes sure that all channels are loaded") {
+            userRobot.assertChannelListPagination(channelsCount: channelsCount)
+        }
+    }
 }
 
 // MARK: - Preview
@@ -84,6 +98,9 @@ extension ChannelList_Tests {
         THEN("the error message is not shown in preview") {
             userRobot.assertLastMessageInChannelPreview(message)
         }
+        AND("last message timestamp is shown") {
+            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: false)
+        }
     }
     
     func test_channelPreviewShowsNoMessages_whenChannelIsEmpty() {
@@ -97,7 +114,7 @@ extension ChannelList_Tests {
             userRobot.assertLastMessageInChannelPreview(message)
         }
         AND("last message timestamp is hidden") {
-            userRobot.assertLastMessageTimestampInChannelPreviewIsHidden()
+            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: true)
         }
     }
     
@@ -124,7 +141,7 @@ extension ChannelList_Tests {
             userRobot.assertLastMessageInChannelPreview("No messages")
         }
         AND("last message timestamp is hidden") {
-            userRobot.assertLastMessageTimestampInChannelPreviewIsHidden()
+            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: true)
         }
     }
     
@@ -153,6 +170,9 @@ extension ChannelList_Tests {
         THEN("the channel preview shows previous message") {
             userRobot.assertLastMessageInChannelPreview(message1)
         }
+        AND("last message timestamp is shown") {
+            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: false)
+        }
     }
     
     func test_channelPreviewIsNotUpdated_whenThreadReplyIsSent() {
@@ -169,7 +189,7 @@ extension ChannelList_Tests {
         AND("user sends a message") {
             userRobot.sendMessage(channelMessage)
         }
-        AND("user adds thread reply to this messages") {
+        AND("user adds thread reply to this message") {
             userRobot.replyToMessageInThread(threadReply)
         }
         WHEN("user goes back to the channel list") {
@@ -177,6 +197,9 @@ extension ChannelList_Tests {
         }
         THEN("the channel preview shows the last message in the channel") {
             userRobot.assertLastMessageInChannelPreview(channelMessage)
+        }
+        AND("last message timestamp is shown") {
+            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: false)
         }
     }
     
@@ -202,6 +225,42 @@ extension ChannelList_Tests {
         }
         THEN("the channel preview shows edited message") {
             userRobot.assertLastMessageInChannelPreview(editedMessage)
+        }
+        AND("last message timestamp is shown") {
+            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: false)
+        }
+    }
+}
+
+// MARK: - Truncate channel
+
+extension ChannelList_Tests {
+    func test_messageList_and_channelPreview_AreUpdatedWhenChannelTruncatedWithMessage() {
+        linkToScenario(withId: 201)
+        
+        let message = "Channel truncated"
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 42)
+            userRobot.login().openChannel()
+        }
+        WHEN("user truncates the channel with system message") {
+            userRobot.truncateChannel(withMessage: true)
+        }
+        THEN("user observes only the system message") {
+            userRobot.assertMessage(message)
+        }
+        AND("previous messages are no longer visible") {
+            userRobot.assertMessageCount(1)
+        }
+        WHEN("user goes to channel list") {
+            userRobot.tapOnBackButton()
+        }
+        THEN("the channel preview shows system message") {
+            userRobot.assertLastMessageInChannelPreview(message)
+        }
+        AND("last message timestamp is shown") {
+            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: false)
         }
     }
 }

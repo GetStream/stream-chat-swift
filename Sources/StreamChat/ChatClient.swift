@@ -90,6 +90,11 @@ public class ChatClient {
             apiClient
         )
     }()
+
+    /// A repository that handles all the executions needed to keep the Database in sync with remote.
+    private(set) lazy var callRepository: CallRepository = {
+        environment.callRepositoryBuilder(apiClient)
+    }()
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
@@ -205,10 +210,11 @@ public class ChatClient {
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
     private var urlSessionConfiguration: URLSessionConfiguration {
-        let config = URLSessionConfiguration.default
-        config.waitsForConnectivity = false
-        config.httpAdditionalHeaders = sessionHeaders
-        return config
+        let configuration = URLSessionConfiguration.default
+        configuration.waitsForConnectivity = false
+        configuration.httpAdditionalHeaders = sessionHeaders
+        configuration.timeoutIntervalForRequest = config.timeoutIntervalForRequest
+        return configuration
     }
     
     /// Stream-specific request headers.
@@ -237,9 +243,7 @@ public class ChatClient {
     }
 
     /// Creates a new instance of `ChatClient`.
-    /// - Parameters:
-    ///   - config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
-    ///   - tokenProvider: In case of token expiration this closure is used to obtain a new token
+    /// - Parameter config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
     public convenience init(
         config: ChatClientConfig
     ) {
@@ -374,6 +378,19 @@ public class ChatClient {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
         }
         userConnectionProvider = nil
+    }
+    
+    /// Disconnects the chat client form the chat servers and removes all the local data related.
+    public func logout() {
+        disconnect()
+        databaseContainer.removeAllData(force: true) { error in
+            if let error = error {
+                log.error("Logging out current user failed with error \(error)", subsystems: .all)
+                return
+            } else {
+                log.debug("Logging out current user successfully.", subsystems: .all)
+            }
+        }
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
@@ -573,6 +590,12 @@ extension ChatClient {
                 database: $5,
                 apiClient: $6
             )
+        }
+
+        var callRepositoryBuilder: (
+            _ apiClient: APIClient
+        ) -> CallRepository = {
+            CallRepository(apiClient: $0)
         }
         
         var messageRepositoryBuilder: (

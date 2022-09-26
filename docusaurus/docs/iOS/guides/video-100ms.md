@@ -10,7 +10,7 @@ Video calls have become an integral part of daily life since the pandemic hit. T
 
 There are a few necessary steps to follow to integrate video calling capabilities with the Stream Chat SDK, but we will go over each phase of the process to come up with a functional and reusable solution that allows your end-users to communicate with one another through a seamless video experience.
 
-Here is a sneak peek of the final product you’ll build today: 
+Here is a sneak peek of the final product you’ll build today:
 
 <video width="400" height="860" controls loop muted autoplay>
   <source src="https://getstream.io/static-cdn/videos/100ms-example.mov"/>
@@ -19,17 +19,11 @@ Here is a sneak peek of the final product you’ll build today:
 Follow the steps below to produce this app that allows your users to make video calls:
 
 1. Set up an account for 100ms
-2. Create a server (optional as we will provide one for you)
+2. Stream Dashboard integration
 3. Set up basic app architecture
 4. Create a layout UI
 5. Send messages with the [Stream Chat SDK](https://getstream.io/chat/)
 6. Hook up UI with 100ms
-
-<aside>
-💡 On the second step of creating a server: we have provided <a href="https://github.com/GetStream/iOS-video-integration-100ms">a solution</a> for you that you can reuse for your project.
-</aside>
-
-<br />
 
 If you want to avoid starting from the very beginning, our [SwiftUI tutorial](https://getstream.io/tutorials/swiftui-chat/) on the [Stream website](https://getstream.io) is set as the starting point. If you followed this step-by-step tutorial before, you are ready to jump right in.
 
@@ -54,125 +48,35 @@ From here, click the **Go to Dashboard** button at the bottom. After completing 
 
 You will come back to the Dashboard later, but we will move on to other steps next.
 
-## 2. Create a Server
+## 2. Stream Dashboard integration
 
-This guide will not go over each step required to create a server. However, we do offer a custom solution in _Node.js_ that you can use that supports all necessary steps and APIs.
+In order for the integration of 100ms to work there needs to be a server component handling token generation and more. Normally this would require a custom server implementation but Stream offers first-class integration for 100ms relieving you of these duties.
 
-Go to the [GitHub page](https://github.com/GetStream/iOS-video-integration-100ms) to see an integration guide. We assume you’ve followed the steps outlined below to set up and run a server on your local machine:
+There is only a few setup-steps to go through in the Stream dashboard and this guide details all of them:
 
-1. Clone the repo and set up your machine to run it (install [node and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm))
-2. Get the credentials from your 100ms Dashboard and copy them into a local `.env` file
+1. Head over to the [Dashboard](https://dashboard.getstream.io) and login
+2. Create a new app or select your app by name
+3. In the sidebar on the left, select **Ext. Video Integration**
+4. Make sure the **100ms** tab is selected
 
-With the server running, you can create a new class that takes care of the communication with it. Create a new Swift file called `NetworkManager`:
+This is the screen that you navigated to:
 
-```swift
-import Foundation
+![View of the Stream Dashboard when an app was selected with the external video integration.](../assets/hms-guide-before.png)
 
-enum MyError: Error {
-	case urlCreationFailure(message: String), invalidServerResponse(message: String), unsupportedData
-}
+First, it is necessary to enable the integration through the toggle in the top right (red arrow in the image below). Make sure that you can see the green **HMS Enabled** badge at the top.
 
-struct AuthTokenResponse: Codable {
-	var token: String
-	var userId: String
-	var roomId: String
-}
+Next, it is necessary to enter the credentials from the 100ms console. This is the place you need to enter the following values (in brackets are the place you can find them in the 100ms dashboard):
 
-struct RoomCreationResponse: Codable {
-	var roomId: String
-	var roomName: String
-	var userId: String
-	var managementToken: String
-}
+- `App Access Key` (100ms Dashboard: `Developer` -> `App Access Key`)
+- `App Secret` (100ms Dashboard: `Developer` -> `App Secret`)
+- `Default Role` (can be `guest`)
+- `Default Room Template` (100ms Dashboard: `Templates` -> `Name`)
 
-class NetworkManager {
+![View of the Stream Dashboard when the 100ms video integration was enabled.](../assets/hms-guide-after.png)
 
-#if targetEnvironment(simulator)
-	// simulator code
-	let serverAddress: String = "http://localhost:3000"
-#else
-	// real device code (you need to check the IP address of your mac in network settings
-	let serverAddress: String = "http://192.168.178.132:3000"
-#endif
+With these steps being taken, the Stream Chat SDK will use these credentials internally to initiate calls without you needing to take additional steps.
 
-	static let shared = NetworkManager()
-
-		private init() {}
-
-	func createRoom(with name: String) async throws -> RoomCreationResponse {
-		guard let url = URL(string: createRoomCreationUrlString()) else {
-			throw MyError.urlCreationFailure(message: "Create Room URL could not be created")
-		}
-		var request = URLRequest(url: url)
-		request.httpMethod = "POST"
-		request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-		let postBody: [String: Any] = [
-			"name": name
-		]
-
-		if let jsonData = createData(for: postBody) {
-			request.httpBody = jsonData
-		}
-
-		let (data, response) = try await URLSession.shared.data(for: request)
-
-		guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-			throw MyError.invalidServerResponse(message: response.debugDescription)
-		}
-
-		if let responseObject = try? JSONDecoder().decode(RoomCreationResponse.self, from: data) {
-			print(responseObject)
-			return responseObject
-		} else {
-			throw MyError.unsupportedData
-		}
-	}
-
-	private func createData(for dict: [String: Any]) -> Data? {
-		return try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-	}
-
-	func getAuthToken(for roomId: String) async throws -> AuthTokenResponse {
-		guard let url = URL(string: createAuthUrlString(with: roomId)) else {
-			throw MyError.urlCreationFailure(message: "URL could not be created")
-		}
-
-		var request = URLRequest(url: url)
-		request.httpMethod = "GET"
-
-		let (data, response) = try await URLSession.shared.data(for: request)
-
-		guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-			throw MyError.invalidServerResponse(message: response.debugDescription)
-		}
-
-		if let responseObject = try? JSONDecoder().decode(AuthTokenResponse.self, from: data) {
-			print(responseObject)
-			return responseObject
-		} else {
-			throw MyError.unsupportedData
-		}
-	}
-
-	func createAuthUrlString(with roomId: String) -> String {
-		return "\(serverAddress)/authToken?roomId=\(roomId)"
-	}
-
-	func createRoomCreationUrlString() -> String {
-		return "\(serverAddress)/createRoom"
-	}
-}
-```
-
-<aside>
-💡 <b>Note</b>: You need to change the <code>serverAddress</code> variable on <b>line 27</b> to match the IP address of your Mac in order to connect your real device to the server.
-Not sure where to find the correct IP? <a href="https://www.hellotech.com/guide/for/how-to-find-ip-address-on-mac">Check out this guide</a>.
-</aside>
-
-<br />
-
-The server is now running and you have a helper class that allows you to interact with the backend without a need for customization.
+So, let's focus on the iOS implementation.
 
 ## 3. Set Up the Basic App Architecture
 
@@ -605,29 +509,56 @@ There are two use cases you need to cover for sending and editing messages:
 
 ### Starting a Call and Sending the Message
 
-When the user hits the call button at the top right of the channel header a new message should be sent to the channel. Therefore, a new room needs to be created with the _100ms SDK_, which is happening on the backend. The `NetworkManager` that you added earlier has the `createRoom` function for that, which returns the necessary information (we’re only interested in the `roomId` for now). The ID will be a randomly created `UUID` from the client, but can also be created from the backend directly.
+When the user hits the call button at the top right of the channel header a new message should be sent to the channel. Therefore, a new room needs to be created with the _100ms SDK_, which is happening on the backend. The Stream Chat SDK offers native support for `100ms` so it's easy to create one and retrieve the necessary information (namely a `roomId`) with a single API call.
 
-After that, the `chatClient` can be used to get a `channelController` that you can use to call `createNewMessage`.
+In order to make the API work nicely with our `async/await` based architecture, we first extend the `ChatClient` to build upon the closure-based API from the SDK. Create a new file called `ChatClient+createCall.swift` and paste this code inside of it:
+
+```swift
+import StreamChat
+
+extension ChatClient {
+    func createCall(with id: String, in channelId: ChannelId) async throws -> CallWithToken {
+        try await withCheckedThrowingContinuation({ continuation in
+            channelController(for: channelId).createCall(id: id, type: "video") { result in
+                continuation.resume(with: result)
+            }
+        })
+    }
+}
+```
+
+We create a call with a given ID (that is randomly generated) in a channel with the `channelId` (of type `ChannelId`). Inside the SDK function of the `channelController` is called.
+
+:::note
+The only supported type for a call as of now is `"video"` so we hardcode this in the extension of the `ChatClient`.
+:::
+
+In order to initiate a call in the `CallViewModel` there is a few steps to take. First, it's necessary to make sure a valid `channelId` is present. Then the `createCall` function that was just created on the `chatClient` can be called. The room ID will be a randomly created `UUID` from the client-side, but can also be created from the backend directly.
+
+After we made sure that a valid room ID was received (and it is set on the viewModel), the `chatClient` can be used to get a `channelController` that you can use to call `createNewMessage`.
 
 Finally, you can start the call screen by setting `isCallScreenShown` to `true`.
 
-<aside>
-💡 You need to make sure that the call to <code>isCallScreenShown</code> is happening on the main thread, so it’s necessary to wrap it into an <code>await MainActor.run {}</code> call.
-</aside>
-
-<br />
+:::note
+You need to make sure that the call to <code>isCallScreenShown</code> is happening on the main thread, so it’s necessary to wrap it into an <code>await MainActor.run {}</code> call.
+:::
 
 Head over to the `CallViewModel` and create the `createCall` function:
 
 ```swift
 func createCall() async {
 	do {
-		let roomCreationResult = try await NetworkManager.shared.createRoom(with: UUID().uuidString)
-		self.roomId = roomCreationResult.roomId
-
 		guard let channelId = channelId else {
 			return
 		}
+
+		let callWithToken = try await chatClient.createCall(with: UUID().uuidString, in: channelId)
+		guard let roomId = callWithToken.call.hms?.roomId else {
+			return
+		}
+
+		self.roomId = roomId
+
 		chatClient
 			.channelController(for: channelId)
 			.createNewMessage(text: .callOngoing, extraData: createExtraData(with: roomCreationResult.roomId))
@@ -752,18 +683,23 @@ Do the exact same with the `// toggle video` and replace it with `viewModel.togg
 
 In order to join a call there are a few steps you need to do:
 
-1. Get an auth token (the `NetworkManager` offers the `getAuthToken` function)
-2. Create a `config` variable for the `hmsSDK` (of type `HMSConfig`)
-3. Call the `join` function of the `hmsSDK`
+1. Show the call screen by setting `isCallScreenShown` to `true`
+2. Get an auth token (we can re-use the `createCall` function of the `chatClient`)
+3. Create a `config` variable for the `hmsSDK` (of type `HMSConfig`) with the name of the current user (if available)
+4. Call the `join` function of the `hmsSDK`
 
 The following code snippet does exactly that, so add it to the `CallViewModel`:
 
 ```swift
 func joinCall(with roomId: String) async {
 	do {
-		let authTokenResult = try await NetworkManager.shared.getAuthToken(for: roomId)
+		isCallScreenShown = true
+		guard let channelId = channelId else {
+			return
+		}
 
-		let config = HMSConfig(userID: authTokenResult.userId, roomID: roomId, authToken: authTokenResult.token)
+		let callWithToken = try await chatClient.createCall(with: roomId, in: channelId)
+		let config = HMSConfig(userName: chatClient.currentUserController().currentUser?.name ?? "Unknown User", authToken: callWithToken.token)
 
 		hmsSDK.join(config: config, delegate: self)
 	} catch {

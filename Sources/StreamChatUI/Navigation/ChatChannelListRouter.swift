@@ -12,7 +12,7 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
     
     /// Shows the view controller with the profile of the current user.
     open func showCurrentUserProfile() {
-        log.error(
+        log.info(
             """
             Showing current user profile is not handled. Subclass `ChatChannelListRouter` and provide your \
             implementation of the `\(#function)` method.
@@ -47,7 +47,7 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
     ///
     /// - Parameter cid: `ChannelId` of a channel swipe acton was used on
     open func didTapMoreButton(for cid: ChannelId) {
-        log.error(
+        log.info(
             """
             Tapping `more` swipe action for channel is not handled. Subclass `ChatChannelListRouter` and provide your \
             implementation of the `\(#function)` method.
@@ -59,7 +59,7 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
     ///
     /// - Parameter cid: `ChannelId` of a channel swipe acton was used on
     open func didTapDeleteButton(for cid: ChannelId) {
-        log.error(
+        log.info(
             """
             Tapping `delete` swipe action for channel is not handled. Subclass `ChatChannelListRouter` and provide your \
             implementation of the `\(#function)` method.

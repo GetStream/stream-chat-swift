@@ -23,6 +23,7 @@ extension ChatMessage {
             replyCount: 2,
             extraData: [:],
             quotedMessage: { nil },
+            isBounced: false,
             isSilent: false,
             isShadowed: false,
             reactionScores: ["like": 1],

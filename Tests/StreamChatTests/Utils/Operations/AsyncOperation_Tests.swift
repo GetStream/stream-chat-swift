@@ -115,6 +115,60 @@ final class AsyncOperation_Tests: XCTestCase {
         waitForOperationToFinish(operation)
         XCTAssertEqual(operationBlockCalls, 0)
     }
+
+    func test_baseOperation_isThreadSafe() {
+        let operation = BaseOperation()
+
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            operation.isFinished = true
+        }
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            _ = operation.isFinished
+        }
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            operation.isFinished = false
+        }
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            operation.isExecuting = true
+        }
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            _ = operation.isExecuting
+        }
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            operation.isExecuting = false
+        }
+    }
+
+    func test_operation_isThreadSafe() {
+        for _ in (1...100) {
+            let operation = AsyncOperation { _, done in
+                DispatchQueue.global().async {
+                    done(.continue)
+                }
+            }
+
+            operation.start()
+
+            DispatchQueue.concurrentPerform(iterations: 100) { _ in
+                operation.isFinished = true
+            }
+            DispatchQueue.concurrentPerform(iterations: 100) { _ in
+                _ = operation.isFinished
+            }
+            DispatchQueue.concurrentPerform(iterations: 100) { _ in
+                operation.isFinished = false
+            }
+            DispatchQueue.concurrentPerform(iterations: 100) { _ in
+                operation.isExecuting = true
+            }
+            DispatchQueue.concurrentPerform(iterations: 100) { _ in
+                _ = operation.isExecuting
+            }
+            DispatchQueue.concurrentPerform(iterations: 100) { _ in
+                operation.isExecuting = false
+            }
+        }
+    }
 }
 
 // MARK: Test Helpers

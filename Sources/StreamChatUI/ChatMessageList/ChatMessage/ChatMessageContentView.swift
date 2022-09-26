@@ -39,14 +39,19 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
     /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
     /// the content view is displayed outside the collection/table view.
     func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?)
+    
+    /// Gets called when mentioned user is tapped.
+    /// - Parameter mentionedUser: The mentioned user that was tapped on.
+    func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser)
 }
 
 public extension ChatMessageContentViewDelegate {
     func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {}
+    func messageContentViewDidTapOnMentionedUser(_ mentionedUser: ChatUser) {}
 }
 
 /// A view that displays the message content.
-open class ChatMessageContentView: _View, ThemeProvider {
+open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// The current layout options of the view.
     /// When this value is set the subviews are instantiated and laid out just once based on
     /// the received options.
@@ -61,6 +66,9 @@ open class ChatMessageContentView: _View, ThemeProvider {
     open var isMarkdownEnabled: Bool {
         appearance.formatters.isMarkdownEnabled
     }
+    
+    /// The component responsible to get the tapped mentioned user in a UITextView
+    var textViewUserMentionsHandler = TextViewMentionedUsersHandler()
 
     // MARK: Content && Actions
 
@@ -486,26 +494,40 @@ open class ChatMessageContentView: _View, ThemeProvider {
             setNeedsLayout()
         }
 
-        // Text
-        if isMarkdownEnabled, markdownFormatter.containsMarkdown(content?.textContent ?? "") {
-            let markdownText = markdownFormatter.format(content?.textContent ?? "")
+        var textColor = appearance.colorPalette.text
+        var textFont = appearance.fonts.body
+
+        if content?.isDeleted == true {
+            textColor = appearance.colorPalette.textLowEmphasis
+        } else if content?.shouldRenderAsJumbomoji == true {
+            textFont = appearance.fonts.emoji
+        } else if content?.type == .system || content?.type == .error {
+            textFont = appearance.fonts.caption1.bold
+            textColor = appearance.colorPalette.textLowEmphasis
+        }
+
+        let text = content?.textContent ?? ""
+        let attributedText = NSAttributedString(
+            string: text,
+            attributes: [
+                .foregroundColor: textColor,
+                .font: textFont
+            ]
+        )
+        textView?.attributedText = attributedText
+
+        // Markdown
+        if isMarkdownEnabled, markdownFormatter.containsMarkdown(text) {
+            let markdownText = markdownFormatter.format(text)
             textView?.attributedText = markdownText
-        } else {
-            var textColor = appearance.colorPalette.text
-            var textFont = appearance.fonts.body
-            
-            if content?.isDeleted == true {
-                textColor = appearance.colorPalette.textLowEmphasis
-            } else if content?.shouldRenderAsJumbomoji == true {
-                textFont = appearance.fonts.emoji
-            } else if content?.type == .system || content?.type == .error {
-                textFont = appearance.fonts.caption1.bold
-                textColor = appearance.colorPalette.textLowEmphasis
+        }
+
+        // Mentions
+        if let mentionedUsers = content?.mentionedUsers, !mentionedUsers.isEmpty {
+            mentionedUsers.forEach {
+                let mention = "@\($0.name ?? "")"
+                textView?.highlightMention(mention: mention)
             }
-            
-            textView?.textColor = textColor
-            textView?.font = textFont
-            textView?.text = content?.textContent
         }
         
         // Avatar
@@ -596,6 +618,8 @@ open class ChatMessageContentView: _View, ThemeProvider {
             guard let channel = channel, let message = content else { return nil }
             return .init(message: message, channel: channel)
         }()
+        
+        textView?.delegate = self
     }
 
     override open func tintColorDidChange() {
@@ -644,6 +668,24 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// Handles tap on `deliveryStatusView` and forwards the action to the delegate.
     @objc open func handleTapOnDeliveryStatusView() {
         delegate?.messageContentViewDidTapOnDeliveryStatusIndicator(indexPath?())
+    }
+    
+    // MARK: - UITextViewDelegate
+    
+    open func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        if let mentionedUsers = content?.mentionedUsers, !mentionedUsers.isEmpty {
+            let tappedMentionedUser = textViewUserMentionsHandler.mentionedUserTapped(
+                on: textView,
+                in: characterRange,
+                with: mentionedUsers
+            )
+            if let mentionedUser = tappedMentionedUser {
+                delegate?.messageContentViewDidTapOnMentionedUser(mentionedUser)
+                return false // There's no URL to open, so return false
+            }
+        }
+
+        return true
     }
 	
     // MARK: - Setups

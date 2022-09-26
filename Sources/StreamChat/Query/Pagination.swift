@@ -25,7 +25,7 @@ public struct Pagination: Encodable, Equatable {
     /// An offset.
     public let offset: Int
     
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case pageSize = "limit"
         case offset
     }
@@ -63,7 +63,7 @@ public struct MessagesPagination: Encodable, Equatable {
         self.parameter = parameter
     }
     
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case pageSize = "limit"
     }
     
@@ -76,7 +76,7 @@ public struct MessagesPagination: Encodable, Equatable {
 
 /// Pagination parameters
 public enum PaginationParameter: Encodable, Hashable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case greaterThan = "id_gt"
         case greaterThanOrEqual = "id_gte"
         case lessThan = "id_lt"

@@ -6,6 +6,8 @@
 import Swifter
 import XCTest
 
+public let eventKey = EventPayload.CodingKeys.self
+
 public extension StreamMockServer {
     
     func configureEventEndpoints() {
@@ -13,7 +15,7 @@ public extension StreamMockServer {
             let channelId = try XCTUnwrap(request.params[EndpointQuery.channelId])
             let json = TestData.toJson(request.body)
             let event = json[JSONKey.event] as? [String: Any]
-            let eventType = event?[EventPayload.CodingKeys.eventType.rawValue] as? String
+            let eventType = event?[eventKey.eventType.rawValue] as? String
             self?.websocketEvent(
                 EventType(rawValue: String(describing: eventType)),
                 user: UserDetails.lukeSkywalker,
@@ -32,11 +34,11 @@ public extension StreamMockServer {
         var json = TestData.toJson(.httpChatEvent)
         var event = json[JSONKey.event] as? [String: Any]
         let user = setUpUser(source: event, details: UserDetails.lukeSkywalker)
-        event?[EventPayload.CodingKeys.user.rawValue] = user
-        event?[EventPayload.CodingKeys.createdAt.rawValue] = TestData.currentDate
-        event?[EventPayload.CodingKeys.eventType.rawValue] = eventType
-        event?[EventPayload.CodingKeys.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
-        event?[EventPayload.CodingKeys.channelId.rawValue] = channelId
+        event?[eventKey.user.rawValue] = user
+        event?[eventKey.createdAt.rawValue] = TestData.currentDate
+        event?[eventKey.eventType.rawValue] = eventType
+        event?[eventKey.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
+        event?[eventKey.channelId.rawValue] = channelId
         json[JSONKey.event] = event
         return .ok(.json(json))
     }

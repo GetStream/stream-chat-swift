@@ -342,6 +342,113 @@ final class ChatMessageContentView_Tests: XCTestCase {
         XCTAssertNotNil(reactionBubbleView)
         XCTAssert(reactionBubbleView is CustomChatReactionsBubbleView)
     }
+    
+    func test_appearance_whenMessageWithAMentionedUserIsSent() {
+        let channelWithReadsEnabled: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+        
+        let mentionedUser = myFriend
+        mentionedUser.name = "MyFriend"
+        let messageWithMention = "Hello @\(mentionedUser.name ?? "")!, how are you?"
+        
+        let sentMessageFromCurrentUser: ChatMessage = .mock(
+            id: .unique,
+            cid: channelWithReadsEnabled.cid,
+            text: messageWithMention,
+            author: me,
+            createdAt: createdAt,
+            mentionedUsers: [mentionedUser],
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+        
+        let view = contentView(
+            message: sentMessageFromCurrentUser,
+            channel: channelWithReadsEnabled
+        )
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_textViewShouldInteractWithUrl_whenMentionedUserTapped_callsDelegate_returnsFalse() {
+        let mentionedUser = myFriend
+        mentionedUser.name = "MyFriend"
+
+        let messageWithMentions: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: me,
+            createdAt: createdAt,
+            mentionedUsers: [mentionedUser],
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let textViewUserMentionsHandler = TextViewUserMentionsHandler_Mock()
+        textViewUserMentionsHandler.mockMentionedUser = mentionedUser
+
+        let chatMessageViewContentDelegate = ChatMessageContentViewDelegate_Mock()
+
+        let view = contentView(
+            message: messageWithMentions
+        )
+        view.textViewUserMentionsHandler = textViewUserMentionsHandler
+        view.delegate = chatMessageViewContentDelegate
+
+        let shouldInteract = view.textView(
+            UITextView(),
+            shouldInteractWith: URL(string: "url")!,
+            in: .init(location: 4, length: 7),
+            interaction: .invokeDefaultAction
+        )
+
+        XCTAssertEqual(shouldInteract, false)
+        XCTAssertEqual(chatMessageViewContentDelegate.tappedMentionedUser, mentionedUser)
+        XCTAssertEqual(chatMessageViewContentDelegate.messageContentViewDidTapOnMentionedUserCallCount, 1)
+    }
+
+    func test_textViewShouldInteractWithUrl_whenMentionedUserNotTapped_doesNotCallDelegate_returnsTrue() {
+        let mentionedUser = myFriend
+        mentionedUser.name = "MyFriend"
+
+        let messageWithMentions: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: me,
+            createdAt: createdAt,
+            mentionedUsers: [mentionedUser],
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let textViewUserMentionsHandler = TextViewUserMentionsHandler_Mock()
+        textViewUserMentionsHandler.mockMentionedUser = nil
+
+        let chatMessageViewContentDelegate = ChatMessageContentViewDelegate_Mock()
+
+        let view = contentView(
+            message: messageWithMentions
+        )
+        view.textViewUserMentionsHandler = textViewUserMentionsHandler
+        view.delegate = chatMessageViewContentDelegate
+
+        let shouldInteract = view.textView(
+            UITextView(),
+            shouldInteractWith: URL(string: "url")!,
+            in: .init(location: 4, length: 7),
+            interaction: .invokeDefaultAction
+        )
+
+        XCTAssertEqual(shouldInteract, true)
+        XCTAssertEqual(chatMessageViewContentDelegate.messageContentViewDidTapOnMentionedUserCallCount, 0)
+    }
 }
 
 // MARK: - Helpers
