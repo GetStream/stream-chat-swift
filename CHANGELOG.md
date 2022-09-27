@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Added `timeoutIntervalForRequest` to ChatClientConfig to control URLSession's timeout [#2311](https://github.com/GetStream/stream-chat-swift/pull/2311)
+- Added `channel.ownCapabilities` [#2317](https://github.com/GetStream/stream-chat-swift/pull/2317)
 
 ### 🐞 Fixed
 - Fixed pagination in message list not working when synchronize does not succeed [#2241](https://github.com/GetStream/stream-chat-swift/pull/2241)
