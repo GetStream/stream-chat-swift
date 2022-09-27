@@ -13,6 +13,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
     @NSManaged var config: ChannelConfigDTO
+    @NSManaged var ownCapabilities: [String]
     
     @NSManaged var createdAt: DBDate
     @NSManaged var deletedAt: DBDate?
@@ -183,6 +184,9 @@ extension NSManagedObjectContext {
         }
         dto.typeRawValue = payload.typeRawValue
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
+        if let ownCapabilities = payload.ownCapabilities {
+            dto.ownCapabilities = ownCapabilities
+        }
         dto.createdAt = payload.createdAt.bridgeDate
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
@@ -478,6 +482,7 @@ extension ChatChannel {
             isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
             config: dto.config.asModel(),
+            ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,
             lastActiveMembers: { fetchMembers() },
             membership: dto.membership.map { try $0.asModel() },

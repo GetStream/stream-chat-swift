@@ -112,7 +112,10 @@ final class ChannelListPayload_Tests: XCTestCase {
                     ],
                     createdAt: channelCreatedDate,
                     updatedAt: .unique
-                ),
+                ), ownCapabilities: [
+                    "join-channel",
+                    "delete-channel"
+                ],
                 isFrozen: true,
                 isHidden: false,
                 members: channelUsers.map {
@@ -293,6 +296,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.updatedAt, "2020-03-17T18:54:09.460881Z".toDate())
 
         XCTAssertEqual(payload.membership?.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.channel.ownCapabilities?.count, 27)
     }
     
     func test_newestMessage_whenMessagesAreSortedDesc() throws {

@@ -312,7 +312,12 @@ final class ChannelDTO_Tests: XCTestCase {
         // Pinned message should be older than `message` to ensure it's not returned first in `latestMessages`
         let pinnedMessage = dummyPinnedMessagePayload(createdAt: .unique(before: messageCreatedAt))
         
-        let payload = dummyPayload(with: channelId, messages: [message], pinnedMessages: [pinnedMessage])
+        let payload = dummyPayload(
+            with: channelId,
+            messages: [message],
+            pinnedMessages: [pinnedMessage],
+            ownCapabilities: ["join-channel", "delete-channel"]
+        )
         
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -359,6 +364,9 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.config.commands, loadedChannel.config.commands)
             Assert.willBeEqual(payload.channel.config.createdAt, loadedChannel.config.createdAt)
             Assert.willBeEqual(payload.channel.config.updatedAt, loadedChannel.config.updatedAt)
+
+            // Own Capabilities
+            Assert.willBeEqual(payload.channel.ownCapabilities, ["join-channel", "delete-channel"])
             
             // Creator
             Assert.willBeEqual(payload.channel.createdBy!.id, loadedChannel.createdBy?.id)
