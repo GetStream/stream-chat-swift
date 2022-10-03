@@ -13,10 +13,12 @@ final class SlackReactionsChatMessageContentView: DemoChatMessageContentView {
         return view
     }()
 
+    var isInPopupView = false
+
     override func layout(options: ChatMessageLayoutOptions) {
         super.layout(options: options)
 
-        if options.contains(.customReactions) {
+        if options.contains(.customReactions) && !isInPopupView {
             addSubview(slackReactionsView)
             let bottomPadding: CGFloat = options.contains(.timestamp) ? 0 : 2
             NSLayoutConstraint.activate([

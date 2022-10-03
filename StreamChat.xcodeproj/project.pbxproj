@@ -1113,6 +1113,8 @@
 		ADF66ABD28EB909D00457F4B /* SlackReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66ABC28EB909D00457F4B /* SlackReactionsView.swift */; };
 		ADF66ABF28EB950F00457F4B /* SlackReactionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66ABE28EB950F00457F4B /* SlackReactionItemView.swift */; };
 		ADF66AC128EB95A400457F4B /* SlackReactionsChatMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66AC028EB95A400457F4B /* SlackReactionsChatMessageContentView.swift */; };
+		ADF66AC328EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66AC228EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift */; };
+		ADF66AC528EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66AC428EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift */; };
 		ADFA09C926A99E0A002A6EFA /* ChatThreadHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */; };
 		ADFB7E90283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */; };
 		ADFB7E91283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */; };
@@ -1639,9 +1641,9 @@
 		C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */; };
 		C15C8838286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */; };
 		C15C8839286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */; };
-		C1616DB428DC9F0B00FF993B /* ChannelCreated.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB328DC9F0B00FF993B /* ChannelCreated.json */; };
 		C1616DB128DC4D7F00FF993B /* UserGloballyUnbanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */; };
 		C1616DB228DC4D7F00FF993B /* UserGloballyBanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */; };
+		C1616DB428DC9F0B00FF993B /* ChannelCreated.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB328DC9F0B00FF993B /* ChannelCreated.json */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
@@ -3294,6 +3296,8 @@
 		ADF66ABC28EB909D00457F4B /* SlackReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsView.swift; sourceTree = "<group>"; };
 		ADF66ABE28EB950F00457F4B /* SlackReactionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionItemView.swift; sourceTree = "<group>"; };
 		ADF66AC028EB95A400457F4B /* SlackReactionsChatMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsChatMessageContentView.swift; sourceTree = "<group>"; };
+		ADF66AC228EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatMessageMessagePopupVC.swift; sourceTree = "<group>"; };
+		ADF66AC428EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsChatMessageActionsTransitionController.swift; sourceTree = "<group>"; };
 		ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadHeaderView.swift; sourceTree = "<group>"; };
 		ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewListChangeUpdater.swift; sourceTree = "<group>"; };
 		ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewListChangeUpdater.swift; sourceTree = "<group>"; };
@@ -3361,9 +3365,9 @@
 		C152F5FB27C3DC53003B4805 /* MessageRepository_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Spy.swift; sourceTree = "<group>"; };
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundListDatabaseObserver.swift; sourceTree = "<group>"; };
-		C1616DB328DC9F0B00FF993B /* ChannelCreated.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelCreated.json; sourceTree = "<group>"; };
 		C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyUnbanned.json; sourceTree = "<group>"; };
 		C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyBanned.json; sourceTree = "<group>"; };
+		C1616DB328DC9F0B00FF993B /* ChannelCreated.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelCreated.json; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
 		C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Array.swift"; sourceTree = "<group>"; };
 		C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload.swift; sourceTree = "<group>"; };
@@ -7049,6 +7053,8 @@
 			children = (
 				ADF66ABA28EB5A6200457F4B /* SlackReactionsChatMessageLayoutOptionsResolver.swift */,
 				ADF66AC028EB95A400457F4B /* SlackReactionsChatMessageContentView.swift */,
+				ADF66AC428EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift */,
+				ADF66AC228EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift */,
 				ADF66ABC28EB909D00457F4B /* SlackReactionsView.swift */,
 				ADF66ABE28EB950F00457F4B /* SlackReactionItemView.swift */,
 			);
@@ -8939,10 +8945,12 @@
 				648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */,
 				A3227E70284A4BC700EBE6CC /* DemoChatChannelVC.swift in Sources */,
 				849C1B6A283686EE00F9DC42 /* UserDefaults+Shared.swift in Sources */,
+				ADF66AC328EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift in Sources */,
 				A3227E7A284A4CE000EBE6CC /* DemoChatChannelListVC.swift in Sources */,
 				792DDA5E256FB69E001DB91B /* LoginViewController.swift in Sources */,
 				792DDAA825753BEA001DB91B /* CreateGroupViewController.swift in Sources */,
 				7933064925712C8B00FBB586 /* DemoUsers.swift in Sources */,
+				ADF66AC528EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift in Sources */,
 				792DDA5A256FB69E001DB91B /* AppDelegate.swift in Sources */,
 				792DDAA125711AF2001DB91B /* CreateChatViewController.swift in Sources */,
 				A3227E7E284A511200EBE6CC /* DemoAppConfiguration.swift in Sources */,
