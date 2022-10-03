@@ -2,16 +2,15 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import StreamChat
 import StreamChatUI
 
 extension ChatMessageLayoutOption {
-    static let pinInfo: Self = "pinInfo"
+    static let customReactions: Self = "customReactions"
 }
 
-open class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
-    override open func optionsForMessage(
+final class SlackReactionsChatMessageLayoutOptionsResolver: DemoChatMessageLayoutOptionsResolver {
+    override func optionsForMessage(
         at indexPath: IndexPath,
         in channel: ChatChannel,
         with messages: AnyRandomAccessCollection<ChatMessage>,
@@ -21,11 +20,13 @@ open class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolve
         guard indexPath.item < messages.count else {
             return options
         }
-        
+
         let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
         let message = messages[messageIndex]
-        if message.isPinned {
-            options.insert(.pinInfo)
+
+        options.remove(.reactions)
+        if channel.ownCapabilities.contains(.sendReaction) && !message.reactionScores.isEmpty {
+            options.insert(.customReactions)
         }
 
         return options

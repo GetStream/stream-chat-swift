@@ -11,6 +11,8 @@ struct DemoAppConfig {
     var isHardDeleteEnabled: Bool
     /// A Boolean value to define if Atlantis will be started to proxy HTTP and WebSocket calls.
     var isAtlantisEnabled: Bool
+    /// A Boolean value to define if reactions should be rendered Slack-like.
+    var isSlackReactionsEnabled: Bool
 }
 
 class AppConfig {
@@ -23,7 +25,8 @@ class AppConfig {
         // Default DemoAppConfig
         demoAppConfig = DemoAppConfig(
             isHardDeleteEnabled: false,
-            isAtlantisEnabled: false
+            isAtlantisEnabled: false,
+            isSlackReactionsEnabled: false
         )
     }
 }
@@ -97,6 +100,7 @@ class AppConfigViewController: UITableViewController {
     enum DemoAppConfigOption: String, CaseIterable {
         case isHardDeleteEnabled
         case isAtlantisEnabled
+        case isSlackReactionsEnabled
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -194,6 +198,10 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(demoAppConfig.isAtlantisEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isAtlantisEnabled = newValue
             }
+        case .isSlackReactionsEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isSlackReactionsEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isSlackReactionsEnabled = newValue
+            }
         }
     }
 
@@ -207,6 +215,8 @@ class AppConfigViewController: UITableViewController {
         case .isHardDeleteEnabled:
             break
         case .isAtlantisEnabled:
+            break
+        case .isSlackReactionsEnabled:
             break
         }
     }

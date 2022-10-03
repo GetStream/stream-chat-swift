@@ -14,7 +14,7 @@ final class StreamChatWrapper {
     var onRemotePushRegistration: (() -> Void)?
 
     // Chat client
-    private var client: ChatClient?
+    var client: ChatClient?
 
     // ChatClient config
     var config: ChatClientConfig = {
@@ -68,6 +68,12 @@ final class StreamChatWrapper {
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
+
+        // Slack Reactions
+        if AppConfig.shared.demoAppConfig.isSlackReactionsEnabled {
+            Components.default.messageLayoutOptionsResolver = SlackReactionsChatMessageLayoutOptionsResolver()
+            Components.default.messageContentView = SlackReactionsChatMessageContentView.self
+        }
     }
 }
 

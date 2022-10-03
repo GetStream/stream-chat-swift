@@ -14,7 +14,18 @@ final class SlackMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
         appearance: Appearance
     ) -> ChatMessageLayoutOptions {
         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
-        options.remove([.flipped, .bubble, .timestamp, .avatar, .avatarSizePadding, .authorName, .threadInfo, .reactions])
+        options.remove([
+            .flipped,
+            .bubble,
+            .timestamp,
+            .avatar,
+            .avatarSizePadding,
+            .authorName,
+            .threadInfo,
+            .reactions,
+            .deliveryStatusIndicator,
+            .quotedMessage
+        ])
 
         let isFirstInGroup: Bool = {
             let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
