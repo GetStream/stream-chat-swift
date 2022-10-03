@@ -9,7 +9,7 @@ extension ChatMessageLayoutOption {
     static let customReactions: Self = "customReactions"
 }
 
-final class SlackReactionsChatMessageLayoutOptionsResolver: DemoChatMessageLayoutOptionsResolver {
+final class SlackReactionsMessageLayoutOptionsResolver: DemoChatMessageLayoutOptionsResolver {
     override func optionsForMessage(
         at indexPath: IndexPath,
         in channel: ChatChannel,

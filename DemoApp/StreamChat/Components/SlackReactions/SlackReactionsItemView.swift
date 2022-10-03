@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class SlackReactionItemView: UIButton {
+class SlackReactionsItemView: UIButton {
     var onTap: (() -> Void)?
 
     override init(frame: CGRect) {

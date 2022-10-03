@@ -1109,12 +1109,12 @@
 		ADF34F8A25CDC58900AD637C /* ConnectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34F6A25CD6A1D00AD637C /* ConnectionController.swift */; };
 		ADF34F9E25CDD8E600AD637C /* ConnectionController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34F9D25CDD8E600AD637C /* ConnectionController+SwiftUI.swift */; };
 		ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */; };
-		ADF66ABB28EB5A6200457F4B /* SlackReactionsChatMessageLayoutOptionsResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66ABA28EB5A6200457F4B /* SlackReactionsChatMessageLayoutOptionsResolver.swift */; };
+		ADF66ABB28EB5A6200457F4B /* SlackReactionsMessageLayoutOptionsResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66ABA28EB5A6200457F4B /* SlackReactionsMessageLayoutOptionsResolver.swift */; };
 		ADF66ABD28EB909D00457F4B /* SlackReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66ABC28EB909D00457F4B /* SlackReactionsView.swift */; };
-		ADF66ABF28EB950F00457F4B /* SlackReactionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66ABE28EB950F00457F4B /* SlackReactionItemView.swift */; };
-		ADF66AC128EB95A400457F4B /* SlackReactionsChatMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66AC028EB95A400457F4B /* SlackReactionsChatMessageContentView.swift */; };
-		ADF66AC328EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66AC228EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift */; };
-		ADF66AC528EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66AC428EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift */; };
+		ADF66ABF28EB950F00457F4B /* SlackReactionsItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66ABE28EB950F00457F4B /* SlackReactionsItemView.swift */; };
+		ADF66AC128EB95A400457F4B /* SlackReactionsMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66AC028EB95A400457F4B /* SlackReactionsMessageView.swift */; };
+		ADF66AC328EB9B0C00457F4B /* SlackReactionsMessagePopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66AC228EB9B0C00457F4B /* SlackReactionsMessagePopupVC.swift */; };
+		ADF66AC528EB9E8000457F4B /* SlackReactionsMessageActionsTransitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF66AC428EB9E8000457F4B /* SlackReactionsMessageActionsTransitionController.swift */; };
 		ADFA09C926A99E0A002A6EFA /* ChatThreadHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */; };
 		ADFB7E90283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */; };
 		ADFB7E91283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */; };
@@ -3292,12 +3292,12 @@
 		ADF34F6A25CD6A1D00AD637C /* ConnectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionController.swift; sourceTree = "<group>"; };
 		ADF34F9D25CDD8E600AD637C /* ConnectionController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+SwiftUI.swift"; sourceTree = "<group>"; };
 		ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+Combine.swift"; sourceTree = "<group>"; };
-		ADF66ABA28EB5A6200457F4B /* SlackReactionsChatMessageLayoutOptionsResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsChatMessageLayoutOptionsResolver.swift; sourceTree = "<group>"; };
+		ADF66ABA28EB5A6200457F4B /* SlackReactionsMessageLayoutOptionsResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsMessageLayoutOptionsResolver.swift; sourceTree = "<group>"; };
 		ADF66ABC28EB909D00457F4B /* SlackReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsView.swift; sourceTree = "<group>"; };
-		ADF66ABE28EB950F00457F4B /* SlackReactionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionItemView.swift; sourceTree = "<group>"; };
-		ADF66AC028EB95A400457F4B /* SlackReactionsChatMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsChatMessageContentView.swift; sourceTree = "<group>"; };
-		ADF66AC228EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatMessageMessagePopupVC.swift; sourceTree = "<group>"; };
-		ADF66AC428EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsChatMessageActionsTransitionController.swift; sourceTree = "<group>"; };
+		ADF66ABE28EB950F00457F4B /* SlackReactionsItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsItemView.swift; sourceTree = "<group>"; };
+		ADF66AC028EB95A400457F4B /* SlackReactionsMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsMessageView.swift; sourceTree = "<group>"; };
+		ADF66AC228EB9B0C00457F4B /* SlackReactionsMessagePopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsMessagePopupVC.swift; sourceTree = "<group>"; };
+		ADF66AC428EB9E8000457F4B /* SlackReactionsMessageActionsTransitionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsMessageActionsTransitionController.swift; sourceTree = "<group>"; };
 		ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadHeaderView.swift; sourceTree = "<group>"; };
 		ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewListChangeUpdater.swift; sourceTree = "<group>"; };
 		ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewListChangeUpdater.swift; sourceTree = "<group>"; };
@@ -7051,12 +7051,12 @@
 		ADF66AB928EB5A0300457F4B /* SlackReactions */ = {
 			isa = PBXGroup;
 			children = (
-				ADF66ABA28EB5A6200457F4B /* SlackReactionsChatMessageLayoutOptionsResolver.swift */,
-				ADF66AC028EB95A400457F4B /* SlackReactionsChatMessageContentView.swift */,
-				ADF66AC428EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift */,
-				ADF66AC228EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift */,
+				ADF66ABA28EB5A6200457F4B /* SlackReactionsMessageLayoutOptionsResolver.swift */,
+				ADF66AC028EB95A400457F4B /* SlackReactionsMessageView.swift */,
+				ADF66AC428EB9E8000457F4B /* SlackReactionsMessageActionsTransitionController.swift */,
+				ADF66AC228EB9B0C00457F4B /* SlackReactionsMessagePopupVC.swift */,
 				ADF66ABC28EB909D00457F4B /* SlackReactionsView.swift */,
-				ADF66ABE28EB950F00457F4B /* SlackReactionItemView.swift */,
+				ADF66ABE28EB950F00457F4B /* SlackReactionsItemView.swift */,
 			);
 			path = SlackReactions;
 			sourceTree = "<group>";
@@ -8939,18 +8939,18 @@
 				A3227E60284A497300EBE6CC /* GroupUserCell.swift in Sources */,
 				647F66D5261E22C200111B19 /* BannerView.swift in Sources */,
 				A31783DD285B79EB005009B9 /* Bundle+PushProvider.swift in Sources */,
-				ADF66ABB28EB5A6200457F4B /* SlackReactionsChatMessageLayoutOptionsResolver.swift in Sources */,
+				ADF66ABB28EB5A6200457F4B /* SlackReactionsMessageLayoutOptionsResolver.swift in Sources */,
 				A3227E72284A4BF700EBE6CC /* HiddenChannelListVC.swift in Sources */,
 				AD75CB6B27886746005F5FF7 /* OptionsSelectorViewController.swift in Sources */,
 				648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */,
 				A3227E70284A4BC700EBE6CC /* DemoChatChannelVC.swift in Sources */,
 				849C1B6A283686EE00F9DC42 /* UserDefaults+Shared.swift in Sources */,
-				ADF66AC328EB9B0C00457F4B /* SlackChatMessageMessagePopupVC.swift in Sources */,
+				ADF66AC328EB9B0C00457F4B /* SlackReactionsMessagePopupVC.swift in Sources */,
 				A3227E7A284A4CE000EBE6CC /* DemoChatChannelListVC.swift in Sources */,
 				792DDA5E256FB69E001DB91B /* LoginViewController.swift in Sources */,
 				792DDAA825753BEA001DB91B /* CreateGroupViewController.swift in Sources */,
 				7933064925712C8B00FBB586 /* DemoUsers.swift in Sources */,
-				ADF66AC528EB9E8000457F4B /* SlackReactionsChatMessageActionsTransitionController.swift in Sources */,
+				ADF66AC528EB9E8000457F4B /* SlackReactionsMessageActionsTransitionController.swift in Sources */,
 				792DDA5A256FB69E001DB91B /* AppDelegate.swift in Sources */,
 				792DDAA125711AF2001DB91B /* CreateChatViewController.swift in Sources */,
 				A3227E7E284A511200EBE6CC /* DemoAppConfiguration.swift in Sources */,
@@ -8964,13 +8964,13 @@
 				794E20F52577DF4D00790DAB /* NameGroupViewController.swift in Sources */,
 				A3227EC9284A52EE00EBE6CC /* PushNotifications.swift in Sources */,
 				A3227E65284A4A5C00EBE6CC /* StreamChatWrapper.swift in Sources */,
-				ADF66AC128EB95A400457F4B /* SlackReactionsChatMessageContentView.swift in Sources */,
+				ADF66AC128EB95A400457F4B /* SlackReactionsMessageView.swift in Sources */,
 				A3227E78284A4CAD00EBE6CC /* DemoChatMessageContentView.swift in Sources */,
 				7933060B256FF94800FBB586 /* DemoChatChannelListRouter.swift in Sources */,
 				A3227E69284A4AE800EBE6CC /* AvatarView.swift in Sources */,
 				A3227E5B284A489000EBE6CC /* UIViewController+Alert.swift in Sources */,
 				A3227E6D284A4B6A00EBE6CC /* UserCredentialsCell.swift in Sources */,
-				ADF66ABF28EB950F00457F4B /* SlackReactionItemView.swift in Sources */,
+				ADF66ABF28EB950F00457F4B /* SlackReactionsItemView.swift in Sources */,
 				A3227E59284A484300EBE6CC /* UIImage+Resized.swift in Sources */,
 				79B8B64B285CBDC00059FB2D /* DemoChatMessageLayoutOptionsResolver.swift in Sources */,
 				79330604256FEBE600FBB586 /* AdvancedOptionsViewController.swift in Sources */,

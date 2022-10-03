@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class SlackReactionsChatMessageContentView: DemoChatMessageContentView {
+final class SlackReactionsMessageView: DemoChatMessageContentView {
     lazy var slackReactionsView: SlackReactionsView = {
         let view = SlackReactionsView()
         view.translatesAutoresizingMaskIntoConstraints = false

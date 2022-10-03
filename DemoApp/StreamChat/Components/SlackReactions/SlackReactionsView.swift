@@ -81,7 +81,7 @@ final class SlackReactionsView: _View, AppearanceProvider {
             let reactionType = MessageReactionType(rawValue: key)
             if let reactionScore = content.reactionScores[reactionType] {
                 if let image = appearance.images.availableReactions[reactionType]?.smallIcon {
-                    let reactionItemView = SlackReactionItemView()
+                    let reactionItemView = SlackReactionsItemView()
                     reactionItemView.setImage(image, for: .normal)
                     reactionItemView.setTitle(" \(reactionScore) ", for: .normal)
                     reactionItemView.onTap = {

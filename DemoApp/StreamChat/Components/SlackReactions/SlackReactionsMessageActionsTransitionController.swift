@@ -6,10 +6,10 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class SlackReactionsChatMessageActionsTransitionController: ChatMessageActionsTransitionController {
+class SlackReactionsMessageActionsTransitionController: ChatMessageActionsTransitionController {
     override var selectedMessageContentViewFrame: CGRect? {
         guard let messageView = selectedMessageCell?
-            .messageContentView as? SlackReactionsChatMessageContentView else {
+            .messageContentView as? SlackReactionsMessageView else {
             return super.selectedMessageContentViewFrame
         }
 
