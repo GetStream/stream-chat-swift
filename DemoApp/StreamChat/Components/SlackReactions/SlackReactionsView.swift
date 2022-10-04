@@ -131,3 +131,144 @@ final class SlackReactionsView: _View, ThemeProvider {
         }
     }
 }
+
+class SlackReactionsCollectionViewCell: UICollectionViewCell {
+    var reaction: ChatMessageReactionData? {
+        didSet {
+            guard let reaction = reaction else {
+                return
+            }
+
+            textLabel.text = "🙂 \(reaction.score)"
+            textLabel.textColor = reaction.isChosenByCurrentUser ? .blue : .gray
+        }
+    }
+
+    private let reactionHeight: CGFloat = 26
+
+    lazy var textLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.boldSystemFont(ofSize: 11)
+        label.textAlignment = .center
+        return label
+    }()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureView()
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        layer.cornerRadius = frame.height / 2
+        backgroundColor = .lightGray.withAlphaComponent(0.5)
+    }
+
+    private func configureView() {
+        addSubview(textLabel)
+        NSLayoutConstraint.activate([
+            textLabel.topAnchor.constraint(equalTo: topAnchor, constant: 4),
+            textLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4),
+            textLabel.widthAnchor.constraint(equalToConstant: 35),
+            textLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+        ])
+    }
+}
+
+final class SlackReactionsListView: _View, ThemeProvider, UICollectionViewDataSource, UICollectionViewDelegate {
+    var content: ChatMessage? {
+        didSet { updateContent() }
+    }
+
+    var reactions: [ChatMessageReactionData] = []
+
+    lazy var messageController: ChatMessageController? = {
+        guard let content = content else { return nil }
+        guard let cid = content.cid else { return nil }
+
+        return StreamChatWrapper.shared.messageController(
+            cid: cid,
+            messageId: content.id
+        )
+    }()
+
+    let reactionWidth: CGFloat = 40
+    let reactionRowHeight: CGFloat = 30
+
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.estimatedItemSize = CGSize(width: reactionWidth, height: 24)
+        layout.minimumInteritemSpacing = 4
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(SlackReactionsCollectionViewCell.self, forCellWithReuseIdentifier: "ReactionCell")
+        collectionView.backgroundColor = .clear
+        collectionView.semanticContentAttribute = .forceRightToLeft
+        collectionView.isScrollEnabled = false
+        return collectionView
+    }()
+
+    var heightConstraint: NSLayoutConstraint?
+
+    override func setUpLayout() {
+        super.setUpLayout()
+
+        addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+
+        heightConstraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
+        heightConstraint?.isActive = true
+    }
+
+    override func updateContent() {
+        super.updateContent()
+
+        guard let content = self.content else { return }
+
+        reactions = content.reactionScores.map {
+            let userReactionIDs = Set(content.currentUserReactions.map(\.type))
+            return ChatMessageReactionData(
+                type: $0.key,
+                score: $0.value,
+                isChosenByCurrentUser: userReactionIDs.contains($0.key)
+            )
+        }
+        reactions += reactions
+
+        collectionView.reloadData()
+
+        let lines = CGFloat(reactions.count) * reactionWidth / UIScreen.main.bounds.width
+        heightConstraint?.constant = ceil(lines) * reactionRowHeight
+    }
+
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        1
+    }
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        reactions.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "ReactionCell", for: indexPath
+        ) as! SlackReactionsCollectionViewCell
+
+        cell.reaction = reactions[indexPath.item]
+        return cell
+    }
+}

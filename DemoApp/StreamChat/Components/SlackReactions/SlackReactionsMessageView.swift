@@ -7,8 +7,8 @@ import StreamChatUI
 import UIKit
 
 final class SlackReactionsMessageView: DemoChatMessageContentView {
-    lazy var slackReactionsView: SlackReactionsView = {
-        let view = SlackReactionsView()
+    lazy var slackReactionsView: SlackReactionsListView = {
+        let view = SlackReactionsListView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -22,10 +22,11 @@ final class SlackReactionsMessageView: DemoChatMessageContentView {
             addSubview(slackReactionsView)
             let bottomPadding: CGFloat = options.contains(.timestamp) ? 0 : 2
             NSLayoutConstraint.activate([
-                slackReactionsView.leadingAnchor.constraint(equalTo: mainContainer.leadingAnchor, constant: 8),
-                slackReactionsView.trailingAnchor.constraint(equalTo: mainContainer.trailingAnchor, constant: -8),
+                slackReactionsView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+                slackReactionsView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
                 slackReactionsView.topAnchor.constraint(equalTo: mainContainer.bottomAnchor, constant: bottomPadding),
-                slackReactionsView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
+                slackReactionsView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
+                slackReactionsView.widthAnchor.constraint(greaterThanOrEqualToConstant: 40)
             ])
         }
     }
