@@ -122,5 +122,12 @@ final class SlackReactionsView: _View, ThemeProvider {
                 bottomStackView.addArrangedSubview(reactionItemView)
             }
         }
+
+        // If both stack views have content, increase the size of the main stack
+        if !bottomStackView.subviews.isEmpty && !topStackView.subviews.isEmpty {
+            heightConstraint?.constant = rowHeight * 2
+        } else {
+            heightConstraint?.constant = rowHeight
+        }
     }
 }
