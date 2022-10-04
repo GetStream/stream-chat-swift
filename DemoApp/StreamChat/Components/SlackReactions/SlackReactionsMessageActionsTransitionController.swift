@@ -8,14 +8,14 @@ import UIKit
 
 class SlackReactionsMessageActionsTransitionController: ChatMessageActionsTransitionController {
     override var selectedMessageContentViewFrame: CGRect? {
-        guard let messageView = selectedMessageCell?
-            .messageContentView as? SlackReactionsMessageView else {
+        let messageContentView = selectedMessageCell?.messageContentView
+        guard let slackMessageView = messageContentView as? SlackReactionsMessageView else {
             return super.selectedMessageContentViewFrame
         }
 
         var frame = super.selectedMessageContentViewFrame
-        frame?.size.height -= messageView.slackReactionsView.frame.height
-        frame?.origin.y += messageView.slackReactionsView.frame.height
+        frame?.size.height -= slackMessageView.slackReactionsView.frame.height
+        frame?.origin.y += slackMessageView.slackReactionsView.frame.height
         return frame
     }
 }

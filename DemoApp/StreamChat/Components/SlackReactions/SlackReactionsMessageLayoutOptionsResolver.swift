@@ -4,6 +4,7 @@
 
 import StreamChat
 import StreamChatUI
+import UIKit
 
 extension ChatMessageLayoutOption {
     static let customReactions: Self = "customReactions"

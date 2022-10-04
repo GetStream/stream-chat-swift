@@ -6,10 +6,20 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class SlackReactionsView: _View, AppearanceProvider {
+final class SlackReactionsView: _View, ThemeProvider {
     var content: ChatMessage? {
         didSet { updateContentIfNeeded() }
     }
+
+    lazy var messageController: ChatMessageController? = {
+        guard let content = content else { return nil }
+        guard let cid = content.cid else { return nil }
+
+        return StreamChatWrapper.shared.messageController(
+            cid: cid,
+            messageId: content.id
+        )
+    }()
 
     lazy var mainStackView: UIStackView = {
         let view = UIStackView()
@@ -59,8 +69,6 @@ final class SlackReactionsView: _View, AppearanceProvider {
         heightConstraint?.isActive = true
     }
 
-    let productReactionsOrder = ["love", "like", "dislike", "haha", "wow", "sad"]
-
     override func updateContent() {
         super.updateContent()
 
@@ -77,41 +85,42 @@ final class SlackReactionsView: _View, AppearanceProvider {
 
         var reactionsWidth: CGFloat = 0.0
 
-        for key in productReactionsOrder {
-            let reactionType = MessageReactionType(rawValue: key)
-            if let reactionScore = content.reactionScores[reactionType] {
-                if let image = appearance.images.availableReactions[reactionType]?.smallIcon {
-                    let reactionItemView = SlackReactionsItemView()
-                    reactionItemView.setImage(image, for: .normal)
-                    reactionItemView.setTitle(" \(reactionScore) ", for: .normal)
-                    reactionItemView.onTap = {
-                        let shouldRemove = content.currentUserReactions.contains { $0.type == reactionType }
-                        let messageController = StreamChatWrapper.shared.client!.messageController(
-                            cid: ChannelId(type: .team, id: content.cid?.id ?? ""),
-                            messageId: content.id
-                        )
-                        shouldRemove ? messageController.deleteReaction(reactionType) : messageController.addReaction(reactionType)
-                    }
-                    if content.currentUserReactions.contains(where: { $0.type == reactionType }) {
-                        reactionItemView.setTitleColor(.blue, for: .normal)
-                        reactionItemView.backgroundColor = UIColor.blue.withAlphaComponent(0.2)
-                    }
+        let userReactionIDs = Set(content.currentUserReactions.map(\.type))
+        let reactions = content.reactionScores
+            .map { ChatMessageReactionData(
+                type: $0.key,
+                score: $0.value,
+                isChosenByCurrentUser: userReactionIDs.contains($0.key)
+            ) }
 
-                    reactionsWidth += reactionItemView.intrinsicContentSize.width
+        reactions.sorted(by: components.reactionsSorting).forEach { reaction in
+            guard let reactionImage = appearance.images.availableReactions[reaction.type] else {
+                return
+            }
 
-                    if reactionsWidth < UIScreen.main.bounds.width {
-                        topStackView.addArrangedSubview(reactionItemView)
-                    } else {
-                        bottomStackView.addArrangedSubview(reactionItemView)
-                    }
+            let reactionItemView = SlackReactionsItemView()
+            reactionItemView.setImage(reactionImage.smallIcon, for: .normal)
+            reactionItemView.setTitle(" \(reaction.score) ", for: .normal)
+            reactionItemView.onTap = { [weak self] in
+                if reaction.isChosenByCurrentUser {
+                    self?.messageController?.deleteReaction(reaction.type)
+                } else {
+                    self?.messageController?.addReaction(reaction.type)
                 }
             }
-        }
 
-        if !bottomStackView.subviews.isEmpty && !topStackView.subviews.isEmpty {
-            heightConstraint?.constant = rowHeight * 2
-        } else {
-            heightConstraint?.constant = rowHeight
+            if reaction.isChosenByCurrentUser {
+                reactionItemView.setTitleColor(.blue, for: .normal)
+                reactionItemView.backgroundColor = UIColor.blue.withAlphaComponent(0.2)
+            }
+
+            reactionsWidth += reactionItemView.intrinsicContentSize.width
+
+            if reactionsWidth < UIScreen.main.bounds.width {
+                topStackView.addArrangedSubview(reactionItemView)
+            } else {
+                bottomStackView.addArrangedSubview(reactionItemView)
+            }
         }
     }
 }

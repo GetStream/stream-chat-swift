@@ -14,7 +14,7 @@ final class StreamChatWrapper {
     var onRemotePushRegistration: (() -> Void)?
 
     // Chat client
-    var client: ChatClient?
+    private var client: ChatClient?
 
     // ChatClient config
     var config: ChatClientConfig = {
@@ -154,6 +154,10 @@ extension StreamChatWrapper {
 
     func channelListController(query: ChannelListQuery) -> ChatChannelListController? {
         client?.channelListController(query: query)
+    }
+
+    func messageController(cid: ChannelId, messageId: MessageId) -> ChatMessageController? {
+        client?.messageController(cid: cid, messageId: messageId)
     }
 }
 
