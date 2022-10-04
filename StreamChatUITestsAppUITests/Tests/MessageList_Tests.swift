@@ -136,8 +136,11 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
-    func test_messageIncreases_whenUserEditsMessageWithOneLineText() {
+    func test_messageIncreases_whenUserEditsMessageWithOneLineText() throws {
         linkToScenario(withId: 99)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "XCUITest does not get text from a cell after editing it on iOS 12")
 
         let message = "test message"
         
@@ -154,6 +157,9 @@ final class MessageList_Tests: StreamTestCase {
     
     func test_messageDecreases_whenUserEditsMessage() throws {
         linkToScenario(withId: 100)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
+                      "XCUITest does not get text from a cell after editing it on iOS 12")
         
         let message = "test\nmessage"
         

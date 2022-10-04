@@ -102,7 +102,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
             userRobot.tapOnBackButton()
         }
         WHEN("participant reads the user's message") {
-            participantRobot.readMessage()
+            participantRobot.wait(0.3).readMessage()
         }
         THEN("user spots double checkmark next to the message") {
             userRobot.assertMessageDeliveryStatusInChannelPreview(.read)
@@ -229,7 +229,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
             userRobot.replyToMessageInThread(threadReply)
         }
         AND("participant reads the user's thread reply") {
-            participantRobot.readMessage()
+            participantRobot.wait(0.3).readMessage()
         }
         WHEN("user retuns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
