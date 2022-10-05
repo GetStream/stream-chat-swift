@@ -91,7 +91,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         WHEN("participant reads the user's message") {
-            participantRobot.wait(0.3).readMessage()
+            participantRobot.readMessage(after: 0.3)
         }
         THEN("user spots double checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -113,7 +113,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         AND("message is read by more than 1 participant") {
-            participantRobot.wait(0.3).readMessage()
+            participantRobot.readMessage(after: 0.3)
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
@@ -143,7 +143,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         AND("is read by participant") {
-            participantRobot.wait(0.3).readMessage()
+            participantRobot.readMessage(after: 0.3)
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
@@ -274,7 +274,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.openThread()
         }
         WHEN("the message is read by participant") {
-            participantRobot.wait(0.3).readMessage()
+            participantRobot.readMessage(after: 0.3)
         }
         THEN("user spots double checkmark below the message in thread") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -346,7 +346,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.replyToMessageInThread(threadReply)
         }
         AND("participant reads the user's thread reply") {
-            participantRobot.wait(0.3).readMessage()
+            participantRobot.readMessage(after: 0.3)
         }
         THEN("user spots double checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -398,7 +398,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.replyToMessageInThread(threadReply)
         }
         AND("thread reply is read by participant") {
-            participantRobot.wait(0.3).readMessage()
+            participantRobot.readMessage(after: 0.3)
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
@@ -573,7 +573,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         WHEN("participant reads the user's message") {
-            participantRobot.wait(0.3).readMessage()
+            participantRobot.readMessage(after: 0.3)
         }
         THEN("delivery status is hidden") {
             userRobot
@@ -595,7 +595,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         AND("message is read by more than 1 participant") {
-            participantRobot.wait(0.3).readMessage()
+            participantRobot.readMessage(after: 0.3)
         }
         WHEN("new participant is added to the channel") {
             userRobot.addParticipant()
@@ -622,7 +622,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         AND("is read by participant") {
-            participantRobot.wait(0.3).readMessage()
+            participantRobot.readMessage(after: 0.3)
         }
         WHEN("participant is removed from the channel") {
             userRobot.removeParticipant(withUserId: participantOne)
