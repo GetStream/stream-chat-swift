@@ -85,7 +85,7 @@ public class ParticipantRobot {
     }
     
     @discardableResult
-    public func readMessage(after seconds: Double = 0.3) -> Self {
+    public func readMessage(after seconds: Double) -> Self {
         wait(seconds)
         
         server.waitForChannelsUpdate()
