@@ -85,17 +85,9 @@ public class ParticipantRobot {
     }
     
     @discardableResult
-    public func readMessage(after seconds: Double) -> Self {
-        wait(seconds)
-        
-        server.waitForChannelsUpdate()
-        
-        server.websocketEvent(
-            .messageRead,
-            user: participant(),
-            channelId: server.currentChannelId
-        )
-        return self
+    public func readMessageAfterDelay(_ delay: Double = 0.3) -> Self {
+        wait(delay)
+        return readMessage()
     }
     
     @discardableResult
