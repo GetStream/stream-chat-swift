@@ -85,6 +85,12 @@ public class ParticipantRobot {
     }
     
     @discardableResult
+    public func readMessageAfterDelay(_ delay: Double = 0.3) -> Self {
+        wait(delay)
+        return readMessage()
+    }
+    
+    @discardableResult
     public func sendMessage(_ text: String,
                             withPushNotification: Bool = false,
                             bundleIdForPushNotification: String = "",
