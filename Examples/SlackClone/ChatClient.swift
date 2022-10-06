@@ -23,6 +23,8 @@ extension ChatClient {
         components.channelUnreadCountView = SlackChatChannelUnreadCountView.self
         components.galleryView = SlackChatMessageGalleryView.self
         components.galleryAttachmentInjector = SlackGalleryAttachmentViewInjector.self
+        components.messagePopupVC = SlackReactionsMessagePopupVC.self
+        components.messageActionsTransitionController = SlackReactionsMessageActionsTransitionController.self
         
         Appearance.default = appearance
         Components.default = components

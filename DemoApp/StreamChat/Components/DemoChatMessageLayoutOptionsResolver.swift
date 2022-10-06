@@ -11,7 +11,12 @@ extension ChatMessageLayoutOption {
 }
 
 final class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
-    override func optionsForMessage(at indexPath: IndexPath, in channel: ChatChannel, with messages: AnyRandomAccessCollection<ChatMessage>, appearance: Appearance) -> ChatMessageLayoutOptions {
+    override func optionsForMessage(
+        at indexPath: IndexPath,
+        in channel: ChatChannel,
+        with messages: AnyRandomAccessCollection<ChatMessage>,
+        appearance: Appearance
+    ) -> ChatMessageLayoutOptions {
         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
         guard indexPath.item < messages.count else {
             return options
@@ -22,6 +27,7 @@ final class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolv
         if message.isPinned {
             options.insert(.pinInfo)
         }
+
         return options
     }
 }

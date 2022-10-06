@@ -1044,6 +1044,10 @@
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
 		AD91C35428A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */; };
 		AD91C35528A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */; };
+		AD99A7CE28EF17CA005185DF /* SlackReactonsItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */; };
+		AD99A7D028EF17ED005185DF /* SlackReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7CF28EF17ED005185DF /* SlackReactionsView.swift */; };
+		AD99A7D228EF180C005185DF /* SlackReactionsMessagePopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7D128EF180C005185DF /* SlackReactionsMessagePopupVC.swift */; };
+		AD99A7D428EF188C005185DF /* SlackReactionsMessageActionsTransitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7D328EF188C005185DF /* SlackReactionsMessageActionsTransitionController.swift */; };
 		AD99C904279B073B009DD9C5 /* MessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */; };
 		AD99C905279B0741009DD9C5 /* MessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */; };
 		AD99C908279B0E9A009DD9C5 /* MessageDateSeparatorFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */; };
@@ -1635,9 +1639,9 @@
 		C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */; };
 		C15C8838286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */; };
 		C15C8839286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */; };
-		C1616DB428DC9F0B00FF993B /* ChannelCreated.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB328DC9F0B00FF993B /* ChannelCreated.json */; };
 		C1616DB128DC4D7F00FF993B /* UserGloballyUnbanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */; };
 		C1616DB228DC4D7F00FF993B /* UserGloballyBanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */; };
+		C1616DB428DC9F0B00FF993B /* ChannelCreated.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB328DC9F0B00FF993B /* ChannelCreated.json */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
@@ -3239,6 +3243,10 @@
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
 		AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageListVC+DiffKit.swift"; sourceTree = "<group>"; };
+		AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactonsItemView.swift; sourceTree = "<group>"; };
+		AD99A7CF28EF17ED005185DF /* SlackReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsView.swift; sourceTree = "<group>"; };
+		AD99A7D128EF180C005185DF /* SlackReactionsMessagePopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsMessagePopupVC.swift; sourceTree = "<group>"; };
+		AD99A7D328EF188C005185DF /* SlackReactionsMessageActionsTransitionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsMessageActionsTransitionController.swift; sourceTree = "<group>"; };
 		AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTimestampFormatter.swift; sourceTree = "<group>"; };
 		AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDateSeparatorFormatter.swift; sourceTree = "<group>"; };
 		AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLastActivityFormatter.swift; sourceTree = "<group>"; };
@@ -3353,9 +3361,9 @@
 		C152F5FB27C3DC53003B4805 /* MessageRepository_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Spy.swift; sourceTree = "<group>"; };
 		C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository_Tests.swift; sourceTree = "<group>"; };
 		C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundListDatabaseObserver.swift; sourceTree = "<group>"; };
-		C1616DB328DC9F0B00FF993B /* ChannelCreated.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelCreated.json; sourceTree = "<group>"; };
 		C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyUnbanned.json; sourceTree = "<group>"; };
 		C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyBanned.json; sourceTree = "<group>"; };
+		C1616DB328DC9F0B00FF993B /* ChannelCreated.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelCreated.json; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
 		C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Array.swift"; sourceTree = "<group>"; };
 		C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload.swift; sourceTree = "<group>"; };
@@ -7540,8 +7548,12 @@
 				F8933BBA25FF563F0054BBFF /* SlackChatChannelListViewController.swift */,
 				F8933BB725FF563E0054BBFF /* SlackChatChannelUnreadCountView.swift */,
 				F8933BB925FF563F0054BBFF /* SlackChatChannelViewController.swift */,
-				F8933DF3260209100054BBFF /* SlackChatMessageContentView.swift */,
 				F8FC489726038BDA00A27DC5 /* SlackChatMessageGalleryView.swift */,
+				F8933DF3260209100054BBFF /* SlackChatMessageContentView.swift */,
+				AD99A7CF28EF17ED005185DF /* SlackReactionsView.swift */,
+				AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */,
+				AD99A7D128EF180C005185DF /* SlackReactionsMessagePopupVC.swift */,
+				AD99A7D328EF188C005185DF /* SlackReactionsMessageActionsTransitionController.swift */,
 				ADCBBFD626D66ADC0023FCB2 /* SlackChatMessageListViewController.swift */,
 				AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */,
 				8803EA792639B1D8002B2A7B /* SlackMessageOptionsResolver.swift */,
@@ -10359,9 +10371,13 @@
 				F8933DF4260209100054BBFF /* SlackChatMessageContentView.swift in Sources */,
 				F8933BC025FF56400054BBFF /* SlackChatChannelListViewController.swift in Sources */,
 				ADCBBFD726D66ADC0023FCB2 /* SlackChatMessageListViewController.swift in Sources */,
+				AD99A7D228EF180C005185DF /* SlackReactionsMessagePopupVC.swift in Sources */,
 				F8933BC125FF56400054BBFF /* SlackChatChannelListItemView.swift in Sources */,
 				F8933B9525FF55E30054BBFF /* AppDelegate.swift in Sources */,
+				AD99A7CE28EF17CA005185DF /* SlackReactonsItemView.swift in Sources */,
+				AD99A7D428EF188C005185DF /* SlackReactionsMessageActionsTransitionController.swift in Sources */,
 				8803EA7A2639B1D8002B2A7B /* SlackMessageOptionsResolver.swift in Sources */,
+				AD99A7D028EF17ED005185DF /* SlackReactionsView.swift in Sources */,
 				F87A472026089DFE001653A8 /* JumpView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

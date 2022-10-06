@@ -2,17 +2,16 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import StreamChat
 import StreamChatUI
 import UIKit
 
 final class DemoChatMessageContentView: ChatMessageContentView {
     var pinInfoLabel: UILabel?
-    
+
     override func layout(options: ChatMessageLayoutOptions) {
         super.layout(options: options)
-        
+
         if options.contains(.pinInfo) {
             backgroundColor = UIColor(red: 0.984, green: 0.957, blue: 0.867, alpha: 1)
             pinInfoLabel = UILabel()
@@ -45,14 +44,9 @@ final class DemoChatMessageContentView: ChatMessageContentView {
             }
         }
 
-        guard let authorNameLabel = authorNameLabel, authorNameLabel.text?.isEmpty == true else {
-            return
+        if let authorNameLabel = authorNameLabel, authorNameLabel.text?.isEmpty == true,
+           let birthLand = content?.author.birthLand {
+            authorNameLabel.text?.append(" \(birthLand)")
         }
-
-        guard let birthLand = content?.author.birthLand else {
-            return
-        }
-
-        authorNameLabel.text?.append(" \(birthLand)")
     }
 }

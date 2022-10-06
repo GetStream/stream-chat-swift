@@ -6,6 +6,10 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
+extension ChatMessageLayoutOption {
+    static let slackReactions: Self = "customReactions"
+}
+
 final class SlackMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
     override func optionsForMessage(
         at indexPath: IndexPath,
@@ -14,7 +18,18 @@ final class SlackMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
         appearance: Appearance
     ) -> ChatMessageLayoutOptions {
         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
-        options.remove([.flipped, .bubble, .timestamp, .avatar, .avatarSizePadding, .authorName, .threadInfo, .reactions])
+        options.remove([
+            .flipped,
+            .bubble,
+            .timestamp,
+            .avatar,
+            .avatarSizePadding,
+            .authorName,
+            .threadInfo,
+            .reactions,
+            .deliveryStatusIndicator,
+            .quotedMessage
+        ])
 
         let isFirstInGroup: Bool = {
             let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
@@ -30,6 +45,13 @@ final class SlackMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
             options.insert([.avatar, .timestamp, .authorName])
         } else {
             options.insert(.avatarSizePadding)
+        }
+
+        let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
+        let message = messages[messageIndex]
+
+        if channel.ownCapabilities.contains(.sendReaction) && !message.reactionScores.isEmpty {
+            options.insert(.slackReactions)
         }
 
         return options

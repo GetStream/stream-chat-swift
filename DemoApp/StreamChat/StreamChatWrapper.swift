@@ -147,6 +147,10 @@ extension StreamChatWrapper {
     func channelListController(query: ChannelListQuery) -> ChatChannelListController? {
         client?.channelListController(query: query)
     }
+
+    func messageController(cid: ChannelId, messageId: MessageId) -> ChatMessageController? {
+        client?.messageController(cid: cid, messageId: messageId)
+    }
 }
 
 // MARK: Push Notifications
