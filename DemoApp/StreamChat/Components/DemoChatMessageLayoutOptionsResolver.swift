@@ -11,7 +11,7 @@ extension ChatMessageLayoutOption {
 }
 
 final class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
-    override open func optionsForMessage(
+    override func optionsForMessage(
         at indexPath: IndexPath,
         in channel: ChatChannel,
         with messages: AnyRandomAccessCollection<ChatMessage>,
