@@ -486,10 +486,7 @@ extension UserRobot {
         let newText = linesCountShouldBeIncreased ? "ok\n\(textView.text)\n\(newLine)" : newLine
         
         editMessage(newText, messageCellIndex: messageCellIndex)
-        if ProcessInfo().operatingSystemVersion.majorVersion > 12 {
-            // XCUITest does not get text from a cell after editing it on iOS 12
-            assertMessage(newText, at: messageCellIndex, file: file, line: line)
-        }
+        assertMessage(newText, at: messageCellIndex, file: file, line: line)
         
         if linesCountShouldBeIncreased {
             XCTAssertLessThan(cellHeight, messageCell.height, file: file, line: line)
