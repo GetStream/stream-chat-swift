@@ -10,7 +10,7 @@ extension ChatMessageLayoutOption {
     static let pinInfo: Self = "pinInfo"
 }
 
-open class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
+final class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
     override open func optionsForMessage(
         at indexPath: IndexPath,
         in channel: ChatChannel,

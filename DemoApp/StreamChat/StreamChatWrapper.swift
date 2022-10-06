@@ -68,14 +68,6 @@ final class StreamChatWrapper {
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
-
-        // Slack Reactions
-        if AppConfig.shared.demoAppConfig.isSlackReactionsEnabled {
-            Components.default.messageLayoutOptionsResolver = SlackReactionsMessageLayoutOptionsResolver()
-            Components.default.messageContentView = SlackReactionsMessageView.self
-            Components.default.messagePopupVC = SlackReactionsMessagePopupVC.self
-            Components.default.messageActionsTransitionController = SlackReactionsMessageActionsTransitionController.self
-        }
     }
 }
 

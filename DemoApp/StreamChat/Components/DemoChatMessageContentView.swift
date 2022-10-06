@@ -6,10 +6,10 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-open class DemoChatMessageContentView: ChatMessageContentView {
+final class DemoChatMessageContentView: ChatMessageContentView {
     var pinInfoLabel: UILabel?
 
-    override open func layout(options: ChatMessageLayoutOptions) {
+    override func layout(options: ChatMessageLayoutOptions) {
         super.layout(options: options)
 
         if options.contains(.pinInfo) {
@@ -21,7 +21,7 @@ open class DemoChatMessageContentView: ChatMessageContentView {
         }
     }
     
-    override open func updateContent() {
+    override func updateContent() {
         super.updateContent()
 
         if content?.isShadowed == true {
