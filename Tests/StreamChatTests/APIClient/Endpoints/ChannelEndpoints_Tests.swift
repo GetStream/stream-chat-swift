@@ -100,7 +100,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_deleteChannel_buildsCorrectly() {
         let cid = ChannelId.unique
         
-        let expectedEndpoint = Endpoint<EmptyResponse>(
+        let expectedEndpoint = Endpoint<ChannelDeletedPayload>(
             path: .deleteChannel(cid.apiPath),
             method: .delete,
             queryItems: nil,
@@ -109,7 +109,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .deleteChannel(cid: cid)
+        let endpoint: Endpoint<ChannelDeletedPayload> = .deleteChannel(cid: cid)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

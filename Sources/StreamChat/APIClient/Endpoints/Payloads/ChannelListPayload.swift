@@ -68,6 +68,10 @@ extension ChannelPayload: Decodable {
     }
 }
 
+struct ChannelDeletedPayload: Decodable {
+    let channel: ChannelDetailPayload
+}
+
 struct ChannelDetailPayload {
     let cid: ChannelId
     

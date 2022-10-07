@@ -97,11 +97,10 @@ class ChannelUpdater: Worker {
     func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .deleteChannel(cid: cid)) { [weak self] result in
             switch result {
-            case .success:
-                self?.database.write {
-                    if let channel = $0.channel(cid: cid) {
-                        channel.truncatedAt = channel.lastMessageAt ?? channel.createdAt
-                    }
+            case let .success(deletedPayload):
+                self?.database.write { session in
+                    let channel = try session.saveChannel(payload: deletedPayload.channel, query: nil, cache: nil)
+                    channel.truncatedAt = channel.lastMessageAt ?? channel.createdAt
                 } completion: { error in
                     completion?(error)
                 }

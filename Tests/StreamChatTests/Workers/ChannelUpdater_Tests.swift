@@ -654,8 +654,37 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.deleteChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .deleteChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<ChannelDeletedPayload> = .deleteChannel(cid: channelID)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_deleteChannel_savesDeletedChannelToDB() throws {
+        // Create a channel in DB
+        let cid = ChannelId.unique
+        try database.writeSynchronously {
+            try $0.saveChannel(payload: self.dummyPayload(with: cid))
+        }
+
+        // Fetch channel from DB
+        var channel: ChannelDTO? { database.viewContext.channel(cid: cid) }
+
+        // Channel Deleted Payload
+        let payload: ChannelDeletedPayload = ChannelDeletedPayload(
+            channel: .dummy(cid: cid, deletedAt: Date())
+        )
+
+        XCTAssertNil(channel?.deletedAt)
+
+        let exp = expectation(description: "should call delete channel completion")
+        channelUpdater.deleteChannel(cid: cid) { _ in
+            XCTAssertNearlySameDate(channel?.deletedAt?.bridgeDate, payload.channel.deletedAt)
+            XCTAssertNotNil(channel?.deletedAt)
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(.success(payload))
+
+        wait(for: [exp], timeout: 0.5)
     }
 
     func test_deleteChannel_successfulResponse_isPropagatedToCompletion() {

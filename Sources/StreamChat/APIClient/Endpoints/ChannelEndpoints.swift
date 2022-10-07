@@ -54,7 +54,7 @@ extension Endpoint {
         )
     }
     
-    static func deleteChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
+    static func deleteChannel(cid: ChannelId) -> Endpoint<ChannelDeletedPayload> {
         .init(
             path: .deleteChannel(cid.apiPath),
             method: .delete,
