@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix message text not dynamically scalable with content size category changes [#2328](https://github.com/GetStream/stream-chat-swift/pull/2328)
 
 # [4.22.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.22.0)
 _September 26, 2022_
