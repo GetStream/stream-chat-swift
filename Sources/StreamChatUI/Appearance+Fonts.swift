@@ -18,6 +18,6 @@ public extension Appearance {
         public var headlineBold = UIFont.preferredFont(forTextStyle: .headline).bold
         public var title = UIFont.preferredFont(forTextStyle: .title1)
         public var title3 = UIFont.preferredFont(forTextStyle: .title3).bold
-        public var emoji = UIFont.systemFont(ofSize: 50)
+        public var emoji = UIFont.preferredFont(forTextStyle: .body).withSize(50)
     }
 }
