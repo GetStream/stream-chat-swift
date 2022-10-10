@@ -181,8 +181,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         )
         AssertSnapshot(
             vc,
-            isEmbeddedInNavigationController: true,
-            variants: [.defaultLight]
+            isEmbeddedInNavigationController: true
         )
     }
     

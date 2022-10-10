@@ -511,7 +511,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             string: text,
             attributes: [
                 .foregroundColor: textColor,
-                .font: textFont
+                .font: forceScaledFont(textFont)
             ]
         )
         textView?.attributedText = attributedText
@@ -925,6 +925,28 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             deliveryStatusView!.addTarget(self, action: #selector(handleTapOnDeliveryStatusView), for: .touchUpInside)
         }
         return deliveryStatusView!
+    }
+}
+
+extension ChatMessageContentView {
+    /// It creates a new instance of the provided font and forces it to be scalable with `UIFontMetrics`.
+    /// This seems to be required when using `UITextView.adjustsForContentSizeCategory` in a reusable cell.
+    /// When setting the font in the textView, it needs be a new instance for each cell, it can't be shared.
+    /// So using directly the `appearance.fonts.body` makes it not work when adjusting the content size.
+    ///
+    /// - Parameter font: The font to be scaled.
+    /// - Returns: A scaled font with `UIFontMetrics`.
+    public func forceScaledFont(_ font: UIFont) -> UIFont {
+        let originalDescriptor = font.fontDescriptor
+        let originalFontAttributes = originalDescriptor.fontAttributes
+        let originalTextStyle = originalFontAttributes[.textStyle] as? UIFont.TextStyle ?? .body
+
+        // We use the font descriptor, instead of the font directly, because if the original
+        // font is already scaled with UIFontMetrics, it crashes, scaling an already scaled font 🤷‍♂️
+        return UIFontMetrics(forTextStyle: originalTextStyle)
+            .scaledFont(
+                for: UIFont(descriptor: originalDescriptor, size: 0)
+            )
     }
 }
 
