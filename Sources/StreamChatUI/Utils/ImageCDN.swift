@@ -46,7 +46,7 @@ open class StreamImageCDN: ImageCDN {
         else { return key }
         
         // Keep these parameters in the cache key as they determine the image size.
-        let persistedParameters = ["w", "h"]
+        let persistedParameters = ["w", "h", "resize", "crop"]
         
         let newParameters = components.queryItems?.filter { persistedParameters.contains($0.name) } ?? []
         components.queryItems = newParameters.isEmpty ? nil : newParameters
@@ -71,7 +71,7 @@ open class StreamImageCDN: ImageCDN {
             "w": preferredSize.width == 0 ? "*" : String(format: "%.0f", preferredSize.width * scale),
             "h": preferredSize.height == 0 ? "*" : String(format: "%.0f", preferredSize.height * scale),
             "crop": "center",
-            "resize": "fill",
+            "resize": "clip",
             "ro": "0" // Required parameter.
         ]
 

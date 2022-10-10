@@ -98,9 +98,8 @@ open class NukeImageLoader: ImageLoading {
             imageView.image = placeholder
             return nil
         }
-
-        let urlRequest = imageCDN.urlRequest(forImage: url)
-        let size = preferredSize ?? .zero
+        
+        let size = preferredSize ?? imageView.bounds.size
         let canResize = resize && size != .zero
 
         // If we don't have a valid size, we will not be able to resize using our CDN.
@@ -119,7 +118,12 @@ open class NukeImageLoader: ImageLoading {
             ? [ImageProcessors.LateResize(id: cachingKey, sizeProvider: { imageView.bounds.size })]
             : []
 
-        let request = ImageRequest(urlRequest: urlRequest, processors: processors, userInfo: [.imageIdKey: cachingKey])
+        let urlRequest = imageCDN.urlRequest(forImage: url)
+        let request = ImageRequest(
+            urlRequest: urlRequest,
+            processors: processors,
+            userInfo: [.imageIdKey: cachingKey]
+        )
         let options = ImageLoadingOptions(placeholder: placeholder)
         imageView.currentImageLoadingTask = StreamChatUI.loadImage(
             with: request,
