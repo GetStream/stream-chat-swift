@@ -35,17 +35,17 @@ class ChatClientUpdater {
             // Cancel all API requests since they are related to the previous user.
             client.completeTokenWaiters(token: nil)
 
-            // Setting a new user is not possible in connectionless mode.
-            guard client.config.isClientInActiveMode else {
-                completion(ClientError.ClientIsNotInActiveMode())
-                return
-            }
-
             // Update the current user id to the new one.
             client.currentUserId = newToken.userId
 
             // Update the current token with the new one.
             client.currentToken = newToken
+
+            // Setting a new connection is not possible in connectionless mode.
+            guard client.config.isClientInActiveMode else {
+                completion(ClientError.ClientIsNotInActiveMode())
+                return
+            }
 
             // Disconnect from web-socket.
             disconnect(source: .userInitiated) { [weak client] in
