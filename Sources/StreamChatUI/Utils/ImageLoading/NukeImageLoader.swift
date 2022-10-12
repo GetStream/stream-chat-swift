@@ -112,10 +112,8 @@ open class NukeImageLoader: ImageLoading {
         // successfully cache the resized image.
         let cachingKey = imageCDN.cachingKey(forImage: url)
 
-        // If we don't have a size, we cannot properly create a 1:1 matching between a caching key and the resized image
-        // that LateResize will create. Therefore, we use/cache the original resolution image.
         let processors: [ImageProcessing] = canResize
-            ? [ImageProcessors.LateResize(id: cachingKey, sizeProvider: { imageView.bounds.size })]
+            ? [ImageProcessors.Resize(size: size)]
             : []
 
         let urlRequest = imageCDN.urlRequest(forImage: url)
