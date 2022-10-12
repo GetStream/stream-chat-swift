@@ -74,8 +74,6 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     public var unreadCount: UnreadCount {
         currentUser?.unreadCount ?? .noUnread
     }
-
-    private lazy var chatClientUpdater = environment.chatClientUpdaterBuilder(client)
     
     /// The worker used to update the current user.
     private lazy var currentUserUpdater = environment.currentUserUpdaterBuilder(
@@ -263,8 +261,6 @@ extension CurrentChatUserController {
         ) -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = EntityDatabaseObserver.init
         
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
-
-        var chatClientUpdaterBuilder = ChatClientUpdater.init
     }
 }
 
