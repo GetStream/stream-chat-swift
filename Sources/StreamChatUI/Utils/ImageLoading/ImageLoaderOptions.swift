@@ -22,13 +22,13 @@ public struct ImageLoaderOptions {
 extension ImageLoaderOptions {
     /// The resize information when loading an image.
     public struct Resize {
-        public var width: CGFloat
-        public var height: CGFloat
+        /// The width and height of the image.
+        public var size: CGSize?
+        /// The resize content mode.
         public var mode: ResizeMode
 
-        public init(width: CGFloat, height: CGFloat, mode: ResizeMode = .clip) {
-            self.width = width
-            self.height = height
+        public init(size: CGSize?, mode: ResizeMode = .clip) {
+            self.size = size
             self.mode = mode
         }
     }
@@ -51,7 +51,7 @@ extension ImageLoaderOptions {
 
         /// Make the image as large as possible, while maintaining aspect ratio and keeping the
         /// height and width less than or equal to the given height and width.
-        public static var clip = ResizeMode(modeValue: "crop")
+        public static var clip = ResizeMode(modeValue: "clip")
 
         /// Crop to the given dimensions, keeping focus on the portion of the image in the crop mode.
         public static func crop(_ value: Crop = .center) -> Self {

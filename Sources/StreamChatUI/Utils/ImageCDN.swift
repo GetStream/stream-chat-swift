@@ -22,6 +22,12 @@ public protocol ImageCDN {
     ///
     /// Use view size in points for `preferredSize`, point to pixel ratio (scale) of the device is applied inside of this function.
     func thumbnailURL(originalURL: URL, preferredSize: CGSize) -> URL
+
+    func thumbnailURL(
+        originalURL: URL,
+        preferredSize: CGSize,
+        resizeMode: ImageLoaderOptions.ResizeMode
+    ) -> URL
 }
 
 extension ImageCDN {
@@ -60,6 +66,18 @@ open class StreamImageCDN: ImageCDN {
     }
     
     open func thumbnailURL(originalURL: URL, preferredSize: CGSize) -> URL {
+        thumbnailURL(
+            originalURL: originalURL,
+            preferredSize: preferredSize,
+            resizeMode: .clip
+        )
+    }
+
+    public func thumbnailURL(
+        originalURL: URL,
+        preferredSize: CGSize,
+        resizeMode: ImageLoaderOptions.ResizeMode
+    ) -> URL {
         guard
             var components = URLComponents(url: originalURL, resolvingAgainstBaseURL: true),
             let host = components.host,
@@ -67,13 +85,15 @@ open class StreamImageCDN: ImageCDN {
         else { return originalURL }
 
         let scale = UIScreen.main.scale
-        let queryItems: [String: String] = [
+        var queryItems: [String: String] = [
             "w": preferredSize.width == 0 ? "*" : String(format: "%.0f", preferredSize.width * scale),
             "h": preferredSize.height == 0 ? "*" : String(format: "%.0f", preferredSize.height * scale),
-            "crop": "center",
-            "resize": "clip",
+            "resize": resizeMode.modeValue,
             "ro": "0" // Required parameter.
         ]
+        if let cropValue = resizeMode.cropValue {
+            queryItems["crop"] = cropValue
+        }
 
         var items = components.queryItems ?? []
 
