@@ -67,6 +67,13 @@ extension ImageAttachmentPayload: Encodable {
         var values = extraData ?? [:]
         values[AttachmentCodingKeys.title.rawValue] = title.map { .string($0) }
         values[AttachmentCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
+        values[AttachmentCodingKeys.thumbURL.rawValue] = .string(imagePreviewURL.absoluteString)
+
+        if let originalWidth = self.originalWidth, let originalHeight = self.originalHeight {
+            values[AttachmentCodingKeys.originalWidth.rawValue] = .double(originalWidth)
+            values[AttachmentCodingKeys.originalHeight.rawValue] = .double(originalHeight)
+        }
+
         try values.encode(to: encoder)
     }
 }

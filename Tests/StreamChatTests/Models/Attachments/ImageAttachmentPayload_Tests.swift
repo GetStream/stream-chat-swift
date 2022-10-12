@@ -71,4 +71,27 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         let extraData = try XCTUnwrap(payload.extraData(ofType: ExtraData.self))
         XCTAssertEqual(extraData.comment, comment)
     }
+
+    func test_encoding() throws {
+        let payload = ImageAttachmentPayload(
+            title: "Image1.png",
+            imageRemoteURL: URL(string: "dummyURL")!,
+            imagePreviewRemoteURL: URL(string: "dummyPreviewURL"),
+            originalWidth: 100,
+            originalHeight: 50,
+            extraData: ["isVerified": true]
+        )
+        let json = try JSONEncoder.stream.encode(payload)
+
+        let expectedJsonObject: [String: Any] = [
+            "title": "Image1.png",
+            "image_url": "dummyURL",
+            "thumb_url": "dummyPreviewURL",
+            "original_width": 100,
+            "original_height": 50,
+            "isVerified": true
+        ]
+
+        AssertJSONEqual(json, expectedJsonObject)
+    }
 }
