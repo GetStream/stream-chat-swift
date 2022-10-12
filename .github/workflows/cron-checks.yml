@@ -13,7 +13,7 @@ jobs:
     name: Test E2E UI (Debug)
     strategy:
       matrix:
-        ios: [12.4, 13.7, 14.5, latest]
+        ios: [12.4, 13.7, 14.5, 15.4, latest]
         device: ["iPhone 8"]
         include:
           - ios: latest
@@ -64,11 +64,8 @@ jobs:
     name: Test LLC (Debug)
     strategy:
       matrix:
-        xcode: [13.4.1, 13.1]
+        xcode: [13.1, 13.4.1, 14.0.1]
         os: [macos-12]
-        # include: // CIS-2167
-        #   - xcode: 12.5.1
-        #     os: macos-11
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:

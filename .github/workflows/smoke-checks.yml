@@ -22,10 +22,7 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  XCODE_VERSION: 13.4.1
-  IOS_VERSION: "15.5"
-  IOS_SIMULATOR_DEVICE: "iPhone 12 Pro"
-  IOS_SIMULATOR_DEVICE_WITH_VERSION: "iPhone 12 Pro (15.5)"
+  IOS_SIMULATOR_DEVICE: "iPhone 12 Pro (16.0)"
 
 jobs:
   automated-code-review:
@@ -63,7 +60,7 @@ jobs:
       run: bundle exec fastlane rubocop
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
-      timeout-minutes: 25
+      timeout-minutes: 30
     - name: Get branch name
       id: get_branch_name
       run: echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
@@ -92,18 +89,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
-    - name: "Prepare ${{ env.IOS_SIMULATOR_DEVICE }} with iOS ${{ env.IOS_VERSION }}"
-      uses: ./.github/actions/prepare-ios-simulator
-      with:
-        device: ${{ env.IOS_SIMULATOR_DEVICE }}
-        ios: ${{ env.IOS_VERSION }}
-        xcode: ${{ env.XCODE_VERSION }}
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE_WITH_VERSION }}"
+      run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}"
       timeout-minutes: 25
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
+        IOS_SIMULATOR_DEVICE: "iPhone 12 Pro (15.5)"
+        XCODE_VERSION: "13.4.1"
 
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
@@ -164,29 +157,25 @@ jobs:
       run: echo "::set-output name=launch_id::${{env.LAUNCH_ID}}"
       if: env.LAUNCH_ID != ''
 
-  # build-xcode13:
-  #   name: Build LLC + UI (Xcode 13)
-  #   runs-on: macos-12
-  #   if: ${{ github.event_name != 'push' }}
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: ./.github/actions/bootstrap
-  #   - name: List Xcode versions xcversion sees
-  #     run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
-  #   - name: Build LLC (Xcode 13)
-  #     run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true
-  #     timeout-minutes: 25
-  #     env:
-  #       XCODE_VERSION: "13"
-  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       GITHUB_EVENT: ${{ toJson(github.event) }}
-  #   - name: Build UI (Xcode 13)
-  #     run: bundle exec fastlane test_ui device:"iPhone 13" build_for_testing:true
-  #     timeout-minutes: 25
-  #     env:
-  #       XCODE_VERSION: "13"
-  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       GITHUB_EVENT: ${{ toJson(github.event) }}
+  build-xcode13:
+    name: Build LLC + UI (Xcode 13)
+    runs-on: macos-12
+    if: ${{ github.event_name != 'push' }}
+    env:
+      XCODE_VERSION: "13"
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_EVENT: ${{ toJson(github.event) }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/bootstrap
+    - name: List Xcode versions xcversion sees
+      run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
+    - name: Build LLC (Xcode 13)
+      run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true
+      timeout-minutes: 25
+    - name: Build UI (Xcode 13)
+      run: bundle exec fastlane test_ui device:"iPhone 13" build_for_testing:true
+      timeout-minutes: 25
 
   build-apps:
     name: Build Sample + Demo Apps

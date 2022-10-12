@@ -268,8 +268,11 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         }
     }
     
+    // This is a workaround to overcome the Swift 6 warning
+    private var _currentPlayer: AVPlayer? { player }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
-        unsubscribeFromPlayerNotifications(player)
+        unsubscribeFromPlayerNotifications(_currentPlayer)
     }
 }

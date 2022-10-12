@@ -45,25 +45,23 @@ let package = Package(
             resources: [.process("Resources")]
         ),
         .target(name: "StreamChatTestTools",
-                dependencies: [
-                    .target(name: "StreamChat"),
-                    .product(name: "StreamChatTestHelpers", package: "StreamChatTestHelpers"),
-                ],
-                path: "TestTools/StreamChatTestTools",
-                exclude: ["Info.plist"],
-                resources: [
-                        .process("Fixtures")
-                ]
+            dependencies: [
+                .target(name: "StreamChat"),
+                .product(name: "StreamChatTestHelpers", package: "StreamChatTestHelpers"),
+            ],
+            path: "TestTools/StreamChatTestTools",
+            exclude: ["Info.plist"],
+            resources: [.process("Fixtures")]
         ),
         .target(name: "StreamChatTestMockServer",
-                dependencies: [
-                    .target(name: "StreamChat"),
-                    .product(name: "StreamChatTestHelpers", package: "StreamChatTestHelpers"),
-                    .product(name: "Swifter", package: "Swifter")
-                ],
-                path: "TestTools/StreamChatTestMockServer",
-                exclude: ["Info.plist"],
-                resources: [.copy("Fixtures")]
+            dependencies: [
+                .target(name: "StreamChat"),
+                .product(name: "StreamChatTestHelpers", package: "StreamChatTestHelpers"),
+                .product(name: "Swifter", package: "Swifter")
+            ],
+            path: "TestTools/StreamChatTestMockServer",
+            exclude: ["Info.plist"],
+            resources: [.process("Fixtures")]
         ),
     ]
 )

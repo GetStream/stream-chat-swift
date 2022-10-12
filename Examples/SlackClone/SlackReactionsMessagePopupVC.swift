@@ -7,8 +7,8 @@ import StreamChatUI
 
 final class SlackReactionsMessagePopupVC: ChatMessagePopupVC {
     override func setUpLayout() {
-        let messageView = messageContentView as! SlackChatMessageContentView
-        messageView.isInPopupView = true
+        let messageView = messageContentView as? SlackChatMessageContentView
+        messageView?.isInPopupView = true
 
         super.setUpLayout()
     }
