@@ -1014,12 +1014,12 @@ extension ChatMessageContentView {
     }
     
     @available(*, deprecated, renamed: "createOnlyVisibleToYouImageView")
-    open func createOnlyVisibleForYouIconImageView() -> UIImageView {
+    public func createOnlyVisibleForYouIconImageView() -> UIImageView {
         createOnlyVisibleToYouImageView()
     }
     
     @available(*, deprecated, renamed: "createOnlyVisibleToYouLabel")
-    open func createOnlyVisibleForYouLabel() -> UILabel {
+    public func createOnlyVisibleForYouLabel() -> UILabel {
         createOnlyVisibleToYouLabel()
     }
 }

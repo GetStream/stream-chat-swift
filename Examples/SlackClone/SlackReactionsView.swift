@@ -84,7 +84,8 @@ final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource
                 score: $0.value,
                 isChosenByCurrentUser: userReactionIDs.contains($0.key)
             )
-        }.sorted(by: components.reactionsSorting)
+        }
+        .sorted(by: components.reactionsSorting)
 
         collectionView.reloadData()
 
@@ -101,9 +102,12 @@ final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "SlackReactionsItemViewCell", for: indexPath
-        ) as! SlackReactionsItemView
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "SlackReactionsItemViewCell",
+            for: indexPath
+        ) as? SlackReactionsItemView else {
+            return UICollectionViewCell()
+        }
 
         cell.reaction = reactions[indexPath.item]
         return cell

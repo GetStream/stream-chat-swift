@@ -2,7 +2,7 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
+import StreamChat
 import StreamChatUI
 import UIKit
 

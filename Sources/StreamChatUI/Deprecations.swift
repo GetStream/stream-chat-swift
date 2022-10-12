@@ -236,7 +236,7 @@ public extension ChatMessageLayoutOptions {
 
 extension ChatMessageListScrollOverlayView {
     @available(*, deprecated, message: "use `dateSeparatorView.textLabel` instead.")
-    open var textLabel: UILabel {
+    public var textLabel: UILabel {
         dateSeparatorView.textLabel
     }
 }
@@ -262,7 +262,7 @@ extension AttachmentsPreviewVC {
         deprecated,
         message: "this view has been split into 2 views, horizontalScrollView and verticalScrollView. This change was required to support mixed attachments. We highly recommend stopping using this view since with mixed attachments the customization done to this view won't affect both scroll views."
     )
-    open var scrollView: UIScrollView {
+    public var scrollView: UIScrollView {
         let axises = Set(content.map { type(of: $0).preferredAxis })
         if axises.contains(.horizontal) {
             return horizontalScrollView
@@ -281,7 +281,7 @@ extension AttachmentsPreviewVC {
         deprecated,
         message: "this property is not being used anymore by default. There's now two scroll views for each axis."
     )
-    open var stackViewAxis: NSLayoutConstraint.Axis {
+    public var stackViewAxis: NSLayoutConstraint.Axis {
         content.first.flatMap { type(of: $0).preferredAxis } ?? .horizontal
     }
 
@@ -290,7 +290,7 @@ extension AttachmentsPreviewVC {
         deprecated,
         message: "it has been replaced by attachmentPreviews(for:). The name reflects better the intent and when asking for the attachment views, it is safer to specify which axis or axises we want."
     )
-    open var attachmentViews: [UIView] {
+    public var attachmentViews: [UIView] {
         attachmentPreviews(for: [.horizontal, .vertical])
     }
 }

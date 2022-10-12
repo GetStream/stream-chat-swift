@@ -212,7 +212,7 @@ extension UserRobot {
         let messageCell = messageCell(withIndex: messageCellIndex)
         let threadButton = MessageListPage.Attributes.threadReplyCountButton(in: messageCell)
         if threadButton.exists {
-            threadButton.waitForHitPoint().safeTap()
+            threadButton.tap()
         } else {
             selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: messageCellIndex)
         }
