@@ -12,13 +12,17 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         let title: String = .unique
         let imageURL: URL = .unique()
         let thumbURL: URL = .unique()
+        let originalWidth: Double = 3200
+        let originalHeight: Double = 2600
         
         // Create JSON with the given values.
         let json = """
         {
             "title": "\(title)",
             "image_url": "\(imageURL.absoluteString)",
-            "thumb_url": "\(thumbURL.absoluteString)"
+            "thumb_url": "\(thumbURL.absoluteString)",
+            "original_width": \(originalWidth),
+            "original_height": \(originalHeight)
         }
         """.data(using: .utf8)!
         
@@ -29,6 +33,8 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.title, title)
         XCTAssertEqual(payload.imageURL, imageURL)
         XCTAssertEqual(payload.imagePreviewURL, thumbURL)
+        XCTAssertEqual(payload.originalWidth, originalWidth)
+        XCTAssertEqual(payload.originalHeight, originalHeight)
         XCTAssertNil(payload.extraData)
     }
     
