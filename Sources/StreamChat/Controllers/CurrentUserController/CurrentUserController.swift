@@ -145,9 +145,7 @@ public extension CurrentChatUserController {
     ///
     /// - Parameter completion: The completion to be called when the operation is completed.
     func reloadUserIfNeeded(completion: ((Error?) -> Void)? = nil) {
-        chatClientUpdater.reloadUserIfNeeded(
-            userConnectionProvider: client.userConnectionProvider
-        ) { error in
+        client.authenticationRepository.refreshToken { error in
             self.callback {
                 completion?(error)
             }

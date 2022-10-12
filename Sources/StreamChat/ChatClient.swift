@@ -66,6 +66,13 @@ public class ChatClient {
 
     // MARK: Repositories
 
+    private(set) lazy var authenticationRepository = environment.authenticationRepositoryBuilder(
+        apiClient,
+        clientUpdater,
+        environment.tokenExpirationRetryStrategy,
+        environment.timerType
+    )
+
     private(set) lazy var messageRepository = environment.messageRepositoryBuilder(
         databaseContainer,
         apiClient
@@ -196,8 +203,7 @@ public class ChatClient {
     }()
     
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
-    private(set) var userConnectionProvider: UserConnectionProvider?
-    
+
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
     
@@ -310,10 +316,10 @@ public class ChatClient {
         tokenProvider: @escaping TokenProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
-        setConnectionInfoAndConnect(
-            userInfo: userInfo,
-            userConnectionProvider: .init(tokenProvider: tokenProvider),
-            completion: completion
+        authenticationRepository.connectUser(
+            with: userInfo,
+            tokenProvider: tokenProvider,
+            completion: { completion?($0) }
         )
     }
     
@@ -348,26 +354,16 @@ public class ChatClient {
         userInfo: UserInfo,
         completion: ((Error?) -> Void)? = nil
     ) {
-        setConnectionInfoAndConnect(
-            userInfo: userInfo,
-            userConnectionProvider: .guest(
-                client: self,
-                userId: userInfo.id,
-                name: userInfo.name,
-                imageURL: userInfo.imageURL,
-                extraData: userInfo.extraData
-            ),
-            completion: completion
-        )
+        authenticationRepository.connectGuestUser(userInfo: userInfo, completion: { completion?($0) })
     }
     
     /// Connects anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
-        setConnectionInfoAndConnect(
-            userInfo: nil,
-            userConnectionProvider: .anonymous,
-            completion: completion
+        authenticationRepository.connectUser(
+            with: nil,
+            tokenProvider: { $0(.success(.anonymous)) },
+            completion: { completion?($0) }
         )
     }
     
@@ -377,7 +373,7 @@ public class ChatClient {
         clientUpdater.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
         }
-        userConnectionProvider = nil
+        authenticationRepository.logOutUser()
     }
     
     /// Disconnects the chat client form the chat servers and removes all the local data related.
@@ -441,19 +437,6 @@ public class ChatClient {
             waiters.removeAll()
         }
     }
-    
-    private func setConnectionInfoAndConnect(
-        userInfo: UserInfo?,
-        userConnectionProvider: UserConnectionProvider,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        self.userConnectionProvider = userConnectionProvider
-        clientUpdater.reloadUserIfNeeded(
-            userInfo: userInfo,
-            userConnectionProvider: userConnectionProvider,
-            completion: completion
-        )
-    }
 
     func updateUser(with token: Token, completeTokenWaiters: Bool, isFirstConnection: Bool) {
         currentUserId = token.userId
@@ -486,6 +469,12 @@ public class ChatClient {
 
         // Reset all existing local data.
         databaseContainer.removeAllData(force: true, completion: completion)
+    }
+
+    private func refreshToken(completion: ((Error?) -> Void)?) {
+        authenticationRepository.refreshToken {
+            completion?($0)
+        }
     }
 }
 
@@ -604,6 +593,20 @@ extension ChatClient {
                 keepConnectionAliveInBackground: $5
             )
         }
+
+        var authenticationRepositoryBuilder: (
+            _ apiClient: APIClient,
+            _ clientUpdater: ChatClientUpdater,
+            _ tokenExpirationRetryStrategy: RetryStrategy,
+            _ timerType: Timer.Type
+        ) -> AuthenticationRepository = {
+            AuthenticationRepository(
+                apiClient: $0,
+                clientUpdater: $1,
+                tokenExpirationRetryStrategy: $2,
+                timerType: $3
+            )
+        }
         
         var syncRepositoryBuilder: (
             _ config: ChatClientConfig,
@@ -694,6 +697,16 @@ extension ClientError {
             "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
         }
     }
+
+    public class MissingTokenProvider: ClientError {
+        override public var localizedDescription: String {
+            """
+                Missing token refresh provider to get a new token
+                When using expiring tokens you need to provide a way to refresh it passing `tokenProvider` when \
+                calling `ChatClient.connectUser()`.
+            """
+        }
+    }
 }
 
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
@@ -734,38 +747,7 @@ extension ChatClient: ConnectionStateDelegate {
             shouldNotifyWaiters: shouldNotifyConnectionIdWaiters
         )
     }
-    
-    private func refreshToken(
-        completion: ((Error?) -> Void)?
-    ) {
-        guard let tokenProvider = userConnectionProvider?.tokenProvider else {
-            return log.assertionFailure(
-                "In case if token expiration is enabled on backend you need to provide a way to reobtain it via `tokenProvider` on ChatClient"
-            )
-        }
-        
-        let reconnectionDelay = tokenExpirationRetryStrategy.getDelayAfterTheFailure()
-        
-        tokenRetryTimer = environment
-            .timerType
-            .schedule(
-                timeInterval: reconnectionDelay,
-                queue: .main
-            ) { [clientUpdater] in
-                clientUpdater.reloadUserIfNeeded(
-                    userConnectionProvider: .init { completion in
-                        tokenProvider { result in
-                            if case .success = result {
-                                self.tokenExpirationRetryStrategy.resetConsecutiveFailures()
-                            }
-                            completion(result)
-                        }
-                    },
-                    completion: completion
-                )
-            }
-    }
-    
+
     /// Update connectionId and notify waiters if needed
     /// - Parameters:
     ///   - connectionId: new connectionId (if present)
