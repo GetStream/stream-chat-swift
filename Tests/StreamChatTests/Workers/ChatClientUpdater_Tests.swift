@@ -772,7 +772,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertEqual(client.currentToken, newToken)
         XCTAssertEqual(client.currentUserId, newUserId)
         XCTAssertNil(client.webSocketClient?.connectEndpoint)
-        XCTAssertFalse(client.createBackgroundWorkers_called)
+        XCTAssertTrue(client.createBackgroundWorkers_called)
     }
 
     private func createClientInCleanState(

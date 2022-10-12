@@ -6,9 +6,6 @@
 
 /// Mock implementation of `ChatClientUpdater`
 final class ChatClientUpdater_Mock: ChatClientUpdater {
-    @Atomic var prepareEnvironment_newToken: Token?
-    var prepareEnvironment_called: Bool { prepareEnvironment_newToken != nil }
-
     @Atomic var reloadUserIfNeeded_called = false {
         didSet {
             reloadUserIfNeeded_callsCount += 1
@@ -28,14 +25,6 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
     @Atomic var disconnect_completion: (() -> Void)?
 
     // MARK: - Overrides
-
-    override func prepareEnvironment(
-        userInfo: UserInfo?,
-        newToken: Token,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        prepareEnvironment_newToken = newToken
-    }
 
     override func reloadUserIfNeeded(
         userInfo: UserInfo?,
@@ -73,8 +62,6 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
     // MARK: - Clean Up
 
     func cleanUp() {
-        prepareEnvironment_newToken = nil
-
         reloadUserIfNeeded_called = false
         reloadUserIfNeeded_callsCount = 0
         reloadUserIfNeeded_completion = nil

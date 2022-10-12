@@ -454,6 +454,39 @@ public class ChatClient {
             completion: completion
         )
     }
+
+    func updateUser(with token: Token, completeTokenWaiters: Bool, isFirstConnection: Bool) {
+        currentUserId = token.userId
+        currentToken = token
+
+        if completeTokenWaiters {
+            self.completeTokenWaiters(token: token)
+        }
+
+        if isFirstConnection || backgroundWorkers.isEmpty {
+            createBackgroundWorkers()
+        }
+    }
+
+    func switchToNewUser(with token: Token) {
+        completeTokenWaiters(token: nil)
+        updateUser(with: token, completeTokenWaiters: false, isFirstConnection: false)
+    }
+
+    func updateWebSocketEndpoint(with token: Token, userInfo: UserInfo?) {
+        webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo ?? .init(id: token.userId))
+    }
+
+    func clearPreviousUserData(completion: @escaping (Error?) -> Void) {
+        createBackgroundWorkers()
+
+        // Stop tracking active components
+        activeChannelControllers.removeAllObjects()
+        activeChannelListControllers.removeAllObjects()
+
+        // Reset all existing local data.
+        databaseContainer.removeAllData(force: true, completion: completion)
+    }
 }
 
 extension ChatClient {
