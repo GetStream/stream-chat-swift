@@ -292,6 +292,12 @@ extension UserRobot {
             .tapOnBackButton()
             .tapOnBackButton()
     }
+    
+    @discardableResult
+    func scrollMessageListDown() -> Self {
+        MessageListPage.list.swipeUp()
+        return self
+    }
 
     @discardableResult
     func scrollMessageListUp() -> Self {

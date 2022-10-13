@@ -26,8 +26,6 @@ jobs:
       GITHUB_EVENT: ${{ toJson(github.event) }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-      IOS_VERSION: ${{ matrix.ios }}
-      DEVICE_NAME: ${{ matrix.device }}
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/bootstrap
@@ -47,8 +45,6 @@ jobs:
     - name: Allure TestOps Launch Removal
       if: cancelled()
       run: bundle exec fastlane allure_launch_removal launch_id:$LAUNCH_ID
-      env:
-        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
