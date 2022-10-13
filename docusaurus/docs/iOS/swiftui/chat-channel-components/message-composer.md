@@ -29,9 +29,28 @@ struct BackgroundViewModifier: ViewModifier {
 }
 ```
 
+## Customizing the Trailing Composer View
+
+If you want to change the button for sending messages (or add additional content alongside it), you will need to implement the `makeTrailingComposerView` method in the `ViewFactory`. Here's an example usage:
+
+```swift
+public func makeTrailingComposerView(
+    enabled: Bool,
+    cooldownDuration: Int,
+    onTap: @escaping () -> Void
+) -> some View {
+    CustomSendMessageButton(enabled: enabled, onTap: onTap)
+}
+```
+
+The method provides the following parameters:
+- `enabled` - whether there's content (text / attachment) for the message to be sent.
+- `cooldownDuration` - if the channel is in cooldown mode, use this property to show a timer with the duration (in seconds) until the user can send messages again.
+- `onTap` - the action to be executed when the user taps on the button to send a message. You should attach this action to your custom button, in order for the message to be sent.
+
 ## Customizing the Leading Composer View
 
-You can completely swap the leading composer view with your own implementation. This might be useful if you want to change the behaviour of the attachment picker (provide a different one), or even just hide the component.
+You can also swap the leading composer view with your own implementation. This might be useful if you want to change the behaviour of the attachment picker (provide a different one), or even just hide the component.
 
 In order to do this, you need to implement the `makeLeadingComposerView`, which receives a binding of the `PickerTypeState`. Having the `PickerTypeState` as a parameter allows you to control the visibility of the attachment picker view. The `PickerTypeState` has two states - expanded and collapsed. If the state is collapsed, the composer is in the minimal mode (only the text input and leading and trailing areas are shown). If the enum state is expanded, it has associated value with it, which is of type `AttachmentPickerType`. This defines the type of picker which is currently displayed in the attachment picker view. The possible states are `none` (nothing is selected), `media` (media picker is selected), `giphy` (giphy commands picker is shown) and custom (for your own custom pickers).
 
