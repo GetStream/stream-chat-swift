@@ -22,9 +22,9 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     public var imageURL: URL
     /// A link to the image preview.
     public var imagePreviewURL: URL
-    /// The original width of the image.
+    /// The original width of the image in pixels.
     public var originalWidth: Double?
-    /// The original height of the image.
+    /// The original height of the image in pixels.
     public var originalHeight: Double?
     /// An extra data.
     public var extraData: [String: RawJSON]?

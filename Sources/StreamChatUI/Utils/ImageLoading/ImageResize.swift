@@ -6,13 +6,18 @@ import UIKit
 
 /// The resize information when loading an image.
 public struct ImageResize {
-    /// The new width of the image.
+    /// The new width of the image in points (not pixels).
     public var width: CGFloat
-    /// The new height of the image.
+    /// The new height of the image in points (not pixels).
     public var height: CGFloat
     /// The resize content mode.
     public var mode: Mode
 
+    /// The resize information when loading an image.
+    ///
+    /// - Parameters:
+    ///   - size: The new size of the image in points (not pixels).
+    ///   - mode: The resize content mode.
     public init(_ size: CGSize, mode: Mode = .clip) {
         width = size.width
         height = size.height
