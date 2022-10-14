@@ -38,7 +38,7 @@ public class BackendRobot {
     }
     
     @discardableResult
-    func generateChannels(
+    public func generateChannels(
         count: Int,
         messagesCount: Int = 0,
         replyCount: Int = 0,

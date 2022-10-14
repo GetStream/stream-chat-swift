@@ -359,10 +359,11 @@ extension UserRobot {
     @discardableResult
     func assertTypingIndicatorShown(
         typingUserName: String,
+        waitTimeout: Double = XCUIElement.waitTimeout,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let typingIndicatorView = MessageListPage.typingIndicator.wait()
+        let typingIndicatorView = MessageListPage.typingIndicator.wait(timeout: waitTimeout)
         XCTAssertTrue(typingIndicatorView.exists,
                       "Element hidden",
                       file: file,
@@ -376,10 +377,11 @@ extension UserRobot {
     
     @discardableResult
     func assertTypingIndicatorHidden(
+        waitTimeout: Double = XCUIElement.waitTimeout,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let typingIndicatorView = MessageListPage.typingIndicator.waitForDisappearance()
+        let typingIndicatorView = MessageListPage.typingIndicator.waitForDisappearance(timeout: waitTimeout)
         XCTAssertFalse(typingIndicatorView.exists, "Typing indicator is visible", file: file, line: line)
         return self
     }

@@ -207,23 +207,28 @@ final class MessageList_Tests: StreamTestCase {
     func test_typingIndicator() {
         linkToScenario(withId: 73)
         
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+        let typingIndicatorTimeout = isIpad ? 10 : XCUIElement.waitTimeout
+        let typingEventsTimeout: Double = 3
+        
         GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
+            userRobot.login().openChannel()
         }
         WHEN("participant starts typing") {
-            participantRobot.wait(2).startTyping()
+            participantRobot.wait(typingEventsTimeout).startTyping()
         }
         THEN("user observes typing indicator is shown") {
             let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
-            userRobot.assertTypingIndicatorShown(typingUserName: typingUserName)
+            userRobot.assertTypingIndicatorShown(
+                typingUserName: typingUserName,
+                waitTimeout: typingIndicatorTimeout
+            )
         }
         WHEN("participant stops typing") {
-            participantRobot.wait(2).stopTyping()
+            participantRobot.wait(typingEventsTimeout).stopTyping()
         }
         THEN("user observes typing indicator has disappeared") {
-            userRobot.assertTypingIndicatorHidden()
+            userRobot.assertTypingIndicatorHidden(waitTimeout: typingIndicatorTimeout)
         }
     }
 
@@ -590,7 +595,9 @@ extension MessageList_Tests {
             userRobot.login().openChannel()
         }
         WHEN("user sends a message with YouTube link") {
-            userRobot.sendMessage(message)
+            userRobot
+                .sendMessage(message)
+                .scrollMessageListDown() // to hide the keyboard
         }
         THEN("user observes a preview of the image with description") {
             userRobot.assertLinkPreview()
@@ -606,7 +613,9 @@ extension MessageList_Tests {
             userRobot.login().openChannel()
         }
         WHEN("user sends a message with YouTube link") {
-            userRobot.sendMessage(message)
+            userRobot
+                .sendMessage(message)
+                .scrollMessageListDown() // to hide the keyboard
         }
         THEN("user observes a preview of the video with description") {
             userRobot.assertLinkPreview(alsoVerifyServiceName: "YouTube")
@@ -621,8 +630,9 @@ extension MessageList_Tests {
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
-        WHEN("user sends a message with YouTube link") {
+        WHEN("participant sends a message with Unsplash link") {
             participantRobot.sendMessage(message)
+            userRobot.scrollMessageListDown() // to hide the keyboard
         }
         THEN("user observes a preview of the image with description") {
             userRobot.assertLinkPreview()
@@ -637,8 +647,9 @@ extension MessageList_Tests {
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
-        WHEN("user sends a message with YouTube link") {
+        WHEN("participant sends a message with YouTube link") {
             participantRobot.sendMessage(message)
+            userRobot.scrollMessageListDown() // to hide the keyboard
         }
         THEN("user observes a preview of the video with description") {
             userRobot.assertLinkPreview(alsoVerifyServiceName: "YouTube")
