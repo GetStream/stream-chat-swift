@@ -79,7 +79,6 @@ public extension AnyAttachmentPayload {
             payload = ImageAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 imageRemoteURL: localFileURL,
-                imagePreviewRemoteURL: localFileURL,
                 extraData: extraData
             )
         case .video:

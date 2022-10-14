@@ -20,105 +20,35 @@ open class NukeImageLoader: ImageLoading {
     }
 
     @discardableResult
-    open func loadImage(
-        using urlRequest: URLRequest,
-        cachingKey: String?,
-        completion: @escaping ((Result<UIImage, Error>) -> Void)
-    ) -> Cancellable? {
-        var userInfo: [ImageRequest.UserInfoKey: Any]?
-        if let cachingKey = cachingKey {
-            userInfo = [.imageIdKey: cachingKey]
-        }
-        
-        let request = ImageRequest(
-            urlRequest: urlRequest,
-            userInfo: userInfo
-        )
-        
-        let imageTask = ImagePipeline.shared.loadImage(with: request) { result in
-            switch result {
-            case let .success(imageResponse):
-                completion(.success(imageResponse.image))
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-        
-        return imageTask
-    }
-    
-    open func loadImages(
-        from urls: [URL],
-        placeholders: [UIImage],
-        loadThumbnails: Bool,
-        thumbnailSize: CGSize,
-        imageCDN: ImageCDN,
-        completion: @escaping (([UIImage]) -> Void)
-    ) {
-        let group = DispatchGroup()
-        var images: [UIImage] = []
-        
-        for avatarUrl in urls {
-            var placeholderIndex = 0
-
-            let imageRequest = imageCDN.urlRequest(forImageUrl: avatarUrl, resize: .init(thumbnailSize))
-            let cachingKey = imageCDN.cachingKey(forImageUrl: avatarUrl)
-
-            group.enter()
-
-            loadImage(using: imageRequest, cachingKey: cachingKey) { result in
-                switch result {
-                case let .success(image):
-                    images.append(image)
-                case .failure:
-                    if !placeholders.isEmpty {
-                        // Rotationally use the placeholders
-                        images.append(placeholders[placeholderIndex])
-                        placeholderIndex += 1
-                        if placeholderIndex == placeholders.count {
-                            placeholderIndex = 0
-                        }
-                    }
-                }
-                group.leave()
-            }
-        }
-        
-        group.notify(queue: .main) {
-            completion(images)
-        }
-    }
-    
-    @discardableResult
-    open func loadImage(
+    public func loadImage(
         into imageView: UIImageView,
-        url: URL?,
-        imageCDN: ImageCDN,
-        placeholder: UIImage?,
-        resize: Bool = true,
-        preferredSize: CGSize? = nil,
-        completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
+        from url: URL?,
+        with options: ImageLoaderOptions,
+        completion: ((Result<UIImage, Error>) -> Void)?
     ) -> Cancellable? {
         imageView.currentImageLoadingTask?.cancel()
 
         guard let url = url else {
-            imageView.image = placeholder
+            imageView.image = options.placeholder
             return nil
         }
 
-        let size = preferredSize ?? imageView.bounds.size
-        let processors: [ImageProcessing] = size != .zero
-            ? [ImageProcessors.Resize(size: size)]
-            : []
-
+        let urlRequest = imageCDN.urlRequest(forImageUrl: url, resize: options.resize)
         let cachingKey = imageCDN.cachingKey(forImageUrl: url)
-        let urlRequest = imageCDN.urlRequest(forImageUrl: url, resize: .init(size))
+
+        var processors: [ImageProcessing] = []
+        if let resize = options.resize {
+            let cgSize = CGSize(width: resize.width, height: resize.height)
+            processors.append(ImageProcessors.Resize(size: cgSize))
+        }
+
         let request = ImageRequest(
             urlRequest: urlRequest,
             processors: processors,
             userInfo: [.imageIdKey: cachingKey]
         )
-        let options = ImageLoadingOptions(placeholder: placeholder)
+
+        let options = ImageLoadingOptions(placeholder: options.placeholder)
         imageView.currentImageLoadingTask = StreamChatUI.loadImage(
             with: request,
             options: options,
@@ -133,6 +63,76 @@ open class NukeImageLoader: ImageLoading {
         }
 
         return imageView.currentImageLoadingTask
+    }
+
+    @discardableResult
+    public func downloadImage(
+        from url: URL,
+        with options: ImageDownloadOptions,
+        completion: @escaping ((Result<UIImage, Error>) -> Void)
+    ) -> Cancellable? {
+        let urlRequest = imageCDN.urlRequest(forImageUrl: url, resize: options.resize)
+        let cachingKey = imageCDN.cachingKey(forImageUrl: url)
+
+        var processors: [ImageProcessing] = []
+        if let resize = options.resize {
+            let cgSize = CGSize(width: resize.width, height: resize.height)
+            processors.append(ImageProcessors.Resize(size: cgSize))
+        }
+
+        let request = ImageRequest(
+            urlRequest: urlRequest,
+            processors: processors,
+            userInfo: [.imageIdKey: cachingKey]
+        )
+
+        let imageTask = ImagePipeline.shared.loadImage(with: request) { result in
+            switch result {
+            case let .success(imageResponse):
+                completion(.success(imageResponse.image))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+
+        return imageTask
+    }
+
+    public func loadMultipleImages(
+        from urls: [(URL, ImageLoaderOptions)],
+        completion: @escaping (([UIImage]) -> Void)
+    ) {
+        let group = DispatchGroup()
+        var images: [UIImage] = []
+
+        for (url, loaderOptions) in urls {
+            var placeholderIndex = 0
+
+            group.enter()
+
+            let downloadOptions = ImageDownloadOptions(resize: loaderOptions.resize)
+            downloadImage(from: url, with: downloadOptions) { result in
+                switch result {
+                case let .success(image):
+                    images.append(image)
+                case .failure:
+                    let placeholders = urls.map(\.1).compactMap(\.placeholder)
+                    if !placeholders.isEmpty {
+                        // Rotationally use the placeholders
+                        images.append(placeholders[placeholderIndex])
+                        placeholderIndex += 1
+                        if placeholderIndex == placeholders.count {
+                            placeholderIndex = 0
+                        }
+                    }
+                }
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) {
+            completion(images)
+        }
     }
 }
 

@@ -4,7 +4,7 @@
 
 import UIKit
 
-/// The options for loading an image.
+/// The options for loading an image into a view.
 public struct ImageLoaderOptions {
     // Ideally, the name would be `ImageLoadingOptions`, but this would conflict with Nuke.
 
@@ -13,7 +13,7 @@ public struct ImageLoaderOptions {
     /// The resize information when loading an image. `Nil` if you want the full resolution of the image.
     public var resize: ImageResize?
 
-    public init(placeholder: UIImage?, resize: ImageResize?) {
+    public init(placeholder: UIImage? = nil, resize: ImageResize? = nil) {
         self.placeholder = placeholder
         self.resize = resize
     }

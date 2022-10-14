@@ -1073,6 +1073,8 @@
 		AD91C35528A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */; };
 		AD95FD0D28F991ED00DBDF41 /* ImageResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */; };
 		AD95FD0E28F991ED00DBDF41 /* ImageResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */; };
+		AD95FD1128FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */; };
+		AD95FD1228FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */; };
 		AD99A7CE28EF17CA005185DF /* SlackReactonsItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */; };
 		AD99A7D028EF17ED005185DF /* SlackReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7CF28EF17ED005185DF /* SlackReactionsView.swift */; };
 		AD99A7D228EF180C005185DF /* SlackReactionsMessagePopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7D128EF180C005185DF /* SlackReactionsMessagePopupVC.swift */; };
@@ -3275,6 +3277,7 @@
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
 		AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageListVC+DiffKit.swift"; sourceTree = "<group>"; };
 		AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResize.swift; sourceTree = "<group>"; };
+		AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadOptions.swift; sourceTree = "<group>"; };
 		AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactonsItemView.swift; sourceTree = "<group>"; };
 		AD99A7CF28EF17ED005185DF /* SlackReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsView.swift; sourceTree = "<group>"; };
 		AD99A7D128EF180C005185DF /* SlackReactionsMessagePopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsMessagePopupVC.swift; sourceTree = "<group>"; };
@@ -6735,6 +6738,7 @@
 			children = (
 				ACCA772926C40C96007AE2ED /* ImageLoading.swift */,
 				AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */,
+				AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */,
 				AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */,
 				ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */,
 				BDC80CB4265CF4B800F62CE2 /* ImageCDN.swift */,
@@ -8760,6 +8764,7 @@
 				843F0BC72677640000B342CB /* VideoAttachmentGalleryPreview.swift in Sources */,
 				ADB22F7D25F1626200853C92 /* ChatPresenceAvatarView.swift in Sources */,
 				ADBBDA1F279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */,
+				AD95FD1128FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */,
 				A3C50226284F9CF70048753E /* SwiftyScanner.swift in Sources */,
 				AD99C904279B073B009DD9C5 /* MessageTimestampFormatter.swift in Sources */,
 				2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */,
@@ -10249,6 +10254,7 @@
 				C121EBBC2746A1E900023E4C /* VideoAttachmentGalleryCell.swift in Sources */,
 				C121EBBD2746A1E900023E4C /* GalleryVC.swift in Sources */,
 				C121EBBE2746A1E900023E4C /* ZoomDismissalInteractionController.swift in Sources */,
+				AD95FD1228FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */,
 				C121EBBF2746A1E900023E4C /* ZoomTransitionController.swift in Sources */,
 				C121EBC02746A1E900023E4C /* ZoomAnimator.swift in Sources */,
 				AD78F9FD28EC735700BC0FCE /* SwiftyScanner.swift in Sources */,
