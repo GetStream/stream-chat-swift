@@ -538,7 +538,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 url: imageURL,
                 imageCDN: components.imageCDN,
                 placeholder: placeholder,
-                preferredSize: .avatarThumbnailSize
+                preferredSize: components.avatarThumbnailSize
             )
         } else {
             authorAvatarView?.imageView.image = placeholder
@@ -598,7 +598,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 url: threadAvatarUrl,
                 imageCDN: components.imageCDN,
                 placeholder: appearance.images.userAvatarPlaceholder4,
-                preferredSize: .avatarThumbnailSize
+                preferredSize: components.avatarThumbnailSize
             )
         }
 

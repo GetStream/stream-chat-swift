@@ -82,7 +82,7 @@ public extension ImageLoading {
         from urls: [URL],
         placeholders: [UIImage],
         loadThumbnails: Bool = true,
-        thumbnailSize: CGSize = .avatarThumbnailSize,
+        thumbnailSize: CGSize = Components.default.avatarThumbnailSize,
         imageCDN: ImageCDN,
         completion: @escaping (([UIImage]) -> Void)
     ) {

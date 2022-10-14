@@ -180,7 +180,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             url: imageUrl,
             imageCDN: components.imageCDN,
             placeholder: placeholder,
-            preferredSize: .avatarThumbnailSize
+            preferredSize: components.avatarThumbnailSize
         )
     }
 

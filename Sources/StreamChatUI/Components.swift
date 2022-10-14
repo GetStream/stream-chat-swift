@@ -13,6 +13,9 @@ public struct Components {
     /// A view used as an online activity indicator (online/offline).
     public var onlineIndicatorView: (UIView & MaskProviding).Type = OnlineIndicatorView.self
 
+    /// The default avatar thumbnail size.
+    public var avatarThumbnailSize: CGSize = .init(width: 40, height: 40)
+
     /// A view that displays the avatar image. By default a circular image.
     public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
 

@@ -70,7 +70,7 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
             url: currentUserImageUrl,
             imageCDN: components.imageCDN,
             placeholder: placeholderImage,
-            preferredSize: .avatarThumbnailSize
+            preferredSize: components.avatarThumbnailSize
         )
         
         alpha = state == .normal ? 1 : 0.5

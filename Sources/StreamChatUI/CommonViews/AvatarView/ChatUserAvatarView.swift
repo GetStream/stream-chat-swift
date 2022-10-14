@@ -28,7 +28,7 @@ open class ChatUserAvatarView: _View, ThemeProvider {
             url: content?.imageURL,
             imageCDN: components.imageCDN,
             placeholder: appearance.images.userAvatarPlaceholder1,
-            preferredSize: .avatarThumbnailSize
+            preferredSize: components.avatarThumbnailSize
         )
         
         presenceAvatarView.isOnlineIndicatorVisible = content?.isOnline ?? false

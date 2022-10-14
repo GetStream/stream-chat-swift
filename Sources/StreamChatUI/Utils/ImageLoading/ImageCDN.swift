@@ -91,5 +91,6 @@ open class StreamImageCDN: ImageCDN {
 }
 
 public extension CGSize {
+    @available(*, deprecated, message: "use Components.avatarThumbnailSize instead.")
     static var avatarThumbnailSize: CGSize { CGSize(width: 40, height: 40) }
 }
