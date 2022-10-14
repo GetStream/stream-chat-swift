@@ -6,10 +6,18 @@ import UIKit
 
 extension ImageTask: Cancellable {}
 
-/// The class which is resposible for loading images from URLs.
+/// The class which is responsible for loading images from URLs.
 /// Internally uses `Nuke`'s shared object of `ImagePipeline` to load the image.
 open class NukeImageLoader: ImageLoading {
     public init() {}
+
+    open var avatarThumbnailSize: CGSize {
+        Components.default.avatarThumbnailSize
+    }
+
+    open var imageCDN: ImageCDN {
+        Components.default.imageCDN
+    }
 
     @discardableResult
     open func loadImage(
@@ -52,10 +60,9 @@ open class NukeImageLoader: ImageLoading {
         
         for avatarUrl in urls {
             var placeholderIndex = 0
-            
-            let thumbnailUrl = imageCDN.thumbnailURL(originalURL: avatarUrl, preferredSize: .avatarThumbnailSize)
-            let imageRequest = imageCDN.urlRequest(forImage: thumbnailUrl)
-            let cachingKey = imageCDN.cachingKey(forImage: avatarUrl)
+
+            let imageRequest = imageCDN.urlRequest(forImageUrl: avatarUrl, resize: .init(thumbnailSize))
+            let cachingKey = imageCDN.cachingKey(forImageUrl: avatarUrl)
 
             group.enter()
 
@@ -94,29 +101,18 @@ open class NukeImageLoader: ImageLoading {
     ) -> Cancellable? {
         imageView.currentImageLoadingTask?.cancel()
 
-        guard var url = url else {
+        guard let url = url else {
             imageView.image = placeholder
             return nil
         }
-        
+
         let size = preferredSize ?? imageView.bounds.size
-        let canResize = resize && size != .zero
-
-        // If we don't have a valid size, we will not be able to resize using our CDN.
-        if canResize {
-            url = imageCDN.thumbnailURL(originalURL: url, preferredSize: size)
-        }
-
-        // At this point, if the image will be resized using our CDN, the url will contain the size values as
-        // parameters, and this will create a unique caching key for that url with this size. Only in this case we can
-        // successfully cache the resized image.
-        let cachingKey = imageCDN.cachingKey(forImage: url)
-
-        let processors: [ImageProcessing] = canResize
+        let processors: [ImageProcessing] = size != .zero
             ? [ImageProcessors.Resize(size: size)]
             : []
 
-        let urlRequest = imageCDN.urlRequest(forImage: url)
+        let cachingKey = imageCDN.cachingKey(forImageUrl: url)
+        let urlRequest = imageCDN.urlRequest(forImageUrl: url, resize: .init(size))
         let request = ImageRequest(
             urlRequest: urlRequest,
             processors: processors,
