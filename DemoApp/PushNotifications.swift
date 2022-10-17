@@ -48,7 +48,11 @@ extension PushNotifications: UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.badge, .banner])
+        if #available(iOS 14.0, *) {
+            completionHandler([.badge, .banner])
+        } else {
+            completionHandler([.badge])
+        }
     }
 
     func userNotificationCenter(

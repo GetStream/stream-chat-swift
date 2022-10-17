@@ -5,17 +5,6 @@
 import Foundation
 import StreamChat
 
-let apiKey = "8br4watad788"
-let applicationGroupIdentifier = "group.io.getstream.iOS.StreamChatUITestsApp"
-
-struct UserCredentials {
-    let id: String
-    let name: String
-    let avatarURL: URL
-    let token: Token
-    let birthLand: String
-}
-
 extension UserCredentials {
     
     static var `default`: UserCredentials {

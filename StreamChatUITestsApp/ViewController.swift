@@ -10,7 +10,7 @@ var settings = Settings()
 
 final class ViewController: UIViewController {
 
-    var streamChat = StreamChatWrapper()
+    var streamChat = StreamChatWrapper.shared
 
     var channelController: ChatChannelController?
     var router: CustomChannelListRouter?
@@ -35,7 +35,8 @@ final class ViewController: UIViewController {
 
     @objc func didTap() {
         // Setup chat client
-        streamChat.setupChatClient(with: .default)
+        streamChat.setUpChat()
+        streamChat.connect(user: .credentials(.default), completion: { _ in})
 
         // create UI
         let channelList = streamChat.makeChannelListViewController()
