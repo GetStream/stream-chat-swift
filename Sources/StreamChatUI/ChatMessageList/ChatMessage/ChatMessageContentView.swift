@@ -535,10 +535,11 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         if let imageURL = content?.author.imageURL, let imageView = authorAvatarView?.imageView {
             components.imageLoader.loadImage(
                 into: imageView,
-                url: imageURL,
-                imageCDN: components.imageCDN,
-                placeholder: placeholder,
-                preferredSize: components.avatarThumbnailSize
+                from: imageURL,
+                with: ImageLoaderOptions(
+                    resize: .init(components.avatarThumbnailSize),
+                    placeholder: placeholder
+                )
             )
         } else {
             authorAvatarView?.imageView.image = placeholder
@@ -595,10 +596,11 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         if let imageView = threadAvatarView?.imageView {
             components.imageLoader.loadImage(
                 into: imageView,
-                url: threadAvatarUrl,
-                imageCDN: components.imageCDN,
-                placeholder: appearance.images.userAvatarPlaceholder4,
-                preferredSize: components.avatarThumbnailSize
+                from: threadAvatarUrl,
+                with: ImageLoaderOptions(
+                    resize: .init(components.avatarThumbnailSize),
+                    placeholder: appearance.images.userAvatarPlaceholder4
+                )
             )
         }
 

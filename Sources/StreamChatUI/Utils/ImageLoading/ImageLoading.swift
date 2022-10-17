@@ -101,6 +101,7 @@ public protocol ImageLoading: AnyObject {
 // MARK: - Default Parameters
 
 public extension ImageLoading {
+    @discardableResult
     func downloadImage(
         from url: URL,
         with options: ImageDownloadOptions = .init(),
@@ -109,6 +110,7 @@ public extension ImageLoading {
         downloadImage(from: url, with: options, completion: completion)
     }
 
+    @discardableResult
     func loadImage(
         into imageView: UIImageView,
         from url: URL?,
@@ -154,8 +156,8 @@ public extension ImageLoading {
             into: imageView,
             from: url,
             with: ImageLoaderOptions(
-                placeholder: placeholder,
-                resize: preferredSize.map { ImageResize($0) }
+                resize: preferredSize.map { ImageResize($0) },
+                placeholder: placeholder
             ),
             completion: completion
         )
@@ -172,8 +174,8 @@ public extension ImageLoading {
     ) {
         let options = placeholders.map {
             ImageLoaderOptions(
-                placeholder: $0,
-                resize: .init(thumbnailSize)
+                resize: .init(thumbnailSize),
+                placeholder: $0
             )
         }
 

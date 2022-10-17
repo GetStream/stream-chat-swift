@@ -90,15 +90,13 @@ extension ChatMessageGalleryView {
             let attachment = content
 
             loadingIndicator.isVisible = true
-            imageTask = components.imageLoader.loadImage(
+            components.imageLoader.loadImage(
                 into: imageView,
-                url: attachment?.payload.imagePreviewURL,
-                imageCDN: components.imageCDN,
-                completion: { [weak self] _ in
-                    self?.loadingIndicator.isVisible = false
-                    self?.imageTask = nil
-                }
-            )
+                from: attachment?.payload.imagePreviewURL
+            ) { [weak self] _ in
+                self?.loadingIndicator.isVisible = false
+                self?.imageTask = nil
+            }
 
             uploadingOverlay.content = content?.uploadingState
             uploadingOverlay.isVisible = attachment?.uploadingState != nil

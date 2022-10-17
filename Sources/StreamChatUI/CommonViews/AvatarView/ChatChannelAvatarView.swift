@@ -139,12 +139,11 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
                 placeholderAvatars.append(placeholderImages.removeFirst())
             }
         }
-        
-        components.imageLoader.loadImages(
-            from: avatarUrls,
-            placeholders: placeholderImages,
-            imageCDN: components.imageCDN
-        ) { images in
+
+        let options = placeholderImages.map { ImageLoaderOptions(placeholder: $0) }
+        let urls = Array(zip(avatarUrls, options))
+
+        components.imageLoader.loadMultipleImages(from: urls) { images in
             completion(images, channelId)
         }
     }
@@ -275,10 +274,11 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     open func loadIntoAvatarImageView(from url: URL?, placeholder: UIImage?) {
         components.imageLoader.loadImage(
             into: presenceAvatarView.avatarView.imageView,
-            url: url,
-            imageCDN: components.imageCDN,
-            placeholder: placeholder,
-            preferredSize: components.avatarThumbnailSize
+            from: url,
+            with: ImageLoaderOptions(
+                resize: .init(components.avatarThumbnailSize),
+                placeholder: placeholder
+            )
         )
     }
 }

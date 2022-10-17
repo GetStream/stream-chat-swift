@@ -8,12 +8,13 @@ import UIKit
 public struct ImageLoaderOptions {
     // Ideally, the name would be `ImageLoadingOptions`, but this would conflict with Nuke.
 
-    /// The placeholder to be used while the image is finishing loading.
-    public var placeholder: UIImage?
     /// The resize information when loading an image. `Nil` if you want the full resolution of the image.
     public var resize: ImageResize?
 
-    public init(placeholder: UIImage? = nil, resize: ImageResize? = nil) {
+    /// The placeholder to be used while the image is finishing loading.
+    public var placeholder: UIImage?
+
+    public init(resize: ImageResize? = nil, placeholder: UIImage? = nil) {
         self.placeholder = placeholder
         self.resize = resize
     }

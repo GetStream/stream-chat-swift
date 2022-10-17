@@ -41,10 +41,12 @@ open class ImageAttachmentComposerPreview: _View, ThemeProvider {
     
     override open func updateContent() {
         super.updateContent()
+
+        let size = CGSize(width: width, height: height)
         components.imageLoader.loadImage(
             into: imageView,
-            url: content,
-            imageCDN: components.imageCDN
+            from: content,
+            with: ImageLoaderOptions(resize: ImageResize(size))
         )
     }
 }

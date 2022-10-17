@@ -31,13 +31,9 @@ open class ImageAttachmentGalleryCell: GalleryCollectionViewCell {
         super.updateContent()
         
         let imageAttachment = content?.attachment(payloadType: ImageAttachmentPayload.self)
-        
+
         if let url = imageAttachment?.imageURL {
-            components.imageLoader.loadImage(
-                into: imageView,
-                url: url,
-                imageCDN: components.imageCDN
-            )
+            components.imageLoader.loadImage(into: imageView, from: url)
         } else {
             imageView.image = nil
         }
