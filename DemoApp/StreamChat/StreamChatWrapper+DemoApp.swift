@@ -8,6 +8,36 @@ import StreamChatUI
 
 extension StreamChatWrapper {
     
+    // Instantiates chat client
+    func setUpChat() {
+        guard client == nil else {
+            log.error("Client was already instantiated")
+            return
+        }
+
+        // Set the log level
+        LogConfig.level = .warning
+        LogConfig.formatters = [
+            PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
+        ]
+
+        // Create Client
+        client = ChatClient(config: config)
+
+        // Customize UI
+        configureUI()
+
+        // L10N
+        let localizationProvider = Appearance.default.localizationProvider
+        Appearance.default.localizationProvider = { key, table in
+            let localizedString = localizationProvider(key, table)
+
+            return localizedString == key
+                ? Bundle.main.localizedString(forKey: key, value: nil, table: table)
+                : localizedString
+        }
+    }
+    
     func configureUI() {
         // Customize UI configuration
         Components.default.messageListDateSeparatorEnabled = true

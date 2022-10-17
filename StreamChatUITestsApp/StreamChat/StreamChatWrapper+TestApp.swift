@@ -3,10 +3,26 @@
 //
 
 import Foundation
+#if TESTS
+@testable import StreamChat
+#else
 import StreamChat
+#endif
 import StreamChatUI
 
 extension StreamChatWrapper {
+    
+    func setUpChat() {
+        var config = ChatClientConfig(apiKey: .init(apiKeyString))
+        config.isLocalStorageEnabled = settings.isLocalStorageEnabled.isOn
+        config.staysConnectedInBackground = settings.staysConnectedInBackground.isOn
+
+        configureUI()
+
+        // create an instance of ChatClient and share it using the singleton
+        let environment = ChatClient.Environment()
+        client = ChatClient(config: config, environment: environment)
+    }
     
     func configureUI() {
         // Customization
