@@ -2,6 +2,7 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
 /// A protocol that provides a set of functions for loading images.
@@ -96,6 +97,41 @@ public protocol ImageLoading: AnyObject {
         imageCDN: ImageCDN,
         completion: @escaping (([UIImage]) -> Void)
     )
+}
+
+// MARK: - Image Attachment Helper API
+
+public extension ImageLoading {
+    @discardableResult
+    func loadImage(
+        into imageView: UIImageView,
+        from attachmentPayload: ImageAttachmentPayload?,
+        maxResolutionInPixels: Double,
+        completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
+    ) -> Cancellable? {
+        guard let originalWidth = attachmentPayload?.originalWidth,
+              let originalHeight = attachmentPayload?.originalHeight else {
+            return loadImage(
+                into: imageView,
+                from: attachmentPayload?.imageURL,
+                completion: completion
+            )
+        }
+
+        let imageSizeCalculator = ImageSizeCalculator()
+        let newSize = imageSizeCalculator.calculateSize(
+            originalWidthInPixels: originalWidth,
+            originalHeightInPixels: originalHeight,
+            maxResolutionTotalPixels: maxResolutionInPixels
+        )
+
+        return loadImage(
+            into: imageView,
+            from: attachmentPayload?.imageURL,
+            with: ImageLoaderOptions(resize: .init(newSize)),
+            completion: completion
+        )
+    }
 }
 
 // MARK: - Default Parameters

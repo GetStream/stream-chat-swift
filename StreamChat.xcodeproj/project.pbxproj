@@ -1137,6 +1137,8 @@
 		ADCD5E4427987EFE00E66911 /* StreamModalTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCD5E4227987EFE00E66911 /* StreamModalTransitioningDelegate.swift */; };
 		ADCDDD0025AE2784004E15FB /* UserUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */; };
 		ADCDDD0825AE2F4A004E15FB /* InputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */; };
+		ADD2A99028FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD2A98F28FF0CD300A83305 /* ImageSizeCalculator.swift */; };
+		ADD2A99128FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD2A98F28FF0CD300A83305 /* ImageSizeCalculator.swift */; };
 		ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE2A2779EC8A003B3B07 /* Atlantis */; };
 		ADEE888D289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */; };
 		ADEE888E289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */; };
@@ -3321,6 +3323,7 @@
 		ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserUpdateResponse.json; sourceTree = "<group>"; };
 		ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateViewController.swift; sourceTree = "<group>"; };
 		ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewController.swift; sourceTree = "<group>"; };
+		ADD2A98F28FF0CD300A83305 /* ImageSizeCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSizeCalculator.swift; sourceTree = "<group>"; };
 		ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC_Tests.swift; sourceTree = "<group>"; };
 		ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chewbacca.jpg; sourceTree = "<group>"; };
 		ADEA7F22261D2F8C00CA2289 /* r2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = r2.jpg; sourceTree = "<group>"; };
@@ -6737,12 +6740,13 @@
 			isa = PBXGroup;
 			children = (
 				ACCA772926C40C96007AE2ED /* ImageLoading.swift */,
+				ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */,
 				AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */,
 				AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */,
 				AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */,
-				ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */,
 				BDC80CB4265CF4B800F62CE2 /* ImageCDN.swift */,
 				ACD502A826BC0C670029FB7D /* ImageMerger.swift */,
+				ADD2A98F28FF0CD300A83305 /* ImageSizeCalculator.swift */,
 			);
 			path = ImageLoading;
 			sourceTree = "<group>";
@@ -8721,6 +8725,7 @@
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
 				ADFB7E94283E703A00ABB6CF /* TableViewListChangeUpdater.swift in Sources */,
 				88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */,
+				ADD2A99028FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */,
 				A3C5022A284F9CF70048753E /* CharacterRule.swift in Sources */,
 				E7166CE225BEE20600B03B07 /* Appearance+Images.swift in Sources */,
 				88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */,
@@ -10253,6 +10258,7 @@
 				C121EBBB2746A1E900023E4C /* ImageAttachmentGalleryCell.swift in Sources */,
 				C121EBBC2746A1E900023E4C /* VideoAttachmentGalleryCell.swift in Sources */,
 				C121EBBD2746A1E900023E4C /* GalleryVC.swift in Sources */,
+				ADD2A99128FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */,
 				C121EBBE2746A1E900023E4C /* ZoomDismissalInteractionController.swift in Sources */,
 				AD95FD1228FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */,
 				C121EBBF2746A1E900023E4C /* ZoomTransitionController.swift in Sources */,
