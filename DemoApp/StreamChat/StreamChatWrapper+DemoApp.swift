@@ -7,7 +7,6 @@ import StreamChat
 import StreamChatUI
 
 extension StreamChatWrapper {
-    
     // Instantiates chat client
     func setUpChat() {
         guard client == nil else {
