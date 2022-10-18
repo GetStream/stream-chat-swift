@@ -9,7 +9,6 @@ import UIKit
 // MARK: - Navigation
 
 extension DemoAppCoordinator {
-    
     func start(cid: ChannelId? = nil) {
         if let user = UserDefaults.shared.currentUser {
             showChat(for: .credentials(user), cid: cid, animated: false)
