@@ -68,7 +68,7 @@ open class NukeImageLoader: ImageLoading {
     @discardableResult
     public func downloadImage(
         from url: URL,
-        with options: ImageDownloadOptions,
+        with options: ImageDownloadOptions = ImageDownloadOptions(),
         completion: @escaping ((Result<UIImage, Error>) -> Void)
     ) -> Cancellable? {
         let urlRequest = imageCDN.urlRequest(forImageUrl: url, resize: options.resize)
