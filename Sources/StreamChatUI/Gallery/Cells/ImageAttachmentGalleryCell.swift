@@ -32,11 +32,11 @@ open class ImageAttachmentGalleryCell: GalleryCollectionViewCell {
         
         let imageAttachment = content?.attachment(payloadType: ImageAttachmentPayload.self)
 
-        if let url = imageAttachment?.imageURL {
-            components.imageLoader.loadImage(into: imageView, from: url)
-        } else {
-            imageView.image = nil
-        }
+        components.imageLoader.loadImage(
+            into: imageView,
+            from: imageAttachment?.payload,
+            maxResolutionInPixels: components.imageAttachmentMaxPixels
+        )
     }
     
     override open func viewForZooming(in scrollView: UIScrollView) -> UIView? {

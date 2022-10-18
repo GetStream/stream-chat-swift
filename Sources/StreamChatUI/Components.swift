@@ -144,6 +144,12 @@ public struct Components {
     /// The view used to display a bubble around a message.
     public var messageBubbleView: ChatMessageBubbleView.Type = ChatMessageBubbleView.self
 
+    /// The maximum image resolution in pixels when loading image attachments in the Message List.
+    ///
+    /// By default it is 2MP, 2 Million Pixels. Keep in mind that
+    /// increasing this value will increase the memory footprint.
+    public var imageAttachmentMaxPixels: Double = 2_000_000
+
     /// The class responsible for returning the correct attachment view injector from a message
     @available(iOSApplicationExtension, unavailable)
     public var attachmentViewCatalog: AttachmentViewCatalog.Type = AttachmentViewCatalog.self
