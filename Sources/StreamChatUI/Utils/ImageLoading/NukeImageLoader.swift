@@ -48,10 +48,10 @@ open class NukeImageLoader: ImageLoading {
             userInfo: [.imageIdKey: cachingKey]
         )
 
-        let options = ImageLoadingOptions(placeholder: options.placeholder)
+        let nukeOptions = ImageLoadingOptions(placeholder: options.placeholder)
         imageView.currentImageLoadingTask = StreamChatUI.loadImage(
             with: request,
-            options: options,
+            options: nukeOptions,
             into: imageView
         ) { result in
             switch result {

@@ -25,6 +25,15 @@ public struct AnyAttachmentPayload {
     public let localFileURL: URL?
 }
 
+/// Local Metadata related to an attachment.
+/// It is used to describe additional information of a local attachment.
+public struct AnyAttachmentLocalMetadata {
+    /// The original width and height of an image or video attachment in Pixels.
+    public var originalResolution: (width: Double, height: Double)?
+
+    public init() {}
+}
+
 public extension AnyAttachmentPayload {
     /// Creates an instance of `AnyAttachmentPayload` with the given payload.
     ///
@@ -64,8 +73,9 @@ public extension AnyAttachmentPayload {
     /// - Throws: The error if `localFileURL` is not the file URL or if `extraData` can not be represented as
     /// a dictionary.
     init(
-        localFileURL: URL,
         attachmentType: AttachmentType,
+        localFileURL: URL,
+        localMetadata: AnyAttachmentLocalMetadata? = nil,
         extraData: Encodable? = nil
     ) throws {
         let file = try AttachmentFile(url: localFileURL)
@@ -79,6 +89,8 @@ public extension AnyAttachmentPayload {
             payload = ImageAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 imageRemoteURL: localFileURL,
+                originalWidth: localMetadata?.originalResolution?.width,
+                originalHeight: localMetadata?.originalResolution?.height,
                 extraData: extraData
             )
         case .video:
