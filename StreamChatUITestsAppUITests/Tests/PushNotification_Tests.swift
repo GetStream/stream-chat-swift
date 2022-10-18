@@ -33,11 +33,9 @@ final class PushNotification_Tests: StreamTestCase {
     
     func test_goToBackgroundFromChannelList_and_tapOnPushNotification() throws {
         linkToScenario(withId: 291)
-        
-        throw XCTSkip("[CIS-2164] The test app is not yet ready for this test")
 
         GIVEN("user goes to channel list") {
-            userRobot.login()
+            userRobot.login().openChannel().tapOnBackButton()
         }
         checkHappyPath(message: message, sender: sender)
     }
