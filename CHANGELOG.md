@@ -4,8 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
-### 🔄 Changed
-- CurrentChatUserController+Combine: Use controller.unreadCount as initial value instead of .noUnread [#2334](https://github.com/GetStream/stream-chat-swift/pull/2334)
+### 🐞 Fixed
+- Fix CurrentChatUserController+Combine initialValue hard coded to `.noUnread` instead of using the initial value from the current user data model [#2334](https://github.com/GetStream/stream-chat-swift/pull/2334)
 
 ## StreamChatUI
 ### 🐞 Fixed
