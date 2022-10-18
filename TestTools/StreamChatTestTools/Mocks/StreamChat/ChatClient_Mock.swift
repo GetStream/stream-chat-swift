@@ -48,19 +48,13 @@ final class ChatClient_Mock: ChatClient {
 
     public var currentUserId_mock: UserId? {
         get {
-            super.currentUserId
+            authenticationRepository.currentUserId
         }
         set {
-            super.currentUserId = newValue
+            (authenticationRepository as? AuthenticationRepository_Mock)?.mockedCurrentUserId = newValue
         }
     }
     
-    override func fetchCurrentUserIdFromDatabase() -> UserId? {
-        fetchCurrentUserIdFromDatabase_called = true
-
-        return super.fetchCurrentUserIdFromDatabase()
-    }
-
     override func createBackgroundWorkers() {
         createBackgroundWorkers_called = true
 
@@ -210,6 +204,7 @@ extension ChatClient.Environment {
             eventDecoderBuilder: EventDecoder.init,
             notificationCenterBuilder: EventNotificationCenter.init,
             clientUpdaterBuilder: ChatClientUpdater_Mock.init,
+            authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
             syncRepositoryBuilder: SyncRepository_Spy.init,
             messageRepositoryBuilder: MessageRepository_Spy.init,
             offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Spy.init

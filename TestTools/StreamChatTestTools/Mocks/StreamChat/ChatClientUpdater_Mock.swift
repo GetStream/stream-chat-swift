@@ -15,7 +15,6 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
     var reloadUserIfNeeded_callsCount = 0
     @Atomic var reloadUserIfNeeded_completion: ((Error?) -> Void)?
     @Atomic var reloadUserIfNeeded_callSuper: (() -> Void)?
-    @Atomic var reloadUserIfNeeded_userConnectionProvider: UserConnectionProvider?
 
     @Atomic var connect_called = false
     @Atomic var connect_completion: ((Error?) -> Void)?
@@ -28,16 +27,15 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
 
     override func reloadUserIfNeeded(
         userInfo: UserInfo?,
-        userConnectionProvider: UserConnectionProvider?,
+        tokenProvider: TokenProvider?,
         completion: ((Error?) -> Void)?
     ) {
         reloadUserIfNeeded_called = true
         reloadUserIfNeeded_completion = completion
-        reloadUserIfNeeded_userConnectionProvider = userConnectionProvider
         reloadUserIfNeeded_callSuper = {
             super.reloadUserIfNeeded(
                 userInfo: userInfo,
-                userConnectionProvider: userConnectionProvider,
+                tokenProvider: tokenProvider,
                 completion: completion
             )
         }

@@ -31,7 +31,7 @@ final class MessageSearchController_Tests: XCTestCase {
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
         // Message search requires a current user
-        client.currentUserId = .unique
+        client.authenticationRepository.setToken(token: .unique())
     }
     
     override func tearDown() {

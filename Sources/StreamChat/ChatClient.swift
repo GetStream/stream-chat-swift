@@ -11,7 +11,14 @@ import Foundation
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
 public class ChatClient {
     /// The `UserId` of the currently logged in user.
-    @Atomic public internal(set) var currentUserId: UserId?
+    var currentUserId: UserId? {
+        authenticationRepository.currentUserId
+    }
+
+    /// The token of the current user.
+    var currentToken: Token? {
+        authenticationRepository.currentToken
+    }
 
     /// The current connection status of the client.
     ///
@@ -68,6 +75,7 @@ public class ChatClient {
 
     private(set) lazy var authenticationRepository = environment.authenticationRepositoryBuilder(
         apiClient,
+        databaseContainer,
         clientUpdater,
         environment.tokenExpirationRetryStrategy,
         environment.timerType
@@ -206,13 +214,7 @@ public class ChatClient {
 
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
-    
-    /// Retry timing strategy for refreshing an expiried token
-    private lazy var tokenExpirationRetryStrategy = environment.tokenExpirationRetryStrategy
-    
-    /// A timer that runs token refreshing job
-    private var tokenRetryTimer: TimerControl?
-    
+
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
     private var urlSessionConfiguration: URLSessionConfiguration {
@@ -236,17 +238,6 @@ public class ChatClient {
 
     /// An array of requests waiting for the token
     @Atomic private(set) var tokenWaiters: [String: (Token?) -> Void] = [:]
-    
-    /// The token of the current user. If the current user is anonymous, the token is `nil`.
-    @Atomic var currentToken: Token?
-    
-    /// Sets the user token to the client, this method is only needed to perform API calls
-    /// without connecting as a user.
-    /// You should only use this in special cases like a notification service or other background process
-    public func setToken(token: Token) {
-        _currentToken.wrappedValue = token
-        completeTokenWaiters(token: token)
-    }
 
     /// Creates a new instance of `ChatClient`.
     /// - Parameter config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
@@ -279,7 +270,6 @@ public class ChatClient {
         self.environment = environment
 
         setupConnectionRecoveryHandler(with: environment)
-        currentUserId = fetchCurrentUserIdFromDatabase()
     }
     
     deinit {
@@ -332,12 +322,18 @@ public class ChatClient {
     ///
     /// - Note: Connect endpoint uses an upsert mechanism. If the user does not exist, it will be created with the given `userInfo`. If user already exists, it will get updated with non-nil fields from the `userInfo`.
     ///
-    /// - Important: This method can only be used when `token` does not expire. If the token expores, the `connect` API with token provider has to be used.
+    /// - Important: This method can only be used when `token` does not expire. If the token expires, the `connect` API with token provider has to be used.
     public func connectUser(
         userInfo: UserInfo,
         token: Token,
         completion: ((Error?) -> Void)? = nil
     ) {
+        if token.expiration == nil {
+            log.error("""
+            The token you are passing has an expiration date. Please provide a `tokenProvider` to refresh it or use a non expiring token
+            """, subsystems: .authentication)
+        }
+
         connectUser(
             userInfo: userInfo,
             tokenProvider: { $0(.success(token)) },
@@ -389,21 +385,6 @@ public class ChatClient {
         }
     }
 
-    func fetchCurrentUserIdFromDatabase() -> UserId? {
-        var currentUserId: UserId?
-
-        let context = databaseContainer.viewContext
-        if Thread.isMainThread {
-            currentUserId = context.currentUser?.user.id
-        } else {
-            context.performAndWait {
-                currentUserId = context.currentUser?.user.id
-            }
-        }
-
-        return currentUserId
-    }
-    
     func createBackgroundWorkers() {
         guard config.isClientInActiveMode else { return }
 
@@ -438,9 +419,18 @@ public class ChatClient {
         }
     }
 
+    /// Sets the user token to the client, this method is only needed to perform API calls
+    /// without connecting as a user.
+    /// You should only use this in special cases like a notification service or other background process
+    ///
+    /// - Important: Do not call this method if you will be connecting to chat.
+    public func setToken(token: Token) {
+        authenticationRepository.setToken(token: token)
+        completeTokenWaiters(token: token)
+    }
+
     func updateUser(with token: Token, completeTokenWaiters: Bool, isFirstConnection: Bool) {
-        currentUserId = token.userId
-        currentToken = token
+        authenticationRepository.setToken(token: token)
 
         if completeTokenWaiters {
             self.completeTokenWaiters(token: token)
@@ -596,15 +586,17 @@ extension ChatClient {
 
         var authenticationRepositoryBuilder: (
             _ apiClient: APIClient,
+            _ apiClient: DatabaseContainer,
             _ clientUpdater: ChatClientUpdater,
             _ tokenExpirationRetryStrategy: RetryStrategy,
             _ timerType: Timer.Type
         ) -> AuthenticationRepository = {
             AuthenticationRepository(
                 apiClient: $0,
-                clientUpdater: $1,
-                tokenExpirationRetryStrategy: $2,
-                timerType: $3
+                databaseContainer: $1,
+                clientUpdater: $2,
+                tokenExpirationRetryStrategy: $3,
+                timerType: $4
             )
         }
         

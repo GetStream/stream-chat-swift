@@ -9,18 +9,27 @@ public typealias TokenProvider = (@escaping (Result<Token, Error>) -> Void) -> V
 class AuthenticationRepository {
     private let tokenQueue: DispatchQueue = DispatchQueue(label: "io.getstream.auth-repository", attributes: .concurrent)
     private var _isGettingToken: Bool = false
+    private var _currentUserId: UserId?
     private var _currentToken: Token?
     private var _tokenProvider: TokenProvider?
     private var _tokenRequestCompletions: [(Error?) -> Void] = []
 
-    private(set) var isGettingToken: Bool {
+    private var isGettingToken: Bool {
         get { tokenQueue.sync { _isGettingToken } }
         set { tokenQueue.async(flags: .barrier) { self._isGettingToken = newValue }}
     }
 
+    private(set) var currentUserId: UserId? {
+        get { tokenQueue.sync { _currentUserId } }
+        set { tokenQueue.async(flags: .barrier) { self._currentUserId = newValue }}
+    }
+
     private(set) var currentToken: Token? {
         get { tokenQueue.sync { _currentToken } }
-        set { tokenQueue.async(flags: .barrier) { self._currentToken = newValue }}
+        set { tokenQueue.async(flags: .barrier) {
+            self._currentToken = newValue
+            newValue.map { self._currentUserId = $0.userId }
+        }}
     }
 
     private(set) var tokenProvider: TokenProvider? {
@@ -34,6 +43,7 @@ class AuthenticationRepository {
     }
 
     private let apiClient: APIClient
+    private let databaseContainer: DatabaseContainer
     private let clientUpdater: ChatClientUpdater
     /// A timer that runs token refreshing job
     private var tokenRetryTimer: TimerControl?
@@ -41,11 +51,40 @@ class AuthenticationRepository {
     private var tokenExpirationRetryStrategy: RetryStrategy
     private let timerType: Timer.Type
 
-    init(apiClient: APIClient, clientUpdater: ChatClientUpdater, tokenExpirationRetryStrategy: RetryStrategy, timerType: Timer.Type) {
+    init(
+        apiClient: APIClient,
+        databaseContainer: DatabaseContainer,
+        clientUpdater: ChatClientUpdater,
+        tokenExpirationRetryStrategy: RetryStrategy,
+        timerType: Timer.Type
+    ) {
         self.apiClient = apiClient
+        self.databaseContainer = databaseContainer
         self.clientUpdater = clientUpdater
         self.tokenExpirationRetryStrategy = tokenExpirationRetryStrategy
         self.timerType = timerType
+
+        fetchCurrentUser()
+    }
+
+    private func fetchCurrentUser() {
+        var currentUserId: UserId?
+
+        let context = databaseContainer.viewContext
+        if Thread.isMainThread {
+            currentUserId = context.currentUser?.user.id
+        } else {
+            context.performAndWait {
+                currentUserId = context.currentUser?.user.id
+            }
+        }
+        self.currentUserId = currentUserId
+    }
+
+    /// Sets the user token. This method is only needed to perform API calls without connecting as a user.
+    /// You should only use this in special cases like a notification service or other background process
+    func setToken(token: Token) {
+        currentToken = token
     }
 
     /// Establishes a connection for a  user.
@@ -107,7 +146,7 @@ class AuthenticationRepository {
 
     private func getToken(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
         tokenRequestCompletions.append(completion)
-        guard isGettingToken else {
+        guard !isGettingToken else {
             log.debug("Trying to get a token while already getting one", subsystems: .authentication)
             return
         }
@@ -121,11 +160,9 @@ class AuthenticationRepository {
             } else {
                 log.debug("Successfully retrieved token", subsystems: .authentication)
             }
-            self?.tokenQueue.sync {
-                self?._tokenRequestCompletions.forEach { $0(error) }
-                self?._tokenRequestCompletions = []
-                self?._isGettingToken = false
-            }
+            let completionBlocks: [(Error?) -> Void]? = self?.tokenRequestCompletions
+            completionBlocks?.forEach { $0(error) }
+            self?.isGettingToken = false
         }
     }
 

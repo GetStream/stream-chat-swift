@@ -32,7 +32,6 @@ final class CurrentUserController_Tests: XCTestCase {
 
         controllerCallbackQueueID = nil
         client.mockAPIClient.cleanUp()
-        env.chatClientUpdater?.cleanUp()
         env.currentUserUpdater?.cleanUp()
         
         AssertAsync {
@@ -286,7 +285,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_updateUserData_callCurrentUserUpdater_withCorrectValues() {
         // Simulate `connectUser`
-        client.currentUserId = .unique
+        client.authenticationRepository.setToken(token: .unique())
         
         let expectedName = String.unique
         let expectedImageUrl = URL.unique()
@@ -305,8 +304,8 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_updateUserData_propagatesError() throws {
         // Simulate `connectUser`
-        client.currentUserId = .unique
-        
+        client.authenticationRepository.setToken(token: .unique())
+
         var completionError: Error?
         controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
@@ -323,8 +322,8 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_updateUserData_propagatesNilError() throws {
         // Simulate `connectUser`
-        client.currentUserId = .unique
-        
+        client.authenticationRepository.setToken(token: .unique())
+
         var completionIsCalled = false
         controller
             .updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] error in
@@ -405,7 +404,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_synchronizeDevices_whenRequestSuccess_completionCalledWithoutError() throws {
         // Simulate `connectUser`
-        client.currentUserId = .unique
+        client.authenticationRepository.setToken(token: .unique())
 
         var completionError: Error?
         controller.synchronizeDevices { [callbackQueueID] in
@@ -421,7 +420,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_synchronizeDevices_whenRequestFails_propagatesError() {
         // Simulate `connectUser`
-        client.currentUserId = .unique
+        client.authenticationRepository.setToken(token: .unique())
 
         var completionError: Error?
         controller.synchronizeDevices { [callbackQueueID] in
@@ -482,8 +481,8 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_addDevice_whenPushProviderIsAPN_callsCurrentUserUpdaterWithCorrectValues() {
         // Simulate `connectUser`
-        client.currentUserId = .unique
-        
+        client.authenticationRepository.setToken(token: .unique())
+
         let expectedDeviceToken = "test".data(using: .utf8)!
         
         controller.addDevice(.apn(token: expectedDeviceToken))
@@ -496,7 +495,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_addDevice_whenPushProviderIsFirebase_callsCurrentUserUpdaterWithCorrectValues() {
         // Simulate `connectUser`
-        client.currentUserId = .unique
+        client.authenticationRepository.setToken(token: .unique())
 
         let expectedDeviceId = "test"
 
@@ -510,8 +509,8 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_addDevice_propagatesError() throws {
         // Simulate `connectUser`
-        client.currentUserId = .unique
-        
+        client.authenticationRepository.setToken(token: .unique())
+
         var completionError: Error?
         controller.addDevice(.firebase(token: "test")) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
@@ -528,8 +527,8 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_addDevice_propagatesNilError() throws {
         // Simulate `connectUser`
-        client.currentUserId = .unique
-        
+        client.authenticationRepository.setToken(token: .unique())
+
         var completionIsCalled = false
         controller.addDevice(.firebase(token: "test")) { [callbackQueueID] error in
             // Assert callback queue is correct.
@@ -602,8 +601,8 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_removeDevice_callCurrentUserUpdater_withCorrectValues() {
         // Simulate `connectUser`
-        client.currentUserId = .unique
-        
+        client.authenticationRepository.setToken(token: .unique())
+
         let expectedId = String.unique
         
         controller.removeDevice(id: expectedId)
@@ -615,8 +614,8 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_removeDevice_propagatesError() throws {
         // Simulate `connectUser`
-        client.currentUserId = .unique
-        
+        client.authenticationRepository.setToken(token: .unique())
+
         let expectedId = String.unique
         
         var completionError: Error?
@@ -635,8 +634,8 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_removeDevice_propagatesNilError() throws {
         // Simulate `connectUser`
-        client.currentUserId = .unique
-        
+        client.authenticationRepository.setToken(token: .unique())
+
         let expectedId = String.unique
         
         var completionIsCalled = false
@@ -709,27 +708,21 @@ final class CurrentUserController_Tests: XCTestCase {
     
     // MARK: - Reload user if needed
 
-    func test_reloadUserIfNeeded_callsClientUpdater_and_propagatesTheResult() {
+    func test_reloadUserIfNeeded_callsClientUpdater_and_propagatesTheResult() throws {
+        let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
         for error in [nil, TestError()] {
             // Simulate `reloadUserIfNeeded` and capture the result.
-            var reloadUserIfNeededCompletionCalled = false
+            authenticationRepository.refreshTokenError = error
+
+            let expectation = self.expectation(description: "reloadCompletes")
             var reloadUserIfNeededCompletionError: Error?
             controller.reloadUserIfNeeded { [callbackQueueID] error in
                 AssertTestQueue(withId: callbackQueueID)
                 reloadUserIfNeededCompletionError = error
-                reloadUserIfNeededCompletionCalled = true
+                expectation.fulfill()
             }
 
-            // Assert the `chatClientUpdater` is called.
-            XCTAssertTrue(env.chatClientUpdater.reloadUserIfNeeded_called)
-            // The completion hasn't been called yet.
-            XCTAssertFalse(reloadUserIfNeededCompletionCalled)
-
-            // Simulate `chatClientUpdater` result.
-            env.chatClientUpdater.reloadUserIfNeeded_completion!(error)
-
-            // Assert `reloadUserIfNeeded` completion is called.
-            AssertAsync.willBeTrue(reloadUserIfNeededCompletionCalled)
+            waitForExpectations(timeout: 0.1)
 
             // Assert `error` is propagated.
             XCTAssertEqual(reloadUserIfNeededCompletionError as? TestError, error)
@@ -791,7 +784,6 @@ private class TestEnvironment {
     var currentUserObserverItem: CurrentChatUser?
     var currentUserObserverStartUpdatingError: Error?
 
-    var chatClientUpdater: ChatClientUpdater_Mock!
     var currentUserUpdater: CurrentUserUpdater_Mock!
 
     lazy var currentUserControllerEnvironment: CurrentChatUserController
@@ -803,8 +795,5 @@ private class TestEnvironment {
         }, currentUserUpdaterBuilder: { [unowned self] db, client in
             self.currentUserUpdater = CurrentUserUpdater_Mock(database: db, apiClient: client)
             return self.currentUserUpdater!
-        }, chatClientUpdaterBuilder: { [unowned self] in
-            self.chatClientUpdater = ChatClientUpdater_Mock(client: $0)
-            return self.chatClientUpdater!
         })
 }

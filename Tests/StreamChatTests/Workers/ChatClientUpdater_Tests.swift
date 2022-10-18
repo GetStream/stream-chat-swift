@@ -9,6 +9,13 @@ import XCTest
 final class ChatClientUpdater_Tests: XCTestCase {
     // MARK: Disconnect
 
+    private var authenticationRepository: AuthenticationRepository_Mock?
+
+    override func tearDown() {
+        super.tearDown()
+        authenticationRepository = nil
+    }
+
     func test_disconnect_whenClientIsPassive() {
         // Create a passive client with user session.
         let client = mockClientWithUserSession(isActive: false)
@@ -289,7 +296,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
-            userConnectionProvider: .static(updatedToken)
+            tokenProvider: staticToken(updatedToken)
         ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
@@ -374,7 +381,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
-            userConnectionProvider: .static(updatedToken)
+            tokenProvider: staticToken(updatedToken)
         ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
@@ -445,7 +452,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         let error = try waitFor { completion in
-            updater.reloadUserIfNeeded(userConnectionProvider: .static(.unique()), completion: completion)
+            updater.reloadUserIfNeeded(tokenProvider: staticToken(.unique()), completion: completion)
         }
 
         // Assert `ClientError.ClientIsNotInActiveMode` is propagated.
@@ -462,7 +469,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         var error: Error?
-        updater.reloadUserIfNeeded(userConnectionProvider: .static(.unique())) {
+        updater.reloadUserIfNeeded(tokenProvider: staticToken(.unique())) {
             error = $0
         }
         
@@ -490,7 +497,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         // Simulate `reloadUserIfNeeded` call and catch the result.
         let error: Error? = try waitFor { completion in
             updater.reloadUserIfNeeded(
-                userConnectionProvider: .static(.unique()),
+                tokenProvider: staticToken(.unique()),
                 completion: completion
             )
             
@@ -512,7 +519,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
-            userConnectionProvider: .static(.unique())
+            tokenProvider: staticToken(.unique())
         ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
@@ -539,7 +546,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         
         // Simulate `reloadUserIfNeeded` call.
         updater?.reloadUserIfNeeded(
-            userConnectionProvider: .init {
+            tokenProvider: .init {
                 tokenProviderCompletion = $0
             }
         )
@@ -583,7 +590,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
             userInfo: .init(id: userId),
-            userConnectionProvider: .static(token)
+            tokenProvider: staticToken(token)
         ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
@@ -782,6 +789,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         webSocketClient: WebSocketClient_Mock? = nil
     ) -> ChatClient_Mock {
         var environment = ChatClient.Environment.mock
+
         if let webSocketClient = webSocketClient {
             environment = ChatClient.Environment(
                 apiClientBuilder: environment.apiClientBuilder,
@@ -794,6 +802,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
                 eventDecoderBuilder: environment.eventDecoderBuilder,
                 notificationCenterBuilder: environment.notificationCenterBuilder,
                 clientUpdaterBuilder: environment.clientUpdaterBuilder,
+                authenticationRepositoryBuilder: environment.authenticationRepositoryBuilder,
                 syncRepositoryBuilder: environment.syncRepositoryBuilder,
                 messageRepositoryBuilder: environment.messageRepositoryBuilder,
                 offlineRequestsRepositoryBuilder: environment.offlineRequestsRepositoryBuilder
@@ -803,9 +812,12 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isClientInActiveMode = isClientInActiveMode
         let client = ChatClient_Mock(config: config, environment: environment)
+
+        authenticationRepository = client.authenticationRepository as? AuthenticationRepository_Mock
+        XCTAssertNotNil(authenticationRepository)
+
         if let existingToken = existingToken {
-            client.currentUserId = existingToken.userId
-            client.currentToken = existingToken
+            authenticationRepository?.setToken(token: existingToken)
         }
 
         XCTAssertNil(client.webSocketClient?.connectEndpoint)
@@ -834,17 +846,17 @@ final class ChatClientUpdater_Tests: XCTestCase {
     // MARK: Reload User if needed
 
     func test_reloadUserIfNeeded_noProvider() {
-        let error = reloadUserIfNeededAndWait(userInfo: nil, userConnectionProvider: nil, client: createClientInCleanState(existingToken: nil))
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: nil, client: createClientInCleanState(existingToken: nil))
 
         XCTAssertTrue(error is ClientError.ConnectionWasNotInitiated)
     }
 
     func test_reloadUserIfNeeded_tokenProviderFailure() {
         let testError = ClientError("tokenProviderFailure")
-        let provider = UserConnectionProvider(tokenProvider: { completion in
+        let provider: TokenProvider = { completion in
             completion(.failure(testError))
-        })
-        let error = reloadUserIfNeededAndWait(userInfo: nil, userConnectionProvider: provider, client: createClientInCleanState(existingToken: nil))
+        }
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: provider, client: createClientInCleanState(existingToken: nil))
 
         XCTAssertEqual(error, testError)
     }
@@ -857,10 +869,10 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let newUserId = "user9"
         let newToken = Token.unique(userId: newUserId)
 
-        let provider = UserConnectionProvider(tokenProvider: { completion in
+        let provider: TokenProvider = { completion in
             completion(.success(newToken))
-        })
-        let error = reloadUserIfNeededAndWait(userInfo: nil, userConnectionProvider: provider, client: client)
+        }
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: provider, client: client)
 
         XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
     }
@@ -870,10 +882,10 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let newUserId = "user9"
         let newToken = Token.unique(userId: newUserId)
 
-        let provider = UserConnectionProvider(tokenProvider: { completion in
+        let provider: TokenProvider = { completion in
             completion(.success(newToken))
-        })
-        let error = reloadUserIfNeededAndWait(userInfo: nil, userConnectionProvider: provider, client: client)
+        }
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: provider, client: client)
 
         guard case .disconnected = client.connectionStatus else {
             XCTFail("Should be disconnected when is not in active mode")
@@ -889,12 +901,12 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let newToken = Token.unique(userId: newUserId)
         XCTAssertNil(client.connectionId)
 
-        let provider = UserConnectionProvider(tokenProvider: { completion in
+        let provider: TokenProvider = { completion in
             completion(.success(newToken))
-        })
+        }
         let error = reloadUserIfNeededAndWait(
             userInfo: nil,
-            userConnectionProvider: provider,
+            tokenProvider: provider,
             client: client,
             completeConnectionIdWaitersWith: "connection-id"
         )
@@ -910,10 +922,10 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let newToken = Token.unique(userId: newUserId)
         client.connectionId = "something"
 
-        let provider = UserConnectionProvider(tokenProvider: { completion in
+        let provider: TokenProvider = { completion in
             completion(.success(newToken))
-        })
-        let error = reloadUserIfNeededAndWait(userInfo: nil, userConnectionProvider: provider, client: client)
+        }
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: provider, client: client)
 
         XCTAssertNil(error)
         XCTAssertFalse(webSocketClient.connect_called)
@@ -921,7 +933,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
     private func reloadUserIfNeededAndWait(
         userInfo: UserInfo?,
-        userConnectionProvider: UserConnectionProvider?,
+        tokenProvider: TokenProvider?,
         client: ChatClient,
         completeConnectionIdWaitersWith connectionId: String? = nil
     ) -> Error? {
@@ -930,7 +942,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var receivedError: Error?
         updater.reloadUserIfNeeded(
             userInfo: userInfo,
-            userConnectionProvider: userConnectionProvider,
+            tokenProvider: tokenProvider,
             completion: { error in
                 receivedError = error
                 expectation.fulfill()
@@ -959,8 +971,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = ChatClient_Mock(config: config)
         client.connectUser(userInfo: .init(id: token.userId), token: token)
 
-        client.currentUserId = token.userId
-        client.currentToken = token
+        client.authenticationRepository.setToken(token: token)
 
         client.connectionId = .unique
         client.connectionStatus = .connected
@@ -996,4 +1007,8 @@ private extension Endpoint<EmptyResponse> {
             lhsPayload.userDetails.imageURL == rhsPayload.userDetails.imageURL &&
             lhsPayload.userDetails.extraData == rhsPayload.userDetails.extraData
     }
+}
+
+private func staticToken(_ token: Token) -> TokenProvider {
+    { $0(.success(token)) }
 }

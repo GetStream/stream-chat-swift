@@ -408,7 +408,8 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(client.connectionId, connectionId)
         
         // Was called on ChatClient init
-        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
+        let authenticationRepository = try XCTUnwrap(testEnv.authenticationRepository)
+        XCTAssertCall("connectUser(with:tokenProvider:completion:)", on: authenticationRepository)
 
         // Simulate WebSocketConnection change to "disconnected"
         let error = ClientError(with: ErrorPayload(code: 40, message: "", statusCode: 200))
@@ -421,7 +422,9 @@ final class ChatClient_Tests: XCTestCase {
         
         time.run(numberOfSeconds: 0.6)
         // Was called one more time on receiving token expired error
-        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
+        AssertAsync.willBeTrue(
+            authenticationRepository.numberOfCalls(on: "refreshToken(completion:)") == 1
+        )
         
         // Token is expired again
         testEnv.webSocketClient?
@@ -432,15 +435,9 @@ final class ChatClient_Tests: XCTestCase {
             )
         
         // Does not call secondary token refresh right away
-        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
-        
-        // Does not call secondary token refresh when not enough time has passed
-        time.run(numberOfSeconds: 0.1)
-        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
-        
-        // Calls secondary token refresh when enough time has passed
-        time.run(numberOfSeconds: 3)
-        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 3)
+        AssertAsync.willBeTrue(
+            authenticationRepository.numberOfCalls(on: "refreshToken(completion:)") == 2
+        )
 
         // We set connectionId to nil after token expiration disconnect
         XCTAssertNil(client.connectionId)
@@ -635,12 +632,12 @@ final class ChatClient_Tests: XCTestCase {
         // Create an active client to save the current user to the database.
         var chatClient: ChatClient! = ChatClient(config: config)
         chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
-        
+
         // Create current user in the database.
         try chatClient.databaseContainer.createCurrentUser(id: currentUserId)
 
         AssertAsync.canBeReleased(&chatClient)
-        
+
         // Take main then background queue.
         for queue in [DispatchQueue.main, DispatchQueue.global()] {
             let error: Error? = try waitFor { completion in
@@ -695,7 +692,7 @@ final class ChatClient_Tests: XCTestCase {
             
             // THEN
             var providedToken: Token?
-            client.userConnectionProvider?.tokenProvider { providedToken = try? $0.get() }
+            testEnv.authenticationRepository?.tokenProvider? { providedToken = try? $0.get() }
             XCTAssertEqual(providedToken, token)
             
             XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
@@ -732,7 +729,7 @@ final class ChatClient_Tests: XCTestCase {
             
             // THEN
             var providedToken: Token?
-            client.userConnectionProvider?.tokenProvider { providedToken = try? $0.get() }
+            testEnv.authenticationRepository?.tokenProvider? { providedToken = try? $0.get() }
             XCTAssertEqual(providedToken, token)
             
             XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
@@ -769,7 +766,6 @@ final class ChatClient_Tests: XCTestCase {
             }
             
             // THEN
-            XCTAssertNotNil(client.userConnectionProvider)
             XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
             
             // WHEN
@@ -796,10 +792,10 @@ final class ChatClient_Tests: XCTestCase {
                 connectCompletionCalled = true
                 connectCompletionError = $0
             }
-            
+
             // THEN
             var providedToken: Token?
-            client.userConnectionProvider?.tokenProvider { providedToken = try? $0.get() }
+            testEnv.authenticationRepository?.tokenProvider? { providedToken = try? $0.get() }
             XCTAssertEqual(providedToken?.userId.isAnonymousUser, true)
             
             XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
@@ -890,7 +886,8 @@ private class TestEnvironment {
     @Atomic var apiClient: APIClient_Spy?
     @Atomic var webSocketClient: WebSocketClient_Mock?
     @Atomic var databaseContainer: DatabaseContainer_Spy?
-    
+    var authenticationRepository: AuthenticationRepository_Mock?
+
     @Atomic var requestEncoder: RequestEncoder_Spy?
     @Atomic var requestDecoder: RequestDecoder_Spy?
     
@@ -973,7 +970,17 @@ private class TestEnvironment {
                 self.backgroundTaskScheduler = BackgroundTaskScheduler_Mock()
                 return self.backgroundTaskScheduler!
             },
-            timerType: VirtualTimeTimer.self
+            timerType: VirtualTimeTimer.self,
+            authenticationRepositoryBuilder: {
+                self.authenticationRepository = AuthenticationRepository_Mock(
+                    apiClient: $0,
+                    databaseContainer: $1,
+                    clientUpdater: $2,
+                    tokenExpirationRetryStrategy: $3,
+                    timerType: $4
+                )
+                return self.authenticationRepository!
+            }
         )
     }()
 }

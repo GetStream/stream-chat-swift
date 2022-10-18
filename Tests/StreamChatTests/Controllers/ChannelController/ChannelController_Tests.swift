@@ -451,7 +451,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_channelControllerForNewChannel_createdCorrectly() throws {
         // Simulate currently logged-in user
         let currentUserId: UserId = .unique
-        client.currentUserId = currentUserId
+        client.setToken(token: .unique(userId: currentUserId))
 
         let cid: ChannelId = .unique
         let team: String = .unique
@@ -515,7 +515,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_channelControllerForNewChannel_includesCurrentUser_byDefault() throws {
         // Simulate currently logged-in user
         let currentUserId: UserId = .unique
-        client.currentUserId = currentUserId
+        client.setToken(token: .unique(userId: currentUserId))
 
         // Create DM channel members.
         let members: Set<UserId> = [.unique, .unique, .unique]
@@ -536,7 +536,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_channelControllerForNew1on1Channel_createdCorrectly() throws {
         // Simulate currently logged-in user
         let currentUserId: UserId = .unique
-        client.currentUserId = currentUserId
+        client.setToken(token: .unique(userId: currentUserId))
 
         for isCurrentUserMember in [true, false] {
             let team: String = .unique
@@ -568,7 +568,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_channelControllerForNew1on1Channel_throwsError_OnEmptyMembers() {
         // Simulate currently logged-in user
         let currentUserId: UserId = .unique
-        client.currentUserId = currentUserId
+        client.setToken(token: .unique(userId: currentUserId))
 
         let members: Set<UserId> = []
 
@@ -616,7 +616,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_channelControllerForNewDirectMessagesChannel_includesCurrentUser_byDefault() throws {
         // Simulate currently logged-in user
         let currentUserId: UserId = .unique
-        client.currentUserId = currentUserId
+        client.setToken(token: .unique(userId: currentUserId))
 
         // Create DM channel members.
         let members: Set<UserId> = [.unique, .unique, .unique]
@@ -636,7 +636,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_channelController_returnsNilCID_forNewDirectMessageChannel() throws {
         // Simulate currently logged-in user
         let currentUserId: UserId = .unique
-        client.currentUserId = currentUserId
+        client.setToken(token: .unique(userId: currentUserId))
 
         // Create ChatChannelController for new channel
         controller = try client.channelController(
@@ -3190,8 +3190,8 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: emptyChannel)
         }
         
-        client.currentUserId = currentUser.id
-        
+        client.setToken(token: .unique(userId: currentUser.id))
+
         // WHEN
         var completionCalled = false
         controller.markRead { [callbackQueueID] error in
@@ -3269,8 +3269,8 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
         
-        client.currentUserId = currentUser.id
-        
+        client.setToken(token: .unique(userId: currentUser.id))
+
         // WHEN
         var completionCalled = false
         controller.markRead { [callbackQueueID] error in
@@ -3314,8 +3314,8 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
         
-        client.currentUserId = currentUser.id
-        
+        client.setToken(token: .unique(userId: currentUser.id))
+
         // WHEN
         var completionCalled = false
         controller.markRead { [callbackQueueID] error in
@@ -3358,8 +3358,8 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
         
-        client.currentUserId = currentUser.id
-        
+        client.setToken(token: .unique(userId: currentUser.id))
+
         // WHEN
         var completionCalled = false
         controller.markRead { [callbackQueueID] error in
@@ -3386,7 +3386,7 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         // This is needed to determine if the channel needs to be marked as read
-        client.currentUserId = dummyUserPayload.id
+        client.setToken(token: .unique(userId: dummyUserPayload.id))
 
         // Simulate `markRead` call and catch the completion
         var completionCalledError: Error?
@@ -3407,7 +3407,7 @@ final class ChannelController_Tests: XCTestCase {
         // GIVEN
         let channel = dummyPayload(with: channelId, numberOfMessages: 3)
         let currentUser: CurrentUserPayload = .dummy(userId: channel.channelReads.first!.user.id, role: .user)
-        client.currentUserId = currentUser.id
+        client.setToken(token: .unique(userId: currentUser.id))
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
