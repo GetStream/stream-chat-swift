@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🔄 Changed
+- CurrentChatUserController+Combine: Use controller.unreadCount as initial value instead of .noUnread [#2334](https://github.com/GetStream/stream-chat-swift/pull/2334)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix message text not dynamically scalable with content size category changes [#2328](https://github.com/GetStream/stream-chat-swift/pull/2328)
