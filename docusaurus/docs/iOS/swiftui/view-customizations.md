@@ -50,8 +50,25 @@ And that's everything we need to do to provide our own version of some of the vi
 
 If you are customizing many view slots (over 15) from the SDK, and you have many generics in your codebase, it's good idea to explicitly specify the types of your custom views with `typealias`. This will improve the build time of your project.
 
+For example, in our `ViewFactory`, the `associatedType` for creating the no channels view is `NoChannels`:
+
 ```swift
-typealias MoreActionsView = MoreChannelActionsView
+associatedtype NoChannels: View
+func makeNoChannelsView() -> NoChannels
+```
+
+In order to improve the build time, you would need to specify the associated type with a typealias, like this:
+
+```swift
+typealias NoChannels = CustomNoChannelsView
+```
+
+Then, your custom implementation of the factory method `makeNoChannelsView` will look like the following:
+
+```swift
+public func makeNoChannelsView() -> CustomNoChannelsView {
+    CustomNoChannelsView()
+}
 ```
 
 You can find all the associated types we use in the `ViewFactory` [here](https://github.com/GetStream/stream-chat-swiftui/blob/main/Sources/StreamChatSwiftUI/ViewFactory.swift).
