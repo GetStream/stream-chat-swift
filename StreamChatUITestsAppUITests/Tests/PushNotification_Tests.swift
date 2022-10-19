@@ -28,9 +28,6 @@ final class PushNotification_Tests: StreamTestCase {
         GIVEN("user goes to message list") {
             userRobot.login().openChannel()
         }
-        AND("user sends a message") {
-            userRobot.sendMessage("Hey")
-        }
         checkHappyPath(message: message, sender: sender)
     }
     
@@ -39,9 +36,6 @@ final class PushNotification_Tests: StreamTestCase {
 
         GIVEN("user goes to message list") {
             userRobot.login().openChannel()
-        }
-        AND("user sends a message") {
-            userRobot.sendMessage("Hey")
         }
         AND("user goes to channel list") {
             userRobot.tapOnBackButton()

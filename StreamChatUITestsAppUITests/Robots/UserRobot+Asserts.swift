@@ -149,24 +149,20 @@ extension UserRobot {
 extension UserRobot {
     
     @discardableResult
-    func messageCell(withIndex index: Int? = nil,
+    func messageCell(withIndex index: Int? = 0,
                      file: StaticString = #filePath,
                      line: UInt = #line) -> XCUIElement {
-        let messageCell: XCUIElement
-        if let index = index {
-            let minExpectedCount = index + 1
-            let cells = cells.waitCount(minExpectedCount)
-            XCTAssertGreaterThanOrEqual(
-                cells.count,
-                minExpectedCount,
-                "Message cell is not found at index #\(index)",
-                file: file,
-                line: line
-            )
-            messageCell = cells.element(boundBy: index)
-        } else {
-            messageCell = cells.firstMatch
-        }
+        let messageIndex: Int = index ?? 0
+        let minExpectedCount = messageIndex + 1
+        let cells = cells.waitCount(minExpectedCount)
+        XCTAssertGreaterThanOrEqual(
+            cells.count,
+            minExpectedCount,
+            "Message cell is not found at index #\(messageIndex)",
+            file: file,
+            line: line
+        )
+        let messageCell = cells.element(boundBy: messageIndex)
         return messageCell
     }
 

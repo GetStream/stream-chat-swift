@@ -3,6 +3,8 @@
 //
 
 import XCTest
+import MobileCoreServices
+import ImageIO
 
 // Application
 let app = XCUIApplication()
@@ -14,6 +16,8 @@ class StreamTestCase: XCTestCase {
     var backendRobot: BackendRobot!
     var participantRobot: ParticipantRobot!
     var server: StreamMockServer!
+    var timer: Timer?
+    var screenShots: [XCUIScreenshot] = []
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -27,11 +31,13 @@ class StreamTestCase: XCTestCase {
         try super.setUpWithError()
         alertHandler()
         useMockServer()
+        server.recordVideo(name: testName)
         app.launch()
     }
 
     override func tearDownWithError() throws {
-        takeElementTree()
+        attachElementTree()
+        stopVideoOnTearDown()
         app.terminate()
         server.stop()
         server = nil
@@ -57,7 +63,7 @@ extension StreamTestCase {
         ])
     }
     
-    private func takeElementTree() {
+    private func attachElementTree() {
         let attachment = XCTAttachment(string: app.debugDescription)
         attachment.lifetime = .deleteOnSuccess
         add(attachment)
@@ -73,5 +79,21 @@ extension StreamTestCase {
             }
             return false
         }
+    }
+    
+    private func stopVideoOnTearDown() {
+        var delete = true
+        
+        if let testRun = testRun {
+            if testRun.failureCount > 0 || testRun.unexpectedExceptionCount > 0 {
+                delete = false
+            }
+        }
+        
+        server.recordVideo(name: testName, delete: delete, stop: true)
+    }
+    
+    private var testName: String {
+        String(name.split(separator: " ")[1].dropLast())
     }
 }

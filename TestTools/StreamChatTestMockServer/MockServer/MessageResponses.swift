@@ -155,6 +155,18 @@ public extension StreamMockServer {
         URLSession.shared.dataTask(with: request).resume()
     }
     
+    func recordVideo(name: String, delete: Bool = false, stop: Bool = false) {
+        var json: [String: Any] = ["delete": delete, "stop": stop]
+        let udid = ProcessInfo.processInfo.environment["SIMULATOR_UDID"] ?? ""
+        let urlString = "\(MockServerConfiguration.httpHost):4567/record_video/\(udid)/\(name)"
+        guard let url = URL(string: urlString) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = EndpointMethod.post.rawValue
+        request.httpBody = json.jsonToString().data(using: .utf8)
+        URLSession.shared.dataTask(with: request).resume()
+    }
+    
     private func messageUpdate(_ request: HttpRequest) throws -> HttpResponse {
         let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
         let message = findMessageById(messageId)
