@@ -35,7 +35,10 @@ final class PushNotification_Tests: StreamTestCase {
         linkToScenario(withId: 291)
 
         GIVEN("user goes to channel list") {
-            userRobot.login().openChannel().tapOnBackButton()
+            userRobot
+                .login()
+                .openChannel()      // this is required to let the mock server know
+                .tapOnBackButton() // which channel to use for push notifications
         }
         checkHappyPath(message: message, sender: sender)
     }
