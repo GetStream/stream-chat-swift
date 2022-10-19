@@ -13,9 +13,12 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
     var currentUserController: CurrentUserController_Mock!
     var cancellables: Set<AnyCancellable>!
 
+    let initialUnreadCount = UnreadCount(channels: 2, messages: 2)
+
     override func setUp() {
         super.setUp()
         currentUserController = CurrentUserController_Mock()
+        currentUserController.unreadCount_simulated = initialUnreadCount
         cancellables = []
     }
     
@@ -70,6 +73,6 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
             $0.currentUserController(controller!, didChangeCurrentUserUnreadCount: newUnreadCount)
         }
         
-        XCTAssertEqual(recording.output, [.noUnread, newUnreadCount])
+        XCTAssertEqual(recording.output, [initialUnreadCount, newUnreadCount])
     }
 }
