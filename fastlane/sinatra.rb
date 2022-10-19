@@ -9,15 +9,29 @@ end
 
 post '/record_video/:udid/:test_name' do
   recordings_dir = 'recordings'
-  FileUtils.mkdir_p(recordings_dir)
-  video_file = "#{recordings_dir}/#{params['test_name']}.mp4"
-
+  video_base_name = "#{recordings_dir}/#{params['test_name']}"
+  recordings = (0..Dir["#{recordings_dir}/*"].length + 1).to_a
   body = JSON.parse(request.body.read)
+  FileUtils.mkdir_p(recordings_dir)
+
+  video_file = ''
+  if body['delete']
+    recordings.reverse_each do |i|
+      video_file = "#{video_base_name}_#{i}.mp4"
+      break if File.exist?(video_file)
+    end
+  else
+    recordings.each do |i|
+      video_file = "#{video_base_name}_#{i}.mp4"
+      break unless File.exist?(video_file)
+    end
+  end
+
   if body['stop']
     simctl_processes = `pgrep simctl`.strip.split("\n")
     simctl_processes.each { |pid| `kill -s SIGINT #{pid}` }
     File.delete(video_file) if body['delete'] && File.exist?(video_file)
   else
-    puts `xcrun simctl io #{params['udid']} recordVideo --force #{video_file} &`
+    puts `xcrun simctl io #{params['udid']} recordVideo --codec h264 --force #{video_file} &`
   end
 end
