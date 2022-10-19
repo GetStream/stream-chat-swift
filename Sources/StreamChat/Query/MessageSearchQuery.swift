@@ -72,6 +72,29 @@ public extension Filter where Scope: AnyMessageSearchFilterScope {
     }
 }
 
+public enum SearchPagination: Encodable {
+    case offset(Int = 0, limit: Int)
+    case cursor(String?, limit: Int)
+
+    enum CodingKeys: String, CodingKey {
+        case limit
+        case next
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        switch self {
+        case let .offset(offset, limit):
+            try Pagination(pageSize: limit, offset: offset).encode(to: encoder)
+        case let .cursor(next, limit):
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(limit, forKey: .limit)
+            if let next = next {
+                try container.encode(next, forKey: .next)
+            }
+        }
+    }
+}
+
 public struct MessageSearchQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case query
@@ -86,7 +109,7 @@ public struct MessageSearchQuery: Encodable {
     
     public let sort: [Sorting<MessageSearchSortingKey>]
     
-    public var pagination: Pagination?
+    public var pagination: SearchPagination?
     
     var filterHash: String
     
@@ -99,7 +122,7 @@ public struct MessageSearchQuery: Encodable {
         self.channelFilter = channelFilter
         self.messageFilter = messageFilter
         self.sort = sort
-        pagination = Pagination(pageSize: pageSize)
+        pagination = SearchPagination.offset(0, limit: pageSize)
         filterHash = messageFilter.filterHash + channelFilter.filterHash
     }
     

@@ -81,7 +81,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     
     @Atomic var search_query: MessageSearchQuery?
     @Atomic var search_policy: UpdatePolicy?
-    @Atomic var search_completion: ((Error?) -> Void)?
+    @Atomic var search_completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)?
     
     @Atomic var clearSearchResults_query: MessageSearchQuery?
     @Atomic var clearSearchResults_completion: ((Error?) -> Void)?
@@ -324,7 +324,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     override func search(
         query: MessageSearchQuery,
         policy: UpdatePolicy = .merge,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil
     ) {
         search_query = query
         search_policy = policy
