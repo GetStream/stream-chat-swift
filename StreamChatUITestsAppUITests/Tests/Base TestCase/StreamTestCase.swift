@@ -16,8 +16,6 @@ class StreamTestCase: XCTestCase {
     var backendRobot: BackendRobot!
     var participantRobot: ParticipantRobot!
     var server: StreamMockServer!
-    var timer: Timer?
-    var screenShots: [XCUIScreenshot] = []
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -85,7 +83,8 @@ extension StreamTestCase {
         var delete = true
         
         if let testRun = testRun {
-            if testRun.failureCount > 0 || testRun.unexpectedExceptionCount > 0 {
+            let failureCount = testRun.failureCount + testRun.unexpectedExceptionCount
+            if failureCount > 0 && testRun.skipCount == 0 {
                 delete = false
             }
         }

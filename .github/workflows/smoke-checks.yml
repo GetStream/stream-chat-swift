@@ -139,8 +139,10 @@ jobs:
     - uses: actions/upload-artifact@v3
       if: failure()
       with:
-        name: recordings
-        path: fastlane/recordings
+        name: Failed Tests Data
+        path: |
+          fastlane/recordings
+          fastlane/sinatra_log.txt
 
   allure_testops_launch:
     name: Launch Allure TestOps

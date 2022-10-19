@@ -37,14 +37,11 @@ final class UserRobot: Robot {
         
         // TODO: CIS-1737
         if !cells.firstMatch.exists {
-            for _ in 0...5 {
-                server.stop()
-                app.terminate()
-                server.start(port: in_port_t(MockServerConfiguration.port))
-                sleep(1)
+            for _ in 0...10 {
+                deleteApp()
                 app.launch()
                 login()
-                cells.waitCount(minExpectedCount)
+                cells.waitCount(minExpectedCount, timeout: 2)
                 if cells.firstMatch.exists { break }
             }
         }
@@ -248,6 +245,25 @@ extension UserRobot {
     func tapOnPushNotification() -> Self {
         SpringBoard.notificationBanner.wait().safeTap()
         return self
+    }
+    
+    func deleteApp() {
+        app.terminate()
+
+        let icon = SpringBoard.testAppIcon
+        if icon.exists {
+            let iconFrame = icon.frame
+            let springboardFrame = SpringBoard.app.frame
+            icon.press(forDuration: 5)
+
+            // Tap the little "X" button at approximately where it is. The X is not exposed directly
+            let dx = (iconFrame.minX + 3) / springboardFrame.maxX
+            let dy = (iconFrame.minY + 3) / springboardFrame.maxY
+            SpringBoard.app.coordinate(withNormalizedOffset: CGVector(dx: dx, dy: dy)).tap()
+                                       
+            SpringBoard.deleteAppButton.tap()
+            SpringBoard.deleteButton.tap()
+        }
     }
     
     @discardableResult

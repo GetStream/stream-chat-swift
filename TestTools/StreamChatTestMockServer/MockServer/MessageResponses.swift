@@ -156,7 +156,7 @@ public extension StreamMockServer {
     }
     
     func recordVideo(name: String, delete: Bool = false, stop: Bool = false) {
-        var json: [String: Any] = ["delete": delete, "stop": stop]
+        let json: [String: Any] = ["delete": delete, "stop": stop]
         let udid = ProcessInfo.processInfo.environment["SIMULATOR_UDID"] ?? ""
         let urlString = "\(MockServerConfiguration.httpHost):4567/record_video/\(udid)/\(name)"
         guard let url = URL(string: urlString) else { return }

@@ -221,7 +221,7 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         SpringBoard.notificationBanner.wait()
-        let appIconValue = SpringBoard.appIcon.value as? String
+        let appIconValue = SpringBoard.testAppIcon.value as? String
         XCTAssertEqual(appIconValue?.contains("1"),
                        shouldBeVisible,
                        "Badge should be visible: \(shouldBeVisible)",
