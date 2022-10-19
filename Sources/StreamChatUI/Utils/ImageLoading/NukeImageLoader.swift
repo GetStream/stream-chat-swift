@@ -98,40 +98,25 @@ open class NukeImageLoader: ImageLoading {
         return imageTask
     }
 
-    public func loadMultipleImages(
-        from urls: [(URL, ImageLoaderOptions)],
-        completion: @escaping (([UIImage]) -> Void)
+    public func downloadMultipleImages(
+        from urlsAndOptions: [(url: URL, options: ImageDownloadOptions)],
+        completion: @escaping (([Result<UIImage, Error>]) -> Void)
     ) {
         let group = DispatchGroup()
-        var images: [UIImage] = []
+        var results: [Result<UIImage, Error>] = []
 
-        for (url, loaderOptions) in urls {
-            var placeholderIndex = 0
-
+        for (url, downloadOptions) in urlsAndOptions {
             group.enter()
 
-            let downloadOptions = ImageDownloadOptions(resize: loaderOptions.resize)
             downloadImage(from: url, with: downloadOptions) { result in
-                switch result {
-                case let .success(image):
-                    images.append(image)
-                case .failure:
-                    let placeholders = urls.map(\.1).compactMap(\.placeholder)
-                    if !placeholders.isEmpty {
-                        // Rotationally use the placeholders
-                        images.append(placeholders[placeholderIndex])
-                        placeholderIndex += 1
-                        if placeholderIndex == placeholders.count {
-                            placeholderIndex = 0
-                        }
-                    }
-                }
+                results.append(result)
+
                 group.leave()
             }
         }
 
         group.notify(queue: .main) {
-            completion(images)
+            completion(results)
         }
     }
 }

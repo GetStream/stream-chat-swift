@@ -25,8 +25,13 @@ final class ImageLoader_Mock: ImageLoading {
         return nil
     }
 
-    func loadMultipleImages(from urls: [(URL, ImageLoaderOptions)], completion: @escaping (([UIImage]) -> Void)) {
-        let images = urls.map(\.0).map { UIImage(data: try! Data(contentsOf: $0))! }
-        completion(images)
+    func downloadMultipleImages(
+        from urlsAndOptions: [(url: URL, options: ImageDownloadOptions)],
+        completion: @escaping (([Result<UIImage, Error>]) -> Void)
+    ) {
+        let results = urlsAndOptions.map(\.0).map {
+            Result<UIImage, Error>.success(UIImage(data: try! Data(contentsOf: $0))!)
+        }
+        completion(results)
     }
 }

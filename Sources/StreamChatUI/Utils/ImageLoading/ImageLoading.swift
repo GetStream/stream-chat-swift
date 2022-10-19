@@ -7,19 +7,6 @@ import UIKit
 
 /// A protocol that provides a set of functions for loading images.
 public protocol ImageLoading: AnyObject {
-    /// Download an image from the given `URL`.
-    /// - Parameters:
-    ///   - url: The `URL` of the image.
-    ///   - options: The loading options on how to fetch the image.
-    ///   - completion: The completion when the loading is finished.
-    /// - Returns: A cancellable task.
-    @discardableResult
-    func downloadImage(
-        from url: URL,
-        with options: ImageDownloadOptions,
-        completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
-    ) -> Cancellable?
-
     /// Load an image into an imageView from the given `URL`.
     /// - Parameters:
     ///   - imageView: The image view where the image will be loaded.
@@ -35,13 +22,27 @@ public protocol ImageLoading: AnyObject {
         completion: ((_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
+    /// Download an image from the given `URL`.
+    /// - Parameters:
+    ///   - url: The `URL` of the image.
+    ///   - options: The loading options on how to fetch the image.
+    ///   - completion: The completion when the loading is finished.
+    /// - Returns: A cancellable task.
+    @discardableResult
+    func downloadImage(
+        from url: URL,
+        with options: ImageDownloadOptions,
+        completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
+    ) -> Cancellable?
+
     /// Load a batch of images and get notified when all of them complete loading.
     /// - Parameters:
-    ///   - urls: A tuple of urls and the options on how to fetch the image.
+    ///   - urlsAndOptions: A tuple of urls and the options on how to fetch the image.
     ///   - completion: The completion when the loading is finished.
-    func loadMultipleImages(
-        from urls: [(URL, ImageLoaderOptions)],
-        completion: @escaping (([UIImage]) -> Void)
+    ///   It returns an array of image and errors in case the image failed to load.
+    func downloadMultipleImages(
+        from urlsAndOptions: [(url: URL, options: ImageDownloadOptions)],
+        completion: @escaping (([Result<UIImage, Error>]) -> Void)
     )
 
     // MARK: - Deprecations
@@ -186,16 +187,32 @@ public extension ImageLoading {
         imageCDN: ImageCDN,
         completion: @escaping (([UIImage]) -> Void)
     ) {
-        let options = placeholders.map {
-            ImageLoaderOptions(
-                resize: .init(thumbnailSize),
-                placeholder: $0
-            )
+        let urlsAndOptions = urls.map { url in
+            (url: url, options: ImageDownloadOptions(resize: .init(thumbnailSize)))
         }
 
-        let urls = zip(urls, options)
-            .map { ($0.0, $0.1) }
+        downloadMultipleImages(from: urlsAndOptions) { results in
+            var images: [UIImage] = []
 
-        loadMultipleImages(from: urls, completion: completion)
+            for result in results {
+                var placeholderIndex = 0
+
+                switch result {
+                case let .success(image):
+                    images.append(image)
+                case .failure:
+                    if !placeholders.isEmpty {
+                        // Rotationally use the placeholders
+                        images.append(placeholders[placeholderIndex])
+                        placeholderIndex += 1
+                        if placeholderIndex == placeholders.count {
+                            placeholderIndex = 0
+                        }
+                    }
+                }
+            }
+
+            completion(images)
+        }
     }
 }
