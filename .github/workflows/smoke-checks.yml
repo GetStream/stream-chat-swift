@@ -140,7 +140,7 @@ jobs:
   allure_testops_launch:
     name: Launch Allure TestOps
     runs-on: macos-12
-    if: ${{ github.event_name != 'push' }}
+    # if: ${{ github.event_name != 'push' }}
     outputs:
       launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
     steps:
