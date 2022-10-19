@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - test-flaky-push-notification-tests
 
   pull_request:
     branches:
@@ -25,78 +26,78 @@ env:
   IOS_SIMULATOR_DEVICE: "iPhone 12 Pro (16.0)"
 
 jobs:
-  automated-code-review:
-    name: Automated Code Review
-    runs-on: macos-12
-    if: ${{ github.event_name != 'push' }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/bootstrap
-      - name: Run Danger
-        run: bundle exec danger
-        env:
-          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
-      - name: Run Linting
-        run: ./Scripts/run-linter.sh
+  # automated-code-review:
+  #   name: Automated Code Review
+  #   runs-on: macos-12
+  #   if: ${{ github.event_name != 'push' }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: ./.github/actions/bootstrap
+  #     - name: Run Danger
+  #       run: bundle exec danger
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+  #     - name: Run Linting
+  #       run: ./Scripts/run-linter.sh
 
-  build-and-test-debug:
-    name: Test LLC (Debug)
-    runs-on: macos-12
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_EVENT: ${{ toJson(github.event) }}
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 100
-    - uses: actions/setup-python@v3.0.0
-      with:
-        python-version: 3.8
-        cache: 'pip'
-    - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_SONAR: true
-    - name: Run Fastlane Linting
-      run: bundle exec fastlane rubocop
-    - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
-      timeout-minutes: 30
-    - name: Get branch name
-      id: get_branch_name
-      run: echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
-    - name: Run Sonar analysis
-      run: bundle exec fastlane sonar_upload
-      env:
-        BRANCH_NAME: ${{ steps.get_branch_name.outputs.branch }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        PR_NUMBER: ${{ github.event.number }}
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Test LLC (Debug)"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
+  # build-and-test-debug:
+  #   name: Test LLC (Debug)
+  #   runs-on: macos-12
+  #   env:
+  #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     GITHUB_EVENT: ${{ toJson(github.event) }}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #     with:
+  #       fetch-depth: 100
+  #   - uses: actions/setup-python@v3.0.0
+  #     with:
+  #       python-version: 3.8
+  #       cache: 'pip'
+  #   - uses: ./.github/actions/bootstrap
+  #     env:
+  #       INSTALL_SONAR: true
+  #   - name: Run Fastlane Linting
+  #     run: bundle exec fastlane rubocop
+  #   - name: Run LLC Tests (Debug)
+  #     run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
+  #     timeout-minutes: 30
+  #   - name: Get branch name
+  #     id: get_branch_name
+  #     run: echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
+  #   - name: Run Sonar analysis
+  #     run: bundle exec fastlane sonar_upload
+  #     env:
+  #       BRANCH_NAME: ${{ steps.get_branch_name.outputs.branch }}
+  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       PR_NUMBER: ${{ github.event.number }}
+  #   - uses: 8398a7/action-slack@v3
+  #     with:
+  #       status: ${{ job.status }}
+  #       text: "You shall not pass!"
+  #       job_name: "Test LLC (Debug)"
+  #       fields: message,commit,author,action,workflow,job,took
+  #     env:
+  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
+  #     if: ${{ github.event_name == 'push' && failure() }}
 
-  build-and-test-ui-debug:
-    name: Test UI (Debug)
-    runs-on: macos-12
-    if: ${{ github.event_name != 'push' }}
-    steps:
-    - uses: actions/checkout@v2
-    - uses: ./.github/actions/bootstrap
-    - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}"
-      timeout-minutes: 25
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
-        IOS_SIMULATOR_DEVICE: "iPhone 12 Pro (15.5)"
-        XCODE_VERSION: "13.4.1"
+  # build-and-test-ui-debug:
+  #   name: Test UI (Debug)
+  #   runs-on: macos-12
+  #   if: ${{ github.event_name != 'push' }}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: Run UI Tests (Debug)
+  #     run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}"
+  #     timeout-minutes: 25
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       GITHUB_EVENT: ${{ toJson(github.event) }}
+  #       IOS_SIMULATOR_DEVICE: "iPhone 12 Pro (15.5)"
+  #       XCODE_VERSION: "13.4.1"
 
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)
@@ -107,7 +108,7 @@ jobs:
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
     strategy:
       matrix:
-        batch: [0, 1, 2]
+        batch: [0]
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
@@ -157,79 +158,79 @@ jobs:
       run: echo "::set-output name=launch_id::${{env.LAUNCH_ID}}"
       if: env.LAUNCH_ID != ''
 
-  build-xcode13:
-    name: Build LLC + UI (Xcode 13)
-    runs-on: macos-12
-    if: ${{ github.event_name != 'push' }}
-    env:
-      XCODE_VERSION: "13"
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_EVENT: ${{ toJson(github.event) }}
-    steps:
-    - uses: actions/checkout@v2
-    - uses: ./.github/actions/bootstrap
-    - name: List Xcode versions xcversion sees
-      run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
-    - name: Build LLC (Xcode 13)
-      run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true
-      timeout-minutes: 25
-    - name: Build UI (Xcode 13)
-      run: bundle exec fastlane test_ui device:"iPhone 13" build_for_testing:true
-      timeout-minutes: 25
+  # build-xcode13:
+  #   name: Build LLC + UI (Xcode 13)
+  #   runs-on: macos-12
+  #   if: ${{ github.event_name != 'push' }}
+  #   env:
+  #     XCODE_VERSION: "13"
+  #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     GITHUB_EVENT: ${{ toJson(github.event) }}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: List Xcode versions xcversion sees
+  #     run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
+  #   - name: Build LLC (Xcode 13)
+  #     run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true
+  #     timeout-minutes: 25
+  #   - name: Build UI (Xcode 13)
+  #     run: bundle exec fastlane test_ui device:"iPhone 13" build_for_testing:true
+  #     timeout-minutes: 25
 
-  build-apps:
-    name: Build Sample + Demo Apps
-    runs-on: macos-12
-    if: ${{ github.event_name != 'push' }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_EVENT: ${{ toJson(github.event) }}
-    steps:
-    - uses: actions/checkout@v2
-    - uses: ./.github/actions/bootstrap
-    - name: Build Sample App
-      run: bundle exec fastlane build_sample
-      timeout-minutes: 10
-    - name: Build Demo App
-      run: bundle exec fastlane build_demo
-      timeout-minutes: 10
-    - name: Build iMessageClone App
-      run: bundle exec fastlane build_imessage_clone
-      timeout-minutes: 10
-    - name: Build SlackClone App
-      run: bundle exec fastlane build_slack_clone
-      timeout-minutes: 10
-    - name: Build MessengerClone App
-      run: bundle exec fastlane build_messenger_clone
-      timeout-minutes: 10
-    - name: Build YouTubeClone App
-      run: bundle exec fastlane build_youtube_clone
-      timeout-minutes: 10
+  # build-apps:
+  #   name: Build Sample + Demo Apps
+  #   runs-on: macos-12
+  #   if: ${{ github.event_name != 'push' }}
+  #   env:
+  #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     GITHUB_EVENT: ${{ toJson(github.event) }}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: Build Sample App
+  #     run: bundle exec fastlane build_sample
+  #     timeout-minutes: 10
+  #   - name: Build Demo App
+  #     run: bundle exec fastlane build_demo
+  #     timeout-minutes: 10
+  #   - name: Build iMessageClone App
+  #     run: bundle exec fastlane build_imessage_clone
+  #     timeout-minutes: 10
+  #   - name: Build SlackClone App
+  #     run: bundle exec fastlane build_slack_clone
+  #     timeout-minutes: 10
+  #   - name: Build MessengerClone App
+  #     run: bundle exec fastlane build_messenger_clone
+  #     timeout-minutes: 10
+  #   - name: Build YouTubeClone App
+  #     run: bundle exec fastlane build_youtube_clone
+  #     timeout-minutes: 10
 
-  spm-integration:
-    name: Test Integration (SPM)
-    runs-on: macos-12
-    if: ${{ github.event_name != 'push' }}
-    steps:
-    - uses: actions/checkout@v2
-    - uses: ./.github/actions/bootstrap
-    - name: Build Test Project
-      run: bundle exec fastlane spm_integration
-      timeout-minutes: 25
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
+  # spm-integration:
+  #   name: Test Integration (SPM)
+  #   runs-on: macos-12
+  #   if: ${{ github.event_name != 'push' }}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: Build Test Project
+  #     run: bundle exec fastlane spm_integration
+  #     timeout-minutes: 25
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       GITHUB_EVENT: ${{ toJson(github.event) }}
 
-  cocoapods-integration:
-    name: Test Integration (CocoaPods)
-    runs-on: macos-12
-    if: ${{ github.event_name != 'push' }}
-    steps:
-    - uses: actions/checkout@v2
-    - uses: ./.github/actions/bootstrap
-    - name: Build Test Project
-      run: bundle exec fastlane cocoapods_integration
-      timeout-minutes: 25
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
+  # cocoapods-integration:
+  #   name: Test Integration (CocoaPods)
+  #   runs-on: macos-12
+  #   if: ${{ github.event_name != 'push' }}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: Build Test Project
+  #     run: bundle exec fastlane cocoapods_integration
+  #     timeout-minutes: 25
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       GITHUB_EVENT: ${{ toJson(github.event) }}

@@ -25,24 +25,26 @@ final class PushNotification_Tests: StreamTestCase {
     func test_goToBackgroundFromMessageList_and_tapOnPushNotification() throws {
         linkToScenario(withId: 95)
         
-        throw XCTSkip("This test is flaky at the moment")
-        
         GIVEN("user goes to message list") {
             userRobot.login().openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage("Hey")
         }
         checkHappyPath(message: message, sender: sender)
     }
     
     func test_goToBackgroundFromChannelList_and_tapOnPushNotification() throws {
         linkToScenario(withId: 291)
-        
-        throw XCTSkip("This test is flaky at the moment")
 
-        GIVEN("user goes to channel list") {
-            userRobot
-                .login()
-                .openChannel()      // this is required to let the mock server know
-                .tapOnBackButton() // which channel to use for push notifications
+        GIVEN("user goes to message list") {
+            userRobot.login().openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage("Hey")
+        }
+        AND("user goes to channel list") {
+            userRobot.tapOnBackButton()
         }
         checkHappyPath(message: message, sender: sender)
     }
