@@ -35,7 +35,3 @@ post '/record_video/:udid/:test_name' do
     puts `xcrun simctl io #{params['udid']} recordVideo --codec h264 --force #{video_file} &`
   end
 end
-
-post '/uninstall/:udid/:bundle_id' do
-  puts `xcrun simctl uninstall #{params['udid']} #{params['bundle_id']}`
-end
