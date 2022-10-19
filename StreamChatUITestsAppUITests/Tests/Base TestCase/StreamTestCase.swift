@@ -84,9 +84,7 @@ extension StreamTestCase {
         
         if let testRun = testRun {
             let failureCount = testRun.failureCount + testRun.unexpectedExceptionCount
-            if failureCount > 0 && testRun.skipCount == 0 {
-                delete = false
-            }
+            if failureCount > 0 { delete = false }
         }
         
         server.recordVideo(name: testName, delete: delete, stop: true)

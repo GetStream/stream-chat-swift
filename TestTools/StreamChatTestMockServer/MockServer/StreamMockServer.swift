@@ -33,7 +33,6 @@ public final class StreamMockServer {
     public func start(port: UInt16) {
         do {
             try server.start(port)
-            sleep(3)
             print("Server status: \(server.state). Port: \(port)")
         } catch {
             print("Server start error: \(error)")

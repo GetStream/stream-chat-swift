@@ -26,6 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         registerForPushNotifications()
         return true
     }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        chat.logOut()
+    }
 
     func setupUI() {
         let window = UIWindow()
