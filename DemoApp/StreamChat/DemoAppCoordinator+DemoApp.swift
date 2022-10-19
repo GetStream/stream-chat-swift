@@ -6,25 +6,9 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class DemoAppCoordinator: NSObject {
-    private let window: UIWindow
-    private let chat: StreamChatWrapper
-    private let pushNotifications: PushNotifications
+// MARK: - Navigation
 
-    init(
-        window: UIWindow,
-        chat: StreamChatWrapper,
-        pushNotifications: PushNotifications
-    ) {
-        self.window = window
-        self.chat = chat
-        self.pushNotifications = pushNotifications
-        
-        super.init()
-
-        handlePushNotificationResponse()
-    }
-    
+extension DemoAppCoordinator {
     func start(cid: ChannelId? = nil) {
         if let user = UserDefaults.shared.currentUser {
             showChat(for: .credentials(user), cid: cid, animated: false)
@@ -32,26 +16,7 @@ final class DemoAppCoordinator: NSObject {
             showLogin(animated: false)
         }
     }
-
-    func handlePushNotificationResponse() {
-        pushNotifications.listenToNotificationsResponse { [weak self] response in
-            guard case UNNotificationDefaultActionIdentifier = response.actionIdentifier else {
-                return
-            }
-            guard
-                let chatNotificationInfo = self?.chat.notificationInfo(for: response),
-                let cid = chatNotificationInfo.cid else {
-                return
-            }
-
-            self?.start(cid: cid)
-        }
-    }
-}
-
-// MARK: - Navigation
-
-private extension DemoAppCoordinator {
+    
     func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool) {
         logIn(as: user)
         
@@ -74,21 +39,11 @@ private extension DemoAppCoordinator {
             set(rootViewController: loginVC, animated: animated)
         }
     }
-    
-    func set(rootViewController: UIViewController, animated: Bool) {
-        if animated {
-            UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft) {
-                self.window.rootViewController = rootViewController
-            }
-        } else {
-            window.rootViewController = rootViewController
-        }
-    }
 }
 
 // MARK: - Screens factory
 
-private extension DemoAppCoordinator {
+extension DemoAppCoordinator {
     func makeLoginVC(onUserSelection: @escaping (DemoUserType) -> Void) -> UIViewController? {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let loginNVC = storyboard.instantiateInitialViewController() as? UINavigationController,

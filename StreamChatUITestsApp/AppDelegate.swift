@@ -8,7 +8,15 @@ import UserNotifications
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    private let pushNotifications = PushNotifications()
+    
     var window: UIWindow?
+    private var coordinator: DemoAppCoordinator!
+    
+    // Stream Chat
+    var chat: StreamChatWrapper {
+        StreamChatWrapper.shared
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -20,13 +28,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func setupUI() {
-        // Empty root view controller
-        let rootViewController = ViewController()
+        let window = UIWindow()
+        window.makeKeyAndVisible()
+        self.window = window
+        makeCoordinator(in: window)
+    }
+    
+    func makeCoordinator(in window: UIWindow) {
+        // Hook on registration for push notifications.
+        // This closure is called once the chat user is connected.
+        chat.onRemotePushRegistration = { [weak self] in
+            self?.pushNotifications.registerForPushNotifications()
+        }
 
-        // Embed in navigation controller
-        window = UIWindow()
-        window?.rootViewController = UINavigationController(rootViewController: rootViewController)
-        window?.makeKeyAndVisible()
+        // Create coordinator for this demo app
+        coordinator = DemoAppCoordinator(
+            window: window,
+            chat: chat,
+            pushNotifications: pushNotifications
+        )
+        coordinator.start()
     }
     
     func disableAnimations() {
