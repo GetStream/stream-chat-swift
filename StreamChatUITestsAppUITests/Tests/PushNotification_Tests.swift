@@ -25,6 +25,8 @@ final class PushNotification_Tests: StreamTestCase {
     func test_goToBackgroundFromMessageList_and_tapOnPushNotification() throws {
         linkToScenario(withId: 95)
         
+        throw XCTSkip("This test is flaky at the moment")
+        
         GIVEN("user goes to message list") {
             userRobot.login().openChannel()
         }
@@ -33,6 +35,8 @@ final class PushNotification_Tests: StreamTestCase {
     
     func test_goToBackgroundFromChannelList_and_tapOnPushNotification() throws {
         linkToScenario(withId: 291)
+        
+        throw XCTSkip("This test is flaky at the moment")
 
         GIVEN("user goes to channel list") {
             userRobot
