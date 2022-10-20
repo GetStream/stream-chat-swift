@@ -67,6 +67,10 @@ public extension StreamMockServer {
         server.register(MockEndpoint.truncate) { [weak self] request in
             self?.channelTruncation(request)
         }
+        server.register(MockEndpoint.sync) { request in
+            // TODO:
+            .ok(.json([JSONKey.events: []]))
+        }
     }
 
     func channelIndex(withId id: String) -> Int? {

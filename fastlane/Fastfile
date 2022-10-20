@@ -483,14 +483,14 @@ lane :test_e2e_mock do |options|
   ios = options[:ios]
   device = ios && ios != 'latest' ? "#{options[:device]} (#{ios})" : options[:device]
   build_for_testing = is_ci && options[:cron].nil?
-  number_of_retries = options[:cron] ? 2 : 1
 
   scan_options = {
     project: 'StreamChat.xcodeproj',
     scheme: 'StreamChatUITestsApp',
     testplan: 'StreamChatUITestsApp',
+    result_bundle: true,
     devices: device,
-    number_of_retries: number_of_retries
+    number_of_retries: 3 # TODO: CIS-1737
   }
   scan(scan_options.merge(clean: true, build_for_testing: build_for_testing))
 

@@ -13,6 +13,12 @@ import StreamChatUI
 extension StreamChatWrapper {
     
     func setUpChat() {
+        // Set the log level
+        LogConfig.level = .debug
+        LogConfig.formatters = [
+            PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
+        ]
+        
         var config = ChatClientConfig(apiKey: .init(apiKeyString))
         config.isLocalStorageEnabled = settings.isLocalStorageEnabled.isOn
         config.staysConnectedInBackground = settings.staysConnectedInBackground.isOn

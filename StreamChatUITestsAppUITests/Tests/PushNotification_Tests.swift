@@ -22,10 +22,8 @@ final class PushNotification_Tests: StreamTestCase {
         }
     }
     
-    func test_goToBackgroundFromMessageList_and_tapOnPushNotification() throws {
+    func test_pushNotificationFromMessageList() throws {
         linkToScenario(withId: 95)
-        
-        throw XCTSkip("This test is flaky at the moment")
         
         GIVEN("user goes to message list") {
             userRobot.login().openChannel()
@@ -33,10 +31,8 @@ final class PushNotification_Tests: StreamTestCase {
         checkHappyPath(message: message, sender: sender)
     }
     
-    func test_goToBackgroundFromChannelList_and_tapOnPushNotification() throws {
+    func test_pushNotificationFromChannelList() throws {
         linkToScenario(withId: 291)
-        
-        throw XCTSkip("This test is flaky at the moment")
 
         GIVEN("user goes to channel list") {
             userRobot
@@ -261,7 +257,7 @@ final class PushNotification_Tests: StreamTestCase {
             userRobot.assertPushNotification(withText: message, from: sender)
         }
         WHEN("user taps on the push notification") {
-            userRobot.tapOnPushNotification().assertMessage(message)
+            userRobot.tapOnPushNotification()
         }
         THEN("message list updates") {
             userRobot.assertMessage(message)
