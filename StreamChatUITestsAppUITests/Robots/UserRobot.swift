@@ -41,6 +41,7 @@ final class UserRobot: Robot {
                 server.stop()
                 app.terminate()
                 server.start(port: in_port_t(MockServerConfiguration.port))
+                sleep(1)
                 app.launch()
                 login()
 //                cells.waitCount(minExpectedCount, timeout: 3)
