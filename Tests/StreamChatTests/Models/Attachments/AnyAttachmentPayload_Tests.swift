@@ -12,7 +12,11 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         let url: URL = .localYodaImage
         let type: AttachmentType = .image
         let extraData = PhotoMetadata.random
-        let anyPayload = try AnyAttachmentPayload(localFileURL: url, attachmentType: type, extraData: extraData)
+        let anyPayload = try AnyAttachmentPayload(
+            attachmentType: type,
+            localFileURL: url,
+            extraData: extraData
+        )
         
         // Assert any payload fields are correct.
         let payload = try XCTUnwrap(anyPayload.payload as? ImageAttachmentPayload)
@@ -29,7 +33,11 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         let url: URL = .localYodaImage
         let type: AttachmentType = .video
         let extraData = PhotoMetadata.random
-        let anyPayload = try AnyAttachmentPayload(localFileURL: url, attachmentType: type, extraData: extraData)
+        let anyPayload = try AnyAttachmentPayload(
+            attachmentType: type,
+            localFileURL: url,
+            extraData: extraData
+        )
 
         // Assert any payload fields are correct.
         let payload = try XCTUnwrap(anyPayload.payload as? VideoAttachmentPayload)
@@ -46,7 +54,11 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         let url: URL = .localYodaQuote
         let type: AttachmentType = .file
         let extraData = PhotoMetadata.random
-        let anyPayload = try AnyAttachmentPayload(localFileURL: url, attachmentType: type, extraData: extraData)
+        let anyPayload = try AnyAttachmentPayload(
+            attachmentType: type,
+            localFileURL: url,
+            extraData: extraData
+        )
 
         // Assert any payload fields are correct.
         let payload = try XCTUnwrap(anyPayload.payload as? FileAttachmentPayload)
@@ -62,8 +74,8 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertThrowsError(
             // Try to create uploadable attachment with custom type
             try AnyAttachmentPayload(
-                localFileURL: .localYodaQuote,
-                attachmentType: .init(rawValue: .unique)
+                attachmentType: .init(rawValue: .unique),
+                localFileURL: .localYodaQuote
             )
         ) { error in
             XCTAssertTrue(error is ClientError.UnsupportedUploadableAttachmentType)
@@ -76,8 +88,8 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertThrowsError(
             // Try to create uploadable attachment with invalid extra data
             try AnyAttachmentPayload(
-                localFileURL: .localYodaQuote,
                 attachmentType: .init(rawValue: .unique),
+                localFileURL: .localYodaQuote,
                 extraData: String.unique
             )
         )

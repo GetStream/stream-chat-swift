@@ -86,7 +86,6 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         let expectedJsonObject: [String: Any] = [
             "title": "Image1.png",
             "image_url": "dummyURL",
-            "thumb_url": "dummyPreviewURL",
             "original_width": 100,
             "original_height": 50,
             "isVerified": true
