@@ -146,26 +146,8 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         }
 
         components.imageLoader.downloadMultipleImages(from: urlsAndOptions) { results in
-            var images: [UIImage] = []
-
-            for result in results {
-                var placeholderIndex = 0
-
-                switch result {
-                case let .success(image):
-                    images.append(image)
-                case .failure:
-                    if !placeholderImages.isEmpty {
-                        // Rotationally use the placeholders
-                        images.append(placeholderImages[placeholderIndex])
-                        placeholderIndex += 1
-                        if placeholderIndex == placeholderImages.count {
-                            placeholderIndex = 0
-                        }
-                    }
-                }
-            }
-
+            let imagesMapper = ImageResultsMapper(results: results)
+            let images = imagesMapper.mapErrors(with: placeholderImages)
             completion(images, channelId)
         }
     }

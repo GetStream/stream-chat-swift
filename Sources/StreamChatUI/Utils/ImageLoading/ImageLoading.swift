@@ -192,26 +192,8 @@ public extension ImageLoading {
         }
 
         downloadMultipleImages(from: urlsAndOptions) { results in
-            var images: [UIImage] = []
-
-            for result in results {
-                var placeholderIndex = 0
-
-                switch result {
-                case let .success(image):
-                    images.append(image)
-                case .failure:
-                    if !placeholders.isEmpty {
-                        // Rotationally use the placeholders
-                        images.append(placeholders[placeholderIndex])
-                        placeholderIndex += 1
-                        if placeholderIndex == placeholders.count {
-                            placeholderIndex = 0
-                        }
-                    }
-                }
-            }
-
+            let imagesMapper = ImageResultsMapper(results: results)
+            let images = imagesMapper.mapErrors(with: placeholders)
             completion(images)
         }
     }
