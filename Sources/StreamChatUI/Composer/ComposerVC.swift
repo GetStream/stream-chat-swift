@@ -835,6 +835,17 @@ open class ComposerVC: _ViewController,
         suggestionsVC.removeFromParent()
         suggestionsVC.view.removeFromSuperview()
     }
+
+    /// Creates and adds an attachment from the given URL to the `content`
+    /// - Parameters:
+    ///   - url: The URL of the attachment
+    ///   - type: The type of the attachment
+    open func addAttachmentToContent(
+        from url: URL,
+        type: AttachmentType
+    ) throws {
+        try addAttachmentToContent(from: url, type: type, info: [:])
+    }
     
     /// Creates and adds an attachment from the given URL to the `content`
     /// - Parameters:
