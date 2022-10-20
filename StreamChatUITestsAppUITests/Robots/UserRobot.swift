@@ -37,11 +37,10 @@ final class UserRobot: Robot {
         
         // TODO: CIS-1737
         if !cells.firstMatch.exists {
-            for _ in 0...15 {
+            for _ in 0...30 {
                 app.terminate()
                 app.launch()
                 login()
-                cells.waitCount(minExpectedCount, timeout: 2)
                 if cells.firstMatch.exists { break }
             }
         }
