@@ -19,9 +19,7 @@ class StreamTestCase: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
-        server = StreamMockServer()
-        server.configure()
-        server.start(port: in_port_t(MockServerConfiguration.port))
+        startMockServer()
         participantRobot = ParticipantRobot(server)
         backendRobot = BackendRobot(server)
         userRobot = UserRobot(server)
@@ -35,7 +33,7 @@ class StreamTestCase: XCTestCase {
 
     override func tearDownWithError() throws {
         attachElementTree()
-        stopVideoOnTearDown()
+        stopVideo()
         app.terminate()
         server.stop()
         server = nil
@@ -79,15 +77,25 @@ extension StreamTestCase {
         }
     }
     
-    private func stopVideoOnTearDown() {
-        var delete = true
-        
+    private func startMockServer() {
+        server = StreamMockServer()
+        server.configure()
+        let result = server.start(port: in_port_t(MockServerConfiguration.port))
+        if !result {
+            XCTFail("Mock server failed on start")
+        }
+    }
+    
+    private func stopVideo() {
+        server.recordVideo(name: testName, delete: !isTestFailed(), stop: true)
+    }
+    
+    private func isTestFailed() -> Bool {
         if let testRun = testRun {
             let failureCount = testRun.failureCount + testRun.unexpectedExceptionCount
-            if failureCount > 0 { delete = false }
+            return failureCount > 0
         }
-        
-        server.recordVideo(name: testName, delete: delete, stop: true)
+        return false
     }
     
     private var testName: String {

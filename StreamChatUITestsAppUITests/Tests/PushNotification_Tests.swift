@@ -22,7 +22,7 @@ final class PushNotification_Tests: StreamTestCase {
         }
     }
     
-    func test_goToBackgroundFromMessageList_and_tapOnPushNotification() throws {
+    func test_pushNotificationFromMessageList() throws {
         linkToScenario(withId: 95)
         
         GIVEN("user goes to message list") {
@@ -31,7 +31,7 @@ final class PushNotification_Tests: StreamTestCase {
         checkHappyPath(message: message, sender: sender)
     }
     
-    func test_goToBackgroundFromChannelList_and_tapOnPushNotification() throws {
+    func test_pushNotificationFromChannelList() throws {
         linkToScenario(withId: 291)
 
         GIVEN("user goes to message list") {
