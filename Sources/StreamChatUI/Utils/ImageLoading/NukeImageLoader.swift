@@ -20,7 +20,7 @@ open class NukeImageLoader: ImageLoading {
     }
 
     @discardableResult
-    public func loadImage(
+    open func loadImage(
         into imageView: UIImageView,
         from url: URL?,
         with options: ImageLoaderOptions,
@@ -66,7 +66,7 @@ open class NukeImageLoader: ImageLoading {
     }
 
     @discardableResult
-    public func downloadImage(
+    open func downloadImage(
         from url: URL,
         with options: ImageDownloadOptions = ImageDownloadOptions(),
         completion: @escaping ((Result<UIImage, Error>) -> Void)
@@ -98,7 +98,7 @@ open class NukeImageLoader: ImageLoading {
         return imageTask
     }
 
-    public func downloadMultipleImages(
+    open func downloadMultipleImages(
         from urlsAndOptions: [(url: URL, options: ImageDownloadOptions)],
         completion: @escaping (([Result<UIImage, Error>]) -> Void)
     ) {
