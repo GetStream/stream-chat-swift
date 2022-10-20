@@ -37,10 +37,13 @@ final class UserRobot: Robot {
         
         // TODO: CIS-1737
         if !cells.firstMatch.exists {
-            for _ in 0...30 {
+            for _ in 0...20 {
+                server.stop()
                 app.terminate()
+                server.start(port: in_port_t(MockServerConfiguration.port))
                 app.launch()
                 login()
+//                cells.waitCount(minExpectedCount, timeout: 3)
                 if cells.firstMatch.exists { break }
             }
         }
