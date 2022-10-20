@@ -20,8 +20,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🚨 Minor Breaking Changes
 Although we don't usually ship breaking changes in minor releases, in some cases where they are minimal and important, we have to do them to keep improving the SDK long-term. Either way, these changes are for advanced customizations which won't affect most of the customers.
 
-- `ComposerVC.addAttachmentToContent()` has a new `info` property.
-- The `ImageCDN` protocol has some minor breaking changes that were needed to support the new Stream CDN v2 and to make it more scalabe in the future. If you have your own implementation of the `ImageCDN`, the old `urlRequest(forImage)` is now the `urlRequest(forImageUrl:resize:)`, and the `cachingKey(fromImage)` is now `cachingKey(fromImageUrl:)`, the `thumbnail(originalURL:preferreSize:)` was removed since it is not needed and it is handled by `urlRequest(forImageUrl:resize:)`. So mostly it was naming changes. For the `urlRequest(forImageUrl:resize:)`, if your CDN does not support resizing, you can just ignore it, and copy the exact some implementation of the old `urlRequest(forImage)`.
+- The `ImageCDN` protocol has some minor breaking changes that were needed to support the new Stream CDN v2 and to make it more scalable in the future.
+  - `urlRequest(forImage:)` -> `urlRequest(forImageUrl:resize:)`.
+  - `cachingKey(forImage:)` -> `cachingKey(forImageUrl:)`.
+  - Removed `thumbnail(originalURL:preferreSize:)`. This is now handled by `urlRequest(forImageUrl:resize:)` as well. If your CDN does not support resizing, you can ignore the resize parameter.
 
 # [4.22.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.22.0)
 _September 26, 2022_
