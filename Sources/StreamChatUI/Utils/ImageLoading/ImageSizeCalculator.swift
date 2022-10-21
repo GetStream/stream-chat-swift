@@ -33,6 +33,24 @@ struct ImageSizeCalculator {
             return originalSizeInPoints
         }
 
+        /// The formula to calculate the new resolution is based on the max pixels and
+        /// the original aspect ratio. To get the formula, a system of questions is needed.
+        ///
+        /// { w * h = maxResolutionTotalPixels }
+        /// { w / h = originalRatio }
+        /// ->
+        /// { w = maxResolutionTotalPixels / h
+        /// { h = w / originalRatio
+        /// ->
+        /// { w = maxResolutionTotalPixels / (w / originalRatio)
+        /// { h = w / originalRatio
+        /// ->
+        /// { wˆ2 / originalRatio = maxResolutionTotalPixels
+        /// { h = w / originalRatio
+        /// ->
+        /// { w = sqrt(maxResolutionTotalPixels * originalRatio)
+        /// { h = w / originalRatio
+        ///
         let originalRatio = originalWidthInPixels / originalHeightInPixels
         let newWidthInPixels = sqrt(maxResolutionTotalPixels * originalRatio)
         let newHeightInPixels = newWidthInPixels / originalRatio
