@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix CurrentChatUserController+Combine initialValue hard coded to `.noUnread` instead of using the initial value from the current user data model [#2334](https://github.com/GetStream/stream-chat-swift/pull/2334)
 
 ## StreamChatUI
+### ✅ Added
+- Make ChatMessageListVC.tableView(heightForRowAt:) open [#2342](https://github.com/GetStream/stream-chat-swift/pull/2342)
 ### 🐞 Fixed
 - Fix message text not dynamically scalable with content size category changes [#2328](https://github.com/GetStream/stream-chat-swift/pull/2328)
 
