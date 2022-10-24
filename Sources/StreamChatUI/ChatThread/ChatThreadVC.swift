@@ -53,12 +53,17 @@ open class ChatThreadVC: _ViewController,
 
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
+    /// A closure to filter replies and override the message list data source.
+    public var repliesFilter: ((ChatMessage) -> Bool)?
+
     private var isLoadingPreviousMessages: Bool = false
 
     private var currentlyTypingUsers: Set<ChatUser> = []
 
     override open func setUp() {
         super.setUp()
+
+        repliesFilter = components.repliesFilter
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(
@@ -150,12 +155,17 @@ open class ChatThreadVC: _ViewController,
 
     // MARK: - ChatMessageListVCDataSource
 
+    // The replies data source.
     public var messages: [ChatMessage] {
+        set {
+            if let repliesFilter = repliesFilter {
+                replies = newValue.filter(repliesFilter)
+                return
+            }
+            replies = newValue
+        }
         get {
             replies
-        }
-        set {
-            replies = newValue
         }
     }
 
@@ -321,8 +331,16 @@ open class ChatThreadVC: _ViewController,
 
     private func updateMessages(with changes: [ListChange<ChatMessage>]) {
         messageListVC.setPreviousMessagesSnapshot(self.messages)
+
         let messages = getRepliesWithThreadRootMessage(from: messageController)
-        messageListVC.setNewMessagesSnapshot(messages)
+        let newMessages: [ChatMessage]
+        if let repliesFilter = repliesFilter {
+            newMessages = messages.filter(repliesFilter)
+        } else {
+            newMessages = messages
+        }
+
+        messageListVC.setNewMessagesSnapshot(newMessages)
         messageListVC.updateMessages(with: changes)
     }
 

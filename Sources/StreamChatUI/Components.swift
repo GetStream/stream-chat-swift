@@ -103,6 +103,9 @@ public struct Components {
 
     /// A closure to filter messages and override the message list channel data source.
     public var messagesFilter: ((ChatMessage) -> Bool)?
+
+    /// A closure to filter replies and override the message list thread data source.
+    public var repliesFilter: ((ChatMessage) -> Bool)?
     
     /// The controller that handles `ChatMessageListVC <-> ChatMessagePopUp` transition.
     public var messageActionsTransitionController: ChatMessageActionsTransitionController.Type =
