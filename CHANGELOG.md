@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Fix CurrentChatUserController+Combine initialValue hard coded to `.noUnread` instead of using the initial value from the current user data model [#2334](https://github.com/GetStream/stream-chat-swift/pull/2334)
+- Allow Message Search pagination when using sort parameters [#2347](https://github.com/GetStream/stream-chat-swift/pull/2347)
 
 ## StreamChatUI
 ### ✅ Added
