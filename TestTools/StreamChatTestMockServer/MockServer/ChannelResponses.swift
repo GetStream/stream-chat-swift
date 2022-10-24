@@ -67,9 +67,8 @@ public extension StreamMockServer {
         server.register(MockEndpoint.truncate) { [weak self] request in
             self?.channelTruncation(request)
         }
-        server.register(MockEndpoint.sync) { request in
-            // TODO:
-            .ok(.json([JSONKey.events: []]))
+        server.register(MockEndpoint.sync) { [weak self] _ in
+            self?.handleSyncRequest()
         }
     }
 
@@ -205,6 +204,11 @@ public extension StreamMockServer {
         }
 
         return updateChannelMembers(request, ids: type.ids, eventType: type.eventType)
+    }
+    
+    // TODO: CIS-2230
+    private func handleSyncRequest() -> HttpResponse? {
+        .ok(.json([JSONKey.events: []]))
     }
 
     private func updateChannelMembers(_ request: HttpRequest,

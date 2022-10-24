@@ -14,7 +14,7 @@ class StreamTestCase: XCTestCase {
     var backendRobot: BackendRobot!
     var participantRobot: ParticipantRobot!
     var server: StreamMockServer!
-    let recordVideo = false
+    var recordVideo = false
 
     override func setUpWithError() throws {
         continueAfterFailure = false
