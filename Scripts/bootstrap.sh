@@ -67,3 +67,7 @@ if [[ ${INSTALL_ALLURE-default} == true ]]; then
   curl -sL "${DOWNLOAD_URL}" -o ./fastlane/xcresults
   chmod +x ./fastlane/xcresults
 fi
+
+if [[ ${INSTALL_XCPARSE-default} == true ]]; then
+  brew install chargepoint/xcparse/xcparse
+fi

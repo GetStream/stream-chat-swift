@@ -59,6 +59,7 @@ public enum MockEndpoint {
     public static let image = "/channels/messaging/\(EndpointQuery.channelId)/image"
     public static let file = "/channels/messaging/\(EndpointQuery.channelId)/file"
     public static let truncate = "/channels/messaging/\(EndpointQuery.channelId)/truncate"
+    public static let sync = "/sync"
 }
 
 public enum EndpointQuery {
@@ -72,6 +73,7 @@ public enum JSONKey {
     public static let message = "message"
     public static let reaction = "reaction"
     public static let event = "event"
+    public static let events = "events"
     public static let channels = "channels"
     public static let user = "user"
     public static let userId = "user_id"

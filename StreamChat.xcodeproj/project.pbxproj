@@ -341,6 +341,7 @@
 		825A32CB27DBB463000402A9 /* MessageListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825A32CA27DBB463000402A9 /* MessageListPage.swift */; };
 		825A32CD27DBB46F000402A9 /* ChannelListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825A32CC27DBB46F000402A9 /* ChannelListPage.swift */; };
 		825A32CF27DBB48D000402A9 /* StartPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825A32CE27DBB48D000402A9 /* StartPage.swift */; };
+		826992C82900628500D2D470 /* DeviceRemoteControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826992C72900628500D2D470 /* DeviceRemoteControl.swift */; };
 		826B1C3528895AFD005DDF13 /* http_youtube_link.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C3428895AFD005DDF13 /* http_youtube_link.json */; };
 		826B1C3728895BB5005DDF13 /* http_unsplash_link.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C3628895BB5005DDF13 /* http_unsplash_link.json */; };
 		826B1C39288FD756005DDF13 /* http_truncate.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C38288FD756005DDF13 /* http_truncate.json */; };
@@ -2671,6 +2672,7 @@
 		825A32CC27DBB46F000402A9 /* ChannelListPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListPage.swift; sourceTree = "<group>"; };
 		825A32CE27DBB48D000402A9 /* StartPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartPage.swift; sourceTree = "<group>"; };
 		8261340927F20B7A0034AC37 /* StreamChatUITestsApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatUITestsApp.xctestplan; sourceTree = "<group>"; };
+		826992C72900628500D2D470 /* DeviceRemoteControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRemoteControl.swift; sourceTree = "<group>"; };
 		826B1C3428895AFD005DDF13 /* http_youtube_link.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_youtube_link.json; sourceTree = "<group>"; };
 		826B1C3628895BB5005DDF13 /* http_unsplash_link.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_unsplash_link.json; sourceTree = "<group>"; };
 		826B1C38288FD756005DDF13 /* http_truncate.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_truncate.json; sourceTree = "<group>"; };
@@ -4622,6 +4624,7 @@
 				82D2E81E27D10F4300169ADA /* StreamMockServer.swift */,
 				82E4CBDF27F322EA0013B02D /* User.swift */,
 				82E4CBDB27F240C60013B02D /* WebsocketResponses.swift */,
+				826992C72900628500D2D470 /* DeviceRemoteControl.swift */,
 			);
 			path = MockServer;
 			sourceTree = "<group>";
@@ -9769,6 +9772,7 @@
 				A3A0C9B3283E955200B18DA4 /* EventResponses.swift in Sources */,
 				A3A0C9A1283E955200B18DA4 /* ChannelResponses.swift in Sources */,
 				A3A0C9A9283E955200B18DA4 /* MessageResponses.swift in Sources */,
+				826992C82900628500D2D470 /* DeviceRemoteControl.swift in Sources */,
 				A3A0C9AD283E955200B18DA4 /* MessageList.swift in Sources */,
 				A3A0C9B1283E955200B18DA4 /* LaunchArgument.swift in Sources */,
 				A3A0C9B0283E955200B18DA4 /* StreamMockServer.swift in Sources */,

@@ -8,15 +8,18 @@ import XCTest
 enum SpringBoard {
     static var bundleId = "com.apple.springboard"
     
-    static var notificationBanner: XCUIElement {
+    static var app: XCUIApplication {
         XCUIApplication(bundleIdentifier: bundleId)
-            .otherElements["Notification"]
-            .descendants(matching: .any)
-            .matching(NSPredicate(format: "label CONTAINS[c] ', now,'"))
-            .firstMatch
     }
     
-    static var appIcon: XCUIElement {
-        return XCUIApplication(bundleIdentifier: bundleId).icons["Chat UI Tests"]
+    static var notificationBanner: XCUIElement {
+        app.otherElements["Notification"]
+           .descendants(matching: .any)
+           .matching(NSPredicate(format: "label CONTAINS[c] ', now,'"))
+           .firstMatch
+    }
+    
+    static var testAppIcon: XCUIElement {
+        app.icons["Chat UI Tests"]
     }
 }
