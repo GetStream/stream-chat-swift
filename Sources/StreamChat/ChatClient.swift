@@ -629,7 +629,7 @@ extension ClientError {
             """
             Connection to the API has failed.
             You can read more about making a successful connection in our docs:
-            https://getstream.io/chat/docs/sdk/ios/basics/getting-started/#your-first-app-with-stream-chat
+            https://getstream.io/chat/docs/sdk/ios/uikit/getting-started/
             \n
             API Error: \(String(describing: errorDescription))
             """
