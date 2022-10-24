@@ -42,7 +42,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     /// Filter hash this controller observes.
     let explicitFilterHash = UUID().uuidString
 
-    private var nextPage: String?
+    private var nextPageCursor: String?
 
     lazy var query: MessageSearchQuery = {
         // Filter is just a mock, explicit hash will override it
@@ -157,7 +157,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         // would be much more complex to parse than this `if` statement
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let lastQuery = lastQuery {
             messageUpdater.clearSearchResults(for: lastQuery) { error in
-                self.nextPage = nil
+                self.nextPageCursor = nil
                 self.callback { completion?(error) }
             }
             return
@@ -228,7 +228,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         }
 
         var updatedQuery = lastQuery
-        if let nextPage = nextPage, !lastQuery.sort.isEmpty {
+        if let nextPage = nextPageCursor, !lastQuery.sort.isEmpty {
             updatedQuery.pagination = .cursor(nextPage, limit: limit)
         } else {
             updatedQuery.pagination = .offset(messages.count, limit: limit)
@@ -243,7 +243,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     }
 
     private func updateNextPageCursor(with payload: MessageSearchResultsPayload) {
-        nextPage = payload.next
+        nextPageCursor = payload.next
     }
 }
 
