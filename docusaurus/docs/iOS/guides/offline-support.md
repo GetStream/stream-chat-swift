@@ -13,8 +13,11 @@ Offline support comes in 4 different aspects:
 
 It is really important to make sure that the app properly reconnects after a downtime, independently of what was the cause of it. It can happen that you backgrounded the app, you lost connection or maybe it was killed by yourself or the system.
 
-We are listening to the app's lifecycle to make sure we perform the right set of actions to bring you up online as soon as possible
+We are listening to the app's lifecycle to make sure we perform the right set of actions to bring you up online as soon as possible.
 
+:::note
+Note that on the iOS simulator, the reconnection doesn't always work reliably. Please use a real iOS device when testing these flows.
+:::
 
 ### Events Recovery:
 
