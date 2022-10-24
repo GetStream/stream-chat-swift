@@ -63,10 +63,15 @@ open class ChatChannelVC: _ViewController,
         messageListVC.listView.isLastCellFullyVisible
     }
 
+    /// A closure to filter messages and override the message list data source.
+    public var messagesFilter: ((ChatMessage) -> Bool)?
+
     private var isLoadingPreviousMessages: Bool = false
 
     override open func setUp() {
         super.setUp()
+
+        messagesFilter = components.messagesFilter
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(
@@ -152,7 +157,22 @@ open class ChatChannelVC: _ViewController,
 
     // MARK: - ChatMessageListVCDataSource
 
-    public var messages: [ChatMessage] = []
+    /// An helper property to be able to filter the messages data source.
+    private var _messages: [ChatMessage] = []
+
+    /// The messages data source.
+    public var messages: [ChatMessage] {
+        set {
+            if let messagesFilter = messagesFilter {
+                _messages = newValue.filter(messagesFilter)
+                return
+            }
+            _messages = newValue
+        }
+        get {
+            _messages
+        }
+    }
     
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
@@ -253,8 +273,15 @@ open class ChatChannelVC: _ViewController,
             channelController.markRead()
         }
 
+        let newMessages: [ChatMessage]
+        if let messagesFilter = messagesFilter {
+            newMessages = channelController.messages.filter(messagesFilter)
+        } else {
+            newMessages = Array(channelController.messages)
+        }
+
         messageListVC.setPreviousMessagesSnapshot(messages)
-        messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
+        messageListVC.setNewMessagesSnapshot(newMessages)
         messageListVC.updateMessages(with: changes)
     }
 
