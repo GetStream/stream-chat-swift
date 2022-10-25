@@ -30,12 +30,14 @@ public final class StreamMockServer {
 
     public init() {}
 
-    public func start(port: UInt16) {
+    public func start(port: UInt16) -> Bool {
         do {
             try server.start(port)
             print("Server status: \(server.state). Port: \(port)")
+            return true
         } catch {
             print("Server start error: \(error)")
+            return false
         }
     }
     

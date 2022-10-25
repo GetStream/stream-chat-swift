@@ -177,7 +177,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
         let message = attributes.text(in: messageCell).wait()
         let actualText = message.waitForText(text).text
         XCTAssertEqual(text, actualText, file: file, line: line)
@@ -225,7 +225,7 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         SpringBoard.notificationBanner.wait()
-        let appIconValue = SpringBoard.appIcon.value as? String
+        let appIconValue = SpringBoard.testAppIcon.value as? String
         XCTAssertEqual(appIconValue?.contains("1"),
                        shouldBeVisible,
                        "Badge should be visible: \(shouldBeVisible)",
@@ -321,7 +321,7 @@ extension UserRobot {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let message = attributes.text(in: messageCell).wait()
         let expectedMessage = attributes.deletedMessagePlaceholder
-        let actualMessage = message.waitForText(expectedMessage).text
+        let actualMessage = message.wait().waitForText(expectedMessage).text
         XCTAssertEqual(expectedMessage, actualMessage, "Text is wrong", file: file, line: line)
         return self
     }

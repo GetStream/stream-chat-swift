@@ -30,7 +30,7 @@ jobs:
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.5.0
       - uses: ./.github/actions/bootstrap
       - name: Run Danger
         run: bundle exec danger
@@ -46,7 +46,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_EVENT: ${{ toJson(github.event) }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.5.0
       with:
         fetch-depth: 100
     - uses: actions/setup-python@v3.0.0
@@ -63,7 +63,7 @@ jobs:
       timeout-minutes: 30
     - name: Get branch name
       id: get_branch_name
-      run: echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
+      run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
     - name: Run Sonar analysis
       run: bundle exec fastlane sonar_upload
       env:
@@ -87,7 +87,7 @@ jobs:
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}"
@@ -110,12 +110,13 @@ jobs:
         batch: [0, 1, 2]
       fail-fast: false
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.5.0
       if: env.LAUNCH_ID != ''
     - uses: ./.github/actions/bootstrap
       if: env.LAUNCH_ID != ''
       env:
         INSTALL_ALLURE: true
+        INSTALL_XCPARSE: true
     - name: Run UI Tests (Debug)
       if: env.LAUNCH_ID != ''
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}'
@@ -135,6 +136,17 @@ jobs:
       run: bundle exec fastlane allure_launch_removal launch_id:$LAUNCH_ID
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+    - name: Parse xcresult
+      if: failure()
+      run: xcparse logs fastlane/test_output/StreamChatUITestsApp.xcresult fastlane/test_output/logs/
+    - uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: Test Data
+        path: |
+          fastlane/recordings
+          fastlane/sinatra_log.txt
+          fastlane/test_output/logs/*/Diagnostics/StreamChatUITestsAppUITests-*/*/*.txt
 
   allure_testops_launch:
     name: Launch Allure TestOps
@@ -143,7 +155,7 @@ jobs:
     outputs:
       launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
       env:
         XCODE_ACTIONS: false
@@ -154,7 +166,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
     - id: get_launch_id
-      run: echo "::set-output name=launch_id::${{env.LAUNCH_ID}}"
+      run: echo "launch_id=${{env.LAUNCH_ID}}" >> $GITHUB_OUTPUT
       if: env.LAUNCH_ID != ''
 
   build-xcode13:
@@ -166,7 +178,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_EVENT: ${{ toJson(github.event) }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
     - name: List Xcode versions xcversion sees
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
@@ -185,7 +197,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_EVENT: ${{ toJson(github.event) }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
     - name: Build Sample App
       run: bundle exec fastlane build_sample
@@ -211,7 +223,7 @@ jobs:
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane spm_integration
@@ -225,7 +237,7 @@ jobs:
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane cocoapods_integration

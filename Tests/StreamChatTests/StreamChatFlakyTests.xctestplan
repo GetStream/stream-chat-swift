@@ -15,6 +15,7 @@
     {
       "selectedTests" : [
         "APIClient_Tests\/test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests()",
+        "APIClient_Tests\/test_runningARequestAndSwitchingToRecoveryMode()",
         "ChannelController_Tests\/test_createCall_propagatesResultFromUpdater()",
         "ChannelUpdater_Tests\/test_hideChannel_successfulResponse_isPropagatedToCompletion()",
         "MessageSender_Tests\/test_senderSendsMessage_inTheOrderTheyWereCreatedLocally()",

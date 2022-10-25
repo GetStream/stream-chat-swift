@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### ✅ Added
 - Uses Stream's Image CDN v2 to reduce the memory footprint [#2339](https://github.com/GetStream/stream-chat-swift/pull/2339)
-
+- Make ChatMessageListVC.tableView(heightForRowAt:) open [#2342](https://github.com/GetStream/stream-chat-swift/pull/2342)
 ### 🐞 Fixed
 - Fix message text not dynamically scalable with content size category changes [#2328](https://github.com/GetStream/stream-chat-swift/pull/2328)
 

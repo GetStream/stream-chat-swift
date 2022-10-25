@@ -6,14 +6,14 @@ runs:
     - run: echo "IMAGE=${ImageOS}-${ImageVersion}" >> $GITHUB_ENV
       shell: bash
     - name: Cache RubyGems
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: rubygem-cache
       with:
         path: vendor/bundle
         key: ${{ env.IMAGE }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ env.IMAGE }}-gem-
     - name: Cache Mint
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: mint-cache
       with:
         path: ~/.mint
