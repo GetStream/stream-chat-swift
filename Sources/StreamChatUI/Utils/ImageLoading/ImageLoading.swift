@@ -177,11 +177,11 @@ public extension ImageLoading {
         imageCDN: ImageCDN,
         completion: @escaping (([UIImage]) -> Void)
     ) {
-        let urlsAndOptions = urls.map { url in
+        let requests = urls.map { url in
             ImageDownloadRequest(url: url, options: .init(resize: .init(thumbnailSize)))
         }
 
-        downloadMultipleImages(with: urlsAndOptions) { results in
+        downloadMultipleImages(with: requests) { results in
             let imagesMapper = ImageResultsMapper(results: results)
             let images = imagesMapper.mapErrors(with: placeholders)
             completion(images)
