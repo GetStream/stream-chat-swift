@@ -37,9 +37,9 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         completion(refreshTokenError)
     }
 
-    override func connectUser(with userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+    override func connectUser(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
         record()
-        super.connectUser(with: userInfo, tokenProvider: tokenProvider, completion: completion)
+        super.connectUser(userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
     }
 
     override func connectGuestUser(userInfo: UserInfo, completion: @escaping (Error?) -> Void) {

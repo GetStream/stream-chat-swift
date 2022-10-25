@@ -37,7 +37,7 @@ class AuthenticationRepository {
         set { tokenQueue.async(flags: .barrier) { self._tokenProvider = newValue }}
     }
 
-    private(set) var tokenRequestCompletions: [(Error?) -> Void] {
+    private var tokenRequestCompletions: [(Error?) -> Void] {
         get { tokenQueue.sync { _tokenRequestCompletions } }
         set { tokenQueue.async(flags: .barrier) { self._tokenRequestCompletions = newValue }}
     }
@@ -91,26 +91,22 @@ class AuthenticationRepository {
     /// - Parameters:
     ///   - userInfo:       The user information that will be created OR updated if it exists.
     ///   - tokenProvider:  The block to be used to get a token.
-    func connectUser(with userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
-        connect(userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
+    func connectUser(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+        self.tokenProvider = tokenProvider
+        getToken(userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
     }
 
     /// Establishes a connection for a guest user.
     /// - Parameters:
     ///   - userInfo: The user information that will be created OR updated if it exists.
     func connectGuestUser(userInfo: UserInfo, completion: @escaping (Error?) -> Void) {
-        connect(
+        connectUser(
             userInfo: userInfo,
             tokenProvider: { [weak self] completion in
                 self?.fetchGuestToken(userInfo: userInfo, completion: completion)
             },
             completion: completion
         )
-    }
-
-    private func connect(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
-        self.tokenProvider = tokenProvider
-        getToken(userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
     }
 
     func logOutUser() {

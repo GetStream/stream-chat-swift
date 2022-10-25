@@ -1181,6 +1181,7 @@
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
 		C111B5B628CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C111B5B528CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift */; };
 		C111B5B828CF871E00C79D53 /* ListDatabaseObserverWrapper_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C111B5B728CF871E00C79D53 /* ListDatabaseObserverWrapper_Tests.swift */; };
+		C11BAA4D2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */; };
 		C121E804274544AC00023E4C /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */; };
 		C121E805274544AC00023E4C /* Deprecations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69712522260BC9B4003C7B47 /* Deprecations.swift */; };
 		C121E806274544AC00023E4C /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FC85E624ACCBC500A665ED /* Token.swift */; };
@@ -3368,6 +3369,7 @@
 		BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListUnreadCountView.swift; sourceTree = "<group>"; };
 		C111B5B528CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundListDatabaseObserver_Tests.swift; sourceTree = "<group>"; };
 		C111B5B728CF871E00C79D53 /* ListDatabaseObserverWrapper_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserverWrapper_Tests.swift; sourceTree = "<group>"; };
+		C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Tests.swift; sourceTree = "<group>"; };
 		C121E758274543D000023E4C /* libStreamChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChat.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C121EA2F2746A19400023E4C /* libStreamChatUI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChatUI.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C12D0A5F28FD59B60099895A /* AuthenticationRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Mock.swift; sourceTree = "<group>"; };
@@ -5738,11 +5740,12 @@
 		A364D0A327D126490029857A /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */,
+				AC889AA628C74D1200EDA0B9 /* CallRepository_Tests.swift */,
 				C152F5FD27C65C18003B4805 /* MessageRepository_Tests.swift */,
 				C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */,
 				C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */,
 				C186BFA927AA979B0099CCA6 /* SyncRepository_Tests.swift */,
-				AC889AA628C74D1200EDA0B9 /* CallRepository_Tests.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -9726,6 +9729,7 @@
 				8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */,
 				790882A22546D95F00896F03 /* FlagMessagePayload_Tests.swift in Sources */,
 				79CD959424F9381700E87377 /* MulticastDelegate_Tests.swift in Sources */,
+				C11BAA4D2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift in Sources */,
 				C186BFA627A7F4E10099CCA6 /* AsyncOperation_Tests.swift in Sources */,
 				A3C7BAD127E4E02700BBF4FA /* ChannelListFilterScope_Tests.swift in Sources */,
 				DAD5C836250278AD0045117A /* ChannelController+Combine_Tests.swift in Sources */,

@@ -13,6 +13,7 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
     }
 
     var reloadUserIfNeeded_callsCount = 0
+    @Atomic var reloadUserIfNeeded_tokenProvider: TokenProvider?
     @Atomic var reloadUserIfNeeded_completion: ((Error?) -> Void)?
     @Atomic var reloadUserIfNeeded_callSuper: (() -> Void)?
 
@@ -31,6 +32,7 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
         completion: ((Error?) -> Void)?
     ) {
         reloadUserIfNeeded_called = true
+        reloadUserIfNeeded_tokenProvider = tokenProvider
         reloadUserIfNeeded_completion = completion
         reloadUserIfNeeded_callSuper = {
             super.reloadUserIfNeeded(
@@ -62,6 +64,7 @@ final class ChatClientUpdater_Mock: ChatClientUpdater {
     func cleanUp() {
         reloadUserIfNeeded_called = false
         reloadUserIfNeeded_callsCount = 0
+        reloadUserIfNeeded_tokenProvider = nil
         reloadUserIfNeeded_completion = nil
         reloadUserIfNeeded_callSuper = nil
 

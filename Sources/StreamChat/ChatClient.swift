@@ -307,7 +307,7 @@ public class ChatClient {
         completion: ((Error?) -> Void)? = nil
     ) {
         authenticationRepository.connectUser(
-            with: userInfo,
+            userInfo: userInfo,
             tokenProvider: tokenProvider,
             completion: { completion?($0) }
         )
@@ -358,7 +358,7 @@ public class ChatClient {
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
         authenticationRepository.connectUser(
-            with: nil,
+            userInfo: nil,
             tokenProvider: { $0(.success(.anonymous)) },
             completion: { completion?($0) }
         )
