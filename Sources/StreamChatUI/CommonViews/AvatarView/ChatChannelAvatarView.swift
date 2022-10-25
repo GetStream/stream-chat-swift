@@ -141,11 +141,11 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         }
 
         let avatarSize = components.avatarThumbnailSize
-        let urlsAndOptions = avatarUrls.map {
-            (url: $0, options: ImageDownloadOptions(resize: .init(avatarSize)))
+        let requests = avatarUrls.map {
+            ImageDownloadRequest(url: $0, options: ImageDownloadOptions(resize: .init(avatarSize)))
         }
 
-        components.imageLoader.downloadMultipleImages(from: urlsAndOptions) { results in
+        components.imageLoader.downloadMultipleImages(with: requests) { results in
             let imagesMapper = ImageResultsMapper(results: results)
             let images = imagesMapper.mapErrors(with: placeholderImages)
             completion(images, channelId)

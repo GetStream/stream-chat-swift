@@ -24,24 +24,22 @@ public protocol ImageLoading: AnyObject {
 
     /// Download an image from the given `URL`.
     /// - Parameters:
-    ///   - url: The `URL` of the image.
-    ///   - options: The loading options on how to fetch the image.
+    ///   - request: The url and options information of an image download request.
     ///   - completion: The completion when the loading is finished.
     /// - Returns: A cancellable task.
     @discardableResult
     func downloadImage(
-        from url: URL,
-        with options: ImageDownloadOptions,
+        with request: ImageDownloadRequest,
         completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
     ) -> Cancellable?
 
     /// Load a batch of images and get notified when all of them complete loading.
     /// - Parameters:
-    ///   - urlsAndOptions: A tuple of urls and the options on how to fetch the image.
+    ///   - requests: The urls and options information of each image download request.
     ///   - completion: The completion when the loading is finished.
     ///   It returns an array of image and errors in case the image failed to load.
     func downloadMultipleImages(
-        from urlsAndOptions: [(url: URL, options: ImageDownloadOptions)],
+        with requests: [ImageDownloadRequest],
         completion: @escaping (([Result<UIImage, Error>]) -> Void)
     )
 
@@ -93,6 +91,7 @@ public extension ImageLoading {
             return loadImage(
                 into: imageView,
                 from: attachmentPayload?.imageURL,
+                with: ImageLoaderOptions(),
                 completion: completion
             )
         }
@@ -116,20 +115,12 @@ public extension ImageLoading {
 // MARK: - Default Parameters
 
 public extension ImageLoading {
-    @discardableResult
-    func downloadImage(
-        from url: URL,
-        with options: ImageDownloadOptions = .init(),
-        completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
-    ) -> Cancellable? {
-        downloadImage(from: url, with: options, completion: completion)
-    }
-
+    // Default empty completion block.
     @discardableResult
     func loadImage(
         into imageView: UIImageView,
         from url: URL?,
-        with options: ImageLoaderOptions = .init(),
+        with options: ImageLoaderOptions,
         completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
     ) -> Cancellable? {
         loadImage(into: imageView, from: url, with: options, completion: completion)
@@ -150,8 +141,7 @@ public extension ImageLoading {
         }
 
         return downloadImage(
-            from: url,
-            with: ImageDownloadOptions(resize: nil),
+            with: ImageDownloadRequest(url: url, options: ImageDownloadOptions()),
             completion: completion
         )
     }
@@ -188,10 +178,10 @@ public extension ImageLoading {
         completion: @escaping (([UIImage]) -> Void)
     ) {
         let urlsAndOptions = urls.map { url in
-            (url: url, options: ImageDownloadOptions(resize: .init(thumbnailSize)))
+            ImageDownloadRequest(url: url, options: .init(resize: .init(thumbnailSize)))
         }
 
-        downloadMultipleImages(from: urlsAndOptions) { results in
+        downloadMultipleImages(with: urlsAndOptions) { results in
             let imagesMapper = ImageResultsMapper(results: results)
             let images = imagesMapper.mapErrors(with: placeholders)
             completion(images)

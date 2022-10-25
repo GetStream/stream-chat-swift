@@ -1069,6 +1069,8 @@
 		AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0A0263C7823008B466C /* AttachmentButton.swift */; };
 		AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0AA263C7A7E008B466C /* ShrinkInputButton.swift */; };
 		AD87D0BD263C7C09008B466C /* CircularCloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */; };
+		AD8B72752908016400921C31 /* ImageDownloadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8B72742908016400921C31 /* ImageDownloadRequest.swift */; };
+		AD8B72762908016400921C31 /* ImageDownloadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8B72742908016400921C31 /* ImageDownloadRequest.swift */; };
 		AD8D1809268F7290004E3A5C /* TypingSuggester.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D1808268F7290004E3A5C /* TypingSuggester.swift */; };
 		AD8D180B268F8ED4004E3A5C /* SlackComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */; };
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
@@ -3281,6 +3283,7 @@
 		AD87D0A0263C7823008B466C /* AttachmentButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentButton.swift; sourceTree = "<group>"; };
 		AD87D0AA263C7A7E008B466C /* ShrinkInputButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShrinkInputButton.swift; sourceTree = "<group>"; };
 		AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularCloseButton.swift; sourceTree = "<group>"; };
+		AD8B72742908016400921C31 /* ImageDownloadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadRequest.swift; sourceTree = "<group>"; };
 		AD8D1808268F7290004E3A5C /* TypingSuggester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingSuggester.swift; sourceTree = "<group>"; };
 		AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackComposerVC.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
@@ -6751,13 +6754,13 @@
 		ACCA772826C40C7A007AE2ED /* ImageLoading */ = {
 			isa = PBXGroup;
 			children = (
+				AD8B7277290801B800921C31 /* ImageCDN */,
 				ACCA772926C40C96007AE2ED /* ImageLoading.swift */,
 				ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */,
 				AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */,
 				AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */,
+				AD8B72742908016400921C31 /* ImageDownloadRequest.swift */,
 				AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */,
-				BDC80CB4265CF4B800F62CE2 /* ImageCDN.swift */,
-				ADD2A99928FF4F4B00A83305 /* StreamCDN.swift */,
 				ACD502A826BC0C670029FB7D /* ImageMerger.swift */,
 				ADD2A98F28FF0CD300A83305 /* ImageSizeCalculator.swift */,
 				AD7BBFCA2901AF3F004E8B76 /* ImageResultsMapper.swift */,
@@ -6957,6 +6960,15 @@
 				AD87D0AA263C7A7E008B466C /* ShrinkInputButton.swift */,
 			);
 			path = ShrinkInputButton;
+			sourceTree = "<group>";
+		};
+		AD8B7277290801B800921C31 /* ImageCDN */ = {
+			isa = PBXGroup;
+			children = (
+				ADD2A99928FF4F4B00A83305 /* StreamCDN.swift */,
+				BDC80CB4265CF4B800F62CE2 /* ImageCDN.swift */,
+			);
+			path = ImageCDN;
 			sourceTree = "<group>";
 		};
 		AD8E6BBD2642DB520013E01E /* CommandLabelView */ = {
@@ -8687,6 +8699,7 @@
 				88BD82B02549D18F00369074 /* ChatChannelListItemView.swift in Sources */,
 				A3C5022B284F9CF70048753E /* Token.swift in Sources */,
 				A39A8AE7263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift in Sources */,
+				AD8B72752908016400921C31 /* ImageDownloadRequest.swift in Sources */,
 				8825334C258CE82500B77352 /* AlertsRouter.swift in Sources */,
 				AD95FD0D28F991ED00DBDF41 /* ImageResize.swift in Sources */,
 				AD4474FD263B19F90030E583 /* ImageAttachmentComposerPreview.swift in Sources */,
@@ -10246,6 +10259,7 @@
 				C121EBA32746A1E800023E4C /* QuotedChatMessageView.swift in Sources */,
 				C121EBA42746A1E800023E4C /* QuotedChatMessageView+SwiftUI.swift in Sources */,
 				C121EBA52746A1E800023E4C /* OnlineIndicatorView.swift in Sources */,
+				AD8B72762908016400921C31 /* ImageDownloadRequest.swift in Sources */,
 				AD78F9FE28EC735700BC0FCE /* Token.swift in Sources */,
 				C121EBA62746A1E800023E4C /* ChatPresenceAvatarView.swift in Sources */,
 				C121EBA72746A1E800023E4C /* ChatAvatarView.swift in Sources */,

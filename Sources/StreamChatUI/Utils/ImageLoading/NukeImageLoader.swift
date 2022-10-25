@@ -67,10 +67,11 @@ open class NukeImageLoader: ImageLoading {
 
     @discardableResult
     open func downloadImage(
-        from url: URL,
-        with options: ImageDownloadOptions = ImageDownloadOptions(),
+        with request: ImageDownloadRequest,
         completion: @escaping ((Result<UIImage, Error>) -> Void)
     ) -> Cancellable? {
+        let url = request.url
+        let options = request.options
         let urlRequest = imageCDN.urlRequest(forImageUrl: url, resize: options.resize)
         let cachingKey = imageCDN.cachingKey(forImageUrl: url)
 
@@ -99,16 +100,20 @@ open class NukeImageLoader: ImageLoading {
     }
 
     open func downloadMultipleImages(
-        from urlsAndOptions: [(url: URL, options: ImageDownloadOptions)],
+        with requests: [ImageDownloadRequest],
         completion: @escaping (([Result<UIImage, Error>]) -> Void)
     ) {
         let group = DispatchGroup()
         var results: [Result<UIImage, Error>] = []
 
-        for (url, downloadOptions) in urlsAndOptions {
+        for request in requests {
+            let url = request.url
+            let downloadOptions = request.options
+
             group.enter()
 
-            downloadImage(from: url, with: downloadOptions) { result in
+            let request = ImageDownloadRequest(url: url, options: downloadOptions)
+            downloadImage(with: request) { result in
                 results.append(result)
 
                 group.leave()
