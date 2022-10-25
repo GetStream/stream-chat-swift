@@ -109,9 +109,15 @@ class AuthenticationRepository {
         )
     }
 
+    func clearTokenProvider() {
+        tokenProvider = nil
+    }
+
     func logOutUser() {
         log.debug("Logging out user", subsystems: .authentication)
-        tokenProvider = nil
+        clearTokenProvider()
+        currentToken = nil
+        currentUserId = nil
     }
 
     func refreshToken(completion: @escaping (Error?) -> Void) {

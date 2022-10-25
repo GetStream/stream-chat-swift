@@ -409,7 +409,7 @@ final class ChatClient_Tests: XCTestCase {
         
         // Was called on ChatClient init
         let authenticationRepository = try XCTUnwrap(testEnv.authenticationRepository)
-        XCTAssertCall("connectUser(with:tokenProvider:completion:)", on: authenticationRepository)
+        XCTAssertCall("connectUser(userInfo:tokenProvider:completion:)", on: authenticationRepository)
 
         // Simulate WebSocketConnection change to "disconnected"
         let error = ClientError(with: ErrorPayload(code: 40, message: "", statusCode: 200))
@@ -742,6 +742,31 @@ final class ChatClient_Tests: XCTestCase {
             XCTAssertTrue(connectCompletionCalled)
         }
     }
+
+    func test_connectUserWithExpiringStaticToken_returnsMissingTokenProviderError() {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        // WHEN
+        let token = Token(rawValue: "", userId: "123", expiration: Date())
+        var connectCompletionCalled = false
+        var connectCompletionError: Error?
+        client.connectUser(
+            userInfo: .init(id: .unique),
+            token: token,
+            completion: {
+                connectCompletionCalled = true
+                connectCompletionError = $0
+            }
+        )
+
+        // THEN
+        XCTAssertTrue(connectCompletionError is ClientError.MissingTokenProvider)
+        XCTAssertTrue(connectCompletionCalled)
+    }
     
     func test_connectGuestUser_setsTokenProvider_andInitiatesConnection() {
         for error in [nil, TestError()] {
@@ -807,6 +832,193 @@ final class ChatClient_Tests: XCTestCase {
             XCTAssertEqual(connectCompletionError as? TestError, error)
             XCTAssertTrue(connectCompletionCalled)
         }
+    }
+
+    // MARK: Set token
+
+    func test_setToken_savesToken_completesWaiters() throws {
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        XCTAssertNil(client.currentUserId)
+
+        let expectation = self.expectation(description: "Token waiter")
+        var providedToken: Token?
+        client.provideToken { token in
+            providedToken = token
+            expectation.fulfill()
+        }
+
+        let userId = "123"
+        let newToken = Token.unique(userId: userId)
+        client.setToken(token: newToken)
+
+        waitForExpectations(timeout: 0.1)
+
+        let authenticationRepository = try XCTUnwrap(testEnv.authenticationRepository)
+        XCTAssertCall("setToken(token:)", on: authenticationRepository)
+        XCTAssertEqual(client.currentUserId, userId)
+        XCTAssertEqual(providedToken, newToken)
+    }
+
+    // MARK: Update user
+
+    func test_updateUser_completeWaiters() throws {
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        XCTAssertNil(client.currentUserId)
+
+        let expectation = self.expectation(description: "Token waiter")
+        var providedToken: Token?
+        client.provideToken { token in
+            providedToken = token
+            expectation.fulfill()
+        }
+
+        let userId = "123"
+        let newToken = Token.unique(userId: userId)
+        client.updateUser(with: newToken, completeTokenWaiters: true, isFirstConnection: true)
+
+        waitForExpectations(timeout: 0.1)
+
+        let authenticationRepository = try XCTUnwrap(testEnv.authenticationRepository)
+        XCTAssertCall("setToken(token:)", on: authenticationRepository)
+        XCTAssertEqual(client.currentUserId, userId)
+        XCTAssertEqual(providedToken, newToken)
+    }
+
+    func test_updateUser_dontCompleteWaiters() throws {
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        XCTAssertNil(client.currentUserId)
+        XCTAssertEqual(client.backgroundWorkers.count, 0)
+
+        client.provideToken { token in
+            if token != nil {
+                XCTFail("Should not complete waiters")
+            }
+        }
+
+        let userId = "123"
+        let newToken = Token.unique(userId: userId)
+        client.updateUser(with: newToken, completeTokenWaiters: false, isFirstConnection: true)
+
+        let authenticationRepository = try XCTUnwrap(testEnv.authenticationRepository)
+        XCTAssertCall("setToken(token:)", on: authenticationRepository)
+        XCTAssertEqual(client.currentUserId, userId)
+    }
+
+    func test_updateUser_firstConnection_noBackgroundWorkers() throws {
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        XCTAssertNil(client.currentUserId)
+        XCTAssertEqual(client.backgroundWorkers.count, 0)
+
+        let userId = "123"
+        let newToken = Token.unique(userId: userId)
+        client.updateUser(with: newToken, completeTokenWaiters: false, isFirstConnection: true)
+
+        let authenticationRepository = try XCTUnwrap(testEnv.authenticationRepository)
+        XCTAssertCall("setToken(token:)", on: authenticationRepository)
+        XCTAssertEqual(client.currentUserId, userId)
+        XCTAssertEqual(client.backgroundWorkers.count, 4)
+    }
+
+    func test_updateUser_firstConnection_existingBackgroundWorkers_recreatesThem() throws {
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        client.createBackgroundWorkers()
+        XCTAssertNil(client.currentUserId)
+        XCTAssertEqual(client.backgroundWorkers.count, 4)
+        let previousBackgroundWorkers = client.backgroundWorkers
+
+        let userId = "123"
+        let newToken = Token.unique(userId: userId)
+        client.updateUser(with: newToken, completeTokenWaiters: false, isFirstConnection: true)
+
+        let authenticationRepository = try XCTUnwrap(testEnv.authenticationRepository)
+        XCTAssertCall("setToken(token:)", on: authenticationRepository)
+        XCTAssertEqual(client.currentUserId, userId)
+        XCTAssertEqual(client.backgroundWorkers.count, 4)
+        XCTAssertNotEqual(
+            previousBackgroundWorkers.map(ObjectIdentifier.init),
+            client.backgroundWorkers.map(ObjectIdentifier.init)
+        )
+    }
+
+    func test_updateUser_notFirstConnection_existingBackgroundWorkers_keepsThem() throws {
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        client.createBackgroundWorkers()
+        XCTAssertNil(client.currentUserId)
+        XCTAssertEqual(client.backgroundWorkers.count, 4)
+        let previousBackgroundWorkers = client.backgroundWorkers
+
+        let userId = "123"
+        let newToken = Token.unique(userId: userId)
+        client.updateUser(with: newToken, completeTokenWaiters: false, isFirstConnection: false)
+
+        let authenticationRepository = try XCTUnwrap(testEnv.authenticationRepository)
+        XCTAssertCall("setToken(token:)", on: authenticationRepository)
+        XCTAssertEqual(client.currentUserId, userId)
+        XCTAssertEqual(client.backgroundWorkers.count, 4)
+        XCTAssertEqual(
+            previousBackgroundWorkers.map(ObjectIdentifier.init),
+            client.backgroundWorkers.map(ObjectIdentifier.init)
+        )
+    }
+
+    // MARK: Switch to new user
+
+    func test_switchToNewUser() throws {
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        XCTAssertNil(client.currentUserId)
+
+        let expectation = self.expectation(description: "Complete existing waiter")
+        var providedToken: Token?
+        client.provideToken { token in
+            providedToken = token
+            expectation.fulfill()
+        }
+
+        let userId = "123"
+        let newToken = Token.unique(userId: userId)
+        client.switchToNewUser(with: newToken)
+
+        waitForExpectations(timeout: 0.1)
+        XCTAssertNil(providedToken)
+
+        client.logout()
+
+        client.provideToken { token in
+            if token != nil {
+                XCTFail("Should not complete waiters for new token")
+            }
+        }
+
+        let authenticationRepository = try XCTUnwrap(testEnv.authenticationRepository)
+        XCTAssertCall("setToken(token:)", on: authenticationRepository)
     }
 
     // MARK: - Passive (not active) Client tests

@@ -46,4 +46,9 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         record()
         super.connectGuestUser(userInfo: userInfo, completion: completion)
     }
+
+    override func setToken(token: Token) {
+        record()
+        super.setToken(token: token)
+    }
 }

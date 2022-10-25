@@ -370,12 +370,13 @@ public class ChatClient {
         clientUpdater.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
         }
-        authenticationRepository.logOutUser()
+        authenticationRepository.clearTokenProvider()
     }
     
     /// Disconnects the chat client form the chat servers and removes all the local data related.
     public func logout() {
         disconnect()
+        authenticationRepository.logOutUser()
         databaseContainer.removeAllData(force: true) { error in
             if let error = error {
                 log.error("Logging out current user failed with error \(error)", subsystems: .all)
