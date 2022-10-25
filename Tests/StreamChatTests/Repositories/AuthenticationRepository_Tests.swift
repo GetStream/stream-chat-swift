@@ -71,6 +71,30 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.currentToken, newToken)
     }
 
+    func test_updatingToken_updatesUserId() throws {
+        let databaseUserId = "the-id"
+        try database.createCurrentUser(id: databaseUserId)
+
+        // Recreate repository to trigger init
+        repository = AuthenticationRepository(
+            apiClient: apiClient,
+            databaseContainer: database,
+            clientUpdater: clientUpdater,
+            tokenExpirationRetryStrategy: retryStrategy,
+            timerType: DefaultTimer.self
+        )
+
+        XCTAssertEqual(repository.currentUserId, databaseUserId)
+
+        // Update token
+
+        let newUserId = "new-user-id"
+        let token = Token.unique(userId: newUserId)
+        repository.setToken(token: token)
+
+        XCTAssertEqual(repository.currentUserId, newUserId)
+    }
+
     // MARK: Connect user
 
     func test_connectUser_notGettingToken_callsClientUpdater_success() throws {
@@ -218,15 +242,36 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(request.path, .guest)
     }
 
-    // MARK: Log out
+    // MARK: Clear Token Provider
 
-    func test_logOut_clearsTokenProvider() {
+    func test_clearTokenProvider_removesIt() {
         let userInfo = UserInfo(id: "123")
         repository.connectGuestUser(userInfo: userInfo, completion: { _ in })
+        repository.setToken(token: .unique())
         XCTAssertNotNil(repository.tokenProvider)
+        XCTAssertNotNil(repository.currentToken)
+        XCTAssertNotNil(repository.currentUserId)
+
+        repository.clearTokenProvider()
+        XCTAssertNil(repository.tokenProvider)
+        XCTAssertNotNil(repository.currentToken)
+        XCTAssertNotNil(repository.currentUserId)
+    }
+
+    // MARK: Log out
+
+    func test_logOut_clearsUserData() {
+        let userInfo = UserInfo(id: "123")
+        repository.connectGuestUser(userInfo: userInfo, completion: { _ in })
+        repository.setToken(token: .unique())
+        XCTAssertNotNil(repository.tokenProvider)
+        XCTAssertNotNil(repository.currentToken)
+        XCTAssertNotNil(repository.currentUserId)
 
         repository.logOutUser()
         XCTAssertNil(repository.tokenProvider)
+        XCTAssertNil(repository.currentToken)
+        XCTAssertNil(repository.currentUserId)
     }
 
     // MARK: Refresh token
