@@ -89,6 +89,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_XCPARSE: true
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}"
       timeout-minutes: 25
@@ -97,6 +99,15 @@ jobs:
         GITHUB_EVENT: ${{ toJson(github.event) }}
         IOS_SIMULATOR_DEVICE: "iPhone 12 Pro (15.5)"
         XCODE_VERSION: "13.4.1"
+    - name: Parse xcresult
+      if: failure()
+      run: xcparse screenshots fastlane/test_output/StreamChatUI.xcresult fastlane/test_output/snapshots --test
+    - uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: Test Data
+        path: |
+          fastlane/test_output/snapshots
 
   build-and-test-e2e-debug:
     name: Test E2E UI (Debug)

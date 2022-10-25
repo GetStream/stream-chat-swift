@@ -534,6 +534,7 @@ lane :test_ui do |options|
     scheme: 'StreamChatUI',
     testplan: 'StreamChatUITestPlan',
     clean: true,
+    result_bundle: true,
     devices: options[:device],
     build_for_testing: options[:build_for_testing]
   )
