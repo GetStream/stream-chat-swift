@@ -11,7 +11,7 @@ import Foundation
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
 public class ChatClient {
     /// The `UserId` of the currently logged in user.
-    var currentUserId: UserId? {
+    public var currentUserId: UserId? {
         authenticationRepository.currentUserId
     }
 
@@ -328,10 +328,11 @@ public class ChatClient {
         token: Token,
         completion: ((Error?) -> Void)? = nil
     ) {
-        if token.expiration == nil {
-            log.error("""
-            The token you are passing has an expiration date. Please provide a `tokenProvider` to refresh it or use a non expiring token
-            """, subsystems: .authentication)
+        guard token.expiration == nil else {
+            let error = ClientError.MissingTokenProvider()
+            log.error(error.localizedDescription, subsystems: .authentication)
+            completion?(error)
+            return
         }
 
         connectUser(
@@ -419,6 +420,8 @@ public class ChatClient {
         }
     }
 
+    // MARK: Authentication helpers
+
     /// Sets the user token to the client, this method is only needed to perform API calls
     /// without connecting as a user.
     /// You should only use this in special cases like a notification service or other background process
@@ -429,6 +432,11 @@ public class ChatClient {
         completeTokenWaiters(token: token)
     }
 
+    /// Updates the user information using the new token
+    /// - Parameters:
+    ///   - token: The token for the new user
+    ///   - completeTokenWaiters: A boolean indicating if the token should be passed to the requests that are awaiting
+    ///   - isFirstConnection: A boolean indicating if this is the first connection in the lifecycle of the app
     func updateUser(with token: Token, completeTokenWaiters: Bool, isFirstConnection: Bool) {
         authenticationRepository.setToken(token: token)
 
@@ -441,15 +449,24 @@ public class ChatClient {
         }
     }
 
+    /// Cancels any hanging requests and switches to a new user
+    /// - Parameter token: The token for the new user
     func switchToNewUser(with token: Token) {
         completeTokenWaiters(token: nil)
         updateUser(with: token, completeTokenWaiters: false, isFirstConnection: false)
     }
 
+    /// Updates the WebSocket endpoint to use the passed token and user information for the connection
     func updateWebSocketEndpoint(with token: Token, userInfo: UserInfo?) {
         webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo ?? .init(id: token.userId))
     }
 
+    /// Clears state related to the current user to leave the client ready for another user
+    /// Will clear:
+    ///     - Background workers
+    ///     - References to active controllers
+    ///     - Database
+    /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
     func clearPreviousUserData(completion: @escaping (Error?) -> Void) {
         createBackgroundWorkers()
 
@@ -461,6 +478,8 @@ public class ChatClient {
         databaseContainer.removeAllData(force: true, completion: completion)
     }
 
+    /// Starts the process to  refresh the token
+    /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
     private func refreshToken(completion: ((Error?) -> Void)?) {
         authenticationRepository.refreshToken {
             completion?($0)
@@ -694,7 +713,7 @@ extension ClientError {
         override public var localizedDescription: String {
             """
                 Missing token refresh provider to get a new token
-                When using expiring tokens you need to provide a way to refresh it passing `tokenProvider` when \
+                When using expiring tokens you need to provide a way to refresh it by passing `tokenProvider` when \
                 calling `ChatClient.connectUser()`.
             """
         }

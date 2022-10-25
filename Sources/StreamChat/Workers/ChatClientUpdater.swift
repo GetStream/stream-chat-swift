@@ -63,8 +63,8 @@ class ChatClientUpdater {
                     return
                 }
 
-                client.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
                 client.clearPreviousUserData(completion: completion)
+                client.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
             }
         }
     }
