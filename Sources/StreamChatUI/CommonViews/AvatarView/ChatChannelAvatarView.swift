@@ -139,12 +139,15 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
                 placeholderAvatars.append(placeholderImages.removeFirst())
             }
         }
-        
-        components.imageLoader.loadImages(
-            from: avatarUrls,
-            placeholders: placeholderImages,
-            imageCDN: components.imageCDN
-        ) { images in
+
+        let avatarSize = components.avatarThumbnailSize
+        let requests = avatarUrls.map {
+            ImageDownloadRequest(url: $0, options: ImageDownloadOptions(resize: .init(avatarSize)))
+        }
+
+        components.imageLoader.downloadMultipleImages(with: requests) { results in
+            let imagesMapper = ImageResultsMapper(results: results)
+            let images = imagesMapper.mapErrors(with: placeholderImages)
             completion(images, channelId)
         }
     }
@@ -162,11 +165,12 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         let imageProcessor = components.imageProcessor
         
         let images = avatars.map {
-            imageProcessor.scale(image: $0, to: .avatarThumbnailSize)
+            imageProcessor.scale(image: $0, to: components.avatarThumbnailSize)
         }
         
         // The half of the width of the avatar
-        let halfContainerSize = CGSize(width: CGSize.avatarThumbnailSize.width / 2, height: CGSize.avatarThumbnailSize.height)
+        let size = components.avatarThumbnailSize
+        let halfContainerSize = CGSize(width: size.width / 2, height: size.height)
         
         if images.count == 1, let image = images.first {
             combinedImage = image
@@ -195,10 +199,13 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
                 ],
                 orientation: .vertical
             )
-            
+
             let rightImage = imageProcessor.crop(
                 image: imageProcessor
-                    .scale(image: rightCollage ?? appearance.images.userAvatarPlaceholder3, to: .avatarThumbnailSize),
+                    .scale(
+                        image: rightCollage ?? appearance.images.userAvatarPlaceholder3,
+                        to: components.avatarThumbnailSize
+                    ),
                 to: halfContainerSize
             )
             
@@ -225,7 +232,10 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
             
             let leftImage = imageProcessor.crop(
                 image: imageProcessor
-                    .scale(image: leftCollage ?? appearance.images.userAvatarPlaceholder1, to: .avatarThumbnailSize),
+                    .scale(
+                        image: leftCollage ?? appearance.images.userAvatarPlaceholder1,
+                        to: components.avatarThumbnailSize
+                    ),
                 to: halfContainerSize
             )
             
@@ -239,7 +249,10 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
             
             let rightImage = imageProcessor.crop(
                 image: imageProcessor
-                    .scale(image: rightCollage ?? appearance.images.userAvatarPlaceholder2, to: .avatarThumbnailSize),
+                    .scale(
+                        image: rightCollage ?? appearance.images.userAvatarPlaceholder2,
+                        to: components.avatarThumbnailSize
+                    ),
                 to: halfContainerSize
             )
          
@@ -265,10 +278,11 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     open func loadIntoAvatarImageView(from url: URL?, placeholder: UIImage?) {
         components.imageLoader.loadImage(
             into: presenceAvatarView.avatarView.imageView,
-            url: url,
-            imageCDN: components.imageCDN,
-            placeholder: placeholder,
-            preferredSize: .avatarThumbnailSize
+            from: url,
+            with: ImageLoaderOptions(
+                resize: .init(components.avatarThumbnailSize),
+                placeholder: placeholder
+            )
         )
     }
 }

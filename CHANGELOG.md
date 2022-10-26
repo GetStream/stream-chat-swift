@@ -4,14 +4,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Added support for Stream's Image CDN v2 [#2339](https://github.com/GetStream/stream-chat-swift/pull/2339)
+
 ### 🐞 Fixed
 - Fix CurrentChatUserController+Combine initialValue hard coded to `.noUnread` instead of using the initial value from the current user data model [#2334](https://github.com/GetStream/stream-chat-swift/pull/2334)
 
 ## StreamChatUI
 ### ✅ Added
+- Uses Stream's Image CDN v2 to reduce the memory footprint [#2339](https://github.com/GetStream/stream-chat-swift/pull/2339)
 - Make ChatMessageListVC.tableView(heightForRowAt:) open [#2342](https://github.com/GetStream/stream-chat-swift/pull/2342)
 ### 🐞 Fixed
 - Fix message text not dynamically scalable with content size category changes [#2328](https://github.com/GetStream/stream-chat-swift/pull/2328)
+
+### 🚨 Minor Breaking Changes
+Although we don't usually ship breaking changes in minor releases, in some cases where they are minimal and important, we have to do them to keep improving the SDK long-term. Either way, these changes are for advanced customizations which won't affect most of the customers.
+
+- The `ImageCDN` protocol has some minor breaking changes that were needed to support the new Stream CDN v2 and to make it more scalable in the future.
+  - `urlRequest(forImage:)` -> `urlRequest(forImageUrl:resize:)`.
+  - `cachingKey(forImage:)` -> `cachingKey(forImageUrl:)`.
+  - Removed `thumbnail(originalURL:preferreSize:)`. This is now handled by `urlRequest(forImageUrl:resize:)` as well. If your CDN does not support resizing, you can ignore the resize parameter.
 
 # [4.22.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.22.0)
 _September 26, 2022_

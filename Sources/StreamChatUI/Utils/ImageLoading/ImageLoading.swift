@@ -2,31 +2,58 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
-/// ImageLoading is providing set of functions for downloading of images from URLs.
+/// A protocol that provides a set of functions for loading images.
 public protocol ImageLoading: AnyObject {
-    /// Load an image from using the given URL request
+    /// Load an image into an imageView from the given `URL`.
     /// - Parameters:
-    ///   - urlRequest: The `URLRequest` object used to fetch the image
-    ///   - cachingKey: The key to be used for caching this image
-    ///   - completion: Completion that gets called when the download is finished
+    ///   - imageView: The image view where the image will be loaded.
+    ///   - url: The `URL` of the image. If `nil` it will load the placeholder.
+    ///   - options: The loading options on how to fetch the image.
+    ///   - completion: The completion when the loading is finished.
+    /// - Returns: A cancellable task.
+    @discardableResult
+    func loadImage(
+        into imageView: UIImageView,
+        from url: URL?,
+        with options: ImageLoaderOptions,
+        completion: ((_ result: Result<UIImage, Error>) -> Void)?
+    ) -> Cancellable?
+
+    /// Download an image from the given `URL`.
+    /// - Parameters:
+    ///   - request: The url and options information of an image download request.
+    ///   - completion: The completion when the loading is finished.
+    /// - Returns: A cancellable task.
+    @discardableResult
+    func downloadImage(
+        with request: ImageDownloadRequest,
+        completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
+    ) -> Cancellable?
+
+    /// Load a batch of images and get notified when all of them complete loading.
+    /// - Parameters:
+    ///   - requests: The urls and options information of each image download request.
+    ///   - completion: The completion when the loading is finished.
+    ///   It returns an array of image and errors in case the image failed to load.
+    func downloadMultipleImages(
+        with requests: [ImageDownloadRequest],
+        completion: @escaping (([Result<UIImage, Error>]) -> Void)
+    )
+
+    // MARK: - Deprecations
+
+    @available(*, deprecated, message: "use downloadImage() instead.")
     @discardableResult
     func loadImage(
         using urlRequest: URLRequest,
         cachingKey: String?,
         completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
     ) -> Cancellable?
-    
-    /// Load an image into an imageView from the given URL
-    /// - Parameters:
-    ///   - imageView: The `UIImageView` object in which the image should be loaded
-    ///   - url: The `URL` from which the image is to be loaded
-    ///   - imageCDN: The `ImageCDN`object which is to be used
-    ///   - placeholder: The placeholder `UIImage` to be used
-    ///   - resize: Whether to resize the image or not
-    ///   - preferredSize: The preferred size of the image to be loaded
-    ///   - completion: Completion that gets called when the download is finished
+
+    @available(*, deprecated, message: "use loadImage(into:from:with:) instead.")
     @discardableResult
     func loadImage(
         into imageView: UIImageView,
@@ -37,15 +64,8 @@ public protocol ImageLoading: AnyObject {
         preferredSize: CGSize?,
         completion: ((_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
-    
-    /// Load images from a given URLs
-    /// - Parameters:
-    ///   - urls: The URLs to load the images from
-    ///   - placeholders: The placeholder images. Placeholders are used when an image fails to load from a URL. The placeholders are used rotationally
-    ///   - loadThumbnails: Should load the images as thumbnails. If this is set to `true`, the thumbnail URL is derived from the `imageCDN` object
-    ///   - thumbnailSize: The size of the thumbnail. This parameter is used only if the `loadThumbnails` parameter is true
-    ///   - imageCDN: The imageCDN to be used
-    ///   - completion: Completion that gets called when all the images finish downloading
+
+    @available(*, deprecated, message: "use loadMultipleImages() instead.")
     func loadImages(
         from urls: [URL],
         placeholders: [UIImage],
@@ -56,7 +76,77 @@ public protocol ImageLoading: AnyObject {
     )
 }
 
+// MARK: - Image Attachment Helper API
+
 public extension ImageLoading {
+    @discardableResult
+    func loadImage(
+        into imageView: UIImageView,
+        from attachmentPayload: ImageAttachmentPayload?,
+        maxResolutionInPixels: Double,
+        completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
+    ) -> Cancellable? {
+        guard let originalWidth = attachmentPayload?.originalWidth,
+              let originalHeight = attachmentPayload?.originalHeight else {
+            return loadImage(
+                into: imageView,
+                from: attachmentPayload?.imageURL,
+                with: ImageLoaderOptions(),
+                completion: completion
+            )
+        }
+
+        let imageSizeCalculator = ImageSizeCalculator()
+        let newSize = imageSizeCalculator.calculateSize(
+            originalWidthInPixels: originalWidth,
+            originalHeightInPixels: originalHeight,
+            maxResolutionTotalPixels: maxResolutionInPixels
+        )
+
+        return loadImage(
+            into: imageView,
+            from: attachmentPayload?.imageURL,
+            with: ImageLoaderOptions(resize: .init(newSize)),
+            completion: completion
+        )
+    }
+}
+
+// MARK: - Default Parameters
+
+public extension ImageLoading {
+    // Default empty completion block.
+    @discardableResult
+    func loadImage(
+        into imageView: UIImageView,
+        from url: URL?,
+        with options: ImageLoaderOptions,
+        completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
+    ) -> Cancellable? {
+        loadImage(into: imageView, from: url, with: options, completion: completion)
+    }
+}
+
+// MARK: Deprecation fallbacks
+
+public extension ImageLoading {
+    @available(*, deprecated, message: "use downloadImage() instead.")
+    func loadImage(
+        using urlRequest: URLRequest,
+        cachingKey: String?, completion: @escaping ((Result<UIImage, Error>) -> Void)
+    ) -> Cancellable? {
+        guard let url = urlRequest.url else {
+            completion(.failure(NSError(domain: "io.getstream.imageDeprecation.invalidUrl", code: 1)))
+            return nil
+        }
+
+        return downloadImage(
+            with: ImageDownloadRequest(url: url, options: ImageDownloadOptions()),
+            completion: completion
+        )
+    }
+
+    @available(*, deprecated, message: "use loadImage(into:from:with:) instead.")
     @discardableResult
     func loadImage(
         into imageView: UIImageView,
@@ -69,30 +159,32 @@ public extension ImageLoading {
     ) -> Cancellable? {
         loadImage(
             into: imageView,
-            url: url,
-            imageCDN: imageCDN,
-            placeholder: placeholder,
-            resize: resize,
-            preferredSize: preferredSize,
+            from: url,
+            with: ImageLoaderOptions(
+                resize: preferredSize.map { ImageResize($0) },
+                placeholder: placeholder
+            ),
             completion: completion
         )
     }
-    
+
+    @available(*, deprecated, message: "use loadMultipleImages() instead.")
     func loadImages(
         from urls: [URL],
         placeholders: [UIImage],
         loadThumbnails: Bool = true,
-        thumbnailSize: CGSize = .avatarThumbnailSize,
+        thumbnailSize: CGSize = Components.default.avatarThumbnailSize,
         imageCDN: ImageCDN,
         completion: @escaping (([UIImage]) -> Void)
     ) {
-        loadImages(
-            from: urls,
-            placeholders: placeholders,
-            loadThumbnails: loadThumbnails,
-            thumbnailSize: thumbnailSize,
-            imageCDN: imageCDN,
-            completion: completion
-        )
+        let requests = urls.map { url in
+            ImageDownloadRequest(url: url, options: .init(resize: .init(thumbnailSize)))
+        }
+
+        downloadMultipleImages(with: requests) { results in
+            let imagesMapper = ImageResultsMapper(results: results)
+            let images = imagesMapper.mapErrors(with: placeholders)
+            completion(images)
+        }
     }
 }

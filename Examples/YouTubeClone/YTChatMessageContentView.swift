@@ -31,7 +31,7 @@ final class YTChatMessageContentView: ChatMessageContentView {
     }
     
     override var messageAuthorAvatarSize: CGSize {
-        .init(width: 40, height: 40)
+        components.avatarThumbnailSize
     }
     
     override func layout(options: ChatMessageLayoutOptions) {

@@ -15,6 +15,16 @@ public enum AttachmentValidationError: Error {
     case maxAttachmentsCountPerMessageExceeded(limit: Int)
 }
 
+public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public static let originalImage: Self = .init(rawValue: "originalImage")
+}
+
 /// The possible composer states. An Enum is not used so it does not cause
 /// future breaking changes and is possible to extend with new cases.
 public struct ComposerState: RawRepresentable, Equatable {
@@ -825,12 +835,28 @@ open class ComposerVC: _ViewController,
         suggestionsVC.removeFromParent()
         suggestionsVC.view.removeFromSuperview()
     }
+
+    /// Creates and adds an attachment from the given URL to the `content`
+    /// - Parameters:
+    ///   - url: The URL of the attachment
+    ///   - type: The type of the attachment
+    open func addAttachmentToContent(
+        from url: URL,
+        type: AttachmentType
+    ) throws {
+        try addAttachmentToContent(from: url, type: type, info: [:])
+    }
     
     /// Creates and adds an attachment from the given URL to the `content`
     /// - Parameters:
     ///   - url: The URL of the attachment
     ///   - type: The type of the attachment
-    open func addAttachmentToContent(from url: URL, type: AttachmentType) throws {
+    ///   - info: The metadata of the attachment
+    open func addAttachmentToContent(
+        from url: URL,
+        type: AttachmentType,
+        info: [LocalAttachmentInfoKey: Any]
+    ) throws {
         guard let chatConfig = channelController?.client.config else {
             log.assertionFailure("Channel controller must be set at this point")
             return
@@ -847,8 +873,20 @@ open class ComposerVC: _ViewController,
         guard fileSize < chatConfig.maxAttachmentSize else {
             throw AttachmentValidationError.maxFileSizeExceeded
         }
+
+        var localMetadata = AnyAttachmentLocalMetadata()
+        if let image = info[.originalImage] as? UIImage {
+            localMetadata.originalResolution = (
+                width: Double(image.size.width),
+                height: Double(image.size.height)
+            )
+        }
         
-        let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: type)
+        let attachment = try AnyAttachmentPayload(
+            attachmentType: type,
+            localFileURL: url,
+            localMetadata: localMetadata
+        )
         content.attachments.append(attachment)
     }
     
@@ -932,9 +970,18 @@ open class ComposerVC: _ViewController,
                 log.error("Unexpected item selected in image picker")
                 return
             }
-            
+
+            var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
+            if let originalImage = info[.originalImage] {
+                localAttachmentInfo[.originalImage] = originalImage
+            }
+
             do {
-                try self?.addAttachmentToContent(from: urlAndType.0, type: urlAndType.1)
+                try self?.addAttachmentToContent(
+                    from: urlAndType.0,
+                    type: urlAndType.1,
+                    info: localAttachmentInfo
+                )
             } catch {
                 self?.handleAddAttachmentError(
                     attachmentURL: urlAndType.0,
@@ -956,7 +1003,7 @@ open class ComposerVC: _ViewController,
                 attachmentType = .file
             }
             do {
-                try addAttachmentToContent(from: fileURL, type: attachmentType)
+                try addAttachmentToContent(from: fileURL, type: attachmentType, info: [:])
             } catch {
                 handleAddAttachmentError(
                     attachmentURL: fileURL,
@@ -988,7 +1035,11 @@ open class ComposerVC: _ViewController,
         
         let type: AttachmentType = .image
         do {
-            try addAttachmentToContent(from: imageUrl, type: type)
+            try addAttachmentToContent(
+                from: imageUrl,
+                type: type,
+                info: [.originalImage: image]
+            )
         } catch {
             handleAddAttachmentError(
                 attachmentURL: imageUrl,

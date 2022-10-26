@@ -177,10 +177,11 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         let placeholder = appearance.images.userAvatarPlaceholder1
         components.imageLoader.loadImage(
             into: authorAvatarView.imageView,
-            url: imageUrl,
-            imageCDN: components.imageCDN,
-            placeholder: placeholder,
-            preferredSize: .avatarThumbnailSize
+            from: imageUrl,
+            with: ImageLoaderOptions(
+                resize: .init(components.avatarThumbnailSize),
+                placeholder: placeholder
+            )
         )
     }
 
@@ -242,9 +243,8 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     open func setAttachmentPreviewImage(url: URL?) {
         components.imageLoader.loadImage(
             into: attachmentPreviewView,
-            url: url,
-            imageCDN: components.imageCDN,
-            preferredSize: attachmentPreviewSize
+            from: url,
+            with: ImageLoaderOptions(resize: .init(attachmentPreviewSize))
         )
     }
     

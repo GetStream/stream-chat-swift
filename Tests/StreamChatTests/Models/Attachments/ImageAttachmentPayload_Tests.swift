@@ -12,13 +12,17 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         let title: String = .unique
         let imageURL: URL = .unique()
         let thumbURL: URL = .unique()
+        let originalWidth: Double = 3200
+        let originalHeight: Double = 2600
         
         // Create JSON with the given values.
         let json = """
         {
             "title": "\(title)",
             "image_url": "\(imageURL.absoluteString)",
-            "thumb_url": "\(thumbURL.absoluteString)"
+            "thumb_url": "\(thumbURL.absoluteString)",
+            "original_width": \(originalWidth),
+            "original_height": \(originalHeight)
         }
         """.data(using: .utf8)!
         
@@ -29,6 +33,8 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.title, title)
         XCTAssertEqual(payload.imageURL, imageURL)
         XCTAssertEqual(payload.imagePreviewURL, thumbURL)
+        XCTAssertEqual(payload.originalWidth, originalWidth)
+        XCTAssertEqual(payload.originalHeight, originalHeight)
         XCTAssertNil(payload.extraData)
     }
     
@@ -64,5 +70,27 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         // Assert extra data can be decoded.
         let extraData = try XCTUnwrap(payload.extraData(ofType: ExtraData.self))
         XCTAssertEqual(extraData.comment, comment)
+    }
+
+    func test_encoding() throws {
+        let payload = ImageAttachmentPayload(
+            title: "Image1.png",
+            imageRemoteURL: URL(string: "dummyURL")!,
+            imagePreviewRemoteURL: URL(string: "dummyPreviewURL"),
+            originalWidth: 100,
+            originalHeight: 50,
+            extraData: ["isVerified": true]
+        )
+        let json = try JSONEncoder.stream.encode(payload)
+
+        let expectedJsonObject: [String: Any] = [
+            "title": "Image1.png",
+            "image_url": "dummyURL",
+            "original_width": 100,
+            "original_height": 50,
+            "isVerified": true
+        ]
+
+        AssertJSONEqual(json, expectedJsonObject)
     }
 }

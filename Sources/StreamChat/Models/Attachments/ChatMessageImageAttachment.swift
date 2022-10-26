@@ -22,6 +22,10 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     public var imageURL: URL
     /// A link to the image preview.
     public var imagePreviewURL: URL
+    /// The original width of the image in pixels.
+    public var originalWidth: Double?
+    /// The original height of the image in pixels.
+    public var originalHeight: Double?
     /// An extra data.
     public var extraData: [String: RawJSON]?
     
@@ -37,10 +41,19 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     /// Creates `ImageAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
-    public init(title: String?, imageRemoteURL: URL, imagePreviewRemoteURL: URL? = nil, extraData: [String: RawJSON]?) {
+    public init(
+        title: String?,
+        imageRemoteURL: URL,
+        imagePreviewRemoteURL: URL? = nil,
+        originalWidth: Double? = nil,
+        originalHeight: Double? = nil,
+        extraData: [String: RawJSON]? = nil
+    ) {
         self.title = title
         imageURL = imageRemoteURL
         imagePreviewURL = imagePreviewRemoteURL ?? imageRemoteURL
+        self.originalWidth = originalWidth
+        self.originalHeight = originalHeight
         self.extraData = extraData
     }
 }
@@ -54,6 +67,12 @@ extension ImageAttachmentPayload: Encodable {
         var values = extraData ?? [:]
         values[AttachmentCodingKeys.title.rawValue] = title.map { .string($0) }
         values[AttachmentCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
+
+        if let originalWidth = self.originalWidth, let originalHeight = self.originalHeight {
+            values[AttachmentCodingKeys.originalWidth.rawValue] = .double(originalWidth)
+            values[AttachmentCodingKeys.originalHeight.rawValue] = .double(originalHeight)
+        }
+
         try values.encode(to: encoder)
     }
 }
@@ -75,11 +94,17 @@ extension ImageAttachmentPayload: Decodable {
                 container.decodeIfPresent(String.self, forKey: .name)
         )?.trimmingCharacters(in: .whitespacesAndNewlines)
 
+        let previewUrl = try container.decodeIfPresent(URL.self, forKey: .thumbURL) ?? imageURL
+
+        let originalWidth = try container.decodeIfPresent(Double.self, forKey: .originalWidth)
+        let originalHeight = try container.decodeIfPresent(Double.self, forKey: .originalHeight)
+
         self.init(
             title: title,
             imageRemoteURL: imageURL,
-            imagePreviewRemoteURL: try container
-                .decodeIfPresent(URL.self, forKey: .thumbURL) ?? imageURL,
+            imagePreviewRemoteURL: previewUrl,
+            originalWidth: originalWidth,
+            originalHeight: originalHeight,
             extraData: try Self.decodeExtraData(from: decoder)
         )
     }

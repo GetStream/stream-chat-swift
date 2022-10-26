@@ -65,12 +65,14 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
     @objc override open func updateContent() {
         let currentUserImageUrl = controller?.currentUser?.imageURL
         let placeholderImage = appearance.images.userAvatarPlaceholder1
+
         components.imageLoader.loadImage(
             into: avatarView.imageView,
-            url: currentUserImageUrl,
-            imageCDN: components.imageCDN,
-            placeholder: placeholderImage,
-            preferredSize: .avatarThumbnailSize
+            from: currentUserImageUrl,
+            with: ImageLoaderOptions(
+                resize: ImageResize(components.avatarThumbnailSize),
+                placeholder: placeholderImage
+            )
         )
         
         alpha = state == .normal ? 1 : 0.5

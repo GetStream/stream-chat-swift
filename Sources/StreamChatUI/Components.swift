@@ -13,6 +13,9 @@ public struct Components {
     /// A view used as an online activity indicator (online/offline).
     public var onlineIndicatorView: (UIView & MaskProviding).Type = OnlineIndicatorView.self
 
+    /// The default avatar thumbnail size.
+    public var avatarThumbnailSize: CGSize = .init(width: 40, height: 40)
+
     /// A view that displays the avatar image. By default a circular image.
     public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
 
@@ -140,6 +143,12 @@ public struct Components {
 
     /// The view used to display a bubble around a message.
     public var messageBubbleView: ChatMessageBubbleView.Type = ChatMessageBubbleView.self
+
+    /// The maximum image resolution in pixels when loading image attachments in the Message List.
+    ///
+    /// By default it is 2MP, 2 Million Pixels. Keep in mind that
+    /// increasing this value will increase the memory footprint.
+    public var imageAttachmentMaxPixels: Double = 2_000_000
 
     /// The class responsible for returning the correct attachment view injector from a message
     @available(iOSApplicationExtension, unavailable)

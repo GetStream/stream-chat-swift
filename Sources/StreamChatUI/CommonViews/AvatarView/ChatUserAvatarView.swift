@@ -25,10 +25,11 @@ open class ChatUserAvatarView: _View, ThemeProvider {
     override open func updateContent() {
         components.imageLoader.loadImage(
             into: presenceAvatarView.avatarView.imageView,
-            url: content?.imageURL,
-            imageCDN: components.imageCDN,
-            placeholder: appearance.images.userAvatarPlaceholder1,
-            preferredSize: .avatarThumbnailSize
+            from: content?.imageURL,
+            with: ImageLoaderOptions(
+                resize: .init(components.avatarThumbnailSize),
+                placeholder: appearance.images.userAvatarPlaceholder1
+            )
         )
         
         presenceAvatarView.isOnlineIndicatorVisible = content?.isOnline ?? false
