@@ -13,6 +13,9 @@ public class ChatMessageController_Mock: ChatMessageController {
         messageId: String = "MockMessage"
     ) -> ChatMessageController_Mock {
         let chatClient = ChatClient_Mock.mock
+        if let authenticationRepository = chatClient.authenticationRepository as? AuthenticationRepository_Mock {
+            authenticationRepository.mockedCurrentUserId = currentUserId
+        }
         var channelId = cid
         if channelId == nil {
             channelId = try! .init(cid: "mock:channel")
