@@ -585,11 +585,8 @@ final class MessageSearchController_Tests: XCTestCase {
 
         let pagination = env.messageUpdater?.search_query?.pagination
 
-        guard case let .cursor(next, _) = pagination else {
-            XCTFail("Should have cursor based pagination when using sort")
-            return
-        }
-        XCTAssertEqual(next, simulatedNextCursor)
+        XCTAssertEqual(pagination?.cursor, simulatedNextCursor)
+        XCTAssertEqual(pagination?.offset, 0)
     }
 
     func test_loadNextMessages_whenNotUsingSort_offsetPaginationIsUsed() throws {
@@ -607,11 +604,8 @@ final class MessageSearchController_Tests: XCTestCase {
 
         let pagination = env.messageUpdater?.search_query?.pagination
 
-        guard case let .offset(offset, _) = pagination else {
-            XCTFail("Should have cursor based pagination when using sort")
-            return
-        }
-        XCTAssertEqual(1, offset)
+        XCTAssertEqual(pagination?.offset, 1)
+        XCTAssertNil(pagination?.cursor)
     }
 
     func test_loadNextMessages_nextResultPage_isLoaded() throws {
