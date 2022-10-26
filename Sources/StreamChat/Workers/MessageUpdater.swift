@@ -552,7 +552,7 @@ class MessageUpdater: Worker {
 
                     session.saveMessageSearch(payload: payload, for: query)
                 } completion: { error in
-                    if let error {
+                    if let error = error {
                         completion?(.failure(error))
                     } else {
                         completion?(.success(payload))
