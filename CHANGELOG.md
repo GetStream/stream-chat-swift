@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Added support for Stream's Image CDN v2 [#2339](https://github.com/GetStream/stream-chat-swift/pull/2339)
+- Expose `EntityChange.item` [#2351](https://github.com/GetStream/stream-chat-swift/pull/2351)
 
 ### 🐞 Fixed
 - Fix CurrentChatUserController+Combine initialValue hard coded to `.noUnread` instead of using the initial value from the current user data model [#2334](https://github.com/GetStream/stream-chat-swift/pull/2334)
