@@ -782,67 +782,6 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertTrue(client.createBackgroundWorkers_called)
     }
 
-    private func createClientInCleanState(
-        existingToken: Token?,
-        createBackgroundWorkers: Bool = false,
-        isClientInActiveMode: Bool = true,
-        webSocketClient: WebSocketClient_Mock? = nil
-    ) -> ChatClient_Mock {
-        var environment = ChatClient.Environment.mock
-
-        if let webSocketClient = webSocketClient {
-            environment = ChatClient.Environment(
-                apiClientBuilder: environment.apiClientBuilder,
-                webSocketClientBuilder: { _, _, _, _ in
-                    webSocketClient
-                },
-                databaseContainerBuilder: environment.databaseContainerBuilder,
-                requestEncoderBuilder: environment.requestEncoderBuilder,
-                requestDecoderBuilder: environment.requestDecoderBuilder,
-                eventDecoderBuilder: environment.eventDecoderBuilder,
-                notificationCenterBuilder: environment.notificationCenterBuilder,
-                clientUpdaterBuilder: environment.clientUpdaterBuilder,
-                authenticationRepositoryBuilder: environment.authenticationRepositoryBuilder,
-                syncRepositoryBuilder: environment.syncRepositoryBuilder,
-                messageRepositoryBuilder: environment.messageRepositoryBuilder,
-                offlineRequestsRepositoryBuilder: environment.offlineRequestsRepositoryBuilder
-            )
-        }
-
-        var config = ChatClientConfig(apiKeyString: .unique)
-        config.isClientInActiveMode = isClientInActiveMode
-        let client = ChatClient_Mock(config: config, environment: environment)
-
-        authenticationRepository = client.authenticationRepository as? AuthenticationRepository_Mock
-        XCTAssertNotNil(authenticationRepository)
-
-        if let existingToken = existingToken {
-            authenticationRepository?.setToken(token: existingToken)
-        }
-
-        XCTAssertNil(client.webSocketClient?.connectEndpoint)
-        XCTAssertEqual(client.backgroundWorkers.count, 0)
-
-        return client
-    }
-
-    private func prepareEnvironmentAndWait(userInfo: UserInfo?, newToken: Token, client: ChatClient) -> Error? {
-        let updater = ChatClientUpdater(client: client)
-        let expectation = self.expectation(description: "prepareEnvironment completes")
-        var receivedError: Error?
-        updater.prepareEnvironment(
-            userInfo: userInfo,
-            newToken: newToken,
-            completion: { error in
-                receivedError = error
-                expectation.fulfill()
-            }
-        )
-
-        waitForExpectations(timeout: 0.1)
-        return receivedError
-    }
-
     // MARK: Reload User if needed
 
     func test_reloadUserIfNeeded_noProvider() {
@@ -982,6 +921,67 @@ final class ChatClientUpdater_Tests: XCTestCase {
         client.createBackgroundWorkers()
 
         return client
+    }
+
+    private func createClientInCleanState(
+        existingToken: Token?,
+        createBackgroundWorkers: Bool = false,
+        isClientInActiveMode: Bool = true,
+        webSocketClient: WebSocketClient_Mock? = nil
+    ) -> ChatClient_Mock {
+        var environment = ChatClient.Environment.mock
+
+        if let webSocketClient = webSocketClient {
+            environment = ChatClient.Environment(
+                apiClientBuilder: environment.apiClientBuilder,
+                webSocketClientBuilder: { _, _, _, _ in
+                    webSocketClient
+                },
+                databaseContainerBuilder: environment.databaseContainerBuilder,
+                requestEncoderBuilder: environment.requestEncoderBuilder,
+                requestDecoderBuilder: environment.requestDecoderBuilder,
+                eventDecoderBuilder: environment.eventDecoderBuilder,
+                notificationCenterBuilder: environment.notificationCenterBuilder,
+                clientUpdaterBuilder: environment.clientUpdaterBuilder,
+                authenticationRepositoryBuilder: environment.authenticationRepositoryBuilder,
+                syncRepositoryBuilder: environment.syncRepositoryBuilder,
+                messageRepositoryBuilder: environment.messageRepositoryBuilder,
+                offlineRequestsRepositoryBuilder: environment.offlineRequestsRepositoryBuilder
+            )
+        }
+
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isClientInActiveMode = isClientInActiveMode
+        let client = ChatClient_Mock(config: config, environment: environment)
+
+        authenticationRepository = client.authenticationRepository as? AuthenticationRepository_Mock
+        XCTAssertNotNil(authenticationRepository)
+
+        if let existingToken = existingToken {
+            authenticationRepository?.setToken(token: existingToken)
+        }
+
+        XCTAssertNil(client.webSocketClient?.connectEndpoint)
+        XCTAssertEqual(client.backgroundWorkers.count, 0)
+
+        return client
+    }
+
+    private func prepareEnvironmentAndWait(userInfo: UserInfo?, newToken: Token, client: ChatClient) -> Error? {
+        let updater = ChatClientUpdater(client: client)
+        let expectation = self.expectation(description: "prepareEnvironment completes")
+        var receivedError: Error?
+        updater.prepareEnvironment(
+            userInfo: userInfo,
+            newToken: newToken,
+            completion: { error in
+                receivedError = error
+                expectation.fulfill()
+            }
+        )
+
+        waitForExpectations(timeout: 0.1)
+        return receivedError
     }
 }
 

@@ -308,26 +308,6 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(receivedError, mockedError)
     }
 
-    private func refreshTokenAndWaitForResponse(mockedError: Error?) throws -> Error? {
-        XCTAssertNotNil(repository.tokenProvider)
-        retryStrategy.mock_nextRetryDelay.returns(0.1)
-
-        let expectation = self.expectation(description: "Refresh token")
-        var receivedError: Error?
-        repository.refreshToken { error in
-            receivedError = error
-            expectation.fulfill()
-        }
-
-        AssertAsync.willBeTrue(clientUpdater.reloadUserIfNeeded_completion != nil)
-        let reloadUserCompletion = try XCTUnwrap(clientUpdater.reloadUserIfNeeded_completion)
-        let tokenProvider = try XCTUnwrap(clientUpdater.reloadUserIfNeeded_tokenProvider)
-        reloadUserCompletion(mockedError)
-        tokenProvider { _ in }
-        waitForExpectations(timeout: 10)
-        return receivedError
-    }
-
     func test_refreshToken_multipleCalls() throws {
         try setTokenProvider(mockedResult: .success(.unique()))
         retryStrategy.mock_nextRetryDelay.returns(0.1)
@@ -349,6 +329,26 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         XCTAssertCall("nextRetryDelay()", on: retryStrategy, times: 3)
         XCTAssertCall("resetConsecutiveFailures()", on: retryStrategy, times: 1)
+    }
+
+    private func refreshTokenAndWaitForResponse(mockedError: Error?) throws -> Error? {
+        XCTAssertNotNil(repository.tokenProvider)
+        retryStrategy.mock_nextRetryDelay.returns(0.1)
+
+        let expectation = self.expectation(description: "Refresh token")
+        var receivedError: Error?
+        repository.refreshToken { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        AssertAsync.willBeTrue(clientUpdater.reloadUserIfNeeded_completion != nil)
+        let reloadUserCompletion = try XCTUnwrap(clientUpdater.reloadUserIfNeeded_completion)
+        let tokenProvider = try XCTUnwrap(clientUpdater.reloadUserIfNeeded_tokenProvider)
+        reloadUserCompletion(mockedError)
+        tokenProvider { _ in }
+        waitForExpectations(timeout: 10)
+        return receivedError
     }
 
     private func setTokenProvider(mockedResult: Result<Token, Error>) throws {

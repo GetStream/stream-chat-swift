@@ -468,7 +468,7 @@ public class ChatClient {
     ///     - References to active controllers
     ///     - Database
     /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
-    func clearPreviousUserData(completion: @escaping (Error?) -> Void) {
+    func clearCurrentUserData(completion: @escaping (Error?) -> Void) {
         createBackgroundWorkers()
 
         // Stop tracking active components
