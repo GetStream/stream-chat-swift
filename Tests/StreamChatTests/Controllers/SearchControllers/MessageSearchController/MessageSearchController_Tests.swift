@@ -639,6 +639,19 @@ final class MessageSearchController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.didChangeMessages_changes, [.insert(newMessage, index: [0, 1])])
     }
 
+    func test_loadNextMessages_nextResultsPage_cantBeCalledBeforeSearch() {
+        var reportedError: Error?
+        controller.loadNextMessages { error in
+            reportedError = error
+        }
+        
+        // Assert updater is not called
+        XCTAssertNil(env.messageUpdater?.search_completion)
+        
+        // Assert an error is reported
+        AssertAsync.willBeFalse(reportedError == nil)
+    }
+
     @discardableResult
     private func simulateInitialSearch(query: MessageSearchQuery, responseNextCursor: String?) throws -> ChatMessage {
         // Make a search
@@ -659,19 +672,6 @@ final class MessageSearchController_Tests: XCTestCase {
 
         AssertAsync.willBeEqual(controller.messages.count, 1)
         return message
-    }
-    
-    func test_loadNextMessages_nextResultsPage_cantBeCalledBeforeSearch() {
-        var reportedError: Error?
-        controller.loadNextMessages { error in
-            reportedError = error
-        }
-        
-        // Assert updater is not called
-        XCTAssertNil(env.messageUpdater?.search_completion)
-        
-        // Assert an error is reported
-        AssertAsync.willBeFalse(reportedError == nil)
     }
 }
 
