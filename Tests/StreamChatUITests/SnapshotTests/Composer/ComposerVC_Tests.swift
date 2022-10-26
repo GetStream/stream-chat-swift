@@ -244,7 +244,7 @@ final class ComposerVC_Tests: XCTestCase {
         let mockUserSearchController = ChatUserSearchController_Mock.mock()
         
         let mockChannelController = ChatChannelController_Mock.mock()
-        mockChannelController.client.currentUserId = .unique
+        mockChannelController.client.authenticationRepository.setToken(token: .unique())
         mockChannelController.channel_mock = .mock(
             cid: .unique,
             lastActiveMembers: [member],
